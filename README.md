@@ -254,6 +254,7 @@ If you use **GraphFLA** or our pre-collected datasets in your research, please c
 
 @inproceedings{HuangL25b,
   author       = {Mingyu Huang and
+                  Peili Mao and
                   Ke Li},
   title        = {Rethinking Performance Analysis for Configurable Software Systems: A  
                   Case Study from a Fitness Landscape Perspective},
