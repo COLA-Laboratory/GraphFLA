@@ -3,6 +3,7 @@ import itertools
 import math
 import pandas as pd
 
+
 class OptimizationProblem:
     """
     Base class for defining optimization problems.
@@ -23,12 +24,12 @@ class OptimizationProblem:
         """
         self.n = n
         self.variables = range(n)
-    
+
     def evaluate(self, config):
         """
         Evaluate the fitness of a given configuration.
 
-        This method should be implemented by subclasses to define the 
+        This method should be implemented by subclasses to define the
         specific evaluation criteria for the optimization problem.
 
         Parameters
@@ -41,9 +42,9 @@ class OptimizationProblem:
         NotImplementedError
             If the method is not implemented in a subclass.
         """
-        
+
         raise NotImplementedError("Subclasses should implement this method.")
-    
+
     def get_all_configs(self):
         """
         Generate all possible configurations for the problem.
@@ -62,8 +63,10 @@ class OptimizationProblem:
             If the method is not implemented in a subclass.
         """
 
-        raise NotImplementedError("Subclasses should define this method to generate all configurations.")
-    
+        raise NotImplementedError(
+            "Subclasses should define this method to generate all configurations."
+        )
+
     def get_data(self):
         """
         Generate a DataFrame containing configurations and their fitness values.
@@ -76,16 +79,17 @@ class OptimizationProblem:
 
         all_configs = self.get_all_configs()
         config_values = {config: self.evaluate(config) for config in all_configs}
-        
+
         data = pd.DataFrame(list(config_values.items()), columns=["config", "fitness"])
-        data['config'] = data['config'].apply(list)
+        data["config"] = data["config"].apply(list)
         return data
+
 
 class NK(OptimizationProblem):
     """
     NK model for fitness landscapes.
 
-    This class represents an NK landscape, a model used to study the complexity of 
+    This class represents an NK landscape, a model used to study the complexity of
     adaptive landscapes based on interactions among components.
 
     Parameters
@@ -113,7 +117,7 @@ class NK(OptimizationProblem):
             for e in self.variables
         ]
         self.values = {}
-    
+
     def get_all_configs(self):
         """
         Generate all possible binary configurations for the NK model.
@@ -142,18 +146,19 @@ class NK(OptimizationProblem):
         """
 
         total_value = 0.0
-        config = tuple(config)  
+        config = tuple(config)
         for e in self.variables:
             key = (e,) + tuple(config[i] for i in self.dependence[e])
             if key not in self.values:
                 self.values[key] = random.random()
             total_value += self.values[key]
-        
+
         total_value /= self.n
         if self.exponent != 1:
             total_value = math.pow(total_value, self.exponent)
-        
+
         return total_value
+
 
 class RoughMountFuji(OptimizationProblem):
     """
@@ -168,7 +173,7 @@ class RoughMountFuji(OptimizationProblem):
         The number of variables in the optimization problem.
     alpha : float, default=0.5
         The ruggedness parameter that determines the balance between the smooth
-        and rugged components. Must be between 0 and 1.
+        and rugged components. Must be between 0 (smoothest) and 1 (most rugged).
     """
 
     def __init__(self, n, alpha=0.5):
@@ -210,18 +215,21 @@ class RoughMountFuji(OptimizationProblem):
         config = tuple(config)
 
         # Smooth component
-        smooth_value = sum(self.smooth_contribution[i] * config[i] for i in self.variables)
+        smooth_value = sum(
+            self.smooth_contribution[i] * config[i] for i in self.variables
+        )
 
         # Rugged component
         if config not in self.random_values:
             self.random_values[config] = random.random()
-        
+
         rugged_value = self.random_values[config]
 
         # Combine the smooth and rugged components using alpha
         fitness = (1 - self.alpha) * smooth_value + self.alpha * rugged_value
 
         return fitness
+
 
 class HoC(RoughMountFuji):
     """
@@ -267,7 +275,8 @@ class HoC(RoughMountFuji):
             self.random_values[config] = random.random()
 
         return self.random_values[config]
-    
+
+
 class Additive(OptimizationProblem):
     """
     Additive model for fitness landscapes.
@@ -287,7 +296,9 @@ class Additive(OptimizationProblem):
         """
         super().__init__(n)
         # Assign a random fitness contribution for each variable set to 0 and 1
-        self.contributions = {i: (random.random(), random.random()) for i in self.variables}
+        self.contributions = {
+            i: (random.random(), random.random()) for i in self.variables
+        }
 
     def get_all_configs(self):
         """
@@ -319,6 +330,7 @@ class Additive(OptimizationProblem):
         config = tuple(config)
         fitness = sum(self.contributions[i][config[i]] for i in self.variables)
         return fitness
+
 
 class Eggbox(OptimizationProblem):
     """
@@ -378,7 +390,7 @@ class Eggbox(OptimizationProblem):
         fitness = math.sin(self.frequency * sum_of_elements * math.pi) ** 2
         return fitness
 
-    
+
 class Max3Sat(OptimizationProblem):
     """
     Max-3-SAT optimization problem.
@@ -403,7 +415,7 @@ class Max3Sat(OptimizationProblem):
         super().__init__(n)
         self.m = int(alpha * n)
         self.clauses = self._generate_clauses()
-        
+
     def _generate_clauses(self):
         """
         Generate a set of 3-literal clauses.
@@ -420,7 +432,7 @@ class Max3Sat(OptimizationProblem):
             clause = tuple((var, random.choice([True, False])) for var in vars)
             clauses.add(clause)
         return list(clauses)
-    
+
     def get_all_configs(self):
         """
         Generate all possible configurations for the Max-3-SAT problem.
@@ -453,4 +465,3 @@ class Max3Sat(OptimizationProblem):
             if any((config[var] == is_positive) for var, is_positive in clause):
                 num_satisfied += 1
         return num_satisfied
-    

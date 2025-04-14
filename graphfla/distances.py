@@ -2,7 +2,11 @@ import numpy as np
 from typing import Dict
 
 
-def euclidean_distance(X: np.ndarray, x: np.ndarray) -> np.ndarray:
+def euclidean_distance(
+    X: np.ndarray,
+    x: np.ndarray,
+    data_types: None,
+) -> np.ndarray:
     """
     Compute the Euclidean distance between each row of X and the reference vector x.
 
@@ -21,7 +25,7 @@ def euclidean_distance(X: np.ndarray, x: np.ndarray) -> np.ndarray:
     return np.sqrt(np.sum((X - x) ** 2, axis=1))
 
 
-def hamming_distance(X: np.ndarray, x: np.ndarray) -> np.ndarray:
+def hamming_distance(X: np.ndarray, x: np.ndarray, data_types: None) -> np.ndarray:
     """
     Compute the Hamming distance between each row of X and the reference vector x.
 
@@ -40,7 +44,7 @@ def hamming_distance(X: np.ndarray, x: np.ndarray) -> np.ndarray:
     return np.sum(X != x, axis=1)
 
 
-def manhattan_distance(X: np.ndarray, x: np.ndarray) -> np.ndarray:
+def manhattan_distance(X: np.ndarray, x: np.ndarray, data_types: None) -> np.ndarray:
     """
     Compute the Manhattan distance between each row of X and the reference vector x.
 
@@ -99,11 +103,11 @@ def mixed_distance(
     if cat_indices:
         X_cat = X[:, cat_indices]
         x_cat = x[cat_indices]
-        total_distance += hamming_distance(X_cat, x_cat)
+        total_distance += hamming_distance(X_cat, x_cat, None)
 
     if ord_indices:
         X_ord = X[:, ord_indices]
         x_ord = x[ord_indices]
-        total_distance += manhattan_distance(X_ord, x_ord)
+        total_distance += manhattan_distance(X_ord, x_ord, None)
 
     return total_distance

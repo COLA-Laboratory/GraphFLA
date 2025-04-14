@@ -1,15 +1,219 @@
 from .distances import mixed_distance
 from .algorithms import hill_climb, random_walk
+from .utils import is_ancestor_fast
 from scipy.stats import spearmanr, pearsonr, binomtest, ttest_1samp
 from typing import Any, Tuple
 from itertools import combinations, product
 from joblib import Parallel, delayed
 from sklearn.linear_model import LinearRegression
+from typing import Union
 
 import numpy as np
 import pandas as pd
 import networkx as nx
 import random
+import warnings
+
+### Future Work:
+### 1. (YES) Distribution of Fitness Effects (DFE)
+### 2. (YES) Mutational Robustness
+### 3. (NO) Evolvability
+###   - Mutational robustness (e.g., average fitness effect of neighbors, neutral neighborhood size) (Payne & Wagner 2014, Lauring et al.).
+###   - How the DFE changes across genetic backgrounds (Johnson et al.).
+###   - Evolvability-reducing (ER) mutations.
+###   - Analysis of neutral networks and their properties (Lauring et al., Greenbury et al.).
+### 4. Advanced Epistasis
+###   - (YES) Diminishing Returns.
+###   - (NO) Increasing Costs.
+###   - (NO) Global epistasis.
+###   - (NO) Idiosyncratic epistasis.
+###   - (NO) Additive, multiplicative, and chimeric epistasis.
+### 5. (NO) Higher-Order Epistasis
+### 6. (YES) Evolutionary Accessibility & Predictability
+### 7. (NO) Environment-Dependent Fitness Effects and Epistasis (GxE, GxGxE), this may include:
+###   - Calculating and analyzing GxE and GxGxE interactions systematically. (Costanzo et al., Bank 2022).
+###   - Implementing methods for differential interaction analysis (identifying modified, masked, novel interactions) as defined by Costanzo et al.
+###   - Tools for modeling and predicting landscape changes across environmental gradients (Chen et al. 2022, Bank 2022), potentially using transformation models like those suggested by Li & Zhang (2018).
+###   - Support for multi-objective optimization concepts like Pareto fronts to analyze trade-offs between different functions/phenotypes (Shoval et al.).
+### 8. (YES) Landscape Modeling
+### 9. Simulation
+###   - (YES) Adaptive walk models (reedy, stochastic based on fixation probabilities like Kimura's, random walks on neutral networks).
+###   - (YES) Population genetics models.
+###   - (NO) Tools for predicting evolutionary trajectories and outcomes based on landscape topography (Lässig et al., de Visser & Krug 2014, Bank 2022).
+
+
+def global_optima_accessibility(
+    landscape, approximate: bool = False, n_samples: Union[int, float, None] = 0.2
+) -> float:
+    """
+    Calculate or estimate the accessibility of the global optimum (GO).
+
+    This metric represents the fraction of configurations in the landscape
+    that can reach the global optimum via any monotonic, fitness-improving path.
+
+    By default (`approximate=False`), it relies on the 'size_basin_first'
+    attribute calculated by `determine_accessible_paths()`. If this
+    attribute is not available (i.e., `determine_accessible_paths()` has
+    not been run or `landscape._path_calculated` is False), this method will
+    raise a RuntimeError unless `approximate` is set to True.
+
+    If `approximate=True`, the accessibility is estimated by sampling
+    a specified number or fraction (`n_samples`) of configurations and
+    checking if the GO is reachable from each sample using graph traversal
+    (specifically, checking if the GO is a successor via directed paths).
+
+    Parameters
+    ----------
+    approximate : bool, default=False
+        If True, estimate accessibility by sampling and graph traversal.
+        If False, use the pre-calculated 'size_basin_first' attribute for the GO.
+    n_samples : int or float, optional
+        Specifies the number or fraction of configurations to sample for
+        approximation. Required and must be set if `approximate=True`.
+        - If int: The absolute number of configurations to sample (must be > 0).
+        - If float: The fraction of total configurations to sample (must be in (0, 1]).
+        Ignored if `approximate=False`.
+
+    Returns
+    -------
+    float
+        The fraction of configurations estimated or known to be able to
+        reach the global optimum monotonically (value between 0.0 and 1.0).
+
+    Raises
+    ------
+    RuntimeError
+        If `approximate=False` and `determine_accessible_paths()` has not
+        been successfully run (i.e., `landscape._path_calculated` is False).
+        If the global optimum has not been determined.
+        If the graph is not initialized.
+    ValueError
+        If `approximate=True` and `n_samples` is None or invalid (e.g., int <= 0,
+        float not in (0, 1], or wrong type).
+    """
+    if landscape.graph is None:
+        raise RuntimeError("Graph not initialized. Cannot calculate accessibility.")
+    if landscape.go_index is None:
+        # Attempt to determine GO if not already done
+        landscape._determine_global_optimum()
+        if landscape.go_index is None:  # Check again after attempting
+            raise RuntimeError(
+                "Global optimum could not be determined. Cannot calculate accessibility."
+            )
+
+    if landscape.n_configs is None or landscape.n_configs == 0:
+        warnings.warn(
+            "Landscape has 0 configurations. Accessibility is 0.", RuntimeWarning
+        )
+        return 0.0
+
+    # --- Exact Calculation ---
+    if not approximate:
+        if not landscape._path_calculated:
+            raise RuntimeError(
+                "Exact global optima accessibility requires 'size_basin_first' data. "
+                "Please run `landscape.determine_accessible_paths()` first, or set `approximate=True`."
+            )
+
+        try:
+            # Get the pre-calculated size of the basin leading to the GO.
+            # The count from determine_accessible_paths already includes the GO node itlandscape.
+            go_node_data = landscape.graph.nodes[landscape.go_index]
+            size_basin_go = go_node_data.get("size_basin_first", 0)
+
+            if "size_basin_first" not in go_node_data and landscape.verbose:
+                # This case indicates an issue if _path_calculated is True
+                warnings.warn(
+                    "Global optimum node missing 'size_basin_first' attribute "
+                    "despite _path_calculated=True. Calculation might be inaccurate. Returning 0.",
+                    RuntimeWarning,
+                )
+                return 0.0
+            elif size_basin_go == 0 and landscape.verbose:
+                warnings.warn(
+                    "Calculated 'size_basin_first' for GO is 0.", RuntimeWarning
+                )
+
+            accessibility = size_basin_go / landscape.n_configs
+            return accessibility
+
+        except KeyError:
+            # Should not happen if _path_calculated is True and GO index is valid
+            raise RuntimeError(
+                "Internal inconsistency: Global optimum index not found in graph nodes after check. "
+                "Re-run `determine_accessible_paths()` or use `approximate=True`."
+            )
+        except Exception as e:
+            raise RuntimeError(
+                f"An unexpected error occurred accessing exact accessibility: {e}"
+            )
+
+    # --- Approximate Calculation ---
+    else:
+        if n_samples is None:
+            raise ValueError(
+                "If approximate=True, 'n_samples' must be provided (int > 0 or float (0, 1])."
+            )
+
+        num_to_sample: int
+        if isinstance(n_samples, int):
+            if n_samples <= 0:
+                raise ValueError("If 'n_samples' is int, it must be > 0.")
+            if n_samples > landscape.n_configs:
+                warnings.warn(
+                    f"'n_samples' ({n_samples}) > total configurations ({landscape.n_configs}). Sampling all."
+                )
+                num_to_sample = landscape.n_configs
+            else:
+                num_to_sample = n_samples
+        elif isinstance(n_samples, float):
+            if not 0.0 < n_samples <= 1.0:
+                raise ValueError("If 'n_samples' is float, it must be in (0, 1].")
+            num_to_sample = max(
+                1, int(n_samples * landscape.n_configs)
+            )  # Ensure at least 1 sample
+        else:
+            raise ValueError("'n_samples' must be an integer (>0) or a float (0, 1].")
+
+        all_nodes = list(landscape.graph.nodes())
+        if not all_nodes:  # Handle empty graph case edge case
+            warnings.warn("Graph has no nodes to sample from.", RuntimeWarning)
+            return 0.0
+
+        # Ensure we don't try to sample more nodes than exist
+        actual_sample_size = min(num_to_sample, len(all_nodes))
+        if actual_sample_size < num_to_sample and landscape.verbose:
+            print(
+                f"  Reduced sample size to {actual_sample_size} due to available nodes."
+            )
+
+        if actual_sample_size == 0:  # If graph had nodes but num_to_sample ended up 0
+            warnings.warn(
+                "Calculated sample size is 0. Cannot approximate.", RuntimeWarning
+            )
+            return 0.0
+
+        sample_nodes = random.sample(all_nodes, actual_sample_size)
+
+        count_reaching_go = 0
+
+        for start_node in sample_nodes:
+            try:
+                # Use the reachability check function
+                if is_ancestor_fast(landscape.graph, start_node, landscape.go_index):
+                    count_reaching_go += 1
+            except Exception as e:
+                # Handle potential errors during graph traversal for a specific node
+                warnings.warn(
+                    f"Reachability check failed for sample node {start_node}: {e}",
+                    RuntimeWarning,
+                )
+                continue  # Skip this sample
+
+        # Calculate approximation based on successful checks
+        approx_accessibility = count_reaching_go / actual_sample_size
+
+        return approx_accessibility
 
 
 def fdc(
@@ -202,7 +406,7 @@ def ruggedness(landscape) -> float:
     return ruggedness
 
 
-def basin_size_fit_corr(landscape, method: str = "spearman") -> tuple:
+def basin_fit_corr(landscape, method: str = "spearman") -> tuple:
     """
     Calculate the correlation between the size of the basin of attraction and the fitness of local optima.
 
@@ -220,17 +424,9 @@ def basin_size_fit_corr(landscape, method: str = "spearman") -> tuple:
         A tuple containing the correlation coefficient and the p-value.
     """
 
-    lo_indices = landscape.lo_index
-    if not lo_indices:
-        raise ValueError("No local optima found in the landscape.")
-
-    basin_sizes = []
-    fitness_values = []
-    for lo in lo_indices:
-        basin_size = landscape.graph.nodes[lo].get("size_basin", 0)
-        fitness = landscape.graph.nodes[lo].get("fitness", 0)
-        basin_sizes.append(basin_size)
-        fitness_values.append(fitness)
+    lo_data = landscape.get_data(lo_only=True)
+    basin_sizes = lo_data["size_basin_best"]
+    fitness_values = lo_data["fitness"]
 
     if method == "spearman":
         correlation, p_value = spearmanr(basin_sizes, fitness_values)
@@ -410,23 +606,24 @@ def all_mutation_effects(
 
     return all_mutation_effects_df
 
+
 def idiosyncratic_index(landscape, mutation):
     """
     Calculates the idiosyncratic index for the fitness landscape proposed in [1].
 
-    The idiosyncratic index of a specific genetic mutation quantifies the sensitivity 
-    of a specific mutation to idiosyncratic epistasis. It is defined as the as the 
-    variation in the fitness difference between genotypes that differ by the mutation, 
-    relative to the variation in the fitness difference between random genotypes for 
-    the same number of genotype pairs. We compute this for the entire fitness landscape 
-    by averaging it across individual mutations. 
+    The idiosyncratic index of a specific genetic mutation quantifies the sensitivity
+    of a specific mutation to idiosyncratic epistasis. It is defined as the as the
+    variation in the fitness difference between genotypes that differ by the mutation,
+    relative to the variation in the fitness difference between random genotypes for
+    the same number of genotype pairs. We compute this for the entire fitness landscape
+    by averaging it across individual mutations.
 
-    The idiosyncratic index for a landscape varies from 0 to 1, corresponding to the 
+    The idiosyncratic index for a landscape varies from 0 to 1, corresponding to the
     minimum and maximum levels of idiosyncrasy, respectively.
 
     For more information, please refer to the original paper:
-    
-    [1] Daniel M. Lyons et al, "Idiosyncratic epistasis creates universals in mutational 
+
+    [1] Daniel M. Lyons et al, "Idiosyncratic epistasis creates universals in mutational
     effects and evolutionary trajectories", Nat. Ecol. Evo., 2020.
 
     Parameters
@@ -445,7 +642,84 @@ def idiosyncratic_index(landscape, mutation):
     float
         The calculated idiosyncratic index.
     """
-    raise NotImplementedError("This method is currently not implemented.")
+    A, pos, B = mutation
+
+    data = landscape.get_data()
+    X = data.iloc[:, : len(landscape.data_types)]
+    f = data["fitness"]
+
+    # Check if alleles A and B exist at the specified position
+    unique_alleles = X[pos].unique()
+    if A not in unique_alleles:
+        raise ValueError(
+            f"Original allele '{A}' not found at position '{pos}'. Available: {unique_alleles}"
+        )
+    if B not in unique_alleles:
+        raise ValueError(
+            f"New allele '{B}' not found at position '{pos}'. Available: {unique_alleles}"
+        )
+
+    X_A = X[X[pos] == A]
+    X_B = X[X[pos] == B]
+
+    if X_A.empty or X_B.empty:
+        print(
+            f"Warning: No genotypes found for allele '{A}' or '{B}' at position '{pos}'. Returning 0.0."
+        )
+        return 0.0
+
+    background_cols = [col for col in X.columns if col != pos]
+
+    if not background_cols:
+        X_A_backgrounds = pd.Series([tuple()] * len(X_A), index=X_A.index)
+        X_B_backgrounds = pd.Series([tuple()] * len(X_B), index=X_B.index)
+    else:
+        X_A_backgrounds = X_A[background_cols].apply(tuple, axis=1)
+        X_B_backgrounds = X_B[background_cols].apply(tuple, axis=1)
+
+    df_A = pd.DataFrame({"background": X_A_backgrounds, "fitness_A": f.loc[X_A.index]})
+    df_B = pd.DataFrame({"background": X_B_backgrounds, "fitness_B": f.loc[X_B.index]})
+
+    df_A = df_A.drop_duplicates(subset="background", keep="first").set_index(
+        "background"
+    )
+    df_B = df_B.drop_duplicates(subset="background", keep="first").set_index(
+        "background"
+    )
+
+    df_merged = pd.merge(df_A, df_B, left_index=True, right_index=True, how="inner")
+
+    if df_merged.empty:
+        return 0.0
+
+    mutation_effects = df_merged["fitness_B"] - df_merged["fitness_A"]
+    n_pairs = len(mutation_effects)
+
+    if n_pairs <= 1:
+        return 0.0
+
+    std_mutation_effect = np.std(mutation_effects)
+    all_fitness_values = f.values
+
+    if len(all_fitness_values) <= 1 or np.all(
+        all_fitness_values == all_fitness_values[0]
+    ):
+        return 0.0
+
+    rand_f1 = np.random.choice(all_fitness_values, size=n_pairs, replace=True)
+    rand_f2 = np.random.choice(all_fitness_values, size=n_pairs, replace=True)
+
+    random_diffs = rand_f1 - rand_f2
+
+    std_random_diff = np.std(random_diffs)
+
+    if std_random_diff == 0:
+        return 0.0
+
+    idiosyncratic_val = std_mutation_effect / std_random_diff
+
+    return idiosyncratic_val
+
 
 def pairwise_epistasis(X, f, pos1, pos2):
     """
@@ -588,43 +862,135 @@ def all_pairwise_epistasis(X, f, n_jobs=1):
 
 def r_s_ratio(landscape) -> float:
     """
-    Calculate the roughness-to-slope (r/s) ratio of a fitness landscape. This metric quantifies
-    the deviation from additivity, with higher values indicating greater ruggedness and epistasis.
+    Calculate the roughness-to-slope (r/s) ratio of a fitness landscape.
+
+    This metric quantifies the deviation from additivity by comparing the
+    standard deviation of the residuals from a linear model fit (roughness)
+    to the mean absolute additive coefficients (slope). Higher values
+    indicate greater ruggedness and epistasis relative to the additive trend.
+
+    Calculation follows definitions used in Rough Mount Fuji models and
+    empirical landscape studies, e.g., [1]-[4].
+
+    References
+    ----------
+    [1] I. Fragata et al., "Evolution in the light of fitness landscape
+        theory," Trends Ecol. Evol., vol. 34, no. 1, pp. 69-82, Jan. 2019.
+    [2] T. Aita, H. Uchiyama, T. Inaoka, M. Nakajima, T. Kokubo, and
+        Y. Husimi, "Analysis of a local fitness landscape with a model of
+        the rough Mount Fuji-type landscape," Biophys. Chem., vol. 88,
+        no. 1-3, pp. 1-10, Dec. 2000.
+    [3] A. Skwara et al., "Statistically learning the functional landscape
+        of microbial communities," Nat. Ecol. Evol., vol. 7, no. 11,
+        pp. 1823-1833, Nov. 2023.
+    [4] C. Bank, R. T. Hietpas, J. D. Jensen, and D. N. A. Bolon, "A
+        systematic survey of an intragenic epistatic landscape," Proc. Natl.
+        Acad. Sci. USA, vol. 113, no. 50, pp. 14424-14429, Dec. 2016.
 
     Parameters
     ----------
-    landscape : object
-        A landscape object with a `get_data()` method that provides sequence and fitness data.
+    landscape : graphfal.landscape.Landscape
+        A Landscape object instance. It must have attributes `n_vars`,
+        `data_types`, and a method `get_data()` that returns a DataFrame
+        containing the raw configurations and a 'fitness' column.
 
     Returns
     -------
     float
-        The roughness-to-slope (r/s) ratio.
+        The roughness-to-slope (r/s) ratio. Returns np.inf if the slope (s)
+        is zero or very close to zero. Returns np.nan if the calculation fails.
+
+    Raises
+    ------
+    ValueError
+        If the landscape object is missing required attributes/methods or if
+        data types are unsupported.
     """
+    # 1. Get Data
     data = landscape.get_data()
 
-    fitness_column = 'fitness'
+    raw_X = data.iloc[:, : landscape.n_vars]
+    fitness_values = data["fitness"].values
+    data_types = landscape.data_types
 
-    encoded_sequences = pd.get_dummies(data.iloc[:,:landscape.n_vars])
-    fitness_values = data[fitness_column]
+    # 2. Prepare Numerical Genotype Representation for Additive Model
+    numerical_X_cols = {}
+    cols = list(data_types.keys())  # Maintain order
 
-    linear_model = LinearRegression()
-    linear_model.fit(encoded_sequences, fitness_values)
+    for col in cols:
+        dtype = data_types[col]
+        if dtype == "boolean":
+            # Convert boolean to 0/1 integer representation
+            numerical_X_cols[col] = raw_X[col].astype(bool).astype(int)
+        elif dtype == "categorical":
+            # Use pandas Categorical codes (integer representation)
+            numerical_X_cols[col] = pd.Categorical(raw_X[col]).codes
+        elif dtype == "ordinal":
+            # Use pandas Categorical codes (integer representation)
+            numerical_X_cols[col] = pd.Categorical(raw_X[col], ordered=True).codes
+        else:
+            raise ValueError(
+                f"Unsupported data type '{dtype}' for r/s ratio calculation in column '{col}'"
+            )
 
-    predicted_fitness = linear_model.predict(encoded_sequences)
-    residuals = fitness_values - predicted_fitness
+    numerical_X = pd.DataFrame(numerical_X_cols, index=raw_X.index)
+    X_fit = numerical_X.values  # Use numpy array for sklearn
 
-    roughness = np.sqrt(np.mean(residuals**2))
-    slope = np.mean(np.abs(linear_model.coef_))
-    r_s_ratio = roughness / slope
+    # Check for sufficient data
+    n_samples, n_features = X_fit.shape
+    if n_samples <= n_features:
+        warnings.warn(
+            f"Number of samples ({n_samples}) is less than or equal to "
+            f"the number of features ({n_features}) after encoding. "
+            "Linear regression might be underdetermined or unstable.",
+            UserWarning,
+        )
 
-    return r_s_ratio
+    # 3. Fit Additive (Linear) Model
+    try:
+        linear_model = LinearRegression(fit_intercept=True)
+        linear_model.fit(X_fit, fitness_values)
+
+        # 4. Calculate Slope (s)
+        # Mean of absolute values of additive coefficients (betas)
+        additive_coeffs = linear_model.coef_
+        # potential case where n_features is 1
+        if n_features == 1 and np.isscalar(additive_coeffs):
+            slope_s = np.abs(additive_coeffs)
+        elif n_features == 1 and isinstance(additive_coeffs, (np.ndarray, list)):
+            slope_s = np.abs(additive_coeffs[0])
+        elif n_features > 1:
+            slope_s = np.mean(np.abs(additive_coeffs))
+        else:  # n_features == 0 (should not happen if validation is correct)
+            slope_s = 0
+
+        if np.isclose(slope_s, 0):
+            warnings.warn(
+                "Slope 's' is zero or near zero. Landscape may be flat "
+                "or purely epistatic according to the linear fit. Returning inf.",
+                UserWarning,
+            )
+            return np.inf
+
+        predicted_fitness = linear_model.predict(X_fit)
+        residuals = fitness_values - predicted_fitness
+        roughness_r = np.std(residuals, ddof=1 if n_samples > 1 else 0)
+
+        r_s_ratio_value = roughness_r / slope_s
+
+        return r_s_ratio_value
+
+    except Exception as e:
+        warnings.warn(
+            f"Calculation of r/s ratio failed: {e}. Returning np.nan.", UserWarning
+        )
+        return np.nan
 
 
 def _find_squares(landscape) -> list:
     """
-    Identify all 4-node cycles (squares) in the landscape's graph. A square is a 
-    quadruplet of sequences that contain a wild type,  two of its one-mutant neighbours, 
+    Identify all 4-node cycles (squares) in the landscape's graph. A square is a
+    quadruplet of sequences that contain a wild type,  two of its one-mutant neighbours,
     and the double mutant that can be formed from the single mutants.
 
     Parameters
@@ -647,14 +1013,15 @@ def _find_squares(landscape) -> list:
             squares.append(cycle)
     return squares
 
+
 def _assign_roles(landscape, squares):
     """
     Assign mutation roles to nodes within each 4-node cycle (square).
 
     This function categorizes nodes in each square based on their fitness values into
-    wild type, one-mutants, and double mutant. Specifically, the sequence with the 
-    highest fitness is designated as the double mutant. The remaining roles can then 
-    be assigned accordingly based on mutations. 
+    wild type, one-mutants, and double mutant. Specifically, the sequence with the
+    highest fitness is designated as the double mutant. The remaining roles can then
+    be assigned accordingly based on mutations.
 
     Parameters
     ----------
@@ -668,30 +1035,37 @@ def _assign_roles(landscape, squares):
     -------
     list of dict
         A list of dictionaries, each representing a square with assigned roles as well
-        as the fitness values of each sequence. 
+        as the fitness values of each sequence.
     """
     squares_with_roles = []
     graph = landscape.graph
     for square in squares:
         fitness_values = {node: graph.nodes[node].get("fitness", 0) for node in square}
-        double_mutant = max(fitness_values, key=fitness_values.get)  
+        double_mutant = max(fitness_values, key=fitness_values.get)
         neighbors = set(nx.subgraph(graph, square).predecessors(double_mutant))
         single_mutants = [node for node in square if node in neighbors]
-        wild_type = next(node for node in square if node not in single_mutants and node != double_mutant)
+        wild_type = next(
+            node
+            for node in square
+            if node not in single_mutants and node != double_mutant
+        )
 
-        squares_with_roles.append({
-            "wild_type": wild_type,
-            "single_mutant_1": single_mutants[0],
-            "single_mutant_2": single_mutants[1],
-            "double_mutant": double_mutant,
-            "fitness_values": fitness_values,
-        })
-        
+        squares_with_roles.append(
+            {
+                "wild_type": wild_type,
+                "single_mutant_1": single_mutants[0],
+                "single_mutant_2": single_mutants[1],
+                "double_mutant": double_mutant,
+                "fitness_values": fitness_values,
+            }
+        )
+
     return squares_with_roles
+
 
 def _mag_sign_epistasis(landscape, squares_with_roles):
     """
-    Determine the prevalence of three types of epistasis in a fitness landscape. This is 
+    Determine the prevalence of three types of epistasis in a fitness landscape. This is
     achieved by determining the proportion of squares exhibiting different types of epistasis:
     - Magnitude epistasis
     - Sign epistasis
@@ -714,12 +1088,12 @@ def _mag_sign_epistasis(landscape, squares_with_roles):
         - "reciprocal sign epistasis": Proportion showing reciprocal sign epistasis.
     """
     idx_to_fitness = landscape.get_data()["fitness"].to_dict()
-    df_squares = pd.DataFrame(squares_with_roles).iloc[:,:4]
+    df_squares = pd.DataFrame(squares_with_roles).iloc[:, :4]
     df_squares.columns = ["ab", "aB", "Ab", "AB"]
-    
+
     for col in df_squares.columns:
         df_squares[col] = df_squares[col].replace(idx_to_fitness)
-    
+
     mut1 = df_squares["aB"] - df_squares["ab"]
     mut2 = df_squares["AB"] - df_squares["Ab"]
     mut3 = df_squares["Ab"] - df_squares["ab"]
@@ -728,19 +1102,23 @@ def _mag_sign_epistasis(landscape, squares_with_roles):
     magnitude = df_squares[(mut1 * mut2 > 0) & (mut3 * mut4 > 0)]
     perc_mag = len(magnitude) / len(df_squares)
 
-    sign = df_squares[((mut1 * mut2 < 0) & (mut3 * mut4 > 0)) | ((mut1 * mut2 > 0) & (mut3 * mut4 < 0))]
+    sign = df_squares[
+        ((mut1 * mut2 < 0) & (mut3 * mut4 > 0))
+        | ((mut1 * mut2 > 0) & (mut3 * mut4 < 0))
+    ]
     perc_sign = len(sign) / len(df_squares)
 
     reci_sign = df_squares[(mut1 * mut2 < 0) & (mut3 * mut4 < 0)]
     perc_reci_sign = len(reci_sign) / len(df_squares)
 
     dict_epistasis = {
-        "magnitude epistasis" : perc_mag,
-        "sign epistasis" : perc_sign,
-        "reciprocal sign epistasis" : perc_reci_sign
+        "magnitude epistasis": perc_mag,
+        "sign epistasis": perc_sign,
+        "reciprocal sign epistasis": perc_reci_sign,
     }
 
     return dict_epistasis
+
 
 def _pos_neg_epistasis(landscape, squares_with_roles):
     """
@@ -750,7 +1128,7 @@ def _pos_neg_epistasis(landscape, squares_with_roles):
     ----------
     landscape : Landscape
         The fitness landscape object.
-    
+
     squares_with_roles : list of lists
         A list of squares with assigned mutation roles and fitness values.
 
@@ -758,15 +1136,15 @@ def _pos_neg_epistasis(landscape, squares_with_roles):
     -------
     dict
         A dictionary containing the proportions of:
-        - "positive epistasis": Proportion of squares where the combined effect of two mutations 
+        - "positive epistasis": Proportion of squares where the combined effect of two mutations
           is greater than the sum of their individual effects.
-        - "negative epistasis": Proportion of squares where the combined effect of two mutations 
+        - "negative epistasis": Proportion of squares where the combined effect of two mutations
           is less than or equal to the sum of their individual effects.
     """
     idx_to_fitness = landscape.get_data()["fitness"].to_dict()
-    df_squares = pd.DataFrame(squares_with_roles).iloc[:,:4]
+    df_squares = pd.DataFrame(squares_with_roles).iloc[:, :4]
     df_squares.columns = ["ab", "aB", "Ab", "AB"]
-    
+
     for col in df_squares.columns:
         df_squares[col] = df_squares[col].replace(idx_to_fitness)
 
@@ -779,21 +1157,19 @@ def _pos_neg_epistasis(landscape, squares_with_roles):
     perc_negative = 1 - perc_positive
 
     dict_epistassi = {
-        "positive epistasis" : perc_positive,
-        "negative epistasis" : perc_negative
+        "positive epistasis": perc_positive,
+        "negative epistasis": perc_negative,
     }
 
     return dict_epistassi
-    
-def classify_epistasis(
-        landscape, 
-        type: str="pos_neg"
-    ) -> dict:
+
+
+def classify_epistasis(landscape, type: str = "pos_neg") -> dict:
     """
     Classify the type of epistasis present in a given fitness landscape.
 
-    This function analyzes a fitness landscape to determine whether it exhibits positive/negative 
-    epistasis or magnitude/sign/reciprocal sign epistasis. The classification is determined by 
+    This function analyzes a fitness landscape to determine whether it exhibits positive/negative
+    epistasis or magnitude/sign/reciprocal sign epistasis. The classification is determined by
     identifying 4-node cycles (squares) and analyzing the relationships between mutations.
 
     Parameters
@@ -831,7 +1207,5 @@ def classify_epistasis(
         dict_epistasis = _mag_sign_epistasis(landscape, squares_with_roles)
     else:
         raise ValueError("Invalid type specified. Use 'pos_neg' or 'mag_sign'.")
-    
+
     return dict_epistasis
-
-
