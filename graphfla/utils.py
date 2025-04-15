@@ -1,6 +1,22 @@
 import networkx as nx
+import igraph as ig
 import pandas as pd
+import numpy as np
 from typing import Any
+
+
+def autocorr_numpy(x, lag=1):
+    x = np.asarray(x, dtype=np.float64)
+    n = len(x)
+    x_mean = np.mean(x)
+
+    x_centered = x - x_mean
+
+    numerator = np.dot(x_centered[: n - lag], x_centered[lag:])
+
+    denominator = np.dot(x_centered, x_centered)
+
+    return numerator / denominator if denominator != 0 else np.nan
 
 
 def is_ancestor_fast(G: nx.DiGraph, start_node: Any, target_node: Any) -> bool:
@@ -43,6 +59,36 @@ def is_ancestor_fast(G: nx.DiGraph, start_node: Any, target_node: Any) -> bool:
                 visited.add(successor)
                 stack.append(successor)
     return False
+
+
+def add_network_metrics_igraph(graph: ig.Graph, weight: str = "delta_fit") -> ig.Graph:
+    """
+    Calculate basic network metrics for nodes in an igraph directed graph.
+
+    Parameters
+    ----------
+    graph : ig.Graph
+        The directed graph for which the network metrics are to be calculated.
+
+    weight : str, default='delta_fit'
+        The edge attribute key to be considered for weighting.
+
+    Returns
+    -------
+    ig.Graph
+        The graph with node attributes added: in-degree, out-degree, and PageRank.
+    """
+    # Compute in-degree and out-degree
+    graph.vs["in_degree"] = graph.indegree()
+    graph.vs["out_degree"] = graph.outdegree()
+
+    # Compute PageRank (with weights if the attribute exists)
+    weights = graph.es[weight] if weight in graph.edge_attributes() else None
+    pagerank = graph.pagerank(weights=weights, directed=True)
+
+    graph.vs["pagerank"] = pagerank
+
+    return graph
 
 
 def add_network_metrics(graph: nx.DiGraph, weight: str) -> nx.DiGraph:
