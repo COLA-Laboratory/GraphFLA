@@ -1,11 +1,8 @@
-import pandas as pd
-import igraph as ig
 import random
-import numpy as np
-from typing import List, Any, Tuple, Optional
+from typing import List, Any, Tuple
 
 
-def local_search_igraph(
+def local_search(
     graph, node: Any, weight: str, search_method: str = "best-improvement"
 ) -> Any:
     """
@@ -53,7 +50,7 @@ def local_search_igraph(
         raise ValueError(f"Unsupported search method: {search_method}")
 
 
-def hill_climb_igraph(
+def hill_climb(
     graph,
     node: int,
     weight: str,
@@ -84,7 +81,7 @@ def hill_climb_igraph(
 
     search_method : str
         Specifies the method of local search to use. Options include:
-        - 'best-improvement': Evaluates all neighbors and selects the one with the most significant
+        - 'best-improvement': Also known as greedy. Evaluates all neighbors and selects the one with the most significant
           improvement in the weight attribute.
         - 'first-improvement': Selects the first neighbor that shows any improvement in the weight attribute.
 
@@ -115,7 +112,7 @@ def hill_climb_igraph(
 
     while True:
         # Get next node efficiently
-        next_node = local_search_igraph(graph, current_node, weight, search_method)
+        next_node = local_search(graph, current_node, weight, search_method)
 
         # No better node or we've seen this node before - we've found an optimum or cycle
         if next_node is None or next_node in visited:

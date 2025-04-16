@@ -1,9 +1,8 @@
 import numpy as np
 import pandas as pd
+from scipy.stats import spearmanr, pearsonr, kendalltau
 
-from scipy.stats import spearmanr, pearsonr
-
-from ..algorithms import hill_climb_igraph
+from ..algorithms import hill_climb
 
 
 def neighbor_fit_corr(landscape, auto_calculate=True, method="pearson"):
@@ -81,11 +80,6 @@ def neighbor_fit_corr(landscape, auto_calculate=True, method="pearson"):
     fitness_values = landscape.graph.vs["fitness"]
     neighbor_fitness_values = landscape.graph.vs["mean_neighbor_fit"]
 
-    # Create a pandas DataFrame for easier analysis and to handle NaNs
-    import pandas as pd
-    import numpy as np
-    from scipy import stats
-
     data = pd.DataFrame(
         {"fitness": fitness_values, "mean_neighbor_fit": neighbor_fitness_values}
     )
@@ -111,15 +105,13 @@ def neighbor_fit_corr(landscape, auto_calculate=True, method="pearson"):
 
     # Calculate correlation
     if method == "pearson":
-        corr, p_value = stats.pearsonr(
-            data_clean["fitness"], data_clean["mean_neighbor_fit"]
-        )
+        corr, p_value = pearsonr(data_clean["fitness"], data_clean["mean_neighbor_fit"])
     elif method == "spearman":
-        corr, p_value = stats.spearmanr(
+        corr, p_value = spearmanr(
             data_clean["fitness"], data_clean["mean_neighbor_fit"]
         )
     else:  # kendall
-        corr, p_value = stats.kendalltau(
+        corr, p_value = kendalltau(
             data_clean["fitness"], data_clean["mean_neighbor_fit"]
         )
 
@@ -167,15 +159,15 @@ def fdc(
     data = landscape.get_data()
 
     if method == "spearman":
-        correlation, p_value = spearmanr(data["dist_go"], data["fitness"])
+        correlation, _ = spearmanr(data["dist_go"], data["fitness"])
     elif method == "pearson":
-        correlation, p_value = pearsonr(data["dist_go"], data["fitness"])
+        correlation, _ = pearsonr(data["dist_go"], data["fitness"])
     else:
         raise ValueError(
             f"Invalid method {method}. Please choose either 'spearman' or 'pearson'."
         )
 
-    return correlation, p_value
+    return correlation
 
 
 def ffi(
@@ -221,21 +213,18 @@ def ffi(
     fitness = data["fitness"]
 
     ffi_list = []
-    p_values = []
 
     for i in data.index:
-        lo, _, trace = hill_climb_igraph(
+        lo, _, trace = hill_climb(
             landscape.graph, i, "delta_fit", verbose=0, return_trace=True
         )
         if len(trace) >= min_len and lo == landscape.go_index:
             fitnesses = fitness.loc[trace]
-            ffi, p_value = check_diminishing_differences(fitnesses, method)
+            ffi, _ = check_diminishing_differences(fitnesses, method)
             ffi_list.append(ffi)
-            p_values.append(p_value)
 
     ffi = pd.Series(ffi_list).mean()
-    mean_p_value = pd.Series(p_values).mean()
-    return ffi, mean_p_value
+    return ffi
 
 
 def basin_fit_corr(landscape, method: str = "spearman") -> tuple:

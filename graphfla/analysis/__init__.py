@@ -24,8 +24,6 @@ from .epistasis import (
     global_idiosyncratic_index,
     diminishing_returns_index,
     increasing_costs_index,
-    pairwise_epistasis,
-    all_pairwise_epistasis,
 )
 
 __all__ = [
@@ -44,8 +42,6 @@ __all__ = [
     "diminishing_returns_index",
     "increasing_costs_index",
     "global_optima_accessibility",
-    "pairwise_epistasis",
-    "all_pairwise_epistasis",
     "neutrality",
     "single_mutation_effects",
     "all_mutation_effects",

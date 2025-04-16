@@ -5,7 +5,7 @@ import numpy as np
 from typing import Any, Optional
 
 
-def random_walk_igraph(
+def random_walk(
     graph: ig.Graph,
     start_node: Any,
     attribute: Optional[str] = None,

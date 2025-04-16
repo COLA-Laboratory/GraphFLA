@@ -1,10 +1,10 @@
 import numpy as np
 import pandas as pd
 import igraph as ig
-from typing import List, Any, Dict, Tuple, Union, Optional
+from typing import List, Any, Dict, Tuple
 from itertools import combinations, product
 from tqdm import tqdm
-from .utils import add_network_metrics_igraph
+from .utils import add_network_metrics
 
 
 def get_lon(
@@ -118,7 +118,7 @@ def get_lon(
 
     if verbose:
         print("# Adding further node attributes...")
-    lon = add_network_metrics_igraph(lon, weight="weight")
+    lon = add_network_metrics(lon, weight="weight")
 
     return lon
 

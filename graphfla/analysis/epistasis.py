@@ -1,7 +1,5 @@
-from scipy.stats import spearmanr, pearsonr, binomtest, ttest_1samp
+from scipy.stats import spearmanr, pearsonr
 from typing import Any, Tuple, Literal
-from itertools import combinations, product
-from joblib import Parallel, delayed
 from collections import defaultdict
 
 import numpy as np
@@ -130,11 +128,19 @@ def classify_epistasis(landscape, approximate=False, sample_cut_prob=0.2):
     -------
     dict
         A dictionary containing proportions for:
-        - "magnitude epistasis"
-        - "sign epistasis"
-        - "reciprocal sign epistasis"
-        - "positive epistasis"
-        - "negative epistasis"
+        - "magnitude epistasis": The magnitude of the combined fitness effect of mutations
+        differs from the sum of their individual effects, but the direction relative to
+        single mutants or wild-type may not change sign.
+        - "sign epistasis": The sign of the fitness effect of at least one mutation changes depending
+        on the presence of other mutations. For example, a mutation beneficialon its own becomes
+        deleterious when combined with another specific mutation.
+        - "reciprocal sign epistasis": A specific form of sign epistasis where the sign of the effect
+        of *each* mutation depends on the allele state at the other locus.
+        - "positive epistasis": The combined fitness effect of mutations is greater than the sum of
+        their individual effects, often referred to as synergistic epistasis.
+        - "negative epistasis": The combined fitness effect of mutations is less than the sum of their
+        individual effects, often referred to as antagonistic epistasis.
+
         Returns zero proportions if relevant counts/instances are zero or cannot be processed.
 
     Raises
@@ -468,7 +474,7 @@ def diminishing_returns_index(
 
     Parameters
     ----------
-    landscape : BaseLandscape
+    landscape : Landscape
         An initialized and built fitness landscape object. The landscape graph
         must have a 'fitness' attribute for each node.
     method : {'pearson', 'spearman'}, default='pearson'
@@ -529,7 +535,7 @@ def diminishing_returns_index(
             "Not enough nodes with successors to calculate correlation for diminishing returns.",
             UserWarning,
         )
-        return np.nan, np.nan
+        return np.nan
 
     node_fitnesses_series = pd.Series(node_fitnesses)
     avg_improvement_series = pd.Series(avg_successor_improvement)
@@ -540,7 +546,7 @@ def diminishing_returns_index(
             "Not enough valid data points after NaN omission to calculate correlation.",
             UserWarning,
         )
-        return np.nan, np.nan
+        return np.nan
     node_fitnesses_corr = node_fitnesses_series[mask]
     avg_improvement_corr = avg_improvement_series[mask]
 
@@ -553,10 +559,10 @@ def diminishing_returns_index(
 
     try:
         correlation, p_value = corr_func(node_fitnesses_corr, avg_improvement_corr)
-        return correlation, p_value
+        return correlation
     except Exception as e:
         warnings.warn(f"Could not calculate correlation: {e}", UserWarning)
-        return np.nan, np.nan
+        return np.nan
 
 
 def increasing_costs_index(
@@ -575,7 +581,7 @@ def increasing_costs_index(
 
     Parameters
     ----------
-    landscape : BaseLandscape
+    landscape : Landscape
         An initialized and built fitness landscape object. The landscape graph
         must have a 'fitness' attribute for each node.
     method : {'pearson', 'spearman'}, default='pearson'
@@ -636,7 +642,7 @@ def increasing_costs_index(
             "Not enough nodes with predecessors to calculate correlation for increasing cost.",
             UserWarning,
         )
-        return np.nan, np.nan
+        return np.nan
 
     node_fitnesses_series = pd.Series(node_fitnesses)
     avg_cost_series = pd.Series(avg_predecessor_cost)
@@ -647,7 +653,7 @@ def increasing_costs_index(
             "Not enough valid data points after NaN omission to calculate correlation.",
             UserWarning,
         )
-        return np.nan, np.nan
+        return np.nan
     node_fitnesses_corr = node_fitnesses_series[mask]
     avg_cost_corr = avg_cost_series[mask]
 
@@ -659,147 +665,8 @@ def increasing_costs_index(
         raise ValueError("Method must be 'pearson' or 'spearman'")
 
     try:
-        correlation, p_value = corr_func(node_fitnesses_corr, avg_cost_corr)
-        return correlation, p_value
+        correlation, _ = corr_func(node_fitnesses_corr, avg_cost_corr)
+        return correlation
     except Exception as e:
         warnings.warn(f"Could not calculate correlation: {e}", UserWarning)
-        return np.nan, np.nan
-
-
-def pairwise_epistasis(X, f, pos1, pos2):
-    """
-    Assess the pairwise epistasis effects between all unique unordered mutations at two specified positions.
-
-    Parameters
-    ----------
-    X : pd.DataFrame
-        The genotype matrix where each column corresponds to a genetic position.
-
-    f : pd.Series
-        The fitness values corresponding to each genotype.
-
-    pos1 : str
-        The name of the first position to assess mutations for.
-
-    pos2 : str
-        The name of the second position to assess mutations for.
-
-    Returns
-    -------
-    pd.DataFrame
-        A DataFrame containing mutation pairs, median absolute epistasis effect,
-        p-values, and significance flags.
-    """
-
-    def get_diff(df1, df2, f):
-        f.name = "fitness"
-        df1 = pd.concat([df1, f], axis=1, join="inner")
-        df2 = pd.concat([df2, f], axis=1, join="inner")
-        df1.set_index(0, inplace=True)
-        df2.set_index(0, inplace=True)
-
-        df_diff = pd.merge(
-            df1, df2, left_index=True, right_index=True, suffixes=("_1", "_2")
-        )
-        df_diff.index = range(len(df_diff))
-        diff = df_diff["fitness_1"] - df_diff["fitness_2"]
-        return diff
-
-    def compute_epistasis(X, f, pos1, pos2, mut1, mut2):
-        _, a, A = mut1
-        _, b, B = mut2
-
-        X_AB = X[(X[pos1] == A) & (X[pos2] == B)]
-        X_ab = X[(X[pos1] == a) & (X[pos2] == b)]
-        X_Ab = X[(X[pos1] == A) & (X[pos2] == b)]
-        X_aB = X[(X[pos1] == a) & (X[pos2] == B)]
-
-        X_AB = pd.Series(X_AB.drop(columns=[pos1, pos2]).apply(tuple, axis=1))
-        X_ab = pd.Series(X_ab.drop(columns=[pos1, pos2]).apply(tuple, axis=1))
-        X_Ab = pd.Series(X_Ab.drop(columns=[pos1, pos2]).apply(tuple, axis=1))
-        X_aB = pd.Series(X_aB.drop(columns=[pos1, pos2]).apply(tuple, axis=1))
-
-        f_AB_ab = get_diff(X_AB, X_ab, f)
-        f_Ab_ab = get_diff(X_Ab, X_ab, f)
-        f_aB_ab = get_diff(X_aB, X_ab, f)
-
-        diff = f_AB_ab - (f_Ab_ab + f_aB_ab)
-
-        if diff.empty:
-            cohen_d = np.nan
-            ttest_p = np.nan
-            mean = np.nan
-        else:
-            cohen_d = abs(diff).median() / f.std()
-            _, ttest_p = ttest_1samp(diff, 0)
-            mean = diff.mean()
-
-        return {
-            "pos1": pos1,
-            "mutation1_from": a,
-            "mutation1_to": A,
-            "pos2": pos2,
-            "mutation2_from": b,
-            "mutation2_to": B,
-            "cohen_d": cohen_d,
-            "ttest_p": ttest_p,
-            "mean_diff": mean,
-        }
-
-    unique_vals1 = sorted(X[pos1].dropna().unique())
-    unique_vals2 = sorted(X[pos2].dropna().unique())
-
-    mutations1 = [(pos1, a, b) for a, b in combinations(unique_vals1, 2)]
-    mutations2 = [(pos2, c, d) for c, d in combinations(unique_vals2, 2)]
-
-    mutation_pairs = list(product(mutations1, mutations2))
-
-    results = [
-        compute_epistasis(X, f, pos1, pos2, mut1, mut2) for mut1, mut2 in mutation_pairs
-    ]
-
-    epistasis_df = pd.DataFrame(results)
-
-    return epistasis_df
-
-
-def all_pairwise_epistasis(X, f, n_jobs=1):
-    """
-    Compute and aggregate epistasis effects between all unique pairs of positions in the genotype matrix using parallel execution.
-
-    Parameters
-    ----------
-    X : pd.DataFrame
-        The genotype matrix where each column corresponds to a genetic position.
-    f : pd.Series
-        The fitness values corresponding to each genotype.
-    n_jobs : int, default=1
-        The number of parallel jobs to run. -1 means using all available cores.
-
-    Returns
-    -------
-    pd.DataFrame
-        An aggregated DataFrame containing average epistasis scores for each position pair.
-    """
-
-    positions = list(X.columns)
-    position_pairs = list(combinations(positions, 2))
-
-    detailed_results = Parallel(n_jobs=n_jobs)(
-        delayed(pairwise_epistasis)(X, f, pos1, pos2) for pos1, pos2 in position_pairs
-    )
-
-    all_epistasis_df = pd.concat(detailed_results, ignore_index=True)
-
-    aggregated = (
-        all_epistasis_df.groupby(["pos1", "pos2"])
-        .agg(
-            average_cohen_d=("cohen_d", "median"),
-            average_mean_diff=("mean_diff", "median"),
-            most_significant_p=("ttest_p", "min"),
-            total_mutation_pairs=("ttest_p", "count"),
-        )
-        .reset_index()
-    )
-
-    return aggregated
+        return np.nan

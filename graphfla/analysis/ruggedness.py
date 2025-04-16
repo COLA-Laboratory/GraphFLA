@@ -4,7 +4,7 @@ import pandas as pd
 import warnings
 import random
 
-from ..algorithms import random_walk_igraph
+from ..algorithms import random_walk
 from ..utils import autocorr_numpy
 from typing import Tuple
 from sklearn.linear_model import LinearRegression
@@ -12,8 +12,8 @@ from sklearn.linear_model import LinearRegression
 
 def lo_ratio(landscape) -> float:
     """
-    Calculate the ruggedness index of the landscape based on the ratio of the number
-    of local optima to the total number of configurations.
+    The most intuitive measure of landscape ruggedness. It is based on the ratio
+    of the number of local optima to the total number of configurations in the landscape.
 
     Parameters
     ----------
@@ -44,6 +44,9 @@ def autocorrelation(
 
     Parameters:
     ----------
+    landscape : Landscape
+        The fitness landscape object.
+
     walk_length : int, default=20
         The length of each random walk.
 
@@ -53,35 +56,41 @@ def autocorrelation(
     lag : int, default=1
         The distance lag used for calculating autocorrelation.
 
+    References:
+    ----------
+    [1] E. Weinberger, "Correlated and Uncorrelated Fitness Landscapes and How to Tell
+        the Difference", Biol. Cybern. 63, 325-336 (1990).
+
     Returns:
     -------
-    autocorr : Tuple[float, float]
-        A tuple containing the median and variance of the autocorrelation values.
+    autocorr : Dict
+        A dictionary containing the mean and variance of the autocorrelation values.
     """
     corr_list = []
 
     for _ in range(walk_times):
         random_node = random.randrange(0, landscape.n_configs)
-        logger = random_walk_igraph(
-            landscape.graph, random_node, "fitness", walk_length
-        )
+        logger = random_walk(landscape.graph, random_node, "fitness", walk_length)
         fitness_values = np.array(logger)[:, 2].astype(float)
         ac = autocorr_numpy(fitness_values, lag=lag)
         corr_list.append(ac)
 
     corr_array = np.array(corr_list)
-    return np.nanmedian(corr_array), np.nanvar(corr_array)
+    return {
+        "mean": np.nanmean(corr_array),
+        "variance": np.nanvar(corr_array),
+    }
 
 
 def gradient_intensity(landscape) -> float:
     """
-    Calculate the gradient intensity of the landscape using igraph. It is defined as the average absolute
-    fitness difference (delta_fit) across all edges.
+    Calculate the gradient intensity of the landscape using igraph. It is
+    defined as the average absolute fitness difference (delta_fit) across all edges.
 
     Parameters
     ----------
     landscape : Landscape
-        The fitness landscape object with an igraph graph.
+        The fitness landscape object.
 
     Returns
     -------
@@ -89,7 +98,7 @@ def gradient_intensity(landscape) -> float:
         The gradient intensity.
     """
 
-    graph = landscape.graph  # igraph.Graph
+    graph = landscape.graph
     total_edges = graph.ecount()
     if total_edges == 0:
         return 0.0

@@ -61,7 +61,7 @@ def is_ancestor_fast(G: nx.DiGraph, start_node: Any, target_node: Any) -> bool:
     return False
 
 
-def add_network_metrics_igraph(graph: ig.Graph, weight: str = "delta_fit") -> ig.Graph:
+def add_network_metrics(graph: ig.Graph, weight: str = "delta_fit") -> ig.Graph:
     """
     Calculate basic network metrics for nodes in an igraph directed graph.
 
@@ -87,34 +87,6 @@ def add_network_metrics_igraph(graph: ig.Graph, weight: str = "delta_fit") -> ig
     pagerank = graph.pagerank(weights=weights, directed=True)
 
     graph.vs["pagerank"] = pagerank
-
-    return graph
-
-
-def add_network_metrics(graph: nx.DiGraph, weight: str) -> nx.DiGraph:
-    """
-    Calculate basic network metrics for nodes in the graph.
-
-    Parameters
-    ----------
-    graph : nx.DiGraph
-        The directed graph for which the network metrics are to be calculated.
-
-    weight : str, default='delta_fit'
-        The edge attribute key to be considered for weighting. Default is 'delta_fit'.
-
-    Returns
-    -------
-    nx.DiGraph
-        The directed graph with node attributes added.
-    """
-    in_degree = dict(graph.in_degree())
-    out_degree = dict(graph.out_degree())
-    pagerank = nx.pagerank(graph, weight=weight)
-
-    nx.set_node_attributes(graph, in_degree, "in_degree")
-    nx.set_node_attributes(graph, out_degree, "out_degree")
-    nx.set_node_attributes(graph, pagerank, "pagerank")
 
     return graph
 

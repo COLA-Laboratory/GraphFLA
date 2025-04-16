@@ -249,6 +249,9 @@ class Knapsack(OptimizationProblem):
         return float(total_value)
 
 
+# ...existing code...
+
+
 class NumberPartitioning(OptimizationProblem):
     """
     Number Partitioning optimization problem.
@@ -261,21 +264,24 @@ class NumberPartitioning(OptimizationProblem):
     ----------
     n : int
         The number of integers to partition.
-    bit_precision : int, default=12
-        The bit precision for generating the numbers (higher means larger numbers).
+    alpha : float, default=1.0
+        Control parameter defining the ratio of bit precision to number of elements (k/n).
+        Higher values generate larger numbers relative to the problem size.
     seed : int or None, optional
         Seed for the random number generator.
     """
 
-    def __init__(self, n, bit_precision=12, seed=None):
+    def __init__(self, n, alpha=1.0, seed=None):
         """
         Initialize the Number Partitioning problem with the given parameters.
         """
         super().__init__(n, seed)
-        if bit_precision <= 0:
-            raise ValueError("bit_precision must be positive")
+        if alpha <= 0:
+            raise ValueError("alpha must be positive")
 
-        self.bit_precision = bit_precision
+        self.alpha = alpha
+        # Calculate bit precision based on alpha and n
+        self.bit_precision = int(alpha * n)
 
         # Generate the set of numbers to be partitioned
         self.numbers = self._generate_numbers()
@@ -283,17 +289,17 @@ class NumberPartitioning(OptimizationProblem):
 
     def _generate_numbers(self):
         """
-        Generate a set of positive integers using the specified bit precision.
+        Generate a set of positive integers using alpha to determine bit precision.
 
         Following the literature (Mertens, 1998), generates numbers uniformly
-        from [0, 2^bit_precision - 1].
+        from [1, 2^(alpha*n) - 1].
 
         Returns
         -------
         list
             A list of positive integers to be partitioned.
         """
-        max_value = (1 << self.bit_precision) - 1  # 2^bit_precision - 1
+        max_value = (1 << self.bit_precision) - 1  # 2^(alpha*n) - 1
         return [self.rng.randint(1, max_value) for _ in range(self.n)]
 
     def get_all_configs(self):
