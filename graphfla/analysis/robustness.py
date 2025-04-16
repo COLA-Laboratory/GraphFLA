@@ -6,6 +6,83 @@ import numpy as np
 import pandas as pd
 
 
+def calculate_evol_enhance(landscape, epsilon=0, auto_calculate=True):
+    """
+    Calculates the proportion of edges where the higher-fitness node connects to
+    a neighborhood with higher mean fitness than the lower-fitness node.
+
+    This metric quantifies the prevalence of potentially evolvability-enhancing (EE)
+    mutations in the landscape, as described in Wagner (2023). An edge represents
+    an EE mutation if the delta_mean_neighbor_fit (difference in mean neighbor fitness
+    between the connected nodes) exceeds the specified epsilon threshold.
+
+    Parameters
+    ----------
+    landscape : BaseLandscape
+        The fitness landscape object.
+    epsilon : float, default=0
+        Tolerance threshold for detecting significant differences in mean neighbor fitness.
+        Only edges with delta_mean_neighbor_fit > epsilon are counted as EE mutations.
+    auto_calculate : bool, default=True
+        If True, automatically runs calculate_neighbor_fitness() if needed.
+        If False, raises an exception when neighbor fitness metrics are missing.
+
+    Returns
+    -------
+    dict
+        A dictionary containing:
+        - 'ee_proportion': The proportion of edges with delta_mean_neighbor_fit > epsilon
+        - 'ee_count': The count of edges with delta_mean_neighbor_fit > epsilon
+        - 'total_edges': The total number of edges in the landscape
+
+    Raises
+    ------
+    RuntimeError
+        If auto_calculate=False and neighbor fitness metrics haven't been calculated.
+
+    References
+    ----------
+    .. [1] Wagner, A. The role of evolvability in the evolution of
+          complex traits. Nat Rev Genet 24, 1-16 (2023).
+          https://doi.org/10.1038/s41576-023-00559-0
+    """
+    landscape._check_built()
+
+    # Check if neighbor fitness has been calculated
+    if "delta_mean_neighbor_fit" not in landscape.graph.es.attributes():
+        if auto_calculate:
+            if landscape.verbose:
+                print(
+                    "Neighbor fitness metrics not found. Running calculate_neighbor_fitness()..."
+                )
+            landscape.calculate_neighbor_fitness()
+        else:
+            raise RuntimeError(
+                "Neighbor fitness metrics haven't been calculated. "
+                "Either call landscape.calculate_neighbor_fitness() first "
+                "or set auto_calculate=True."
+            )
+
+    # Get all delta_mean_neighbor_fit values
+    delta_values = landscape.graph.es["delta_mean_neighbor_fit"]
+    total_edges = landscape.graph.ecount()
+
+    if total_edges == 0:
+        if landscape.verbose:
+            print("Warning: No edges found in the landscape graph.")
+        return {"ee_proportion": 0.0, "ee_count": 0, "total_edges": 0}
+
+    # Count edges where delta_mean_neighbor_fit > epsilon
+    ee_count = sum(1 for delta in delta_values if delta > epsilon)
+    ee_proportion = ee_count / total_edges
+
+    return {
+        "ee_proportion": ee_proportion,
+        "ee_count": ee_count,
+        "total_edges": total_edges,
+    }
+
+
 def neutrality(landscape, threshold: float = 0.01) -> float:
     """
     Calculate the neutrality index of the landscape using an igraph-based graph.

@@ -1590,7 +1590,7 @@ class BaseLandscape:
         References
         ----------
         - Wagner, A. The role of evolvability in the evolution of
-          complex traits. Nat Rev Genet 24, 1–16 (2023).
+          complex traits. Nat Rev Genet 24, 1-16 (2023).
           https://doi.org/10.1038/s41576-023-00559-0
 
         Returns
@@ -1669,8 +1669,6 @@ class BaseLandscape:
             print(
                 f" - Added 'delta_mean_neighbor_fit' attribute for {len(delta_mean_neighbor_fit)} edges"
             )
-
-        return self
 
     def _determine_global_optimum(self):
         """Identifies the global optimum node in the landscape graph using igraph."""
@@ -1895,6 +1893,17 @@ class BaseLandscape:
 
             # Sort by index for consistency
             data_lo.sort_index(inplace=True)
+
+            data_lo.rename(
+                columns={
+                    old: new
+                    for old, new in zip(
+                        data_lo.columns[: self.n_vars], self.data_types.keys()
+                    )
+                },
+                inplace=True,
+            )
+
             return data_lo
 
         else:
@@ -1923,6 +1932,16 @@ class BaseLandscape:
                 ]
             else:
                 cols_to_drop = ["size_basin_greedy", "radius_basin_greedy"]
+
+            data.rename(
+                columns={
+                    old: new
+                    for old, new in zip(
+                        data.columns[: self.n_vars], self.data_types.keys()
+                    )
+                },
+                inplace=True,
+            )
 
             return data.drop(columns=cols_to_drop, errors="ignore")
 
@@ -2041,19 +2060,26 @@ class BaseLandscape:
     def shape(self):
         """Return the shape (n_configs, n_edges) of the landscape graph."""
         self._check_built()
-        n_configs = self.n_configs if self.n_configs is not None else 0
-        n_edges = self.n_edges if self.n_edges is not None else 0
-        return (n_configs, n_edges)
+        if self.graph is None:
+            return (0, 0)
+        return (self.graph.vcount(), self.graph.ecount())
 
     def __getitem__(self, index):
         """Return the node attributes dictionary for the given index."""
         self._check_built()
         if self.graph is None:
-            raise RuntimeError("Graph is None.")  # Internal check
+            raise RuntimeError("Graph is None.")
+
         try:
-            # Access node data using graph.nodes dictionary interface
-            return self.graph.nodes[index]
-        except KeyError:
+            # If index is an integer within bounds, use positional indexing.
+            if isinstance(index, int) and 0 <= index < self.graph.vcount():
+                vertex = self.graph.vs[index]
+            else:
+                # Otherwise, assume the vertex 'name' attribute is used.
+                vertex = self.graph.vs.find(name=index)
+            # Return the vertex attributes as a dictionary.
+            return vertex.attributes()
+        except (IndexError, ValueError):
             raise KeyError(f"Index {index} not found among landscape configurations.")
 
     def __str__(self):
@@ -2061,14 +2087,14 @@ class BaseLandscape:
         if not self._is_built:
             return f"{self.__class__.__name__} object (uninitialized)"
 
+        n_configs = self.graph.vcount() if self.graph is not None else "?"
+        n_edges = self.graph.ecount() if self.graph is not None else "?"
         n_vars_str = str(self.n_vars) if self.n_vars is not None else "?"
-        n_configs_str = str(self.n_configs) if self.n_configs is not None else "?"
-        n_edges_str = str(self.n_edges) if self.n_edges is not None else "?"
         n_lo_str = str(self.n_lo) if self.n_lo is not None else "?"
 
         return (
             f"{self.__class__.__name__} with {n_vars_str} variables, "
-            f"{n_configs_str} configurations, {n_edges_str} connections, "
+            f"{n_configs} configurations, {n_edges} connections, "
             f"and {n_lo_str} local optima."
         )
 
@@ -2079,51 +2105,47 @@ class BaseLandscape:
     def __len__(self):
         """Return the number of configurations (nodes) in the landscape."""
         self._check_built()
-        return self.n_configs if self.n_configs is not None else 0
+        return self.graph.vcount() if self.graph is not None else 0
 
     def __iter__(self):
         """Iterate over the configuration indices (nodes) in the landscape."""
         self._check_built()
         if self.graph is None:
-            raise RuntimeError("Graph is None.")  # Internal check
-        return iter(self.graph.nodes)
+            raise RuntimeError("Graph is None.")
+        return (v.index for v in self.graph.vs)
 
     def __contains__(self, item):
         """Check if a configuration index (node) exists in the landscape."""
         self._check_built()
         if self.graph is None:
-            raise RuntimeError("Graph is None.")  # Internal check
-        # Check if the item is a valid node in the graph
-        return item in self.graph.nodes
+            raise RuntimeError("Graph is None.")
+        try:
+            if isinstance(item, int):
+                # Check bounds if item is an index.
+                return 0 <= item < self.graph.vcount()
+            else:
+                # Try to find a vertex with a matching 'name' attribute.
+                self.graph.vs.find(name=item)
+                return True
+        except ValueError:
+            return False
 
     def __eq__(self, other):
         """Compare two BaseLandscape instances for equality.
 
-        Equality is currently based on graph structure isomorphism and the
-        optimization direction (`maximize`). A more robust comparison might
-        also consider node/edge attributes.
-
-        Parameters
-        ----------
-        other : object
-            The object to compare with.
-
-        Returns
-        -------
-        bool
-            True if the landscapes are considered equal, False otherwise.
+        Equality is based on graph structure isomorphism and the optimization direction (`maximize`).
         """
         if not isinstance(other, BaseLandscape):
             return NotImplemented
         if not self._is_built or not other._is_built:
-            # Consider unbuilt instances equal only if both are unbuilt
+            # Consider unbuilt instances equal only if both are unbuilt.
             return self._is_built == other._is_built
         if self.graph is None or other.graph is None:
-            # Consider None graphs equal only if both are None
+            # Consider None graphs equal only if both are None.
             return self.graph is None and other.graph is None
 
-        return self.graph == other.graph and self.maximize == other.maximize
+        return self.graph.isomorphic(other.graph) and self.maximize == other.maximize
 
     def __bool__(self):
         """Return True if the landscape is built and has configurations."""
-        return self._is_built and bool(self.n_configs and self.n_configs > 0)
+        return self._is_built and self.graph is not None and self.graph.vcount() > 0

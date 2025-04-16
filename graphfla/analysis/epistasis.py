@@ -293,7 +293,7 @@ def idiosyncratic_index(landscape, mutation):
     A, pos, B = mutation
 
     data = landscape.get_data()
-    X = data.iloc[:, : len(landscape.data_types)]
+    X = data.iloc[:, : landscape.n_vars]
     f = data["fitness"]
 
     # Check if alleles A and B exist at the specified position
@@ -367,6 +367,90 @@ def idiosyncratic_index(landscape, mutation):
     idiosyncratic_val = std_mutation_effect / std_random_diff
 
     return idiosyncratic_val
+
+
+def global_idiosyncratic_index(landscape, random_seed=None):
+    """
+    Calculates the global idiosyncratic index for the entire fitness landscape.
+
+    This function extends the individual mutation idiosyncratic index from Lyons et al. (2020)
+    to provide a global measure by averaging across all possible mutations in the landscape.
+    The global index quantifies the overall sensitivity of the landscape to idiosyncratic
+    epistasis.
+
+    The index ranges from 0 to 1, with higher values indicating stronger idiosyncratic effects.
+
+    Parameters
+    ----------
+    landscape : Landscape
+        The fitness landscape object.
+    random_seed : int, optional
+        Seed for random number generation to ensure reproducibility.
+
+    Returns
+    -------
+    dict
+        A dictionary containing:
+        - 'global_index': The overall idiosyncratic index (average across all mutations)
+        - 'per_position': A dictionary mapping each position to its average index
+        - 'mutation_counts': The number of valid mutations considered in the calculation
+
+    References
+    ----------
+    .. [1] Daniel M. Lyons et al, "Idiosyncratic epistasis creates universals in mutational
+       effects and evolutionary trajectories", Nat. Ecol. Evo., 2020.
+    """
+    if random_seed is not None:
+        np.random.seed(random_seed)
+
+    data = landscape.get_data()
+    X = data.iloc[:, : landscape.n_vars]
+
+    # Track indices for each position and overall
+    position_indices = {}
+    all_indices = []
+    mutation_counts = 0
+
+    # Process each position
+    for pos in X.columns:
+        unique_alleles = sorted(X[pos].unique())
+        position_total = 0
+        position_count = 0
+
+        # Generate all unique unordered pairs of alleles (mutations)
+        for i in range(len(unique_alleles)):
+            for j in range(i + 1, len(unique_alleles)):
+                A, B = unique_alleles[i], unique_alleles[j]
+
+                try:
+                    # Calculate idiosyncratic index for this specific mutation
+                    index_A_to_B = idiosyncratic_index(landscape, (A, pos, B))
+
+                    if not np.isnan(index_A_to_B):
+                        position_total += index_A_to_B
+                        all_indices.append(index_A_to_B)
+                        position_count += 1
+                except Exception as e:
+                    # Skip mutations that cause errors
+                    print(
+                        f"Warning: Could not calculate index for mutation {A}->{B} at position {pos}: {e}"
+                    )
+
+        # Store average for this position
+        if position_count > 0:
+            position_indices[pos] = position_total / position_count
+            mutation_counts += position_count
+        else:
+            position_indices[pos] = np.nan
+
+    # Calculate global index
+    global_index = np.mean(all_indices) if all_indices else np.nan
+
+    return {
+        "global_index": global_index,
+        "per_position": position_indices,
+        "mutation_counts": mutation_counts,
+    }
 
 
 def diminishing_returns_index(

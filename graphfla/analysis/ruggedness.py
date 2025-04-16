@@ -148,7 +148,6 @@ def r_s_ratio(landscape) -> float:
         If the landscape object is missing required attributes/methods or if
         data types are unsupported.
     """
-    # 1. Get Data
     data = landscape.get_data()
 
     raw_X = data.iloc[:, : landscape.n_vars]

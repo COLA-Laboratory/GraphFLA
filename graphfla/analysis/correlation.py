@@ -6,6 +6,144 @@ from scipy.stats import spearmanr, pearsonr
 from ..algorithms import hill_climb_igraph
 
 
+def neighbor_fit_corr(landscape, auto_calculate=True, method="pearson"):
+    """
+    Calculates the correlation between a configuration's fitness and the mean fitness
+    of its neighbors across the fitness landscape.
+
+    This metric quantifies the extent to which fitter configurations tend to have
+    neighbors with higher fitness values. A strong positive correlation suggests that
+    higher-fitness configurations exist in higher-fitness regions of the landscape,
+    indicating a structured landscape with potential fitness gradients.
+
+    Parameters
+    ----------
+    landscape : BaseLandscape
+        The fitness landscape object.
+    auto_calculate : bool, default=True
+        If True, automatically runs calculate_neighbor_fitness() if needed.
+        If False, raises an exception when neighbor fitness metrics are missing.
+    method : str, default='pearson'
+        The correlation method to use. Options are:
+        - 'pearson': Standard correlation coefficient
+        - 'spearman': Rank correlation
+        - 'kendall': Kendall Tau correlation
+
+    Returns
+    -------
+    dict
+        A dictionary containing:
+        - 'correlation': The correlation coefficient between fitness and mean neighbor fitness
+        - 'p_value': The p-value of the correlation test
+        - 'method': The correlation method used
+        - 'n_nodes': The number of nodes used in the calculation
+        - 'stats': Additional descriptive statistics
+
+    Raises
+    ------
+    RuntimeError
+        If auto_calculate=False and neighbor fitness metrics haven't been calculated.
+    ValueError
+        If an invalid correlation method is specified.
+
+    Notes
+    -----
+    - Nodes with no neighbors (and thus NaN mean_neighbor_fit) are excluded
+    - A positive correlation suggests that fitter configurations tend to exist in
+      higher-fitness regions of the landscape
+    - A negative correlation suggests the opposite pattern
+    - No correlation suggests random distribution of fitness across the landscape
+    """
+    landscape._check_built()
+
+    # Check if neighbor fitness has been calculated
+    if "mean_neighbor_fit" not in landscape.graph.vs.attributes():
+        if auto_calculate:
+            if landscape.verbose:
+                print(
+                    "Neighbor fitness metrics not found. Running calculate_neighbor_fitness()..."
+                )
+            landscape.calculate_neighbor_fitness()
+        else:
+            raise RuntimeError(
+                "Neighbor fitness metrics haven't been calculated. "
+                "Either call landscape.calculate_neighbor_fitness() first "
+                "or set auto_calculate=True."
+            )
+
+    # Valid correlation methods
+    if method not in ["pearson", "spearman", "kendall"]:
+        raise ValueError(
+            f"Invalid correlation method: {method}. Choose from 'pearson', 'spearman', or 'kendall'"
+        )
+
+    # Extract fitness and mean neighbor fitness values
+    fitness_values = landscape.graph.vs["fitness"]
+    neighbor_fitness_values = landscape.graph.vs["mean_neighbor_fit"]
+
+    # Create a pandas DataFrame for easier analysis and to handle NaNs
+    import pandas as pd
+    import numpy as np
+    from scipy import stats
+
+    data = pd.DataFrame(
+        {"fitness": fitness_values, "mean_neighbor_fit": neighbor_fitness_values}
+    )
+
+    # Remove rows with NaN (nodes with no neighbors)
+    data_clean = data.dropna()
+    n_nodes = len(data_clean)
+    n_excluded = len(data) - n_nodes
+
+    if n_nodes == 0:
+        if landscape.verbose:
+            print(
+                "Warning: No valid data for correlation calculation after removing NaNs."
+            )
+        return {
+            "correlation": np.nan,
+            "p_value": np.nan,
+            "method": method,
+            "n_nodes": 0,
+            "n_excluded": n_excluded,
+            "stats": {"fitness_mean": np.nan, "neighbor_fitness_mean": np.nan},
+        }
+
+    # Calculate correlation
+    if method == "pearson":
+        corr, p_value = stats.pearsonr(
+            data_clean["fitness"], data_clean["mean_neighbor_fit"]
+        )
+    elif method == "spearman":
+        corr, p_value = stats.spearmanr(
+            data_clean["fitness"], data_clean["mean_neighbor_fit"]
+        )
+    else:  # kendall
+        corr, p_value = stats.kendalltau(
+            data_clean["fitness"], data_clean["mean_neighbor_fit"]
+        )
+
+    # Calculate additional statistics
+    fitness_mean = data_clean["fitness"].mean()
+    fitness_std = data_clean["fitness"].std()
+    neighbor_fitness_mean = data_clean["mean_neighbor_fit"].mean()
+    neighbor_fitness_std = data_clean["mean_neighbor_fit"].std()
+
+    return {
+        "correlation": corr,
+        "p_value": p_value,
+        "method": method,
+        "n_nodes": n_nodes,
+        "n_excluded": n_excluded,
+        "stats": {
+            "fitness_mean": fitness_mean,
+            "fitness_std": fitness_std,
+            "neighbor_fitness_mean": neighbor_fitness_mean,
+            "neighbor_fitness_std": neighbor_fitness_std,
+        },
+    }
+
+
 def fdc(
     landscape,
     method: str = "spearman",
@@ -123,10 +261,20 @@ def basin_fit_corr(landscape, method: str = "spearman") -> tuple:
     fitness_values = lo_data["fitness"]
 
     if method == "spearman":
-        correlation, p_value = spearmanr(basin_sizes, fitness_values)
+        corr_greedy, _ = spearmanr(basin_sizes, fitness_values)
     elif method == "pearson":
-        correlation, p_value = pearsonr(basin_sizes, fitness_values)
+        corr_greedy, _ = pearsonr(basin_sizes, fitness_values)
     else:
         raise ValueError(f"Invalid method '{method}'. Choose 'spearman' or 'pearson'.")
 
-    return correlation, p_value
+    if "size_basin_accessible" in lo_data.columns:
+        basin_sizes_accessible = lo_data["size_basin_accessible"]
+        if method == "spearman":
+            corr_accessible, _ = spearmanr(basin_sizes_accessible, fitness_values)
+        elif method == "pearson":
+            corr_accessible, _ = pearsonr(basin_sizes_accessible, fitness_values)
+
+        return {"greedy": corr_greedy, "accessible": corr_accessible}
+
+    else:
+        return {"greedy": corr_greedy}
