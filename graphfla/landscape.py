@@ -1,11 +1,12 @@
-from abc import ABC, abstractmethod
 import pandas as pd
 import numpy as np
 import igraph as ig
+import warnings
 import time
+
+from typing import Tuple, Dict, List, Union, Optional, Any
 from collections import defaultdict
 from tqdm import tqdm
-import warnings
 
 from .lon import get_lon
 from .algorithms import hill_climb
@@ -27,7 +28,26 @@ from ._neighbors import (
     SequenceNeighborGenerator,
 )
 
-from typing import Tuple, Dict, List, Union, Optional, Any
+import time
+from functools import wraps
+
+
+def timeit(method):
+    """
+    A decorator to measure and log the execution time of a method.
+    """
+
+    @wraps(method)
+    def timed(*args, **kwargs):
+        start_time = time.time()
+        result = method(*args, **kwargs)
+        end_time = time.time()
+        elapsed_time = end_time - start_time
+        # print(f"Method {method.__name__} executed in {elapsed_time:.4f} seconds.")
+        return result
+
+    return timed
+
 
 ALLOWED_DATA_TYPES = {"boolean", "categorical", "ordinal"}
 DNA_ALPHABET = ["A", "C", "G", "T"]
@@ -60,6 +80,10 @@ class Landscape:
         The type of landscape to create. This determines the preprocessing and
         neighbor generation strategies used. Options include 'boolean', 'dna',
         'rna', 'protein', or 'default' for general landscapes.
+    maximize : bool, default=True
+        Determines the optimization direction. If True, the landscape seeks
+        higher fitness values (peaks are optima). If False, it seeks lower
+        fitness values (valleys are optima).
 
     Attributes
     ----------
@@ -204,7 +228,7 @@ class Landscape:
         "default": DefaultNeighborGenerator(),
     }
 
-    def __init__(self, type: str = "default"):
+    def __init__(self, type: str = "default", maximize: bool = True):
         # Core attributes
         self.graph = None
         self.configs = None
@@ -222,7 +246,7 @@ class Landscape:
         self.type = type
 
         # Landscape construction parameters
-        self.maximize = True
+        self.maximize = maximize
         self.epsilon = "auto"
 
         # Build status flags
@@ -344,13 +368,13 @@ class Landscape:
         """Register a custom neighbor generator for a data type."""
         cls._neighbor_generators[data_type] = generator
 
+    @timeit
     def build_from_data(
         self,
         X: Any,
         f: Union[pd.Series, list, np.ndarray],
         data_types: Optional[Dict[str, str]] = None,
         *,
-        maximize: bool = True,
         epsilon: Union[float, str] = "auto",
         calculate_basins: bool = True,
         calculate_paths: bool = True,
@@ -387,10 +411,6 @@ class Landscape:
             column names/indices, and values must be one of 'boolean',
             'categorical', or 'ordinal'. This information is crucial for
             determining neighborhood relationships and calculating distances.
-        maximize : bool, default=True
-            Determines the optimization direction. If True, the landscape seeks
-            higher fitness values (peaks are optima). If False, it seeks lower
-            fitness values (valleys are optima).
         epsilon : float or 'auto', default='auto'
             Noise tolerance value used for floating-point comparisons when determining
             fitness improvements or optima. If 'auto', a default might be used.
@@ -463,7 +483,6 @@ class Landscape:
             )
 
         # Set parameters
-        self.maximize = maximize
         self.epsilon = epsilon
         self.verbose = verbose
 
@@ -540,8 +559,9 @@ class Landscape:
         if verbose:
             print("Constructing landscape graph...")
 
-        edge_list = self._construct_neighborhoods(processed_data, n_edit=n_edit)
-        self.graph = self._construct_landscape(processed_data, edge_list)
+        edges, delta_fits = self._construct_neighborhoods(processed_data, n_edit=n_edit)
+        self.graph = self._construct_landscape(processed_data, edges, delta_fits)
+
         self.n_configs = self.graph.vcount()
 
         if self.n_configs == 0:
@@ -550,7 +570,7 @@ class Landscape:
             )
 
         # STEP 7: Analyze graph properties
-        self._analyze_graph(
+        self._analyze_landscape(
             calculate_distance=calculate_distance,
             calculate_basins=calculate_basins,
             calculate_paths=calculate_paths,
@@ -1076,6 +1096,7 @@ class Landscape:
         """Generate neighbors using the selected strategy."""
         return self._neighbor_generator.generate(config, config_dict, n_edit)
 
+    @timeit
     def _construct_neighborhoods(self, data, n_edit):
         """Identifies connections (edges) between neighboring configurations."""
         if self.configs is None or self.config_dict is None:
@@ -1089,7 +1110,7 @@ class Landscape:
         config_to_index = dict(zip(self.configs, data.index))
         config_to_fitness = dict(zip(self.configs, data["fitness"]))
 
-        edge_list = []
+        edges, delta_fits = [], []
         # Use tqdm for progress bar if verbose
         configs_iter = (
             tqdm(
@@ -1132,13 +1153,15 @@ class Landscape:
                     if is_improvement:
                         # Store edge as (source, target, weight)
                         # Weight is absolute difference |current_fit - neighbor_fit|
-                        edge_list.append((current_id, neighbor_idx, abs(delta_fit)))
+                        edges.append((current_id, neighbor_idx))
+                        delta_fits.append(abs(delta_fit))
 
         if self.verbose:
-            print(f" - Identified {len(edge_list)} potential improving connections.")
-        return edge_list
+            print(f" - Identified {len(edges)} potential improving connections.")
+        return edges, delta_fits
 
-    def _construct_landscape(self, data, edge_list):
+    @timeit
+    def _construct_landscape(self, data, edges, delta_fits):
         """Builds the ig.Graph object from nodes and edges."""
         if self.verbose:
             print(" - Constructing graph object...")
@@ -1146,13 +1169,9 @@ class Landscape:
         graph = ig.Graph(directed=True)
         graph.add_vertices(len(data.index))  # data.index must be 0..N-1
 
-        # edge_list is [(source, target, weight), ...]
-        edges = [(src, tgt) for src, tgt, _ in edge_list]
-        weights = [weight for _, _, weight in edge_list]
-
         graph.add_edges(edges)
-        if weights:
-            graph.es["delta_fit"] = weights
+        if delta_fits:
+            graph.es["delta_fit"] = delta_fits
 
         if self.verbose:
             print(" - Adding node attributes (fitness, etc.)...")
@@ -1207,6 +1226,7 @@ class Landscape:
         # or returns the modified graph.
         return add_network_metrics(graph, weight=weight)
 
+    @timeit
     def determine_local_optima(self):
         """Identifies local optima nodes in the landscape graph using igraph."""
 
@@ -1231,6 +1251,7 @@ class Landscape:
         if self.verbose:
             print(f"   - Found {self.n_lo} local optima.")
 
+    @timeit
     def determine_basin_of_attraction(self):
         """
         Calculates the basin of attraction for each node using a greedy
@@ -1249,62 +1270,93 @@ class Landscape:
         if self.verbose:
             print(" - Calculating basins of attraction via hill climbing...")
 
-        basin_index = defaultdict(int)  # Maps node index -> its LO index
-        dict_size = defaultdict(int)  # Stores size of each basin (number of nodes)
-        dict_diameter = defaultdict(list)  # Stores path lengths within each basin
+        n_vertices = self.graph.vcount()
 
-        # Prepare iterator with progress bar if verbose
-        nodes_iter = (
-            tqdm(
-                range(self.graph.vcount()),
-                total=self.n_configs,
-                desc="   - Hill climbing",
-            )
-            if self.verbose
-            else range(self.graph.vcount())
+        # Pre-allocate arrays for all results to avoid repeated dict lookups
+        basin_indices = np.full(n_vertices, -1, dtype=np.int32)
+        step_counts = np.zeros(n_vertices, dtype=np.int32)
+
+        # Process vertices in batches
+        batch_size = 10000  # Adjust based on available memory and typical graph size
+
+        # Cache local optima information to avoid redundant hill climbing
+        is_lo = (
+            np.array(self.graph.vs["is_lo"])
+            if "is_lo" in self.graph.vs.attributes()
+            else None
         )
 
-        # Perform hill climbing for each node
-        for i in nodes_iter:
-            try:
-                # hill_climb function should return the index of the LO reached
-                # and the number of steps taken. Assumes 'delta_fit' edge weight.
-                lo, steps = hill_climb(self.graph, i, "delta_fit")
-                basin_index[i] = lo
-                dict_size[lo] += 1
-                dict_diameter[lo].append(steps)
-            except Exception as e:
-                # Handle cases where hill climbing might fail (e.g., complex cycles)
-                warnings.warn(
-                    f"Hill climb failed for node {i}: {e}. Assigning node to its own basin.",
-                    RuntimeWarning,
-                )
-                basin_index[i] = i  # Assign node to its own basin as fallback
-                dict_size[i] += 1
-                dict_diameter[i].append(0)
+        # Prepare iterator with progress bar if verbose
+        batch_ranges = list(range(0, n_vertices, batch_size))
+        nodes_iter = (
+            tqdm(batch_ranges, desc="   - Hill climbing batches")
+            if self.verbose
+            else batch_ranges
+        )
 
-        # Add basin information as vertex attributes
-        self.graph.vs["basin_index"] = [
-            basin_index[i] for i in range(self.graph.vcount())
-        ]
-        self.graph.vs["size_basin_greedy"] = [
-            dict_size[basin_index[i]] for i in range(self.graph.vcount())
-        ]
+        for batch_start in nodes_iter:
+            batch_end = min(batch_start + batch_size, n_vertices)
+            batch_indices = range(batch_start, batch_end)
 
-        # For radius_basin, calculate the max path length for each basin
-        radius_basin_values = []
-        for i in range(self.graph.vcount()):
-            basin_lo = basin_index[i]
-            paths = dict_diameter[basin_lo]
-            radius_basin_values.append(max(paths) if paths else 0)
+            # Process each node in the batch
+            for i in batch_indices:
+                # Skip computation if we already know this is a local optimum
+                if is_lo is not None and is_lo[i]:
+                    # Local optima are in their own basin
+                    basin_indices[i] = i
+                    step_counts[i] = 0
+                    continue
 
-        self.graph.vs["radius_basin_greedy"] = radius_basin_values
+                try:
+                    # hill_climb function returns the index of the LO reached and steps taken
+                    lo, steps = hill_climb(self.graph, i, "delta_fit")
+                    basin_indices[i] = lo
+                    step_counts[i] = steps
+                except Exception as e:
+                    # Handle cases where hill climbing might fail (e.g., complex cycles)
+                    if self.verbose:
+                        warnings.warn(
+                            f"Hill climb failed for node {i}: {e}. Assigning node to its own basin.",
+                            RuntimeWarning,
+                        )
+                    basin_indices[i] = i  # Assign node to its own basin as fallback
+                    step_counts[i] = 0
 
-        # Store the basin index map
+        # Calculate basin sizes and diameters efficiently using numpy
+        unique_basins, basin_counts = np.unique(basin_indices, return_counts=True)
+        basin_size_map = dict(zip(unique_basins, basin_counts))
+
+        # Create size_basin array mapping each node to its basin size
+        size_basin_values = np.zeros(n_vertices, dtype=np.int32)
+        for i in range(n_vertices):
+            basin_idx = basin_indices[i]
+            size_basin_values[i] = basin_size_map.get(basin_idx, 0)
+
+        # Calculate basin radii (max step count per basin)
+        max_steps_per_basin = {}
+        for i in range(n_vertices):
+            basin_idx = basin_indices[i]
+            max_steps_per_basin[basin_idx] = max(
+                max_steps_per_basin.get(basin_idx, 0), step_counts[i]
+            )
+
+        radius_basin_values = np.zeros(n_vertices, dtype=np.int32)
+        for i in range(n_vertices):
+            basin_idx = basin_indices[i]
+            radius_basin_values[i] = max_steps_per_basin.get(basin_idx, 0)
+
+        # Assign results to graph attributes
+        self.graph.vs["basin_index"] = basin_indices.tolist()
+        self.graph.vs["size_basin_greedy"] = size_basin_values.tolist()
+        self.graph.vs["radius_basin_greedy"] = radius_basin_values.tolist()
+
+        # Mark as calculated
         self._basin_calculated = True
-        if self.verbose:
-            print(f"   - Basins calculated for {len(dict_size)} local optima.")
 
+        if self.verbose:
+            print(f"   - Basins calculated for {len(unique_basins)} local optima.")
+
+    @timeit
     def determine_accessible_paths(self):
         """Determines the size of basins based on accessible paths (ancestors).
 
@@ -1374,6 +1426,7 @@ class Landscape:
                 RuntimeWarning,
             )
 
+    @timeit
     def determine_neighbor_fitness(self) -> "Landscape":
         """Calculates the mean fitness of neighbors for each node and the difference
         in mean neighbor fitness between connected nodes.
@@ -1391,8 +1444,8 @@ class Landscape:
         References
         ----------
         .. Wagner, A. The role of evolvability in the evolution of
-           complex traits. Nat Rev Genet 24, 1-16 (2023).
-           https://doi.org/10.1038/s41576-023-00559-0
+        complex traits. Nat Rev Genet 24, 1-16 (2023).
+        https://doi.org/10.1038/s41576-023-00559-0
 
         Returns
         -------
@@ -1410,66 +1463,89 @@ class Landscape:
         if self.verbose:
             print("Calculating neighbor fitness metrics...")
 
+        # Get total number of vertices for progress tracking
+        n_vertices = self.graph.vcount()
+
+        # Pre-fetch all fitness values into a numpy array for faster lookup
+        fitness_array = np.array(self.graph.vs["fitness"])
+
         # Step 1: Calculate mean neighbor fitness for each node
-        mean_neighbor_fit = []
+        # Preallocate array for mean neighbor fitness values
+        mean_neighbor_fit = np.full(n_vertices, np.nan)
 
-        for vertex_idx in range(self.graph.vcount()):
-            # Get all neighbors (both in and out neighbors in undirected sense)
-            neighbors = set(self.graph.neighbors(vertex_idx, mode="all"))
+        # Use tqdm for progress tracking if verbose
+        vertex_iter = (
+            tqdm(range(n_vertices), desc="Calculating mean neighbor fitness")
+            if self.verbose
+            else range(n_vertices)
+        )
 
-            # If the node has no neighbors, set mean to NaN or the node's own fitness
-            if not neighbors:
-                mean_neighbor_fit.append(float("nan"))
-                continue
+        # Process nodes in batches to balance speed and memory usage
+        batch_size = 1000  # Adjust based on typical graph size and available memory
 
-            # Calculate mean fitness of neighbors
-            neighbor_fitness_sum = sum(self.graph.vs[n]["fitness"] for n in neighbors)
-            mean_fitness = neighbor_fitness_sum / len(neighbors)
-            mean_neighbor_fit.append(mean_fitness)
+        for i in range(0, n_vertices, batch_size):
+            # Get the batch of vertices to process
+            batch_end = min(i + batch_size, n_vertices)
+            batch_indices = list(range(i, batch_end))
+
+            # Process each vertex in the batch
+            for vertex_idx in (
+                tqdm(batch_indices, leave=False) if self.verbose else batch_indices
+            ):
+                # Get neighbors using the built-in neighbors method (memory efficient)
+                neighbors = self.graph.neighbors(vertex_idx, mode="all")
+
+                # If the node has neighbors, calculate mean fitness
+                if neighbors:
+                    # Use vectorized operation on the pre-fetched fitness array
+                    mean_neighbor_fit[vertex_idx] = np.mean(fitness_array[neighbors])
 
         # Add the mean neighbor fitness as a vertex attribute
-        self.graph.vs["mean_neighbor_fit"] = mean_neighbor_fit
+        self.graph.vs["mean_neighbor_fit"] = mean_neighbor_fit.tolist()
 
         if self.verbose:
-            print(
-                f" - Added 'mean_neighbor_fit' attribute for {len(mean_neighbor_fit)} nodes"
-            )
+            print(f" - Added 'mean_neighbor_fit' attribute for {n_vertices} nodes")
 
         # Step 2: Calculate delta mean neighbor fitness for each edge
-        delta_mean_neighbor_fit = []
+        # Get total number of edges for progress tracking
+        n_edges = self.graph.ecount()
 
-        for edge in self.graph.es:
-            source = edge.source
-            target = edge.target
+        # Create a more memory-efficient approach for edge processing
+        # Process edges in batches to keep memory usage low
+        batch_size_edges = 10000  # Adjust based on typical graph size
+        delta_mean_neighbor_fit = np.zeros(n_edges)
 
-            source_fitness = self.graph.vs[source]["fitness"]
-            target_fitness = self.graph.vs[target]["fitness"]
+        edge_iter = (
+            tqdm(
+                range(0, n_edges, batch_size_edges),
+                desc="Calculating delta neighbor fitness",
+            )
+            if self.verbose
+            else range(0, n_edges, batch_size_edges)
+        )
 
-            # Determine which node has higher fitness
-            if source_fitness >= target_fitness:
-                higher_fit_node = source
-                lower_fit_node = target
-            else:
-                higher_fit_node = target
-                lower_fit_node = source
+        for i in edge_iter:
+            batch_end = min(i + batch_size_edges, n_edges)
+            batch_edges = list(range(i, batch_end))
 
-            # Calculate the difference in mean neighbor fitness
-            higher_mean_neighbor_fit = self.graph.vs[higher_fit_node][
-                "mean_neighbor_fit"
-            ]
-            lower_mean_neighbor_fit = self.graph.vs[lower_fit_node]["mean_neighbor_fit"]
+            for edge_idx in batch_edges:
+                edge = self.graph.es[edge_idx]
+                src, tgt = edge.source, edge.target
 
-            delta = higher_mean_neighbor_fit - lower_mean_neighbor_fit
-            delta_mean_neighbor_fit.append(delta)
+                # Calculate difference in mean neighbor fitness
+                delta = mean_neighbor_fit[tgt] - mean_neighbor_fit[src]
+                delta_mean_neighbor_fit[edge_idx] = delta
 
         # Add the delta mean neighbor fitness as an edge attribute
-        self.graph.es["delta_mean_neighbor_fit"] = delta_mean_neighbor_fit
+        self.graph.es["delta_mean_neighbor_fit"] = delta_mean_neighbor_fit.tolist()
 
         if self.verbose:
-            print(
-                f" - Added 'delta_mean_neighbor_fit' attribute for {len(delta_mean_neighbor_fit)} edges"
-            )
+            print(f" - Added 'delta_mean_neighbor_fit' attribute for {n_edges} edges")
 
+        self._neighbor_fit_calculated = True
+        return self
+
+    @timeit
     def determine_global_optimum(self):
         """Identifies the global optimum node in the landscape graph using igraph."""
         if self.graph is None:
@@ -1511,6 +1587,7 @@ class Landscape:
             self.go_index = None
             self.go = None
 
+    @timeit
     def determine_dist_to_go(self, distance):
         """Calculates the distance from each node to the global optimum."""
         if self.graph is None:
@@ -1666,6 +1743,7 @@ class Landscape:
 
         return X_standard, f_standard, dt_standard
 
+    @timeit
     def _handle_missing_values(
         self,
         X_in: pd.DataFrame,
@@ -1813,6 +1891,7 @@ class Landscape:
 
         return X_out, f_out
 
+    @timeit
     def _handle_duplicates(
         self, X_in: pd.DataFrame, f_in: pd.Series
     ) -> Tuple[pd.DataFrame, pd.Series]:
@@ -1844,6 +1923,7 @@ class Landscape:
 
         return X_out, f_out
 
+    @timeit
     def _prepare_data(self, X, f, data_types):
         """Encodes data and sets `configs` and `config_dict` attributes."""
         if self.verbose:
@@ -1896,7 +1976,8 @@ class Landscape:
             config_dict[i] = {"type": dtype, "max": int(max_val)}
         return config_dict
 
-    def _analyze_graph(
+    @timeit
+    def _analyze_landscape(
         self,
         calculate_distance: bool,
         calculate_basins: bool,
