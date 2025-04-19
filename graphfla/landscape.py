@@ -1473,13 +1473,6 @@ class Landscape:
         # Preallocate array for mean neighbor fitness values
         mean_neighbor_fit = np.full(n_vertices, np.nan)
 
-        # Use tqdm for progress tracking if verbose
-        vertex_iter = (
-            tqdm(range(n_vertices), desc="Calculating mean neighbor fitness")
-            if self.verbose
-            else range(n_vertices)
-        )
-
         # Process nodes in batches to balance speed and memory usage
         batch_size = 1000  # Adjust based on typical graph size and available memory
 
@@ -1489,9 +1482,7 @@ class Landscape:
             batch_indices = list(range(i, batch_end))
 
             # Process each vertex in the batch
-            for vertex_idx in (
-                tqdm(batch_indices, leave=False) if self.verbose else batch_indices
-            ):
+            for vertex_idx in batch_indices:
                 # Get neighbors using the built-in neighbors method (memory efficient)
                 neighbors = self.graph.neighbors(vertex_idx, mode="all")
 
@@ -1515,16 +1506,7 @@ class Landscape:
         batch_size_edges = 10000  # Adjust based on typical graph size
         delta_mean_neighbor_fit = np.zeros(n_edges)
 
-        edge_iter = (
-            tqdm(
-                range(0, n_edges, batch_size_edges),
-                desc="Calculating delta neighbor fitness",
-            )
-            if self.verbose
-            else range(0, n_edges, batch_size_edges)
-        )
-
-        for i in edge_iter:
+        for i in range(0, n_edges, batch_size_edges):
             batch_end = min(i + batch_size_edges, n_edges)
             batch_edges = list(range(i, batch_end))
 
@@ -1588,23 +1570,23 @@ class Landscape:
             self.go = None
 
     @timeit
-    def determine_dist_to_go(self, distance):
+    def determine_dist_to_go(self, distance=None):
         """Calculates the distance from each node to the global optimum."""
-        if self.graph is None:
-            raise RuntimeError("Graph is None.")  # Internal check
-        if self.configs is None or self.go_index is None or self.data_types is None:
+
+        # Check prerequisites
+        if (
+            self.graph is None
+            or self.configs is None
+            or self.go_index is None
+            or self.data_types is None
+        ):
             if self.verbose:
-                print(
-                    "   - Skipping distance to GO (missing configs, go_index, or data_types)."
-                )
+                print("Skipping distance calculation - missing prerequisites")
             return
-        # Ensure the global optimum's configuration is available
-        if self.go_index not in self.configs.index:
-            if self.verbose:
-                print(
-                    f"   - Skipping distance to GO (GO index {self.go_index} not found in configs map)."
-                )
-            return
+
+        # Use default distance function if none provided
+        if distance is None:
+            distance = self._get_default_distance_metric()
 
         if self.verbose:
             print(
@@ -1612,45 +1594,22 @@ class Landscape:
             )
 
         try:
-            # Prepare configurations for distance calculation
-            # Assumes self.configs contains encoded tuples/lists
-            configs_list = self.configs.tolist()
-            # Convert to numpy array for efficient distance calculation
-            configs_array = np.array(configs_list)
-            # Get the configuration tuple of the global optimum
-            go_config_tuple = self.configs.loc[self.go_index]
-            # Convert GO config to array for the distance function
-            go_config_array = np.array(go_config_tuple)
+            configs = np.vstack(self.configs.values)
+            go_config = configs[self.go_index]
+            distances = distance(configs, go_config, self.data_types)
 
-            # Calculate distances from all configs to the GO config
-            # The distance function signature is assumed to be:
-            # distance(all_configs_array, reference_config_array, data_types_dict)
-            distances = distance(configs_array, go_config_array, self.data_types)
-
-            if len(distances) != len(self.configs.index):
-                # This check ensures the distance function returned expected output
-                raise ValueError(
-                    "Length mismatch between calculated distances and configs index."
-                )
-
-            # Add calculated distances as a node attribute 'dist_go'
+            # Add calculated distances as a node attribute
             self.graph.vs["dist_go"] = distances
+            self._distance_calculated = True
+
             if self.verbose:
                 print(
                     "   - Distances to GO calculated and added as node attribute 'dist_go'."
                 )
 
-        except KeyError as e:
-            warnings.warn(
-                f"KeyError calculating distance to GO: {e}. "
-                "Check consistency between go_index and self.configs.",
-                RuntimeWarning,
-            )
         except Exception as e:
-            warnings.warn(
-                f"Error calculating distance to GO using {distance.__name__}: {e}",
-                RuntimeWarning,
-            )
+            warnings.warn(f"Error calculating distances to GO: {e}", RuntimeWarning)
+            self._distance_calculated = False
 
     def describe(self) -> None:
         """Prints a summary description of the landscape properties.
