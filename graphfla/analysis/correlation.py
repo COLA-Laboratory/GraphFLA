@@ -20,7 +20,7 @@ def neighbor_fit_corr(landscape, auto_calculate=True, method="pearson"):
     landscape : BaseLandscape
         The fitness landscape object.
     auto_calculate : bool, default=True
-        If True, automatically runs calculate_neighbor_fitness() if needed.
+        If True, automatically runs determine_neighbor_fitness() if needed.
         If False, raises an exception when neighbor fitness metrics are missing.
     method : str, default='pearson'
         The correlation method to use. Options are:
@@ -60,13 +60,13 @@ def neighbor_fit_corr(landscape, auto_calculate=True, method="pearson"):
         if auto_calculate:
             if landscape.verbose:
                 print(
-                    "Neighbor fitness metrics not found. Running calculate_neighbor_fitness()..."
+                    "Neighbor fitness metrics not found. Running determine_neighbor_fitness()..."
                 )
-            landscape.calculate_neighbor_fitness()
+            landscape.determine_neighbor_fitness()
         else:
             raise RuntimeError(
                 "Neighbor fitness metrics haven't been calculated. "
-                "Either call landscape.calculate_neighbor_fitness() first "
+                "Either call landscape.determine_neighbor_fitness() first "
                 "or set auto_calculate=True."
             )
 
@@ -156,6 +156,18 @@ def fdc(
         close to 1 indicates a positive correlation between fitness and distance to the global optimum.
     """
 
+    # Check if the landscape has dist_go calculated
+    if "dist_go" not in landscape.graph.vs.attributes():
+        # If dist_go is not available, calculate it
+        landscape.determine_dist_to_go()
+
+        # Check again in case calculation failed
+        if "dist_go" not in landscape.graph.vs.attributes():
+            raise RuntimeError(
+                "Could not calculate distance to global optimum. Make sure the landscape "
+                "has proper configuration data and a valid global optimum."
+            )
+
     data = landscape.get_data()
 
     if method == "spearman":
@@ -244,26 +256,45 @@ def basin_fit_corr(landscape, method: str = "spearman") -> tuple:
     tuple
         A tuple containing the correlation coefficient and the p-value.
     """
+    # Check if basins have been calculated
+    if "size_basin_greedy" not in landscape.graph.vs.attributes():
+        # If basin sizes are not available, calculate them
+        if landscape.verbose:
+            print("Basin sizes not found. Calculating basins of attraction...")
+        landscape.determine_basin_of_attraction()
+
+        # Check again in case calculation failed
+        if "size_basin_greedy" not in landscape.graph.vs.attributes():
+            raise RuntimeError(
+                "Could not calculate basin sizes. Make sure the landscape "
+                "has a valid graph structure for basin calculation."
+            )
 
     lo_data = landscape.get_data(lo_only=True)
     basin_sizes = lo_data["size_basin_greedy"]
     fitness_values = lo_data["fitness"]
 
     if method == "spearman":
-        corr_greedy, _ = spearmanr(basin_sizes, fitness_values)
+        corr_greedy, p_value_greedy = spearmanr(basin_sizes, fitness_values)
     elif method == "pearson":
-        corr_greedy, _ = pearsonr(basin_sizes, fitness_values)
+        corr_greedy, p_value_greedy = pearsonr(basin_sizes, fitness_values)
     else:
         raise ValueError(f"Invalid method '{method}'. Choose 'spearman' or 'pearson'.")
 
     if "size_basin_accessible" in lo_data.columns:
         basin_sizes_accessible = lo_data["size_basin_accessible"]
         if method == "spearman":
-            corr_accessible, _ = spearmanr(basin_sizes_accessible, fitness_values)
+            corr_accessible, p_value_accessible = spearmanr(
+                basin_sizes_accessible, fitness_values
+            )
         elif method == "pearson":
-            corr_accessible, _ = pearsonr(basin_sizes_accessible, fitness_values)
+            corr_accessible, p_value_accessible = pearsonr(
+                basin_sizes_accessible, fitness_values
+            )
 
-        return {"greedy": corr_greedy, "accessible": corr_accessible}
-
+        return {
+            "greedy": (corr_greedy, p_value_greedy),
+            "accessible": (corr_accessible, p_value_accessible),
+        }
     else:
-        return {"greedy": corr_greedy}
+        return {"greedy": (corr_greedy, p_value_greedy)}
