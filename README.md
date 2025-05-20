@@ -102,36 +102,36 @@ landscape.build_from_data(X, f, data_types=data_types, verbose=True)
 
 `GraphFLA` currently supports the following features for landscape analysis.
 
-| **Class**           | **Function**                     | **Feature**                            | **Range**     | **Higher value indicates**            |
-|---------------------|----------------------------------|----------------------------------------|---------------|----------------------------------------|
-| **Ruggedness**      | `lo_ratio`                       | Fraction of local optima               | [0,1]         | ↑ more peaks                           |
-| **Ruggedness**                    | `r_s_ratio`                      | Roughness-slope ratio                  | [0, ∞)        | ↑ ruggedness                           |
-| **Ruggedness**                    | `autocorrelation`                | Autocorrelation                        | [-1, 1]       | ↓ ruggedness                           |
-| **Ruggedness**                    | `gamma_statistic`                | Gamma statistic                        | [-1, 1]       | ↑ ruggedness                           |
-| **Ruggedness**                    | `gamma_statistic`                | Gamma star statistic                   | [-1, 1]       | ↑ ruggedness                           |
-| **Ruggedness**                    | `neighbor_fit_corr`              | Neighbor-fitness correlation           | [-1, 1]       | ↓ ruggedness                           |
-| **Epistasis**       | `classify_epistasis`             | Magnitude epistasis                    | [0, 1)        | ↓ evolutionary constraints             |
-| **Epistasis**                    | `classify_epistasis`             | Sign epistasis                         | [0, 1]        | ↑ evolutionary constraints             |
-| **Epistasis**                    | `classify_epistasis`             | Reciprocal sign epistasis              | [0, 1]        | ↑ evolutionary constraints             |
-| **Epistasis**                    | `classify_epistasis`             | Positive epistasis                     | [0, 1]        | ↑ synergistic effects                  |
-| **Epistasis**                    | `classify_epistasis`             | Negative epistasis                     | [0, 1]        | ↑ antagonistic effects                 |
-| **Epistasis**                    | `global_idiosyncratic_index`     | Global idiosyncratic index             | [0, 1]        | ↑ specific interactions                |
-| **Epistasis**                    | `diminishing_returns_index`      | Diminishing return epistasis           | [0, 1]        | ↑ flat peaks                           |
-| **Epistasis**                    | `increasing_costs_index`         | Increasing cost epistasis              | [0, 1]        | ↑ steep descents                       |
-| **Epistasis**                    | `higher_order_epistasis`         | Higher-order epistasis                 | [0, 1]        | ↓ higher-order interactions            |
-| **Navigability**    | `fitness_distance_corr`          | Fitness-distance correlation           | [-1, 1]       | ↑ navigation                           |
-| **Navigability**                    | `go_accessibility`               | Global optima accessibility            | [0, 1]        | ↑ access to global peaks               |
-| **Navigability**                    | `basin_fit_corr`                 | Basin-fitness corr. (accessible)       | [-1, 1]       | ↑ access to fitter peaks               |
-| **Navigability**                    | `basin_fit_corr`                 | Basin-fitness corr. (greedy)           | [-1, 1]       | ↑ access to fitter peaks               |
-| **Navigability**                    | `calculate_evol_enhance`         | Evol-enhancing mutation                | [0, 1]        | ↑ evolvability                         |
-| **Neutrality**      | `neutrality`                     | Neutrality                             | [0, 1]        | ↑ neutrality                           |
-| **Fitness Distribution** | `fitness_distribution`       | Skewness                               | (-∞, ∞)       | ↑ asymmetry of fitness values          |
-| **Fitness Distribution**                         | `fitness_distribution`       | Kurtosis                               | (-∞, ∞)       | ↑ outlier/extreme value prevalence     |
-| **Fitness Distribution**                         | `fitness_distribution`       | Coefficient of variation (CV)          | [0, ∞)        | ↑ relative fitness variability         |
-| **Fitness Distribution**                         | `fitness_distribution`       | Quartile coefficient                   | [0, 1]        | ↑ interquartile dispersion             |
-| **Fitness Distribution**                         | `fitness_distribution`       | Median/Mean ratio                      | [0, ∞)        | ↑ deviation from symmetry              |
-| **Fitness Distribution**                         | `fitness_distribution`       | Relative range                         | [0, ∞)        | ↑ spread of fitness values             |
-| **Fitness Distribution**                         | `fitness_distribution`       | Cauchy location parameter              | (-∞, ∞)       | ↑ central tendency estimate            |
+| **Class** | **Function** | **Feature** | **Range** | **Higher value indicates** |
+|--------------------------|----------------------------------|----------------------------------------|---------------|----------------------------------------|
+| **Ruggedness** | `lo_ratio`                       | Fraction of local optima               | [0,1]         | ↑ more peaks                           |
+|                          | `r_s_ratio`                      | Roughness-slope ratio                  | [0, ∞)        | ↑ ruggedness                           |
+|                          | `autocorrelation`                | Autocorrelation                        | [-1, 1]       | ↓ ruggedness                           |
+|                          | `gamma_statistic`                | Gamma statistic                        | [-1, 1]       | ↑ ruggedness                           |
+|                          | `gamma_statistic`                | Gamma star statistic                   | [-1, 1]       | ↑ ruggedness                           |
+|                          | `neighbor_fit_corr`              | Neighbor-fitness correlation           | [-1, 1]       | ↓ ruggedness                           |
+| **Epistasis** | `classify_epistasis`             | Magnitude epistasis                    | [0, 1)        | ↓ evolutionary constraints             |
+|                          | `classify_epistasis`             | Sign epistasis                         | [0, 1]        | ↑ evolutionary constraints             |
+|                          | `classify_epistasis`             | Reciprocal sign epistasis              | [0, 1]        | ↑ evolutionary constraints             |
+|                          | `classify_epistasis`             | Positive epistasis                     | [0, 1]        | ↑ synergistic effects                  |
+|                          | `classify_epistasis`             | Negative epistasis                     | [0, 1]        | ↑ antagonistic effects                 |
+|                          | `global_idiosyncratic_index`     | Global idiosyncratic index             | [0, 1]        | ↑ specific interactions                |
+|                          | `diminishing_returns_index`      | Diminishing return epistasis           | [0, 1]        | ↑ flat peaks                           |
+|                          | `increasing_costs_index`         | Increasing cost epistasis              | [0, 1]        | ↑ steep descents                       |
+|                          | `higher_order_epistasis`         | Higher-order epistasis                 | [0, 1]        | ↓ higher-order interactions            |
+| **Navigability** | `fitness_distance_corr`          | Fitness-distance correlation           | [-1, 1]       | ↑ navigation                           |
+|                          | `go_accessibility`               | Global optima accessibility            | [0, 1]        | ↑ access to global peaks               |
+|                          | `basin_fit_corr`                 | Basin-fitness corr. (accessible)       | [-1, 1]       | ↑ access to fitter peaks               |
+|                          | `basin_fit_corr`                 | Basin-fitness corr. (greedy)           | [-1, 1]       | ↑ access to fitter peaks               |
+|                          | `calculate_evol_enhance`         | Evol-enhancing mutation                | [0, 1]        | ↑ evolvability                         |
+| **Neutrality** | `neutrality`                     | Neutrality                             | [0, 1]        | ↑ neutrality                           |
+| **Fitness Distribution** | `fitness_distribution`           | Skewness                               | (-∞, ∞)       | ↑ asymmetry of fitness values          |
+|                          | `fitness_distribution`           | Kurtosis                               | (-∞, ∞)       | ↑ outlier/extreme value prevalence     |
+|                          | `fitness_distribution`           | Coefficient of variation (CV)          | [0, ∞)        | ↑ relative fitness variability         |
+|                          | `fitness_distribution`           | Quartile coefficient                   | [0, 1]        | ↑ interquartile dispersion             |
+|                          | `fitness_distribution`           | Median/Mean ratio                      | [0, ∞)        | ↑ deviation from symmetry              |
+|                          | `fitness_distribution`           | Relative range                         | [0, ∞)        | ↑ spread of fitness values             |
+|                          | `fitness_distribution`           | Cauchy location parameter              | (-∞, ∞)       | ↑ central tendency estimate            |
 
 
 ## Landscapes
