@@ -145,12 +145,6 @@ def global_optima_accessibility(landscape) -> float:
     return local_optima_accessibility(landscape, lo=landscape.go_index)
 
 
-def accessible_fract(landscape):
-    raise NotImplementedError(
-        "The function 'accessible_fract' is not implemented yet. Please check back later."
-    )
-
-
 def mean_path_lengths(
     landscape,
     lo: Union[int, List[int]] = None,
@@ -373,6 +367,12 @@ def mean_path_lengths_go(
     # Delegate the calculation to path_lengths with go_index
     return mean_path_lengths(
         landscape, lo=landscape.go_index, accessible=accessible, n_samples=n_samples
+    )
+
+
+def accessible_fract(landscape):
+    raise NotImplementedError(
+        "The function 'accessible_fract' is not implemented yet. Please check back later."
     )
 
 

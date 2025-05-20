@@ -374,7 +374,6 @@ class Landscape:
         X: Any,
         f: Union[pd.Series, list, np.ndarray],
         data_types: Optional[Dict[str, str]] = None,
-        *,
         epsilon: Union[float, str] = "auto",
         calculate_basins: bool = True,
         calculate_paths: bool = True,
@@ -524,7 +523,7 @@ class Landscape:
                     f"got {type(data_types)}."
                 )
 
-            X_processed, f_processed, self.data_types, dimension = (
+            X_processed, f_processed, self.data_types, self.n_vars = (
                 self._preprocessor.preprocess(X, f, data_types, verbose=verbose)
             )
         else:
@@ -1144,7 +1143,6 @@ class Landscape:
 
                     # Determine if the neighbor represents an improvement
                     # Handles epsilon implicitly for now, strict inequality used.
-                    # TODO: Explicit epsilon handling might be needed here based on self.epsilon
                     is_improvement = (self.maximize and delta_fit < 0) or (
                         not self.maximize and delta_fit > 0
                     )
@@ -2099,50 +2097,36 @@ class Landscape:
 
 
 class BooleanLandscape(Landscape):
-    """A specialized landscape class for binary/boolean configuration spaces.
+    """A specialized landscape class for boolean configuration spaces.
 
-    This class represents fitness landscapes where each configuration variable
-    can take only two values (0 or 1, True or False). Common examples include
-    binary genotypes, presence/absence of genetic elements, or ON/OFF regulatory states.
+    This class represents fitness landscapes where each configuration is a bit string
+    (sequence of 0s and 1s), which is common in many optimization problems like
+    NK landscapes, MAXSAT, and binary encoding of combinatorial problems.
 
     Parameters
     ----------
-    bit_length : int, optional
-        The length of binary configurations (number of bits/variables).
-        If provided, will be used during data preprocessing.
     maximize : bool, default=True
         Determines the optimization direction. If True, the landscape seeks
-        higher fitness values (peaks are optima). If False, it seeks lower
-        fitness values (valleys are optima).
+        higher fitness values. If False, it seeks lower values.
+
+    Examples
+    --------
+    >>> import pandas as pd
+    >>> import numpy as np
+    >>> X_data = pd.DataFrame({'var_0': [0, 0, 1, 1], 'var_1': [0, 1, 0, 1]})
+    >>> f_data = pd.Series([1.0, 2.0, 3.0, 2.5])
+    >>> landscape = BooleanLandscape().build_from_data(X_data, f_data)
     """
 
-    def __init__(self, bit_length: Optional[int] = None, maximize: bool = True):
+    def __init__(self, maximize: bool = True):
+        """Initialize a boolean landscape.
+
+        Parameters
+        ----------
+        maximize : bool, default=True
+            Determines the optimization direction.
+        """
         super().__init__(type="boolean", maximize=maximize)
-        self.bit_length = bit_length
-
-    def build_from_data(
-        self,
-        X: Any,
-        f: Union[pd.Series, list, np.ndarray],
-        data_types: Optional[Dict[str, str]] = None,
-        **kwargs,
-    ) -> "BooleanLandscape":
-        """Build a boolean landscape from binary configuration data."""
-        # If no data_types provided, create them automatically
-        if data_types is None:
-            if isinstance(X, pd.DataFrame):
-                data_types = {col: "boolean" for col in X.columns}
-            else:
-                data_types = {f"var_{i}": "boolean" for i in range(X.shape[1])}
-
-        # Call parent's build_from_data with proper data_types
-        super().build_from_data(X, f, data_types, **kwargs)
-
-        # Store bit_length based on data if not provided during initialization
-        if self.bit_length is None:
-            self.bit_length = self.n_vars
-
-        return self
 
 
 class SequenceLandscape(Landscape):
@@ -2156,8 +2140,6 @@ class SequenceLandscape(Landscape):
     ----------
     alphabet : list[str]
         The set of valid characters that can appear in the sequences.
-    sequence_length : int, optional
-        The length of sequences. If provided, will be used during data preprocessing.
     maximize : bool, default=True
         Determines the optimization direction. If True, the landscape seeks
         higher fitness values. If False, it seeks lower values.
@@ -2166,7 +2148,6 @@ class SequenceLandscape(Landscape):
     def __init__(
         self,
         alphabet: List[str],
-        sequence_length: Optional[int] = None,
         maximize: bool = True,
     ):
         # Register our processor with the custom alphabet
@@ -2183,31 +2164,6 @@ class SequenceLandscape(Landscape):
 
         super().__init__(type=type_key, maximize=maximize)
         self.alphabet = alphabet
-        self.sequence_length = sequence_length
-
-    def build_from_data(
-        self,
-        X: Any,
-        f: Union[pd.Series, list, np.ndarray],
-        data_types: Optional[Dict[str, str]] = None,
-        **kwargs,
-    ) -> "SequenceLandscape":
-        """Build a sequence landscape from sequence configuration data."""
-        # If no data_types provided, create them automatically
-        if data_types is None:
-            if isinstance(X, pd.DataFrame):
-                data_types = {col: "categorical" for col in X.columns}
-            else:
-                data_types = {f"pos_{i}": "categorical" for i in range(X.shape[1])}
-
-        # Call parent's build_from_data with proper data_types
-        super().build_from_data(X, f, data_types, **kwargs)
-
-        # Store sequence_length based on data if not provided during initialization
-        if self.sequence_length is None:
-            self.sequence_length = self.n_vars
-
-        return self
 
 
 class DNALandscape(SequenceLandscape):
@@ -2218,17 +2174,13 @@ class DNALandscape(SequenceLandscape):
 
     Parameters
     ----------
-    sequence_length : int, optional
-        The length of DNA sequences. If provided, will be used during preprocessing.
     maximize : bool, default=True
         Determines the optimization direction. If True, the landscape seeks
         higher fitness values. If False, it seeks lower values.
     """
 
-    def __init__(self, sequence_length: Optional[int] = None, maximize: bool = True):
-        super().__init__(
-            alphabet=DNA_ALPHABET, sequence_length=sequence_length, maximize=maximize
-        )
+    def __init__(self, maximize: bool = True):
+        super().__init__(alphabet=DNA_ALPHABET, maximize=maximize)
 
 
 class RNALandscape(SequenceLandscape):
@@ -2239,17 +2191,13 @@ class RNALandscape(SequenceLandscape):
 
     Parameters
     ----------
-    sequence_length : int, optional
-        The length of RNA sequences. If provided, will be used during preprocessing.
     maximize : bool, default=True
         Determines the optimization direction. If True, the landscape seeks
         higher fitness values. If False, it seeks lower values.
     """
 
-    def __init__(self, sequence_length: Optional[int] = None, maximize: bool = True):
-        super().__init__(
-            alphabet=RNA_ALPHABET, sequence_length=sequence_length, maximize=maximize
-        )
+    def __init__(self, maximize: bool = True):
+        super().__init__(alphabet=RNA_ALPHABET, maximize=maximize)
 
 
 class ProteinLandscape(SequenceLandscape):
@@ -2260,16 +2208,13 @@ class ProteinLandscape(SequenceLandscape):
 
     Parameters
     ----------
-    sequence_length : int, optional
-        The length of protein sequences. If provided, will be used during preprocessing.
     maximize : bool, default=True
         Determines the optimization direction. If True, the landscape seeks
         higher fitness values. If False, it seeks lower values.
     """
 
-    def __init__(self, sequence_length: Optional[int] = None, maximize: bool = True):
+    def __init__(self, maximize: bool = True):
         super().__init__(
             alphabet=PROTEIN_ALPHABET,
-            sequence_length=sequence_length,
             maximize=maximize,
         )

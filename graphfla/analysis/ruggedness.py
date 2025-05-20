@@ -37,7 +37,7 @@ def lo_ratio(landscape) -> float:
 
 def autocorrelation(
     landscape, walk_length: int = 20, walk_times: int = 1000, lag: int = 1
-) -> Tuple[float, float]:
+) -> float:
     """
     A measure of landscape ruggedness. It operates by calculating the autocorrelation of
     fitness values over multiple random walks on a graph.
@@ -64,7 +64,7 @@ def autocorrelation(
     Returns:
     -------
     autocorr : Dict
-        A dictionary containing the mean and variance of the autocorrelation values.
+        the mean of the autocorrelation values.
     """
     corr_list = []
 
@@ -76,10 +76,7 @@ def autocorrelation(
         corr_list.append(ac)
 
     corr_array = np.array(corr_list)
-    return {
-        "mean": np.nanmean(corr_array),
-        "variance": np.nanvar(corr_array),
-    }
+    return np.nanmean(corr_array)
 
 
 def gradient_intensity(landscape) -> float:
@@ -106,8 +103,9 @@ def gradient_intensity(landscape) -> float:
     # Get the list of delta_fit values for all edges (default to 0 if missing)
     delta_fits = [abs(edge.attributes().get("delta_fit", 0)) for edge in graph.es]
     total_delta_fit = sum(delta_fits)
+    fitness = landscape.graph.vs["fitness"]
 
-    gradient = total_delta_fit / total_edges
+    gradient = (total_delta_fit / total_edges) / pd.Series(fitness).mean()
     return gradient
 
 
@@ -116,7 +114,7 @@ def r_s_ratio(landscape) -> float:
     Calculate the roughness-to-slope (r/s) ratio of a fitness landscape.
 
     This metric quantifies the deviation from additivity by comparing the
-    standard deviation of the residuals from a linear model fit (roughness)
+    root-mean-square error of the linear model fit (roughness)
     to the mean absolute additive coefficients (slope). Higher values
     indicate greater ruggedness and epistasis relative to the additive trend.
 
@@ -164,27 +162,35 @@ def r_s_ratio(landscape) -> float:
     data_types = landscape.data_types
 
     # 2. Prepare Numerical Genotype Representation for Additive Model
-    numerical_X_cols = {}
+    X_transform_list = []
     cols = list(data_types.keys())  # Maintain order
 
     for col in cols:
         dtype = data_types[col]
         if dtype == "boolean":
             # Convert boolean to 0/1 integer representation
-            numerical_X_cols[col] = raw_X[col].astype(bool).astype(int)
+            col_values = raw_X[col].astype(bool).astype(int).values.reshape(-1, 1)
+            X_transform_list.append(col_values)
         elif dtype == "categorical":
-            # Use pandas Categorical codes (integer representation)
-            numerical_X_cols[col] = pd.Categorical(raw_X[col]).codes
+            # Use one-hot encoding for nominal categorical variables
+            cat_series = pd.Categorical(raw_X[col])
+            # Get one-hot encoded columns, drop first category to avoid multicollinearity
+            one_hot = pd.get_dummies(cat_series, drop_first=False)
+            X_transform_list.append(one_hot.values)
         elif dtype == "ordinal":
-            # Use pandas Categorical codes (integer representation)
-            numerical_X_cols[col] = pd.Categorical(raw_X[col], ordered=True).codes
+            # For ordinal variables, use numerical codes that preserve order
+            col_values = pd.Categorical(raw_X[col], ordered=True).codes
+            X_transform_list.append(col_values.reshape(-1, 1))
         else:
             raise ValueError(
                 f"Unsupported data type '{dtype}' for r/s ratio calculation in column '{col}'"
             )
 
-    numerical_X = pd.DataFrame(numerical_X_cols, index=raw_X.index)
-    X_fit = numerical_X.values  # Use numpy array for sklearn
+    # Combine all transformed columns into a single array
+    if len(X_transform_list) == 1:
+        X_fit = X_transform_list[0]
+    else:
+        X_fit = np.hstack(X_transform_list)
 
     # Check for sufficient data
     n_samples, n_features = X_fit.shape
@@ -224,7 +230,10 @@ def r_s_ratio(landscape) -> float:
 
         predicted_fitness = linear_model.predict(X_fit)
         residuals = fitness_values - predicted_fitness
-        roughness_r = np.std(residuals, ddof=1 if n_samples > 1 else 0)
+
+        # Calculate roughness as RMSE (root-mean-square error)
+        # This is more consistent with the definition in the literature
+        roughness_r = np.sqrt(np.mean(residuals**2))
 
         r_s_ratio_value = roughness_r / slope_s
 

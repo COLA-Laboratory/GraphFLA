@@ -1,6 +1,8 @@
 from scipy.stats import spearmanr, pearsonr
 from typing import Any, Tuple, Literal
 from collections import defaultdict
+from itertools import product, combinations
+from joblib import Parallel, delayed
 
 import numpy as np
 import igraph as ig
@@ -375,9 +377,9 @@ def idiosyncratic_index(landscape, mutation):
     return idiosyncratic_val
 
 
-def global_idiosyncratic_index(landscape, random_seed=None):
+def global_idiosyncratic_index(landscape, n_jobs=-1, random_seed=None):
     """
-    Calculates the global idiosyncratic index for the entire fitness landscape.
+    Calculates the global idiosyncratic index for the entire fitness landscape using parallel processing.
 
     This function extends the individual mutation idiosyncratic index from Lyons et al. (2020)
     to provide a global measure by averaging across all possible mutations in the landscape.
@@ -390,6 +392,8 @@ def global_idiosyncratic_index(landscape, random_seed=None):
     ----------
     landscape : Landscape
         The fitness landscape object.
+    n_jobs : int, optional
+        Number of parallel jobs to use. Default is -1 (all available cores).
     random_seed : int, optional
         Seed for random number generation to ensure reproducibility.
 
@@ -406,62 +410,74 @@ def global_idiosyncratic_index(landscape, random_seed=None):
     .. [1] Daniel M. Lyons et al, "Idiosyncratic epistasis creates universals in mutational
        effects and evolutionary trajectories", Nat. Ecol. Evo., 2020.
     """
+    from joblib import Parallel, delayed
+
     if random_seed is not None:
         np.random.seed(random_seed)
 
     data = landscape.get_data()
     X = data.iloc[:, : landscape.n_vars]
 
-    # Track indices for each position and overall
-    position_indices = {}
-    all_indices = []
-    mutation_counts = 0
-
-    # Process each position
+    # Generate all possible mutations to process in parallel
+    mutations_to_process = []
     for pos in X.columns:
         unique_alleles = sorted(X[pos].unique())
-        position_total = 0
-        position_count = 0
-
-        # Generate all unique unordered pairs of alleles (mutations)
         for i in range(len(unique_alleles)):
             for j in range(i + 1, len(unique_alleles)):
                 A, B = unique_alleles[i], unique_alleles[j]
+                mutations_to_process.append((A, pos, B))
 
-                try:
-                    # Calculate idiosyncratic index for this specific mutation
-                    index_A_to_B = idiosyncratic_index(landscape, (A, pos, B))
+    # Define a worker function to compute idiosyncratic index for each mutation
+    def compute_index(mutation):
+        try:
+            A, pos, B = mutation
+            index_value = idiosyncratic_index(landscape, mutation)
+            return {"mutation": mutation, "pos": pos, "index": index_value}
+        except Exception as e:
+            print(
+                f"Warning: Could not calculate index for mutation {A}->{B} at position {pos}: {e}"
+            )
+            return {"mutation": mutation, "pos": pos, "index": np.nan}
 
-                    if not np.isnan(index_A_to_B):
-                        position_total += index_A_to_B
-                        all_indices.append(index_A_to_B)
-                        position_count += 1
-                except Exception as e:
-                    # Skip mutations that cause errors
-                    print(
-                        f"Warning: Could not calculate index for mutation {A}->{B} at position {pos}: {e}"
-                    )
+    # Execute in parallel
+    results = Parallel(n_jobs=n_jobs)(
+        delayed(compute_index)(mutation) for mutation in mutations_to_process
+    )
 
-        # Store average for this position
-        if position_count > 0:
-            position_indices[pos] = position_total / position_count
-            mutation_counts += position_count
+    # Process results
+    position_indices = defaultdict(list)
+    all_indices = []
+
+    for result in results:
+        index_value = result["index"]
+        pos = result["pos"]
+
+        if not np.isnan(index_value):
+            position_indices[pos].append(index_value)
+            all_indices.append(index_value)
+
+    # Calculate average per position
+    position_averages = {}
+    for pos, indices in position_indices.items():
+        if indices:
+            position_averages[pos] = np.mean(indices)
         else:
-            position_indices[pos] = np.nan
+            position_averages[pos] = np.nan
 
     # Calculate global index
     global_index = np.mean(all_indices) if all_indices else np.nan
+    mutation_counts = len(all_indices)
 
     return {
         "global_index": global_index,
-        "per_position": position_indices,
+        "per_position": position_averages,
         "mutation_counts": mutation_counts,
     }
 
 
 def diminishing_returns_index(
     landscape,
-    method: Literal["pearson", "spearman"] = "pearson",
+    method: Literal["pearson", "spearman", "regression"] = "pearson",
 ) -> Tuple[float, float]:
     """Measures diminishing returns epistasis in a fitness landscape.
 
@@ -477,18 +493,22 @@ def diminishing_returns_index(
     landscape : Landscape
         An initialized and built fitness landscape object. The landscape graph
         must have a 'fitness' attribute for each node.
-    method : {'pearson', 'spearman'}, default='pearson'
-        The method used to calculate the correlation coefficient.
-        'pearson' for Pearson correlation, 'spearman' for Spearman rank correlation.
+    method : {'pearson', 'spearman', 'regression'}, default='pearson'
+        The method used to calculate the diminishing returns index.
+        'pearson' for Pearson correlation coefficient,
+        'spearman' for Spearman rank correlation coefficient,
+        'regression' for the slope of a linear regression.
 
     Returns
     -------
-    correlation : float
-        The correlation coefficient between node fitness and average successor
-        fitness improvement. NaN if calculation is not possible.
+    correlation_or_slope : float
+        For 'pearson' or 'spearman': The correlation coefficient between node fitness
+        and average successor fitness improvement.
+        For 'regression': The slope of the linear regression.
+        Returns NaN if calculation is not possible.
     p_value : float
-        The p-value associated with the correlation test. NaN if calculation
-        is not possible.
+        The p-value associated with the correlation test or regression.
+        Returns NaN if calculation is not possible.
 
     Raises
     ------
@@ -547,18 +567,49 @@ def diminishing_returns_index(
             UserWarning,
         )
         return np.nan
-    node_fitnesses_corr = node_fitnesses_series[mask]
-    avg_improvement_corr = avg_improvement_series[mask]
+    node_fitnesses = node_fitnesses_series[mask]
+    avg_improvement = avg_improvement_series[mask]
 
     if method == "pearson":
         corr_func = pearsonr
     elif method == "spearman":
         corr_func = spearmanr
+    elif method == "regression":
+        try:
+            # Add regression method using numpy's polyfit
+            X = np.array(node_fitnesses).reshape(-1, 1)
+            y = np.array(avg_improvement)
+
+            # Add a constant (intercept) to the predictor matrix
+            X_with_const = np.column_stack((np.ones(X.shape[0]), X))
+
+            # Fit linear regression
+            beta, residuals, rank, s = np.linalg.lstsq(X_with_const, y, rcond=None)
+            slope = beta[1]  # Slope is the coefficient for X
+
+            # Calculate p-value for the slope
+            n = len(X)
+            if n <= 2:
+                return slope
+
+            # Calculate standard error of the slope
+            y_pred = X_with_const.dot(beta)
+            residual_SS = np.sum((y - y_pred) ** 2)
+            X_mean = np.mean(X)
+            X_var = np.sum((X.reshape(-1) - X_mean) ** 2)
+
+            if X_var == 0:
+                return slope
+
+            return slope
+        except Exception as e:
+            warnings.warn(f"Could not calculate regression: {e}", UserWarning)
+            return np.nan
     else:
-        raise ValueError("Method must be 'pearson' or 'spearman'")
+        raise ValueError("Method must be 'pearson', 'spearman', or 'regression'")
 
     try:
-        correlation, p_value = corr_func(node_fitnesses_corr, avg_improvement_corr)
+        correlation, _ = corr_func(node_fitnesses, avg_improvement)
         return correlation
     except Exception as e:
         warnings.warn(f"Could not calculate correlation: {e}", UserWarning)
@@ -567,8 +618,8 @@ def diminishing_returns_index(
 
 def increasing_costs_index(
     landscape,
-    method: Literal["pearson", "spearman"] = "pearson",
-) -> Tuple[float, float]:
+    method: Literal["pearson", "spearman", "regression"] = "pearson",
+) -> float:
     """Measures increasing cost epistasis in a fitness landscape.
 
     Increasing cost epistasis occurs when the fitness cost (reduction) of
@@ -584,18 +635,19 @@ def increasing_costs_index(
     landscape : Landscape
         An initialized and built fitness landscape object. The landscape graph
         must have a 'fitness' attribute for each node.
-    method : {'pearson', 'spearman'}, default='pearson'
-        The method used to calculate the correlation coefficient.
-        'pearson' for Pearson correlation, 'spearman' for Spearman rank correlation.
+    method : {'pearson', 'spearman', 'regression'}, default='pearson'
+        The method used to calculate the increasing costs index.
+        'pearson' for Pearson correlation coefficient,
+        'spearman' for Spearman rank correlation coefficient,
+        'regression' for the slope of a linear regression.
 
     Returns
     -------
-    correlation : float
-        The correlation coefficient between node fitness and average predecessor
-        fitness cost. NaN if calculation is not possible.
-    p_value : float
-        The p-value associated with the correlation test. NaN if calculation
-        is not possible.
+    correlation_or_slope : float
+        For 'pearson' or 'spearman': The correlation coefficient between node fitness
+        and average predecessor fitness cost.
+        For 'regression': The slope of the linear regression.
+        Returns NaN if calculation is not possible.
 
     Raises
     ------
@@ -654,19 +706,314 @@ def increasing_costs_index(
             UserWarning,
         )
         return np.nan
-    node_fitnesses_corr = node_fitnesses_series[mask]
-    avg_cost_corr = avg_cost_series[mask]
+    node_fitnesses = node_fitnesses_series[mask]
+    avg_cost = avg_cost_series[mask]
 
     if method == "pearson":
         corr_func = pearsonr
     elif method == "spearman":
         corr_func = spearmanr
+    elif method == "regression":
+        try:
+            # Add regression method using numpy's polyfit
+            X = np.array(node_fitnesses).reshape(-1, 1)
+            y = np.array(avg_cost)
+
+            # Add a constant (intercept) to the predictor matrix
+            X_with_const = np.column_stack((np.ones(X.shape[0]), X))
+
+            # Fit linear regression
+            beta, residuals, rank, s = np.linalg.lstsq(X_with_const, y, rcond=None)
+            slope = beta[1]  # Slope is the coefficient for X
+
+            return slope
+        except Exception as e:
+            warnings.warn(f"Could not calculate regression: {e}", UserWarning)
+            return np.nan
     else:
-        raise ValueError("Method must be 'pearson' or 'spearman'")
+        raise ValueError("Method must be 'pearson', 'spearman', or 'regression'")
 
     try:
-        correlation, _ = corr_func(node_fitnesses_corr, avg_cost_corr)
+        correlation, _ = corr_func(node_fitnesses, avg_cost)
         return correlation
     except Exception as e:
         warnings.warn(f"Could not calculate correlation: {e}", UserWarning)
         return np.nan
+
+
+def gamma_statistic(landscape, n_jobs=-1):
+    """
+    Calculates the gamma and gamma_star statistics for a fitness landscape.
+
+    Parameters
+    ----------
+    landscape : Landscape
+        The fitness landscape object containing fitness data.
+    n_jobs : int, optional
+        Number of parallel jobs to use. Default is -1 (all available cores).
+
+    Returns
+    -------
+    dict
+        A dictionary containing:
+        - 'gamma': The traditional gamma statistic value. Values close to -1 or 1 indicate
+          strong epistatic interactions in magnitude, while values close to 0 indicate
+          weak or no epistasis.
+        - 'gamma_star': The gamma star statistic that only considers sign consistency.
+          Values close to 1 indicate consistent sign epistasis across backgrounds,
+          values close to -1 indicate opposing sign patterns, and values close to 0
+          indicate random sign patterns.
+
+    Notes
+    -----
+    - The gamma statistic measures the correlation between fitness effects of mutations
+      across different genetic backgrounds, providing a measure of epistatic interactions
+      in the landscape.
+    - The gamma_star statistic focuses only on sign consistency, ignoring the magnitude
+      of fitness effects. It indicates whether mutations tend to have consistent
+      directional effects across different genetic backgrounds.
+    """
+
+    # Ensure landscape is built
+    landscape._check_built()
+    if landscape.graph is None or "fitness" not in landscape.graph.vs.attributes():
+        raise ValueError(
+            "Landscape graph or node 'fitness' attribute not found."
+            " Landscape must be built first."
+        )
+
+    # Extract data
+    df = landscape.get_data()
+    X = df.iloc[:, : landscape.n_vars]
+
+    # Function to get all possible mutations for a position
+    def get_all_mutations(df, pos):
+        combs = list(combinations(df[pos].unique(), 2))
+        return combs
+
+    # Get all mutations for each position
+    mutation_dict = {col: get_all_mutations(X, col) for col in X.columns}
+
+    # Generate all position pairs
+    positions = list(X.columns)
+    position_pairs = [
+        (pos1, pos2) for pos1 in positions for pos2 in positions if pos1 != pos2
+    ]
+
+    def count_differing_bits(list1, list2):
+        if len(list1) != len(list2):
+            raise ValueError("Lists must be of the same length.")
+
+        total_diff_bits = 0
+        for a, b in zip(list1, list2):
+            xor = a ^ b
+            total_diff_bits += bin(xor).count("1")
+
+        return total_diff_bits
+
+    # Function to process each mutation pair and compute correlation
+    def process_mutation_pair(i, pos1, pos2, mutation1, mutation2):
+        index_cols = list(X.drop(columns=[pos1, pos2]).columns)
+
+        mask_pos1_0 = df[pos1] == mutation1[0]
+        mask_pos1_1 = df[pos1] == mutation1[1]
+        mask_pos2_0 = df[pos2] == mutation2[0]
+        mask_pos2_1 = df[pos2] == mutation2[1]
+
+        df_ab = df[mask_pos1_0 & mask_pos2_0]
+        df_Ab = df[mask_pos1_1 & mask_pos2_0]
+        df_aB = df[mask_pos1_0 & mask_pos2_1]
+        df_AB = df[mask_pos1_1 & mask_pos2_1]
+
+        if any(len(data) == 0 for data in [df_ab, df_Ab, df_aB, df_AB]):
+            return None  # No need to compute if data frames are empty
+
+        # Set index for the data frames
+        for data in [df_ab, df_Ab, df_aB, df_AB]:
+            if len(data) > 0:
+                data.set_index(index_cols, inplace=True)
+
+        # Compute fitness effects
+        fit_effects_b = df_ab["fitness"] - df_Ab["fitness"]
+        fit_effects_B = df_aB["fitness"] - df_AB["fitness"]
+
+        fit_effects_b_aligned, fit_effects_B_aligned = fit_effects_b.align(
+            fit_effects_B
+        )
+
+        if len(fit_effects_b_aligned) > 0:
+            valid_mask = ~(
+                np.isnan(fit_effects_b_aligned) | np.isnan(fit_effects_B_aligned)
+            )
+            if valid_mask.sum() > 1:
+                # Compute traditional gamma (correlation of fitness effect values)
+
+                fit_effects_b = fit_effects_b_aligned[valid_mask]
+                fit_effects_B = fit_effects_B_aligned[valid_mask]
+
+                gamma_value = np.corrcoef(fit_effects_b, fit_effects_B)[0, 1]
+
+                fit_effects_b = fit_effects_b.map(
+                    lambda x: 1 if x > 0 else (-1 if x < 0 else 0)
+                ).to_list()
+                fit_effects_B = fit_effects_B.map(
+                    lambda x: 1 if x > 0 else (-1 if x < 0 else 0)
+                ).to_list()
+
+                # gamma_star_value = np.corrcoef(fit_effects_b, fit_effects_B)[0, 1]
+                # Compute gamma_star (correlation of fitness effect signs)
+                # Convert to signs: 1 for positive, -1 for negative, 0 for zero
+
+                gamma_star_value = 1 - count_differing_bits(
+                    fit_effects_b, fit_effects_B
+                ) / len(fit_effects_b)
+
+                return {"gamma": gamma_value, "gamma_star": gamma_star_value}
+
+        return None
+
+    # Process all mutation combinations for each position pair
+    def process_position_pair(i, pos1, pos2):
+        results = []
+        mutations1 = mutation_dict[pos1]
+        mutations2 = mutation_dict[pos2]
+
+        for mutation1, mutation2 in product(mutations1, mutations2):
+            result = process_mutation_pair(i, pos1, pos2, mutation1, mutation2)
+            if result is not None:
+                results.append(result)
+
+        return results
+
+    # Parallelize processing
+    results = Parallel(n_jobs=n_jobs)(
+        delayed(process_position_pair)(i, pos1, pos2)
+        for i, (pos1, pos2) in enumerate(position_pairs)
+    )
+
+    # Flatten results and calculate mean
+    all_gamma = []
+    all_gamma_star = []
+
+    for sublist in results:
+        for result in sublist:
+            if result is not None:
+                all_gamma.append(result["gamma"])
+                all_gamma_star.append(result["gamma_star"])
+
+    if not all_gamma:
+        return {"gamma": np.nan, "gamma_star": np.nan}
+
+    return {"gamma": np.mean(all_gamma), "gamma_star": np.mean(all_gamma_star)}
+
+
+def higher_order_epistasis(landscape, order=2, verbose=False, n_jobs=1):
+    """
+    Calculates the fraction of variance in fitness that can be explained
+    by interactions between variables up to the specified order using polynomial regression.
+
+    Parameters
+    ----------
+    landscape : Landscape
+        The fitness landscape object to analyze.
+    order : int, optional
+        The maximum order of polynomial features to consider. This controls the degree
+        of the polynomial, where an order of k allows for modeling interactions between
+        up to k variables. Must be between 1 and the total number of variables in the landscape.
+        Default is 2 (quadratic terms and pairwise interactions).
+    random_state : int, optional
+        Random seed for reproducibility. Default is 42.
+    verbose : bool, optional
+        Whether to print progress information. Default is False.
+
+    Returns
+    -------
+    float
+        The R² score representing the fraction of variance explained by
+        polynomial terms up to the specified order. Values closer to 1.0 indicate
+        stronger epistasis of the given order.
+
+    Notes
+    -----
+    This function uses polynomial regression with degree=order to model interactions
+    up to the specified order. The resulting R² score indicates how well these
+    interactions explain the observed fitness values.
+
+    A high R² score suggests that most of the fitness variance can be
+    explained by considering interactions up to the specified order,
+    indicating strong epistatic effects of that order in the landscape.
+
+    """
+    try:
+        from sklearn.preprocessing import PolynomialFeatures, OneHotEncoder
+        from sklearn.linear_model import LinearRegression
+        from sklearn.metrics import r2_score
+        from sklearn.pipeline import Pipeline
+    except ImportError:
+        raise ImportError(
+            "This function requires scikit-learn. "
+            "Please install it with 'pip install scikit-learn'."
+        )
+
+    # Check if landscape is built
+    landscape._check_built()
+
+    if landscape.configs is None or len(landscape.configs) == 0:
+        raise ValueError("Landscape has no configuration data.")
+
+    # Validate order parameter
+    if not isinstance(order, int):
+        raise TypeError(f"Order must be an integer, got {type(order).__name__}")
+
+    if order < 1:
+        raise ValueError(f"Order must be at least 1, got {order}")
+
+    if order > landscape.n_vars:
+        raise ValueError(
+            f"Order cannot exceed the number of variables in the landscape "
+            f"({landscape.n_vars}), got {order}"
+        )
+
+    if verbose:
+        print(f"Calculating order-{order} epistasis using polynomial regression...")
+
+    # Extract configurations and fitness values
+    X = np.vstack(landscape.configs.values)
+    y = np.array(landscape.graph.vs["fitness"])
+
+    # One-hot encode all variables
+    if verbose:
+        print(f"One-hot encoding {X.shape[1]} variables...")
+
+    encoder = OneHotEncoder(sparse_output=False)
+    try:
+        X_encoded = encoder.fit_transform(X)
+    except Exception as e:
+        raise ValueError(f"Failed to one-hot encode configurations: {e}")
+
+    if verbose:
+        print(f"Encoded data shape: {X_encoded.shape}")
+        print(f"Creating polynomial features of degree {order}...")
+
+    # Create a pipeline with polynomial features and linear regression
+    model = Pipeline(
+        [
+            ("poly", PolynomialFeatures(degree=order, include_bias=True)),
+            ("linear", LinearRegression(n_jobs=n_jobs)),
+        ]
+    )
+
+    # Handle potential numerical issues with large datasets
+    try:
+        if verbose:
+            print(f"Fitting polynomial regression model...")
+        model.fit(X_encoded, y)
+        y_pred = model.predict(X_encoded)
+        r2 = r2_score(y, y_pred)
+    except Exception as e:
+        raise RuntimeError(f"Error fitting polynomial regression model: {e}")
+
+    if verbose:
+        print(f"Order-{order} epistasis R² score: {r2:.4f}")
+
+    return r2

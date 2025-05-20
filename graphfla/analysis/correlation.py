@@ -105,38 +105,16 @@ def neighbor_fit_corr(landscape, auto_calculate=True, method="pearson"):
 
     # Calculate correlation
     if method == "pearson":
-        corr, p_value = pearsonr(data_clean["fitness"], data_clean["mean_neighbor_fit"])
+        corr, _ = pearsonr(data_clean["fitness"], data_clean["mean_neighbor_fit"])
     elif method == "spearman":
-        corr, p_value = spearmanr(
-            data_clean["fitness"], data_clean["mean_neighbor_fit"]
-        )
+        corr, _ = spearmanr(data_clean["fitness"], data_clean["mean_neighbor_fit"])
     else:  # kendall
-        corr, p_value = kendalltau(
-            data_clean["fitness"], data_clean["mean_neighbor_fit"]
-        )
+        corr, _ = kendalltau(data_clean["fitness"], data_clean["mean_neighbor_fit"])
 
-    # Calculate additional statistics
-    fitness_mean = data_clean["fitness"].mean()
-    fitness_std = data_clean["fitness"].std()
-    neighbor_fitness_mean = data_clean["mean_neighbor_fit"].mean()
-    neighbor_fitness_std = data_clean["mean_neighbor_fit"].std()
-
-    return {
-        "correlation": corr,
-        "p_value": p_value,
-        "method": method,
-        "n_nodes": n_nodes,
-        "n_excluded": n_excluded,
-        "stats": {
-            "fitness_mean": fitness_mean,
-            "fitness_std": fitness_std,
-            "neighbor_fitness_mean": neighbor_fitness_mean,
-            "neighbor_fitness_std": neighbor_fitness_std,
-        },
-    }
+    return corr
 
 
-def fdc(
+def fitness_distance_corr(
     landscape,
     method: str = "spearman",
 ) -> tuple:
@@ -275,26 +253,22 @@ def basin_fit_corr(landscape, method: str = "spearman") -> tuple:
     fitness_values = lo_data["fitness"]
 
     if method == "spearman":
-        corr_greedy, p_value_greedy = spearmanr(basin_sizes, fitness_values)
+        corr_greedy, _ = spearmanr(basin_sizes, fitness_values)
     elif method == "pearson":
-        corr_greedy, p_value_greedy = pearsonr(basin_sizes, fitness_values)
+        corr_greedy, _ = pearsonr(basin_sizes, fitness_values)
     else:
         raise ValueError(f"Invalid method '{method}'. Choose 'spearman' or 'pearson'.")
 
     if "size_basin_accessible" in lo_data.columns:
         basin_sizes_accessible = lo_data["size_basin_accessible"]
         if method == "spearman":
-            corr_accessible, p_value_accessible = spearmanr(
-                basin_sizes_accessible, fitness_values
-            )
+            corr_accessible, _ = spearmanr(basin_sizes_accessible, fitness_values)
         elif method == "pearson":
-            corr_accessible, p_value_accessible = pearsonr(
-                basin_sizes_accessible, fitness_values
-            )
+            corr_accessible, _ = pearsonr(basin_sizes_accessible, fitness_values)
 
         return {
-            "greedy": (corr_greedy, p_value_greedy),
-            "accessible": (corr_accessible, p_value_accessible),
+            "greedy": corr_greedy,
+            "accessible": corr_accessible,
         }
     else:
-        return {"greedy": (corr_greedy, p_value_greedy)}
+        return {"greedy": corr_greedy}

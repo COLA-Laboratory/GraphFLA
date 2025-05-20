@@ -89,6 +89,9 @@ class SequencePreprocessor:
         verbose: bool = True,
     ) -> Tuple[pd.DataFrame, pd.Series, Dict[str, str], int]:
         """Preprocess sequence data."""
+        # Validate that all values in X are in the alphabet
+        self._validate_alphabet_conformity(X)
+
         # Use the existing _preprocess_sequence_input function
         X_df, seq_data_types, seq_len = _preprocess_sequence_input(
             X_input=X,
@@ -114,6 +117,80 @@ class SequencePreprocessor:
         f_series.index = X_df.index
 
         return X_df, f_series, seq_data_types, seq_len
+
+    def _validate_alphabet_conformity(
+        self, X: Union[List[str], pd.Series, np.ndarray, pd.DataFrame]
+    ) -> None:
+        """Validates that all values in X conform to the specified alphabet and warns about unused alphabet characters."""
+        valid_chars = set(self.alphabet)
+        used_chars = set()
+
+        # Handle different input types
+        if isinstance(X, (list, tuple, pd.Series)):
+            # For sequence format (list of strings)
+            for idx, seq in enumerate(X):
+                if isinstance(seq, str):
+                    seq_chars = set(seq.upper())
+                    invalid_chars = seq_chars - valid_chars
+                    if invalid_chars:
+                        raise ValueError(
+                            f"Input X values at index {idx} contain {', '.join(invalid_chars)}, "
+                            f"which is not among specified alphabet: {self.alphabet}"
+                        )
+                    used_chars.update(seq_chars)
+
+        elif isinstance(X, pd.DataFrame):
+            # For tabular format
+            for col in X.columns:
+                for idx, val in enumerate(X[col]):
+                    if val is not None:
+                        val_upper = str(val).upper()
+                        if val_upper not in valid_chars:
+                            raise ValueError(
+                                f"Input X values at position ({idx}, {col}) contain '{val}', "
+                                f"which is not among specified alphabet: {self.alphabet}"
+                            )
+                        used_chars.add(val_upper)
+
+        elif isinstance(X, np.ndarray):
+            # For numpy array
+            if X.ndim == 1:
+                # 1D array (like a list of sequences)
+                for idx, seq in enumerate(X):
+                    if isinstance(seq, str):
+                        seq_chars = set(seq.upper())
+                        invalid_chars = seq_chars - valid_chars
+                        if invalid_chars:
+                            raise ValueError(
+                                f"Input X values at index {idx} contain {', '.join(invalid_chars)}, "
+                                f"which is not among specified alphabet: {self.alphabet}"
+                            )
+                        used_chars.update(seq_chars)
+            else:
+                # 2D array (tabular format)
+                for i in range(X.shape[0]):
+                    for j in range(X.shape[1]):
+                        val = X[i, j]
+                        if val is not None:
+                            val_upper = str(val).upper()
+                            if val_upper not in valid_chars:
+                                raise ValueError(
+                                    f"Input X values at position ({i}, {j}) contain '{val}', "
+                                    f"which is not among specified alphabet: {self.alphabet}"
+                                )
+                            used_chars.add(val_upper)
+
+        # Check for unused alphabet characters
+        unused_chars = valid_chars - used_chars
+        if unused_chars:
+            import warnings
+
+            warnings.warn(
+                f"The following characters appear in the alphabet but are missing from input X: "
+                f"{', '.join(sorted(unused_chars))}. "
+                f"This might indicate you're using an incorrect alphabet for your data.",
+                UserWarning,
+            )
 
 
 class DefaultPreprocessor:
@@ -190,7 +267,6 @@ class DefaultPreprocessor:
         X_df.reset_index(drop=True, inplace=True)
         f_series.reset_index(drop=True, inplace=True)
         f_series.index = X_df.index
-
         return X_df, f_series, data_types_validated, len(data_types_validated)
 
     def _validate_data_types(
