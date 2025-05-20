@@ -5,7 +5,17 @@
 [![Issues](https://img.shields.io/github/issues/yourusername/graphfla.svg)](https://github.com/yourusername/graphfla/issues)
 [![Stars](https://img.shields.io/github/stars/yourusername/graphfla.svg)](https://github.com/yourusername/graphfla/stargazers) -->
 
-**GraphFLA** (Graph-based Fitness Landscape Analysis) is a Python framework for constructing, analyzing, and manipulating **fitness landscapes** as graphs. It provides a broad collection of features rooted in evolutoinary biology to decipher the topography of compelx fitness landscapes of diverse modalities.
+![Alt text](images/landscape.jpg)
+
+**GraphFLA** (Graph-based Fitness Landscape Analysis) is a Python framework for constructing, analyzing, manipulating and visualizing **fitness landscapes** as graphs. It provides a broad collection of features rooted in evolutoinary biology to decipher the topography of compelx fitness landscapes of diverse modalities.
+
+## Key Features
+- **Versatility:** applicable to arbitrary discrete, combinatorial sequence-fitness data, ranging from biomolecules like DNA, RNA, and protein, to functional units like genes, to complex ecological communities.
+- **Comprehensiveness:** offers a holistic collection of 20+ features for characterizing 4 fundamental topographical aspects of fitness landscape, including ruggedness, navigability, epistassi and neutrality.
+- **Interoperability:** works with the same data format (i.e., `X` and `f`) as in training machine learning (ML) models, thus interoperable with established ML ecosystems in different disciplines.
+- **Scalability:** heavily optimized to be capable of handling landscapes with even millions of variants.
+- **Extensibility:** new landscape features can be easily added via an unified API. 
+
 
 ## Quick Start
 
@@ -15,9 +25,9 @@ Our documentation website is currently under development, but `GraphFLA` is quit
 
 `GraphFLA` is designed to interoperate with established ML frameworks and benchmarks by using the same data format as in ML model training: an `X` and an `f`. 
 
-Specifically, `X` can either be a list of sequences of strings representing genotypes, or a `pd.DataFrame` or `numpy.ndarray`, in which each column represents a loci; `f` can either be a list, `pd.Series` or `numpy.ndarray`.
+Specifically, `X` can either be a list of sequences of strings representing genotypes, or a `pd.DataFrame` or an `numpy.ndarray`, wherein each column represents a loci; `f` can either be a list, `pd.Series` or `numpy.ndarray`.
 
-Yet, we note that it is recommended to remove redundant loci in `X` (i.e., those that are never mutated across the whole library) to make landscape construction faster.
+To make landscape construction faster, we recommended removing redundant loci in `X` (i.e., those that are never mutated across the whole library) .
 
 ```python
 import pandas as pd
@@ -32,7 +42,7 @@ f = data["fitness"]
 
 Creating a landscape object in `GraphFLA` is much like training an ML model: we first initialize a `Landscape` class, and then build it with our data. 
 
-Here, assume we are working with DNA sequences. `GraphFLA` provides registered methods for performance optimization for these, which can be triggered by specifying `type="dna"`. Alternatively, you can directly use the `DNALandscape` class, which is natively built for DNA data.
+Here, assume we are working with DNA sequences. `GraphFLA` provides registered methods for performance optimization for this type, which can be triggered by specifying `type="dna"`. Alternatively, you can directly use the `DNALandscape` class to get the same effect, which is natively built for DNA data.
 
 The `maximize` parameter specifies the direction of optimization, i.e., whether `f` is to be optimized or minimized.
 
@@ -51,7 +61,7 @@ landscape.build_from_data(X, f, verbose=True)
 
 ### 3. Landscape analysis
 
-Once the landscape is constructed, we can then analyze its features using the functions listed in the Feature Table.
+Once the landscape is constructed, we can then analyze its features using the available functions (see later).
 
 ```python
 from graphfla.analysis import (
@@ -98,7 +108,7 @@ data_types = {
 landscape.build_from_data(X, f, data_types=data_types, verbose=True)
 ```
 
-## Features
+## Landscape Analysis Features
 
 `GraphFLA` currently supports the following features for landscape analysis.
 
@@ -134,15 +144,15 @@ landscape.build_from_data(X, f, data_types=data_types, verbose=True)
 |                          | `fitness_distribution`           | Cauchy location parameter              | (-∞, ∞)       | ↑ central tendency estimate            |
 
 
-## Landscapes
+## Landscape Classes
 
 `GraphFLA` currently offers the following classes for landscape construction.
 
-|**Classes**|**Supported Search Space Types**|**Description**|
+|**Classes**|**Supported search space**|**Description**|
 |--|--|--|
 |`Landscape`|All discrete, combinatorial spaces, where each variable can be either categorical, boolean, or ordinal|The base landscape class, most generalizable|
 |`SequenceLandscape`|Categorical data where each variable takes values from the same alphabet.|Class optimized for general sequence data|
-|`BooleanLandscape`|Boolean data|Class optimized for boolean data|
+|`BooleanLandscape`|Boolean space|Class optimized for boolean data|
 |`DNALandscape`|DNA sequence space|Class optimized for DNA data|
 |`RNALandscape`|RNA sequence space|Class optimized for RNA data|
 |`ProteinLandscape`|Protein sequence space|Class optimized for protein data|
