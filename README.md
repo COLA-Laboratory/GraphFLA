@@ -16,12 +16,19 @@
 - **Scalability:** heavily optimized to be capable of handling landscapes with even millions of variants.
 - **Extensibility:** new landscape features can be easily added via an unified API. 
 
-
 ## Quick Start
 
 Our documentation website is currently under development, but `GraphFLA` is quite easy to get started with!
 
-### 1. Prepare your data
+### 1. Installation
+
+Official installation (pip)
+
+```
+pip install graphfla
+```
+
+### 2. Prepare your data
 
 `GraphFLA` is designed to interoperate with established ML frameworks and benchmarks by using the same data format as in ML model training: an `X` and an `f`. 
 
@@ -38,7 +45,7 @@ X = data["sequences"]
 f = data["fitness"]
 ```
 
-### 2. Create the landscape object
+### 3. Create the landscape object
 
 Creating a landscape object in `GraphFLA` is much like training an ML model: we first initialize a `Landscape` class, and then build it with our data. 
 
@@ -59,7 +66,7 @@ landscape = Landscape(type="dna", maximize=True)
 landscape.build_from_data(X, f, verbose=True)
 ```
 
-### 3. Landscape analysis
+### 4. Landscape analysis
 
 Once the landscape is constructed, we can then analyze its features using the available functions (see later).
 
@@ -78,7 +85,7 @@ r_s_score = r_s_ratio(landscape)
 neutrality_index = neutrality(landscape)
 go_access = global_optima_accessibility(landscape)
 ```
-### 4. Playing with arbitrary combinatorial data
+### 5. Playing with arbitrary combinatorial data
 The `type` parameter of the `Landscape` class currently supports `"dna"`, `rna`, `"protein"`, and `"boolean"`. However, this does not mean that `GraphFLA` can only work with these types of data; instead, these registered values are only for convenience and performance optimization purpose. 
 
 In fact, `GraphFLA` can handle arbitrary combinatorial search space as long as the values of each variable is discrete. To work with such data, we can initialize a general landscape, and then pass in a dictionary to specify the data type of each variable (options: `{"ordinal", "cateogrical", "boolean"}`).
