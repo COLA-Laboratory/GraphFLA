@@ -541,7 +541,7 @@ def _preprocess_boolean_input(
     X_df.columns = [f"bit_{i}" for i in range(bit_length)]
 
     # Create data_types dictionary
-    data_types = {str(col): "boolean" for col in X_df.columns}
+    data_types = {col: "boolean" for col in X_df.columns}
 
     if verbose:
         print(
@@ -651,7 +651,7 @@ def _preprocess_sequence_input(
             )
 
     # Create data_types dictionary
-    data_types = {str(col): "categorical" for col in X_df.columns}
+    data_types = {col: "categorical" for col in X_df.columns}
     if verbose:
         print("Sequence input preprocessing complete.")
     return X_df, data_types, seq_len

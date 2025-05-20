@@ -1,0 +1,47 @@
+Metadata-Version: 2.4
+Name: graphfla
+Version: 0.1.0
+Summary: A Python package for Graph-based Fitness Landscape Analysis.
+Home-page: https://github.com/COLA-Laboratory/GraphFLA/tree/main
+Author: Mingyu Huang
+Author-email: m.huang.gla@outlook.com
+Classifier: Programming Language :: Python :: 3
+Classifier: Programming Language :: Python :: 3.9
+Classifier: Programming Language :: Python :: 3.10
+Classifier: Programming Language :: Python :: 3.11
+Classifier: License :: OSI Approved :: MIT License
+Classifier: Operating System :: OS Independent
+Classifier: Intended Audience :: Science/Research
+Classifier: Topic :: Scientific/Engineering
+Classifier: Topic :: Scientific/Engineering :: Artificial Intelligence
+Classifier: Topic :: Scientific/Engineering :: Bio-Informatics
+Classifier: Development Status :: 3 - Alpha
+Requires-Python: >=3.8
+Description-Content-Type: text/plain
+License-File: LICENSE
+Requires-Dist: joblib>=1.0.0
+Requires-Dist: numpy>=1.19
+Requires-Dist: pandas>=1.1
+Requires-Dist: python-igraph>=0.9
+Requires-Dist: scikit-learn>=0.24
+Requires-Dist: scipy>=1.6.0
+Requires-Dist: tqdm>=4.40
+Dynamic: author
+Dynamic: author-email
+Dynamic: classifier
+Dynamic: description
+Dynamic: description-content-type
+Dynamic: home-page
+Dynamic: license-file
+Dynamic: requires-dist
+Dynamic: requires-python
+Dynamic: summary
+
+
+graphfla: A Python package for Graph-based Fitness Landscape Analysis.
+========================================================
+graphfla provides tools for generating, constructing, analyzing and 
+manipulating fitness landscapes commonly encountered in evolutionary biology 
+and black-box optimization. It includes a variety of features chacterizing
+different aspects of fitness landscape topography, such as ruggedness,
+navigability, neutrality, and epistasis.

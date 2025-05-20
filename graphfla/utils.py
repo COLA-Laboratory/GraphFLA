@@ -1,4 +1,5 @@
 import numpy as np
+import igraph as ig
 
 
 def autocorr_numpy(x, lag=1):
@@ -13,6 +14,36 @@ def autocorr_numpy(x, lag=1):
     denominator = np.dot(x_centered, x_centered)
 
     return numerator / denominator if denominator != 0 else np.nan
+
+
+def add_network_metrics(graph: ig.Graph, weight: str = "delta_fit") -> ig.Graph:
+    """
+    Calculate basic network metrics for nodes in an igraph directed graph.
+
+    Parameters
+    ----------
+    graph : ig.Graph
+        The directed graph for which the network metrics are to be calculated.
+
+    weight : str, default='delta_fit'
+        The edge attribute key to be considered for weighting.
+
+    Returns
+    -------
+    ig.Graph
+        The graph with node attributes added: in-degree, out-degree, and PageRank.
+    """
+    # Compute in-degree and out-degree
+    graph.vs["in_degree"] = graph.indegree()
+    graph.vs["out_degree"] = graph.outdegree()
+
+    # Compute PageRank (with weights if the attribute exists)
+    weights = graph.es[weight] if weight in graph.edge_attributes() else None
+    pagerank = graph.pagerank(weights=weights, directed=True)
+
+    graph.vs["pagerank"] = pagerank
+
+    return graph
 
 
 # def is_ancestor_fast(G: nx.DiGraph, start_node: Any, target_node: Any) -> bool:
@@ -55,37 +86,6 @@ def autocorr_numpy(x, lag=1):
 #                 visited.add(successor)
 #                 stack.append(successor)
 #     return False
-
-
-# def add_network_metrics(graph: ig.Graph, weight: str = "delta_fit") -> ig.Graph:
-#     """
-#     Calculate basic network metrics for nodes in an igraph directed graph.
-
-#     Parameters
-#     ----------
-#     graph : ig.Graph
-#         The directed graph for which the network metrics are to be calculated.
-
-#     weight : str, default='delta_fit'
-#         The edge attribute key to be considered for weighting.
-
-#     Returns
-#     -------
-#     ig.Graph
-#         The graph with node attributes added: in-degree, out-degree, and PageRank.
-#     """
-#     # Compute in-degree and out-degree
-#     graph.vs["in_degree"] = graph.indegree()
-#     graph.vs["out_degree"] = graph.outdegree()
-
-#     # Compute PageRank (with weights if the attribute exists)
-#     weights = graph.es[weight] if weight in graph.edge_attributes() else None
-#     pagerank = graph.pagerank(weights=weights, directed=True)
-
-#     graph.vs["pagerank"] = pagerank
-
-#     return graph
-
 
 # def get_embedding(
 #     graph: nx.Graph, data: pd.DataFrame, model: Any, reducer: Any

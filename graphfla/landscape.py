@@ -28,7 +28,6 @@ from ._neighbors import (
     SequenceNeighborGenerator,
 )
 
-import time
 from functools import wraps
 
 
