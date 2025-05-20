@@ -1,0 +1,7 @@
+joblib==1.4.2
+numpy==2.2.6
+pandas==2.2.3
+python_igraph==0.11.4
+scikit_learn==1.6.1
+scipy==1.15.3
+tqdm==4.67.1
