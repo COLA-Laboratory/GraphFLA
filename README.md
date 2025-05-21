@@ -18,13 +18,10 @@
     <a href="https://github.com/psf/black" rel="nofollow">
         <img src="https://img.shields.io/badge/code%20style-black-000000.svg" alt="Code style: black" />
     </a>
-    <a href="https://results.pre-commit.ci/latest/github/nnaisense/evotorch/master" rel="nofollow">
-        <img src="https://results.pre-commit.ci/badge/github/nnaisense/evotorch/master.svg" alt="pre-commit.ci status" />
-    </a>
 </div>
 <br>
 
-**GraphFLA** (Graph-based Fitness Landscape Analysis) is a Python framework for constructing, analyzing, manipulating and visualizing **fitness landscapes** as graphs. It provides a broad collection of features rooted in evolutoinary biology to decipher the topography of compelx fitness landscapes of diverse modalities.
+**GraphFLA** (Graph-based Fitness Landscape Analysis) is a Python framework for constructing, analyzing, manipulating and visualizing **fitness landscapes** as graphs. It provides a broad collection of features rooted in evolutoinary biology to decipher the topography of complex fitness landscapes of diverse modalities.
 
 Feel free to explore examples in Google Colab!
 
@@ -33,7 +30,7 @@ Feel free to explore examples in Google Colab!
 ## Key Features
 - **Versatility:** applicable to arbitrary discrete, combinatorial sequence-fitness data, ranging from biomolecules like DNA, RNA, and protein, to functional units like genes, to complex ecological communities.
 - **Comprehensiveness:** offers a holistic collection of 20+ features for characterizing 4 fundamental topographical aspects of fitness landscape, including ruggedness, navigability, epistassi and neutrality.
-- **Interoperability:** works with the same data format (i.e., `X` and `f`) as in training machine learning (ML) models, thus interoperable with established ML ecosystems in different disciplines.
+- **Interoperability:** works with the same data format (i.e., `X` and `f`) as in training machine learning (ML) models, thus being interoperable with established ML ecosystems in different disciplines.
 - **Scalability:** heavily optimized to be capable of handling landscapes with even millions of variants.
 - **Extensibility:** new landscape features can be easily added via an unified API. 
 
