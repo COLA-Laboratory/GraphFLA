@@ -8,6 +8,26 @@
 ![PyPI version](https://img.shields.io/pypi/v/graphfla)
 ![Code style: black](https://img.shields.io/badge/code%20style-black-000000)
 
+<div align="center">
+    <a href="https://www.python.org/" rel="nofollow">
+        <img src="https://img.shields.io/pypi/pyversions/graphfla" alt="Python" />
+    </a>
+    <a href="https://pypi.org/project/graphfla/" rel="nofollow">
+        <img src="https://img.shields.io/pypi/v/graphfla" alt="PyPI" />
+    </a>
+    <a href="https://github.com/COLA-Laboratory/GraphFLA/blob/main/LICENSE" rel="nofollow">
+        <img src="https://img.shields.io/pypi/l/graphfla" alt="License" />
+    </a>
+    <a href="https://github.com/COLA-Laboratory/GraphFLA/actions/workflows/test.yml" rel="nofollow">
+        <img src="https://github.com/COLA-Laboratory/GraphFLA/actions/workflows/test.yml/badge.svg" alt="Test" />
+    </a>
+    <a href="https://github.com/psf/black" rel="nofollow">
+        <img src="https://img.shields.io/badge/code%20style-black-000000.svg" alt="Code style: black" />
+    </a>
+    <a href="https://results.pre-commit.ci/latest/github/nnaisense/evotorch/master" rel="nofollow">
+        <img src="https://results.pre-commit.ci/badge/github/nnaisense/evotorch/master.svg" alt="pre-commit.ci status" />
+    </a>
+</div>
 <!-- ![Tests](https://img.shields.io/github/actions/workflow/status/your-username/your-repo-name/test.yml?label=test) -->
 
 
