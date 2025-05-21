@@ -1,5 +1,7 @@
 # GraphFLA
 
+![Alt text](images/landscape.jpg)
+
 <div align="center">
     <a href="https://www.python.org/" rel="nofollow">
         <img src="https://img.shields.io/pypi/pyversions/graphfla" alt="Python" />
@@ -20,9 +22,7 @@
         <img src="https://results.pre-commit.ci/badge/github/nnaisense/evotorch/master.svg" alt="pre-commit.ci status" />
     </a>
 </div>
-
-
-![Alt text](images/landscape.jpg)
+<br>
 
 **GraphFLA** (Graph-based Fitness Landscape Analysis) is a Python framework for constructing, analyzing, manipulating and visualizing **fitness landscapes** as graphs. It provides a broad collection of features rooted in evolutoinary biology to decipher the topography of compelx fitness landscapes of diverse modalities.
 
