@@ -1,13 +1,5 @@
 # GraphFLA
 
-<!-- [![Python Versions](https://img.shields.io/pypi/pyversions/graphfla.svg)](https://pypi.python.org/pypi/graphfla/)
-[![Issues](https://img.shields.io/github/issues/yourusername/graphfla.svg)](https://github.com/yourusername/graphfla/issues)
-[![Stars](https://img.shields.io/github/stars/yourusername/graphfla.svg)](https://github.com/yourusername/graphfla/stargazers) -->
-[![License](https://img.shields.io/pypi/l/graphfla)](./LICENSE)
-![Python versions](https://img.shields.io/pypi/pyversions/graphfla)
-![PyPI version](https://img.shields.io/pypi/v/graphfla)
-![Code style: black](https://img.shields.io/badge/code%20style-black-000000)
-
 <div align="center">
     <a href="https://www.python.org/" rel="nofollow">
         <img src="https://img.shields.io/pypi/pyversions/graphfla" alt="Python" />
@@ -28,7 +20,6 @@
         <img src="https://results.pre-commit.ci/badge/github/nnaisense/evotorch/master.svg" alt="pre-commit.ci status" />
     </a>
 </div>
-<!-- ![Tests](https://img.shields.io/github/actions/workflow/status/your-username/your-repo-name/test.yml?label=test) -->
 
 
 ![Alt text](images/landscape.jpg)
