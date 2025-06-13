@@ -67,6 +67,8 @@ from .epistasis import (
     diminishing_returns_index,
     increasing_costs_index,
     gamma_statistic,
+    walsh_hadamard_coefficient,
+    extradimensional_bypass_analysis,
 )
 
 __all__ = [
@@ -88,6 +90,8 @@ __all__ = [
     "diminishing_returns_index",
     "increasing_costs_index",
     "gamma_statistic",
+    "walsh_hadamard_coefficient",
+    "extradimensional_bypass_analysis",
     "global_optima_accessibility",
     "local_optima_accessibility",
     "mean_dist_lo",

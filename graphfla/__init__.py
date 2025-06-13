@@ -40,7 +40,8 @@ _submodules = [
     "plotting",
     "problems",
     "sampling",
-    "filters" "utils",
+    "filters",
+    "utils",
 ]
 
 __all__ = _submodules + _exported_config_functions + _exported_core_objects

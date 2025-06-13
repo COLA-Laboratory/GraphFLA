@@ -160,18 +160,13 @@ def fitness_distance_corr(
     return correlation
 
 
-def ffi(
-    landscape, frac: float = 1, min_len: int = 3, method: str = "spearman"
-) -> tuple:
+def ffi(landscape, min_len: int = 3, method: str = "spearman") -> tuple:
     """
     Calculate the fitness flattening index (FFI) of the landscape. It assesses whether the
     landscape tends to be flatter around the global optimum by evaluating adaptive paths.
 
     Parameters
     ----------
-    frac : float, default=1
-        The fraction of adaptive paths to be assessed.
-
     min_len : int, default=3
         Minimum length of an adaptive path for it to be considered.
 

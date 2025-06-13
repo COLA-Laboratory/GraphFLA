@@ -1,3 +1,4 @@
+from sklearn.preprocessing import OneHotEncoder
 from scipy.stats import spearmanr, pearsonr
 from typing import Any, Tuple, Literal
 from collections import defaultdict
@@ -8,6 +9,9 @@ import numpy as np
 import igraph as ig
 import pandas as pd
 import warnings
+import itertools
+import math
+import copy
 
 
 def _assign_roles_for_epistasis_igraph(graph, squares):
@@ -218,7 +222,6 @@ def classify_epistasis(landscape, approximate=False, sample_cut_prob=0.2):
         landscape.graph.motifs_randesu(
             size=motif_size, callback=motif_collector_callback_exact
         )
-        total_collected = sum(len(v) for v in collected_square_instances.values())
 
         # Derive exact counts from collected instances
         reci_sign_count = len(collected_square_instances.get(19, []))
@@ -1017,3 +1020,596 @@ def higher_order_epistasis(landscape, order=2, verbose=False, n_jobs=1):
         print(f"Order-{order} epistasis R² score: {r2:.4f}")
 
     return r2
+
+
+def walsh_hadamard_coefficient(landscape, max_order=2, max_cells=1e9, chunk_size=1000):
+    """
+    Compute Walsh-Hadamard coefficients for a fitness landscape.
+
+    This function calculates Walsh-Hadamard coefficients for base and interaction terms
+    up to a specified order using the ensemble encoding approach from the extended
+    Walsh-Hadamard transform. The coefficients quantify the contribution of individual
+    mutations and their interactions to the overall fitness.
+
+    Parameters
+    ----------
+    landscape : Landscape
+        The fitness landscape object containing genotype-fitness data.
+    max_order : int, default=2
+        Maximum interaction order to consider. Higher orders capture more complex
+        epistatic interactions but increase computational cost.
+    max_cells : float, default=1e9
+        Maximum matrix cells permitted to prevent excessive memory usage during
+        interaction feature generation.
+    chunk_size : int, default=1000
+        Chunk size for H matrix construction to optimize memory usage for large datasets.
+
+    Returns
+    -------
+    dict
+        A dictionary with sorted coefficients organized by interaction order:
+        - Keys are integers representing interaction orders (0 for wildtype,
+          1 for single mutations, 2 for pairwise interactions, etc.)
+        - Values are dictionaries mapping feature names to their coefficients
+
+    Raises
+    ------
+    RuntimeError
+        If the landscape has not been built.
+    ValueError
+        If memory limit is exceeded during computation or if input data is invalid.
+
+    Notes
+    -----
+    The Walsh-Hadamard transform provides a complete decomposition of the fitness
+    function into additive and epistatic components. Higher-order coefficients
+    represent increasingly complex epistatic interactions between mutations.
+
+    Examples
+    --------
+    >>> # Assuming 'landscape' is a built Landscape object
+    >>> coefficients = walsh_hadamard_coefficient(landscape, max_order=3)
+    >>> print(f"Wildtype coefficient: {coefficients[0]['WT']}")
+    >>> print(f"Single mutation effects: {list(coefficients[1].keys())}")
+    >>> print(f"Pairwise interactions: {list(coefficients[2].keys())}")
+    """
+
+    # Check if landscape is built
+    landscape._check_built()
+
+    if landscape.graph is None or "fitness" not in landscape.graph.vs.attributes():
+        raise ValueError(
+            "Landscape graph or node 'fitness' attribute not found. "
+            "Landscape must be built first."
+        )
+
+    # Extract data from landscape
+    data = landscape.get_data()
+    X = data.iloc[:, : landscape.n_vars]  # Configuration data
+    f = data["fitness"].values  # Fitness values
+
+    # Convert configurations to string format for Walsh-Hadamard transform
+    # Handle different landscape types appropriately
+    if landscape.type in ["boolean"]:
+        # For boolean landscapes, convert to binary strings
+        X_strings = ["".join(map(str, row.astype(int))) for _, row in X.iterrows()]
+    elif landscape.type in ["dna", "rna", "protein"]:
+        # For sequence landscapes, use the original sequence representation
+        if hasattr(landscape, "configs") and landscape.configs is not None:
+            # Try to reconstruct original sequences if available
+            X_strings = []
+            for config_tuple in landscape.configs.values:
+                # Convert encoded config back to sequence string
+                if landscape.type == "dna":
+                    alphabet = ["A", "C", "G", "T"]
+                elif landscape.type == "rna":
+                    alphabet = ["A", "C", "G", "U"]
+                else:  # protein
+                    alphabet = list("ACDEFGHIKLMNPQRSTVWY")
+
+                sequence = "".join([alphabet[int(pos)] for pos in config_tuple])
+                X_strings.append(sequence)
+        else:
+            # Fallback: treat as categorical and convert to strings
+            X_strings = ["".join(map(str, row)) for _, row in X.iterrows()]
+    else:
+        # For default/categorical landscapes, convert to strings
+        X_strings = ["".join(map(str, row)) for _, row in X.iterrows()]
+
+    # Determine wildtype (first configuration or all zeros for binary)
+    if landscape.type == "boolean":
+        wildtype = "0" * landscape.n_vars
+    else:
+        wildtype = X_strings[0]  # Use first sequence as wildtype
+
+    wildtype_split = [c for c in wildtype]
+
+    # Create DataFrame for sequence features
+    X_df = pd.DataFrame([list(seq) for seq in X_strings])
+
+    # One-hot encode sequence features
+    enc = OneHotEncoder(
+        handle_unknown="ignore", drop=np.array(wildtype_split), dtype=int
+    )
+    enc.fit(X_df)
+
+    # Generate feature names
+    one_hot_names = []
+    for i, feature_name in enumerate(enc.get_feature_names_out()):
+        pos = int(feature_name.split("_")[0][1:])  # Extract position
+        state = feature_name.split("_")[1]  # Extract state
+        one_hot_names.append(f"{wildtype_split[pos]}{pos+1}{state}")
+
+    # Create one-hot encoded DataFrame
+    Xoh = pd.DataFrame(enc.transform(X_df).toarray(), columns=one_hot_names)
+
+    # Add WT column
+    Xoh = pd.concat([pd.DataFrame({"WT": [1] * len(Xoh)}), Xoh], axis=1)
+
+    # Generate interaction features with memory optimization
+    Xohi = _generate_interactions(Xoh, max_order, max_cells)
+
+    # Ensemble encode features using Walsh-Hadamard transform with chunking
+    Xensemble = _ensemble_encode_features(
+        X_strings, Xohi.columns, wildtype, X_df, chunk_size
+    )
+
+    # Compute coefficients using least squares
+    # θ = (X^T X)^(-1) X^T f
+    XtX_inv = np.linalg.pinv(np.dot(Xensemble.T, Xensemble))
+    Xtf = np.dot(Xensemble.T, f)
+    coefficients = np.dot(XtX_inv, Xtf)
+
+    # Create results dictionary with sorted coefficients
+    coef_dict = {}
+    for i, feature_name in enumerate(Xohi.columns):
+        if feature_name == "WT":
+            order = 0
+        else:
+            order = len(feature_name.split("_"))
+
+        if order not in coef_dict:
+            coef_dict[order] = {}
+
+        coef_dict[order][feature_name] = coefficients[i]
+
+    # Sort coefficients within each order
+    for order in coef_dict:
+        coef_dict[order] = dict(sorted(coef_dict[order].items()))
+
+    return coef_dict
+
+
+def _generate_interactions(Xoh, max_order, max_cells):
+    """Generate interaction features up to max_order with memory optimization."""
+    if max_order < 2:
+        return copy.deepcopy(Xoh)
+
+    # Get mutations observed
+    mut_count = list(Xoh.sum(axis=0))
+    pheno_mut = [
+        Xoh.columns[i]
+        for i in range(len(Xoh.columns))
+        if mut_count[i] != 0 and Xoh.columns[i] != "WT"
+    ]
+
+    # Group mutations by position
+    all_pos = list(set([i[1:-1] for i in pheno_mut]))
+    all_pos_mut = {int(i): [j for j in pheno_mut if j[1:-1] == i] for i in all_pos}
+
+    # Generate all theoretical interaction features
+    all_features = {}
+    int_order_dict = {}
+
+    for n in range(2, max_order + 1):
+        all_features[n] = []
+        pos_comb = list(itertools.combinations(sorted(all_pos_mut.keys()), n))
+        for p in pos_comb:
+            all_features[n] += [
+                "_".join(c) for c in itertools.product(*[all_pos_mut[j] for j in p])
+            ]
+        int_order_dict[n] = len(all_features[n])
+
+    print(
+        "... Total theoretical features (order:count): "
+        + ", ".join(
+            [
+                str(i) + ":" + str(int_order_dict[i])
+                for i in sorted(int_order_dict.keys())
+            ]
+        )
+    )
+
+    # Flatten all features
+    all_features_flat = list(itertools.chain(*list(all_features.values())))
+
+    # Create interaction columns with memory checking
+    int_list = []
+    int_list_names = []
+    int_order_dict_retained = {}
+
+    for c in all_features_flat:
+        c_split = c.split("_")
+        int_col = (Xoh.loc[:, c_split].sum(axis=1) == len(c_split)).astype(int)
+
+        # Check if minimum number of observations satisfied (kept >= 0 as in original)
+        if sum(int_col) >= 0:
+            int_list.append(int_col)
+            int_list_names.append(c)
+
+            # Track retained features by order
+            order = len(c_split)
+            if order not in int_order_dict_retained:
+                int_order_dict_retained[order] = 1
+            else:
+                int_order_dict_retained[order] += 1
+
+        # Memory footprint check (from original code)
+        if len(int_list) * len(Xoh) > max_cells:
+            print(
+                f"Error: Too many interaction terms: number of feature matrix cells >{max_cells:>.0e}"
+            )
+            raise ValueError("Memory limit exceeded")
+
+    print(
+        "... Total retained features (order:count): "
+        + ", ".join(
+            [
+                str(i)
+                + ":"
+                + str(int_order_dict_retained[i])
+                + " ("
+                + str(round(int_order_dict_retained[i] / int_order_dict[i] * 100, 1))
+                + "%)"
+                for i in sorted(int_order_dict_retained.keys())
+            ]
+        )
+    )
+
+    # Concatenate interaction features
+    if len(int_list) > 0:
+        Xint = pd.concat(int_list, axis=1)
+        Xint.columns = int_list_names
+        # Reorder features to match original order
+        Xint = Xint.loc[:, [i for i in all_features_flat if i in Xint.columns]]
+        Xohi = pd.concat([Xoh, Xint], axis=1)
+    else:
+        Xohi = copy.deepcopy(Xoh)
+
+    return Xohi
+
+
+def _ensemble_encode_features(X, feature_names, wildtype, X_df, chunk_size):
+    """Ensemble encode features using Walsh-Hadamard transform with chunking optimization."""
+
+    # Wild-type mask variant sequences
+    geno_list = []
+    for seq in X:
+        masked = "".join(x if x != y else "0" for x, y in zip(seq, wildtype))
+        geno_list.append(masked)
+
+    # Convert feature names to coefficient strings
+    coef_list = [
+        _coefficient_to_sequence(coef, len(wildtype)) for coef in feature_names
+    ]
+
+    # Determine number of states per position (optimized calculation)
+    state_counts = X_df.apply(lambda col: col.value_counts(), axis=0)
+    state_list = [(state_counts[col] > 0).sum() for col in state_counts.columns]
+
+    # Compute Walsh-Hadamard matrices with chunking
+    print("Construction time for H_matrix...")
+    hmat_inv = _H_matrix_chunker(
+        str_geno=geno_list,
+        str_coef=coef_list,
+        num_states=state_list,
+        invert=True,
+        chunk_size=chunk_size,
+    )
+
+    vmat_inv = _V_matrix(str_coef=coef_list, num_states=state_list, invert=True)
+
+    return pd.DataFrame(np.matmul(hmat_inv, vmat_inv), columns=feature_names)
+
+
+def _coefficient_to_sequence(coefficient, length):
+    """Convert coefficient string to sequence representation."""
+    coefficient_seq = ["0"] * length
+
+    if coefficient == "WT":
+        return "".join(coefficient_seq)
+
+    for i in coefficient.split("_"):
+        if len(i) > 2:  # Valid mutation format
+            pos = int(i[1:-1]) - 1
+            state = i[-1]
+            coefficient_seq[pos] = state
+
+    return "".join(coefficient_seq)
+
+
+def _H_matrix_chunker(str_geno, str_coef, num_states=2, invert=False, chunk_size=1000):
+    """Construct Walsh-Hadamard matrix in chunks (memory optimization)."""
+    # Check if chunking not necessary
+    if len(str_geno) < chunk_size:
+        return _H_matrix(str_geno, str_coef, num_states, invert)
+
+    # Chunk processing
+    hmat_list = []
+    for i in range(math.ceil(len(str_geno) / chunk_size)):
+        from_i = i * chunk_size
+        to_i = min((i + 1) * chunk_size, len(str_geno))
+        hmat_list.append(_H_matrix(str_geno[from_i:to_i], str_coef, num_states, invert))
+
+    return np.concatenate(hmat_list, axis=0)
+
+
+def _H_matrix(str_geno, str_coef, num_states=2, invert=False):
+    """Construct Walsh-Hadamard matrix."""
+    string_length = len(str_geno[0])
+
+    if isinstance(num_states, int):
+        num_states = [float(num_states)] * string_length
+    else:
+        num_states = [float(i) for i in num_states]
+
+    # Convert to numeric representation (memory efficient)
+    str_coef_num = [[ord(j) for j in i.replace("0", ".")] for i in str_coef]
+    str_geno_num = [[ord(j) for j in i] for i in str_geno]
+
+    # Matrix operations
+    num_statesi = np.repeat([num_states], len(str_geno) * len(str_coef), axis=0)
+    str_genobi = np.repeat(str_geno_num, len(str_coef), axis=0)
+    str_coefbi = np.transpose(
+        np.tile(np.transpose(np.asarray(str_coef_num)), len(str_geno))
+    )
+
+    str_genobi_eq_str_coefbi = str_genobi == str_coefbi
+    row_factor2 = str_genobi_eq_str_coefbi.sum(axis=1)
+
+    if invert:
+        row_factor1 = np.prod(str_genobi_eq_str_coefbi * (num_statesi - 2) + 1, axis=1)
+        return (row_factor1 * np.power(-1, row_factor2) / np.prod(num_states)).reshape(
+            (len(str_geno), -1)
+        )
+    else:
+        row_factor1 = (
+            np.logical_or(
+                np.logical_or(str_genobi_eq_str_coefbi, str_genobi == ord("0")),
+                str_coefbi == ord("."),
+            ).sum(axis=1)
+            == string_length
+        ).astype(float)
+        return (row_factor1 * np.power(-1, row_factor2)).reshape((len(str_geno), -1))
+
+
+def _V_matrix(str_coef, num_states=2, invert=False):
+    """Construct diagonal weighting matrix."""
+    string_length = len(str_coef[0])
+
+    if isinstance(num_states, int):
+        num_states = [float(num_states)] * string_length
+    else:
+        num_states = [float(i) for i in num_states]
+
+    str_coef_dot = [i.replace("0", ".") for i in str_coef]
+    V = np.zeros((len(str_coef), len(str_coef)))
+
+    for i in range(len(str_coef)):
+        factor1 = int(
+            np.prod(
+                [
+                    c
+                    for a, b, c in zip(str_coef_dot[i], str_coef[i], num_states)
+                    if ord(a) != ord(b)
+                ]
+            )
+        )
+        factor2 = sum(
+            [1 for a, b in zip(str_coef_dot[i], str_coef[i]) if ord(a) == ord(b)]
+        )
+
+        if invert:
+            V[i, i] = factor1 * np.power(-1, factor2)
+        else:
+            V[i, i] = 1 / (factor1 * np.power(-1, factor2))
+
+    return V
+
+
+def extradimensional_bypass_analysis(landscape, approximate=False, sample_cut_prob=0.2):
+    """
+    Analyzes extradimensional bypasses in reciprocal sign epistasis motifs.
+
+    For each motif representing reciprocal sign epistasis (type 19), this function
+    identifies whether accessible evolutionary paths exist that bypass the direct
+    path between the double mutant nodes. Such indirect paths are called
+    extradimensional bypasses and allow evolution to traverse fitness valleys
+    that would otherwise be inaccessible under strong selection.
+
+    Parameters
+    ----------
+    landscape : Landscape
+        The fitness landscape object, containing landscape.graph as an igraph.Graph
+        with a "fitness" vertex attribute.
+    approximate : bool, optional
+        If True, uses sampling to find motif instances. Faster but less accurate.
+        Defaults to False (exact enumeration of all instances).
+    sample_cut_prob : float, optional
+        The probability used for pruning the search tree at each level during
+        sampling when approximate=True. Higher values -> faster, less accurate.
+        Defaults to 0.2.
+
+    Returns
+    -------
+    dict
+        A dictionary containing:
+        - "bypass_proportion": The proportion of reciprocal sign epistasis motifs
+          for which an extradimensional bypass exists (float between 0 and 1).
+        - "average_bypass_length": The average length of extradimensional bypasses
+          for motifs where such bypasses exist. Returns NaN if no bypasses exist.
+        - "total_motifs": Total number of type 19 motifs analyzed.
+        - "motifs_with_bypass": Number of motifs that have extradimensional bypasses.
+
+    Raises
+    ------
+    AttributeError
+        If landscape.graph is not an igraph.Graph object or does not exist.
+    ValueError
+        If sample_cut_prob is not between 0 and 1, or if fitness attribute missing.
+
+    Notes
+    -----
+    Reciprocal sign epistasis occurs when both the wildtype (ab) and double mutant (AB)
+    have higher fitness than both single mutants (aB, Ab). This creates a fitness valley
+    that prevents direct evolutionary access between ab and AB. Extradimensional bypasses
+    are indirect paths through the broader fitness landscape that circumvent this valley.
+    """
+
+    # --- Validate Input ---
+    if not hasattr(landscape, "graph") or not isinstance(landscape.graph, ig.Graph):
+        raise AttributeError(
+            "Input 'landscape' must have a 'graph' attribute that is an igraph.Graph object."
+        )
+    if "fitness" not in landscape.graph.vs.attributes():
+        raise ValueError("igraph.Graph must have a 'fitness' vertex attribute.")
+    if approximate and not 0.0 <= sample_cut_prob <= 1.0:
+        raise ValueError("sample_cut_prob must be between 0.0 and 1.0")
+
+    # --- Find Type 19 Motifs (Reciprocal Sign Epistasis) ---
+    try:
+        motif_19_instances = get_motif_node_indices(
+            landscape.graph,
+            motif_size=4,
+            target_motif_type=19,
+            approximate=approximate,
+            sample_cut_prob=sample_cut_prob,
+        )
+    except Exception as e:
+        raise RuntimeError(f"Failed to find motif instances: {e}")
+
+    if not motif_19_instances:
+        return {
+            "bypass_proportion": 0.0,
+            "average_bypass_length": np.nan,
+            "total_motifs": 0,
+            "motifs_with_bypass": 0,
+        }
+
+    # --- Analyze Each Motif for Extradimensional Bypasses ---
+    bypass_lengths = []
+    motifs_with_bypass = 0
+    total_motifs = len(motif_19_instances)
+
+    for motif_nodes in motif_19_instances:
+        try:
+            # Get fitness values for all nodes in the motif
+            fitness_values = {
+                node: landscape.graph.vs[node]["fitness"] for node in motif_nodes
+            }
+
+            # Find the node with highest fitness (AB)
+            AB = max(fitness_values, key=fitness_values.get)
+
+            # Find the double mutant (ab) - the node that is not a predecessor of AB
+            # and is among the remaining 3 nodes
+            remaining_nodes = [node for node in motif_nodes if node != AB]
+            AB_predecessors = set(landscape.graph.predecessors(AB))
+
+            # ab should be the node that is NOT a direct predecessor of AB
+            ab = [node for node in remaining_nodes if node not in AB_predecessors]
+
+            if not ab:
+                # If no ab, skip this motif
+                continue
+
+            # Check if an accessible path exists from ab to AB
+            try:
+                # Get shortest path distance in the directed graph
+                distances = landscape.graph.distances(source=ab, target=AB, mode="out")
+                distance = distances[0][0]
+
+                # If distance is finite (not inf), an extradimensional bypass exists
+                if not np.isinf(distance):
+                    bypass_lengths.append(distance)
+                    motifs_with_bypass += 1
+
+            except Exception as e:
+                # Skip this motif if distance calculation fails
+                print(
+                    f"Warning: Could not calculate distance for motif {motif_nodes}: {e}"
+                )
+                continue
+
+        except Exception as e:
+            # Skip this motif if any error occurs during processing
+            print(f"Warning: Could not process motif {motif_nodes}: {e}")
+            continue
+
+    # --- Calculate Results ---
+    bypass_proportion = motifs_with_bypass / total_motifs if total_motifs > 0 else 0.0
+    average_bypass_length = np.mean(bypass_lengths) if bypass_lengths else np.nan
+
+    return {
+        "bypass_proportion": bypass_proportion,
+        "average_bypass_length": average_bypass_length,
+        "total_motifs": total_motifs,
+        "motifs_with_bypass": motifs_with_bypass,
+    }
+
+
+def get_motif_node_indices(
+    graph, motif_size=4, target_motif_type=19, approximate=False, sample_cut_prob=0.2
+):
+    """
+    Find all instances of a specific motif type and return their node indices.
+
+    Parameters
+    ----------
+    graph : igraph.Graph
+        The igraph object to search for motifs
+    motif_size : int
+        Size of motifs to search for (default 4)
+    target_motif_type : int
+        The specific motif ID to collect (e.g., 19, 52, 66)
+    approximate : bool, optional
+        If True, uses sampling to find motif instances. Faster but less accurate.
+        Defaults to False (exact enumeration of all instances).
+    sample_cut_prob : float, optional
+        The probability used for pruning the search tree at each level during
+        sampling when approximate=True. Higher values -> faster, less accurate.
+        Defaults to 0.2.
+
+    Returns
+    -------
+    list
+        List of tuples, where each tuple contains the node indices
+        for one instance of the target motif
+
+    Raises
+    ------
+    ValueError
+        If sample_cut_prob is not between 0 and 1.
+    """
+    # Validate input
+    if approximate and not 0.0 <= sample_cut_prob <= 1.0:
+        raise ValueError("sample_cut_prob must be between 0.0 and 1.0")
+
+    collected_motifs = []
+    cut_prob_vector = [sample_cut_prob] * motif_size if approximate else None
+
+    def motif_collector_callback(graph, vertices, isoclass):
+        if isoclass == target_motif_type:
+            # Store the vertex indices as a tuple
+            collected_motifs.append(tuple(sorted(vertices)))
+        return False  # Continue search
+
+    # Find motifs with or without sampling
+    if approximate:
+        graph.motifs_randesu(
+            size=motif_size, cut_prob=cut_prob_vector, callback=motif_collector_callback
+        )
+    else:
+        graph.motifs_randesu(size=motif_size, callback=motif_collector_callback)
+
+    return collected_motifs

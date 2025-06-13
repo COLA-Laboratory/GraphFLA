@@ -154,11 +154,13 @@ landscape.build_from_data(X, f, data_types=data_types, verbose=True)
 |                          | `diminishing_returns_index`      | Diminishing return epistasis           | [0, 1]        | ↑ flat peaks                           |
 |                          | `increasing_costs_index`         | Increasing cost epistasis              | [0, 1]        | ↑ steep descents                       |
 |                          | `higher_order_epistasis`         | Higher-order epistasis                 | [0, 1]        | ↓ higher-order interactions            |
+|                          | `walsh_hadamard_coefficient`     | All pairwise and higher-order epistasis    | -          | - |
 | **Navigability** | `fitness_distance_corr`          | Fitness-distance correlation           | [-1, 1]       | ↑ navigation                           |
 |                          | `go_accessibility`               | Global optima accessibility            | [0, 1]        | ↑ access to global peaks               |
 |                          | `basin_fit_corr`                 | Basin-fitness corr. (accessible)       | [-1, 1]       | ↑ access to fitter peaks               |
 |                          | `basin_fit_corr`                 | Basin-fitness corr. (greedy)           | [-1, 1]       | ↑ access to fitter peaks               |
 |                          | `calculate_evol_enhance`         | Evol-enhancing mutation                | [0, 1]        | ↑ evolvability                         |
+|                          | `extradimensional_bypass_analysis`| Extradimensional bypass               | [0, 1]        | ↑ navigability                         |  
 | **Neutrality** | `neutrality`                     | Neutrality                             | [0, 1]        | ↑ neutrality                           |
 | **Fitness Distribution** | `fitness_distribution`           | Skewness                               | (-∞, ∞)       | ↑ asymmetry of fitness values          |
 |                          | `fitness_distribution`           | Kurtosis                               | (-∞, ∞)       | ↑ outlier/extreme value prevalence     |

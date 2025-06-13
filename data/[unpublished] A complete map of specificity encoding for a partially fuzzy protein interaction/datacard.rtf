@@ -1,0 +1,62 @@
+{\rtf1\ansi\ansicpg1252\cocoartf2761
+\cocoatextscaling0\cocoaplatform0{\fonttbl\f0\fnil\fcharset0 HelveticaNeue;}
+{\colortbl;\red255\green255\blue255;}
+{\*\expandedcolortbl;;}
+\paperw11900\paperh16840\margl1440\margr1440\vieww11520\viewh8400\viewkind0
+\deftab560
+\pard\pardeftab560\slleading20\partightenfactor0
+
+\f0\fs26 \cf0 [\
+  \{\
+    "genotype": "Amino acid sequence of the C-terminal four positions (0, -1, -2, -3) of the CRIPT peptide.",\
+    "type": "protein",\
+    "species": "Homo sapiens",\
+    "taxon": "Mammalia",\
+    "name": "CRIPT-Cterm",\
+    "full_name": "Variants of the C-terminal 4 residues (positions 0 to -3) of the CRIPT peptide, fitness measured by binding to wild-type PDZ3 domain of PSD-95.",\
+    "size": 160000,\
+    "space": "All $20^4 = 160,000$ amino acid combinations at the C-terminal four positions (0 to -3) of a CRIPT peptide. Library generated using NNK degenerate codons for these 4 positions, targeting all 20 amino acids at each position.",\
+    "fitness_measure": "Binding fitness scores from a yeast protein fragment complementation assay (PCA) using DHFR enzyme activity in the presence of methotrexate. Scores were also converted to Gibbs free energy of binding (dG/ddG).",\
+    "summary": "Mapping from amino acid sequences of CRIPT C-terminal 4-residue variants to their binding fitness with wild-type PDZ3 domain of PSD-95.",\
+    "environment": "Yeast protein fragment complementation assay (Saccharomyces cerevisiae) in synthetic complete medium (SD -URA/ADE) with 200 ug/mL methotrexate and 2% DMSO."\
+  \},\
+  \{\
+    "genotype": "Amino acid sequence of four internal positions (-4, -5, -6, -7) of the CRIPT peptide.",\
+    "type": "protein",\
+    "species": "Homo sapiens",\
+    "taxon": "Mammalia",\
+    "name": "CRIPT-Nterm",\
+    "full_name": "Variants of 4 internal residues (positions -4 to -7) of the CRIPT peptide, fitness measured by binding to wild-type PDZ3 domain of PSD-95.",\
+    "size": 160000,\
+    "space": "All $20^4 = 160,000$ amino acid combinations at four internal positions (-4 to -7) of a CRIPT peptide. Library generated using NNK degenerate codons for these 4 positions, targeting all 20 amino acids at each position.",\
+    "fitness_measure": "Binding fitness scores from a yeast protein fragment complementation assay (PCA) using DHFR enzyme activity in the presence of methotrexate. Scores were also converted to Gibbs free energy of binding (dG/ddG).",\
+    "summary": "Mapping from amino acid sequences of CRIPT internal 4-residue variants (positions -4 to -7) to their binding fitness with wild-type PDZ3 domain of PSD-95.",\
+    "environment": "Yeast protein fragment complementation assay (Saccharomyces cerevisiae) in synthetic complete medium (SD -URA/ADE) with 200 ug/mL methotrexate and 2% DMSO."\
+  \},\
+  \{\
+    "genotype": "A pair of protein sequences: a variant of the PDZ3 domain (aa 303-402 of PSD-95) and a variant of an 8-residue CRIPT peptide (positions 0 to -7).",\
+    "type": "protein",\
+    "species": "Homo sapiens",\
+    "taxon": "Mammalia",\
+    "name": "PDZ3-CRIPT-trans",\
+    "full_name": "Interaction between variants of the third PDZ domain of PSD-95 (human DLG4, residues 303-402) and variants of its 8-residue CRIPT peptide ligand (human CRIPT fragment, positions 0 to -7).",\
+    "size": 290853,\
+    "space": "Combinations of PDZ3 variants and CRIPT peptide variants. PDZ3 variants included wild-type and all single amino acid substitutions at each of its 100 positions. CRIPT peptide variants included wild-type and all single amino acid substitutions at each of its 8 positions (0 to -7). This results in approximately $(1+100 \\\\times 19) \\\\times (1+8 \\\\times 19) \\\\approx 1901 \\\\times 153 \\\\approx 290,853$ unique (PDZ3 variant, CRIPT variant) amino acid pairs. Libraries were constructed using oligo pools encoding these mutations, also including synonymous and STOP codons as controls.",\
+    "fitness_measure": "Binding fitness scores from a yeast protein fragment complementation assay (PCA). These scores were used to calculate energetic couplings (ddG, residuals from an additive model) between mutations in PDZ3 and CRIPT.",\
+    "summary": "Mapping from (PDZ3 protein variant, CRIPT peptide variant) pairs to their binding fitness, used to determine energetic couplings and specificity changes.",\
+    "environment": "Yeast protein fragment complementation assay (Saccharomyces cerevisiae) in synthetic complete medium (SD -URA/ADE) with 200 ug/mL methotrexate and 2% DMSO."\
+  \},\
+  \{\
+    "genotype": "Amino acid sequence of an 8-residue CRIPT peptide variant (positions 0 to -7) containing wild-type, single, or double mutations.",\
+    "type": "protein",\
+    "species": "Homo sapiens",\
+    "taxon": "Mammalia",\
+    "name": "CRIPT-cis",\
+    "full_name": "Wild-type, single, and double mutants of an 8-residue CRIPT peptide (positions 0 to -7), fitness measured by binding to wild-type PDZ3 domain of PSD-95.",\
+    "size": 10261,\
+    "space": "Wild-type, all single, and all double amino acid mutants across an 8-residue CRIPT peptide (positions 0 to -7). Number of positions $L=8$. Total protein variants: $1 (WT) + L \\\\times 19 (singles) + \\\\binom\{L\}\{2\} \\\\times 19^2 (doubles) = 1 + 8 \\\\times 19 + 28 \\\\times 361 = 10,261$. Library generated using NNK degenerate oligos targeting these combinations.",\
+    "fitness_measure": "Binding fitness scores (to wild-type PDZ3) from a yeast protein fragment complementation assay (PCA). Scores were used to calculate energetic couplings (ddG) between mutations within the CRIPT peptide.",\
+    "summary": "Mapping from CRIPT peptide variants (wild-type, single, or double mutations within 8 residues) to their binding fitness with wild-type PDZ3 domain of PSD-95.",\
+    "environment": "Yeast protein fragment complementation assay (Saccharomyces cerevisiae) in synthetic complete medium (SD -URA/ADE) with 200 ug/mL methotrexate and 2% DMSO."\
+  \}\
+]}
