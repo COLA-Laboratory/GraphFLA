@@ -45,7 +45,15 @@ def boolean_landscape_data():
 def boolean_landscape(boolean_landscape_data):
     X, fitness = boolean_landscape_data
     landscape = BooleanLandscape()
-    landscape.build_from_data(X, fitness, verbose=False)
+    landscape.build_from_data(
+        X,
+        fitness,
+        verbose=False,
+        calculate_basins=True,
+        calculate_paths=True,
+        calculate_distance=True,
+        calculate_neighbor_fit=True,
+    )
     return landscape
 
 
@@ -62,7 +70,15 @@ def dna_sequence_data():
 def dna_landscape(dna_sequence_data):
     sequences, fitness = dna_sequence_data
     landscape = DNALandscape()
-    landscape.build_from_data(sequences, fitness, verbose=False)
+    landscape.build_from_data(
+        sequences,
+        fitness,
+        verbose=False,
+        calculate_basins=True,
+        calculate_paths=True,
+        calculate_distance=True,
+        calculate_neighbor_fit=True,
+    )
     return landscape
 
 
@@ -79,7 +95,15 @@ def rna_sequence_data():
 def rna_landscape(rna_sequence_data):
     sequences, fitness = rna_sequence_data
     landscape = RNALandscape()
-    landscape.build_from_data(sequences, fitness, verbose=False)
+    landscape.build_from_data(
+        sequences,
+        fitness,
+        verbose=False,
+        calculate_basins=True,
+        calculate_paths=True,
+        calculate_distance=True,
+        calculate_neighbor_fit=True,
+    )
     return landscape
 
 
@@ -122,7 +146,15 @@ def protein_sequence_data():
 def protein_landscape(protein_sequence_data):
     sequences, fitness = protein_sequence_data
     landscape = ProteinLandscape()
-    landscape.build_from_data(sequences, fitness, verbose=False)
+    landscape.build_from_data(
+        sequences,
+        fitness,
+        verbose=False,
+        calculate_basins=True,
+        calculate_paths=True,
+        calculate_distance=True,
+        calculate_neighbor_fit=True,
+    )
     return landscape
 
 
@@ -134,20 +166,44 @@ def protein_landscape(protein_sequence_data):
 def test_build_boolean_landscape(boolean_landscape_data):
     X, fitness = boolean_landscape_data
     landscape = BooleanLandscape()
-    landscape.build_from_data(X, fitness, verbose=False)
+    landscape.build_from_data(
+        X,
+        fitness,
+        verbose=False,
+        calculate_basins=True,
+        calculate_paths=True,
+        calculate_distance=True,
+        calculate_neighbor_fit=True,
+    )
 
 
 def test_build_dna_landscape_from_list(dna_sequence_data):
     sequences, fitness = dna_sequence_data
     landscape = DNALandscape()
-    landscape.build_from_data(sequences, fitness, verbose=False)
+    landscape.build_from_data(
+        sequences,
+        fitness,
+        verbose=False,
+        calculate_basins=True,
+        calculate_paths=True,
+        calculate_distance=True,
+        calculate_neighbor_fit=True,
+    )
 
 
 def test_build_dna_landscape_from_df_int_cols(dna_sequence_data):
     sequences, fitness = dna_sequence_data
     X_dna = pd.DataFrame([list(s) for s in sequences])
     landscape = DNALandscape()
-    landscape.build_from_data(X_dna, fitness, verbose=False)
+    landscape.build_from_data(
+        X_dna,
+        fitness,
+        verbose=False,
+        calculate_basins=True,
+        calculate_paths=True,
+        calculate_distance=True,
+        calculate_neighbor_fit=True,
+    )
 
 
 def test_build_dna_landscape_from_df_str_cols(dna_sequence_data):
@@ -155,26 +211,58 @@ def test_build_dna_landscape_from_df_str_cols(dna_sequence_data):
     X_dna = pd.DataFrame([list(s) for s in sequences])
     X_dna.columns = [f"pos_{i}" for i in range(X_dna.shape[1])]
     landscape = DNALandscape()
-    landscape.build_from_data(X_dna, fitness, verbose=False)
+    landscape.build_from_data(
+        X_dna,
+        fitness,
+        verbose=False,
+        calculate_basins=True,
+        calculate_paths=True,
+        calculate_distance=True,
+        calculate_neighbor_fit=True,
+    )
 
 
 def test_build_generic_landscape_dna(dna_sequence_data):
     sequences, fitness = dna_sequence_data
     landscape = Landscape(type="dna")
-    landscape.build_from_data(sequences, fitness, verbose=False)
+    landscape.build_from_data(
+        sequences,
+        fitness,
+        verbose=False,
+        calculate_basins=True,
+        calculate_paths=True,
+        calculate_distance=True,
+        calculate_neighbor_fit=True,
+    )
 
 
 def test_build_rna_landscape_from_list(rna_sequence_data):
     sequences, fitness = rna_sequence_data
     landscape = RNALandscape()
-    landscape.build_from_data(sequences, fitness, verbose=False)
+    landscape.build_from_data(
+        sequences,
+        fitness,
+        verbose=False,
+        calculate_basins=True,
+        calculate_paths=True,
+        calculate_distance=True,
+        calculate_neighbor_fit=True,
+    )
 
 
 def test_build_rna_landscape_from_df_int_cols(rna_sequence_data):
     sequences, fitness = rna_sequence_data
     X_rna = pd.DataFrame([list(s) for s in sequences])
     landscape = RNALandscape()
-    landscape.build_from_data(X_rna, fitness, verbose=False)
+    landscape.build_from_data(
+        X_rna,
+        fitness,
+        verbose=False,
+        calculate_basins=True,
+        calculate_paths=True,
+        calculate_distance=True,
+        calculate_neighbor_fit=True,
+    )
 
 
 def test_build_rna_landscape_from_df_str_cols(rna_sequence_data):
@@ -182,7 +270,15 @@ def test_build_rna_landscape_from_df_str_cols(rna_sequence_data):
     X_rna = pd.DataFrame([list(s) for s in sequences])
     X_rna.columns = [f"pos_{i}" for i in range(X_rna.shape[1])]
     landscape = RNALandscape()
-    landscape.build_from_data(X_rna, fitness, verbose=False)
+    landscape.build_from_data(
+        X_rna,
+        fitness,
+        verbose=False,
+        calculate_basins=True,
+        calculate_paths=True,
+        calculate_distance=True,
+        calculate_neighbor_fit=True,
+    )
 
 
 def test_build_generic_landscape_rna(rna_sequence_data):
@@ -194,14 +290,30 @@ def test_build_generic_landscape_rna(rna_sequence_data):
 def test_build_protein_landscape_from_list(protein_sequence_data):
     sequences, fitness = protein_sequence_data
     landscape = ProteinLandscape()
-    landscape.build_from_data(sequences, fitness, verbose=False)
+    landscape.build_from_data(
+        sequences,
+        fitness,
+        verbose=False,
+        calculate_basins=True,
+        calculate_paths=True,
+        calculate_distance=True,
+        calculate_neighbor_fit=True,
+    )
 
 
 def test_build_protein_landscape_from_df_int_cols(protein_sequence_data):
     sequences, fitness = protein_sequence_data
     X_protein = pd.DataFrame([list(s) for s in sequences])
     landscape = ProteinLandscape()
-    landscape.build_from_data(X_protein, fitness, verbose=False)
+    landscape.build_from_data(
+        X_protein,
+        fitness,
+        verbose=False,
+        calculate_basins=True,
+        calculate_paths=True,
+        calculate_distance=True,
+        calculate_neighbor_fit=True,
+    )
 
 
 def test_build_protein_landscape_from_df_str_cols(protein_sequence_data):
@@ -209,13 +321,29 @@ def test_build_protein_landscape_from_df_str_cols(protein_sequence_data):
     X_protein = pd.DataFrame([list(s) for s in sequences])
     X_protein.columns = [f"pos_{i}" for i in range(X_protein.shape[1])]
     landscape = ProteinLandscape()
-    landscape.build_from_data(X_protein, fitness, verbose=False)
+    landscape.build_from_data(
+        X_protein,
+        fitness,
+        verbose=False,
+        calculate_basins=True,
+        calculate_paths=True,
+        calculate_distance=True,
+        calculate_neighbor_fit=True,
+    )
 
 
 def test_build_generic_landscape_protein(protein_sequence_data):
     sequences, fitness = protein_sequence_data
     landscape = Landscape(type="protein")
-    landscape.build_from_data(sequences, fitness, verbose=False)
+    landscape.build_from_data(
+        sequences,
+        fitness,
+        verbose=False,
+        calculate_basins=True,
+        calculate_paths=True,
+        calculate_distance=True,
+        calculate_neighbor_fit=True,
+    )
 
 
 # ------
