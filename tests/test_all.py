@@ -5,7 +5,7 @@ from itertools import product
 import numpy as np
 
 from graphfla.analysis import *
-from graphfla.xxx import (
+from graphfla.landscape import (
     BooleanLandscape,
     DNALandscape,
     RNALandscape,
