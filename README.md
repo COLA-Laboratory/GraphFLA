@@ -190,6 +190,53 @@ landscape.build_from_data(X, f, data_types=data_types, verbose=True)
 
 This project is licensed under the terms of the [MIT License](./LICENSE).
 
+## Credit
+
+You may cite GraphFLA via the following references:
+
+```
+@inproceedings{HuangZL25,
+  author    = {Mingyu Huang and
+               Shasha Zhou and
+               Ke Li},
+  title     = {Direct Preference-Based Evolutionary Multi-Objective Optimization
+                  with Dueling Bandits},
+  booktitle = {{NeurIPS}'25: Proc. of Advances in Neural Information Processing Systems 39},
+  year      = {2024},
+}
+```
+
+```
+@article{HuangML25,
+  author       = {Mingyu Huang and
+                  Peili Mao and
+                  Ke Li},
+  title        = {Rethinking Performance Analysis for Configurable Software Systems:
+                  {A} Case Study from a Fitness Landscape Perspective},
+  journal      = {Proc. {ACM} Softw. Eng.},
+  volume       = {2},
+  number       = {{ISSTA}},
+  pages        = {1748--1771},
+  year         = {2025},
+  doi          = {10.1145/3728954},
+}
+```
+
+```
+@inproceedings{HuangL25,
+  author       = {Mingyu Huang and
+                  Ke Li},
+  title        = {On the Hyperparameter Loss Landscapes of Machine Learning Models:
+                  An Exploratory Study},
+  booktitle    = {{KDD}'25: Proceedings of the 31st {ACM} {SIGKDD} Conference on Knowledge Discovery
+                  and Data Mining},
+  pages        = {555--564},
+  publisher    = {{ACM}},
+  year         = {2025},
+  doi          = {10.1145/3690624.3709229},
+}
+```
+
 ---
 
 **Happy analyzing!** If you have any questions or suggestions, feel free to open an issue or start a discussion.
