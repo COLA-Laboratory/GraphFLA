@@ -23,6 +23,8 @@
 
 **GraphFLA** (Graph-based Fitness Landscape Analysis) is a Python framework for constructing, analyzing, manipulating and visualizing **fitness landscapes** as graphs. It provides a broad collection of features rooted in evolutoinary biology to decipher the topography of complex fitness landscapes of diverse modalities.
 
+This is also the official code & data repository for the **NeurIPS 2025 (Spotlight)** paper "Augmenting Biological Fitness Prediction Benchmarks with Landscapes Features from GraphFLA". 
+
 Feel free to explore examples in Google Colab!
 
 [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/1zRsU6V0iNucXmeSXqRtwnbaipWfxFGKA?usp=sharing)
@@ -32,7 +34,7 @@ Feel free to explore examples in Google Colab!
 - **Comprehensiveness:** offers a holistic collection of 20+ features for characterizing 4 fundamental topographical aspects of fitness landscape, including ruggedness, navigability, epistassi and neutrality.
 - **Interoperability:** works with the same data format (i.e., `X` and `f`) as in training machine learning (ML) models, thus being interoperable with established ML ecosystems in different disciplines.
 - **Scalability:** heavily optimized to be capable of handling landscapes with even millions of variants.
-- **Extensibility:** new landscape features can be easily added via an unified API. 
+- **Extensibility:** new landscape features can be easily added via an unified API.
 
 ## Quick Start
 
