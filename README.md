@@ -199,8 +199,8 @@ You may cite GraphFLA via the following references:
   author    = {Mingyu Huang and
                Shasha Zhou and
                Ke Li},
-  title     = {Direct Preference-Based Evolutionary Multi-Objective Optimization
-                  with Dueling Bandits},
+  title     = {Augmenting Biological Fitness Prediction Benchmarks with Landscape Features
+               from GraphFLA},
   booktitle = {{NeurIPS}'25: Proc. of Advances in Neural Information Processing Systems 39},
   year      = {2024},
 }
