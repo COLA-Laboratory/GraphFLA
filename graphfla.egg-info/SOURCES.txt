@@ -8,7 +8,6 @@ graphfla/_neighbors.py
 graphfla/_processor.py
 graphfla/distances.py
 graphfla/filters.py
-graphfla/landscape.py
 graphfla/lon.py
 graphfla/sampling.py
 graphfla/utils.py
@@ -27,8 +26,17 @@ graphfla/analysis/fitness.py
 graphfla/analysis/navigability.py
 graphfla/analysis/robustness.py
 graphfla/analysis/ruggedness.py
+graphfla/landscape/__init__.py
+graphfla/landscape/boolean.py
+graphfla/landscape/dna.py
+graphfla/landscape/landscape.py
+graphfla/landscape/protein.py
+graphfla/landscape/rna.py
+graphfla/landscape/sequence.py
+graphfla/plotting/__init__.py
+graphfla/plotting/plotting.py
 graphfla/problems/__init__.py
 graphfla/problems/base_problem.py
 graphfla/problems/biological.py
 graphfla/problems/combinatorial.py
-tests/test.py
+tests/test_all.py

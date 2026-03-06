@@ -2,7 +2,7 @@ import pandas as pd
 import igraph as ig
 import random
 import numpy as np
-from typing import Any, Optional
+from typing import Any, Dict, List, Optional
 
 
 def random_walk(
@@ -10,12 +10,13 @@ def random_walk(
     start_node: Any,
     attribute: Optional[str] = None,
     walk_length: int = 100,
-) -> pd.DataFrame:
+    neutral_neighbors: Optional[Dict[int, List[int]]] = None,
+) -> np.ndarray:
     """
-    Performs an optimized random walk on a directed graph starting from a specified node,
+    Performs a random walk on a directed graph starting from a specified node,
     optionally logging a specified attribute at each step.
 
-    Parameters:
+    Parameters
     ----------
     graph : ig.Graph
         The igraph Graph on which the random walk is performed.
@@ -30,20 +31,23 @@ def random_walk(
     walk_length : int, default=100
         The length of the random walk.
 
-    Returns:
+    neutral_neighbors : dict, optional
+        Mapping from node index to a list of neutral neighbor indices. When
+        provided, the walker can also traverse neutral edges (equal-fitness
+        neighbors that have no directed edge in the graph). Typically obtained
+        from ``landscape._neutral_neighbors``.
+
+    Returns
     -------
-    pd.DataFrame
-        A DataFrame containing the step number, node id, and optionally the
-        logged attribute at each step.
+    np.ndarray
+        An array of shape ``(steps, 2)`` or ``(steps, 3)`` containing the
+        step number, node id, and optionally the logged attribute at each step.
     """
-    # Validate start_node exists in the graph
     if start_node < 0 or start_node >= graph.vcount():
         raise ValueError(f"Node {start_node} not in graph")
 
-    # Check if attribute exists upfront
     has_attribute = attribute is not None and attribute in graph.vs.attributes()
 
-    # Pre-allocate numpy array with appropriate dimensions
     if has_attribute:
         logger = np.empty((walk_length, 3), dtype=object)
     else:
@@ -53,24 +57,19 @@ def random_walk(
     cnt = 0
 
     while cnt < walk_length:
-        # Log current node
         if has_attribute:
             logger[cnt] = [cnt, node, graph.vs[node][attribute]]
         else:
             logger[cnt] = [cnt, node]
 
-        # Get neighbors and select next node
         neighbors = graph.neighbors(node, mode="all")
+        if neutral_neighbors and node in neutral_neighbors:
+            neighbors = list(set(neighbors) | set(neutral_neighbors[node]))
+
         if not neighbors:
-            # No neighbors to move to, end the walk
             break
 
-        # Choose next node randomly and update
         node = random.choice(neighbors)
         cnt += 1
 
-    # Create and return appropriate DataFrame
-    if has_attribute:
-        return logger[:cnt]
-    else:
-        return logger[:cnt]
+    return logger[:cnt]

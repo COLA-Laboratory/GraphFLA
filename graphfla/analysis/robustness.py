@@ -24,7 +24,7 @@ def calculate_evol_enhance(landscape, epsilon=0, auto_calculate=True):
         Tolerance threshold for detecting significant differences in mean neighbor fitness.
         Only edges with delta_mean_neighbor_fit > epsilon are counted as EE mutations.
     auto_calculate : bool, default=True
-        If True, automatically runs calculate_neighbor_fitness() if needed.
+        If True, automatically runs determine_neighbor_fitness() if needed.
         If False, raises an exception when neighbor fitness metrics are missing.
 
     Returns
@@ -53,13 +53,13 @@ def calculate_evol_enhance(landscape, epsilon=0, auto_calculate=True):
         if auto_calculate:
             if landscape.verbose:
                 print(
-                    "Neighbor fitness metrics not found. Running calculate_neighbor_fitness()..."
+                    "Neighbor fitness metrics not found. Running determine_neighbor_fitness()..."
                 )
-            landscape.calculate_neighbor_fitness()
+            landscape.determine_neighbor_fitness()
         else:
             raise RuntimeError(
                 "Neighbor fitness metrics haven't been calculated. "
-                "Either call landscape.calculate_neighbor_fitness() first "
+                "Either call landscape.determine_neighbor_fitness() first "
                 "or set auto_calculate=True."
             )
 
@@ -89,6 +89,11 @@ def neutrality(landscape, threshold: float = 0.01) -> float:
     It assesses the proportion of neighbors with fitness values within a given threshold,
     indicating the presence of neutral areas in the landscape.
 
+    When the landscape has a plateau layer (``epsilon > 0``), neutral neighbors
+    stored during construction are included alongside the graph-based neighbors.
+    This ensures that equal-fitness pairs — which have no directed edge — are
+    still counted toward the neutrality metric.
+
     Parameters
     ----------
     landscape : object
@@ -102,27 +107,30 @@ def neutrality(landscape, threshold: float = 0.01) -> float:
     neutrality : float
         The neutrality index, ranging from 0 to 1. A higher value indicates more neutrality.
     """
-    # Get the igraph graph object from the landscape.
     g = landscape.graph
+    neutral_nn = getattr(landscape, '_neutral_neighbors', None) or {}
+    fitness_values = g.vs["fitness"]
     neutral_pairs = 0
     total_pairs = 0
 
-    # Iterate over each vertex by its index.
     for v in range(g.vcount()):
-        fitness = g.vs[v]["fitness"]  # Retrieve the fitness of the current vertex.
+        fitness = fitness_values[v]
 
-        # Iterate over all neighbors of the current vertex.
-        for neighbor in g.neighbors(v):
-            neighbor_fitness = g.vs[neighbor]["fitness"]
-            # Count the pair as neutral if the fitness difference is within the threshold.
+        # Directed-graph neighbors (improving + worsening edges)
+        graph_neighbors = set(g.neighbors(v))
+
+        # Include neutral neighbors from plateau layer if available
+        all_neighbors = graph_neighbors | set(neutral_nn.get(v, []))
+
+        for neighbor in all_neighbors:
+            neighbor_fitness = fitness_values[neighbor]
             if abs(fitness - neighbor_fitness) <= threshold:
                 neutral_pairs += 1
             total_pairs += 1
 
-    # Compute neutrality as the ratio of neutral neighbor pairs to the total number of pairs.
-    neutrality = neutral_pairs / total_pairs if total_pairs > 0 else 0
+    neutrality_val = neutral_pairs / total_pairs if total_pairs > 0 else 0
 
-    return neutrality
+    return neutrality_val
 
 
 def single_mutation_effects(

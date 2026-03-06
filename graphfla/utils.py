@@ -1,5 +1,161 @@
 import numpy as np
 import igraph as ig
+import pandas as pd
+
+
+def apply_pre_construction_filter(X, f, maximize, functional_threshold, functional_filter_strategy, verbose):
+    if functional_threshold:
+        if functional_filter_strategy == "any":
+            if verbose:
+                print(
+                    f" - Applying functional threshold filter "
+                    f"(threshold={functional_threshold})..."
+                )
+
+            initial_count = len(f)
+
+            if maximize:
+                mask = f >= functional_threshold
+                comparison_op = ">="
+            else:
+                mask = f <= functional_threshold
+                comparison_op = "<="
+
+            X = X[mask]
+            f = f[mask]
+
+            X.reset_index(drop=True, inplace=True)
+            f.reset_index(drop=True, inplace=True)
+
+            final_count = len(f)
+            removed_count = initial_count - final_count
+
+            if verbose:
+                opposite_op = "<" if comparison_op[0] == ">" else ">"
+                opposite_op += "=" if len(comparison_op) > 1 else ""
+
+                print(
+                    f"   - Removed {removed_count} configurations with fitness "
+                    f"{opposite_op} {functional_threshold}"
+                )
+                print(f"   - Kept {final_count}/{initial_count} configurations")
+
+            if final_count == 0:
+                raise ValueError(
+                    f"All configurations removed by functional threshold filter "
+                    f"(threshold={functional_threshold})"
+                )
+
+    return X, f
+
+
+def apply_post_construction_filter(graph, maximize, functional_threshold, functional_filter_strategy, verbose):
+    """Apply post-construction filtering to the landscape graph.
+
+    Returns
+    -------
+    graph : ig.Graph
+        The (possibly pruned) graph.
+    n_configs : int
+        Number of vertices in the final graph.
+    n_edges : int
+        Number of edges in the final graph.
+    kept_vertex_indices : list[int] or None
+        Original vertex indices that survived the filter, in new-index order.
+        ``None`` when no vertices were removed (identity mapping).
+    """
+    kept_vertex_indices = None
+
+    if functional_threshold:
+        if functional_filter_strategy == "both":
+            if verbose:
+                print(
+                    f" - Applying post-construction functional filter "
+                    f"(threshold={functional_threshold}, strategy='both')..."
+                )
+
+            initial_edges = graph.ecount()
+
+            # Get fitness values for all nodes
+            fitness_values = graph.vs["fitness"]
+
+            # Identify edges to remove based on optimization direction
+            edges_to_remove = []
+
+            for edge_idx in range(graph.ecount()):
+                edge = graph.es[edge_idx]
+                source_fitness = fitness_values[edge.source]
+                target_fitness = fitness_values[edge.target]
+
+                # Check if both endpoints are below threshold
+                if maximize:
+                    both_below = (
+                        source_fitness < functional_threshold
+                        and target_fitness < functional_threshold
+                    )
+                else:
+                    both_below = (
+                        source_fitness > functional_threshold
+                        and target_fitness > functional_threshold
+                    )
+
+                if both_below:
+                    edges_to_remove.append(edge_idx)
+
+            # Remove edges in reverse order to maintain correct indices
+            if edges_to_remove:
+                edges_to_remove.sort(reverse=True)
+                graph.delete_edges(edges_to_remove)
+
+                final_edges = graph.ecount()
+                removed_edges = initial_edges - final_edges
+
+                if verbose:
+                    print(
+                        f"   - Removed {removed_edges} edges connecting "
+                        f"non-functional configurations"
+                    )
+                    print(f"   - Kept {final_edges}/{initial_edges} edges")
+            else:
+                if verbose:
+                    print("   - No edges removed (all connect functional configs)")
+
+            # Keep only the largest connected component
+            initial_nodes = graph.vcount()
+
+            # Tag each vertex with its pre-filter index so we can recover
+            # the mapping after giant() re-indexes vertices.
+            graph.vs["_orig_idx"] = list(range(initial_nodes))
+
+            components = graph.connected_components(mode="weak")
+            graph = components.giant()
+
+            if graph.vcount() < initial_nodes:
+                kept_vertex_indices = list(graph.vs["_orig_idx"])
+
+            # Remove the temporary attribute
+            del graph.vs["_orig_idx"]
+
+            if verbose:
+                removed_nodes = initial_nodes - graph.vcount()
+                if removed_nodes > 0:
+                    print(
+                        f"   - Kept largest connected component: "
+                        f"{graph.vcount()} nodes "
+                        f"({removed_nodes} isolated/minor-component nodes removed)"
+                    )
+                else:
+                    print("   - Graph remains fully connected")
+
+    n_configs = graph.vcount()
+    n_edges = graph.ecount()
+
+    if n_configs == 0:
+        raise RuntimeError(
+            "Landscape graph construction resulted in an empty graph."
+        )
+
+    return graph, n_configs, n_edges, kept_vertex_indices
 
 
 def autocorr_numpy(x, lag=1):

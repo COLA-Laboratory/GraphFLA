@@ -1052,6 +1052,11 @@ def walsh_hadamard_coefficient(landscape, max_order=2, max_cells=1e9, chunk_size
           1 for single mutations, 2 for pairwise interactions, etc.)
         - Values are dictionaries mapping feature names to their coefficients
 
+        Feature names use the format ``{original}_{position}_{mutant}`` for
+        single mutations (e.g. ``0_12_1`` = position 12, mutation from 0 to 1).
+        Pairwise and higher-order interactions join mutations with ``-``
+        (e.g. ``0_10_1-0_11_1`` = interaction between positions 10 and 11).
+
     Raises
     ------
     RuntimeError
@@ -1133,12 +1138,13 @@ def walsh_hadamard_coefficient(landscape, max_order=2, max_cells=1e9, chunk_size
     )
     enc.fit(X_df)
 
-    # Generate feature names
+    # Generate feature names: format "{original}_{position}_{mutant}" for clarity
+    # e.g. "0_12_1" = position 12, mutation from 0 to 1
     one_hot_names = []
     for i, feature_name in enumerate(enc.get_feature_names_out()):
         pos = int(feature_name.split("_")[0][1:])  # Extract position
         state = feature_name.split("_")[1]  # Extract state
-        one_hot_names.append(f"{wildtype_split[pos]}{pos+1}{state}")
+        one_hot_names.append(f"{wildtype_split[pos]}_{pos+1}_{state}")
 
     # Create one-hot encoded DataFrame
     Xoh = pd.DataFrame(enc.transform(X_df).toarray(), columns=one_hot_names)
@@ -1165,8 +1171,11 @@ def walsh_hadamard_coefficient(landscape, max_order=2, max_cells=1e9, chunk_size
     for i, feature_name in enumerate(Xohi.columns):
         if feature_name == "WT":
             order = 0
+        elif "-" in feature_name:
+            # Multiple mutations joined with "-" (e.g. "0_10_1-0_11_1")
+            order = len(feature_name.split("-"))
         else:
-            order = len(feature_name.split("_"))
+            order = 1  # Single mutation
 
         if order not in coef_dict:
             coef_dict[order] = {}
@@ -1193,9 +1202,12 @@ def _generate_interactions(Xoh, max_order, max_cells):
         if mut_count[i] != 0 and Xoh.columns[i] != "WT"
     ]
 
-    # Group mutations by position
-    all_pos = list(set([i[1:-1] for i in pheno_mut]))
-    all_pos_mut = {int(i): [j for j in pheno_mut if j[1:-1] == i] for i in all_pos}
+    # Group mutations by position (format: original_position_mutant, e.g. "0_12_1")
+    def _get_position(mut_name):
+        return mut_name.split("_")[1]
+
+    all_pos = list(set([_get_position(i) for i in pheno_mut]))
+    all_pos_mut = {p: [j for j in pheno_mut if _get_position(j) == p] for p in all_pos}
 
     # Generate all theoretical interaction features
     all_features = {}
@@ -1203,10 +1215,10 @@ def _generate_interactions(Xoh, max_order, max_cells):
 
     for n in range(2, max_order + 1):
         all_features[n] = []
-        pos_comb = list(itertools.combinations(sorted(all_pos_mut.keys()), n))
+        pos_comb = list(itertools.combinations(sorted(all_pos_mut.keys(), key=int), n))
         for p in pos_comb:
             all_features[n] += [
-                "_".join(c) for c in itertools.product(*[all_pos_mut[j] for j in p])
+                "-".join(c) for c in itertools.product(*[all_pos_mut[j] for j in p])
             ]
         int_order_dict[n] = len(all_features[n])
 
@@ -1229,7 +1241,8 @@ def _generate_interactions(Xoh, max_order, max_cells):
     int_order_dict_retained = {}
 
     for c in all_features_flat:
-        c_split = c.split("_")
+        # Mutations joined with "-" (e.g. "0_10_1-0_11_1" for pairwise)
+        c_split = c.split("-")
         int_col = (Xoh.loc[:, c_split].sum(axis=1) == len(c_split)).astype(int)
 
         # Check if minimum number of observations satisfied (kept >= 0 as in original)
@@ -1313,17 +1326,24 @@ def _ensemble_encode_features(X, feature_names, wildtype, X_df, chunk_size):
 
 
 def _coefficient_to_sequence(coefficient, length):
-    """Convert coefficient string to sequence representation."""
+    """Convert coefficient string to sequence representation.
+
+    Expects format "original_position_mutant" (e.g. "0_12_1") or multiple joined
+    with "-" (e.g. "0_10_1-0_11_1" for pairwise).
+    """
     coefficient_seq = ["0"] * length
 
     if coefficient == "WT":
         return "".join(coefficient_seq)
 
-    for i in coefficient.split("_"):
-        if len(i) > 2:  # Valid mutation format
-            pos = int(i[1:-1]) - 1
-            state = i[-1]
-            coefficient_seq[pos] = state
+    # Split by "-" to get individual mutations, then parse each
+    for mut in coefficient.split("-"):
+        parts = mut.split("_")
+        if len(parts) >= 3:
+            _orig, pos_str, state = parts[0], parts[1], parts[2]
+            pos = int(pos_str) - 1  # 1-indexed to 0-indexed
+            if 0 <= pos < length:
+                coefficient_seq[pos] = state
 
     return "".join(coefficient_seq)
 
