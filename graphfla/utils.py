@@ -3,22 +3,22 @@ import igraph as ig
 import pandas as pd
 
 
-def apply_pre_construction_filter(X, f, maximize, functional_threshold, functional_filter_strategy, verbose):
-    if functional_threshold:
-        if functional_filter_strategy == "any":
+def apply_pre_construction_filter(X, f, maximize, tau, filter_mode, verbose):
+    if tau is not None:
+        if filter_mode == "any":
             if verbose:
                 print(
                     f" - Applying functional threshold filter "
-                    f"(threshold={functional_threshold})..."
+                    f"(tau={tau})..."
                 )
 
             initial_count = len(f)
 
             if maximize:
-                mask = f >= functional_threshold
+                mask = f >= tau
                 comparison_op = ">="
             else:
-                mask = f <= functional_threshold
+                mask = f <= tau
                 comparison_op = "<="
 
             X = X[mask]
@@ -36,20 +36,20 @@ def apply_pre_construction_filter(X, f, maximize, functional_threshold, function
 
                 print(
                     f"   - Removed {removed_count} configurations with fitness "
-                    f"{opposite_op} {functional_threshold}"
+                    f"{opposite_op} {tau}"
                 )
                 print(f"   - Kept {final_count}/{initial_count} configurations")
 
             if final_count == 0:
                 raise ValueError(
                     f"All configurations removed by functional threshold filter "
-                    f"(threshold={functional_threshold})"
+                    f"(tau={tau})"
                 )
 
     return X, f
 
 
-def apply_post_construction_filter(graph, maximize, functional_threshold, functional_filter_strategy, verbose):
+def apply_post_construction_filter(graph, maximize, tau, filter_mode, verbose):
     """Apply post-construction filtering to the landscape graph.
 
     Returns
@@ -66,12 +66,12 @@ def apply_post_construction_filter(graph, maximize, functional_threshold, functi
     """
     kept_vertex_indices = None
 
-    if functional_threshold:
-        if functional_filter_strategy == "both":
+    if tau is not None:
+        if filter_mode == "both":
             if verbose:
                 print(
                     f" - Applying post-construction functional filter "
-                    f"(threshold={functional_threshold}, strategy='both')..."
+                    f"(tau={tau}, filter_mode='both')..."
                 )
 
             initial_edges = graph.ecount()
@@ -90,13 +90,13 @@ def apply_post_construction_filter(graph, maximize, functional_threshold, functi
                 # Check if both endpoints are below threshold
                 if maximize:
                     both_below = (
-                        source_fitness < functional_threshold
-                        and target_fitness < functional_threshold
+                        source_fitness < tau
+                        and target_fitness < tau
                     )
                 else:
                     both_below = (
-                        source_fitness > functional_threshold
-                        and target_fitness > functional_threshold
+                        source_fitness > tau
+                        and target_fitness > tau
                     )
 
                 if both_below:

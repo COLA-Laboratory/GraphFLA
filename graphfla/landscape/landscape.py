@@ -144,11 +144,12 @@ class Landscape:
     maximize : bool
         Indicates whether the objective is to maximize (True) or minimize
         (False) the fitness values. Set during `build_from_data` or `build_from_graph`.
-    epsilon : float or str
+    epsilon : float
         Neutrality threshold. Neighbors with ``|fitness_a - fitness_b| <= epsilon``
         are classified as neutral rather than improving/worsening. When
         ``epsilon > 0``, a plateau layer is constructed and downstream analyses
-        become plateau-aware. ``'auto'`` resolves to ``0``.
+        become plateau-aware. Defaults to 0. Can be auto-estimated from
+        replicate fitness data via ``epsilon='auto'`` in ``build_from_data``.
     verbose : bool
         The verbosity level set during initialization or construction.
     _is_built : bool
@@ -251,7 +252,7 @@ class Landscape:
 
         # Landscape construction parameters
         self.maximize = maximize
-        self.epsilon = "auto"
+        self.epsilon = 0
         self.verbose = False
 
         # Plateau / neutrality layer attributes
@@ -380,13 +381,14 @@ class Landscape:
         X: Any,
         f: Union[pd.Series, list, np.ndarray],
         data_types: Optional[Dict[str, str]] = None,
-        epsilon: Union[float, str] = "auto",
+        epsilon: Union[float, str] = 0,
+        f_replicate: Optional[Union[pd.Series, list, np.ndarray]] = None,
         calculate_basins: bool = False,
         calculate_paths: bool = False,
         calculate_distance: bool = False,
         calculate_neighbor_fit: bool = False,
-        functional_threshold: Optional[float] = None,
-        functional_filter_strategy: str = "any",
+        tau: Optional[float] = None,
+        filter_mode: str = "any",
         impute: bool = False,
         impute_model: Optional[Any] = None,
         n_edit: int = 1,
@@ -418,7 +420,7 @@ class Landscape:
             column names/indices, and values must be one of 'boolean',
             'categorical', or 'ordinal'. This information is crucial for
             determining neighborhood relationships and calculating distances.
-        epsilon : float or 'auto', default='auto'
+        epsilon : float or 'auto', default=0
             Neutrality threshold. Neighboring configurations whose absolute
             fitness difference is ``<= epsilon`` are treated as neutral
             (equal-fitness) rather than strictly improving/worsening. When
@@ -426,8 +428,19 @@ class Landscape:
             are grouped into plateaus via connected components, and downstream
             analyses (local optima, basins, accessible paths) become
             plateau-aware. A higher epsilon produces a smoother landscape with
-            fewer, larger local optima; ``epsilon=0`` or ``'auto'`` (which
-            resolves to 0) preserves the strict-inequality behavior.
+            fewer, larger local optima; ``epsilon=0`` preserves strict-inequality
+            behavior (the default).
+
+            When set to ``'auto'``, epsilon is estimated from replicate fitness
+            measurements as the residual standard error (RSE) of a linear
+            regression between ``f`` and ``f_replicate``. This requires
+            ``f_replicate`` to be provided.
+        f_replicate : pandas.Series, list, or numpy.ndarray, optional
+            A second, independent set of fitness measurements for the same
+            configurations in ``X``. Used only when ``epsilon='auto'`` to
+            estimate the noise level (residual standard error of a linear
+            regression between ``f`` and ``f_replicate``). Ignored when
+            ``epsilon`` is a numeric value.
         calculate_basins : bool, default=True
             If True, calculates the basins of attraction for each local optimum
             using a greedy hill-climbing algorithm. This identifies which configurations
@@ -437,20 +450,22 @@ class Landscape:
             If True, calculates accessible paths (ancestors) for local optima.
             This can be computationally intensive for large landscapes. Populates the
             `size_basin_accessible` attribute for each local optimum.
-        functional_threshold : float, optional
-            A threshold value used to filter configurations or edges based on fitness.
-            Behavior depends on `functional_filter_strategy` and `maximize`. Configurations
-            above (maximize) or below (minimize) the threshold are considered "functional".
-            Useful for focusing on high-fitness regions or removing low-fitness configurations.
-        functional_filter_strategy : str, default='any'
-            How to apply the functional threshold. Options:
-            - 'any': Pre-construction filter. Remove non-functional configurations before
-              building the graph. If maximize: keep fitness >= threshold; if minimize:
-              keep fitness <= threshold.
-            - 'both': Post-construction filter. Keep all configurations, but remove edges
-              where both endpoints are non-functional (both < threshold when maximize,
-              both > threshold when minimize). Preserves transitions between functional
-              and non-functional regions.
+        tau : float, optional
+            Functional threshold. Configurations whose fitness is above
+            (when ``maximize=True``) or below (when ``maximize=False``) this
+            value are considered "functional". Used together with
+            ``filter_mode`` to focus the landscape on biologically or
+            practically relevant regions.
+        filter_mode : str, default='any'
+            How to apply the functional threshold ``tau``. Options:
+
+            - ``'any'``: Pre-construction filter. Remove non-functional
+              configurations before building the graph. If maximize: keep
+              fitness >= tau; if minimize: keep fitness <= tau.
+            - ``'both'``: Post-construction filter. Keep all configurations,
+              but remove edges where both endpoints are non-functional
+              (both < tau when maximize, both > tau when minimize). Preserves
+              transitions between functional and non-functional regions.
         impute : bool, default=False
             If True, attempts to fill in missing fitness values (`NaN` in `f`)
             using a regression model based on the configurations `X`. Requires
@@ -529,8 +544,30 @@ class Landscape:
                 "This Landscape instance has already been built. Create a new instance to rebuild."
             )
 
-        # Set parameters
-        self.epsilon = epsilon
+        # Resolve epsilon: compute from replicates when 'auto'
+        if epsilon == "auto":
+            if f_replicate is None:
+                raise ValueError(
+                    "epsilon='auto' requires replicate fitness data via the "
+                    "'f_replicate' parameter. Provide a second set of fitness "
+                    "measurements, or set epsilon to a numeric value."
+                )
+            f_arr = np.asarray(f, dtype=np.float64)
+            f_rep_arr = np.asarray(f_replicate, dtype=np.float64)
+            if len(f_arr) != len(f_rep_arr):
+                raise ValueError(
+                    f"f and f_replicate must have the same length, got "
+                    f"{len(f_arr)} and {len(f_rep_arr)}."
+                )
+            self.epsilon = self._compute_auto_epsilon(f_arr, f_rep_arr)
+            if verbose:
+                print(
+                    f" - Auto-computed epsilon (RSE from replicates): "
+                    f"{self.epsilon:.6f}"
+                )
+        else:
+            self.epsilon = float(epsilon)
+
         self.verbose = verbose
 
         if verbose:
@@ -554,7 +591,7 @@ class Landscape:
 
         # STEP 2: Apply pre-construction function-based fitness filter
         X, f = apply_pre_construction_filter(
-            X, f, self.maximize, functional_threshold, functional_filter_strategy, verbose
+            X, f, self.maximize, tau, filter_mode, verbose
         )
 
         # STEP 3: Preprocess data based on landscape type
@@ -609,8 +646,7 @@ class Landscape:
         # STEP 7: Post-construction pruning
         self.graph, self.n_configs, self.n_edges, kept_indices = (
             apply_post_construction_filter(
-                self.graph, self.maximize, functional_threshold,
-                functional_filter_strategy, verbose
+                self.graph, self.maximize, tau, filter_mode, verbose
             )
         )
 
@@ -722,17 +758,17 @@ class Landscape:
             try:
                 epsilon_str = graph["epsilon"]
                 if epsilon_str == "auto":
-                    instance.epsilon = "auto"
+                    instance.epsilon = 0.0
                 else:
                     instance.epsilon = float(epsilon_str)
             except Exception:
-                instance.epsilon = "auto"
+                instance.epsilon = 0.0
                 if verbose:
                     print(
-                        "Warning: Could not parse 'epsilon' attribute. Defaulting to 'auto'."
+                        "Warning: Could not parse 'epsilon' attribute. Defaulting to 0."
                     )
         else:
-            instance.epsilon = "auto"
+            instance.epsilon = 0.0
 
         if "landscape_type" in graph.attributes():
             instance.type = graph["landscape_type"]
@@ -1158,11 +1194,38 @@ class Landscape:
                 "build_from_graph() first."
             )
 
+    @staticmethod
+    def _compute_auto_epsilon(
+        f: np.ndarray, f_replicate: np.ndarray
+    ) -> float:
+        """Estimate the noise threshold from replicate fitness measurements.
+
+        Fits an ordinary least-squares regression ``f_replicate ~ f`` and
+        returns the residual standard error (RSE), i.e.
+        ``sqrt(RSS / (n - 2))`` where RSS is the residual sum of squares.
+        This follows the approach of Aguilar-Rodriguez et al. (2018) who
+        used the RSE between replicate protein-binding microarray
+        experiments as their noise threshold (δ).
+        """
+        f = np.asarray(f, dtype=np.float64)
+        f_replicate = np.asarray(f_replicate, dtype=np.float64)
+        n = len(f)
+        if n < 3:
+            raise ValueError(
+                "At least 3 data points are required to estimate epsilon "
+                "from replicates (need n > 2 for residual standard error)."
+            )
+        coeffs = np.polyfit(f, f_replicate, 1)
+        predicted = np.polyval(coeffs, f)
+        rss = np.sum((f_replicate - predicted) ** 2)
+        return float(np.sqrt(rss / (n - 2)))
+
     def _resolve_epsilon(self) -> float:
         """Resolve the epsilon parameter to a numeric value.
 
-        Returns 0.0 for 'auto' (preserving current strict-inequality behavior).
-        Users can set epsilon > 0 to activate neutrality-aware plateau detection.
+        By this point ``self.epsilon`` should already be a float (resolved
+        during ``build_from_data``). If it is still ``'auto'`` — which can
+        only happen when loading from a legacy graph file — fall back to 0.
         """
         if self.epsilon == "auto":
             return 0.0
@@ -2245,6 +2308,19 @@ class Landscape:
         """Encodes data and sets `configs` and `config_dict` attributes."""
         if self.verbose:
             print("Preparing data for landscape construction (encoding variables)...")
+
+        invariant_cols = [col for col in X.columns if X[col].nunique() <= 1]
+        if invariant_cols:
+            X = X.drop(columns=invariant_cols)
+            data_types = {k: v for k, v in data_types.items() if k not in invariant_cols}
+            self.data_types = data_types
+            self.n_vars = len(data_types)
+            if self.verbose:
+                print(
+                    f" - Removed {len(invariant_cols)} invariant variable(s); "
+                    f"{self.n_vars} variable(s) remaining."
+                )
+
         X_encoded = X.copy()
         # Encode based on data type
         for col, dtype in data_types.items():
