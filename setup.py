@@ -12,7 +12,7 @@ from setuptools import setup, find_packages
 
 setup(
     name="graphfla",
-    version="0.1.1",
+    version="0.2.0",
     author="Mingyu Huang",
     author_email="m.huang.gla@outlook.com",
     description="A Python package for Graph-based Fitness Landscape Analysis.",
