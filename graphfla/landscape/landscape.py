@@ -45,7 +45,7 @@ def timeit(method):
         result = method(*args, **kwargs)
         end_time = time.time()
         elapsed_time = end_time - start_time
-        print(f"Method {method.__name__} executed in {elapsed_time:.4f} seconds.")
+        # print(f"Method {method.__name__} executed in {elapsed_time:.4f} seconds.")
         return result
 
     return timed
@@ -541,7 +541,6 @@ class Landscape:
         # STEP 1: Select appropriate strategies
 
         # Select data preprocessing strategies based on landscape type
-        start_time = time.time()
         self._preprocessor = self._preprocessors.get(self.type)
         if self._preprocessor is None:
             raise ValueError(
@@ -554,19 +553,13 @@ class Landscape:
             raise ValueError(
                 f"No neighbor generator available for landscape type: {self.type}"
             )
-        end_time = time.time()
-        print(f"Select preprocessor and neighbor generator executed in {end_time - start_time:.4f} seconds")
 
-        start_time = time.time()
         # STEP 2: Apply pre-construction function-based fitness filter
         X, f = apply_pre_construction_filter(
             X, f, self.maximize, tau, filter_mode, verbose
         )
-        end_time = time.time()
-        print(f"Method apply_pre_construction_filter executed in {end_time - start_time:.4f} seconds")
 
         # STEP 3: Preprocess data based on landscape type
-        start_time = time.time()
         if self.type == "default":
             # Default preprocessor requires data_types
             if not isinstance(data_types, dict):
@@ -583,8 +576,6 @@ class Landscape:
             X_processed, f_processed, self.data_types, self.n_vars = (
                 self._preprocessor.preprocess(X, f, verbose=verbose)
             )
-        end_time = time.time()
-        print(f"Preprocess data executed in {end_time - start_time:.4f} seconds")
 
         # STEP 4: Data wrangling
         if verbose:
@@ -618,17 +609,13 @@ class Landscape:
         self.graph = self._construct_landscape(processed_data, edges, delta_fits)
 
         # STEP 7: Post-construction pruning
-        start_time = time.time()
         self.graph, self.n_configs, self.n_edges, kept_indices = (
             apply_post_construction_filter(
                 self.graph, self.maximize, tau, filter_mode, verbose
             )
         )
-        end_time = time.time()
-        print(f"Method apply_post_construction_filter executed in {end_time - start_time:.4f} seconds")
 
         # STEP 7b: Remap configs/neutral-pairs if the filter removed vertices
-        start_time = time.time()
         if kept_indices is not None:
             old_to_new = {old: new for new, old in enumerate(kept_indices)}
 
@@ -644,8 +631,6 @@ class Landscape:
                     for u, v in neutral_pairs
                     if u in old_to_new and v in old_to_new
                 ]
-        end_time = time.time()
-        print(f"Time taken to remap configs and neutral pairs: {end_time - start_time} seconds")
 
         self._identify_plateaus(neutral_pairs)
 
