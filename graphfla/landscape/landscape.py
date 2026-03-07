@@ -148,8 +148,7 @@ class Landscape:
         Neutrality threshold. Neighbors with ``|fitness_a - fitness_b| <= epsilon``
         are classified as neutral rather than improving/worsening. When
         ``epsilon > 0``, a plateau layer is constructed and downstream analyses
-        become plateau-aware. Defaults to 0. Can be auto-estimated from
-        replicate fitness data via ``epsilon='auto'`` in ``build_from_data``.
+        become plateau-aware. Defaults to 0.
     verbose : bool
         The verbosity level set during initialization or construction.
     _is_built : bool
@@ -381,8 +380,7 @@ class Landscape:
         X: Any,
         f: Union[pd.Series, list, np.ndarray],
         data_types: Optional[Dict[str, str]] = None,
-        epsilon: Union[float, str] = 0,
-        f_replicate: Optional[Union[pd.Series, list, np.ndarray]] = None,
+        epsilon: float = 0,
         calculate_basins: bool = False,
         calculate_paths: bool = False,
         calculate_distance: bool = False,
@@ -420,7 +418,7 @@ class Landscape:
             column names/indices, and values must be one of 'boolean',
             'categorical', or 'ordinal'. This information is crucial for
             determining neighborhood relationships and calculating distances.
-        epsilon : float or 'auto', default=0
+        epsilon : float, default=0
             Neutrality threshold. Neighboring configurations whose absolute
             fitness difference is ``<= epsilon`` are treated as neutral
             (equal-fitness) rather than strictly improving/worsening. When
@@ -430,17 +428,6 @@ class Landscape:
             plateau-aware. A higher epsilon produces a smoother landscape with
             fewer, larger local optima; ``epsilon=0`` preserves strict-inequality
             behavior (the default).
-
-            When set to ``'auto'``, epsilon is estimated from replicate fitness
-            measurements as the residual standard error (RSE) of a linear
-            regression between ``f`` and ``f_replicate``. This requires
-            ``f_replicate`` to be provided.
-        f_replicate : pandas.Series, list, or numpy.ndarray, optional
-            A second, independent set of fitness measurements for the same
-            configurations in ``X``. Used only when ``epsilon='auto'`` to
-            estimate the noise level (residual standard error of a linear
-            regression between ``f`` and ``f_replicate``). Ignored when
-            ``epsilon`` is a numeric value.
         calculate_basins : bool, default=True
             If True, calculates the basins of attraction for each local optimum
             using a greedy hill-climbing algorithm. This identifies which configurations
@@ -544,30 +531,7 @@ class Landscape:
                 "This Landscape instance has already been built. Create a new instance to rebuild."
             )
 
-        # Resolve epsilon: compute from replicates when 'auto'
-        if epsilon == "auto":
-            if f_replicate is None:
-                raise ValueError(
-                    "epsilon='auto' requires replicate fitness data via the "
-                    "'f_replicate' parameter. Provide a second set of fitness "
-                    "measurements, or set epsilon to a numeric value."
-                )
-            f_arr = np.asarray(f, dtype=np.float64)
-            f_rep_arr = np.asarray(f_replicate, dtype=np.float64)
-            if len(f_arr) != len(f_rep_arr):
-                raise ValueError(
-                    f"f and f_replicate must have the same length, got "
-                    f"{len(f_arr)} and {len(f_rep_arr)}."
-                )
-            self.epsilon = self._compute_auto_epsilon(f_arr, f_rep_arr)
-            if verbose:
-                print(
-                    f" - Auto-computed epsilon (RSE from replicates): "
-                    f"{self.epsilon:.6f}"
-                )
-        else:
-            self.epsilon = float(epsilon)
-
+        self.epsilon = float(epsilon)
         self.verbose = verbose
 
         if verbose:
@@ -1194,41 +1158,8 @@ class Landscape:
                 "build_from_graph() first."
             )
 
-    @staticmethod
-    def _compute_auto_epsilon(
-        f: np.ndarray, f_replicate: np.ndarray
-    ) -> float:
-        """Estimate the noise threshold from replicate fitness measurements.
-
-        Fits an ordinary least-squares regression ``f_replicate ~ f`` and
-        returns the residual standard error (RSE), i.e.
-        ``sqrt(RSS / (n - 2))`` where RSS is the residual sum of squares.
-        This follows the approach of Aguilar-Rodriguez et al. (2018) who
-        used the RSE between replicate protein-binding microarray
-        experiments as their noise threshold (δ).
-        """
-        f = np.asarray(f, dtype=np.float64)
-        f_replicate = np.asarray(f_replicate, dtype=np.float64)
-        n = len(f)
-        if n < 3:
-            raise ValueError(
-                "At least 3 data points are required to estimate epsilon "
-                "from replicates (need n > 2 for residual standard error)."
-            )
-        coeffs = np.polyfit(f, f_replicate, 1)
-        predicted = np.polyval(coeffs, f)
-        rss = np.sum((f_replicate - predicted) ** 2)
-        return float(np.sqrt(rss / (n - 2)))
-
     def _resolve_epsilon(self) -> float:
-        """Resolve the epsilon parameter to a numeric value.
-
-        By this point ``self.epsilon`` should already be a float (resolved
-        during ``build_from_data``). If it is still ``'auto'`` — which can
-        only happen when loading from a legacy graph file — fall back to 0.
-        """
-        if self.epsilon == "auto":
-            return 0.0
+        """Return the numeric epsilon value."""
         return float(self.epsilon)
 
     def _generate_neighbors(
