@@ -45,7 +45,7 @@ def timeit(method):
         result = method(*args, **kwargs)
         end_time = time.time()
         elapsed_time = end_time - start_time
-        # print(f"Method {method.__name__} executed in {elapsed_time:.4f} seconds.")
+        print(f"Method {method.__name__} executed in {elapsed_time:.4f} seconds.")
         return result
 
     return timed
@@ -236,6 +236,7 @@ class Landscape:
         # Core attributes
         self.graph = None
         self.configs = None
+        self._configs_array = None
         self.config_dict = None
         self.data_types = None
         self.n_configs = None
@@ -540,6 +541,7 @@ class Landscape:
         # STEP 1: Select appropriate strategies
 
         # Select data preprocessing strategies based on landscape type
+        start_time = time.time()
         self._preprocessor = self._preprocessors.get(self.type)
         if self._preprocessor is None:
             raise ValueError(
@@ -552,13 +554,19 @@ class Landscape:
             raise ValueError(
                 f"No neighbor generator available for landscape type: {self.type}"
             )
+        end_time = time.time()
+        print(f"Select preprocessor and neighbor generator executed in {end_time - start_time:.4f} seconds")
 
+        start_time = time.time()
         # STEP 2: Apply pre-construction function-based fitness filter
         X, f = apply_pre_construction_filter(
             X, f, self.maximize, tau, filter_mode, verbose
         )
+        end_time = time.time()
+        print(f"Method apply_pre_construction_filter executed in {end_time - start_time:.4f} seconds")
 
         # STEP 3: Preprocess data based on landscape type
+        start_time = time.time()
         if self.type == "default":
             # Default preprocessor requires data_types
             if not isinstance(data_types, dict):
@@ -575,6 +583,8 @@ class Landscape:
             X_processed, f_processed, self.data_types, self.n_vars = (
                 self._preprocessor.preprocess(X, f, verbose=verbose)
             )
+        end_time = time.time()
+        print(f"Preprocess data executed in {end_time - start_time:.4f} seconds")
 
         # STEP 4: Data wrangling
         if verbose:
@@ -608,21 +618,25 @@ class Landscape:
         self.graph = self._construct_landscape(processed_data, edges, delta_fits)
 
         # STEP 7: Post-construction pruning
+        start_time = time.time()
         self.graph, self.n_configs, self.n_edges, kept_indices = (
             apply_post_construction_filter(
                 self.graph, self.maximize, tau, filter_mode, verbose
             )
         )
+        end_time = time.time()
+        print(f"Method apply_post_construction_filter executed in {end_time - start_time:.4f} seconds")
 
         # STEP 7b: Remap configs/neutral-pairs if the filter removed vertices
+        start_time = time.time()
         if kept_indices is not None:
             old_to_new = {old: new for new, old in enumerate(kept_indices)}
 
             if self.configs is not None:
-                self.configs = pd.Series(
-                    [self.configs.iloc[old] for old in kept_indices],
-                    index=range(len(kept_indices)),
-                )
+                self.configs = self.configs.take(kept_indices)
+                self.configs.index = range(len(kept_indices))
+            if self._configs_array is not None:
+                self._configs_array = self._configs_array[kept_indices]
 
             if neutral_pairs:
                 neutral_pairs = [
@@ -630,6 +644,8 @@ class Landscape:
                     for u, v in neutral_pairs
                     if u in old_to_new and v in old_to_new
                 ]
+        end_time = time.time()
+        print(f"Time taken to remap configs and neutral pairs: {end_time - start_time} seconds")
 
         self._identify_plateaus(neutral_pairs)
 
@@ -963,17 +979,12 @@ class Landscape:
             # First get base local optima data
             lo_subgraph = self.graph.subgraph(self.lo_index)
 
-            # Create base DataFrame with LO attributes
+            # Create base DataFrame with LO attributes (column-wise bulk access)
             vertex_attrs = lo_subgraph.vs.attributes()
-            data_dicts = []
-
-            for i in range(lo_subgraph.vcount()):
-                # Extract all attributes for this vertex
-                vertex_dict = {attr: lo_subgraph.vs[i][attr] for attr in vertex_attrs}
-                data_dicts.append(vertex_dict)
-
-            # Create DataFrame with LO indices
-            data_lo = pd.DataFrame(data_dicts, index=self.lo_index)
+            data_lo = pd.DataFrame(
+                {attr: lo_subgraph.vs[attr] for attr in vertex_attrs},
+                index=self.lo_index,
+            )
 
             # Columns typically irrelevant for LO-only view from main graph
             cols_to_drop = ["is_lo", "out_degree", "in_degree", "basin_index"]
@@ -1037,17 +1048,12 @@ class Landscape:
             return data_lo
 
         else:
-            # Return data for all nodes in the main graph
+            # Return data for all nodes in the main graph (column-wise bulk access)
             vertex_attrs = self.graph.vs.attributes()
-            data_dicts = []
-
-            for i in range(self.graph.vcount()):
-                # Extract all attributes for this vertex
-                vertex_dict = {attr: self.graph.vs[i][attr] for attr in vertex_attrs}
-                data_dicts.append(vertex_dict)
-
-            # Create DataFrame with vertex indices
-            data = pd.DataFrame(data_dicts, index=range(self.graph.vcount()))
+            data = pd.DataFrame(
+                {attr: self.graph.vs[attr] for attr in vertex_attrs},
+                index=range(self.graph.vcount()),
+            )
 
             # Sort by index
             data.sort_index(inplace=True)
@@ -1243,20 +1249,33 @@ class Landscape:
             self.maximize,
             self.verbose,
             neighbor_generator,
+            self._configs_array,
         )
 
     def _construct_neighborhoods_pairwise(self, data, n_edit):
         """Compute the full pairwise Hamming distance matrix with pdist."""
         epsilon = self._resolve_epsilon()
         return construct_neighborhoods_pairwise(
-            data, n_edit, self.configs, epsilon, self.verbose, self.maximize
+            data,
+            n_edit,
+            self.configs,
+            epsilon,
+            self.verbose,
+            self.maximize,
+            self._configs_array,
         )
 
     def _construct_neighborhoods_broadcast(self, data, n_edit):
         """For each config, compute Hamming distance to all others via NumPy."""
         epsilon = self._resolve_epsilon()
         return construct_neighborhoods_broadcast(
-            data, n_edit, self.configs, epsilon, self.maximize, self.verbose
+            data,
+            n_edit,
+            self.configs,
+            epsilon,
+            self.maximize,
+            self.verbose,
+            self._configs_array,
         )
 
     @timeit
@@ -1265,44 +1284,20 @@ class Landscape:
         if self.verbose:
             print(" - Constructing graph object...")
 
-        graph = ig.Graph(directed=True)
-        graph.add_vertices(len(data.index))  # data.index must be 0..N-1
-
-        graph.add_edges(edges)
-        if delta_fits:
-            graph.es["delta_fit"] = delta_fits
-
         if self.verbose:
             print(" - Adding node attributes (fitness, etc.)...")
-        # Add original features and fitness as node attributes
-        for column in data.columns:
-            # Ensure column name is suitable for igraph attribute name
-            attr_name = str(column)
-            graph.vs[attr_name] = data[column].values
+        graph = ig.Graph(
+            n=len(data),
+            edges=edges,
+            directed=True,
+            vertex_attrs={
+                str(column): data[column].to_numpy(copy=False)
+                for column in data.columns
+            },
+            edge_attrs={"delta_fit": delta_fits} if delta_fits else None,
+        )
 
         self.n_edges = graph.ecount()  # Update edge count based on final graph
-
-        # Check if node count changed (e.g., due to disconnected nodes not in edge_list)
-        # This check is mainly relevant when building from data.
-        original_node_count = len(data)
-        final_node_count = graph.vcount()
-        if final_node_count != original_node_count:
-            # This might happen if the neighborhood definition (n_edit) results
-            # in some configurations having no connections within the dataset.
-            warnings.warn(
-                f"Node count mismatch: {original_node_count} initial configurations "
-                f"-> {final_node_count} nodes in the final graph. "
-                "This may indicate disconnected components or isolated configurations "
-                "within the provided dataset and neighborhood definition.",
-                UserWarning,
-            )
-            # Prune self.configs to match the actual graph nodes if necessary
-            # to avoid issues in later analyses (like distance calculations)
-            if self.configs is not None:
-                nodes_in_graph = set(range(graph.vcount()))
-                self.configs = self.configs[
-                    self.configs.index.map(lambda idx: idx in nodes_in_graph)
-                ]
 
         return graph
 
@@ -1520,11 +1515,11 @@ class Landscape:
             print(" - Determining local optima...")
 
         # --- Per-node LO detection (unchanged) ---
-        out_degrees = self.graph.outdegree()
-        is_lo = [deg == 0 for deg in out_degrees]
-        self.graph.vs["is_lo"] = is_lo
-        self.n_lo = sum(is_lo)
-        self.lo_index = sorted([i for i, val in enumerate(is_lo) if val])
+        out_degrees = np.array(self.graph.outdegree())
+        is_lo = out_degrees == 0
+        self.graph.vs["is_lo"] = is_lo.tolist()
+        self.n_lo = int(is_lo.sum())
+        self.lo_index = np.where(is_lo)[0].tolist()
 
         if self.verbose:
             print(f"   - Found {self.n_lo} per-node local optima.")
@@ -1546,26 +1541,22 @@ class Landscape:
                 plateau_is_lo[pid] = not has_external_exit
 
             # For nodes not in any multi-member plateau, fall back to per-node is_lo
-            is_plateau_lo = [False] * n_vertices
-            for i in range(n_vertices):
-                pid = int(self._node_to_plateau[i])
-                if pid in plateau_is_lo:
-                    is_plateau_lo[i] = plateau_is_lo[pid]
-                else:
-                    is_plateau_lo[i] = is_lo[i]
+            is_plateau_lo_arr = is_lo.copy()
+            for pid, is_lo_val in plateau_is_lo.items():
+                members = self._plateaus[pid]
+                is_plateau_lo_arr[members] = is_lo_val
 
-            self.graph.vs["is_plateau_lo"] = is_plateau_lo
-            self.n_plateau_lo = (
-                sum(v for v in plateau_is_lo.values() if v)
-                + sum(1 for i in range(n_vertices)
-                      if int(self._node_to_plateau[i]) not in plateau_is_lo and is_lo[i])
-            )
-            self.plateau_lo_index = [
-                pid for pid, v in plateau_is_lo.items() if v
-            ] + [
-                i for i in range(n_vertices)
-                if int(self._node_to_plateau[i]) not in plateau_is_lo and is_lo[i]
-            ]
+            self.graph.vs["is_plateau_lo"] = is_plateau_lo_arr.tolist()
+
+            plateau_lo_pids = [pid for pid, v in plateau_is_lo.items() if v]
+            singleton_lo_mask = is_lo.copy()
+            for pid in plateau_is_lo:
+                members = self._plateaus[pid]
+                singleton_lo_mask[members] = False
+            singleton_los = np.where(singleton_lo_mask)[0].tolist()
+
+            self.n_plateau_lo = len(plateau_lo_pids) + len(singleton_los)
+            self.plateau_lo_index = plateau_lo_pids + singleton_los
 
             if self.verbose:
                 print(f"   - Found {self.n_plateau_lo} plateau-level local optima.")
@@ -1645,25 +1636,16 @@ class Landscape:
                 if lo_pid in plateau_representative:
                     basin_indices[i] = plateau_representative[lo_pid]
 
-        # Calculate basin sizes efficiently using numpy
+        # Calculate basin sizes using vectorized numpy operations
         unique_basins, basin_counts = np.unique(basin_indices, return_counts=True)
-        basin_size_map = dict(zip(unique_basins, basin_counts))
+        basin_size_lookup = np.zeros(n_vertices, dtype=np.int32)
+        basin_size_lookup[unique_basins] = basin_counts
+        size_basin_values = basin_size_lookup[basin_indices]
 
-        size_basin_values = np.zeros(n_vertices, dtype=np.int32)
-        for i in range(n_vertices):
-            size_basin_values[i] = basin_size_map.get(basin_indices[i], 0)
-
-        # Calculate basin radii (max step count per basin)
-        max_steps_per_basin = {}
-        for i in range(n_vertices):
-            basin_idx = basin_indices[i]
-            max_steps_per_basin[basin_idx] = max(
-                max_steps_per_basin.get(basin_idx, 0), step_counts[i]
-            )
-
-        radius_basin_values = np.zeros(n_vertices, dtype=np.int32)
-        for i in range(n_vertices):
-            radius_basin_values[i] = max_steps_per_basin.get(basin_indices[i], 0)
+        # Calculate basin radii (max step count per basin) using numpy
+        max_steps_lookup = np.zeros(n_vertices, dtype=np.int32)
+        np.maximum.at(max_steps_lookup, basin_indices, step_counts)
+        radius_basin_values = max_steps_lookup[basin_indices]
 
         self.graph.vs["basin_index"] = basin_indices.tolist()
         self.graph.vs["size_basin_greedy"] = size_basin_values.tolist()
@@ -1804,30 +1786,19 @@ class Landscape:
         fitness_array = np.array(self.graph.vs["fitness"])
 
         # Step 1: Calculate mean neighbor fitness for each node
-        # Preallocate array for mean neighbor fitness values
         mean_neighbor_fit = np.full(n_vertices, np.nan)
 
-        # Process nodes in batches to balance speed and memory usage
-        batch_size = 1000  # Adjust based on typical graph size and available memory
+        adj_list = self.graph.get_adjlist(mode="all")
 
-        for i in range(0, n_vertices, batch_size):
-            # Get the batch of vertices to process
-            batch_end = min(i + batch_size, n_vertices)
-            batch_indices = list(range(i, batch_end))
+        for vertex_idx in range(n_vertices):
+            neighbors = adj_list[vertex_idx]
+            if self._neutral_neighbors and vertex_idx in self._neutral_neighbors:
+                neighbors = list(
+                    set(neighbors) | set(self._neutral_neighbors[vertex_idx])
+                )
 
-            # Process each vertex in the batch
-            for vertex_idx in batch_indices:
-                # Graph neighbors cover improving + worsening edges
-                neighbors = self.graph.neighbors(vertex_idx, mode="all")
-                # Include neutral neighbors when plateau layer is active
-                if self._neutral_neighbors and vertex_idx in self._neutral_neighbors:
-                    neighbors = list(
-                        set(neighbors) | set(self._neutral_neighbors[vertex_idx])
-                    )
-
-                if neighbors:
-                    # Use vectorized operation on the pre-fetched fitness array
-                    mean_neighbor_fit[vertex_idx] = np.mean(fitness_array[neighbors])
+            if neighbors:
+                mean_neighbor_fit[vertex_idx] = np.mean(fitness_array[neighbors])
 
         # Add the mean neighbor fitness as a vertex attribute
         self.graph.vs["mean_neighbor_fit"] = mean_neighbor_fit.tolist()
@@ -1836,27 +1807,18 @@ class Landscape:
             print(f" - Added 'mean_neighbor_fit' attribute for {n_vertices} nodes")
 
         # Step 2: Calculate delta mean neighbor fitness for each edge
-        # Get total number of edges for progress tracking
         n_edges = self.graph.ecount()
 
-        # Create a more memory-efficient approach for edge processing
-        # Process edges in batches to keep memory usage low
-        batch_size_edges = 10000  # Adjust based on typical graph size
-        delta_mean_neighbor_fit = np.zeros(n_edges)
+        edge_list = self.graph.get_edgelist()
+        if edge_list:
+            edge_array = np.array(edge_list)
+            delta_mean_neighbor_fit = (
+                mean_neighbor_fit[edge_array[:, 1]]
+                - mean_neighbor_fit[edge_array[:, 0]]
+            )
+        else:
+            delta_mean_neighbor_fit = np.zeros(n_edges)
 
-        for i in range(0, n_edges, batch_size_edges):
-            batch_end = min(i + batch_size_edges, n_edges)
-            batch_edges = list(range(i, batch_end))
-
-            for edge_idx in batch_edges:
-                edge = self.graph.es[edge_idx]
-                src, tgt = edge.source, edge.target
-
-                # Calculate difference in mean neighbor fitness
-                delta = mean_neighbor_fit[tgt] - mean_neighbor_fit[src]
-                delta_mean_neighbor_fit[edge_idx] = delta
-
-        # Add the delta mean neighbor fitness as an edge attribute
         self.graph.es["delta_mean_neighbor_fit"] = delta_mean_neighbor_fit.tolist()
 
         if self.verbose:
@@ -1882,16 +1844,12 @@ class Landscape:
             self.go = None
             return
 
-        fitness_values = self.graph.vs["fitness"]
+        fitness_values = np.array(self.graph.vs["fitness"])
 
         if self.maximize:
-            self.go_index = max(
-                range(len(fitness_values)), key=lambda i: fitness_values[i]
-            )
+            self.go_index = int(np.argmax(fitness_values))
         else:
-            self.go_index = min(
-                range(len(fitness_values)), key=lambda i: fitness_values[i]
-            )
+            self.go_index = int(np.argmin(fitness_values))
 
         try:
             self.go = self.graph.vs[self.go_index].attributes()
@@ -1942,9 +1900,13 @@ class Landscape:
                 self._distance_calculated = False
                 return
 
-            configs = np.vstack(
-                [self.configs.iloc[i] for i in range(n_vertices)]
-            )
+            if (
+                self._configs_array is not None
+                and len(self._configs_array) == n_vertices
+            ):
+                configs = self._configs_array
+            else:
+                configs = np.array(self.configs.tolist())
             go_config = configs[self.go_index]
             distances = distance(configs, go_config, self.data_types)
 
@@ -2240,7 +2202,8 @@ class Landscape:
         if self.verbose:
             print("Preparing data for landscape construction (encoding variables)...")
 
-        invariant_cols = [col for col in X.columns if X[col].nunique() <= 1]
+        nunique = X.nunique()
+        invariant_cols = nunique.index[nunique <= 1].tolist()
         if invariant_cols:
             X = X.drop(columns=invariant_cols)
             data_types = {k: v for k, v in data_types.items() if k not in invariant_cols}
@@ -2255,23 +2218,47 @@ class Landscape:
         X_encoded = X.copy()
         # Encode based on data type
         for col, dtype in data_types.items():
+            col_data = X_encoded[col]
             if dtype == "boolean":
                 # Convert boolean (True/False or 1/0) to integer 0 or 1
-                X_encoded[col] = X_encoded[col].astype(bool).astype(int)
+                X_encoded[col] = col_data.astype(bool).astype(int)
             elif dtype == "categorical":
                 # Factorize categorical data into integer codes (0, 1, 2, ...)
-                X_encoded[col] = pd.factorize(X_encoded[col])[0]
+                if isinstance(col_data.dtype, pd.CategoricalDtype):
+                    X_encoded[col] = col_data.cat.codes
+                else:
+                    X_encoded[col] = pd.factorize(col_data)[0]
             elif dtype == "ordinal":
                 # Convert ordinal data into integer codes based on inherent order
-                X_encoded[col] = pd.Categorical(X_encoded[col], ordered=True).codes
+                if isinstance(col_data.dtype, pd.CategoricalDtype) and col_data.cat.ordered:
+                    X_encoded[col] = col_data.cat.codes
+                else:
+                    X_encoded[col] = pd.Categorical(col_data, ordered=True).codes
             else:
                 # This case should ideally not be reached if validation is done
                 raise ValueError(
                     f"Unsupported data type '{dtype}' encountered during encoding."
                 )
 
-        # Store configurations as tuples in a Series, indexed like X
-        self.configs = pd.Series(X_encoded.apply(tuple, axis=1), index=X_encoded.index)
+        # Store configurations as tuples in a Series, indexed like X.
+        # .values.tolist() converts numpy scalars to native Python types,
+        # which is critical for fast hashing in neighborhood construction.
+        encoded_array = X_encoded.to_numpy(copy=False)
+        max_code = int(encoded_array.max()) if encoded_array.size else 0
+        if max_code <= np.iinfo(np.uint8).max:
+            encoded_dtype = np.uint8
+        elif max_code <= np.iinfo(np.uint16).max:
+            encoded_dtype = np.uint16
+        elif max_code <= np.iinfo(np.uint32).max:
+            encoded_dtype = np.uint32
+        else:
+            encoded_dtype = np.uint64
+        self._configs_array = np.ascontiguousarray(encoded_array, dtype=encoded_dtype)
+        self.configs = pd.Series(
+            list(map(tuple, self._configs_array.tolist())),
+            index=X_encoded.index,
+            copy=False,
+        )
 
         # Check for duplicates in encoded configurations (should be handled earlier, but as safeguard)
         if self.configs.duplicated().any():
@@ -2285,7 +2272,8 @@ class Landscape:
         self.config_dict = self._generate_config_dict(data_types, X_encoded)
 
         # Return original data plus fitness for setting node attributes later
-        data_for_attributes = pd.concat([X, f], axis=1)
+        data_for_attributes = X.copy()
+        data_for_attributes["fitness"] = f.to_numpy(copy=False)
         data_for_attributes.reset_index(
             drop=True, inplace=True
         )  # Ensure index alignment is maintained

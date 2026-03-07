@@ -2,7 +2,6 @@ import numpy as np
 import igraph as ig
 import pandas as pd
 
-
 def apply_pre_construction_filter(X, f, maximize, tau, filter_mode, verbose):
     if tau is not None:
         if filter_mode == "any":
@@ -76,35 +75,25 @@ def apply_post_construction_filter(graph, maximize, tau, filter_mode, verbose):
 
             initial_edges = graph.ecount()
 
-            # Get fitness values for all nodes
-            fitness_values = graph.vs["fitness"]
+            # Vectorized edge filtering using numpy
+            fitness_arr = np.array(graph.vs["fitness"])
+            edge_list = graph.get_edgelist()
 
-            # Identify edges to remove based on optimization direction
-            edges_to_remove = []
+            if edge_list:
+                edge_array = np.asarray(edge_list, dtype=np.int32)
+                src_fit = fitness_arr[edge_array[:, 0]]
+                tgt_fit = fitness_arr[edge_array[:, 1]]
 
-            for edge_idx in range(graph.ecount()):
-                edge = graph.es[edge_idx]
-                source_fitness = fitness_values[edge.source]
-                target_fitness = fitness_values[edge.target]
-
-                # Check if both endpoints are below threshold
                 if maximize:
-                    both_below = (
-                        source_fitness < tau
-                        and target_fitness < tau
-                    )
+                    both_below = (src_fit < tau) & (tgt_fit < tau)
                 else:
-                    both_below = (
-                        source_fitness > tau
-                        and target_fitness > tau
-                    )
+                    both_below = (src_fit > tau) & (tgt_fit > tau)
 
-                if both_below:
-                    edges_to_remove.append(edge_idx)
+                edges_to_remove = np.where(both_below)[0].tolist()
+            else:
+                edges_to_remove = []
 
-            # Remove edges in reverse order to maintain correct indices
             if edges_to_remove:
-                edges_to_remove.sort(reverse=True)
                 graph.delete_edges(edges_to_remove)
 
                 final_edges = graph.ecount()
@@ -120,21 +109,19 @@ def apply_post_construction_filter(graph, maximize, tau, filter_mode, verbose):
                 if verbose:
                     print("   - No edges removed (all connect functional configs)")
 
-            # Keep only the largest connected component
+            # Keep only the largest weakly connected component
             initial_nodes = graph.vcount()
-
-            # Tag each vertex with its pre-filter index so we can recover
-            # the mapping after giant() re-indexes vertices.
-            graph.vs["_orig_idx"] = list(range(initial_nodes))
-
             components = graph.connected_components(mode="weak")
-            graph = components.giant()
+            membership = np.asarray(components.membership, dtype=np.int32)
 
-            if graph.vcount() < initial_nodes:
-                kept_vertex_indices = list(graph.vs["_orig_idx"])
+            if membership.size > 0:
+                component_sizes = np.bincount(membership)
+                giant_component = int(component_sizes.argmax())
+                kept_mask = membership == giant_component
 
-            # Remove the temporary attribute
-            del graph.vs["_orig_idx"]
+                if not np.all(kept_mask):
+                    kept_vertex_indices = np.flatnonzero(kept_mask).tolist()
+                    graph = graph.induced_subgraph(kept_vertex_indices)
 
             if verbose:
                 removed_nodes = initial_nodes - graph.vcount()

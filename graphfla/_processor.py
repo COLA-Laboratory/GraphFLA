@@ -97,6 +97,7 @@ class SequencePreprocessor:
             X_input=X,
             alphabet=self.alphabet,
             class_name=f"Sequence ({self.alphabet[0]}{self.alphabet[-1]})",
+            validated=True,
             verbose=verbose,
         )
 
@@ -554,6 +555,7 @@ def _preprocess_sequence_input(
     X_input: Union[List[str], pd.Series, np.ndarray, pd.DataFrame],
     alphabet: List[str],
     class_name: str = "SequenceLandscape",
+    validated: bool = False,
     verbose: bool = True,
 ) -> Tuple[pd.DataFrame, Dict[str, str], int]:
     """
@@ -604,14 +606,20 @@ def _preprocess_sequence_input(
                 raise ValueError(
                     f"All sequences must have the same length (expected {seq_len}, got {len(seq_upper)} for sequence {i})."
                 )
-            if not set(seq_upper).issubset(valid_chars):
+            if not validated and not set(seq_upper).issubset(valid_chars):
                 invalid_chars = set(seq_upper) - valid_chars
                 raise ValueError(
                     f"Sequence {i} contains invalid characters: {invalid_chars}. Allowed: {alphabet}"
                 )
             validated_sequences.append(seq_upper)
-        X_df = pd.DataFrame([list(seq) for seq in validated_sequences])
-        X_df.columns = [f"pos_{i}" for i in range(seq_len)]
+        sequence_array = np.frombuffer(
+            "".join(validated_sequences).encode("ascii"), dtype="S1"
+        ).reshape(len(validated_sequences), seq_len).astype("U1")
+        X_df = pd.DataFrame(
+            sequence_array,
+            columns=[f"pos_{i}" for i in range(seq_len)],
+            copy=False,
+        )
 
     # Format 2: DataFrame or Ndarray (Tabular Format)
     elif isinstance(X_input, (pd.DataFrame, np.ndarray)):
@@ -626,13 +634,14 @@ def _preprocess_sequence_input(
         seq_len = X_df.shape[1]
         if seq_len == 0:
             raise ValueError("Input DataFrame/ndarray cannot have zero columns.")
-        for col in X_df.columns:
-            unique_vals = set(X_df[col].dropna().unique())
-            if not unique_vals.issubset(valid_chars):
-                invalid_chars = unique_vals - valid_chars
-                raise ValueError(
-                    f"Column '{col}' contains invalid characters: {invalid_chars}. Allowed: {alphabet}"
-                )
+        if not validated:
+            for col in X_df.columns:
+                unique_vals = set(X_df[col].dropna().unique())
+                if not unique_vals.issubset(valid_chars):
+                    invalid_chars = unique_vals - valid_chars
+                    raise ValueError(
+                        f"Column '{col}' contains invalid characters: {invalid_chars}. Allowed: {alphabet}"
+                    )
         if isinstance(X_input, np.ndarray):
             X_df.columns = [f"pos_{i}" for i in range(seq_len)]
     else:
@@ -643,8 +652,9 @@ def _preprocess_sequence_input(
     # Enforce Categorical Order
     if X_df is None or X_df.empty:
         raise ValueError("Could not process input X into a DataFrame.")
+    cat_dtype = pd.CategoricalDtype(categories=alphabet, ordered=False)
+    X_df = X_df.astype(cat_dtype)
     for col in X_df.columns:
-        X_df[col] = pd.Categorical(X_df[col], categories=alphabet, ordered=False)
         if X_df[col].isnull().any():
             raise ValueError(
                 f"Invalid characters found in column '{col}' after categorical conversion. Expected characters from: {alphabet}"
