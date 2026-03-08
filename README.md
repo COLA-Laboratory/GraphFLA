@@ -61,9 +61,10 @@ import pandas as pd
 
 # Load data:
 data = pd.DataFrame({
-    "sequences": ["ATCG", "GCTA", "TACG", "CGAT"],
-    "fitness": [0.82, 0.91, 0.45, 0.67]
+    "sequences": ["AAA", "AAG", "AGA", "AGG", "GAA", "GAG", "GGA", "GGG"],
+    "fitness": [0.10, 0.25, 0.25, 0.40, 0.25, 0.40, 0.40, 0.91]
 })
+# 3 positions (A/G), 8 variants; all connected via single mutations; unimodal (GGG optimum)
 
 X = data["sequences"]
 f = data["fitness"]
