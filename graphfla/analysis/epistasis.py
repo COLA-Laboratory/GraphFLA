@@ -951,7 +951,6 @@ def higher_order_epistasis(landscape, order=2, verbose=False, n_jobs=1):
         from sklearn.preprocessing import PolynomialFeatures, OneHotEncoder
         from sklearn.linear_model import LinearRegression
         from sklearn.metrics import r2_score
-        from sklearn.pipeline import Pipeline
     except ImportError:
         raise ImportError(
             "This function requires scikit-learn. "
@@ -984,34 +983,54 @@ def higher_order_epistasis(landscape, order=2, verbose=False, n_jobs=1):
     X = np.vstack(landscape.configs.values)
     y = np.array(landscape.graph.vs["fitness"])
 
-    # One-hot encode all variables
+    # Build a numerically stable design matrix:
+    # - boolean landscapes already have a suitable 0/1 encoding
+    # - other landscape types need one-hot encoding with a reference level dropped
     if verbose:
-        print(f"One-hot encoding {X.shape[1]} variables...")
+        print(f"Encoding {X.shape[1]} variables...")
 
-    encoder = OneHotEncoder(sparse_output=False)
-    try:
-        X_encoded = encoder.fit_transform(X)
-    except Exception as e:
-        raise ValueError(f"Failed to one-hot encode configurations: {e}")
+    if landscape.type == "boolean":
+        X_encoded = np.asarray(X, dtype=np.float64)
+    else:
+        encoder = OneHotEncoder(
+            sparse_output=False,
+            drop="first",
+            dtype=np.float64,
+        )
+        try:
+            X_encoded = encoder.fit_transform(X)
+        except Exception as e:
+            raise ValueError(f"Failed to one-hot encode configurations: {e}")
 
     if verbose:
         print(f"Encoded data shape: {X_encoded.shape}")
         print(f"Creating polynomial features of degree {order}...")
 
-    # Create a pipeline with polynomial features and linear regression
-    model = Pipeline(
-        [
-            ("poly", PolynomialFeatures(degree=order, include_bias=True)),
-            ("linear", LinearRegression(n_jobs=n_jobs)),
-        ]
+    # Use interaction-only features and let LinearRegression handle the intercept.
+    poly = PolynomialFeatures(
+        degree=order,
+        include_bias=False,
+        interaction_only=True,
     )
+    model = LinearRegression(n_jobs=n_jobs)
 
     # Handle potential numerical issues with large datasets
     try:
         if verbose:
             print(f"Fitting polynomial regression model...")
-        model.fit(X_encoded, y)
-        y_pred = model.predict(X_encoded)
+        X_poly = poly.fit_transform(X_encoded)
+        model.fit(X_poly, y)
+        # Avoid np.matmul here because NumPy linked against Accelerate on
+        # macOS arm64 can emit spurious RuntimeWarnings for finite inputs.
+        coefficients = np.asarray(model.coef_, dtype=np.float64).reshape(-1)
+        y_pred = (
+            np.sum(
+                np.asarray(X_poly, dtype=np.float64) * coefficients,
+                axis=1,
+                dtype=np.float64,
+            )
+            + float(model.intercept_)
+        )
         r2 = r2_score(y, y_pred)
     except Exception as e:
         raise RuntimeError(f"Error fitting polynomial regression model: {e}")
@@ -1160,11 +1179,15 @@ def walsh_hadamard_coefficient(landscape, max_order=2, max_cells=1e9, chunk_size
         X_strings, Xohi.columns, wildtype, X_df, chunk_size
     )
 
-    # Compute coefficients using least squares
-    # θ = (X^T X)^(-1) X^T f
-    XtX_inv = np.linalg.pinv(np.dot(Xensemble.T, Xensemble))
-    Xtf = np.dot(Xensemble.T, f)
-    coefficients = np.dot(XtX_inv, Xtf)
+    # Compute coefficients with a direct least-squares solve instead of the
+    # normal equations. This is more numerically stable and also avoids the
+    # spurious macOS arm64 Accelerate matmul warnings seen with pinv(X^T X).
+    Xensemble_values = Xensemble.to_numpy(dtype=np.float64, copy=False)
+    coefficients, *_ = np.linalg.lstsq(
+        Xensemble_values,
+        np.asarray(f, dtype=np.float64),
+        rcond=None,
+    )
 
     # Create results dictionary with sorted coefficients
     coef_dict = {}
@@ -1322,7 +1345,10 @@ def _ensemble_encode_features(X, feature_names, wildtype, X_df, chunk_size):
 
     vmat_inv = _V_matrix(str_coef=coef_list, num_states=state_list, invert=True)
 
-    return pd.DataFrame(np.matmul(hmat_inv, vmat_inv), columns=feature_names)
+    # V is diagonal, so H @ V is equivalent to scaling each column of H by the
+    # corresponding diagonal element. This avoids warning-prone np.matmul calls
+    # on macOS arm64 Accelerate while producing the same matrix exactly.
+    return pd.DataFrame(hmat_inv * np.diag(vmat_inv), columns=feature_names)
 
 
 def _coefficient_to_sequence(coefficient, length):

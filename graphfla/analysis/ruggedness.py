@@ -175,7 +175,7 @@ def r_s_ratio(landscape) -> float:
             # Use one-hot encoding for nominal categorical variables
             cat_series = pd.Categorical(raw_X[col])
             # Get one-hot encoded columns, drop first category to avoid multicollinearity
-            one_hot = pd.get_dummies(cat_series, drop_first=False)
+            one_hot = pd.get_dummies(cat_series, drop_first=True)
             X_transform_list.append(one_hot.values)
         elif dtype == "ordinal":
             # For ordinal variables, use numerical codes that preserve order
@@ -209,13 +209,11 @@ def r_s_ratio(landscape) -> float:
 
         # 4. Calculate Slope (s)
         # Mean of absolute values of additive coefficients (betas)
-        additive_coeffs = linear_model.coef_
+        additive_coeffs = np.asarray(linear_model.coef_, dtype=np.float64).reshape(-1)
         # potential case where n_features is 1
-        if n_features == 1 and np.isscalar(additive_coeffs):
-            slope_s = np.abs(additive_coeffs)
-        elif n_features == 1 and isinstance(additive_coeffs, (np.ndarray, list)):
+        if additive_coeffs.size == 1:
             slope_s = np.abs(additive_coeffs[0])
-        elif n_features > 1:
+        elif additive_coeffs.size > 1:
             slope_s = np.mean(np.abs(additive_coeffs))
         else:  # n_features == 0 (should not happen if validation is correct)
             slope_s = 0
@@ -228,7 +226,16 @@ def r_s_ratio(landscape) -> float:
             )
             return np.inf
 
-        predicted_fitness = linear_model.predict(X_fit)
+        # Avoid np.matmul here because NumPy linked against Accelerate on
+        # macOS arm64 can emit spurious RuntimeWarnings for finite inputs.
+        predicted_fitness = (
+            np.sum(
+                np.asarray(X_fit, dtype=np.float64) * additive_coeffs,
+                axis=1,
+                dtype=np.float64,
+            )
+            + float(linear_model.intercept_)
+        )
         residuals = fitness_values - predicted_fitness
 
         # Calculate roughness as RMSE (root-mean-square error)

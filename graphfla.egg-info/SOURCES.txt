@@ -4,8 +4,8 @@ README.md
 pyproject.toml
 setup.py
 graphfla/__init__.py
+graphfla/_data.py
 graphfla/_neighbors.py
-graphfla/_processor.py
 graphfla/distances.py
 graphfla/filters.py
 graphfla/lon.py
@@ -18,6 +18,9 @@ graphfla.egg-info/requires.txt
 graphfla.egg-info/top_level.txt
 graphfla/algorithms/__init__.py
 graphfla/algorithms/adaptive_walk.py
+graphfla/algorithms/basin.py
+graphfla/algorithms/optima.py
+graphfla/algorithms/plateaus.py
 graphfla/algorithms/random_walk.py
 graphfla/analysis/__init__.py
 graphfla/analysis/correlation.py

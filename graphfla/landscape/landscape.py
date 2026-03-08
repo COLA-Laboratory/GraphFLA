@@ -52,7 +52,7 @@ def timeit(method):
         result = method(*args, **kwargs)
         end_time = time.time()
         elapsed_time = end_time - start_time
-        print(f"Method {method.__name__} executed in {elapsed_time:.4f} seconds.")
+        # print(f"Method {method.__name__} executed in {elapsed_time:.4f} seconds.")
         return result
 
     return timed
@@ -197,9 +197,7 @@ class Landscape:
     >>> # Use the Landscape factory for automatic type selection (recommended)
     >>> # from landscape_lib import Landscape # Assuming library structure
     >>> # landscape = Landscape(type="boolean").build_from_data(X_data, f_data)
-
-    ...
-    Landscape Summary
+    >>> landscape.describe()  # doctest: +SKIP
     --- Landscape Summary ---
     Class: Landscape
     Built: True
@@ -213,10 +211,9 @@ class Landscape:
     Paths Calculated: False
     LON Calculated: False
     ---
-
-    >>> print(f"Number of configurations: {landscape.n_configs}")
+    >>> print(f"Number of configurations: {landscape.n_configs}")  # doctest: +SKIP
     Number of configurations: 4
-    >>> print(f"Global optimum fitness: {landscape.go['fitness']}")
+    >>> print(f"Global optimum fitness: {landscape.go['fitness']}")  # doctest: +SKIP
     Global optimum fitness: 3.0
     """
 
@@ -1247,7 +1244,7 @@ class Landscape:
         Identifies all nodes from which a local optimum can be reached via any
         fitness-increasing path. When plateaus are active, ancestors are computed
         for each plateau-level LO by taking the union of ancestors across all
-        plateau members,         assigned to the canonical representative (min index).
+        plateau members,    assigned to the canonical representative (min index).
 
         Notes
         -----
@@ -1306,7 +1303,9 @@ class Landscape:
         Provides a quick overview of the landscape's size, complexity,
         and analysis status.
         """
-        print("--- Landscape Summary ---")
+        _bold = "\033[1m"
+        _reset = "\033[0m"
+        print(f"{_bold}--- Landscape Summary ---{_reset}")
         print(f"Class: {self.__class__.__name__}")
         print(f"Built: {self._is_built}")
         if self._is_built:
