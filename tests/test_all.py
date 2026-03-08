@@ -191,6 +191,29 @@ def test_build_dna_landscape_from_list(dna_sequence_data):
     )
 
 
+@pytest.mark.parametrize(
+    "as_series",
+    [False, True],
+    ids=["list", "series"],
+)
+def test_build_dna_landscape_filter_any_accepts_sequence_like_inputs(as_series):
+    sequences = ["AA", "AC", "AG", "AT", "CA"]
+    if as_series:
+        sequences = pd.Series(sequences, name="seq")
+    fitness = np.array([0.8, 0.85, 0.9, 0.95, 0.1])
+    landscape = DNALandscape()
+    landscape.build_from_data(
+        sequences,
+        fitness,
+        tau=0.5,
+        filter_mode="any",
+        verbose=False,
+    )
+
+    assert landscape.graph.vcount() == 4
+    assert all(value >= 0.5 for value in landscape.graph.vs["fitness"])
+
+
 def test_build_dna_landscape_from_df_int_cols(dna_sequence_data):
     sequences, fitness = dna_sequence_data
     X_dna = pd.DataFrame([list(s) for s in sequences])

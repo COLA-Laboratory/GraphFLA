@@ -1,8 +1,97 @@
 import numpy as np
 import pandas as pd
 from scipy.stats import spearmanr, pearsonr, kendalltau
+from typing import TYPE_CHECKING
 
 from ..algorithms import hill_climb
+
+if TYPE_CHECKING:
+    from ..landscape.landscape import Landscape
+
+
+def determine_neighbor_fitness(self) -> "Landscape":
+    """Calculates the mean fitness of neighbors for each node and the difference
+    in mean neighbor fitness between connected nodes.
+
+    This method adds two new attributes to the landscape graph:
+    1. 'mean_neighbor_fit': A vertex attribute representing the mean fitness of all
+    neighboring nodes.
+    2. 'delta_mean_neighbor_fit': An edge attribute representing the difference in
+    mean neighbor fitness along the improving (lower-fitness → higher-fitness)
+    direction, i.e. mean_neighbor_fit(target) - mean_neighbor_fit(source).
+
+    This can be useful for identifying evolvability-enhancing (EE) mutations as
+    introduced in Wagner (2023).
+
+    References
+    ----------
+    .. [Wagner 2023] Wagner, A. The role of evolvability in the evolution of
+       complex traits. Nat Rev Genet 24, 1-16 (2023).
+       https://doi.org/10.1038/s41576-023-00559-0
+
+    Returns
+    -------
+    Landscape
+        The landscape instance (self) with the new attributes added, for
+        method chaining.
+
+    Raises
+    ------
+    RuntimeError
+        If the landscape has not been built yet.
+    """
+    if self.graph is None:
+        raise RuntimeError("Graph is None despite landscape being built.")
+
+    if self.verbose:
+        print("Calculating neighbor fitness metrics...")
+
+    # Get total number of vertices for progress tracking
+    n_vertices = self.graph.vcount()
+
+    # Pre-fetch all fitness values into a numpy array for faster lookup
+    fitness_array = np.array(self.graph.vs["fitness"])
+
+    # Step 1: Calculate mean neighbor fitness for each node
+    mean_neighbor_fit = np.full(n_vertices, np.nan)
+
+    adj_list = self.graph.get_adjlist(mode="all")
+
+    for vertex_idx in range(n_vertices):
+        neighbors = adj_list[vertex_idx]
+        if self._neutral_neighbors and vertex_idx in self._neutral_neighbors:
+            neighbors = list(
+                set(neighbors) | set(self._neutral_neighbors[vertex_idx])
+            )
+
+        if neighbors:
+            mean_neighbor_fit[vertex_idx] = np.mean(fitness_array[neighbors])
+
+    # Add the mean neighbor fitness as a vertex attribute
+    self.graph.vs["mean_neighbor_fit"] = mean_neighbor_fit.tolist()
+
+    if self.verbose:
+        print(f" - Added 'mean_neighbor_fit' attribute for {n_vertices} nodes")
+
+    # Step 2: Calculate delta mean neighbor fitness for each edge
+    n_edges = self.graph.ecount()
+
+    edge_list = self.graph.get_edgelist()
+    if edge_list:
+        edge_array = np.array(edge_list)
+        delta_mean_neighbor_fit = (
+            mean_neighbor_fit[edge_array[:, 1]] - mean_neighbor_fit[edge_array[:, 0]]
+        )
+    else:
+        delta_mean_neighbor_fit = np.zeros(n_edges)
+
+    self.graph.es["delta_mean_neighbor_fit"] = delta_mean_neighbor_fit.tolist()
+
+    if self.verbose:
+        print(f" - Added 'delta_mean_neighbor_fit' attribute for {n_edges} edges")
+
+    self._neighbor_fit_calculated = True
+    return self
 
 
 def neighbor_fit_corr(landscape, auto_calculate=True, method="pearson"):

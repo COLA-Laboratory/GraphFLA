@@ -1,9 +1,189 @@
 import warnings
 import random
+from collections import defaultdict
 import numpy as np
 
 from typing import Union, List, Optional, Callable
+from tqdm import tqdm
 from ..distances import mixed_distance
+
+
+def determine_global_optimum(self):
+    """Identifies the global optimum node in the landscape graph using igraph."""
+    if self.graph is None:
+        raise RuntimeError("Graph is None.")  # Internal check
+    if self.verbose:
+        print(" - Determining global optimum...")
+
+    if "fitness" not in self.graph.vs.attributes():
+        warnings.warn(
+            "Cannot determine global optimum: 'fitness' attribute missing from graph nodes.",
+            RuntimeWarning,
+        )
+        self.go_index = None
+        self.go = None
+        return
+
+    fitness_values = np.array(self.graph.vs["fitness"])
+
+    if self.maximize:
+        self.go_index = int(np.argmax(fitness_values))
+    else:
+        self.go_index = int(np.argmin(fitness_values))
+
+    try:
+        self.go = self.graph.vs[self.go_index].attributes()
+        if self.verbose:
+            print(
+                f"   - Global optimum found at index {self.go_index} with fitness {self.go['fitness']:.4f}."
+            )
+    except IndexError:
+        warnings.warn(
+            f"Global optimum index {self.go_index} not found in graph nodes. Resetting GO.",
+            RuntimeWarning,
+        )
+        self.go_index = None
+        self.go = None
+
+
+def determine_accessible_paths(self):
+    """Determines the size of basins based on accessible paths (ancestors).
+
+    Identifies all nodes from which a local optimum can be reached via any
+    fitness-increasing path. When plateaus are active, ancestors are computed
+    for each plateau-level LO by taking the union of ancestors across all
+    plateau members,         assigned to the canonical representative (min index).
+
+    Notes
+    -----
+    This method is computationally intensive and might be slow for large
+    landscapes.
+    """
+    if self.graph is None:
+        raise RuntimeError("Graph is None.")
+
+    if self.lo_index is None or not self.lo_index or self.n_lo is None:
+        warnings.warn(
+            "No local optima found or determined. Cannot calculate accessible paths.",
+            RuntimeWarning,
+        )
+        self._path_calculated = False
+        return
+
+    if self.verbose:
+        print(" - Determining accessible paths (ancestors)...")
+
+    dict_size = defaultdict(int)
+
+    try:
+        if self._has_plateaus and self.plateau_lo_index:
+            # Plateau-aware: union ancestors of all members per plateau-LO
+            plateau_lo_items = []
+            for item in self.plateau_lo_index:
+                if item in self._plateaus:
+                    plateau_lo_items.append(("plateau", item))
+                else:
+                    plateau_lo_items.append(("node", item))
+
+            items_iter = (
+                tqdm(plateau_lo_items, desc="   - Finding ancestors")
+                if self.verbose
+                else plateau_lo_items
+            )
+
+            for kind, item_id in items_iter:
+                if kind == "plateau":
+                    members = self._plateaus[item_id]
+                    ancestors = set()
+                    for member in members:
+                        ancestors.update(self.graph.subcomponent(member, mode="in"))
+                    representative = min(members)
+                    dict_size[representative] = len(ancestors)
+                else:
+                    ancestors_set = self.graph.subcomponent(item_id, mode="in")
+                    dict_size[item_id] = len(ancestors_set)
+        else:
+            los_iter = (
+                tqdm(self.lo_index, total=self.n_lo, desc="   - Finding ancestors")
+                if self.verbose
+                else self.lo_index
+            )
+            for lo in los_iter:
+                ancestors_set = self.graph.subcomponent(lo, mode="in")
+                dict_size[lo] = len(ancestors_set)
+
+        size_basin_accessible_values = [0] * self.graph.vcount()
+        for vertex_id, basin_size in dict_size.items():
+            size_basin_accessible_values[vertex_id] = basin_size
+
+        self.graph.vs["size_basin_accessible"] = size_basin_accessible_values
+
+        self._path_calculated = True
+        if self.verbose:
+            print(
+                f"   - Accessible paths calculated for {len(dict_size)} local optima."
+            )
+    except Exception as e:
+        self._path_calculated = False
+        warnings.warn(
+            f"Error during accessible path calculation: {e}. "
+            "'size_basin_accessible' attribute may be incomplete.",
+            RuntimeWarning,
+        )
+
+
+def determine_dist_to_go(self, distance=None):
+    """Calculates the distance from each node to the global optimum."""
+
+    # Check prerequisites
+    if (
+        self.graph is None
+        or self.configs is None
+        or self.go_index is None
+        or self.data_types is None
+    ):
+        if self.verbose:
+            print("Skipping distance calculation - missing prerequisites")
+        return
+
+    # Use default distance function if none provided
+    if distance is None:
+        distance = self._get_default_distance_metric()
+
+    if self.verbose:
+        print(
+            f" - Calculating distances to global optimum using {distance.__name__}..."
+        )
+
+    try:
+        n_vertices = self.graph.vcount()
+        if len(self.configs) != n_vertices:
+            warnings.warn(
+                f"configs length ({len(self.configs)}) does not match graph "
+                f"vertex count ({n_vertices}). Skipping distance calculation.",
+                RuntimeWarning,
+            )
+            self._distance_calculated = False
+            return
+
+        if self._configs_array is not None and len(self._configs_array) == n_vertices:
+            configs = self._configs_array
+        else:
+            configs = np.array(self.configs.tolist())
+        go_config = configs[self.go_index]
+        distances = distance(configs, go_config, self.data_types)
+
+        self.graph.vs["dist_go"] = distances.tolist()
+        self._distance_calculated = True
+
+        if self.verbose:
+            print(
+                "   - Distances to GO calculated and added as node attribute 'dist_go'."
+            )
+
+    except Exception as e:
+        warnings.warn(f"Error calculating distances to GO: {e}", RuntimeWarning)
+        self._distance_calculated = False
 
 
 def local_optima_accessibility(

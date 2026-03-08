@@ -5,30 +5,37 @@ import warnings
 import time
 
 from typing import Tuple, Dict, List, Union, Optional, Any
-from collections import defaultdict
-from tqdm import tqdm
 
 from ..lon import get_lon
-from ..algorithms import hill_climb
-from ..utils import add_network_metrics, apply_pre_construction_filter, apply_post_construction_filter
-from ..distances import mixed_distance, hamming_distance
-
-from .._processor import (
-    DataPreprocessor,
-    BooleanPreprocessor,
-    DefaultPreprocessor,
-    SequencePreprocessor,
+from ..algorithms import basin, optima, plateaus
+from ..analysis import correlation, navigability
+from .._data import (
+    DNA_ALPHABET,
+    RNA_ALPHABET,
+    PROTEIN_ALPHABET,
+    PreparedData,
+    InputHandler,
+    BooleanHandler,
+    DefaultHandler,
+    SequenceHandler,
+    filter_data,
+    prepare_data,
+    clean_data,
+    encode_data,
 )
+from ..utils import (
+    add_network_metrics,
+    filter_graph,
+    infer_graph_properties,
+)
+from ..distances import mixed_distance, hamming_distance
 
 from .._neighbors import (
     NeighborGenerator,
     BooleanNeighborGenerator,
     DefaultNeighborGenerator,
     SequenceNeighborGenerator,
-    select_neighborhood_strategy,
-    construct_neighborhoods_active,
-    construct_neighborhoods_pairwise,
-    construct_neighborhoods_broadcast,
+    build_edges,
 )
 
 from functools import wraps
@@ -45,16 +52,12 @@ def timeit(method):
         result = method(*args, **kwargs)
         end_time = time.time()
         elapsed_time = end_time - start_time
-        # print(f"Method {method.__name__} executed in {elapsed_time:.4f} seconds.")
+        print(f"Method {method.__name__} executed in {elapsed_time:.4f} seconds.")
         return result
 
     return timed
 
 
-ALLOWED_DATA_TYPES = {"boolean", "categorical", "ordinal"}
-DNA_ALPHABET = ["A", "C", "G", "T"]
-RNA_ALPHABET = ["A", "C", "G", "U"]
-PROTEIN_ALPHABET = list("ACDEFGHIKLMNPQRSTVWY")
 
 
 class Landscape:
@@ -72,14 +75,14 @@ class Landscape:
     After construction:
     - The graph object representing the landscape can be accessed via `Landscape.graph`.
     - Tabular information about the configurations can be obtained with `get_data()`.
-    - Basic landscape properties is available via `describe()`.
+    - Basic landscape properties are available via `describe()`.
     - Other methods in the `graphfla.analysis` and `graphfla.plotting` modules can be
       used for advanced analysis and visualization.
 
     Parameters
     ----------
     type : str, default='default'
-        The type of landscape to create. This determines the preprocessing and
+        The type of landscape to create. This determines the input-preparation and
         neighbor generation strategies used. Options include 'boolean', 'dna',
         'rna', 'protein', or 'default' for general landscapes.
     maximize : bool, default=True
@@ -94,12 +97,14 @@ class Landscape:
         configurations (genotypes) and edges connect neighboring configurations,
         typically pointing from lower to higher fitness if `maximize` is True.
         Each node usually has a 'fitness' attribute. Populated after calling
-        `build_from_data` or `build_from_graph`. Fitness difference between neighboring nodes
-        is stored in the 'delta_fit' attribute.
+        `build_from_data` or `build_from_graph`. Fitness difference between
+        neighboring nodes is stored in the edge attribute 'delta_fit'.
     configs : pandas.Series or None
         A pandas Series mapping node indices (int) to their corresponding
         configuration representation (often a tuple). This represents the
-        genotypes in the landscape. Populated after calling `build_from_data`.
+        genotypes in the landscape. Populated after calling `build_from_data`
+        or when loading a graph via `build_from_graph` if the file contains
+        configs data.
     config_dict : dict or None
         A dictionary describing the encoding scheme for configuration variables.
         Keys are typically integer indices of variables, and values are
@@ -196,7 +201,7 @@ class Landscape:
     ...
     Landscape Summary
     --- Landscape Summary ---
-    Class: BaseLandscape
+    Class: Landscape
     Built: True
     Variables (n_vars): 2
     Configurations (n_configs): 4
@@ -216,12 +221,12 @@ class Landscape:
     """
 
     # Class-level registries for strategies
-    _preprocessors = {
-        "boolean": BooleanPreprocessor(),
-        "dna": SequencePreprocessor(DNA_ALPHABET),
-        "rna": SequencePreprocessor(RNA_ALPHABET),
-        "protein": SequencePreprocessor(PROTEIN_ALPHABET),
-        "default": DefaultPreprocessor(),
+    _input_handlers = {
+        "boolean": BooleanHandler(),
+        "dna": SequenceHandler(DNA_ALPHABET),
+        "rna": SequenceHandler(RNA_ALPHABET),
+        "protein": SequenceHandler(PROTEIN_ALPHABET),
+        "default": DefaultHandler(),
     }
 
     _neighbor_generators = {
@@ -270,8 +275,7 @@ class Landscape:
         self._distance_calculated = False
         self._neighbor_fit_calculated = False
 
-        # Strategy objects (will be set in build_from_data)
-        self._preprocessor = None
+        # Strategy object for neighborhood generation (set in build_from_data)
         self._neighbor_generator = None
 
     @property
@@ -344,7 +348,7 @@ class Landscape:
             return False
 
     def __eq__(self, other):
-        """Compare two BaseLandscape instances for equality.
+        """Compare two Landscape instances for equality.
 
         Equality is based on graph structure isomorphism and the optimization direction (`maximize`).
         """
@@ -362,11 +366,11 @@ class Landscape:
         return self._is_built and self.graph is not None and self.graph.vcount() > 0
 
     @classmethod
-    def register_preprocessor(
-        cls, data_type: str, preprocessor: DataPreprocessor
+    def register_input_handler(
+        cls, data_type: str, handler: InputHandler
     ) -> None:
-        """Register a custom preprocessor for a data type."""
-        cls._preprocessors[data_type] = preprocessor
+        """Register a custom input handler for a data type."""
+        cls._input_handlers[data_type] = handler
 
     @classmethod
     def register_neighbor_generator(
@@ -388,8 +392,6 @@ class Landscape:
         calculate_neighbor_fit: bool = False,
         tau: Optional[float] = None,
         filter_mode: str = "any",
-        impute: bool = False,
-        impute_model: Optional[Any] = None,
         n_edit: int = 1,
         neighborhood_strategy: str = "auto",
         verbose: Optional[bool] = True,
@@ -429,7 +431,7 @@ class Landscape:
             plateau-aware. A higher epsilon produces a smoother landscape with
             fewer, larger local optima; ``epsilon=0`` preserves strict-inequality
             behavior (the default).
-        calculate_basins : bool, default=True
+        calculate_basins : bool, default=False
             If True, calculates the basins of attraction for each local optimum
             using a greedy hill-climbing algorithm. This identifies which configurations
             lead to which peak. Populates the `size_basin_greedy` and `radius_basin_greedy`
@@ -438,6 +440,12 @@ class Landscape:
             If True, calculates accessible paths (ancestors) for local optima.
             This can be computationally intensive for large landscapes. Populates the
             `size_basin_accessible` attribute for each local optimum.
+        calculate_distance : bool, default=False
+            If True, calculates the distance from each node to the global optimum
+            and stores it in the `dist_go` vertex attribute.
+        calculate_neighbor_fit : bool, default=False
+            If True, calculates mean neighbor fitness per node and delta mean neighbor
+            fitness along edges; populates `mean_neighbor_fit` and `delta_mean_neighbor_fit`.
         tau : float, optional
             Functional threshold. Configurations whose fitness is above
             (when ``maximize=True``) or below (when ``maximize=False``) this
@@ -454,15 +462,6 @@ class Landscape:
               but remove edges where both endpoints are non-functional
               (both < tau when maximize, both > tau when minimize). Preserves
               transitions between functional and non-functional regions.
-        impute : bool, default=False
-            If True, attempts to fill in missing fitness values (`NaN` in `f`)
-            using a regression model based on the configurations `X`. Requires
-            scikit-learn or a user-provided `impute_model`.
-        impute_model : object, optional
-            A custom model object with `fit` and `predict` methods used for
-            imputation if `impute=True`. If None and `impute=True`, a
-            `RandomForestRegressor` from scikit-learn is used by default (if
-            available).
         n_edit : int, default=1
             The edit distance defining the neighborhood. An edge exists between
             two configurations if their distance (typically Hamming or mixed)
@@ -495,11 +494,12 @@ class Landscape:
         verbose : bool, optional
             If provided, overrides the instance's verbosity setting for this
             method call. Controls printed output during the build process.
+
         Returns
         -------
-        self : BaseLandscape
-            The instance itself, now populated with the graph and landscape
-            properties derived from the input data.
+        None
+            The method modifies the instance in place (populates the graph and
+            landscape properties). Nothing is returned.
 
         Raises
         ------
@@ -509,144 +509,62 @@ class Landscape:
         ValueError
             If input data `X`, `f`, or `data_types` are invalid (e.g., mismatched
             lengths, empty data, invalid types in `data_types`), or if the
-            construction process fails (e.g., imputation fails, resulting
-            graph is empty).
+            construction process fails (e.g., resulting graph is empty).
         TypeError
             If input types are incorrect (e.g., `data_types` is not a dict).
-        ImportError
-            If `impute=True` and scikit-learn is not installed, unless an
-            `impute_model` is provided.
 
         Notes
         -----
         The construction process involves several steps:
-        1. Select appropriate preprocessing and neighbor generation strategies.
-        2. Preprocess the data based on the landscape type.
-        3. Handle missing values and duplicates.
-        4. Prepare the data for graph construction (encoding, config_dict).
-        5. Construct the core landscape graph.
-        6. Analyze basic features (local optima, basins, paths, distances).
+        1. Resolve the type-specific preparation and neighbor-generation strategies.
+        2. Apply the optional pre-construction fitness filter.
+        3. Prepare the raw input based on the landscape type.
+        4. Clean missing values and duplicate configurations.
+        5. Encode the data and cache configuration metadata.
+        6. Construct the core directed landscape graph.
+        7. Apply post-construction pruning and remap cached metadata.
+        8. Build neutral plateaus and analyze derived landscape properties.
         """
-        if self._is_built:
-            raise RuntimeError(
-                "This Landscape instance has already been built. Create a new instance to rebuild."
-            )
+        self._check_not_built()
 
         self.epsilon = float(epsilon)
         self.verbose = verbose
 
         if verbose:
-            print(f"Building Landscape from data...")
+            print("Building Landscape from data...")
 
-        # STEP 1: Select appropriate strategies
-
-        # Select data preprocessing strategies based on landscape type
-        self._preprocessor = self._preprocessors.get(self.type)
-        if self._preprocessor is None:
-            raise ValueError(
-                f"No data preprocessor available for landscape type: {self.type}"
-            )
-
-        # Select neighborhood generation strategies based on landscape type
-        self._neighbor_generator = self._neighbor_generators.get(self.type)
-        if self._neighbor_generator is None:
-            raise ValueError(
-                f"No neighbor generator available for landscape type: {self.type}"
-            )
-
-        # STEP 2: Apply pre-construction function-based fitness filter
-        X, f = apply_pre_construction_filter(
-            X, f, self.maximize, tau, filter_mode, verbose
+        handler = self._resolve_strategies()
+        processed_data = self._preprocess_data(
+            handler=handler,
+            X=X,
+            f=f,
+            data_types=data_types,
+            tau=tau,
+            filter_mode=filter_mode,
+            verbose=verbose,
+        )
+        neutral_pairs = self._construct_graph(
+            processed_data,
+            n_edit=n_edit,
+            neighborhood_strategy=neighborhood_strategy,
+        )
+        neutral_pairs = self._postprocess_graph(
+            neutral_pairs=neutral_pairs,
+            tau=tau,
+            filter_mode=filter_mode,
+            verbose=verbose,
         )
 
-        # STEP 3: Preprocess data based on landscape type
-        if self.type == "default":
-            # Default preprocessor requires data_types
-            if not isinstance(data_types, dict):
-                raise ValueError(
-                    "Data_types must be a dictionary, e.g., {'var_0': 'boolean', 'var_1': 'categorical'}"
-                    f"got {type(data_types)}."
-                )
+        plateaus.build_plateaus(self, neutral_pairs)
 
-            X_processed, f_processed, self.data_types, self.n_vars = (
-                self._preprocessor.preprocess(X, f, data_types, verbose=verbose)
-            )
-        else:
-            # Other preprocessors infer data_types
-            X_processed, f_processed, self.data_types, self.n_vars = (
-                self._preprocessor.preprocess(X, f, verbose=verbose)
-            )
-
-        # STEP 4: Data wrangling
-        if verbose:
-            print(" - Handling missing values and duplicates...")
-
-        # Handling missing values, and if needed, imputing them
-        X_clean, f_clean = self._handle_missing_values(
-            X_processed, f_processed, self.data_types, impute, impute_model
-        )
-
-        if len(X_clean) == 0:
-            raise ValueError("All data removed during missing value handling.")
-
-        # Detecting and removing duplicates
-        X_final, f_final = self._handle_duplicates(X_clean, f_clean)
-
-        if len(X_final) == 0:
-            raise ValueError("All data removed after handling duplicates.")
-
-        # STEP 5: Prepare data (encoding and config_dict)
-        processed_data = self._prepare_data(X_final, f_final, self.data_types)
-        self.n_configs = len(X_final)
-
-        # STEP 6: Construct landscape graph
-        if verbose:
-            print("Constructing landscape graph...")
-
-        edges, delta_fits, neutral_pairs = self._construct_neighborhoods(
-            processed_data, n_edit=n_edit, strategy=neighborhood_strategy
-        )
-        self.graph = self._construct_landscape(processed_data, edges, delta_fits)
-
-        # STEP 7: Post-construction pruning
-        self.graph, self.n_configs, self.n_edges, kept_indices = (
-            apply_post_construction_filter(
-                self.graph, self.maximize, tau, filter_mode, verbose
-            )
-        )
-
-        # STEP 7b: Remap configs/neutral-pairs if the filter removed vertices
-        if kept_indices is not None:
-            old_to_new = {old: new for new, old in enumerate(kept_indices)}
-
-            if self.configs is not None:
-                self.configs = self.configs.take(kept_indices)
-                self.configs.index = range(len(kept_indices))
-            if self._configs_array is not None:
-                self._configs_array = self._configs_array[kept_indices]
-
-            if neutral_pairs:
-                neutral_pairs = [
-                    (old_to_new[u], old_to_new[v])
-                    for u, v in neutral_pairs
-                    if u in old_to_new and v in old_to_new
-                ]
-
-        self._identify_plateaus(neutral_pairs)
-
-        # STEP 8: Analyze graph properties
-        self._analyze_landscape(
+        self._analyze(
             calculate_distance=calculate_distance,
             calculate_basins=calculate_basins,
             calculate_paths=calculate_paths,
             calculate_neighbor_fit=calculate_neighbor_fit,
         )
 
-        # Mark as built and return
-        self._is_built = True
-        if verbose:
-            print(f"Landscape built successfully.\n")
-            self.describe()
+        self._finalize_build()
 
         return None
 
@@ -793,7 +711,12 @@ class Landscape:
             instance.data_types = None
 
         # Infer basic properties (n_configs, n_edges, n_vars)
-        instance._infer_properties_from_graph()
+        instance.n_configs, instance.n_edges, instance.n_vars = infer_graph_properties(
+            instance.graph,
+            data_types=instance.data_types,
+            configs=instance.configs,
+            verbose=instance.verbose,
+        )
 
         # Determine if this is a specialized landscape subclass
         landscape_class = (
@@ -815,7 +738,7 @@ class Landscape:
 
         # Reconstruct plateau data structures if saved in the graph
         if "plateau_id" in graph.vs.attributes():
-            instance._reconstruct_plateaus()
+            plateaus.restore_plateaus(instance)
 
         # Determine local optima and global optimum from graph structure
         if instance.graph.vcount() > 0:
@@ -950,7 +873,6 @@ class Landscape:
         """
         self._check_built()
         if self.graph is None:
-            # This check is primarily for internal consistency.
             raise RuntimeError("Graph is None despite landscape being built.")
 
         if lo_only:
@@ -959,113 +881,72 @@ class Landscape:
                     "Local optima not found. Cannot filter for LO.",
                     RuntimeWarning,
                 )
-                return pd.DataFrame()  # Return empty DataFrame
+                return pd.DataFrame()
 
-            # First get base local optima data
-            lo_subgraph = self.graph.subgraph(self.lo_index)
-
-            # Create base DataFrame with LO attributes (column-wise bulk access)
-            vertex_attrs = lo_subgraph.vs.attributes()
-            data_lo = pd.DataFrame(
-                {attr: lo_subgraph.vs[attr] for attr in vertex_attrs},
+            vs = self.graph.vs[self.lo_index]
+            data = pd.DataFrame(
+                {attr: vs[attr] for attr in self.graph.vs.attributes()},
                 index=self.lo_index,
             )
 
-            # Columns typically irrelevant for LO-only view from main graph
-            cols_to_drop = ["is_lo", "out_degree", "in_degree", "basin_index"]
-            data_lo = data_lo.drop(columns=cols_to_drop, errors="ignore")
+            data.drop(
+                columns=[
+                    c
+                    for c in ("is_lo", "out_degree", "in_degree", "basin_index")
+                    if c in data.columns
+                ],
+                inplace=True,
+            )
 
-            # If LON is available, append LON-specific attributes with prefixes
             if self.has_lon:
                 if self.lon is None:
                     raise RuntimeError("LON graph is None despite has_lon=True.")
 
-                # Extract LON-specific attributes
-                lon_attrs = self.lon.vs.attributes()
-                lon_specific_attrs = [
+                lon_specific = {
                     "escape_difficulty",
                     "improve_rate",
                     "accessibility",
                     "in_degree",
                     "out_degree",
+                }
+                lon_cols = [
+                    a for a in self.lon.vs.attributes() if a in lon_specific
                 ]
+                if lon_cols:
+                    lon_df = pd.DataFrame(
+                        {f"lon_{a}": self.lon.vs[a] for a in lon_cols},
+                        index=self.lon.vs["name"],
+                    )
+                    data = data.join(lon_df, how="left")
 
-                # Create a DataFrame for LON attributes
-                lon_data_dicts = []
-
-                for i in range(self.lon.vcount()):
-                    lon_vertex_dict = {}
-
-                    # Get the original node index (stored as "name" attribute)
-                    original_idx = self.lon.vs[i]["name"]
-
-                    # Extract LON-specific attributes
-                    for attr in lon_attrs:
-                        if attr in lon_specific_attrs:
-                            # Add prefix to LON-specific attributes
-                            lon_vertex_dict[f"lon_{attr}"] = self.lon.vs[i][attr]
-
-                    lon_data_dicts.append((original_idx, lon_vertex_dict))
-
-                # Create LON attributes DataFrame with original node indices
-                lon_df = pd.DataFrame(
-                    [d for _, d in lon_data_dicts],
-                    index=[idx for idx, _ in lon_data_dicts],
-                )
-
-                # Merge LON attributes with base LO data
-                data_lo = data_lo.join(lon_df, how="left")
-
-            # Sort by index for consistency
-            data_lo.sort_index(inplace=True)
-
-            if self.data_types is not None and self.n_vars is not None:
-                data_lo.rename(
-                    columns={
-                        old: new
-                        for old, new in zip(
-                            data_lo.columns[: self.n_vars], self.data_types.keys()
-                        )
-                    },
-                    inplace=True,
-                )
-
-            return data_lo
+            data.sort_index(inplace=True)
 
         else:
-            # Return data for all nodes in the main graph (column-wise bulk access)
-            vertex_attrs = self.graph.vs.attributes()
             data = pd.DataFrame(
-                {attr: self.graph.vs[attr] for attr in vertex_attrs},
+                {attr: self.graph.vs[attr] for attr in self.graph.vs.attributes()},
                 index=range(self.graph.vcount()),
             )
 
-            # Sort by index
-            data.sort_index(inplace=True)
-
-            # Drop intermediate calculation columns if they exist
-            # These were used to compute basin properties but are less relevant for final output
+            cols_to_drop = ["size_basin_greedy", "radius_basin_greedy"]
             if self._path_calculated:
-                cols_to_drop = [
-                    "size_basin_greedy",
-                    "radius_basin_greedy",
-                    "size_basin_accessible",
-                ]
-            else:
-                cols_to_drop = ["size_basin_greedy", "radius_basin_greedy"]
+                cols_to_drop.append("size_basin_accessible")
+            data.drop(
+                columns=[c for c in cols_to_drop if c in data.columns],
+                inplace=True,
+            )
 
-            if self.data_types is not None and self.n_vars is not None:
-                data.rename(
-                    columns={
-                        old: new
-                        for old, new in zip(
-                            data.columns[: self.n_vars], self.data_types.keys()
-                        )
-                    },
-                    inplace=True,
-                )
+        if self.data_types is not None and self.n_vars is not None:
+            data.rename(
+                columns={
+                    old: new
+                    for old, new in zip(
+                        data.columns[: self.n_vars], self.data_types.keys()
+                    )
+                },
+                inplace=True,
+            )
 
-            return data.drop(columns=cols_to_drop, errors="ignore")
+        return data
 
     def get_lon(self, *args, **kwargs) -> ig.Graph:
         """Constructs and returns the Local Optima Network (LON).
@@ -1141,6 +1022,135 @@ class Landscape:
             )
         return self.lon
 
+    def _check_not_built(self) -> None:
+        """Raise an error if the landscape has already been built."""
+        if self._is_built:
+            raise RuntimeError(
+                "This Landscape instance has already been built. Create a new instance to rebuild."
+            )
+
+    def _resolve_strategies(self) -> InputHandler:
+        """Resolve and cache the type-specific strategies for data builds."""
+        handler = self._input_handlers.get(self.type)
+        if handler is None:
+            raise ValueError(
+                f"No input handler for landscape type: {self.type}"
+            )
+
+        neighbor_generator = self._neighbor_generators.get(self.type)
+        if neighbor_generator is None:
+            raise ValueError(
+                f"No neighbor generator available for landscape type: {self.type}"
+            )
+
+        self._neighbor_generator = neighbor_generator
+        return handler
+
+    def _preprocess_data(
+        self,
+        *,
+        handler: InputHandler,
+        X: Any,
+        f: Union[pd.Series, list, np.ndarray],
+        data_types: Optional[Dict[str, str]],
+        tau: Optional[float],
+        filter_mode: str,
+        verbose: Optional[bool],
+    ) -> pd.DataFrame:
+        """Run the preprocessing pipeline and cache encoded build metadata."""
+        X_filtered, f_filtered = filter_data(
+            X, f, self.maximize, tau, filter_mode, verbose
+        )
+
+        X_processed, f_processed, self.data_types, self.n_vars = prepare_data(
+            handler, X_filtered, f_filtered, data_types=data_types, verbose=verbose
+        )
+
+        X_final, f_final = clean_data(
+            X_processed,
+            f_processed,
+            verbose=verbose,
+        )
+
+        prepared = encode_data(X_final, f_final, self.data_types, verbose=verbose)
+        return self._cache_metadata(prepared)
+
+    def _cache_metadata(self, prepared: PreparedData) -> pd.DataFrame:
+        """Persist encoded build metadata on the landscape instance."""
+        self.data_types = prepared.data_types
+        self.n_vars = prepared.n_vars
+        self._configs_array = prepared.configs_array
+        self.configs = prepared.configs
+        self.config_dict = prepared.config_dict
+
+        processed_data = prepared.data_for_attributes
+        self.n_configs = len(processed_data)
+        return processed_data
+
+    def _construct_graph(
+        self,
+        processed_data: pd.DataFrame,
+        *,
+        n_edit: int,
+        neighborhood_strategy: str,
+    ) -> List[Tuple[int, int]]:
+        """Construct the graph from preprocessed data and return neutral pairs."""
+        if self.verbose:
+            print("Constructing landscape graph...")
+
+        edges, delta_fits, neutral_pairs = self._build_edges(
+            processed_data, n_edit=n_edit, strategy=neighborhood_strategy
+        )
+        self.graph = self._build_graph(processed_data, edges, delta_fits)
+        return neutral_pairs
+
+    def _postprocess_graph(
+        self,
+        *,
+        neutral_pairs: List[Tuple[int, int]],
+        tau: Optional[float],
+        filter_mode: str,
+        verbose: Optional[bool],
+    ) -> List[Tuple[int, int]]:
+        """Apply graph pruning and remap cached metadata when vertices are removed."""
+        self.graph, self.n_configs, self.n_edges, kept_indices = filter_graph(
+            self.graph, self.maximize, tau, filter_mode, verbose
+        )
+        return self._remap_metadata(kept_indices, neutral_pairs)
+
+    def _remap_metadata(
+        self,
+        kept_indices: Optional[List[int]],
+        neutral_pairs: List[Tuple[int, int]],
+    ) -> List[Tuple[int, int]]:
+        """Remap configs and neutral pairs after graph filtering changes indices."""
+        if kept_indices is None:
+            return neutral_pairs
+
+        old_to_new = {old: new for new, old in enumerate(kept_indices)}
+
+        if self.configs is not None:
+            self.configs = self.configs.take(kept_indices)
+            self.configs.index = range(len(kept_indices))
+        if self._configs_array is not None:
+            self._configs_array = self._configs_array[kept_indices]
+
+        if not neutral_pairs:
+            return neutral_pairs
+
+        return [
+            (old_to_new[u], old_to_new[v])
+            for u, v in neutral_pairs
+            if u in old_to_new and v in old_to_new
+        ]
+
+    def _finalize_build(self) -> None:
+        """Mark the instance as built and emit the standard completion output."""
+        self._is_built = True
+        if self.verbose:
+            print("Landscape built successfully.\n")
+            self.describe()
+
     def _check_built(self) -> None:
         """Raise an error if the landscape hasn't been built yet."""
         if not self._is_built:
@@ -1149,123 +1159,31 @@ class Landscape:
                 "build_from_graph() first."
             )
 
-    def _resolve_epsilon(self) -> float:
-        """Return the numeric epsilon value."""
-        return float(self.epsilon)
+    @timeit
+    def _build_edges(self, data, n_edit, strategy="auto"):
+        """Build improving edges and neutral pairs for the current dataset."""
+        if self._neighbor_generator is None:
+            raise RuntimeError("Neighbor generator not set before build.")
 
-    def _generate_neighbors(
-        self, config: Tuple, config_dict: Dict, n_edit: int
-    ) -> List[Tuple]:
-        """Generate neighbors using the selected strategy."""
-        return self._neighbor_generator.generate(config, config_dict, n_edit)
+        result = build_edges(
+            configs=self.configs,
+            config_dict=self.config_dict,
+            data=data,
+            n_configs=self.n_configs,
+            n_vars=self.n_vars,
+            n_edit=n_edit,
+            strategy=strategy,
+            epsilon=float(self.epsilon),
+            maximize=self.maximize,
+            verbose=self.verbose,
+            neighbor_generator=self._neighbor_generator.generate,
+            configs_array=self._configs_array,
+        )
+        return result.edges, result.delta_fits, result.neutral_pairs
 
     @timeit
-    def _construct_neighborhoods(self, data, n_edit, strategy="auto"):
-        """Identifies connections (edges) between neighboring configurations.
-
-        This is the main dispatcher that delegates to one of three concrete
-        strategies depending on the ``strategy`` argument.
-
-        Parameters
-        ----------
-        data : pandas.DataFrame
-            Configuration data with a ``'fitness'`` column and integer index
-            ``0 .. n_configs-1``.
-        n_edit : int
-            Maximum edit distance for two configurations to be neighbors.
-        strategy : str, default='auto'
-            One of ``'auto'``, ``'active'``, ``'pairwise'``, or
-            ``'broadcast'``.
-
-        Returns
-        -------
-        edges : list[tuple[int, int]]
-            Directed edges from lower-fitness to higher-fitness neighbors.
-        delta_fits : list[float]
-            Absolute fitness differences for each edge.
-        neutral_pairs : list[tuple[int, int]]
-            Undirected pairs of neighbors within epsilon fitness of each other.
-            Each pair (u, v) is stored once (u < v) to avoid duplicates.
-        """
-        if self.configs is None or self.config_dict is None:
-            raise RuntimeError(
-                "Cannot construct neighborhoods: configs/config_dict missing."
-            )
-        if self.n_configs is None:
-            raise RuntimeError("n_configs not set before _construct_neighborhoods")
-
-        valid_strategies = {"auto", "active", "pairwise", "broadcast"}
-        if strategy not in valid_strategies:
-            raise ValueError(
-                f"Unknown neighborhood strategy '{strategy}'. "
-                f"Choose from {sorted(valid_strategies)}."
-            )
-
-        if strategy == "auto":
-            strategy = self._select_neighborhood_strategy(n_edit)
-            if self.verbose:
-                print(f" - Auto-selected '{strategy}' neighborhood strategy.")
-
-        if strategy == "pairwise":
-            return self._construct_neighborhoods_pairwise(data, n_edit)
-        elif strategy == "broadcast":
-            return self._construct_neighborhoods_broadcast(data, n_edit)
-        else:
-            return self._construct_neighborhoods_active(data, n_edit)
-
-    def _select_neighborhood_strategy(self, n_edit: int) -> str:
-        """Choose the fastest neighborhood strategy for the current dataset."""
-        return select_neighborhood_strategy(
-            self.n_configs, self.n_vars, self.config_dict, n_edit
-        )
-
-    def _construct_neighborhoods_active(self, data, n_edit):
-        """Enumerate candidate mutant neighbors and check dataset membership."""
-        epsilon = self._resolve_epsilon()
-        neighbor_generator = getattr(
-            self, "_generate_neighbors", Landscape._generate_neighbors
-        )
-        return construct_neighborhoods_active(
-            self.configs,
-            self.config_dict,
-            data,
-            n_edit,
-            epsilon,
-            self.maximize,
-            self.verbose,
-            neighbor_generator,
-            self._configs_array,
-        )
-
-    def _construct_neighborhoods_pairwise(self, data, n_edit):
-        """Compute the full pairwise Hamming distance matrix with pdist."""
-        epsilon = self._resolve_epsilon()
-        return construct_neighborhoods_pairwise(
-            data,
-            n_edit,
-            self.configs,
-            epsilon,
-            self.verbose,
-            self.maximize,
-            self._configs_array,
-        )
-
-    def _construct_neighborhoods_broadcast(self, data, n_edit):
-        """For each config, compute Hamming distance to all others via NumPy."""
-        epsilon = self._resolve_epsilon()
-        return construct_neighborhoods_broadcast(
-            data,
-            n_edit,
-            self.configs,
-            epsilon,
-            self.maximize,
-            self.verbose,
-            self._configs_array,
-        )
-
-    @timeit
-    def _construct_landscape(self, data, edges, delta_fits):
-        """Builds the ig.Graph object from nodes and edges."""
+    def _build_graph(self, data, edges, delta_fits):
+        """Build the igraph representation from nodes and improving edges."""
         if self.verbose:
             print(" - Constructing graph object...")
 
@@ -1286,200 +1204,12 @@ class Landscape:
 
         return graph
 
-    @timeit
-    def _identify_plateaus(self, neutral_pairs):
-        """Build neutral network and identify connected components (plateaus).
-
-        Each connected component of nodes linked by neutral (within-epsilon
-        fitness) edges forms a plateau. Only multi-member plateaus are tracked;
-        singleton nodes remain unaffected.
-
-        Parameters
-        ----------
-        neutral_pairs : list[tuple[int, int]]
-            Undirected neutral neighbor pairs from ``_construct_neighborhoods``.
-        """
-        if not neutral_pairs:
-            self._has_plateaus = False
-            return
-
-        if self.graph is None or self.n_configs is None:
-            self._has_plateaus = False
-            return
-
-        # Build a lightweight undirected graph just for component detection
-        neutral_graph = ig.Graph(
-            n=self.n_configs, edges=neutral_pairs, directed=False
-        )
-        components = neutral_graph.connected_components()
-
-        # For singletons, plateau_id == node index (identity mapping).
-        # Multi-member plateaus get IDs starting at n_configs to avoid collisions.
-        node_to_plateau = np.arange(self.n_configs, dtype=np.int32)
-        plateaus = {}
-        next_plateau_id = self.n_configs
-
-        for members in components:
-            if len(members) > 1:
-                member_list = sorted(members)
-                plateaus[next_plateau_id] = member_list
-                for node in member_list:
-                    node_to_plateau[node] = next_plateau_id
-                next_plateau_id += 1
-
-        if not plateaus:
-            self._has_plateaus = False
-            return
-
-        self._node_to_plateau = node_to_plateau
-        self._plateaus = plateaus
-        self._has_plateaus = True
-
-        # Build per-node neutral neighbor adjacency
-        neutral_neighbors = defaultdict(list)
-        for u, v in neutral_pairs:
-            neutral_neighbors[u].append(v)
-            neutral_neighbors[v].append(u)
-        self._neutral_neighbors = dict(neutral_neighbors)
-
-        # Annotate graph vertices
-        self.graph.vs["plateau_id"] = node_to_plateau.tolist()
-        plateau_sizes = np.ones(self.n_configs, dtype=np.int32)
-        for pid, members in plateaus.items():
-            size = len(members)
-            for node in members:
-                plateau_sizes[node] = size
-        self.graph.vs["plateau_size"] = plateau_sizes.tolist()
-
-        if self.verbose:
-            total_neutral_nodes = sum(len(m) for m in plateaus.values())
-            print(
-                f" - Identified {len(plateaus)} neutral plateaus "
-                f"covering {total_neutral_nodes} nodes."
-            )
-
-    def _reconstruct_plateaus(self):
-        """Rebuild plateau data structures from saved vertex attributes.
-
-        Called by ``build_from_graph`` when a graph with ``plateau_id``
-        attributes is loaded.  When ``self.configs`` is available, neutral
-        neighbor adjacency (``_neutral_neighbors``) is also reconstructed so
-        that ``determine_neighbor_fitness`` remains plateau-aware.
-        """
-        if self.graph is None or "plateau_id" not in self.graph.vs.attributes():
-            self._has_plateaus = False
-            return
-
-        n = self.graph.vcount()
-        node_to_plateau = np.array(self.graph.vs["plateau_id"], dtype=np.int32)
-
-        plateaus = defaultdict(list)
-        for node_idx in range(n):
-            pid = int(node_to_plateau[node_idx])
-            if pid != node_idx:
-                plateaus[pid].append(node_idx)
-
-        if not plateaus:
-            self._has_plateaus = False
-            return
-
-        self._node_to_plateau = node_to_plateau
-        self._plateaus = dict(plateaus)
-        self._has_plateaus = True
-
-        # Rebuild _neutral_neighbors from configs (single-edit adjacency
-        # within each plateau).  Falls back to None if configs are unavailable.
-        if self.configs is not None and len(self.configs) == n:
-            neutral_neighbors = defaultdict(list)
-            for pid, members in self._plateaus.items():
-                member_configs = [np.array(self.configs.iloc[m]) for m in members]
-                for i in range(len(members)):
-                    for j in range(i + 1, len(members)):
-                        if np.sum(member_configs[i] != member_configs[j]) == 1:
-                            neutral_neighbors[members[i]].append(members[j])
-                            neutral_neighbors[members[j]].append(members[i])
-            self._neutral_neighbors = dict(neutral_neighbors) if neutral_neighbors else None
-        else:
-            self._neutral_neighbors = None
-
-    def _find_plateau_exit(self, plateau_id, visited_plateaus):
-        """Find a node in a plateau that has an improving edge to an unvisited plateau.
-
-        Returns
-        -------
-        tuple[int, int] or tuple[None, None]
-            (exit_node_in_plateau, successor_outside_plateau), or (None, None)
-            if the plateau has no external exit.
-        """
-        for node in self._plateaus[plateau_id]:
-            for successor in self.graph.successors(node):
-                target_pid = int(self._node_to_plateau[successor])
-                if target_pid != plateau_id and target_pid not in visited_plateaus:
-                    return node, successor
-        return None, None
-
-    def _plateau_aware_climb(self, start_node, initial_lo, initial_steps):
-        """Extend a hill climb across neutral plateaus.
-
-        After a standard hill_climb reaches a node with out-degree 0, this
-        method checks whether that node's plateau has an exit to a different,
-        higher-fitness region. If so, the climb continues from that exit.
-
-        Parameters
-        ----------
-        start_node : int
-            The original starting node (unused except conceptually).
-        initial_lo : int
-            The local optimum reached by the initial hill climb.
-        initial_steps : int
-            Steps taken in the initial hill climb.
-
-        Returns
-        -------
-        tuple[int, int]
-            (final_lo, total_steps)
-        """
-        current_lo = initial_lo
-        total_steps = initial_steps
-        visited_plateaus = set()
-
-        while True:
-            pid = int(self._node_to_plateau[current_lo])
-            if pid not in self._plateaus:
-                break  # Singleton, not part of a multi-member plateau
-            if pid in visited_plateaus:
-                break
-            visited_plateaus.add(pid)
-
-            exit_node, exit_target = self._find_plateau_exit(pid, visited_plateaus)
-            if exit_node is None:
-                break  # Plateau is a true local optimum
-
-            total_steps += 1
-            next_lo, next_steps = hill_climb(self.graph, exit_target, "delta_fit")
-            total_steps += next_steps
-            current_lo = next_lo
-
-        return current_lo, total_steps
-
     def _get_default_distance_metric(self):
         """Get the appropriate distance metric based on landscape type."""
         if self.type in ["boolean", "dna", "rna", "protein"]:
             return hamming_distance
         else:
             return mixed_distance
-
-    def _add_network_metrics(self, graph, weight):
-        """
-        Calculates and adds node/edge metrics to the graph. Currently this includes
-        in-degree, out-degree, and PageRank. The weight parameter allows for
-        specifying which edge attribute to use for weighted calculations.
-        """
-        if self.verbose:
-            print(" - Calculating network metrics (degrees)...")
-        # Assumes utils.add_network_metrics exists and modifies the graph in place
-        # or returns the modified graph.
-        return add_network_metrics(graph, weight=weight)
 
     @timeit
     def determine_local_optima(self):
@@ -1495,56 +1225,7 @@ class Landscape:
         for backward compatibility. Plateau-level results are stored in
         ``n_plateau_lo`` / ``plateau_lo_index`` / ``is_plateau_lo``.
         """
-
-        if self.verbose:
-            print(" - Determining local optima...")
-
-        # --- Per-node LO detection (unchanged) ---
-        out_degrees = np.array(self.graph.outdegree())
-        is_lo = out_degrees == 0
-        self.graph.vs["is_lo"] = is_lo.tolist()
-        self.n_lo = int(is_lo.sum())
-        self.lo_index = np.where(is_lo)[0].tolist()
-
-        if self.verbose:
-            print(f"   - Found {self.n_lo} per-node local optima.")
-
-        # --- Plateau-level LO detection ---
-        if self._has_plateaus:
-            n_vertices = self.graph.vcount()
-            plateau_is_lo = {}
-
-            for pid, members in self._plateaus.items():
-                has_external_exit = False
-                for node in members:
-                    for successor in self.graph.successors(node):
-                        if int(self._node_to_plateau[successor]) != pid:
-                            has_external_exit = True
-                            break
-                    if has_external_exit:
-                        break
-                plateau_is_lo[pid] = not has_external_exit
-
-            # For nodes not in any multi-member plateau, fall back to per-node is_lo
-            is_plateau_lo_arr = is_lo.copy()
-            for pid, is_lo_val in plateau_is_lo.items():
-                members = self._plateaus[pid]
-                is_plateau_lo_arr[members] = is_lo_val
-
-            self.graph.vs["is_plateau_lo"] = is_plateau_lo_arr.tolist()
-
-            plateau_lo_pids = [pid for pid, v in plateau_is_lo.items() if v]
-            singleton_lo_mask = is_lo.copy()
-            for pid in plateau_is_lo:
-                members = self._plateaus[pid]
-                singleton_lo_mask[members] = False
-            singleton_los = np.where(singleton_lo_mask)[0].tolist()
-
-            self.n_plateau_lo = len(plateau_lo_pids) + len(singleton_los)
-            self.plateau_lo_index = plateau_lo_pids + singleton_los
-
-            if self.verbose:
-                print(f"   - Found {self.n_plateau_lo} plateau-level local optima.")
+        return optima.determine_local_optima(self)
 
     @timeit
     def determine_basin_of_attraction(self):
@@ -1557,89 +1238,7 @@ class Landscape:
         so that all members of a plateau-LO share the same representative
         (minimum-index member).
         """
-        if self.graph is None:
-            raise RuntimeError("Graph is None.")
-        if self.n_configs is None:
-            raise RuntimeError("n_configs is None.")
-
-        if self.verbose:
-            print(" - Calculating basins of attraction via hill climbing...")
-
-        n_vertices = self.graph.vcount()
-
-        basin_indices = np.full(n_vertices, -1, dtype=np.int32)
-        step_counts = np.zeros(n_vertices, dtype=np.int32)
-
-        batch_size = 10000
-
-        is_lo = (
-            np.array(self.graph.vs["is_lo"])
-            if "is_lo" in self.graph.vs.attributes()
-            else None
-        )
-
-        batch_ranges = list(range(0, n_vertices, batch_size))
-        nodes_iter = (
-            tqdm(batch_ranges, desc="   - Hill climbing batches")
-            if self.verbose
-            else batch_ranges
-        )
-
-        for batch_start in nodes_iter:
-            batch_end = min(batch_start + batch_size, n_vertices)
-
-            for i in range(batch_start, batch_end):
-                if is_lo is not None and is_lo[i]:
-                    basin_indices[i] = i
-                    step_counts[i] = 0
-                    continue
-
-                try:
-                    lo, steps = hill_climb(self.graph, i, "delta_fit")
-                    if self._has_plateaus:
-                        lo, steps = self._plateau_aware_climb(i, lo, steps)
-                    basin_indices[i] = lo
-                    step_counts[i] = steps
-                except Exception as e:
-                    if self.verbose:
-                        warnings.warn(
-                            f"Hill climb failed for node {i}: {e}. "
-                            "Assigning node to its own basin.",
-                            RuntimeWarning,
-                        )
-                    basin_indices[i] = i
-                    step_counts[i] = 0
-
-        # Canonicalize: map plateau-LO members to a single representative
-        if self._has_plateaus:
-            plateau_representative = {}
-            for pid, members in self._plateaus.items():
-                plateau_representative[pid] = min(members)
-
-            for i in range(n_vertices):
-                lo_pid = int(self._node_to_plateau[basin_indices[i]])
-                if lo_pid in plateau_representative:
-                    basin_indices[i] = plateau_representative[lo_pid]
-
-        # Calculate basin sizes using vectorized numpy operations
-        unique_basins, basin_counts = np.unique(basin_indices, return_counts=True)
-        basin_size_lookup = np.zeros(n_vertices, dtype=np.int32)
-        basin_size_lookup[unique_basins] = basin_counts
-        size_basin_values = basin_size_lookup[basin_indices]
-
-        # Calculate basin radii (max step count per basin) using numpy
-        max_steps_lookup = np.zeros(n_vertices, dtype=np.int32)
-        np.maximum.at(max_steps_lookup, basin_indices, step_counts)
-        radius_basin_values = max_steps_lookup[basin_indices]
-
-        self.graph.vs["basin_index"] = basin_indices.tolist()
-        self.graph.vs["size_basin_greedy"] = size_basin_values.tolist()
-        self.graph.vs["radius_basin_greedy"] = radius_basin_values.tolist()
-
-        self._basin_calculated = True
-
-        if self.verbose:
-            print(f"   - Basins calculated for {len(unique_basins)} local optima.")
+        return basin.determine_basin_of_attraction(self)
 
     @timeit
     def determine_accessible_paths(self):
@@ -1648,84 +1247,14 @@ class Landscape:
         Identifies all nodes from which a local optimum can be reached via any
         fitness-increasing path. When plateaus are active, ancestors are computed
         for each plateau-level LO by taking the union of ancestors across all
-        plateau members, assigned to the canonical representative (min index).
+        plateau members,         assigned to the canonical representative (min index).
 
-        Note
-        ----
+        Notes
+        -----
         This method is computationally intensive and might be slow for large
         landscapes.
         """
-        if self.graph is None:
-            raise RuntimeError("Graph is None.")
-
-        if self.lo_index is None or not self.lo_index or self.n_lo is None:
-            warnings.warn(
-                "No local optima found or determined. Cannot calculate accessible paths.",
-                RuntimeWarning,
-            )
-            self._path_calculated = False
-            return
-
-        if self.verbose:
-            print(" - Determining accessible paths (ancestors)...")
-
-        dict_size = defaultdict(int)
-
-        try:
-            if self._has_plateaus and self.plateau_lo_index:
-                # Plateau-aware: union ancestors of all members per plateau-LO
-                plateau_lo_items = []
-                for item in self.plateau_lo_index:
-                    if item in self._plateaus:
-                        plateau_lo_items.append(("plateau", item))
-                    else:
-                        plateau_lo_items.append(("node", item))
-
-                items_iter = (
-                    tqdm(plateau_lo_items, desc="   - Finding ancestors")
-                    if self.verbose
-                    else plateau_lo_items
-                )
-
-                for kind, item_id in items_iter:
-                    if kind == "plateau":
-                        members = self._plateaus[item_id]
-                        ancestors = set()
-                        for member in members:
-                            ancestors.update(self.graph.subcomponent(member, mode="in"))
-                        representative = min(members)
-                        dict_size[representative] = len(ancestors)
-                    else:
-                        ancestors_set = self.graph.subcomponent(item_id, mode="in")
-                        dict_size[item_id] = len(ancestors_set)
-            else:
-                los_iter = (
-                    tqdm(self.lo_index, total=self.n_lo, desc="   - Finding ancestors")
-                    if self.verbose
-                    else self.lo_index
-                )
-                for lo in los_iter:
-                    ancestors_set = self.graph.subcomponent(lo, mode="in")
-                    dict_size[lo] = len(ancestors_set)
-
-            size_basin_accessible_values = [0] * self.graph.vcount()
-            for vertex_id, basin_size in dict_size.items():
-                size_basin_accessible_values[vertex_id] = basin_size
-
-            self.graph.vs["size_basin_accessible"] = size_basin_accessible_values
-
-            self._path_calculated = True
-            if self.verbose:
-                print(
-                    f"   - Accessible paths calculated for {len(dict_size)} local optima."
-                )
-        except Exception as e:
-            self._path_calculated = False
-            warnings.warn(
-                f"Error during accessible path calculation: {e}. "
-                "'size_basin_accessible' attribute may be incomplete.",
-                RuntimeWarning,
-            )
+        return navigability.determine_accessible_paths(self)
 
     @timeit
     def determine_neighbor_fitness(self) -> "Landscape":
@@ -1744,168 +1273,32 @@ class Landscape:
 
         References
         ----------
-        .. Wagner, A. The role of evolvability in the evolution of
-        complex traits. Nat Rev Genet 24, 1-16 (2023).
-        https://doi.org/10.1038/s41576-023-00559-0
+        .. [Wagner 2023] Wagner, A. The role of evolvability in the evolution of
+           complex traits. Nat Rev Genet 24, 1-16 (2023).
+           https://doi.org/10.1038/s41576-023-00559-0
 
         Returns
         -------
-        self : BaseLandscape
-            The landscape instance with the new attributes added.
+        Landscape
+            The landscape instance (self) with the new attributes added, for
+            method chaining.
 
         Raises
         ------
         RuntimeError
             If the landscape has not been built yet.
         """
-        if self.graph is None:
-            raise RuntimeError("Graph is None despite landscape being built.")
-
-        if self.verbose:
-            print("Calculating neighbor fitness metrics...")
-
-        # Get total number of vertices for progress tracking
-        n_vertices = self.graph.vcount()
-
-        # Pre-fetch all fitness values into a numpy array for faster lookup
-        fitness_array = np.array(self.graph.vs["fitness"])
-
-        # Step 1: Calculate mean neighbor fitness for each node
-        mean_neighbor_fit = np.full(n_vertices, np.nan)
-
-        adj_list = self.graph.get_adjlist(mode="all")
-
-        for vertex_idx in range(n_vertices):
-            neighbors = adj_list[vertex_idx]
-            if self._neutral_neighbors and vertex_idx in self._neutral_neighbors:
-                neighbors = list(
-                    set(neighbors) | set(self._neutral_neighbors[vertex_idx])
-                )
-
-            if neighbors:
-                mean_neighbor_fit[vertex_idx] = np.mean(fitness_array[neighbors])
-
-        # Add the mean neighbor fitness as a vertex attribute
-        self.graph.vs["mean_neighbor_fit"] = mean_neighbor_fit.tolist()
-
-        if self.verbose:
-            print(f" - Added 'mean_neighbor_fit' attribute for {n_vertices} nodes")
-
-        # Step 2: Calculate delta mean neighbor fitness for each edge
-        n_edges = self.graph.ecount()
-
-        edge_list = self.graph.get_edgelist()
-        if edge_list:
-            edge_array = np.array(edge_list)
-            delta_mean_neighbor_fit = (
-                mean_neighbor_fit[edge_array[:, 1]]
-                - mean_neighbor_fit[edge_array[:, 0]]
-            )
-        else:
-            delta_mean_neighbor_fit = np.zeros(n_edges)
-
-        self.graph.es["delta_mean_neighbor_fit"] = delta_mean_neighbor_fit.tolist()
-
-        if self.verbose:
-            print(f" - Added 'delta_mean_neighbor_fit' attribute for {n_edges} edges")
-
-        self._neighbor_fit_calculated = True
-        return self
+        return correlation.determine_neighbor_fitness(self)
 
     @timeit
     def determine_global_optimum(self):
         """Identifies the global optimum node in the landscape graph using igraph."""
-        if self.graph is None:
-            raise RuntimeError("Graph is None.")  # Internal check
-        if self.verbose:
-            print(" - Determining global optimum...")
-
-        if "fitness" not in self.graph.vs.attributes():
-            warnings.warn(
-                "Cannot determine global optimum: 'fitness' attribute missing from graph nodes.",
-                RuntimeWarning,
-            )
-            self.go_index = None
-            self.go = None
-            return
-
-        fitness_values = np.array(self.graph.vs["fitness"])
-
-        if self.maximize:
-            self.go_index = int(np.argmax(fitness_values))
-        else:
-            self.go_index = int(np.argmin(fitness_values))
-
-        try:
-            self.go = self.graph.vs[self.go_index].attributes()
-            if self.verbose:
-                print(
-                    f"   - Global optimum found at index {self.go_index} with fitness {self.go['fitness']:.4f}."
-                )
-        except IndexError:
-            warnings.warn(
-                f"Global optimum index {self.go_index} not found in graph nodes. Resetting GO.",
-                RuntimeWarning,
-            )
-            self.go_index = None
-            self.go = None
+        return navigability.determine_global_optimum(self)
 
     @timeit
     def determine_dist_to_go(self, distance=None):
         """Calculates the distance from each node to the global optimum."""
-
-        # Check prerequisites
-        if (
-            self.graph is None
-            or self.configs is None
-            or self.go_index is None
-            or self.data_types is None
-        ):
-            if self.verbose:
-                print("Skipping distance calculation - missing prerequisites")
-            return
-
-        # Use default distance function if none provided
-        if distance is None:
-            distance = self._get_default_distance_metric()
-
-        if self.verbose:
-            print(
-                f" - Calculating distances to global optimum using {distance.__name__}..."
-            )
-
-        try:
-            n_vertices = self.graph.vcount()
-            if len(self.configs) != n_vertices:
-                warnings.warn(
-                    f"configs length ({len(self.configs)}) does not match graph "
-                    f"vertex count ({n_vertices}). Skipping distance calculation.",
-                    RuntimeWarning,
-                )
-                self._distance_calculated = False
-                return
-
-            if (
-                self._configs_array is not None
-                and len(self._configs_array) == n_vertices
-            ):
-                configs = self._configs_array
-            else:
-                configs = np.array(self.configs.tolist())
-            go_config = configs[self.go_index]
-            distances = distance(configs, go_config, self.data_types)
-
-            self.graph.vs["dist_go"] = distances.tolist()
-            self._distance_calculated = True
-
-            if self.verbose:
-                print(
-                    "   - Distances to GO calculated and added as node attribute 'dist_go'."
-                )
-
-        except Exception as e:
-            warnings.warn(f"Error calculating distances to GO: {e}", RuntimeWarning)
-            self._distance_calculated = False
+        return navigability.determine_dist_to_go(self, distance=distance)
 
     def describe(self) -> None:
         """Prints a summary description of the landscape properties.
@@ -1947,336 +1340,8 @@ class Landscape:
             print(" (Landscape not built yet)")
         print("---")
 
-    def _standardize_input_formats(
-        self,
-        X: Union[pd.DataFrame, np.ndarray],
-        f: Union[pd.Series, list, np.ndarray],
-        data_types: Dict[str, str],
-    ) -> Tuple[pd.DataFrame, pd.Series, Dict[str, str]]:
-        """Standardizes inputs to DataFrame/Series and aligns indices."""
-        if self.verbose:
-            print(" - Standardizing input formats...")
-
-        if isinstance(X, np.ndarray):
-            try:
-                columns = [f"var_{i}" for i in range(X.shape[1])]
-                X_standard = pd.DataFrame(X, columns=columns).copy()
-            except Exception as e:
-                raise TypeError(
-                    f"Could not convert input X (ndarray) to DataFrame: {e}"
-                )
-        elif isinstance(X, pd.DataFrame):
-            X_standard = X.copy()
-        else:
-            raise TypeError(
-                f"Input X must be a pandas DataFrame or numpy ndarray, got {type(X)}."
-            )
-
-        if isinstance(f, (list, np.ndarray)):
-            try:
-                f_standard = pd.Series(f, name="fitness").copy()
-            except Exception as e:
-                raise TypeError(
-                    f"Could not convert input f (list/ndarray) to Series: {e}"
-                )
-        elif isinstance(f, pd.Series):
-            f_standard = f.copy()
-            f_standard.name = "fitness"
-        else:
-            raise TypeError(
-                f"Input f must be a pandas Series, list, or numpy ndarray, got {type(f)}."
-            )
-
-        if len(X_standard) != len(f_standard):
-            raise ValueError(
-                f"Inconsistent lengths after standardization: X has {len(X_standard)} rows, "
-                f"f has {len(f_standard)} elements."
-            )
-
-        X_standard.reset_index(drop=True, inplace=True)
-        f_standard.reset_index(drop=True, inplace=True)
-        f_standard.index = X_standard.index
-
-        dt_standard = data_types.copy() if data_types else {}
-
-        return X_standard, f_standard, dt_standard
-
     @timeit
-    def _handle_missing_values(
-        self,
-        X_in: pd.DataFrame,
-        f_in: pd.Series,
-        data_types: Dict[str, str],
-        impute: bool,
-        impute_model: Optional[Any],
-    ) -> Tuple[pd.DataFrame, pd.Series]:
-        """Handles missing values (NaN) in X and f, with optional imputation."""
-        if self.verbose:
-            print(" - Handling missing values...")
-
-        X_out, f_out = X_in.copy(), f_in.copy()
-        initial_count = len(X_out)
-
-        if X_out.isnull().values.any():
-            nan_rows_X = X_out.isnull().any(axis=1)
-            n_removed_X = nan_rows_X.sum()
-            if self.verbose:
-                print(
-                    f"   - Found {n_removed_X} rows with NaN in X (features). Removing them."
-                )
-            X_out = X_out[~nan_rows_X]
-            f_out = f_out[~nan_rows_X]
-            if len(X_out) == 0:
-                warnings.warn("All rows removed due to NaNs in X.", RuntimeWarning)
-                return X_out, f_out
-
-        nan_mask_f = f_out.isnull()
-        if nan_mask_f.any():
-            n_missing_f = nan_mask_f.sum()
-            if not impute:
-                if self.verbose:
-                    print(
-                        f"   - Found {n_missing_f} rows with NaN in f (fitness). Removing them (impute=False)."
-                    )
-                X_out = X_out[~nan_mask_f]
-                f_out = f_out[~nan_mask_f]
-            else:
-                try:
-                    from sklearn.ensemble import RandomForestRegressor
-                    from sklearn.compose import ColumnTransformer
-                    from sklearn.preprocessing import OneHotEncoder
-                    from sklearn.pipeline import Pipeline
-                except ImportError:
-                    raise ImportError(
-                        "Fitness value imputation requires scikit-learn. "
-                        "Please install it (`pip install scikit-learn`)."
-                    )
-
-                if self.verbose:
-                    print(
-                        f"   - Found {n_missing_f} missing fitness values. Attempting imputation (impute=True)."
-                    )
-
-                X_known_f = X_out[~nan_mask_f]
-                f_known = f_out[~nan_mask_f]
-                X_unknown_f = X_out[nan_mask_f]
-
-                if len(X_known_f) == 0:
-                    raise ValueError(
-                        "Cannot impute fitness: No data points with known "
-                        "fitness values available to train the imputation model."
-                    )
-                if len(X_unknown_f) == 0:
-                    warnings.warn(
-                        "Imputation requested, but no missing fitness values "
-                        "found after handling NaNs in X.",
-                        RuntimeWarning,
-                    )
-                    return X_out, f_out
-
-                categorical_features = [
-                    col
-                    for col, dtype in data_types.items()
-                    if dtype in ["categorical", "ordinal"]
-                ]
-
-                preprocessor = ColumnTransformer(
-                    transformers=[
-                        (
-                            "cat",
-                            OneHotEncoder(handle_unknown="ignore", sparse_output=False),
-                            categorical_features,
-                        )
-                    ],
-                    remainder="passthrough",
-                )
-
-                if impute_model is None:
-                    model = RandomForestRegressor(random_state=42, n_jobs=-1)
-                    if self.verbose:
-                        print(
-                            "     - Using default RandomForestRegressor for imputation."
-                        )
-                else:
-                    if not (
-                        hasattr(impute_model, "fit")
-                        and hasattr(impute_model, "predict")
-                    ):
-                        raise TypeError(
-                            "Provided impute_model must have 'fit' and 'predict' methods."
-                        )
-                    model = impute_model
-                    if self.verbose:
-                        print(
-                            f"     - Using user-provided imputation model: {type(model).__name__}"
-                        )
-
-                imputation_pipeline = Pipeline(
-                    steps=[("preprocess", preprocessor), ("regressor", model)]
-                )
-
-                try:
-                    if self.verbose:
-                        print(
-                            f"     - Training imputation model on {len(X_known_f)} data points..."
-                        )
-                    imputation_pipeline.fit(X_known_f, f_known)
-                except Exception as e:
-                    raise ValueError(f"Failed to train the imputation model: {e}")
-
-                try:
-                    if self.verbose:
-                        print(
-                            f"     - Predicting {len(X_unknown_f)} missing fitness values..."
-                        )
-                    f_predicted = imputation_pipeline.predict(X_unknown_f)
-                except Exception as e:
-                    raise ValueError(
-                        f"Failed to predict using the imputation model: {e}"
-                    )
-
-                f_out.loc[nan_mask_f] = f_predicted
-                if self.verbose:
-                    print("     - Imputation complete.")
-
-        final_count = len(X_out)
-        if self.verbose and initial_count != final_count:
-            print(
-                f"   - Missing value handling complete. Kept {final_count}/{initial_count} configurations."
-            )
-
-        f_out = f_out.loc[X_out.index]
-
-        return X_out, f_out
-
-    @timeit
-    def _handle_duplicates(
-        self, X_in: pd.DataFrame, f_in: pd.Series
-    ) -> Tuple[pd.DataFrame, pd.Series]:
-        """Removes duplicate configurations in X, keeping the first occurrence."""
-        if self.verbose:
-            print(" - Handling duplicate configurations...")
-
-        initial_count = len(X_in)
-        mask_duplicates = X_in.duplicated(keep="first")
-        num_removed = mask_duplicates.sum()
-
-        if num_removed > 0:
-            if self.verbose:
-                print(
-                    f"   - Found {num_removed} duplicate configurations in X. Keeping first occurrence."
-                )
-            X_out = X_in[~mask_duplicates].copy()
-            f_out = f_in[~mask_duplicates].copy()
-        else:
-            if self.verbose:
-                print("   - No duplicate configurations found.")
-            X_out, f_out = X_in, f_in
-
-        final_count = len(X_out)
-        if self.verbose and initial_count != final_count:
-            print(
-                f"   - Duplicate handling complete. Kept {final_count}/{initial_count} configurations."
-            )
-
-        return X_out, f_out
-
-    @timeit
-    def _prepare_data(self, X, f, data_types):
-        """Encodes data and sets `configs` and `config_dict` attributes."""
-        if self.verbose:
-            print("Preparing data for landscape construction (encoding variables)...")
-
-        nunique = X.nunique()
-        invariant_cols = nunique.index[nunique <= 1].tolist()
-        if invariant_cols:
-            X = X.drop(columns=invariant_cols)
-            data_types = {k: v for k, v in data_types.items() if k not in invariant_cols}
-            self.data_types = data_types
-            self.n_vars = len(data_types)
-            if self.verbose:
-                print(
-                    f" - Removed {len(invariant_cols)} invariant variable(s); "
-                    f"{self.n_vars} variable(s) remaining."
-                )
-
-        X_encoded = X.copy()
-        # Encode based on data type
-        for col, dtype in data_types.items():
-            col_data = X_encoded[col]
-            if dtype == "boolean":
-                # Convert boolean (True/False or 1/0) to integer 0 or 1
-                X_encoded[col] = col_data.astype(bool).astype(int)
-            elif dtype == "categorical":
-                # Factorize categorical data into integer codes (0, 1, 2, ...)
-                if isinstance(col_data.dtype, pd.CategoricalDtype):
-                    X_encoded[col] = col_data.cat.codes
-                else:
-                    X_encoded[col] = pd.factorize(col_data)[0]
-            elif dtype == "ordinal":
-                # Convert ordinal data into integer codes based on inherent order
-                if isinstance(col_data.dtype, pd.CategoricalDtype) and col_data.cat.ordered:
-                    X_encoded[col] = col_data.cat.codes
-                else:
-                    X_encoded[col] = pd.Categorical(col_data, ordered=True).codes
-            else:
-                # This case should ideally not be reached if validation is done
-                raise ValueError(
-                    f"Unsupported data type '{dtype}' encountered during encoding."
-                )
-
-        # Store configurations as tuples in a Series, indexed like X.
-        # .values.tolist() converts numpy scalars to native Python types,
-        # which is critical for fast hashing in neighborhood construction.
-        encoded_array = X_encoded.to_numpy(copy=False)
-        max_code = int(encoded_array.max()) if encoded_array.size else 0
-        if max_code <= np.iinfo(np.uint8).max:
-            encoded_dtype = np.uint8
-        elif max_code <= np.iinfo(np.uint16).max:
-            encoded_dtype = np.uint16
-        elif max_code <= np.iinfo(np.uint32).max:
-            encoded_dtype = np.uint32
-        else:
-            encoded_dtype = np.uint64
-        self._configs_array = np.ascontiguousarray(encoded_array, dtype=encoded_dtype)
-        self.configs = pd.Series(
-            list(map(tuple, self._configs_array.tolist())),
-            index=X_encoded.index,
-            copy=False,
-        )
-
-        # Check for duplicates in encoded configurations (should be handled earlier, but as safeguard)
-        if self.configs.duplicated().any():
-            warnings.warn(
-                "Duplicate encoded configurations found after validation. "
-                "This might indicate issues in the duplicate handling step.",
-                RuntimeWarning,
-            )
-
-        # Generate the config_dict describing the encoding
-        self.config_dict = self._generate_config_dict(data_types, X_encoded)
-
-        # Return original data plus fitness for setting node attributes later
-        data_for_attributes = X.copy()
-        data_for_attributes["fitness"] = f.to_numpy(copy=False)
-        data_for_attributes.reset_index(
-            drop=True, inplace=True
-        )  # Ensure index alignment is maintained
-
-        return data_for_attributes
-
-    def _generate_config_dict(self, data_types, data_encoded):
-        """Generates config_dict based on encoded data."""
-        config_dict = {}
-        max_encoded = data_encoded.max()
-        for i, (col, dtype) in enumerate(data_types.items()):
-            # Max value is 1 for boolean, otherwise use the max encoded value found
-            max_val = 1 if dtype == "boolean" else max_encoded[col]
-            config_dict[i] = {"type": dtype, "max": int(max_val)}
-        return config_dict
-
-    @timeit
-    def _analyze_landscape(
+    def _analyze(
         self,
         calculate_distance: bool,
         calculate_basins: bool,
@@ -2330,7 +1395,9 @@ class Landscape:
             weight_key = (
                 "delta_fit" if "delta_fit" in self.graph.es.attributes() else None
             )
-            self.graph = self._add_network_metrics(self.graph, weight=weight_key)
+            if self.verbose:
+                print(" - Calculating network metrics (degrees)...")
+            self.graph = add_network_metrics(self.graph, weight=weight_key)
 
         # Determine Optima
         self.determine_local_optima()
@@ -2386,52 +1453,3 @@ class Landscape:
         elif self.verbose:
             print(" - Skipping neighbor fitness calculation (not requested).")
 
-    def _infer_properties_from_graph(self):
-        """Set basic landscape properties based on the assigned self.graph."""
-        if self.graph is None:
-            # This check is primarily for internal consistency, should not be
-            # reachable if called correctly by build_from_graph.
-            raise RuntimeError(
-                "_infer_properties_from_graph called before graph assignment."
-            )
-
-        self.n_configs = self.graph.vcount()
-        self.n_edges = self.graph.ecount()
-
-        # Attempt to infer the number of variables (dimensionality)
-        if self.data_types:
-            self.n_vars = len(self.data_types)
-        elif self.configs is not None and len(self.configs) > 0:
-            try:
-                # Assumes configs series contains tuples/lists of variables
-                self.n_vars = len(self.configs.iloc[0])
-            except Exception:
-                self.n_vars = None  # Failed inference
-        else:
-            # Fallback: try to guess from node attributes (less reliable)
-            try:
-                if self.graph.vcount() > 0:
-                    vertex_attrs = self.graph.vs.attributes()
-                    # Heuristic: look for attributes like 'var_0', 'pos_1', etc.
-                    potential_var_keys = [
-                        k
-                        for k in vertex_attrs
-                        if isinstance(k, str)
-                        and (k.startswith(("var_", "pos_", "bit_")))
-                    ]
-                    if potential_var_keys:
-                        self.n_vars = len(potential_var_keys)
-                    else:
-                        self.n_vars = None  # No obvious variable attributes
-                else:
-                    self.n_vars = None  # No vertices to examine
-            except Exception:
-                self.n_vars = None  # Failed inference
-
-        if self.n_vars is None and self.verbose:
-            warnings.warn(
-                "Could not reliably determine 'n_vars' (number of variables) "
-                "from the provided graph and parameters. Distance calculations "
-                "or analyses requiring dimensionality might fail.",
-                UserWarning,
-            )

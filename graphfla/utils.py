@@ -1,54 +1,12 @@
 import numpy as np
 import igraph as ig
 import pandas as pd
+import warnings
 
-def apply_pre_construction_filter(X, f, maximize, tau, filter_mode, verbose):
-    if tau is not None:
-        if filter_mode == "any":
-            if verbose:
-                print(
-                    f" - Applying functional threshold filter "
-                    f"(tau={tau})..."
-                )
-
-            initial_count = len(f)
-
-            if maximize:
-                mask = f >= tau
-                comparison_op = ">="
-            else:
-                mask = f <= tau
-                comparison_op = "<="
-
-            X = X[mask]
-            f = f[mask]
-
-            X.reset_index(drop=True, inplace=True)
-            f.reset_index(drop=True, inplace=True)
-
-            final_count = len(f)
-            removed_count = initial_count - final_count
-
-            if verbose:
-                opposite_op = "<" if comparison_op[0] == ">" else ">"
-                opposite_op += "=" if len(comparison_op) > 1 else ""
-
-                print(
-                    f"   - Removed {removed_count} configurations with fitness "
-                    f"{opposite_op} {tau}"
-                )
-                print(f"   - Kept {final_count}/{initial_count} configurations")
-
-            if final_count == 0:
-                raise ValueError(
-                    f"All configurations removed by functional threshold filter "
-                    f"(tau={tau})"
-                )
-
-    return X, f
+from ._data import filter_data
 
 
-def apply_post_construction_filter(graph, maximize, tau, filter_mode, verbose):
+def filter_graph(graph, maximize, tau, filter_mode, verbose):
     """Apply post-construction filtering to the landscape graph.
 
     Returns
@@ -187,6 +145,73 @@ def add_network_metrics(graph: ig.Graph, weight: str = "delta_fit") -> ig.Graph:
     graph.vs["pagerank"] = pagerank
 
     return graph
+
+
+def infer_graph_properties(graph, data_types=None, configs=None, verbose=False):
+    """Infer basic landscape properties from a graph and optional metadata.
+
+    Parameters
+    ----------
+    graph : ig.Graph
+        The graph to inspect.
+    data_types : dict, optional
+        Mapping of variable names to data types. When provided, its length is
+        used as the primary source for ``n_vars``.
+    configs : pandas.Series, optional
+        Configuration sequence aligned with graph vertices. When available, the
+        first configuration is used to infer ``n_vars``.
+    verbose : bool, default=False
+        Whether to emit a warning when ``n_vars`` cannot be inferred reliably.
+
+    Returns
+    -------
+    tuple[int, int, int | None]
+        ``(n_configs, n_edges, n_vars)`` inferred from the provided inputs.
+    """
+    if graph is None:
+        raise RuntimeError("infer_graph_properties called before graph assignment.")
+
+    n_configs = graph.vcount()
+    n_edges = graph.ecount()
+
+    # Attempt to infer the number of variables (dimensionality)
+    if data_types:
+        n_vars = len(data_types)
+    elif configs is not None and len(configs) > 0:
+        try:
+            # Assumes configs series contains tuples/lists of variables
+            n_vars = len(configs.iloc[0])
+        except Exception:
+            n_vars = None  # Failed inference
+    else:
+        # Fallback: try to guess from node attributes (less reliable)
+        try:
+            if graph.vcount() > 0:
+                vertex_attrs = graph.vs.attributes()
+                # Heuristic: look for attributes like 'var_0', 'pos_1', etc.
+                potential_var_keys = [
+                    k
+                    for k in vertex_attrs
+                    if isinstance(k, str) and (k.startswith(("var_", "pos_", "bit_")))
+                ]
+                if potential_var_keys:
+                    n_vars = len(potential_var_keys)
+                else:
+                    n_vars = None  # No obvious variable attributes
+            else:
+                n_vars = None  # No vertices to examine
+        except Exception:
+            n_vars = None  # Failed inference
+
+    if n_vars is None and verbose:
+        warnings.warn(
+            "Could not reliably determine 'n_vars' (number of variables) "
+            "from the provided graph and parameters. Distance calculations "
+            "or analyses requiring dimensionality might fail.",
+            UserWarning,
+        )
+
+    return n_configs, n_edges, n_vars
 
 
 # def is_ancestor_fast(G: nx.DiGraph, start_node: Any, target_node: Any) -> bool:

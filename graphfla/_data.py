@@ -1,6 +1,38 @@
-from typing import Protocol, Tuple, Dict, List, Union, Any, runtime_checkable
-import pandas as pd
+"""Data preparation and encoding for fitness landscape construction.
+
+This module provides:
+
+1. **Input handlers** — strategy classes that validate and standardize
+   raw configuration data (boolean, sequence, or mixed-type) into
+   DataFrames suitable for encoding.
+
+2. **Pipeline functions** — the processing steps used by
+   ``Landscape.build_from_data``: filtering, preparation, cleaning,
+   and encoding.
+
+3. **PreparedData** — a container for the fully encoded dataset and
+   its associated metadata.
+"""
+
+from dataclasses import dataclass
+from typing import (
+    Any,
+    Dict,
+    List,
+    Protocol,
+    Tuple,
+    Union,
+    runtime_checkable,
+)
+import warnings
+
 import numpy as np
+import pandas as pd
+
+
+# ===================================================================
+# Constants
+# ===================================================================
 
 ALLOWED_DATA_TYPES = {"boolean", "categorical", "ordinal"}
 DNA_ALPHABET = ["A", "C", "G", "T"]
@@ -8,55 +40,58 @@ RNA_ALPHABET = ["A", "C", "G", "U"]
 PROTEIN_ALPHABET = list("ACDEFGHIKLMNPQRSTVWY")
 
 
-@runtime_checkable
-class DataPreprocessor(Protocol):
-    """Protocol defining the interface for data preprocessing."""
+# ===================================================================
+# Input handlers
+# ===================================================================
 
-    def preprocess(
+
+@runtime_checkable
+class InputHandler(Protocol):
+    """Protocol defining the interface for type-specific data preparation."""
+
+    def prepare(
         self, X: Any, f: Union[pd.Series, list, np.ndarray], verbose: bool = True
     ) -> Tuple[pd.DataFrame, pd.Series, Dict[str, str], int]:
         """
-        Preprocess input data for a specific landscape type.
+        Prepare input data for a specific landscape type.
 
         Parameters
         ----------
         X : Any
-            Input configuration data
+            Input configuration data.
         f : Union[pd.Series, list, np.ndarray]
-            Fitness values corresponding to configurations
+            Fitness values corresponding to configurations.
         verbose : bool
-            Whether to print processing information
+            Whether to print processing information.
 
         Returns
         -------
         X_processed : DataFrame
-            Processed feature data
+            Processed feature data.
         f_processed : Series
-            Processed fitness values
+            Processed fitness values.
         data_types : dict
-            Dictionary mapping column names to data types
+            Dictionary mapping column names to data types.
         dimension : int
-            Dimensionality of the data (e.g., sequence length, bit length)
+            Dimensionality of the data (e.g., sequence length, bit length).
         """
         ...
 
 
-class BooleanPreprocessor:
-    """Preprocessor for boolean data."""
+class BooleanHandler:
+    """Input handler for boolean (bitstring) configuration spaces."""
 
-    def preprocess(
+    def prepare(
         self,
         X: Union[List[Any], pd.DataFrame, np.ndarray, pd.Series],
         f: Union[pd.Series, list, np.ndarray],
         verbose: bool = True,
     ) -> Tuple[pd.DataFrame, pd.Series, Dict[str, str], int]:
-        """Preprocess boolean data."""
-        # Use the existing _preprocess_boolean_input function
-        X_df, bool_data_types, bit_len = _preprocess_boolean_input(
+        """Prepare boolean data."""
+        X_df, bool_data_types, bit_len = _parse_boolean_input(
             X_input=X, verbose=verbose
         )
 
-        # Convert fitness to Series if needed
         if isinstance(f, (list, np.ndarray)):
             f_series = pd.Series(f, name="fitness").copy()
         elif isinstance(f, pd.Series):
@@ -67,7 +102,6 @@ class BooleanPreprocessor:
                 f"Input f must be a pandas Series, list, or numpy ndarray, got {type(f)}."
             )
 
-        # Ensure X and f have matching indices
         X_df.reset_index(drop=True, inplace=True)
         f_series.reset_index(drop=True, inplace=True)
         f_series.index = X_df.index
@@ -75,25 +109,23 @@ class BooleanPreprocessor:
         return X_df, f_series, bool_data_types, bit_len
 
 
-class SequencePreprocessor:
-    """Preprocessor for sequence data."""
+class SequenceHandler:
+    """Input handler for discrete-alphabet sequence spaces."""
 
     def __init__(self, alphabet: List[str]):
         """Initialize with the appropriate alphabet."""
         self.alphabet = alphabet
 
-    def preprocess(
+    def prepare(
         self,
         X: Union[List[str], pd.Series, np.ndarray, pd.DataFrame],
         f: Union[pd.Series, list, np.ndarray],
         verbose: bool = True,
     ) -> Tuple[pd.DataFrame, pd.Series, Dict[str, str], int]:
-        """Preprocess sequence data."""
-        # Validate that all values in X are in the alphabet
-        self._validate_alphabet_conformity(X)
+        """Prepare sequence data."""
+        self._validate_alphabet(X)
 
-        # Use the existing _preprocess_sequence_input function
-        X_df, seq_data_types, seq_len = _preprocess_sequence_input(
+        X_df, seq_data_types, seq_len = _parse_sequence_input(
             X_input=X,
             alphabet=self.alphabet,
             class_name=f"Sequence ({self.alphabet[0]}{self.alphabet[-1]})",
@@ -101,7 +133,6 @@ class SequencePreprocessor:
             verbose=verbose,
         )
 
-        # Convert fitness to Series if needed
         if isinstance(f, (list, np.ndarray)):
             f_series = pd.Series(f, name="fitness").copy()
         elif isinstance(f, pd.Series):
@@ -112,23 +143,20 @@ class SequencePreprocessor:
                 f"Input f must be a pandas Series, list, or numpy ndarray, got {type(f)}."
             )
 
-        # Ensure X and f have matching indices
         X_df.reset_index(drop=True, inplace=True)
         f_series.reset_index(drop=True, inplace=True)
         f_series.index = X_df.index
 
         return X_df, f_series, seq_data_types, seq_len
 
-    def _validate_alphabet_conformity(
+    def _validate_alphabet(
         self, X: Union[List[str], pd.Series, np.ndarray, pd.DataFrame]
     ) -> None:
-        """Validates that all values in X conform to the specified alphabet and warns about unused alphabet characters."""
+        """Check that all values in X conform to the alphabet."""
         valid_chars = set(self.alphabet)
         used_chars = set()
 
-        # Handle different input types
         if isinstance(X, (list, tuple, pd.Series)):
-            # For sequence format (list of strings)
             for idx, seq in enumerate(X):
                 if isinstance(seq, str):
                     seq_chars = set(seq.upper())
@@ -141,7 +169,6 @@ class SequencePreprocessor:
                     used_chars.update(seq_chars)
 
         elif isinstance(X, pd.DataFrame):
-            # For tabular format
             for col in X.columns:
                 for idx, val in enumerate(X[col]):
                     if val is not None:
@@ -154,9 +181,7 @@ class SequencePreprocessor:
                         used_chars.add(val_upper)
 
         elif isinstance(X, np.ndarray):
-            # For numpy array
             if X.ndim == 1:
-                # 1D array (like a list of sequences)
                 for idx, seq in enumerate(X):
                     if isinstance(seq, str):
                         seq_chars = set(seq.upper())
@@ -168,7 +193,6 @@ class SequencePreprocessor:
                             )
                         used_chars.update(seq_chars)
             else:
-                # 2D array (tabular format)
                 for i in range(X.shape[0]):
                     for j in range(X.shape[1]):
                         val = X[i, j]
@@ -181,11 +205,8 @@ class SequencePreprocessor:
                                 )
                             used_chars.add(val_upper)
 
-        # Check for unused alphabet characters
         unused_chars = valid_chars - used_chars
         if unused_chars:
-            import warnings
-
             warnings.warn(
                 f"The following characters appear in the alphabet but are missing from input X: "
                 f"{', '.join(sorted(unused_chars))}. "
@@ -194,10 +215,10 @@ class SequencePreprocessor:
             )
 
 
-class DefaultPreprocessor:
-    """Default preprocessor for mixed data types."""
+class DefaultHandler:
+    """Input handler for mixed data types (boolean / categorical / ordinal)."""
 
-    def preprocess(
+    def prepare(
         self,
         X: Union[pd.DataFrame, np.ndarray],
         f: Union[pd.Series, list, np.ndarray],
@@ -205,31 +226,26 @@ class DefaultPreprocessor:
         verbose: bool = True,
     ) -> Tuple[pd.DataFrame, pd.Series, Dict[str, str], int]:
         """
-        Preprocess data with explicit data types.
+        Prepare data with explicit data types.
 
         Parameters
         ----------
         X : DataFrame or ndarray
-            Input configuration data
+            Input configuration data.
         f : Series, list, or ndarray
-            Fitness values
+            Fitness values.
         data_types : dict
-            Dictionary mapping column names to data types
+            Dictionary mapping column names to data types.
         verbose : bool
-            Whether to print processing information
+            Whether to print processing information.
 
         Returns
         -------
         X_processed : DataFrame
-            Processed feature data
         f_processed : Series
-            Processed fitness values
         data_types_validated : dict
-            Validated data types dictionary
         n_vars : int
-            Number of variables in the data
         """
-        # Convert X to DataFrame if ndarray
         if isinstance(X, np.ndarray):
             try:
                 columns = [f"var_{i}" for i in range(X.shape[1])]
@@ -245,7 +261,6 @@ class DefaultPreprocessor:
                 f"Input X must be a pandas DataFrame or numpy ndarray, got {type(X)}."
             )
 
-        # Convert f to Series
         if isinstance(f, (list, np.ndarray)):
             try:
                 f_series = pd.Series(f, name="fitness").copy()
@@ -261,10 +276,8 @@ class DefaultPreprocessor:
                 f"Input f must be a pandas Series, list, or numpy ndarray, got {type(f)}."
             )
 
-        # Validate data_types dictionary against X columns
         data_types_validated = self._validate_data_types(X_df, data_types, verbose)
 
-        # Align indices
         X_df.reset_index(drop=True, inplace=True)
         f_series.reset_index(drop=True, inplace=True)
         f_series.index = X_df.index
@@ -273,7 +286,7 @@ class DefaultPreprocessor:
     def _validate_data_types(
         self, X: pd.DataFrame, data_types: Dict[str, str], verbose: bool
     ) -> Dict[str, str]:
-        """Validates the data_types dictionary against X's columns."""
+        """Validate the data_types dictionary against X's columns."""
         if verbose:
             print(" - Validating data types dictionary...")
 
@@ -311,83 +324,261 @@ class DefaultPreprocessor:
 
         return validated_dt
 
-    def _validate_data_types_dict(
-        self, X_in: pd.DataFrame, dt_in: Dict[str, str]
-    ) -> Dict[str, str]:
-        """Validates the data_types dictionary against X's columns."""
-        if self.verbose:
-            print(" - Validating data types dictionary...")
 
-        if not isinstance(dt_in, dict):
-            raise TypeError(f"data_types must be a dictionary, got {type(dt_in)}.")
-
-        x_cols = set(X_in.columns)
-        dt_keys = set(dt_in.keys())
-
-        if x_cols != dt_keys:
-            missing_in_dt = x_cols - dt_keys
-            extra_in_dt = dt_keys - x_cols
-            error_msg = "Mismatch between X columns and data_types keys:"
-            if missing_in_dt:
-                error_msg += f"\n  - Columns in X missing from data_types: {sorted(list(missing_in_dt))}"
-            if extra_in_dt:
-                error_msg += f"\n  - Keys in data_types not found in X columns: {sorted(list(extra_in_dt))}"
-            raise ValueError(error_msg)
-
-        invalid_types = {}
-        for key, type_val in dt_in.items():
-            if type_val not in ALLOWED_DATA_TYPES:
-                invalid_types[key] = type_val
-
-        if invalid_types:
-            raise ValueError(
-                f"Invalid data types found in data_types dictionary: {invalid_types}. "
-                f"Allowed types are: {ALLOWED_DATA_TYPES}."
-            )
-
-        validated_dt = {col: dt_in[col] for col in X_in.columns}
-
-        if self.verbose:
-            print("   - Data types dictionary validation successful.")
-
-        return validated_dt
+# ===================================================================
+# Data container
+# ===================================================================
 
 
-def _preprocess_boolean_input(
-    X_input: Union[List[Any], pd.DataFrame, np.ndarray, pd.Series],
-    verbose: bool = True,
-) -> Tuple[pd.DataFrame, Dict[str, str], int]:
-    """
-    Validates and standardizes boolean input into a DataFrame with integer 0/1 columns.
+@dataclass(frozen=True)
+class PreparedData:
+    """Encoded configuration data plus the metadata needed by ``Landscape``."""
 
-    Handles various input formats:
-    - List/Series/Array of bitstrings (e.g., ['010', '110'])
-    - List/Tuple of Lists/Tuples of 0/1 (e.g., [[0, 1, 0], [1, 1, 0]])
-    - Pandas DataFrame or NumPy array containing 0/1 or True/False.
+    data_for_attributes: pd.DataFrame
+    data_types: Dict[str, str]
+    n_vars: int
+    configs: pd.Series
+    config_dict: Dict[int, Dict[str, int]]
+    configs_array: np.ndarray
+
+
+# ===================================================================
+# Pipeline — public API
+# ===================================================================
+
+
+def filter_data(X, f, maximize, tau, filter_mode, verbose):
+    """Filter raw configuration data by the functional threshold."""
+    if tau is not None:
+        if filter_mode == "any":
+            if verbose:
+                print(
+                    f" - Applying functional threshold filter "
+                    f"(tau={tau})..."
+                )
+
+            initial_count = len(f)
+            fitness_values = f.to_numpy(copy=False) if isinstance(f, pd.Series) else np.asarray(f)
+
+            if maximize:
+                mask = fitness_values >= tau
+                comparison_op = ">="
+            else:
+                mask = fitness_values <= tau
+                comparison_op = "<="
+
+            X = _apply_mask(X, mask)
+            f = _apply_mask(f, mask)
+
+            final_count = len(f)
+            removed_count = initial_count - final_count
+
+            if verbose:
+                opposite_op = "<" if comparison_op[0] == ">" else ">"
+                opposite_op += "=" if len(comparison_op) > 1 else ""
+
+                print(
+                    f"   - Removed {removed_count} configurations with fitness "
+                    f"{opposite_op} {tau}"
+                )
+                print(f"   - Kept {final_count}/{initial_count} configurations")
+
+            if final_count == 0:
+                raise ValueError(
+                    f"All configurations removed by functional threshold filter "
+                    f"(tau={tau})"
+                )
+
+    return X, f
+
+
+def prepare_data(handler, X, f, data_types=None, verbose=True):
+    """Dispatch to the appropriate handler based on its type.
 
     Parameters
     ----------
-    X_input : Union[List[Any], pd.DataFrame, np.ndarray, pd.Series]
-        The raw boolean configuration data.
-    verbose : bool, default=True
+    handler : InputHandler
+        The handler instance selected for the current landscape type.
+    X : Any
+        Raw configuration data.
+    f : Series, list, or ndarray
+        Fitness values.
+    data_types : dict or None
+        Required when *handler* is a ``DefaultHandler``; ignored otherwise.
+    verbose : bool
         Whether to print processing information.
 
     Returns
     -------
-    Tuple[pd.DataFrame, Dict[str, str], int]
-        - Standardized DataFrame with integer 0/1 values.
-        - Dictionary of data types ({'bit_0': 'boolean', ...}).
-        - Detected bit length.
+    X_processed : DataFrame
+    f_processed : Series
+    data_types : dict
+    n_vars : int
+    """
+    if isinstance(handler, DefaultHandler):
+        if not isinstance(data_types, dict):
+            raise ValueError(
+                "Data_types must be a dictionary, e.g., "
+                "{'var_0': 'boolean', 'var_1': 'categorical'}"
+                f"got {type(data_types)}."
+            )
+        return handler.prepare(X, f, data_types, verbose=verbose)
+    else:
+        return handler.prepare(X, f, verbose=verbose)
 
-    Raises
-    ------
-    ValueError
-        If input is empty, inconsistent, or contains invalid values/formats.
-    TypeError
-        If the input type is unsupported.
+
+def clean_data(
+    X_in: pd.DataFrame,
+    f_in: pd.Series,
+    verbose: bool = False,
+) -> Tuple[pd.DataFrame, pd.Series]:
+    """Clean unusable rows and duplicate configurations."""
+    if verbose:
+        print(" - Handling missing values and duplicates...")
+
+    X_clean, f_clean = _drop_missing(X_in, f_in, verbose=verbose)
+    if len(X_clean) == 0:
+        raise ValueError("All data removed during missing value handling.")
+
+    X_final, f_final = _drop_duplicates(X_clean, f_clean, verbose=verbose)
+    if len(X_final) == 0:
+        raise ValueError("All data removed after handling duplicates.")
+
+    return X_final, f_final
+
+
+def encode_data(
+    X: pd.DataFrame,
+    f: pd.Series,
+    data_types: Dict[str, str],
+    verbose: bool = False,
+) -> PreparedData:
+    """Encode configurations and assemble metadata for graph construction."""
+    if verbose:
+        print("Preparing data for landscape construction (encoding variables)...")
+
+    prepared_data_types = data_types.copy()
+    nunique = X.nunique()
+    invariant_cols = nunique.index[nunique <= 1].tolist()
+
+    if invariant_cols:
+        X = X.drop(columns=invariant_cols)
+        prepared_data_types = {
+            key: value
+            for key, value in prepared_data_types.items()
+            if key not in invariant_cols
+        }
+        if verbose:
+            print(
+                f" - Removed {len(invariant_cols)} invariant variable(s); "
+                f"{len(prepared_data_types)} variable(s) remaining."
+            )
+
+    X_encoded = X.copy()
+    for col, dtype in prepared_data_types.items():
+        col_data = X_encoded[col]
+        if dtype == "boolean":
+            X_encoded[col] = col_data.astype(bool).astype(int)
+        elif dtype == "categorical":
+            if isinstance(col_data.dtype, pd.CategoricalDtype):
+                X_encoded[col] = col_data.cat.codes
+            else:
+                X_encoded[col] = pd.factorize(col_data)[0]
+        elif dtype == "ordinal":
+            if isinstance(col_data.dtype, pd.CategoricalDtype) and col_data.cat.ordered:
+                X_encoded[col] = col_data.cat.codes
+            else:
+                X_encoded[col] = pd.Categorical(col_data, ordered=True).codes
+        else:
+            raise ValueError(
+                f"Unsupported data type '{dtype}' encountered during encoding."
+            )
+
+    encoded_array = X_encoded.to_numpy(copy=False)
+    max_code = int(encoded_array.max()) if encoded_array.size else 0
+    if max_code <= np.iinfo(np.uint8).max:
+        encoded_dtype = np.uint8
+    elif max_code <= np.iinfo(np.uint16).max:
+        encoded_dtype = np.uint16
+    elif max_code <= np.iinfo(np.uint32).max:
+        encoded_dtype = np.uint32
+    else:
+        encoded_dtype = np.uint64
+
+    configs_array = np.ascontiguousarray(encoded_array, dtype=encoded_dtype)
+    configs = pd.Series(
+        list(map(tuple, configs_array.tolist())),
+        index=X_encoded.index,
+        copy=False,
+    )
+
+    if configs.duplicated().any():
+        warnings.warn(
+            "Duplicate encoded configurations found after validation. "
+            "This might indicate issues in the duplicate handling step.",
+            RuntimeWarning,
+        )
+
+    config_dict = _build_config_dict(prepared_data_types, X_encoded)
+
+    data_for_attributes = X.copy()
+    data_for_attributes["fitness"] = f.to_numpy(copy=False)
+    data_for_attributes.reset_index(drop=True, inplace=True)
+
+    return PreparedData(
+        data_for_attributes=data_for_attributes,
+        data_types=prepared_data_types,
+        n_vars=len(prepared_data_types),
+        configs=configs,
+        config_dict=config_dict,
+        configs_array=configs_array,
+    )
+
+
+# ===================================================================
+# Helpers (private)
+# ===================================================================
+
+
+def _apply_mask(values, mask):
+    """Apply a boolean mask while preserving the input container type."""
+    mask = np.asarray(mask, dtype=bool)
+
+    if isinstance(values, (pd.Series, pd.DataFrame)):
+        filtered = values.loc[mask].copy()
+        filtered.reset_index(drop=True, inplace=True)
+        return filtered
+
+    if isinstance(values, np.ndarray):
+        return values[mask]
+
+    if isinstance(values, list):
+        return [value for value, keep in zip(values, mask) if keep]
+
+    if isinstance(values, tuple):
+        return tuple(value for value, keep in zip(values, mask) if keep)
+
+    return np.asarray(values)[mask]
+
+
+def _parse_boolean_input(
+    X_input: Union[List[Any], pd.DataFrame, np.ndarray, pd.Series],
+    verbose: bool = True,
+) -> Tuple[pd.DataFrame, Dict[str, str], int]:
+    """Validate and standardise boolean input into a DataFrame of 0/1 columns.
+
+    Handles various input formats:
+    - List/Series/Array of bitstrings (e.g., ``['010', '110']``)
+    - List/Tuple of Lists/Tuples of 0/1 (e.g., ``[[0, 1, 0], [1, 1, 0]]``)
+    - Pandas DataFrame or NumPy array containing 0/1 or True/False.
+
+    Returns
+    -------
+    tuple[DataFrame, dict[str, str], int]
+        Standardised DataFrame, data-types dictionary, and bit length.
     """
     if verbose:
-        print("Preprocessing Boolean input...")
+        print("Preparing Boolean input...")
 
     if not hasattr(X_input, "__len__") or len(X_input) == 0:
         raise ValueError("Input configuration data `X` cannot be empty.")
@@ -395,7 +586,6 @@ def _preprocess_boolean_input(
     X_df = None
     bit_length = -1
 
-    # Detect format
     is_sequence_of_strings = False
     is_sequence_of_sequences = False
     try:
@@ -407,19 +597,18 @@ def _preprocess_boolean_input(
         if isinstance(first_element, str):
             is_sequence_of_strings = True
         elif isinstance(first_element, (list, tuple, np.ndarray)):
-            # Further check if elements are likely 0/1
             if all(isinstance(val, (int, bool, np.integer)) for val in first_element):
                 is_sequence_of_sequences = True
         elif isinstance(X_input, np.ndarray) and X_input.dtype.kind in ("U", "S"):
-            is_sequence_of_strings = True  # Array of strings
+            is_sequence_of_strings = True
     except (IndexError, TypeError):
-        pass  # Will be handled by DataFrame/ndarray check or raise error
+        pass
 
-    # Format 1: List/Series/Array of Strings (Bitstring Format)
+    # --- Format 1: bitstrings ---
     if is_sequence_of_strings:
         if verbose:
             print("Detected bitstring sequence format input.")
-        bitstrings = list(X_input)  # Convert Series/Array to list
+        bitstrings = list(X_input)
         if not all(isinstance(s, str) for s in bitstrings):
             raise TypeError(
                 "If X is a sequence of strings, all elements must be strings."
@@ -446,16 +635,15 @@ def _preprocess_boolean_input(
 
         X_df = pd.DataFrame(data)
 
-    # Format 2: List/Tuple of Lists/Tuples/Arrays (0/1 Sequence Format)
+    # --- Format 2: sequences of 0/1 ---
     elif is_sequence_of_sequences:
         if verbose:
             print("Detected sequence of 0/1 lists/tuples format input.")
-        sequences = list(X_input)  # Ensure it's a list
+        sequences = list(X_input)
         if not sequences:
             raise ValueError("Input sequence is empty.")
 
         try:
-            # Attempt to convert inner sequences to lists of ints for consistency check
             processed_sequences = [[int(val) for val in seq] for seq in sequences]
         except (ValueError, TypeError) as e:
             raise ValueError(f"Could not convert inner sequences to integers: {e}")
@@ -475,22 +663,21 @@ def _preprocess_boolean_input(
                 raise ValueError(
                     f"Sequence {i} contains invalid values: {invalid_vals}. Only 0 or 1 allowed."
                 )
-            data.append(seq)  # Already a list of 0/1 ints
+            data.append(seq)
 
         X_df = pd.DataFrame(data)
 
-    # Format 3: DataFrame or Ndarray (Tabular Format)
+    # --- Format 3: DataFrame or ndarray ---
     elif isinstance(X_input, (pd.DataFrame, np.ndarray)):
         if verbose:
             print("Detected DataFrame/ndarray format input.")
 
         if isinstance(X_input, np.ndarray):
-            # Convert numpy array to DataFrame, attempt flexible type handling
             try:
                 X_df = pd.DataFrame(X_input)
             except Exception as e:
                 raise TypeError(f"Could not convert NumPy array to DataFrame: {e}")
-        else:  # Is already a DataFrame
+        else:
             X_df = X_input.copy()
 
         if X_df.empty:
@@ -500,20 +687,15 @@ def _preprocess_boolean_input(
         if bit_length == 0:
             raise ValueError("Input DataFrame/ndarray cannot have zero columns.")
 
-        # Validate and convert contents to 0/1 integers
         try:
-            # Replace True/False with 1/0 if they exist
             X_df = X_df.replace({True: 1, False: 0})
-            # Attempt conversion to int, raising error if non-numeric remain
             X_df = X_df.astype(int)
         except (ValueError, TypeError) as e:
             raise ValueError(
                 f"Could not convert DataFrame content to integer 0/1: {e}. Ensure input contains only boolean-like values (0, 1, True, False)."
             )
 
-        # Check if all values are now 0 or 1
         if not X_df.isin([0, 1]).all().all():
-            # Find example problematic value
             problem_val = None
             for col in X_df.columns:
                 bad_rows = X_df[~X_df[col].isin([0, 1])]
@@ -530,42 +712,35 @@ def _preprocess_boolean_input(
             "sequence of 0/1 sequences, or DataFrame/ndarray of 0/1/True/False."
         )
 
-    # Final checks and setup
     if X_df is None or X_df.empty:
-        raise ValueError(
-            "Could not process input X into a DataFrame."
-        )  # Should not happen if logic above is correct
+        raise ValueError("Could not process input X into a DataFrame.")
     if bit_length <= 0:
-        raise ValueError("Could not determine a valid bit length.")  # Should not happen
+        raise ValueError("Could not determine a valid bit length.")
 
-    # Assign standard column names
     X_df.columns = [f"bit_{i}" for i in range(bit_length)]
-
-    # Create data_types dictionary
     data_types = {col: "boolean" for col in X_df.columns}
 
     if verbose:
-        print(
-            f"Boolean input preprocessing complete. Detected bit length: {bit_length}."
-        )
+        print(f"Boolean input preparation complete. Detected bit length: {bit_length}.")
     return X_df, data_types, bit_length
 
 
-def _preprocess_sequence_input(
+def _parse_sequence_input(
     X_input: Union[List[str], pd.Series, np.ndarray, pd.DataFrame],
     alphabet: List[str],
     class_name: str = "SequenceLandscape",
     validated: bool = False,
     verbose: bool = True,
 ) -> Tuple[pd.DataFrame, Dict[str, str], int]:
+    """Validate and standardise sequence input into a categorical DataFrame.
+
+    Returns
+    -------
+    tuple[DataFrame, dict[str, str], int]
+        Standardised DataFrame, data-types dictionary, and sequence length.
     """
-    Validates and standardizes sequence input (strings or tabular)
-    into a DataFrame with categorical columns ordered by the alphabet.
-    (Implementation retained from previous step - assumed correct)
-    """
-    # ... (implementation from previous step) ...
     if verbose:
-        print(f"Preprocessing sequence input for {class_name}...")
+        print(f"Preparing sequence input for {class_name}...")
 
     if not hasattr(X_input, "__len__") or len(X_input) == 0:
         raise ValueError("Input configuration data `X` cannot be empty.")
@@ -574,7 +749,7 @@ def _preprocess_sequence_input(
     seq_len = -1
     valid_chars = set(alphabet)
 
-    # Format 1: List/Series/Array of Strings (Sequence Format)
+    # --- Format 1: list/series/array of strings ---
     is_sequence_format = False
     if isinstance(X_input, (list, tuple, pd.Series, np.ndarray)):
         try:
@@ -621,7 +796,7 @@ def _preprocess_sequence_input(
             copy=False,
         )
 
-    # Format 2: DataFrame or Ndarray (Tabular Format)
+    # --- Format 2: DataFrame or ndarray ---
     elif isinstance(X_input, (pd.DataFrame, np.ndarray)):
         if verbose:
             print("Detected DataFrame/ndarray format input.")
@@ -649,7 +824,6 @@ def _preprocess_sequence_input(
             f"Unsupported input type for X: {type(X_input)}. Expected List/Series/ndarray of strings, or DataFrame/ndarray."
         )
 
-    # Enforce Categorical Order
     if X_df is None or X_df.empty:
         raise ValueError("Could not process input X into a DataFrame.")
     cat_dtype = pd.CategoricalDtype(categories=alphabet, ordered=False)
@@ -660,8 +834,115 @@ def _preprocess_sequence_input(
                 f"Invalid characters found in column '{col}' after categorical conversion. Expected characters from: {alphabet}"
             )
 
-    # Create data_types dictionary
     data_types = {col: "categorical" for col in X_df.columns}
     if verbose:
-        print("Sequence input preprocessing complete.")
+        print("Sequence input preparation complete.")
     return X_df, data_types, seq_len
+
+
+def _drop_missing(
+    X_in: pd.DataFrame,
+    f_in: pd.Series,
+    verbose: bool = False,
+) -> Tuple[pd.DataFrame, pd.Series]:
+    """Handle missing values by dropping incomplete rows."""
+    if verbose:
+        print(" - Handling missing values...")
+
+    X_out, f_out = X_in.copy(), f_in.copy()
+    initial_count = len(X_out)
+
+    if X_out.isnull().values.any():
+        nan_rows_X = X_out.isnull().any(axis=1)
+        n_removed_X = nan_rows_X.sum()
+        if verbose:
+            print(
+                f"   - Found {n_removed_X} rows with NaN in X (features). Removing them."
+            )
+        X_out = X_out[~nan_rows_X]
+        f_out = f_out[~nan_rows_X]
+        if len(X_out) == 0:
+            warnings.warn("All rows removed due to NaNs in X.", RuntimeWarning)
+            return X_out, f_out
+
+    nan_mask_f = f_out.isnull()
+    if nan_mask_f.any():
+        n_missing_f = nan_mask_f.sum()
+        if verbose:
+            print(
+                f"   - Found {n_missing_f} rows with NaN in f (fitness). Removing them."
+            )
+        X_out = X_out[~nan_mask_f]
+        f_out = f_out[~nan_mask_f]
+
+    final_count = len(X_out)
+    if verbose and initial_count != final_count:
+        print(
+            f"   - Missing value handling complete. Kept {final_count}/{initial_count} configurations."
+        )
+
+    f_out = f_out.loc[X_out.index]
+    return X_out, f_out
+
+
+def _drop_duplicates(
+    X_in: pd.DataFrame,
+    f_in: pd.Series,
+    verbose: bool = False,
+) -> Tuple[pd.DataFrame, pd.Series]:
+    """Remove duplicate configurations, keeping the first occurrence."""
+    if verbose:
+        print(" - Handling duplicate configurations...")
+
+    initial_count = len(X_in)
+    mask_duplicates = X_in.duplicated(keep="first")
+    num_removed = mask_duplicates.sum()
+
+    if num_removed > 0:
+        if verbose:
+            print(
+                f"   - Found {num_removed} duplicate configurations in X. Keeping first occurrence."
+            )
+        X_out = X_in[~mask_duplicates].copy()
+        f_out = f_in[~mask_duplicates].copy()
+    else:
+        if verbose:
+            print("   - No duplicate configurations found.")
+        X_out, f_out = X_in, f_in
+
+    final_count = len(X_out)
+    if verbose and initial_count != final_count:
+        print(
+            f"   - Duplicate handling complete. Kept {final_count}/{initial_count} configurations."
+        )
+
+    return X_out, f_out
+
+
+def _build_config_dict(
+    data_types: Dict[str, str], data_encoded: pd.DataFrame
+) -> Dict[int, Dict[str, int]]:
+    """Describe the encoded search space for neighborhood generation."""
+    config_dict = {}
+    max_encoded = data_encoded.max()
+    for i, (col, dtype) in enumerate(data_types.items()):
+        max_val = 1 if dtype == "boolean" else max_encoded[col]
+        config_dict[i] = {"type": dtype, "max": int(max_val)}
+    return config_dict
+
+
+__all__ = [
+    "ALLOWED_DATA_TYPES",
+    "DNA_ALPHABET",
+    "RNA_ALPHABET",
+    "PROTEIN_ALPHABET",
+    "PreparedData",
+    "InputHandler",
+    "BooleanHandler",
+    "SequenceHandler",
+    "DefaultHandler",
+    "filter_data",
+    "prepare_data",
+    "clean_data",
+    "encode_data",
+]

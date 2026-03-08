@@ -1,9 +1,30 @@
+"""Neighbor generation and edge construction for fitness landscapes.
+
+This module provides two concerns:
+
+1. **Neighbor generators** — strategy classes that enumerate adjacent
+   configurations in a given encoding space (boolean, sequence, or
+   mixed-type).
+
+2. **Edge construction** — routines that build directed improving edges
+   (and identify neutral pairs) from a dataset of configurations and
+   fitness values, using one of several computational strategies.
+
+The single public entry point for edge construction is :func:`build_edges`.
+"""
+
+from dataclasses import dataclass
 from math import comb
-from typing import Protocol, Tuple, Dict, List, Any, Callable, runtime_checkable
+from typing import Protocol, Tuple, Dict, List, Callable, runtime_checkable
 import warnings
 
 import numpy as np
 from tqdm import tqdm
+
+
+# ===================================================================
+# Neighbor generators
+# ===================================================================
 
 
 @runtime_checkable
@@ -19,22 +40,22 @@ class NeighborGenerator(Protocol):
         Parameters
         ----------
         config : tuple
-            The configuration for which to find neighbors
+            The configuration for which to find neighbors.
         config_dict : dict
-            Dictionary describing the encoding
+            Dictionary describing the encoding.
         n_edit : int
-            Edit distance for neighborhood definition
+            Edit distance for neighborhood definition.
 
         Returns
         -------
         list[tuple]
-            List of neighboring configurations
+            List of neighboring configurations.
         """
         ...
 
 
 class BooleanNeighborGenerator:
-    """Generator for boolean neighbors (bit flips)."""
+    """Neighbor generator for boolean spaces (single bit flips)."""
 
     def generate(
         self, config: Tuple, config_dict: Dict, n_edit: int = 1
@@ -42,7 +63,7 @@ class BooleanNeighborGenerator:
         """Generate neighbors by flipping bits."""
         if n_edit != 1:
             warnings.warn(
-                f"BooleanNeighborGenerator only supports n_edit=1 for single bit flips. "
+                f"BooleanNeighborGenerator only supports n_edit=1. "
                 f"Received n_edit={n_edit}. Returning no neighbors.",
                 UserWarning,
             )
@@ -55,7 +76,7 @@ class BooleanNeighborGenerator:
 
 
 class SequenceNeighborGenerator:
-    """Generator for sequence neighbors (substitutions)."""
+    """Neighbor generator for discrete-alphabet sequences (substitutions)."""
 
     def __init__(self, alphabet_size: int):
         """
@@ -64,7 +85,7 @@ class SequenceNeighborGenerator:
         Parameters
         ----------
         alphabet_size : int
-            Number of possible values at each position
+            Number of possible values at each position.
         """
         self.alphabet_size = alphabet_size
 
@@ -74,26 +95,23 @@ class SequenceNeighborGenerator:
         """Generate neighbors by substituting at each position."""
         if n_edit != 1:
             warnings.warn(
-                f"SequenceNeighborGenerator only supports n_edit=1 for single position substitutions. "
+                f"SequenceNeighborGenerator only supports n_edit=1. "
                 f"Received n_edit={n_edit}. Returning no neighbors.",
                 UserWarning,
             )
             return []
 
         neighbors = []
-        for i, original_val in enumerate(config):
-            prefix = config[:i]
-            suffix = config[i + 1 :]
-            # Try each possible substitution at this position
-            for new_val in range(self.alphabet_size):
-                if new_val != original_val:
-                    neighbors.append(prefix + (new_val,) + suffix)
-
+        for i, original in enumerate(config):
+            prefix, suffix = config[:i], config[i + 1 :]
+            for val in range(self.alphabet_size):
+                if val != original:
+                    neighbors.append(prefix + (val,) + suffix)
         return neighbors
 
 
 class DefaultNeighborGenerator:
-    """Default generator for mixed data types."""
+    """Neighbor generator for mixed data types (boolean / categorical / ordinal)."""
 
     def generate(
         self, config: Tuple, config_dict: Dict, n_edit: int = 1
@@ -107,105 +125,180 @@ class DefaultNeighborGenerator:
             )
 
         neighbors = []
-        num_vars = len(config)
-
-        for i in range(num_vars):
+        for i in range(len(config)):
             info = config_dict[i]
-            current_val = config[i]
+            current = config[i]
             dtype = info["type"]
 
             if dtype == "boolean":
-                # Flip the bit (0 to 1, 1 to 0)
-                new_vals = [1 - current_val]
-            elif dtype in ["categorical", "ordinal"]:
-                # Iterate through all possible values
-                max_val = info["max"]
-                new_vals = [v for v in range(max_val + 1) if v != current_val]
+                new_vals = [1 - current]
+            elif dtype in ("categorical", "ordinal"):
+                new_vals = [v for v in range(info["max"] + 1) if v != current]
             else:
                 warnings.warn(
-                    f"Unsupported dtype '{dtype}' in generate_neighbors, skipping var {i}",
+                    f"Unsupported dtype '{dtype}', skipping variable {i}.",
                     RuntimeWarning,
                 )
                 continue
 
-            # Create neighbor tuples
-            for new_val in new_vals:
-                neighbor_list = list(config)
-                neighbor_list[i] = new_val
-                neighbors.append(tuple(neighbor_list))
-
+            for val in new_vals:
+                neighbor = list(config)
+                neighbor[i] = val
+                neighbors.append(tuple(neighbor))
         return neighbors
 
 
-# ---------------------------------------------------------------------------
-# Neighborhood construction strategies (moved from landscape.Landscape).
-# Logic is unchanged; parameters replace self.xxx for use from Landscape.
-# ---------------------------------------------------------------------------
+# ===================================================================
+# Edge construction — public API
+# ===================================================================
 
 
-def select_neighborhood_strategy(
-    n_configs: int, n_vars: int, config_dict: Dict, n_edit: int
-) -> str:
-    """Choose the fastest neighborhood strategy for the current dataset.
+@dataclass(frozen=True)
+class EdgeResult:
+    """Container for the output of :func:`build_edges`."""
 
-    Decision logic:
+    edges: List[Tuple[int, int]]
+    delta_fits: List[float]
+    neutral_pairs: List[Tuple[int, int]]
+    strategy: str
 
-    1. If the condensed pairwise distance matrix (from ``pdist``) fits
-       within ~4 GiB, use ``'pairwise'`` — it is the fastest option for
-       small-to-moderate datasets thanks to scipy's optimized C code.
-    2. Otherwise, estimate the per-config candidate count for the
-       ``'active'`` strategy (``sum_{e=1}^{n_edit} C(n_vars, e) *
-       (k-1)^e``, where *k* is the maximum alphabet size) and compare
-       against the cost of a vectorised broadcast
-       (``n_configs / vectorisation_factor``).  If broadcast is cheaper,
-       use ``'broadcast'``; otherwise fall back to ``'active'``.
+
+def build_edges(
+    *,
+    configs,
+    config_dict,
+    data,
+    n_configs: int,
+    n_vars: int,
+    n_edit: int,
+    strategy: str,
+    epsilon: float,
+    maximize: bool,
+    verbose: bool,
+    neighbor_generator: Callable,
+    configs_array=None,
+) -> EdgeResult:
+    """Build improving edges and neutral pairs from a configuration dataset.
+
+    This is the single public entry point for neighborhood construction.
+    It validates inputs, resolves the ``'auto'`` strategy, and dispatches
+    to the appropriate implementation.
+
+    Parameters
+    ----------
+    configs : pandas.Series
+        Mapping from node index to configuration tuple.
+    config_dict : dict
+        Encoding metadata keyed by variable index.
+    data : pandas.DataFrame
+        Must contain a ``'fitness'`` column.
+    n_configs, n_vars, n_edit : int
+        Dataset dimensions and edit-distance threshold.
+    strategy : str
+        One of ``'auto'``, ``'active'``, ``'pairwise'``, ``'broadcast'``.
+    epsilon : float
+        Neutrality threshold.
+    maximize : bool
+        Optimization direction.
+    verbose : bool
+        Whether to print progress.
+    neighbor_generator : callable
+        Bound ``generate`` method of a :class:`NeighborGenerator`.
+    configs_array : numpy.ndarray, optional
+        Pre-computed numeric configuration matrix.
 
     Returns
     -------
-    str
-        ``'pairwise'``, ``'broadcast'``, or ``'active'``.
+    EdgeResult
+    """
+    if configs is None or config_dict is None:
+        raise RuntimeError("Cannot build edges: configs/config_dict missing.")
+    if n_configs is None:
+        raise RuntimeError("n_configs not set before edge construction.")
+
+    valid_strategies = {"auto", "active", "pairwise", "broadcast"}
+    if strategy not in valid_strategies:
+        raise ValueError(
+            f"Unknown strategy '{strategy}'. "
+            f"Choose from {sorted(valid_strategies)}."
+        )
+
+    resolved = strategy
+    if resolved == "auto":
+        resolved = _select_strategy(n_configs, n_vars, config_dict, n_edit)
+        if verbose:
+            print(f" - Auto-selected '{resolved}' neighborhood strategy.")
+
+    kwargs = dict(
+        configs=configs,
+        config_dict=config_dict,
+        data=data,
+        n_edit=n_edit,
+        epsilon=epsilon,
+        maximize=maximize,
+        verbose=verbose,
+        neighbor_generator=neighbor_generator,
+        configs_array=configs_array,
+    )
+
+    if resolved == "pairwise":
+        edges, delta_fits, neutral_pairs = _build_pairwise(**kwargs)
+    elif resolved == "broadcast":
+        edges, delta_fits, neutral_pairs = _build_broadcast(**kwargs)
+    else:
+        edges, delta_fits, neutral_pairs = _build_active(**kwargs)
+
+    return EdgeResult(
+        edges=edges,
+        delta_fits=delta_fits,
+        neutral_pairs=neutral_pairs,
+        strategy=resolved,
+    )
+
+
+# ===================================================================
+# Strategy selection (private)
+# ===================================================================
+
+
+def _select_strategy(
+    n_configs: int, n_vars: int, config_dict: Dict, n_edit: int
+) -> str:
+    """Choose the fastest strategy for the dataset dimensions.
+
+    1. ``'pairwise'`` if the condensed distance matrix fits in ~4 GiB.
+    2. Otherwise compare estimated cost of ``'broadcast'`` (vectorised
+       per-row Hamming) vs. ``'active'`` (candidate enumeration + hash
+       lookup) and pick the cheaper one.
     """
     n = n_configs
     n_vars = n_vars or 1
 
-    # --- Can we afford the full pairwise matrix? ---
     pairwise_bytes = n * (n - 1) // 2 * 8  # float64 condensed form
-    max_pairwise_bytes = 4 * 1024 ** 3      # 4 GiB
-    if pairwise_bytes <= max_pairwise_bytes:
+    if pairwise_bytes <= 4 * 1024 ** 3:
         return "pairwise"
 
-    # --- Active vs. broadcast heuristic ---
-    if config_dict:
-        k_max = max(cd["max"] + 1 for cd in config_dict.values())
-    else:
-        k_max = 2
-
+    k_max = (
+        max(cd["max"] + 1 for cd in config_dict.values()) if config_dict else 2
+    )
     candidates_per_config = sum(
-        comb(n_vars, e) * (k_max - 1) ** e
-        for e in range(1, n_edit + 1)
+        comb(n_vars, e) * (k_max - 1) ** e for e in range(1, n_edit + 1)
     )
     active_cost = n * candidates_per_config
 
-    # Empirical factor: NumPy vectorised element-wise ops are roughly
-    # 30-50x faster than per-element Python/hash-table work.
     vectorisation_factor = 40
     broadcast_cost = n * n / vectorisation_factor
 
-    if broadcast_cost < active_cost:
-        return "broadcast"
-
-    return "active"
+    return "broadcast" if broadcast_cost < active_cost else "active"
 
 
-def _resolve_configs_array(configs, configs_array=None):
-    """Return a contiguous numeric config matrix for vectorized strategies."""
-    if configs_array is not None:
-        return np.ascontiguousarray(configs_array)
-    config_list = configs.tolist() if hasattr(configs, "tolist") else list(configs)
-    return np.ascontiguousarray(np.array(config_list))
+# ===================================================================
+# Strategy implementations (private)
+# ===================================================================
 
 
-def construct_neighborhoods_active(
+def _build_active(
+    *,
     configs,
     config_dict,
     data,
@@ -213,25 +306,22 @@ def construct_neighborhoods_active(
     epsilon,
     maximize,
     verbose,
-    neighbor_generator: Callable,
-    configs_array=None,
+    neighbor_generator,
+    configs_array,
 ):
-    """Enumerate candidate mutant neighbors and check dataset membership.
+    """Enumerate candidate neighbors and look them up via hash set.
 
-    For each configuration, all possible single-edit (or ``n_edit``-edit)
-    neighbors are generated and looked up in a hash set built from the
-    dataset. Efficient when the dataset is dense relative to the
-    mutational neighborhood (i.e. most proposed neighbors exist).
+    Three fast-paths are tried in order:
+
+    1. Byte-map lookup for boolean generators (single bit flips).
+    2. Byte-map lookup for sequence generators (single substitutions).
+    3. Generic tuple-based lookup for arbitrary generators.
     """
     fitness = data["fitness"].to_numpy(copy=False)
-
     edges, delta_fits, neutral_pairs = [], [], []
-    append_edge = edges.append
-    append_delta = delta_fits.append
-    append_neutral = neutral_pairs.append
 
     generator_obj = getattr(neighbor_generator, "__self__", None)
-    can_use_byte_lookup = (
+    can_use_bytemap = (
         n_edit == 1
         and configs_array is not None
         and configs_array.ndim == 2
@@ -240,132 +330,21 @@ def construct_neighborhoods_active(
         and int(np.max(configs_array)) <= np.iinfo(np.uint8).max
     )
 
-    if can_use_byte_lookup and isinstance(generator_obj, BooleanNeighborGenerator):
-        config_rows = np.ascontiguousarray(configs_array, dtype=np.uint8)
-        config_to_index = {row.tobytes(): idx for idx, row in enumerate(config_rows)}
-        get_neighbor_idx = config_to_index.get
-        configs_iter = (
-            tqdm(
-                range(len(config_rows)),
-                total=len(config_rows),
-                desc="# Constructing neighborhoods (active)",
-            )
-            if verbose
-            else range(len(config_rows))
+    if can_use_bytemap and isinstance(generator_obj, BooleanNeighborGenerator):
+        _active_boolean_bytemap(
+            configs_array, fitness, epsilon, maximize, verbose,
+            edges, delta_fits, neutral_pairs,
         )
-
-        for current_id in configs_iter:
-            current_fit = fitness[current_id]
-            config_row = config_rows[current_id]
-            neighbor_key = bytearray(config_row)
-
-            for i, current_val in enumerate(config_row):
-                current_val = int(current_val)
-                neighbor_key[i] = 1 - current_val
-                neighbor_idx = get_neighbor_idx(bytes(neighbor_key))
-                neighbor_key[i] = current_val
-                if neighbor_idx is None:
-                    continue
-
-                neighbor_fit = fitness[neighbor_idx]
-                delta_fit = current_fit - neighbor_fit
-                abs_delta = abs(delta_fit)
-
-                if abs_delta <= epsilon:
-                    if current_id < neighbor_idx:
-                        append_neutral((current_id, neighbor_idx))
-                else:
-                    is_improvement = (maximize and delta_fit < 0) or (
-                        not maximize and delta_fit > 0
-                    )
-                    if is_improvement:
-                        append_edge((current_id, neighbor_idx))
-                        append_delta(abs_delta)
-
-    elif can_use_byte_lookup and isinstance(generator_obj, SequenceNeighborGenerator):
-        config_rows = np.ascontiguousarray(configs_array, dtype=np.uint8)
-        config_to_index = {row.tobytes(): idx for idx, row in enumerate(config_rows)}
-        get_neighbor_idx = config_to_index.get
-        alphabet_size = generator_obj.alphabet_size
-        configs_iter = (
-            tqdm(
-                range(len(config_rows)),
-                total=len(config_rows),
-                desc="# Constructing neighborhoods (active)",
-            )
-            if verbose
-            else range(len(config_rows))
+    elif can_use_bytemap and isinstance(generator_obj, SequenceNeighborGenerator):
+        _active_sequence_bytemap(
+            configs_array, fitness, epsilon, maximize, verbose,
+            generator_obj.alphabet_size, edges, delta_fits, neutral_pairs,
         )
-
-        for current_id in configs_iter:
-            current_fit = fitness[current_id]
-            config_row = config_rows[current_id]
-            neighbor_key = bytearray(config_row)
-
-            for i, original_val in enumerate(config_row):
-                original_val = int(original_val)
-                for new_val in range(alphabet_size):
-                    if new_val == original_val:
-                        continue
-
-                    neighbor_key[i] = new_val
-                    neighbor_idx = get_neighbor_idx(bytes(neighbor_key))
-                    if neighbor_idx is None:
-                        continue
-
-                    neighbor_fit = fitness[neighbor_idx]
-                    delta_fit = current_fit - neighbor_fit
-                    abs_delta = abs(delta_fit)
-
-                    if abs_delta <= epsilon:
-                        if current_id < neighbor_idx:
-                            append_neutral((current_id, neighbor_idx))
-                    else:
-                        is_improvement = (maximize and delta_fit < 0) or (
-                            not maximize and delta_fit > 0
-                        )
-                        if is_improvement:
-                            append_edge((current_id, neighbor_idx))
-                            append_delta(abs_delta)
-                neighbor_key[i] = original_val
-
     else:
-        config_list = configs.tolist() if hasattr(configs, "tolist") else list(configs)
-        config_to_index = {
-            config_tuple: idx for idx, config_tuple in enumerate(config_list)
-        }
-        get_neighbor_idx = config_to_index.get
-        configs_iter = (
-            tqdm(
-                config_list, total=len(config_list),
-                desc="# Constructing neighborhoods (active)",
-            )
-            if verbose
-            else config_list
+        _active_generic(
+            configs, config_dict, fitness, n_edit, epsilon, maximize, verbose,
+            neighbor_generator, edges, delta_fits, neutral_pairs,
         )
-
-        for current_id, config_tuple in enumerate(configs_iter):
-            current_fit = fitness[current_id]
-
-            for neighbor_tuple in neighbor_generator(config_tuple, config_dict, n_edit):
-                neighbor_idx = get_neighbor_idx(neighbor_tuple)
-                if neighbor_idx is None:
-                    continue
-
-                neighbor_fit = fitness[neighbor_idx]
-                delta_fit = current_fit - neighbor_fit
-                abs_delta = abs(delta_fit)
-
-                if abs_delta <= epsilon:
-                    if current_id < neighbor_idx:
-                        append_neutral((current_id, neighbor_idx))
-                else:
-                    is_improvement = (maximize and delta_fit < 0) or (
-                        not maximize and delta_fit > 0
-                    )
-                    if is_improvement:
-                        append_edge((current_id, neighbor_idx))
-                        append_delta(abs_delta)
 
     if verbose:
         print(f" - Identified {len(edges)} improving connections.")
@@ -374,21 +353,24 @@ def construct_neighborhoods_active(
     return edges, delta_fits, neutral_pairs
 
 
-def construct_neighborhoods_pairwise(
-    data, n_edit, configs, epsilon, verbose, maximize, configs_array=None
+def _build_pairwise(
+    *,
+    data,
+    n_edit,
+    configs,
+    epsilon,
+    verbose,
+    maximize,
+    configs_array,
+    config_dict=None,
+    neighbor_generator=None,
 ):
-    """Compute the full pairwise Hamming distance matrix with ``pdist``.
-
-    All configuration pairs whose distance is in ``(0, n_edit]`` are
-    returned as edges or neutral pairs. Very fast for small-to-moderate
-    datasets (~25 000 configurations) thanks to scipy's optimized C
-    implementation, but memory scales as ``O(n_configs^2)``.
-    """
+    """Full pairwise Hamming via ``pdist``.  O(n^2) memory."""
     from scipy.spatial.distance import pdist
 
     n = len(data)
     fitness = data["fitness"].values
-    configs_array = _resolve_configs_array(configs, configs_array)
+    configs_array = _as_config_matrix(configs, configs_array)
     n_vars = configs_array.shape[1]
 
     if verbose:
@@ -396,12 +378,10 @@ def construct_neighborhoods_pairwise(
 
     hamming_fracs = pdist(configs_array, metric="hamming")
 
-    # pdist('hamming') returns fraction of mismatches; compare directly
-    # against the fractional threshold to avoid allocating a second array.
     frac_threshold = (n_edit + 0.5) / n_vars
     valid_mask = (hamming_fracs > 0) & (hamming_fracs <= frac_threshold)
     valid_indices = np.where(valid_mask)[0]
-    del valid_mask  # free memory early
+    del valid_mask
 
     if verbose:
         print(
@@ -412,7 +392,6 @@ def construct_neighborhoods_pairwise(
     if len(valid_indices) == 0:
         return [], [], []
 
-    # Convert condensed-matrix indices to (i, j) pairs — vectorised
     n_f = float(n)
     k = valid_indices.astype(np.float64)
     i_arr = (
@@ -426,32 +405,35 @@ def construct_neighborhoods_pairwise(
         + (n_f - i_arr) * ((n_f - i_arr) - 1) / 2
     ).astype(np.intp)
 
-    return edges_from_pairs(i_arr, j_arr, fitness, epsilon, maximize, verbose)
+    return _classify_pairs(i_arr, j_arr, fitness, epsilon, maximize, verbose)
 
 
-def construct_neighborhoods_broadcast(
-    data, n_edit, configs, epsilon, maximize, verbose, configs_array=None
+def _build_broadcast(
+    *,
+    data,
+    n_edit,
+    configs,
+    epsilon,
+    maximize,
+    verbose,
+    configs_array,
+    config_dict=None,
+    neighbor_generator=None,
 ):
-    """For each config, compute Hamming distance to all others via NumPy.
-
-    Only the upper triangle (j > i) is evaluated, so each pair is
-    processed exactly once. Suitable for large datasets with long
-    sequences and sparse sampling where ``'active'`` would waste time
-    generating candidates and ``'pairwise'`` would exceed memory.
-    """
+    """Per-row vectorised Hamming, upper triangle only."""
     n = len(data)
     fitness = data["fitness"].values
-    configs_array = _resolve_configs_array(configs, configs_array)
+    configs_array = _as_config_matrix(configs, configs_array)
 
-    all_edges, all_delta_fits, all_neutral = [], [], []
+    edges, delta_fits, neutral = [], [], []
 
-    outer_iter = (
+    outer = (
         tqdm(range(n - 1), desc="# Constructing neighborhoods (broadcast)")
         if verbose
         else range(n - 1)
     )
 
-    for i in outer_iter:
+    for i in outer:
         remaining = configs_array[i + 1:]
         dists = np.count_nonzero(remaining != configs_array[i], axis=1)
         valid_local = np.where((dists > 0) & (dists <= n_edit))[0]
@@ -463,13 +445,11 @@ def construct_neighborhoods_broadcast(
         fit_diffs = fitness[i] - fitness[j_indices]
         abs_diffs = np.abs(fit_diffs)
 
-        # --- neutral pairs ---
         neutral_mask = abs_diffs <= epsilon
         if np.any(neutral_mask):
             neutral_j = j_indices[neutral_mask]
-            all_neutral.extend((i, int(j)) for j in neutral_j)
+            neutral.extend((i, int(j)) for j in neutral_j)
 
-        # --- improving edges ---
         improving_mask = ~neutral_mask
         if np.any(improving_mask):
             imp_j = j_indices[improving_mask]
@@ -483,20 +463,31 @@ def construct_neighborhoods_broadcast(
                 src = np.where(imp_diffs > 0, i, imp_j)
                 tgt = np.where(imp_diffs > 0, imp_j, i)
 
-            all_edges.extend(zip(src.tolist(), tgt.tolist()))
-            all_delta_fits.extend(imp_abs.tolist())
+            edges.extend(zip(src.tolist(), tgt.tolist()))
+            delta_fits.extend(imp_abs.tolist())
 
     if verbose:
-        print(f" - Identified {len(all_edges)} improving connections.")
-        if all_neutral:
-            print(
-                f" - Identified {len(all_neutral)} neutral neighbor pairs."
-            )
-    return all_edges, all_delta_fits, all_neutral
+        print(f" - Identified {len(edges)} improving connections.")
+        if neutral:
+            print(f" - Identified {len(neutral)} neutral neighbor pairs.")
+    return edges, delta_fits, neutral
 
 
-def edges_from_pairs(i_arr, j_arr, fitness, epsilon, maximize, verbose):
-    """Classify an array of (i, j) neighbor pairs into edges and neutrals.
+# ===================================================================
+# Helpers (private)
+# ===================================================================
+
+
+def _as_config_matrix(configs, configs_array=None):
+    """Return a contiguous numeric configuration matrix."""
+    if configs_array is not None:
+        return np.ascontiguousarray(configs_array)
+    config_list = configs.tolist() if hasattr(configs, "tolist") else list(configs)
+    return np.ascontiguousarray(np.array(config_list))
+
+
+def _classify_pairs(i_arr, j_arr, fitness, epsilon, maximize, verbose):
+    """Partition (i, j) neighbor pairs into improving edges and neutrals.
 
     Parameters
     ----------
@@ -514,21 +505,18 @@ def edges_from_pairs(i_arr, j_arr, fitness, epsilon, maximize, verbose):
     Returns
     -------
     tuple[list, list, list]
-        ``(edges, delta_fits, neutral_pairs)`` with the same semantics as
-        ``_construct_neighborhoods``.
+        ``(edges, delta_fits, neutral_pairs)``.
     """
     fit_i = fitness[i_arr]
     fit_j = fitness[j_arr]
     deltas = fit_i - fit_j
     abs_deltas = np.abs(deltas)
 
-    # --- neutral pairs ---
     neutral_mask = abs_deltas <= epsilon
     neutral_pairs = list(
         zip(i_arr[neutral_mask].tolist(), j_arr[neutral_mask].tolist())
     )
 
-    # --- improving edges ---
     imp_mask = ~neutral_mask
     if not np.any(imp_mask):
         if verbose:
@@ -561,3 +549,143 @@ def edges_from_pairs(i_arr, j_arr, fitness, epsilon, maximize, verbose):
                 f" - Identified {len(neutral_pairs)} neutral neighbor pairs."
             )
     return edges, delta_fits, neutral_pairs
+
+
+# --- Active strategy fast-path helpers --------------------------------
+
+
+def _active_boolean_bytemap(
+    configs_array, fitness, epsilon, maximize, verbose,
+    edges, delta_fits, neutral_pairs,
+):
+    """Byte-map lookup specialised for single bit flips."""
+    rows = np.ascontiguousarray(configs_array, dtype=np.uint8)
+    index = {row.tobytes(): idx for idx, row in enumerate(rows)}
+    get = index.get
+    append_edge = edges.append
+    append_delta = delta_fits.append
+    append_neutral = neutral_pairs.append
+
+    it = (
+        tqdm(
+            range(len(rows)), total=len(rows),
+            desc="# Constructing neighborhoods (active)",
+        )
+        if verbose
+        else range(len(rows))
+    )
+
+    for cid in it:
+        current_fit = fitness[cid]
+        config_row = rows[cid]
+        key = bytearray(config_row)
+
+        for i, val in enumerate(config_row):
+            val = int(val)
+            key[i] = 1 - val
+            nid = get(bytes(key))
+            key[i] = val
+            if nid is None:
+                continue
+
+            delta = current_fit - fitness[nid]
+            abs_delta = abs(delta)
+
+            if abs_delta <= epsilon:
+                if cid < nid:
+                    append_neutral((cid, nid))
+            else:
+                if (maximize and delta < 0) or (not maximize and delta > 0):
+                    append_edge((cid, nid))
+                    append_delta(abs_delta)
+
+
+def _active_sequence_bytemap(
+    configs_array, fitness, epsilon, maximize, verbose, alphabet_size,
+    edges, delta_fits, neutral_pairs,
+):
+    """Byte-map lookup specialised for single-position substitutions."""
+    rows = np.ascontiguousarray(configs_array, dtype=np.uint8)
+    index = {row.tobytes(): idx for idx, row in enumerate(rows)}
+    get = index.get
+    append_edge = edges.append
+    append_delta = delta_fits.append
+    append_neutral = neutral_pairs.append
+
+    it = (
+        tqdm(
+            range(len(rows)), total=len(rows),
+            desc="# Constructing neighborhoods (active)",
+        )
+        if verbose
+        else range(len(rows))
+    )
+
+    for cid in it:
+        current_fit = fitness[cid]
+        config_row = rows[cid]
+        key = bytearray(config_row)
+
+        for i, orig in enumerate(config_row):
+            orig = int(orig)
+            for val in range(alphabet_size):
+                if val == orig:
+                    continue
+
+                key[i] = val
+                nid = get(bytes(key))
+                if nid is None:
+                    continue
+
+                delta = current_fit - fitness[nid]
+                abs_delta = abs(delta)
+
+                if abs_delta <= epsilon:
+                    if cid < nid:
+                        append_neutral((cid, nid))
+                else:
+                    if (maximize and delta < 0) or (not maximize and delta > 0):
+                        append_edge((cid, nid))
+                        append_delta(abs_delta)
+            key[i] = orig
+
+
+def _active_generic(
+    configs, config_dict, fitness, n_edit, epsilon, maximize, verbose,
+    neighbor_generator, edges, delta_fits, neutral_pairs,
+):
+    """Generic tuple-based lookup for arbitrary neighbor generators."""
+    config_list = configs.tolist() if hasattr(configs, "tolist") else list(configs)
+    index = {cfg: idx for idx, cfg in enumerate(config_list)}
+    get = index.get
+    append_edge = edges.append
+    append_delta = delta_fits.append
+    append_neutral = neutral_pairs.append
+
+    it = (
+        tqdm(
+            config_list, total=len(config_list),
+            desc="# Constructing neighborhoods (active)",
+        )
+        if verbose
+        else config_list
+    )
+
+    for cid, cfg in enumerate(it):
+        current_fit = fitness[cid]
+
+        for neighbor in neighbor_generator(cfg, config_dict, n_edit):
+            nid = get(neighbor)
+            if nid is None:
+                continue
+
+            delta = current_fit - fitness[nid]
+            abs_delta = abs(delta)
+
+            if abs_delta <= epsilon:
+                if cid < nid:
+                    append_neutral((cid, nid))
+            else:
+                if (maximize and delta < 0) or (not maximize and delta > 0):
+                    append_edge((cid, nid))
+                    append_delta(abs_delta)

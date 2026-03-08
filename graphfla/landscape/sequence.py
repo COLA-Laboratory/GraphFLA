@@ -23,16 +23,14 @@ class SequenceLandscape(Landscape):
         alphabet: List[str],
         maximize: bool = True,
     ):
-        # Register our processor with the custom alphabet
-        from .._processor import SequencePreprocessor
+        from .._data import SequenceHandler
         from .._neighbors import SequenceNeighborGenerator
 
-        preprocessor = SequencePreprocessor(alphabet)
+        handler = SequenceHandler(alphabet)
         neighbor_generator = SequenceNeighborGenerator(len(alphabet))
 
-        # Use custom type to register these custom processors
         type_key = f"sequence_{id(alphabet)}"
-        Landscape.register_preprocessor(type_key, preprocessor)
+        Landscape.register_input_handler(type_key, handler)
         Landscape.register_neighbor_generator(type_key, neighbor_generator)
 
         super().__init__(type=type_key, maximize=maximize)
