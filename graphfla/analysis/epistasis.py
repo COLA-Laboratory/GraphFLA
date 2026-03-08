@@ -14,6 +14,18 @@ import math
 import copy
 
 
+def _pythonize(value):
+    if isinstance(value, dict):
+        return {key: _pythonize(val) for key, val in value.items()}
+    if isinstance(value, list):
+        return [_pythonize(item) for item in value]
+    if isinstance(value, tuple):
+        return tuple(_pythonize(item) for item in value)
+    if isinstance(value, np.generic):
+        return value.item()
+    return value
+
+
 def _assign_roles_for_epistasis_igraph(graph, squares):
     """Assigns roles within collected square motif instances."""
     squares_with_roles = []
@@ -102,10 +114,10 @@ def _calculate_pos_neg_epistasis_igraph(squares_with_roles):
     perc_positive = positive_count / total_squares if total_squares > 0 else 0.0
     perc_negative = 1.0 - perc_positive
 
-    return {
+    return _pythonize({
         "positive epistasis": perc_positive,
         "negative epistasis": perc_negative,
-    }
+    })
 
 
 def classify_epistasis(landscape, approximate=False, sample_cut_prob=0.2):
@@ -263,7 +275,7 @@ def classify_epistasis(landscape, approximate=False, sample_cut_prob=0.2):
 
     # --- Step 6: Combine Results ---
     final_results = {**mag_sign_recip_props, **pos_neg_props}
-    return final_results
+    return _pythonize(final_results)
 
 
 def idiosyncratic_index(landscape, mutation):
@@ -377,7 +389,7 @@ def idiosyncratic_index(landscape, mutation):
 
     idiosyncratic_val = std_mutation_effect / std_random_diff
 
-    return idiosyncratic_val
+    return _pythonize(idiosyncratic_val)
 
 
 def global_idiosyncratic_index(landscape, n_jobs=-1, random_seed=None):
@@ -402,11 +414,8 @@ def global_idiosyncratic_index(landscape, n_jobs=-1, random_seed=None):
 
     Returns
     -------
-    dict
-        A dictionary containing:
-        - 'global_index': The overall idiosyncratic index (average across all mutations)
-        - 'per_position': A dictionary mapping each position to its average index
-        - 'mutation_counts': The number of valid mutations considered in the calculation
+    float
+        The overall idiosyncratic index (average across all mutations).
 
     References
     ----------
@@ -443,7 +452,7 @@ def global_idiosyncratic_index(landscape, n_jobs=-1, random_seed=None):
             return {"mutation": mutation, "pos": pos, "index": np.nan}
 
     # Execute in parallel
-    results = Parallel(n_jobs=n_jobs)(
+    results = Parallel(n_jobs=n_jobs, prefer="threads")(
         delayed(compute_index)(mutation) for mutation in mutations_to_process
     )
 
@@ -459,23 +468,9 @@ def global_idiosyncratic_index(landscape, n_jobs=-1, random_seed=None):
             position_indices[pos].append(index_value)
             all_indices.append(index_value)
 
-    # Calculate average per position
-    position_averages = {}
-    for pos, indices in position_indices.items():
-        if indices:
-            position_averages[pos] = np.mean(indices)
-        else:
-            position_averages[pos] = np.nan
-
     # Calculate global index
     global_index = np.mean(all_indices) if all_indices else np.nan
-    mutation_counts = len(all_indices)
-
-    return {
-        "global_index": global_index,
-        "per_position": position_averages,
-        "mutation_counts": mutation_counts,
-    }
+    return _pythonize(global_index)
 
 
 def diminishing_returns_index(
@@ -613,7 +608,7 @@ def diminishing_returns_index(
 
     try:
         correlation, _ = corr_func(node_fitnesses, avg_improvement)
-        return correlation
+        return _pythonize(correlation)
     except Exception as e:
         warnings.warn(f"Could not calculate correlation: {e}", UserWarning)
         return np.nan
@@ -738,46 +733,14 @@ def increasing_costs_index(
 
     try:
         correlation, _ = corr_func(node_fitnesses, avg_cost)
-        return correlation
+        return _pythonize(correlation)
     except Exception as e:
         warnings.warn(f"Could not calculate correlation: {e}", UserWarning)
         return np.nan
 
 
-def gamma_statistic(landscape, n_jobs=-1):
-    """
-    Calculates the gamma and gamma_star statistics for a fitness landscape.
-
-    Parameters
-    ----------
-    landscape : Landscape
-        The fitness landscape object containing fitness data.
-    n_jobs : int, optional
-        Number of parallel jobs to use. Default is -1 (all available cores).
-
-    Returns
-    -------
-    dict
-        A dictionary containing:
-        - 'gamma': The traditional gamma statistic value. Values close to -1 or 1 indicate
-          strong epistatic interactions in magnitude, while values close to 0 indicate
-          weak or no epistasis.
-        - 'gamma_star': The gamma star statistic that only considers sign consistency.
-          Values close to 1 indicate consistent sign epistasis across backgrounds,
-          values close to -1 indicate opposing sign patterns, and values close to 0
-          indicate random sign patterns.
-
-    Notes
-    -----
-    - The gamma statistic measures the correlation between fitness effects of mutations
-      across different genetic backgrounds, providing a measure of epistatic interactions
-      in the landscape.
-    - The gamma_star statistic focuses only on sign consistency, ignoring the magnitude
-      of fitness effects. It indicates whether mutations tend to have consistent
-      directional effects across different genetic backgrounds.
-    """
-
-    # Ensure landscape is built
+def _gamma_statistics(landscape, n_jobs=-1):
+    """Calculate both gamma statistics for internal reuse."""
     landscape._check_built()
     if landscape.graph is None or "fitness" not in landscape.graph.vs.attributes():
         raise ValueError(
@@ -785,19 +748,15 @@ def gamma_statistic(landscape, n_jobs=-1):
             " Landscape must be built first."
         )
 
-    # Extract data
     df = landscape.get_data()
     X = df.iloc[:, : landscape.n_vars]
 
-    # Function to get all possible mutations for a position
     def get_all_mutations(df, pos):
         combs = list(combinations(df[pos].unique(), 2))
         return combs
 
-    # Get all mutations for each position
     mutation_dict = {col: get_all_mutations(X, col) for col in X.columns}
 
-    # Generate all position pairs
     positions = list(X.columns)
     position_pairs = [
         (pos1, pos2) for pos1 in positions for pos2 in positions if pos1 != pos2
@@ -814,7 +773,6 @@ def gamma_statistic(landscape, n_jobs=-1):
 
         return total_diff_bits
 
-    # Function to process each mutation pair and compute correlation
     def process_mutation_pair(i, pos1, pos2, mutation1, mutation2):
         index_cols = list(X.drop(columns=[pos1, pos2]).columns)
 
@@ -829,14 +787,12 @@ def gamma_statistic(landscape, n_jobs=-1):
         df_AB = df[mask_pos1_1 & mask_pos2_1]
 
         if any(len(data) == 0 for data in [df_ab, df_Ab, df_aB, df_AB]):
-            return None  # No need to compute if data frames are empty
+            return None
 
-        # Set index for the data frames
         for data in [df_ab, df_Ab, df_aB, df_AB]:
             if len(data) > 0:
                 data.set_index(index_cols, inplace=True)
 
-        # Compute fitness effects
         fit_effects_b = df_ab["fitness"] - df_Ab["fitness"]
         fit_effects_B = df_aB["fitness"] - df_AB["fitness"]
 
@@ -849,8 +805,6 @@ def gamma_statistic(landscape, n_jobs=-1):
                 np.isnan(fit_effects_b_aligned) | np.isnan(fit_effects_B_aligned)
             )
             if valid_mask.sum() > 1:
-                # Compute traditional gamma (correlation of fitness effect values)
-
                 fit_effects_b = fit_effects_b_aligned[valid_mask]
                 fit_effects_B = fit_effects_B_aligned[valid_mask]
 
@@ -863,10 +817,6 @@ def gamma_statistic(landscape, n_jobs=-1):
                     lambda x: 1 if x > 0 else (-1 if x < 0 else 0)
                 ).to_list()
 
-                # gamma_star_value = np.corrcoef(fit_effects_b, fit_effects_B)[0, 1]
-                # Compute gamma_star (correlation of fitness effect signs)
-                # Convert to signs: 1 for positive, -1 for negative, 0 for zero
-
                 gamma_star_value = 1 - count_differing_bits(
                     fit_effects_b, fit_effects_B
                 ) / len(fit_effects_b)
@@ -875,7 +825,6 @@ def gamma_statistic(landscape, n_jobs=-1):
 
         return None
 
-    # Process all mutation combinations for each position pair
     def process_position_pair(i, pos1, pos2):
         results = []
         mutations1 = mutation_dict[pos1]
@@ -888,13 +837,11 @@ def gamma_statistic(landscape, n_jobs=-1):
 
         return results
 
-    # Parallelize processing
-    results = Parallel(n_jobs=n_jobs)(
+    results = Parallel(n_jobs=n_jobs, prefer="threads")(
         delayed(process_position_pair)(i, pos1, pos2)
         for i, (pos1, pos2) in enumerate(position_pairs)
     )
 
-    # Flatten results and calculate mean
     all_gamma = []
     all_gamma_star = []
 
@@ -907,7 +854,65 @@ def gamma_statistic(landscape, n_jobs=-1):
     if not all_gamma:
         return {"gamma": np.nan, "gamma_star": np.nan}
 
-    return {"gamma": np.mean(all_gamma), "gamma_star": np.mean(all_gamma_star)}
+    return {
+        "gamma": np.mean(all_gamma),
+        "gamma_star": np.mean(all_gamma_star),
+    }
+
+
+def gamma_statistic(landscape, n_jobs=-1):
+    """
+    Calculates the gamma and gamma_star statistics for a fitness landscape.
+
+    Parameters
+    ----------
+    landscape : Landscape
+        The fitness landscape object containing fitness data.
+    n_jobs : int, optional
+        Number of parallel jobs to use. Default is -1 (all available cores).
+
+    Returns
+    -------
+    float
+        The traditional gamma statistic value. Values close to -1 or 1 indicate
+        strong epistatic interactions in magnitude, while values close to 0 indicate
+        weak or no epistasis.
+
+    Notes
+    -----
+    - The gamma statistic measures the correlation between fitness effects of mutations
+      across different genetic backgrounds, providing a measure of epistatic interactions
+      in the landscape.
+    - The gamma_star statistic focuses only on sign consistency, ignoring the magnitude
+      of fitness effects. It indicates whether mutations tend to have consistent
+      directional effects across different genetic backgrounds.
+    """
+
+    stats = _gamma_statistics(landscape, n_jobs=n_jobs)
+    return _pythonize(stats["gamma"])
+
+
+def gamma_star(landscape, n_jobs=-1):
+    """
+    Calculate the gamma-star statistic for a fitness landscape.
+
+    Parameters
+    ----------
+    landscape : Landscape
+        The fitness landscape object containing fitness data.
+    n_jobs : int, optional
+        Number of parallel jobs to use. Default is -1 (all available cores).
+
+    Returns
+    -------
+    float
+        The gamma-star statistic that only considers sign consistency.
+        Values close to 1 indicate consistent sign epistasis across
+        backgrounds, values close to -1 indicate opposing sign patterns,
+        and values close to 0 indicate random sign patterns.
+    """
+    stats = _gamma_statistics(landscape, n_jobs=n_jobs)
+    return _pythonize(stats["gamma_star"])
 
 
 def higher_order_epistasis(landscape, order=2, verbose=False, n_jobs=1):
@@ -1038,7 +1043,7 @@ def higher_order_epistasis(landscape, order=2, verbose=False, n_jobs=1):
     if verbose:
         print(f"Order-{order} epistasis R² score: {r2:.4f}")
 
-    return r2
+    return _pythonize(r2)
 
 
 def walsh_hadamard_coefficient(landscape, max_order=2, max_cells=1e9, chunk_size=1000):
@@ -1535,12 +1540,12 @@ def extradimensional_bypass_analysis(landscape, approximate=False, sample_cut_pr
         raise RuntimeError(f"Failed to find motif instances: {e}")
 
     if not motif_19_instances:
-        return {
+        return _pythonize({
             "bypass_proportion": 0.0,
             "average_bypass_length": np.nan,
             "total_motifs": 0,
             "motifs_with_bypass": 0,
-        }
+        })
 
     # --- Analyze Each Motif for Extradimensional Bypasses ---
     bypass_lengths = []
@@ -1596,12 +1601,12 @@ def extradimensional_bypass_analysis(landscape, approximate=False, sample_cut_pr
     bypass_proportion = motifs_with_bypass / total_motifs if total_motifs > 0 else 0.0
     average_bypass_length = np.mean(bypass_lengths) if bypass_lengths else np.nan
 
-    return {
+    return _pythonize({
         "bypass_proportion": bypass_proportion,
         "average_bypass_length": average_bypass_length,
         "total_motifs": total_motifs,
         "motifs_with_bypass": motifs_with_bypass,
-    }
+    })
 
 
 def get_motif_node_indices(

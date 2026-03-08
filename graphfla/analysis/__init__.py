@@ -4,7 +4,13 @@
 Methods for fitness landscape analysis.
 """
 
-from .correlation import fitness_distance_corr, ffi, basin_fit_corr, neighbor_fit_corr
+from .correlation import (
+    fitness_distance_corr,
+    fitness_flattening_index,
+    ffi,
+    basin_fit_corr,
+    neighbor_fit_corr,
+)
 from .fitness import fitness_distribution, distribution_fit_effects
 from .ruggedness import (
     lo_ratio,
@@ -23,6 +29,7 @@ from .robustness import (
     neutrality,
     single_mutation_effects,
     all_mutation_effects,
+    evol_enhance_mutations,
     calculate_evol_enhance,
 )
 from .epistasis import (
@@ -33,6 +40,7 @@ from .epistasis import (
     diminishing_returns_index,
     increasing_costs_index,
     gamma_statistic,
+    gamma_star,
     walsh_hadamard_coefficient,
     extradimensional_bypass_analysis,
 )
@@ -40,6 +48,7 @@ from .epistasis import (
 __all__ = [
     "higher_order_epistasis",
     "fitness_distance_corr",
+    "fitness_flattening_index",
     "ffi",
     "basin_fit_corr",
     "neighbor_fit_corr",
@@ -49,6 +58,7 @@ __all__ = [
     "autocorrelation",
     "r_s_ratio",
     "gradient_intensity",
+    "evol_enhance_mutations",
     "calculate_evol_enhance",
     "classify_epistasis",
     "idiosyncratic_index",
@@ -56,6 +66,7 @@ __all__ = [
     "diminishing_returns_index",
     "increasing_costs_index",
     "gamma_statistic",
+    "gamma_star",
     "walsh_hadamard_coefficient",
     "extradimensional_bypass_analysis",
     "global_optima_accessibility",

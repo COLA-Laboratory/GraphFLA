@@ -186,6 +186,28 @@ landscape.build_from_data(X, f, data_types=data_types, verbose=True)
 |`RNALandscape`|RNA sequence space|Class optimized for RNA data|
 |`ProteinLandscape`|Protein sequence space|Class optimized for protein data|
 
+## Synthetic Problem Generators
+
+GraphFLA provides synthetic fitness landscape generators for benchmarking and experimentation. All generators produce binary (boolean) search spaces. Use `get_data()` to obtain configurations and fitness values in the same format as ML training data:
+
+```python
+from graphfla.problems import NK, RoughMountFuji, Additive, Eggbox, HoC
+from graphfla.problems import Max3Sat, Knapsack, NumberPartitioning
+
+# Example: NK landscape
+problem = NK(n=10, k=1)
+X, f = problem.get_data()
+# X: list of binary strings, e.g. ["0000000000", "0000000001", "0000000010", ...]
+# f: list of fitness values
+
+# Build landscape and analyze
+from graphfla.landscape import BooleanLandscape
+landscape = BooleanLandscape()
+landscape.build_from_data(X, f, verbose=False)
+```
+
+Available generators: `NK`, `RoughMountFuji`, `Additive`, `Eggbox`, `HoC` (biological models); `Max3Sat`, `Knapsack`, `NumberPartitioning` (combinatorial). Warning: `get_data()` evaluates all 2^n configurations—use with caution for large n.
+
 ## License
 
 This project is licensed under the terms of the [MIT License](./LICENSE).

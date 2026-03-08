@@ -2,7 +2,6 @@ import pandas as pd
 import numpy as np
 import igraph as ig
 import warnings
-import time
 
 from typing import Tuple, Dict, List, Union, Optional, Any
 
@@ -27,6 +26,7 @@ from ..utils import (
     add_network_metrics,
     filter_graph,
     infer_graph_properties,
+    timeit,
 )
 from ..distances import mixed_distance, hamming_distance
 
@@ -37,28 +37,6 @@ from .._neighbors import (
     SequenceNeighborGenerator,
     build_edges,
 )
-
-from functools import wraps
-
-
-def timeit(method):
-    """
-    A decorator to measure and log the execution time of a method.
-    """
-
-    @wraps(method)
-    def timed(*args, **kwargs):
-        start_time = time.time()
-        result = method(*args, **kwargs)
-        end_time = time.time()
-        elapsed_time = end_time - start_time
-        # print(f"Method {method.__name__} executed in {elapsed_time:.4f} seconds.")
-        return result
-
-    return timed
-
-
-
 
 class Landscape:
     """Class implementing the fitness landscape object.
@@ -154,6 +132,10 @@ class Landscape:
         are classified as neutral rather than improving/worsening. When
         ``epsilon > 0``, a plateau layer is constructed and downstream analyses
         become plateau-aware. Defaults to 0.
+    n_plateau : int or None
+        The number of neutral plateaus (multi-member connected components of
+        neutral neighbors). Populated when ``epsilon > 0`` and neutral pairs
+        exist; 0 when no plateaus; None before construction.
     verbose : bool
         The verbosity level set during initialization or construction.
     _is_built : bool
@@ -262,6 +244,7 @@ class Landscape:
         self._node_to_plateau = None   # np.ndarray int32: node_idx → plateau_id
         self._plateaus = None           # dict: plateau_id → list[int] of member nodes
         self._neutral_neighbors = None  # dict: node_idx → list[int] of neutral neighbors
+        self.n_plateau = None           # number of neutral plateaus (multi-member components)
         self.n_plateau_lo = None
         self.plateau_lo_index = None    # list of plateau_ids that are LOs
 
@@ -1026,6 +1009,7 @@ class Landscape:
                 "This Landscape instance has already been built. Create a new instance to rebuild."
             )
 
+    @timeit
     def _resolve_strategies(self) -> InputHandler:
         """Resolve and cache the type-specific strategies for data builds."""
         handler = self._input_handlers.get(self.type)
@@ -1043,6 +1027,7 @@ class Landscape:
         self._neighbor_generator = neighbor_generator
         return handler
 
+    @timeit
     def _preprocess_data(
         self,
         *,
@@ -1084,6 +1069,7 @@ class Landscape:
         self.n_configs = len(processed_data)
         return processed_data
 
+    @timeit
     def _construct_graph(
         self,
         processed_data: pd.DataFrame,
@@ -1101,6 +1087,7 @@ class Landscape:
         self.graph = self._build_graph(processed_data, edges, delta_fits)
         return neutral_pairs
 
+    @timeit
     def _postprocess_graph(
         self,
         *,
@@ -1141,6 +1128,7 @@ class Landscape:
             if u in old_to_new and v in old_to_new
         ]
 
+    @timeit
     def _finalize_build(self) -> None:
         """Mark the instance as built and emit the standard completion output."""
         self._is_built = True
@@ -1156,7 +1144,6 @@ class Landscape:
                 "build_from_graph() first."
             )
 
-    @timeit
     def _build_edges(self, data, n_edit, strategy="auto"):
         """Build improving edges and neutral pairs for the current dataset."""
         if self._neighbor_generator is None:
@@ -1178,7 +1165,6 @@ class Landscape:
         )
         return result.edges, result.delta_fits, result.neutral_pairs
 
-    @timeit
     def _build_graph(self, data, edges, delta_fits):
         """Build the igraph representation from nodes and improving edges."""
         if self.verbose:
@@ -1208,7 +1194,6 @@ class Landscape:
         else:
             return mixed_distance
 
-    @timeit
     def determine_local_optima(self):
         """Identifies local optima nodes in the landscape graph.
 
@@ -1224,7 +1209,6 @@ class Landscape:
         """
         return optima.determine_local_optima(self)
 
-    @timeit
     def determine_basin_of_attraction(self):
         """Calculates the basin of attraction for each node via hill climbing.
 
@@ -1237,7 +1221,6 @@ class Landscape:
         """
         return basin.determine_basin_of_attraction(self)
 
-    @timeit
     def determine_accessible_paths(self):
         """Determines the size of basins based on accessible paths (ancestors).
 
@@ -1253,7 +1236,6 @@ class Landscape:
         """
         return navigability.determine_accessible_paths(self)
 
-    @timeit
     def determine_neighbor_fitness(self) -> "Landscape":
         """Calculates the mean fitness of neighbors for each node and the difference
         in mean neighbor fitness between connected nodes.
@@ -1287,12 +1269,10 @@ class Landscape:
         """
         return correlation.determine_neighbor_fitness(self)
 
-    @timeit
     def determine_global_optimum(self):
         """Identifies the global optimum node in the landscape graph using igraph."""
         return navigability.determine_global_optimum(self)
 
-    @timeit
     def determine_dist_to_go(self, distance=None):
         """Calculates the distance from each node to the global optimum."""
         return navigability.determine_dist_to_go(self, distance=distance)
@@ -1321,9 +1301,10 @@ class Landscape:
             print(
                 f"Local Optima (n_lo): {self.n_lo if self.n_lo is not None else 'Not Calculated'}"
             )
-            if self._has_plateaus and self.n_plateau_lo is not None:
-                print(f"Plateau-Level Local Optima (n_plateau_lo): {self.n_plateau_lo}")
-                print(f"Neutral Plateaus: {len(self._plateaus)}")
+            if self._has_plateaus:
+                print(f"Neutral Plateaus (n_plateau): {self.n_plateau}")
+                if self.n_plateau_lo is not None:
+                    print(f"Plateau-Level Local Optima (n_plateau_lo): {self.n_plateau_lo}")
             go_idx_str = (
                 str(self.go_index)
                 if self.go_index is not None

@@ -1,9 +1,30 @@
+import time
+
 import numpy as np
 import igraph as ig
 import pandas as pd
 import warnings
 
+from functools import wraps
+
 from ._data import filter_data
+
+
+def timeit(method):
+    """
+    A decorator to measure and log the execution time of a method.
+    """
+
+    @wraps(method)
+    def timed(*args, **kwargs):
+        start_time = time.time()
+        result = method(*args, **kwargs)
+        end_time = time.time()
+        elapsed_time = end_time - start_time
+        print(f"Method {method.__name__} executed in {elapsed_time:.4f} seconds.")
+        return result
+
+    return timed
 
 
 def filter_graph(graph, maximize, tau, filter_mode, verbose):

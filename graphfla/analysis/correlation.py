@@ -1,12 +1,25 @@
 import numpy as np
 import pandas as pd
+import warnings
 from scipy.stats import spearmanr, pearsonr, kendalltau
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 
 from ..algorithms import hill_climb
 
 if TYPE_CHECKING:
     from ..landscape.landscape import Landscape
+
+
+def _pythonize(value):
+    if isinstance(value, dict):
+        return {key: _pythonize(val) for key, val in value.items()}
+    if isinstance(value, list):
+        return [_pythonize(item) for item in value]
+    if isinstance(value, tuple):
+        return tuple[dict[Any, dict[Any, dict | list[dict | list | tuple | Any] | tuple | Any] | list[dict | list | tuple | Any] | tuple | Any] | list[dict | list | tuple | Any] | tuple | Any, ...](_pythonize(item) for item in value)
+    if isinstance(value, np.generic):
+        return value.item()
+    return value
 
 
 def determine_neighbor_fitness(self) -> "Landscape":
@@ -183,14 +196,14 @@ def neighbor_fit_corr(landscape, auto_calculate=True, method="pearson"):
             print(
                 "Warning: No valid data for correlation calculation after removing NaNs."
             )
-        return {
+        return _pythonize({
             "correlation": np.nan,
             "p_value": np.nan,
             "method": method,
             "n_nodes": 0,
             "n_excluded": n_excluded,
             "stats": {"fitness_mean": np.nan, "neighbor_fitness_mean": np.nan},
-        }
+        })
 
     # Calculate correlation
     if method == "pearson":
@@ -200,7 +213,7 @@ def neighbor_fit_corr(landscape, auto_calculate=True, method="pearson"):
     else:  # kendall
         corr, _ = kendalltau(data_clean["fitness"], data_clean["mean_neighbor_fit"])
 
-    return corr
+    return _pythonize(corr)
 
 
 def fitness_distance_corr(
@@ -246,10 +259,12 @@ def fitness_distance_corr(
             f"Invalid method {method}. Please choose either 'spearman' or 'pearson'."
         )
 
-    return correlation
+    return _pythonize(correlation)
 
 
-def ffi(landscape, min_len: int = 3, method: str = "spearman") -> tuple:
+def fitness_flattening_index(
+    landscape, min_len: int = 3, method: str = "spearman"
+) -> float:
     """
     Calculate the fitness flattening index (FFI) of the landscape. It assesses whether the
     landscape tends to be flatter around the global optimum by evaluating adaptive paths.
@@ -298,10 +313,21 @@ def ffi(landscape, min_len: int = 3, method: str = "spearman") -> tuple:
             ffi_list.append(ffi)
 
     ffi = pd.Series(ffi_list).mean()
-    return ffi
+    return _pythonize(ffi)
 
 
-def basin_fit_corr(landscape, method: str = "spearman") -> tuple:
+def ffi(landscape, min_len: int = 3, method: str = "spearman") -> float:
+    """Deprecated alias for `fitness_flattening_index`."""
+    warnings.warn(
+        "`ffi` is deprecated and will be removed in a future release. "
+        "Use `fitness_flattening_index` instead.",
+        FutureWarning,
+        stacklevel=2,
+    )
+    return fitness_flattening_index(landscape, min_len=min_len, method=method)
+
+
+def basin_fit_corr(landscape, method: str = "spearman"):
     """
     Calculate the correlation between the size of the basin of attraction and the fitness of local optima.
 
@@ -350,9 +376,9 @@ def basin_fit_corr(landscape, method: str = "spearman") -> tuple:
         elif method == "pearson":
             corr_accessible, _ = pearsonr(basin_sizes_accessible, fitness_values)
 
-        return {
+        return _pythonize({
             "greedy": corr_greedy,
             "accessible": corr_accessible,
-        }
-    else:
-        return {"greedy": corr_greedy}
+        })
+
+    return _pythonize(corr_greedy)

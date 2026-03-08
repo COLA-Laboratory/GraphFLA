@@ -10,6 +10,18 @@ from typing import Tuple
 from sklearn.linear_model import LinearRegression
 
 
+def _pythonize(value):
+    if isinstance(value, dict):
+        return {key: _pythonize(val) for key, val in value.items()}
+    if isinstance(value, list):
+        return [_pythonize(item) for item in value]
+    if isinstance(value, tuple):
+        return tuple(_pythonize(item) for item in value)
+    if isinstance(value, np.generic):
+        return value.item()
+    return value
+
+
 def lo_ratio(landscape) -> float:
     """
     The most intuitive measure of landscape ruggedness. It is based on the ratio
@@ -32,7 +44,7 @@ def lo_ratio(landscape) -> float:
         return 0.0
     ruggedness = n_lo / n_configs
 
-    return ruggedness
+    return _pythonize(ruggedness)
 
 
 def autocorrelation(
@@ -76,7 +88,7 @@ def autocorrelation(
         corr_list.append(ac)
 
     corr_array = np.array(corr_list)
-    return np.nanmean(corr_array)
+    return _pythonize(np.nanmean(corr_array))
 
 
 def gradient_intensity(landscape) -> float:
@@ -106,7 +118,7 @@ def gradient_intensity(landscape) -> float:
     fitness = landscape.graph.vs["fitness"]
 
     gradient = (total_delta_fit / total_edges) / pd.Series(fitness).mean()
-    return gradient
+    return _pythonize(gradient)
 
 
 def r_s_ratio(landscape) -> float:
@@ -224,7 +236,7 @@ def r_s_ratio(landscape) -> float:
                 "or purely epistatic according to the linear fit. Returning inf.",
                 UserWarning,
             )
-            return np.inf
+            return _pythonize(np.inf)
 
         # Avoid np.matmul here because NumPy linked against Accelerate on
         # macOS arm64 can emit spurious RuntimeWarnings for finite inputs.
@@ -244,10 +256,10 @@ def r_s_ratio(landscape) -> float:
 
         r_s_ratio_value = roughness_r / slope_s
 
-        return r_s_ratio_value
+        return _pythonize(r_s_ratio_value)
 
     except Exception as e:
         warnings.warn(
             f"Calculation of r/s ratio failed: {e}. Returning np.nan.", UserWarning
         )
-        return np.nan
+        return _pythonize(np.nan)

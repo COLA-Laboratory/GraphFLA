@@ -6,6 +6,18 @@ from scipy.stats import cauchy  # Add explicit import for cauchy
 from typing import Dict, Any
 
 
+def _pythonize(value):
+    if isinstance(value, dict):
+        return {key: _pythonize(val) for key, val in value.items()}
+    if isinstance(value, list):
+        return [_pythonize(item) for item in value]
+    if isinstance(value, tuple):
+        return tuple(_pythonize(item) for item in value)
+    if isinstance(value, np.generic):
+        return value.item()
+    return value
+
+
 def fitness_distribution(landscape) -> Dict[str, Any]:
     """
     Calculate unitless statistics about the fitness distribution of the landscape.
@@ -60,7 +72,7 @@ def fitness_distribution(landscape) -> Dict[str, Any]:
 
     if n_samples == 0:
         warnings.warn("No fitness values found in the landscape.", RuntimeWarning)
-        return {
+        return _pythonize({
             "skewness": np.nan,
             "kurtosis": np.nan,
             "cv": np.nan,
@@ -68,7 +80,7 @@ def fitness_distribution(landscape) -> Dict[str, Any]:
             "median_mean_ratio": np.nan,
             "relative_range": np.nan,
             "cauchy_loc": np.nan,
-        }
+        })
 
     # Calculate basic statistics
     mean = np.mean(fitness_values)
@@ -111,7 +123,7 @@ def fitness_distribution(landscape) -> Dict[str, Any]:
         # Handle potential fitting failures
         loc = np.nan
 
-    return {
+    return _pythonize({
         "skewness": skewness,
         "kurtosis": kurtosis,
         "cv": cv,
@@ -119,7 +131,7 @@ def fitness_distribution(landscape) -> Dict[str, Any]:
         "median_mean_ratio": median_mean_ratio,
         "relative_range": relative_range,
         "cauchy_loc": loc,
-    }
+    })
 
 
 def distribution_fit_effects(landscape, mutation):
@@ -209,4 +221,4 @@ def distribution_fit_effects(landscape, mutation):
     # Compute the fitness effects (B - A)
     fitness_effects = (df_B_common["fitness"] - df_A_common["fitness"]).tolist()
 
-    return fitness_effects
+    return _pythonize(fitness_effects)

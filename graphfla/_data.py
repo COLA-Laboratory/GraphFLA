@@ -93,7 +93,7 @@ class BooleanHandler:
         )
 
         if isinstance(f, (list, np.ndarray)):
-            f_series = pd.Series(f, name="fitness").copy()
+            f_series = pd.Series(f, name="fitness")
         elif isinstance(f, pd.Series):
             f_series = f.copy()
             f_series.name = "fitness"
@@ -134,7 +134,7 @@ class SequenceHandler:
         )
 
         if isinstance(f, (list, np.ndarray)):
-            f_series = pd.Series(f, name="fitness").copy()
+            f_series = pd.Series(f, name="fitness")
         elif isinstance(f, pd.Series):
             f_series = f.copy()
             f_series.name = "fitness"
@@ -249,7 +249,7 @@ class DefaultHandler:
         if isinstance(X, np.ndarray):
             try:
                 columns = [f"var_{i}" for i in range(X.shape[1])]
-                X_df = pd.DataFrame(X, columns=columns).copy()
+                X_df = pd.DataFrame(X, columns=columns)
             except Exception as e:
                 raise TypeError(
                     f"Could not convert input X (ndarray) to DataFrame: {e}"
@@ -263,7 +263,7 @@ class DefaultHandler:
 
         if isinstance(f, (list, np.ndarray)):
             try:
-                f_series = pd.Series(f, name="fitness").copy()
+                f_series = pd.Series(f, name="fitness")
             except Exception as e:
                 raise TypeError(
                     f"Could not convert input f (list/ndarray) to Series: {e}"
@@ -474,26 +474,27 @@ def encode_data(
                 f"{len(prepared_data_types)} variable(s) remaining."
             )
 
-    X_encoded = X.copy()
+    encoded_columns = {}
     for col, dtype in prepared_data_types.items():
-        col_data = X_encoded[col]
+        col_data = X[col]
         if dtype == "boolean":
-            X_encoded[col] = col_data.astype(bool).astype(int)
+            encoded_columns[col] = col_data.astype(bool).astype(int)
         elif dtype == "categorical":
             if isinstance(col_data.dtype, pd.CategoricalDtype):
-                X_encoded[col] = col_data.cat.codes
+                encoded_columns[col] = col_data.cat.codes
             else:
-                X_encoded[col] = pd.factorize(col_data)[0]
+                encoded_columns[col] = pd.factorize(col_data)[0]
         elif dtype == "ordinal":
             if isinstance(col_data.dtype, pd.CategoricalDtype) and col_data.cat.ordered:
-                X_encoded[col] = col_data.cat.codes
+                encoded_columns[col] = col_data.cat.codes
             else:
-                X_encoded[col] = pd.Categorical(col_data, ordered=True).codes
+                encoded_columns[col] = pd.Categorical(col_data, ordered=True).codes
         else:
             raise ValueError(
                 f"Unsupported data type '{dtype}' encountered during encoding."
             )
 
+    X_encoded = pd.DataFrame(encoded_columns, index=X.index, copy=False)
     encoded_array = X_encoded.to_numpy(copy=False)
     max_code = int(encoded_array.max()) if encoded_array.size else 0
     if max_code <= np.iinfo(np.uint8).max:
@@ -506,11 +507,12 @@ def encode_data(
         encoded_dtype = np.uint64
 
     configs_array = np.ascontiguousarray(encoded_array, dtype=encoded_dtype)
-    configs = pd.Series(
-        list(map(tuple, configs_array.tolist())),
-        index=X_encoded.index,
-        copy=False,
+    config_objects = np.fromiter(
+        (tuple(row.tolist()) for row in configs_array),
+        dtype=object,
+        count=len(configs_array),
     )
+    configs = pd.Series(config_objects, index=X_encoded.index, copy=False)
 
     if configs.duplicated().any():
         warnings.warn(
@@ -521,9 +523,8 @@ def encode_data(
 
     config_dict = _build_config_dict(prepared_data_types, X_encoded)
 
-    data_for_attributes = X.copy()
+    data_for_attributes = X.reset_index(drop=True)
     data_for_attributes["fitness"] = f.to_numpy(copy=False)
-    data_for_attributes.reset_index(drop=True, inplace=True)
 
     return PreparedData(
         data_for_attributes=data_for_attributes,
@@ -545,7 +546,7 @@ def _apply_mask(values, mask):
     mask = np.asarray(mask, dtype=bool)
 
     if isinstance(values, (pd.Series, pd.DataFrame)):
-        filtered = values.loc[mask].copy()
+        filtered = values.loc[mask]
         filtered.reset_index(drop=True, inplace=True)
         return filtered
 
@@ -620,7 +621,7 @@ def _parse_boolean_input(
         if bit_length == 0:
             raise ValueError("Bitstrings cannot be empty.")
 
-        data = []
+        validated_bitstrings = []
         for i, bstr in enumerate(bitstrings):
             if len(bstr) != bit_length:
                 raise ValueError(
@@ -631,9 +632,12 @@ def _parse_boolean_input(
                 raise ValueError(
                     f"Bitstring {i} contains invalid characters: {invalid_chars}. Only '0' and '1' allowed."
                 )
-            data.append([int(bit) for bit in bstr])
+            validated_bitstrings.append(bstr)
 
-        X_df = pd.DataFrame(data)
+        bit_array = np.frombuffer(
+            "".join(validated_bitstrings).encode("ascii"), dtype=np.uint8
+        ).reshape(len(validated_bitstrings), bit_length) - ord("0")
+        X_df = pd.DataFrame(bit_array, copy=False)
 
     # --- Format 2: sequences of 0/1 ---
     elif is_sequence_of_sequences:
@@ -849,7 +853,7 @@ def _drop_missing(
     if verbose:
         print(" - Handling missing values...")
 
-    X_out, f_out = X_in.copy(), f_in.copy()
+    X_out, f_out = X_in, f_in
     initial_count = len(X_out)
 
     if X_out.isnull().values.any():
@@ -859,8 +863,8 @@ def _drop_missing(
             print(
                 f"   - Found {n_removed_X} rows with NaN in X (features). Removing them."
             )
-        X_out = X_out[~nan_rows_X]
-        f_out = f_out[~nan_rows_X]
+        X_out = X_out.loc[~nan_rows_X]
+        f_out = f_out.loc[~nan_rows_X]
         if len(X_out) == 0:
             warnings.warn("All rows removed due to NaNs in X.", RuntimeWarning)
             return X_out, f_out
@@ -872,8 +876,8 @@ def _drop_missing(
             print(
                 f"   - Found {n_missing_f} rows with NaN in f (fitness). Removing them."
             )
-        X_out = X_out[~nan_mask_f]
-        f_out = f_out[~nan_mask_f]
+        X_out = X_out.loc[~nan_mask_f]
+        f_out = f_out.loc[~nan_mask_f]
 
     final_count = len(X_out)
     if verbose and initial_count != final_count:
@@ -903,8 +907,8 @@ def _drop_duplicates(
             print(
                 f"   - Found {num_removed} duplicate configurations in X. Keeping first occurrence."
             )
-        X_out = X_in[~mask_duplicates].copy()
-        f_out = f_in[~mask_duplicates].copy()
+        X_out = X_in.loc[~mask_duplicates]
+        f_out = f_in.loc[~mask_duplicates]
     else:
         if verbose:
             print("   - No duplicate configurations found.")

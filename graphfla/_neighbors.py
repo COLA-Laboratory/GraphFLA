@@ -655,8 +655,12 @@ def _active_generic(
     neighbor_generator, edges, delta_fits, neutral_pairs,
 ):
     """Generic tuple-based lookup for arbitrary neighbor generators."""
-    config_list = configs.tolist() if hasattr(configs, "tolist") else list(configs)
-    index = {cfg: idx for idx, cfg in enumerate(config_list)}
+    if hasattr(configs, "to_numpy"):
+        config_values = configs.to_numpy(copy=False)
+    else:
+        config_values = configs
+
+    index = {cfg: idx for idx, cfg in enumerate(config_values)}
     get = index.get
     append_edge = edges.append
     append_delta = delta_fits.append
@@ -664,11 +668,11 @@ def _active_generic(
 
     it = (
         tqdm(
-            config_list, total=len(config_list),
+            config_values, total=len(config_values),
             desc="# Constructing neighborhoods (active)",
         )
         if verbose
-        else config_list
+        else config_values
     )
 
     for cid, cfg in enumerate(it):

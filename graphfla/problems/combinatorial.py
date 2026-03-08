@@ -75,6 +75,10 @@ class Max3Sat(OptimizationProblem):
 
         return list(clauses)
 
+    def _binary_string_to_config(self, s: str):
+        """Convert binary string to Boolean configuration (True/False)."""
+        return tuple(c == "1" for c in s)
+
     def get_all_configs(self):
         """
         Generate all possible configurations (Boolean assignments) for the Max-3-SAT problem.

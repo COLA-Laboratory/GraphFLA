@@ -1,12 +1,25 @@
 from scipy.stats import binomtest
 from itertools import combinations
 from joblib import Parallel, delayed
+import warnings
 
 import numpy as np
 import pandas as pd
 
 
-def calculate_evol_enhance(landscape, epsilon=0, auto_calculate=True):
+def _pythonize(value):
+    if isinstance(value, dict):
+        return {key: _pythonize(val) for key, val in value.items()}
+    if isinstance(value, list):
+        return [_pythonize(item) for item in value]
+    if isinstance(value, tuple):
+        return tuple(_pythonize(item) for item in value)
+    if isinstance(value, np.generic):
+        return value.item()
+    return value
+
+
+def evol_enhance_mutations(landscape, epsilon=0, auto_calculate=True):
     """
     Calculates the proportion of edges where the higher-fitness node connects to
     a neighborhood with higher mean fitness than the lower-fitness node.
@@ -29,11 +42,8 @@ def calculate_evol_enhance(landscape, epsilon=0, auto_calculate=True):
 
     Returns
     -------
-    dict
-        A dictionary containing:
-        - 'ee_proportion': The proportion of edges with delta_mean_neighbor_fit > epsilon
-        - 'ee_count': The count of edges with delta_mean_neighbor_fit > epsilon
-        - 'total_edges': The total number of edges in the landscape
+    float
+        The proportion of edges with delta_mean_neighbor_fit > epsilon.
 
     Raises
     ------
@@ -70,17 +80,26 @@ def calculate_evol_enhance(landscape, epsilon=0, auto_calculate=True):
     if total_edges == 0:
         if landscape.verbose:
             print("Warning: No edges found in the landscape graph.")
-        return {"ee_proportion": 0.0, "ee_count": 0, "total_edges": 0}
+        return 0.0
 
     # Count edges where delta_mean_neighbor_fit > epsilon
     ee_count = sum(1 for delta in delta_values if delta > epsilon)
     ee_proportion = ee_count / total_edges
 
-    return {
-        "ee_proportion": ee_proportion,
-        "ee_count": ee_count,
-        "total_edges": total_edges,
-    }
+    return _pythonize(ee_proportion)
+
+
+def calculate_evol_enhance(landscape, epsilon=0, auto_calculate=True):
+    """Deprecated alias for `evol_enhance_mutations`."""
+    warnings.warn(
+        "`calculate_evol_enhance` is deprecated and will be removed in a future "
+        "release. Use `evol_enhance_mutations` instead.",
+        FutureWarning,
+        stacklevel=2,
+    )
+    return evol_enhance_mutations(
+        landscape, epsilon=epsilon, auto_calculate=auto_calculate
+    )
 
 
 def neutrality(landscape, threshold: float = 0.01) -> float:
@@ -130,7 +149,7 @@ def neutrality(landscape, threshold: float = 0.01) -> float:
 
     neutrality_val = neutral_pairs / total_pairs if total_pairs > 0 else 0
 
-    return neutrality_val
+    return _pythonize(neutrality_val)
 
 
 def single_mutation_effects(
@@ -181,7 +200,7 @@ def single_mutation_effects(
         )
         significant = test_result.pvalue < 0.05
 
-        return test_result.pvalue, significant
+        return _pythonize(test_result.pvalue), significant
 
     def compute_mutation_effect(X, f, position, A, B, test_type):
         X1 = X[X[position] == A]
@@ -204,14 +223,14 @@ def single_mutation_effects(
         median_effect = abs(diff).median() / f.std()
         p_value, significant = test_significance(diff, test_type)
 
-        return {
+        return _pythonize({
             "mutation_from": A,
             "mutation_to": B,
             "median_abs_effect": median_effect,
             "mean_effect": diff.mean(),
             "p_value": p_value,
             "significant": significant,
-        }
+        })
 
     data = landscape.get_data()
     X = data.iloc[:, : len(landscape.data_types)]

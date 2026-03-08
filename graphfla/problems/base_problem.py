@@ -1,5 +1,4 @@
 import random
-import pandas as pd
 
 
 class OptimizationProblem:
@@ -74,9 +73,27 @@ class OptimizationProblem:
             "Subclasses should define this method to generate all configurations."
         )
 
+    def _binary_string_to_config(self, s: str):
+        """
+        Convert a binary string to a configuration for evaluation.
+
+        Override in subclasses that use Boolean (True/False) instead of int (0/1).
+
+        Parameters
+        ----------
+        s : str
+            Binary string (e.g., "0101").
+
+        Returns
+        -------
+        tuple
+            Configuration suitable for evaluate().
+        """
+        return tuple(int(c) for c in s)
+
     def get_data(self):
         """
-        Generate a DataFrame containing configurations and their fitness values.
+        Generate configurations and their fitness values.
 
         Warning: This method evaluates *all* possible configurations.
         For problems with a large search space (e.g., high-dimensional binary problems),
@@ -85,26 +102,27 @@ class OptimizationProblem:
 
         Returns
         -------
-        pandas.DataFrame
-            A DataFrame with columns `config` (tuple of variables) and `fitness`.
+        tuple of (list[str], list[float])
+            X: List of binary strings (e.g., ["0000000000", "0000000001", ...]).
+            f: List of fitness values corresponding to each configuration.
         """
         try:
-            all_configs_iter = self.get_all_configs()
-            # Use a generator expression for potentially better memory efficiency if intermediate list is huge
-            config_fitness_pairs = (
-                (config, self.evaluate(config)) for config in all_configs_iter
-            )
-            # Construct DataFrame directly from the generator
-            data = pd.DataFrame(config_fitness_pairs, columns=["config", "fitness"])
-            # Keep config as tuple, it's generally more efficient and hashable
-            # data["config"] = data["config"].apply(list) # Avoid converting to list unless necessary
-            return data
+            n = self.n
+            total = 1 << n  # 2**n
+            X = [None] * total
+            f_list = [None] * total
+            for i in range(total):
+                s = format(i, f"0{n}b")
+                X[i] = s
+                config = self._binary_string_to_config(s)
+                f_list[i] = self.evaluate(config)
+            return X, f_list
         except NotImplementedError:
-            print("Warning: get_all_configs is not implemented for this problem.")
-            return pd.DataFrame(columns=["config", "fitness"])
+            print("Warning: get_data is not fully implemented for this problem.")
+            return [], []
         except MemoryError:
             print(
                 f"Error: Generating data for n={self.n} requires too much memory. "
-                "The search space is likely too large (2^{self.n})."
+                f"The search space is likely too large (2^{self.n})."
             )
-            return pd.DataFrame(columns=["config", "fitness"])
+            return [], []

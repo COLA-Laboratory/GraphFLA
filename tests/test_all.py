@@ -34,10 +34,7 @@ def boolean_landscape_data():
     n = 4
     k = 2
     problem = NK(n, k)
-    data = problem.get_data()
-    X_list = data["config"].tolist()
-    X = pd.DataFrame(X_list)
-    fitness = data["fitness"]
+    X, fitness = problem.get_data()
     return X, fitness
 
 
@@ -401,7 +398,7 @@ def test_feature_negative_epistasis(boolean_landscape):
 
 def test_feature_idiosyncrasy(boolean_landscape):
     result = global_idiosyncratic_index(boolean_landscape)
-    assert "global_index" in result
+    assert isinstance(result, (float, np.floating))
 
 
 def test_feature_diminishing_returns_corr(boolean_landscape):
@@ -426,12 +423,12 @@ def test_feature_increasing_costs_regr(boolean_landscape):
 
 def test_feature_gamma(boolean_landscape):
     result = gamma_statistic(boolean_landscape)
-    assert "gamma" in result
+    assert isinstance(result, (float, np.floating))
 
 
 def test_feature_gamma_star(boolean_landscape):
-    result = gamma_statistic(boolean_landscape)
-    assert "gamma_star" in result
+    result = gamma_star(boolean_landscape)
+    assert isinstance(result, (float, np.floating))
 
 
 def test_feature_epistasis_2nd(boolean_landscape):
@@ -465,14 +462,41 @@ def test_feature_bfc_accessible(boolean_landscape):
     assert "accessible" in result
 
 
+def test_feature_bfc_greedy_only(boolean_landscape_data):
+    X, fitness = boolean_landscape_data
+    landscape = BooleanLandscape()
+    landscape.build_from_data(
+        X,
+        fitness,
+        verbose=False,
+        calculate_basins=True,
+        calculate_paths=False,
+        calculate_distance=True,
+        calculate_neighbor_fit=True,
+    )
+    result = basin_fit_corr(landscape)
+    assert isinstance(result, (float, np.floating))
+
+
 def test_feature_go_accessibility(boolean_landscape):
     result = global_optima_accessibility(boolean_landscape)
     assert isinstance(result, (float, np.floating))
 
 
+def test_feature_mean_path_lengths_go(boolean_landscape):
+    result = mean_path_lengths_go(boolean_landscape)
+    assert isinstance(result, (float, np.floating))
+
+
 def test_feature_ee_frac(boolean_landscape):
-    result = calculate_evol_enhance(boolean_landscape)
-    assert "ee_proportion" in result
+    result = evol_enhance_mutations(boolean_landscape)
+    assert isinstance(result, (float, np.floating))
+
+
+def test_feature_ee_frac_deprecated_alias(boolean_landscape):
+    with pytest.warns(FutureWarning):
+        result = calculate_evol_enhance(boolean_landscape)
+    assert isinstance(result, (float, np.floating))
 
 
 def test_feature_neutral_frac(boolean_landscape):
@@ -493,6 +517,17 @@ def test_feature_autocorr(boolean_landscape):
 
 def test_feature_r_s_ratio(boolean_landscape):
     result = r_s_ratio(boolean_landscape)
+    assert isinstance(result, (float, np.floating))
+
+
+def test_feature_fitness_flattening_index(boolean_landscape):
+    result = fitness_flattening_index(boolean_landscape)
+    assert isinstance(result, (float, np.floating))
+
+
+def test_feature_ffi_deprecated_alias(boolean_landscape):
+    with pytest.warns(FutureWarning):
+        result = ffi(boolean_landscape)
     assert isinstance(result, (float, np.floating))
 
 
@@ -599,8 +634,12 @@ def test_rna_feature_neutrality(rna_landscape):
 
 def test_protein_feature_gamma_statistic(protein_landscape):
     result = gamma_statistic(protein_landscape)
-    assert "gamma" in result
-    assert "gamma_star" in result
+    assert isinstance(result, (float, np.floating))
+
+
+def test_protein_feature_gamma_star(protein_landscape):
+    result = gamma_star(protein_landscape)
+    assert isinstance(result, (float, np.floating))
 
 
 # Test higher order epistasis on sequence landscapes (if n_genes >= order)

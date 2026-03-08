@@ -3,7 +3,10 @@ from collections import defaultdict
 import igraph as ig
 import numpy as np
 
+from ..utils import timeit
 
+
+@timeit
 def build_plateaus(landscape, neutral_pairs):
     """Build neutral network and identify connected components (plateaus).
 
@@ -20,10 +23,12 @@ def build_plateaus(landscape, neutral_pairs):
 
     if not neutral_pairs:
         self._has_plateaus = False
+        self.n_plateau = 0
         return
 
     if self.graph is None or self.n_configs is None:
         self._has_plateaus = False
+        self.n_plateau = 0
         return
 
     # Build a lightweight undirected graph just for component detection
@@ -46,10 +51,12 @@ def build_plateaus(landscape, neutral_pairs):
 
     if not plateaus:
         self._has_plateaus = False
+        self.n_plateau = 0
         return
 
     self._node_to_plateau = node_to_plateau
     self._plateaus = plateaus
+    self.n_plateau = len(plateaus)
     self._has_plateaus = True
 
     # Build per-node neutral neighbor adjacency
@@ -88,6 +95,7 @@ def restore_plateaus(landscape):
 
     if self.graph is None or "plateau_id" not in self.graph.vs.attributes():
         self._has_plateaus = False
+        self.n_plateau = 0
         return
 
     n = self.graph.vcount()
@@ -101,10 +109,12 @@ def restore_plateaus(landscape):
 
     if not plateaus:
         self._has_plateaus = False
+        self.n_plateau = 0
         return
 
     self._node_to_plateau = node_to_plateau
     self._plateaus = dict(plateaus)
+    self.n_plateau = len(plateaus)
     self._has_plateaus = True
 
     # Rebuild _neutral_neighbors from configs (single-edit adjacency

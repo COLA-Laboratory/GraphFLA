@@ -8,6 +8,18 @@ from tqdm import tqdm
 from ..distances import mixed_distance
 
 
+def _pythonize(value):
+    if isinstance(value, dict):
+        return {key: _pythonize(val) for key, val in value.items()}
+    if isinstance(value, list):
+        return [_pythonize(item) for item in value]
+    if isinstance(value, tuple):
+        return tuple(_pythonize(item) for item in value)
+    if isinstance(value, np.generic):
+        return value.item()
+    return value
+
+
 def determine_global_optimum(self):
     """Identifies the global optimum node in the landscape graph using igraph."""
     if self.graph is None:
@@ -281,7 +293,7 @@ def local_optima_accessibility(
         raise RuntimeError(f"An error occurred during accessibility calculation: {e}")
 
     # Return either a single value or list based on input type
-    return accessibilities[0] if single_input else accessibilities
+    return _pythonize(accessibilities[0] if single_input else accessibilities)
 
 
 def global_optima_accessibility(landscape) -> float:
@@ -322,7 +334,7 @@ def global_optima_accessibility(landscape) -> float:
             )
 
     # Delegate the calculation to local_optima_accessibility
-    return local_optima_accessibility(landscape, lo=landscape.go_index)
+    return _pythonize(local_optima_accessibility(landscape, lo=landscape.go_index))
 
 
 def mean_path_lengths(
@@ -487,7 +499,7 @@ def mean_path_lengths(
                 results.append({"mean": mean_distance, "variance": variance_distance})
 
         # Return either a single dict or list based on input type
-        return results[0] if single_input else results
+        return _pythonize(results[0] if single_input else results)
 
     except Exception as e:
         raise RuntimeError(f"An error occurred during path length calculation: {e}")
@@ -495,7 +507,7 @@ def mean_path_lengths(
 
 def mean_path_lengths_go(
     landscape, accessible: bool = True, n_samples: Optional[Union[int, float]] = None
-) -> dict:
+) -> float:
     """
     Calculate the mean and variance of the shortest path lengths from configurations to the global optimum.
 
@@ -517,9 +529,9 @@ def mean_path_lengths_go(
 
     Returns
     -------
-    dict
-        A dictionary containing the "mean" and "variance" of the shortest path lengths
-        to the global optimum. Infinite distances are excluded from the calculations.
+    float
+        The mean shortest path length to the global optimum. Infinite distances are
+        excluded from the calculation.
 
     Raises
     ------
@@ -545,9 +557,10 @@ def mean_path_lengths_go(
             )
 
     # Delegate the calculation to path_lengths with go_index
-    return mean_path_lengths(
+    result = mean_path_lengths(
         landscape, lo=landscape.go_index, accessible=accessible, n_samples=n_samples
     )
+    return _pythonize(result["mean"])
 
 
 def accessible_fract(landscape):
@@ -649,7 +662,7 @@ def mean_dist_lo(
         mean_distances.append(mean_dist)
 
     # Return either a single value or list based on input type
-    return mean_distances[0] if single_input else mean_distances
+    return _pythonize(mean_distances[0] if single_input else mean_distances)
 
 
 def mean_dist_go(landscape, distance_func: Optional[Callable] = None) -> float:
@@ -686,7 +699,7 @@ def mean_dist_go(landscape, distance_func: Optional[Callable] = None) -> float:
     if "dist_go" in landscape.graph.vs.attributes():
         # Use pre-calculated distances
         distances = landscape.graph.vs["dist_go"]
-        return np.mean(distances)
+        return _pythonize(np.mean(distances))
 
     # Otherwise, need to calculate distances
     if landscape.configs is None or landscape.data_types is None:
@@ -709,4 +722,4 @@ def mean_dist_go(landscape, distance_func: Optional[Callable] = None) -> float:
     distances = distance_func(configs, go_config, landscape.data_types)
 
     # Calculate and return the mean distance
-    return np.mean(distances)
+    return _pythonize(np.mean(distances))
