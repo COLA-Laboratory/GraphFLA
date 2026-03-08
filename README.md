@@ -59,7 +59,11 @@ To make landscape construction faster, we recommended removing redundant loci in
 ```python
 import pandas as pd
 
-data = pd.read_csv("path_to_data.csv")
+# Load data:
+data = pd.DataFrame({
+    "sequences": ["ATCG", "GCTA", "TACG", "CGAT"],
+    "fitness": [0.82, 0.91, 0.45, 0.67]
+})
 
 X = data["sequences"]
 f = data["fitness"]
@@ -74,13 +78,10 @@ Here, assume we are working with DNA sequences. `GraphFLA` provides registered m
 The `maximize` parameter specifies the direction of optimization, i.e., whether `f` is to be optimized or minimized.
 
 ```python
-from graphfla.landscape import Landscape
+from graphfla.landscape import DNALandscape
 
 # initialize the landscape
-# this is equivalent to:
-# from graphfla.landscape import DNALandscape
-# landscape = DNALandscape(maximize=True)
-landscape = Landscape(type="dna", maximize=True)
+landscape = DNALandscape(maximize=True)
 
 # build the landscape with our data
 landscape.build_from_data(X, f, verbose=True)
@@ -137,15 +138,14 @@ landscape.build_from_data(X, f, data_types=data_types, verbose=True)
 
 ## Landscape Analysis Features
 
-`GraphFLA` currently supports the following features for landscape analysis.
+`GraphFLA` currently supports the following features for landscape analysis. Only landscape-level analysis tools are listed; mutation-specific (e.g., `distribution_fit_effects`, `idiosyncratic_index`) and position-specific (e.g., `single_mutation_effects`) tools are excluded.
 
 | **Class** | **Function** | **Feature** | **Range** | **Higher value indicates** |
 |--------------------------|----------------------------------|----------------------------------------|---------------|----------------------------------------|
-| **Ruggedness** | `lo_ratio`                       | Fraction of local optima               | [0,1]         | ↑ more peaks                           |
+| **Ruggedness** | `lo_ratio`                       | Fraction of local optima               | [0, 1]        | ↑ more peaks                           |
 |                          | `r_s_ratio`                      | Roughness-slope ratio                  | [0, ∞)        | ↑ ruggedness                           |
 |                          | `autocorrelation`                | Autocorrelation                        | [-1, 1]       | ↓ ruggedness                           |
-|                          | `gamma_statistic`                | Gamma statistic                        | [-1, 1]       | ↑ ruggedness                           |
-|                          | `gamma_statistic`                | Gamma star statistic                   | [-1, 1]       | ↑ ruggedness                           |
+|                          | `gradient_intensity`             | Gradient intensity                     | [0, ∞)        | ↑ average fitness change per edge      |
 |                          | `neighbor_fit_corr`              | Neighbor-fitness correlation           | [-1, 1]       | ↓ ruggedness                           |
 | **Epistasis** | `classify_epistasis`             | Magnitude epistasis                    | [0, 1)        | ↓ evolutionary constraints             |
 |                          | `classify_epistasis`             | Sign epistasis                         | [0, 1]        | ↑ evolutionary constraints             |
@@ -153,16 +153,23 @@ landscape.build_from_data(X, f, data_types=data_types, verbose=True)
 |                          | `classify_epistasis`             | Positive epistasis                     | [0, 1]        | ↑ synergistic effects                  |
 |                          | `classify_epistasis`             | Negative epistasis                     | [0, 1]        | ↑ antagonistic effects                 |
 |                          | `global_idiosyncratic_index`     | Global idiosyncratic index             | [0, 1]        | ↑ specific interactions                |
-|                          | `diminishing_returns_index`      | Diminishing return epistasis           | [0, 1]        | ↑ flat peaks                           |
-|                          | `increasing_costs_index`         | Increasing cost epistasis              | [0, 1]        | ↑ steep descents                       |
-|                          | `higher_order_epistasis`         | Higher-order epistasis                 | [0, 1]        | ↓ higher-order interactions            |
-|                          | `walsh_hadamard_coefficient`     | All pairwise and higher-order epistasis    | -          | - |
+|                          | `diminishing_returns_index`      | Diminishing return epistasis           | [-1, 1]       | ↓ flat peaks (higher = less diminishing returns) |
+|                          | `increasing_costs_index`         | Increasing cost epistasis              | [-1, 1]       | ↑ steep descents                      |
+|                          | `higher_order_epistasis`         | Higher-order epistasis (R²)            | [0, 1]        | ↑ higher-order interactions            |
+|                          | `gamma_statistic`                | Gamma statistic                        | [-1, 1]       | ↑ epistasis (magnitude)                |
+|                          | `gamma_star`                     | Gamma star statistic                   | [-1, 1]       | ↑ sign epistasis consistency           |
+|                          | `walsh_hadamard_coefficient`     | Pairwise and higher-order epistasis    | -             | -                                      |
+|                          | `extradimensional_bypass_analysis`| Extradimensional bypass proportion    | [0, 1]        | ↑ navigability                         |
 | **Navigability** | `fitness_distance_corr`          | Fitness-distance correlation           | [-1, 1]       | ↑ navigation                           |
-|                          | `go_accessibility`               | Global optima accessibility            | [0, 1]        | ↑ access to global peaks               |
+|                          | `fitness_flattening_index`       | Fitness flattening index               | [-1, 1]       | ↑ flatter around global optimum        |
+|                          | `global_optima_accessibility`    | Global optimum accessibility           | [0, 1]        | ↑ access to global peaks               |
+|                          | `local_optima_accessibility`    | Local optimum accessibility            | [0, 1]        | ↑ access to specified peak(s)          |
 |                          | `basin_fit_corr`                 | Basin-fitness corr. (accessible)       | [-1, 1]       | ↑ access to fitter peaks               |
 |                          | `basin_fit_corr`                 | Basin-fitness corr. (greedy)           | [-1, 1]       | ↑ access to fitter peaks               |
-|                          | `calculate_evol_enhance`         | Evol-enhancing mutation                | [0, 1]        | ↑ evolvability                         |
-|                          | `extradimensional_bypass_analysis`| Extradimensional bypass               | [0, 1]        | ↑ navigability                         |  
+|                          | `mean_path_lengths`              | Mean path length to LO(s)              | [0, ∞)        | ↑ distance to reach optima             |
+|                          | `mean_path_lengths_go`             | Mean path length to global optimum     | [0, ∞)        | ↑ distance to reach global optimum     |
+|                          | `mean_dist_lo`                   | Mean distance to LO(s)                 | [0, ∞)        | ↑ spatial distance to optima           |
+|                          | `evol_enhance_mutations`         | Evol-enhancing mutation proportion     | [0, 1]        | ↑ evolvability                         |
 | **Neutrality** | `neutrality`                     | Neutrality                             | [0, 1]        | ↑ neutrality                           |
 | **Fitness Distribution** | `fitness_distribution`           | Skewness                               | (-∞, ∞)       | ↑ asymmetry of fitness values          |
 |                          | `fitness_distribution`           | Kurtosis                               | (-∞, ∞)       | ↑ outlier/extreme value prevalence     |
