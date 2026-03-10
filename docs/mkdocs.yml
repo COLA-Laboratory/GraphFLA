@@ -1,0 +1,126 @@
+site_name: GraphFLA
+docs_dir: 'site/content'
+site_dir: 'docs'
+
+nav:
+  - Home: index.md
+  - Architecture:
+    - Getting Started: docs/demo.md
+    - Advanced Usage: docs/demo.md
+  - Getting Started:
+    - Installation: docs/tutorials/installation.md
+    - Quickstart: docs/tutorials/quickstart.md
+  - API Reference:
+    - Landscapes: 
+      - Basic Landscape: docs/api/landscape/landscape.md
+      - DNA Landscape: docs/api/landscape/dna_landscape.md
+      - RNA Landscape: docs/api/landscape/rna_landscape.md
+      - Protein Landscape: docs/api/landscape/protein_landscape.md
+      - Boolean Landscape: docs/api/landscape/boolean_landscape.md
+      - Ordinal Landscape: docs/api/landscape/ordinal_landscape.md
+    # - Analysis: docs/api/analysis.md
+    - Plotting: docs/api/plotting.md
+    - Problems: docs/api/problems.md
+    - Data: docs/api/data.md
+    - Algorithms: docs/api/algorithms.md
+    - Features:
+      - Fitness: docs/api/analysis/fitness.md
+      - Epistasis: docs/api/analysis/epistasis.md
+      - Navigability: docs/api/analysis/navigability.md
+      - Ruggedness: docs/api/analysis/ruggedness.md
+      - Robutness: docs/api/analysis/robustness.md
+  - Template Gallery: docs/api/templates_test.md
+  - Examples:
+      - TF Binding Landscape: docs/applications/tf_binding.md
+      - RNAGym Landscape: docs/applications/rnagym.md
+      - ProteinGym Landscape: docs/applications/proteingym.md
+
+extra_css:
+  - 'https://use.fontawesome.com/releases/v5.8.2/css/all.css'
+  - docs/assets/styles.css 
+
+extra_javascript:
+  # - 'js/custom.js'  # If you need custom JavaScript
+  - javascripts/mathjax.js
+  - https://polyfill.io/v3/polyfill.min.js?features=es6
+  - https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js
+  
+theme:
+  name: material
+  custom_dir: site/overrides
+  features:
+    - math
+    - navigation.tabs
+    - navigation.sections
+    - navigation.tracking
+    - navigation.instant
+    - navigation.instant.preview
+    - navigation.instant.progress
+    - navigation.instant.prefetch
+    - navigation.top
+    - navigation.path
+    - navigation.expand
+    # - navigation.footer
+    - navigation.indexes
+
+    - announce.dismiss
+    - header.autohide
+
+    - search.suggest
+    - search.highlight
+    - search.share
+
+    - content.tabs.link
+    - content.code.annotation
+    - content.code.copy
+    - content.code.select
+  language: en
+  palette:
+    - scheme: default
+      toggle:
+        icon: material/toggle-switch-off-outline 
+        name: Switch to dark mode
+      primary: black
+      accent: purple 
+  plugins:
+    - typeset
+    - search
+
+extra:
+  social:
+    - icon: fontawesome/brands/github-alt
+      link: https://github.com/COLA-Laboratory/GraphFLA
+    # - icon: fontawesome/brands/twitter
+    #   link: https://twitter.com/TheJamesWillett
+    # - icon: fontawesome/brands/linkedin
+    #   link: https://www.linkedin.com/in/willettjames/
+      
+markdown_extensions:
+  - pymdownx.highlight:
+      anchor_linenums: true
+      use_pygments: true
+      pygments_style: "nord"
+      
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
+  - admonition
+  - pymdownx.arithmatex:
+      generic: true
+  - footnotes
+  - pymdownx.details
+  - pymdownx.superfences
+  - pymdownx.mark
+  - pymdownx.tabbed:
+      alternate_style: true
+  - def_list
+  - attr_list
+  - pymdownx.emoji:
+      emoji_index: !!python/name:materialx.emoji.twemoji
+      # emoji_generator: !!python/name:materialx.emoji.to_svg
+  - attr_list
+  - md_in_html
+
+repo_url: https://github.com/COLA-Laboratory/GraphFLA
+
+copyright: |
+  &copy; 2025 <a href="https://github.com/COLA-Laboratory/GraphFLA"  target="_blank" rel="noopener">Mingyu Huang</a>

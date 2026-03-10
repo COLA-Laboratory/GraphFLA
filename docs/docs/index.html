@@ -1,0 +1,2430 @@
+
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+      
+      
+        <link rel="next" href="docs/demo/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.4">
+    
+    
+      
+        <title>GraphFLA - GraphFLA</title>
+      
+    
+    
+      <link rel="stylesheet" href="assets/stylesheets/main.484c7ddc.min.css">
+      
+        
+        <link rel="stylesheet" href="assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.2/css/all.css">
+    
+      <link rel="stylesheet" href="docs/assets/styles.css">
+    
+    <script>__md_scope=new URL(".",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+
+<meta property="og:title" content="GraphFLA" />
+
+
+
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="black" data-md-color-accent="purple">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="." title="GraphFLA" class="md-header__button md-logo" aria-label="GraphFLA" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            GraphFLA
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              GraphFLA
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="black" data-md-color-accent="purple"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M17 6H7c-3.31 0-6 2.69-6 6s2.69 6 6 6h10c3.31 0 6-2.69 6-6s-2.69-6-6-6m0 10H7c-2.21 0-4-1.79-4-4s1.79-4 4-4h10c2.21 0 4 1.79 4 4s-1.79 4-4 4M7 9c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+          <a href="javascript:void(0)" class="md-search__icon md-icon" title="Share" aria-label="Share" data-clipboard data-clipboard-text="" data-md-component="search-share" tabindex="-1">
+            
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9a3 3 0 0 0-3 3 3 3 0 0 0 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.15c-.05.21-.08.43-.08.66 0 1.61 1.31 2.91 2.92 2.91s2.92-1.3 2.92-2.91A2.92 2.92 0 0 0 18 16.08"/></svg>
+          </a>
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/COLA-Laboratory/GraphFLA" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+  
+        
+          
+            
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+    
+  
+  
+    <li class="md-tabs__item md-tabs__item--active">
+      <a href="." class="md-tabs__link">
+        
+  
+  
+    
+  
+  Home
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="docs/demo/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Architecture
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="docs/tutorials/installation/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Getting Started
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="docs/api/landscape/landscape/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  API Reference
+
+        </a>
+      </li>
+    
+  
+
+    
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="docs/api/templates_test/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Template Gallery
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="docs/applications/tf_binding/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Examples
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+
+  <!-- Additional styles for landing page -->
+<style>
+
+/* Apply box shadow on smaller screens that don't display tabs */
+@media only screen and (max-width: 1220px) {
+  .md-header {
+    box-shadow: 0 0 .2rem rgba(0,0,0,.1),0 .2rem .4rem rgba(0,0,0,.2);
+    transition: color 250ms,background-color 250ms,box-shadow 250ms;
+  }
+}
+
+/* Hide main content for now */
+.md-content {
+  display: none;
+}
+
+/* Hide table of contents */
+@media screen and (min-width: 60em) {
+  .md-sidebar--secondary {
+    display: none;
+  }
+}
+
+/* Hide navigation */
+@media screen and (min-width: 76.25em) {
+  .md-sidebar--primary {
+    display: none;
+  }
+}
+
+/* Get started button */
+.md-typeset .md-button--primary {
+    color: var(--md-primary-fg-color);
+    background-color: var(--md-primary-bg-color);
+    border-color: var(--md-primary-bg-color);
+}
+.md-typeset .md-button--primary:hover {
+  color: var(--md-primary-bg-color);
+  background-color: var(--md-primary-fg-color);
+  border-color: var(--md-primary-bg-color);
+}
+
+.tx-hero {
+  max-width: 700px;
+  display: flex;
+  padding: .4rem;
+  margin: 0 auto;
+  text-align: center;
+}
+.tx-hero h1 {
+  font-weight: 700;
+  font-size: 38px;
+  line-height: 46px;
+  color: rgb(38, 38, 38);
+}
+.tx-hero p {
+  color: rgb(92, 92, 92);
+  font-weight: 400;
+  font-size: 20px;
+  line-height: 32px;
+}
+.tx-hero__image {
+  max-width: 1000px;
+  min-width: 600px;
+  width: 100%;
+  height: auto;
+  margin: 0 auto;
+  display: flex;
+  align-items: stretch;
+}
+
+.tx-hero__image img {
+  width: 100%;
+  height: 100%;
+  min-width: 0;
+}
+
+/* Secondary content styles */
+.secondary-section {
+  background: rgb(245, 245, 245) none repeat scroll 0% 0%;
+  border-top: 1px solid rgb(222, 222, 222);
+  border-bottom: 1px solid rgb(222, 222, 222)
+}
+@media screen and (max-width: 1012px) {
+  .secondary-section {
+    display: block;
+  }
+}
+
+.secondary-section .g {
+  position: relative;
+  margin-left: auto;
+  margin-right: auto;
+  padding: 0px 40px;
+  max-width: 1280px;
+}
+
+.secondary-section .g .section {
+  font-size: 18px;
+  font-weight: 400;
+  line-height: 30px;
+  letter-spacing: normal;
+  padding: 88px 0px 116px;
+}
+
+.secondary-section .g .section.follow {
+  padding-top: 0px;
+}
+
+
+.secondary-section .g .section .component-wrapper {
+  display: flex;
+  -moz-box-align: center;
+  align-items: center;
+}
+
+@media screen and (max-width: 1012px) {
+  .secondary-section .g .section .component-wrapper {
+    display: block;
+  }
+}
+
+.secondary-section .g .section .component-wrapper h3 {
+  color: rgb(38, 38, 38);
+  font-size: 36px;
+  font-weight: 700;
+  line-height: 46px;
+  letter-spacing: normal;
+  margin-bottom: 12px;
+}
+
+.secondary-section .g .section .component-wrapper h4 {
+  color: rgb(38, 38, 38);
+}
+
+.secondary-section .g .section .component-wrapper p {
+  color: rgb(92, 92, 92);
+  font-size: 18px;
+  font-weight: 400;
+  line-height: 30px;
+  letter-spacing: normal;
+  margin-bottom: 16px;
+}
+
+.secondary-section .g .section .component-wrapper .image-wrapper {
+  margin-bottom: 12px;
+  overflow: hidden;
+  border-radius: 8px;
+  margin-top: 48px;
+  border: 1px solid rgb(222, 222, 222);
+  box-shadow: rgba(202, 202, 202, 0.15) 0px 0px 0px 6px;
+  max-width: 600px;
+  width: 100%;
+  height: auto;
+  margin: 0 auto;
+  display: flex;
+  align-items: stretch;
+}
+
+.image-wrapper img {
+  width: 100%;
+  height: 100%;
+  min-width: 0;
+}
+
+.secondary-section .g .section .component-wrapper .first-column {
+  padding-right: 100px;
+  flex: 0 1 auto;
+  height: auto;
+  width: 50%;
+}
+
+@media screen and (max-width: 1012px) {
+  .secondary-section .g .section .component-wrapper .first-column {
+    padding-right: 0px;
+    width: 100%;
+    margin-bottom: 32px;
+  }
+}
+
+.secondary-section .g .section .component-wrapper .second-column {
+  flex: 0 1 auto;
+  height: auto;
+  width: 50%;
+}
+@media screen and (max-width: 1012px) {
+  .secondary-section .g .section .component-wrapper .second-column {
+    width: 100%;
+    margin-bottom: 32px;
+  }
+}
+
+.secondary-section .g .section .component-wrapper .responsive-grid {
+  display: grid;
+  width: 100%;
+  grid-template-columns: repeat(1, 1fr);
+  gap: 2rem;
+}
+@media screen and (min-width: 64rem) {
+  .secondary-section .g .section .component-wrapper .responsive-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.secondary-section .g .section .component-wrapper .responsive-grid a.card-wrapper {
+  text-decoration: none;
+  transition: none;
+  background: none;
+  padding: 0;
+}
+
+.secondary-section .g .section .component-wrapper .responsive-grid .card {
+  position: relative;
+  background-color:  #fff none repeat scroll 0% 0%;
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: row;
+  -moz-box-align: center;
+  align-items: center;
+  height: 100%;
+  -moz-box-pack: start;
+  justify-content: flex-start;
+  box-shadow: rgba(0, 0, 0, 0.09) 0.3125rem 0.3125rem 0px -0.0625rem, rgba(0, 0, 0, 0.15) 0px 0.25rem 0.5rem 0px;
+  transition: all 0.6s cubic-bezier(0.165, 0.84, 0.44, 1) 0s;
+}
+.secondary-section .g .section .component-wrapper .responsive-grid .card:hover {
+  box-shadow: rgba(0, 0, 0, 0.2) 0.3125rem 0.3125rem 0px -0.0625rem, rgba(0, 0, 0, 0.26) 0px 0.25rem 0.5rem 0px;
+}
+
+@media screen and (min-width: 75rem) {
+  .secondary-section .g .section .component-wrapper .responsive-grid .card {
+    padding: 2rem 2.5rem;
+  }
+}
+@media screen and (min-width: 36rem) {
+  .secondary-section .g .section .component-wrapper .responsive-grid .card {
+    padding: 1rem 1.5rem;
+  }
+}
+
+.secondary-section .g .section .component-wrapper .responsive-grid .card .logo {
+  margin-right: 0.75rem;
+  width: 1.2rem;
+  min-width: 1.2rem;
+}
+
+.secondary-section .g .section .component-wrapper .responsive-grid .card .card-content {
+  display: flex;
+  flex: 1 1 0%;
+  flex-direction: column;
+  width: 100%;
+}
+
+.secondary-section .g .section .component-wrapper .responsive-grid .card .card-content h5 {
+  color: rgb(61, 61, 61);
+  margin: 0;
+}
+
+.secondary-section .g .section .component-wrapper .responsive-grid .card .card-content p {
+  margin-top: 0.25em;
+  margin-bottom: 0;
+  color: rgb(92, 92, 92);
+  font-size: 0.65rem;
+  font-weight: 300;
+  line-height: normal;
+}
+
+.secondary-section .g .section .component-wrapper .responsive-grid .card .card-content code {
+  background: rgba(0, 0, 0, 0.05) none repeat scroll 0% 0%;
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+
+.component-wrapper span.em {
+  color: rgb(61, 61, 61);
+}
+
+.component-wrapper a {
+  transition: color 125ms;
+  color: rgb(61, 61, 61);
+  background: rgba(0, 0, 0, 0.05) none repeat scroll 0% 0%;
+  padding: 2px 6px;
+  margin: 0px 1px;
+  border-radius: 4px;
+  display: inline;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.component-wrapper a:hover {
+  color: var(--md-typeset-a-color);
+  background: var(--md-accent-fg-color--transparent);
+}
+
+</style>
+
+  <!-- Hero for landing page -->
+  <div class="md-container tx-hero">
+    <div class="md-grid md-typeset">
+      <div class="md-main__inner">
+        <div>
+          <h1>GraphFLA: Streamlining fitness landscape analysis via Python graphs</h1>
+          <p>GraphFLA is a graph-powered Python framework for constructing, analyzing, visualizing, manipulating, and comparing fitness landscapes of black-box optimization problems in diverse real-world domains.
+          </p>
+          <a
+            href="docs/demo.md"
+            title="Get Started"
+            class="md-button md-button--primary"
+          >
+            Get started
+            <svg width="11" height="10" viewBox="0 0 11 10" fill="none" style="margin-left:2px"><path d="M1 5.16772H9.5M9.5 5.16772L6.5 1.66772M9.5 5.16772L6.5 8.66772" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="md-container">
+    <div class="tx-hero__image">
+      <img
+        src="Noneassets/images/screen.png"
+        alt=""
+        draggable="false"
+      >
+    </div>
+  </div>
+
+  <div class="md-container secondary-section">
+    <div class="g">
+      <!-- Architecture as building blocks -->
+      <div class="section">
+        <div class="component-wrapper">
+          <div class="first-column">
+            <h3>Get started with architectures</h3>
+            <p>
+              Run a <span class="em">single command</span> to quickly get started with a containerized
+              application using best practices on AWS from a Dockerfile.
+            </p>
+            <p>
+              Instead of modeling individual resources, Copilot provides common cloud architectures:
+              <a href="docs/concepts/services/#request-driven-web-service">Request-Driven Web Service</a>,
+              <a href="docs/concepts/services/#load-balanced-web-service">Load Balanced Web Service</a>,
+              <a href="docs/concepts/services/#backend-service">Backend Service</a>,
+              <a href="docs/concepts/services/#worker-service">Worker Service</a>, <a href="docs/concepts/jobs/">Scheduled Job</a>.
+              The necessary infrastructure is generated from the chosen pattern.
+              Focus your time on writing business logic instead of connecting AWS resources.
+            </p>
+          </div>
+          <div class="second-column">
+            <div class="image-wrapper">
+              <img
+                src="Noneassets/images/copilot-init.png"
+                alt=""
+                draggable="false"
+              >
+            </div>
+          </div>
+        </div>
+        <div class="component-wrapper" style="display: block;">
+          <h4>Explore features</h4>
+
+          <!-- Arch as code -->
+          <div class="responsive-grid">
+            <a class="card-wrapper" href="docs/manifest/overview">
+              <div class="card">
+                <div class="logo">
+                  <span class="twemoji">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 3a2 2 0 0 1 2-2h9.982a2 2 0 0 1 1.414.586l4.018 4.018A2 2 0 0 1 21 7.018V21a2 2 0 0 1-2 2H4.75a.75.75 0 0 1 0-1.5H19a.5.5 0 0 0 .5-.5V8.5h-4a2 2 0 0 1-2-2v-4H5a.5.5 0 0 0-.5.5v6.25a.75.75 0 0 1-1.5 0Zm12-.5v4a.5.5 0 0 0 .5.5h4a.5.5 0 0 0-.146-.336l-4.018-4.018A.5.5 0 0 0 15 2.5"/><path d="M4.53 12.24a.75.75 0 0 1-.039 1.06l-2.639 2.45 2.64 2.45a.75.75 0 1 1-1.022 1.1l-3.23-3a.75.75 0 0 1 0-1.1l3.23-3a.75.75 0 0 1 1.06.04m3.979 1.06a.75.75 0 1 1 1.02-1.1l3.231 3a.75.75 0 0 1 0 1.1l-3.23 3a.75.75 0 1 1-1.021-1.1l2.639-2.45-2.64-2.45Z"/></svg>
+                  </span>
+                </div>
+                <div class="card-content">
+                  <h5>Manifests</h5>
+                  <p>
+                    Describe your services with architecture-as-code.
+                  </p>
+                </div>
+              </div>
+            </a>
+
+            <!-- Networking -->
+            <a class="card-wrapper" href="docs/developing/svc-to-svc-communication">
+              <div class="card">
+                <div class="logo">
+                  <span class="twemoji">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M248 88h80v48h-80zm-8-56c-26.5 0-48 21.5-48 48v64c0 26.5 21.5 48 48 48h16v32H32c-17.7 0-32 14.3-32 32s14.3 32 32 32h96v32h-16c-26.5 0-48 21.5-48 48v64c0 26.5 21.5 48 48 48h96c26.5 0 48-21.5 48-48v-64c0-26.5-21.5-48-48-48h-16v-32h192v32h-16c-26.5 0-48 21.5-48 48v64c0 26.5 21.5 48 48 48h96c26.5 0 48-21.5 48-48v-64c0-26.5-21.5-48-48-48h-16v-32h96c17.7 0 32-14.3 32-32s-14.3-32-32-32H320v-32h16c26.5 0 48-21.5 48-48V80c0-26.5-21.5-48-48-48zm208 344h8v48h-80v-48zm-256 0h8v48h-80v-48z"/></svg>
+                  </span>
+                </div>
+                <div class="card-content">
+                  <h5>Networking</h5>
+                  <p>
+                    Service discovery is setup by default for your services to connect to each other.
+                  </p>
+                </div>
+              </div>
+            </a>
+
+            <!-- Customize -->
+            <a class="card-wrapper" href="docs/developing/addons/workload">
+              <div class="card">
+                <div class="logo">
+                  <span class="twemoji">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M224 0c35.3 0 64 21.5 64 48 0 10.4-4.4 20-12 27.9-6.6 6.9-12 15.3-12 24.9 0 15 12.2 27.2 27.2 27.2H336c26.5 0 48 21.5 48 48v44.8c0 15 12.2 27.2 27.2 27.2 9.5 0 18-5.4 24.9-12 7.9-7.5 17.5-12 27.9-12 26.5 0 48 28.7 48 64s-21.5 64-48 64c-10.4 0-20.1-4.4-27.9-12-6.9-6.6-15.3-12-24.9-12-15 0-27.2 12.2-27.2 27.2V464c0 26.5-21.5 48-48 48h-56.8c-12.8 0-23.2-10.4-23.2-23.2 0-9.2 5.8-17.3 13.2-22.8 11.6-8.7 18.8-20.7 18.8-34 0-26.5-28.7-48-64-48s-64 21.5-64 48c0 13.3 7.2 25.3 18.8 34 7.4 5.5 13.2 13.5 13.2 22.8 0 12.8-10.4 23.2-23.2 23.2H48c-26.5 0-48-21.5-48-48V343.2C0 330.4 10.4 320 23.2 320c9.2 0 17.3 5.8 22.8 13.2 8.7 11.6 20.7 18.8 34 18.8 26.5 0 48-28.7 48-64s-21.5-64-48-64c-13.3 0-25.3 7.2-34 18.8-5.5 7.4-13.5 13.2-22.8 13.2C10.4 256 0 245.6 0 232.8V176c0-26.5 21.5-48 48-48h108.8c15 0 27.2-12.2 27.2-27.2 0-9.5-5.4-18-12-24.9-7.5-7.9-12-17.5-12-27.9 0-26.5 28.7-48 64-48"/></svg>
+                  </span>
+                </div>
+                <div class="card-content">
+                  <h5>Grow with Addons</h5>
+                  <p>
+                    Integrate your services with databases or any other AWS resources.
+                  </p>
+                </div>
+              </div>
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Continuous delivery -->
+      <div class="section follow">
+        <div class="component-wrapper">
+          <div class="first-column">
+            <h3>Continuous delivery</h3>
+            <p>
+              No need to worry about gluing Copilot commands in a script to create an automated release process.
+              Copilot provides commands to create multiple deployment <a href="docs/concepts/environments/">environments</a> in separate AWS accounts and regions,
+              as well as creating an AWS CodePipeline <a href="docs/concepts/pipelines/">pipeline</a> to build your container images, deploy your services, and
+              run automated tests.
+            </p>
+          </div>
+          <div class="second-column">
+            <div class="image-wrapper">
+              <img
+                src="Noneassets/images/copilot-env-init.png"
+                alt=""
+                draggable="false"
+              >
+            </div>
+          </div>
+        </div>
+        <div class="component-wrapper" style="display: block;">
+          <h4>Explore features</h4>
+
+          <!-- Environments -->
+          <div class="responsive-grid">
+            <a class="card-wrapper" href="docs/commands/env-init/">
+              <div class="card">
+                <div class="logo">
+                  <span class="twemoji">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M6 7.75C6 6.784 6.784 6 7.75 6h8.5c.966 0 1.75.784 1.75 1.75v8.5A1.75 1.75 0 0 1 16.25 18h-8.5A1.75 1.75 0 0 1 6 16.25Zm1.75-.25a.25.25 0 0 0-.25.25v8.5c0 .138.112.25.25.25h8.5a.25.25 0 0 0 .25-.25v-8.5a.25.25 0 0 0-.25-.25Z"/></svg>
+                  </span>
+                </div>
+                <div class="card-content">
+                  <h5>Environments</h5>
+                  <p>
+                    Deploy to multiple AWS accounts and regions.
+                  </p>
+                </div>
+              </div>
+            </a>
+
+            <!-- Override -->
+            <a class="card-wrapper" href="docs/manifest/lb-web-service/#environments">
+              <div class="card">
+                <div class="logo">
+                  <span class="twemoji">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M17.263 2.177a1.75 1.75 0 0 1 2.474 0l2.586 2.586a1.75 1.75 0 0 1 0 2.474L19.53 10.03l-.012.013L8.69 20.378a1.75 1.75 0 0 1-.699.409l-5.523 1.68a.75.75 0 0 1-.747-.188.75.75 0 0 1-.188-.747l1.673-5.5a1.75 1.75 0 0 1 .466-.756L14.476 4.963ZM4.708 16.361a.26.26 0 0 0-.067.108l-1.264 4.154 4.177-1.271a.25.25 0 0 0 .1-.059l10.273-9.806-2.94-2.939zM19 8.44l2.263-2.262a.25.25 0 0 0 0-.354l-2.586-2.586a.25.25 0 0 0-.354 0L16.061 5.5Z"/></svg>
+                  </span>
+                </div>
+                <div class="card-content">
+                  <h5>Override per environment</h5>
+                  <p>
+                    Adjust your service settings per environments in the manifest.
+                  </p>
+                </div>
+              </div>
+            </a>
+
+            <!-- Customize -->
+            <a class="card-wrapper" href="docs/commands/pipeline-init/">
+              <div class="card">
+                <div class="logo">
+                  <span class="twemoji">
+                    <?xml version="1.0" encoding="UTF-8"?>
+<svg width="32px" height="32px" viewBox="0 0 32 32" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 64 (93537) - https://sketch.com -->
+    <title>Icon-Service/32/AWS-CodePipeline</title>
+    <desc>Created with Sketch.</desc>
+    <g id="Icon-Service/32/AWS-CodePipeline" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <path d="M10,10 L13,10 L13,9 L10,9 L10,10 Z M14.952,25.799 L14.022,25.433 L17.611,16.307 L18.541,16.673 L14.952,25.799 Z M19.195,23.366 L21.848,21.04 L19.198,18.743 L19.853,17.987 L22.936,20.66 C23.045,20.754 23.108,20.892 23.108,21.036 C23.108,21.181 23.047,21.318 22.938,21.414 L19.855,24.118 L19.195,23.366 Z M9.617,21.285 C9.517,21.188 9.462,21.054 9.465,20.915 C9.468,20.775 9.529,20.644 9.634,20.552 L12.706,17.836 L13.368,18.585 L10.7,20.943 L13.374,23.537 L12.679,24.255 L9.617,21.285 Z M29,9 L15,9 L15,10 L29,10 L29,11.251 C29,12.216 28.216,13 27.251,13 L5.108,13 C3.946,13 3,12.054 3,10.891 L3,10 L8,10 L8,9 L3,9 L3,5.109 C3,3.946 3.946,3 5.108,3 L27.012,3 C28.108,3 29,3.892 29,4.989 L29,9 Z M7,29 L25,29 L25,14 L7,14 L7,29 Z M27.012,2 L5.108,2 C3.395,2 2,3.395 2,5.109 L2,10.891 C2,12.605 3.395,14 5.108,14 L6,14 L6,29.5 C6,29.776 6.224,30 6.5,30 L25.5,30 C25.776,30 26,29.776 26,29.5 L26,14 L27.251,14 C28.767,14 30,12.767 30,11.251 L30,4.989 C30,3.341 28.659,2 27.012,2 L27.012,2 Z" id="AWS-CodePipeline_Icon_32_Squid" fill="#232F3D"></path>
+    </g>
+</svg>
+                  </span>
+                </div>
+                <div class="card-content">
+                  <h5>Automated releases</h5>
+                  <p>
+                    Create a continuous delivery pipeline with built-in commands.
+                  </p>
+                </div>
+              </div>
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Operations -->
+      <div class="section follow">
+        <div class="component-wrapper">
+          <div class="first-column">
+            <h3>Operations is part of the workflow</h3>
+            <p>
+              Modeling, provisioning, and deploying services are only part of the application lifecycle for the developer.
+              Copilot also supports workflows around troubleshooting and debugging to help when things go wrong. <a href="docs/commands/svc-logs/">Tail
+              your logs</a>, <a href="docs/commands/svc-exec">get a shell</a> to a running container, <a href="docs/commands/svc-status/">view the health</a> of your services
+              from the comfort of your terminal.
+            </p>
+          </div>
+          <div class="second-column">
+            <div class="image-wrapper">
+              <img
+                src="Noneassets/images/copilot-svc-status.png"
+                alt=""
+                draggable="false"
+              >
+            </div>
+          </div>
+        </div>
+        <div class="component-wrapper" style="display: block;">
+          <h4>Explore features</h4>
+
+          <!-- Tasks -->
+          <div class="responsive-grid">
+            <a class="card-wrapper" href="docs/commands/task-run/">
+              <div class="card">
+                <div class="logo">
+                  <span class="twemoji">
+                    <?xml version="1.0" encoding="UTF-8"?>
+<svg width="32px" height="32px" viewBox="0 0 32 32" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 64 (93537) - https://sketch.com -->
+    <title>Icon-Service/32/AWS-Fargate</title>
+    <desc>Created with Sketch.</desc>
+    <g id="Icon-Service/32/AWS-Fargate" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <path d="M22.8732809,25.3426248 L22.8732809,21.9139741 L24.8408644,21.248207 L24.8408644,24.6339372 L22.8732809,25.3426248 Z M19.9292731,24.0080961 L19.9292731,21.248207 L21.8909627,21.912976 L21.8909627,25.3426248 L19.9292731,24.6339372 L19.9292731,24.0080961 Z M18.9469548,28.0865434 L16.9793713,28.7942329 L16.9793713,25.3665804 L18.9469548,24.7008133 L18.9469548,24.9862847 L18.9469548,28.0865434 Z M14.0353635,24.9862847 L14.0353635,24.7008133 L15.997053,25.3655823 L15.997053,28.7942329 L14.0353635,28.0865434 L14.0353635,24.9862847 Z M11.0854617,25.3426248 L11.0854617,21.9139741 L13.0530452,21.248207 L13.0530452,24.0080961 L13.0530452,24.6339372 L11.0854617,25.3426248 Z M8.14145383,21.248207 L10.1031434,21.912976 L10.1031434,25.3426248 L8.14145383,24.6339372 L8.14145383,21.248207 Z M10.5943026,20.0733826 L11.9980354,20.5534935 L10.5943026,21.0286137 L9.1935167,20.5534935 L10.5943026,20.0733826 Z M16.4882122,23.5249908 L17.891945,24.0051017 L16.4882122,24.4802218 L15.0874263,24.0051017 L16.4882122,23.5249908 Z M22.3821218,20.0733826 L23.7858546,20.5534935 L22.3821218,21.0286137 L20.981336,20.5534935 L22.3821218,20.0733826 Z M25.4882122,20.0833641 L22.5383104,19.0732348 C22.4371316,19.0382994 22.3261297,19.0382994 22.2249509,19.0732348 L19.280943,20.0833641 C19.0815324,20.1522366 18.9479371,20.3418854 18.9469548,20.556488 L18.9469548,23.3133826 L16.6444008,22.525841 C16.543222,22.4909057 16.43222,22.4909057 16.3310413,22.525841 L14.0353635,23.3133826 L14.0353635,20.556488 C14.0343811,20.3418854 13.9007859,20.1512384 13.7003929,20.0833641 L10.7504912,19.0732348 C10.6493124,19.0382994 10.5383104,19.0382994 10.4371316,19.0732348 L7.49312377,20.0833641 C7.29371316,20.1522366 7.16011788,20.3418854 7.15913556,20.556488 L7.15913556,24.9862847 C7.15913556,25.1968946 7.28978389,25.3855453 7.48624754,25.456414 L10.4302554,26.5194455 C10.4833006,26.5384104 10.5383104,26.5483919 10.5943026,26.5483919 C10.6502947,26.5483919 10.7053045,26.5384104 10.7583497,26.5194455 L13.0530452,25.692976 L13.0530452,28.4388909 C13.0530452,28.6495009 13.1836935,28.8381516 13.3801572,28.9090203 L16.324165,29.9710536 C16.3772102,29.9900185 16.43222,30 16.4882122,30 C16.5442043,30 16.5992141,29.9900185 16.6522593,29.9710536 L19.6021611,28.9090203 C19.7976424,28.8381516 19.9292731,28.6495009 19.9292731,28.4388909 L19.9292731,25.692976 L22.2180747,26.5194455 C22.2711198,26.5384104 22.3261297,26.5483919 22.3821218,26.5483919 C22.4381139,26.5483919 22.4931238,26.5384104 22.546169,26.5194455 L25.4960707,25.456414 C25.6915521,25.3855453 25.8231827,25.1978928 25.8231827,24.9862847 L25.8231827,20.556488 C25.8222004,20.3418854 25.6886051,20.1512384 25.4882122,20.0833641 L25.4882122,20.0833641 Z M29,13.6063586 C29,16.6826617 22.302554,18.3425878 16,18.3425878 C9.69744597,18.3425878 3,16.6826617 3,13.6063586 C3,12.1430684 4.60412574,10.8524584 7.51964637,9.97208872 L7.79960707,10.9283179 C5.44499018,11.64 3.98231827,12.6660998 3.98231827,13.6063586 C3.98231827,15.3750832 8.91748527,17.3444362 16,17.3444362 C23.0825147,17.3444362 28.0176817,15.3750832 28.0176817,13.6063586 C28.0176817,12.8836969 27.154224,12.0971534 25.6483301,11.4503512 L26.0324165,10.5310536 C28.4852652,11.5860998 29,12.785878 29,13.6063586 L29,13.6063586 Z M16.4911591,4.03009242 L21.9390963,6.04436229 L16.4911591,8.0825878 L11.043222,6.04436229 L16.4911591,4.03009242 Z M22.1090373,14.1693161 C21.1011788,14.6284658 19.4076621,15.1624769 16.9823183,15.229353 L16.9823183,8.96295749 L22.8762279,6.75704251 L22.8762279,12.9755268 C22.8762279,13.4875786 22.5746562,13.9567098 22.1090373,14.1693161 L22.1090373,14.1693161 Z M10.1060904,12.9755268 L10.1060904,6.75704251 L16,8.96295749 L16,15.229353 C13.5746562,15.1624769 11.8811395,14.6284658 10.8742633,14.1693161 C10.4076621,13.9567098 10.1060904,13.4875786 10.1060904,12.9755268 L10.1060904,12.9755268 Z M10.4724951,15.0796303 C11.6345776,15.6096488 13.6218075,16.2404806 16.4911591,16.2404806 C19.3605108,16.2404806 21.3477407,15.6096488 22.5108055,15.0796303 C23.3290766,14.7063216 23.8585462,13.8798521 23.8585462,12.9755268 L23.8585462,6.04136784 L23.8585462,6.04036969 C23.8585462,5.83075786 23.7288802,5.64410351 23.5353635,5.5722366 L16.6591356,3.02994455 C16.5510806,2.99001848 16.4302554,2.99001848 16.3231827,3.02994455 L9.44695481,5.5722366 C9.25343811,5.64410351 9.1237721,5.83075786 9.1237721,6.04036969 L9.1237721,6.04136784 L9.1237721,12.9755268 C9.1237721,13.8798521 9.65324165,14.7063216 10.4724951,15.0796303 L10.4724951,15.0796303 Z" id="AWS-Fargate_Icon_32_Squid" fill="#232F3D"></path>
+    </g>
+</svg>
+                  </span>
+                </div>
+                <div class="card-content">
+                  <h5>Run tasks</h5>
+                  <p>
+                    Run one-off tasks for operational workloads.
+                  </p>
+                </div>
+              </div>
+            </a>
+
+            <a class="card-wrapper" href="docs/commands/svc-exec/">
+              <div class="card">
+                <div class="logo">
+                  <span class="twemoji">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.25 12a.75.75 0 0 1-.22.53l-2.75 2.75a.75.75 0 0 1-1.06-1.06L7.44 12 5.22 9.78a.75.75 0 1 1 1.06-1.06l2.75 2.75c.141.14.22.331.22.53m2 2a.75.75 0 0 0 0 1.5h5a.75.75 0 0 0 0-1.5z"/><path d="M0 4.75C0 3.784.784 3 1.75 3h20.5c.966 0 1.75.784 1.75 1.75v14.5A1.75 1.75 0 0 1 22.25 21H1.75A1.75 1.75 0 0 1 0 19.25Zm1.75-.25a.25.25 0 0 0-.25.25v14.5c0 .138.112.25.25.25h20.5a.25.25 0 0 0 .25-.25V4.75a.25.25 0 0 0-.25-.25Z"/></svg>
+                  </span>
+                </div>
+                <div class="card-content">
+                  <h5>Exec</h5>
+                  <p>
+                    Run commands in or get a shell to a container running on AWS Fargate.
+                  </p>
+                </div>
+              </div>
+            </a>
+
+            <a class="card-wrapper" href="docs/commands/svc-status/">
+              <div class="card">
+                <div class="logo">
+                  <span class="twemoji">
+                    <?xml version="1.0" encoding="UTF-8"?>
+<svg width="32px" height="32px" viewBox="0 0 32 32" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 64 (93537) - https://sketch.com -->
+    <title>Icon-Service/32/Amazon-CloudWatch</title>
+    <desc>Created with Sketch.</desc>
+    <g id="Icon-Service/32/Amazon-CloudWatch" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <path d="M22.6299844,20.1243419 C22.6299844,18.2207948 21.0499046,16.6723135 19.1075134,16.6723135 C17.1651223,16.6723135 15.5850425,18.2207948 15.5850425,20.1243419 C15.5850425,22.027889 17.1651223,23.5763703 19.1075134,23.5763703 C21.0499046,23.5763703 22.6299844,22.027889 22.6299844,20.1243419 L22.6299844,20.1243419 Z M23.6364047,20.1243419 C23.6364047,22.5713369 21.6044421,24.5626641 19.1075134,24.5626641 C16.6105848,24.5626641 14.5786222,22.5713369 14.5786222,20.1243419 C14.5786222,17.6773469 16.6105848,15.6860197 19.1075134,15.6860197 C21.6044421,15.6860197 23.6364047,17.6773469 23.6364047,20.1243419 L23.6364047,20.1243419 Z M27.9116779,26.7029217 L24.5250737,23.7134651 C24.2362311,24.1306674 23.8950547,24.5064453 23.5166406,24.8457304 L26.8841229,27.8223652 C27.2001388,28.0995137 27.6862398,28.0738701 27.9690439,27.7661464 C28.2508416,27.459409 28.2256811,26.9810565 27.9116779,26.7029217 L27.9116779,26.7029217 Z M19.1075134,25.5489579 C22.1589797,25.5489579 24.6428249,23.1157711 24.6428249,20.1243419 C24.6428249,17.1329127 22.1589797,14.6997259 19.1075134,14.6997259 C16.0560472,14.6997259 13.572202,17.1329127 13.572202,20.1243419 C13.572202,23.1157711 16.0560472,25.5489579 19.1075134,25.5489579 L19.1075134,25.5489579 Z M28.5859795,25.9710917 C29.3106021,26.6131689 29.3689745,27.7138729 28.7168142,28.425977 C28.3655735,28.8066864 27.8824918,29 27.3963908,29 C26.9726878,29 26.5489849,28.8530422 26.2108277,28.5551815 L22.7165365,25.4661092 C21.6809301,26.1407342 20.4410203,26.5352517 19.1075134,26.5352517 C15.5005032,26.5352517 12.5657817,23.6592189 12.5657817,20.1243419 C12.5657817,16.5894648 15.5005032,13.713432 19.1075134,13.713432 C22.7145237,13.713432 25.6492452,16.5894648 25.6492452,20.1243419 C25.6492452,21.0918961 25.4228006,22.0071768 25.0292903,22.8307321 L28.5859795,25.9710917 Z M5.59229568,20.6174888 L10.5529412,20.6174888 L10.5529412,21.6037826 L5.58625716,21.6037826 C5.02870033,21.5978649 4.42988027,21.3976472 3.79986118,21.0080611 C2.75620337,20.3738742 1,18.8806254 1,16.0351677 C1,12.5930022 3.41037654,11.3285736 4.81231997,10.8847413 C4.80124935,10.7220029 4.79621725,10.5572918 4.79621725,10.3925807 C4.79621725,7.58854739 6.73760194,4.67898061 9.31101857,3.62759139 C12.3242408,2.39077894 15.5135867,3.00523999 17.8424432,5.26582544 C18.5710914,5.97299811 19.1699115,6.83206003 19.6278327,7.82920308 C20.2417491,7.32224806 21.0026028,7.04214061 21.8047198,7.04214061 C23.3656776,7.04214061 25.1238938,8.20695362 25.430852,10.7545506 C26.8871421,11.0810138 30,12.2300461 30,16.0756057 C30,17.7276479 29.4333854,19.0650623 28.3132396,20.047411 L27.6409509,19.3136084 C28.5386778,18.5255596 28.9935797,17.4357049 28.9935797,16.0756057 C28.9935797,12.6936042 26.10616,11.8532819 24.8642374,11.6491191 C24.7293771,11.6274206 24.6106195,11.5524623 24.5331251,11.4419974 C24.4546243,11.3315324 24.427451,11.1954239 24.4536179,11.0642468 C24.3066805,8.99007091 23.0164498,8.02843443 21.8047198,8.02843443 C21.0478917,8.02843443 20.3383654,8.38941797 19.8572965,9.01867343 C19.7475967,9.16464492 19.5624154,9.23565807 19.3802533,9.21198702 C19.1980913,9.18535709 19.044109,9.06207036 18.9817109,8.89144153 C18.5489502,7.71972447 17.9279889,6.73638953 17.1349297,5.96708034 C15.1029672,3.9944927 12.3232344,3.45893515 9.69849037,4.53794059 C7.51355197,5.4305365 5.80263752,8.0018045 5.80263752,10.3925807 C5.80263752,10.6608526 5.81874024,10.9291246 5.85094569,11.1865473 C5.86906125,11.326601 5.82477876,11.467641 5.72916884,11.5741607 C5.6526809,11.658982 5.55002603,11.7142145 5.43831338,11.7339403 C4.14204407,12.0613899 2.00642027,13.0536015 2.00642027,16.0351677 C2.00642027,18.2849039 3.27249696,19.5266478 4.33326393,20.1726703 C4.80628145,20.4646133 5.22897796,20.6135436 5.59229568,20.6174888 L5.59229568,20.6174888 Z" id="Amazon-CloudWatch_Icon_32_Squid" fill="#232F3D"></path>
+    </g>
+</svg>
+                  </span>
+                </div>
+                <div class="card-content">
+                  <h5>Monitoring</h5>
+                  <p>
+                    View logs or alarms from your services or tasks.
+                  </p>
+                </div>
+              </div>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="." title="GraphFLA" class="md-nav__button md-logo" aria-label="GraphFLA" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    GraphFLA
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/COLA-Laboratory/GraphFLA" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+      
+      <a href="." class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Architecture
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Architecture
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="docs/demo/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Getting Started
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="docs/demo/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Getting Started
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Getting Started
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Getting Started
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="docs/tutorials/installation/" class="md-nav__link">
+        
+  
+  
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M5 20h14v-2H5m14-9h-4V3H9v6H5l7 7z"/></svg>
+  
+  <span class="md-ellipsis">
+    
+  
+    Installation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="docs/tutorials/quickstart/" class="md-nav__link">
+        
+  
+  
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M18.1 4.8c-.1-.5-.5-.8-1-.8H13l.2 3h-2.4l.2-3H6.8c-.5 0-.9.4-1 .8l-2.7 14c-.1.6.4 1.2 1 1.2H10l.3-5h3.4l.3 5h5.8c.6 0 1.1-.6 1-1.2zM10.4 13l.2-4h2.6l.2 4z"/></svg>
+  
+  <span class="md-ellipsis">
+    
+  
+    Quickstart
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    API Reference
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    API Reference
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_4_1" >
+        
+          
+          <label class="md-nav__link" for="__nav_4_1" id="__nav_4_1_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Landscapes
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_1">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Landscapes
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="docs/api/landscape/landscape/" class="md-nav__link">
+        
+  
+  
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 16.5c0 .38-.21.71-.53.88l-7.9 4.44c-.16.12-.36.18-.57.18s-.41-.06-.57-.18l-7.9-4.44A.99.99 0 0 1 3 16.5v-9c0-.38.21-.71.53-.88l7.9-4.44c.16-.12.36-.18.57-.18s.41.06.57.18l7.9 4.44c.32.17.53.5.53.88zM12 4.15 6.04 7.5 12 10.85l5.96-3.35z"/></svg>
+  
+  <span class="md-ellipsis">
+    
+  
+    Basic Landscape
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="docs/api/landscape/dna_landscape/" class="md-nav__link">
+        
+  
+  
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 2h2v2c0 1.44.68 2.61 1.88 3.78.86.83 2.01 1.63 3.21 2.42l-1.83 1.19C8.27 10.72 7.31 10 6.5 9.21 5.07 7.82 4 6.1 4 4zm14 0h2v2c0 2.1-1.07 3.82-2.5 5.21-1.41 1.38-3.21 2.52-4.96 3.63-1.75 1.12-3.45 2.21-4.66 3.38C6.68 17.39 6 18.56 6 20v2H4v-2c0-2.1 1.07-3.82 2.5-5.21 1.41-1.38 3.21-2.52 4.96-3.63 1.75-1.12 3.45-2.21 4.66-3.38C17.32 6.61 18 5.44 18 4zm-3.26 10.61c.99.67 1.95 1.39 2.76 2.18C18.93 16.18 20 17.9 20 20v2h-2v-2c0-1.44-.68-2.61-1.88-3.78-.86-.83-2.01-1.63-3.21-2.42zM7 3h10v1l-.06.5H7.06L7 4zm.68 3h8.64c-.24.34-.52.69-.9 1.06l-.51.44H9.07l-.49-.44c-.38-.37-.66-.72-.9-1.06m1.41 10.5h5.84l.49.44c.38.37.66.72.9 1.06H7.68c.24-.34.52-.69.9-1.06zm-2.03 3h9.88l.06.5v1H7v-1z"/></svg>
+  
+  <span class="md-ellipsis">
+    
+  
+    DNA Landscape
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="docs/api/landscape/rna_landscape/" class="md-nav__link">
+        
+  
+  
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M15.78 8.348c-.77 0-1.396.615-1.396 1.37 0 1.075.406 2.058 1.075 2.813.277.312.598.584.956.807a5 5 0 0 0 .736-3.874q-.009-.043-.02-.087a1.39 1.39 0 0 0-1.35-1.029zm-8.612 3.958q.208.55.533 1.032c.356-.223.678-.495.955-.807a4.22 4.22 0 0 0 1.076-2.813c0-.755-.626-1.37-1.397-1.37-.65 0-1.195.438-1.35 1.029q-.01.043-.02.086a5 5 0 0 0 .205 2.843zm15.501-.67L24 12.29a5.87 5.87 0 0 1-5.243 3.18 6 6 0 0 1-1.926-.32 6.75 6.75 0 0 1-4.774 1.963 6.74 6.74 0 0 1-4.774-1.964 6 6 0 0 1-1.926.32A5.87 5.87 0 0 1 0 12.054l1.362-.595a4.38 4.38 0 0 0 3.995 2.549q.487-.002.946-.102a6.45 6.45 0 0 1-.945-3.367 6.5 6.5 0 0 1 .19-1.554c.328-1.208 1.45-2.098 2.786-2.098l.079.002q.121.003.242.016c1.444.157 2.565 1.357 2.565 2.814 0 1.958-.999 3.687-2.522 4.724a5.24 5.24 0 0 0 3.36 1.21 5.25 5.25 0 0 0 3.358-1.21c-1.523-1.037-2.522-2.767-2.522-4.724 0-1.458 1.122-2.658 2.564-2.814q.12-.013.242-.016l.08-.002a2.88 2.88 0 0 1 2.832 2.286 6.48 6.48 0 0 1-.8 4.733q.457.1.945.102c1.71 0 3.191-.967 3.91-2.372z"/></svg>
+  
+  <span class="md-ellipsis">
+    
+  
+    RNA Landscape
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="docs/api/landscape/protein_landscape/" class="md-nav__link">
+        
+  
+  
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M2.95 3 2 6.91l17.34 4.34.95-3.91zm3.14 3.89-1.93-.48.48-1.95 1.93.48zm3.85.97L8 7.38l.5-1.96 1.92.49zm3.86.96-1.93-.48.48-1.95 1.92.48zm3.85.97-1.93-.48.48-1.96 1.93.49zM4.66 12.75l-.95 3.91L21.05 21l.95-3.9zm3.14 3.9-1.92-.49.47-1.95 1.93.48zm3.85.96-1.92-.48.47-1.95 1.93.48zm3.85.97-1.92-.49.48-1.95 1.94.48zm3.86.96-1.93-.48.48-1.95 1.93.48zM6.25 12.11 11 10.2l6.75 1.69L13 13.8z"/></svg>
+  
+  <span class="md-ellipsis">
+    
+  
+    Protein Landscape
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="docs/api/landscape/boolean_landscape/" class="md-nav__link">
+        
+  
+  
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 19H5V5h14m0-2H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14c1.11 0 2-.89 2-2V5a2 2 0 0 0-2-2M8 17h2V7H6v2h2m6-2h2a2 2 0 0 1 2 2v6c0 1.11-.89 2-2 2h-2a2 2 0 0 1-2-2V9a2 2 0 0 1 2-2m0 2v6h2V9z"/></svg>
+  
+  <span class="md-ellipsis">
+    
+  
+    Boolean Landscape
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="docs/api/landscape/ordinal_landscape/" class="md-nav__link">
+        
+  
+  
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 17V9H2V7h4v10zm18-2a2 2 0 0 1-2 2h-4v-2h4v-2h-2v-2h2V9h-4V7h4a2 2 0 0 1 2 2v1.5a1.5 1.5 0 0 1-1.5 1.5 1.5 1.5 0 0 1 1.5 1.5zm-8 0v2H8v-4a2 2 0 0 1 2-2h2V9H8V7h4a2 2 0 0 1 2 2v2a2 2 0 0 1-2 2h-2v2z"/></svg>
+  
+  <span class="md-ellipsis">
+    
+  
+    Ordinal Landscape
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="docs/api/plotting/" class="md-nav__link">
+        
+  
+  
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M2 2h2v18h18v2H2zm7 8a3 3 0 0 1 3 3 3 3 0 0 1-3 3 3 3 0 0 1-3-3 3 3 0 0 1 3-3m4-8a3 3 0 0 1 3 3 3 3 0 0 1-3 3 3 3 0 0 1-3-3 3 3 0 0 1 3-3m5 10a3 3 0 0 1 3 3 3 3 0 0 1-3 3 3 3 0 0 1-3-3 3 3 0 0 1 3-3"/></svg>
+  
+  <span class="md-ellipsis">
+    
+  
+    Plotting
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="docs/api/problems/" class="md-nav__link">
+        
+  
+  
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 9V3.5L18.5 9M6 2c-1.11 0-2 .89-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-6-6z"/></svg>
+  
+  <span class="md-ellipsis">
+    
+  
+    Problems
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="docs/api/data/" class="md-nav__link">
+        
+  
+  
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 3C7.58 3 4 4.79 4 7s3.58 4 8 4 8-1.79 8-4-3.58-4-8-4M4 9v3c0 2.21 3.58 4 8 4s8-1.79 8-4V9c0 2.21-3.58 4-8 4s-8-1.79-8-4m0 5v3c0 2.21 3.58 4 8 4s8-1.79 8-4v-3c0 2.21-3.58 4-8 4s-8-1.79-8-4"/></svg>
+  
+  <span class="md-ellipsis">
+    
+  
+    Data
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="docs/api/algorithms/" class="md-nav__link">
+        
+  
+  
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 1a2.5 2.5 0 0 0-2.5 2.5A2.5 2.5 0 0 0 11 5.79V7H7a2 2 0 0 0-2 2v.71A2.5 2.5 0 0 0 3.5 12 2.5 2.5 0 0 0 5 14.29V15H4a2 2 0 0 0-2 2v1.21A2.5 2.5 0 0 0 .5 20.5 2.5 2.5 0 0 0 3 23a2.5 2.5 0 0 0 2.5-2.5A2.5 2.5 0 0 0 4 18.21V17h4v1.21a2.5 2.5 0 0 0-1.5 2.29A2.5 2.5 0 0 0 9 23a2.5 2.5 0 0 0 2.5-2.5 2.5 2.5 0 0 0-1.5-2.29V17a2 2 0 0 0-2-2H7v-.71A2.5 2.5 0 0 0 8.5 12 2.5 2.5 0 0 0 7 9.71V9h10v.71A2.5 2.5 0 0 0 15.5 12a2.5 2.5 0 0 0 1.5 2.29V15h-1a2 2 0 0 0-2 2v1.21a2.5 2.5 0 0 0-1.5 2.29A2.5 2.5 0 0 0 15 23a2.5 2.5 0 0 0 2.5-2.5 2.5 2.5 0 0 0-1.5-2.29V17h4v1.21a2.5 2.5 0 0 0-1.5 2.29A2.5 2.5 0 0 0 21 23a2.5 2.5 0 0 0 2.5-2.5 2.5 2.5 0 0 0-1.5-2.29V17a2 2 0 0 0-2-2h-1v-.71A2.5 2.5 0 0 0 20.5 12 2.5 2.5 0 0 0 19 9.71V9a2 2 0 0 0-2-2h-4V5.79a2.5 2.5 0 0 0 1.5-2.29A2.5 2.5 0 0 0 12 1m0 1.5a1 1 0 0 1 1 1 1 1 0 0 1-1 1 1 1 0 0 1-1-1 1 1 0 0 1 1-1M6 11a1 1 0 0 1 1 1 1 1 0 0 1-1 1 1 1 0 0 1-1-1 1 1 0 0 1 1-1m12 0a1 1 0 0 1 1 1 1 1 0 0 1-1 1 1 1 0 0 1-1-1 1 1 0 0 1 1-1M3 19.5a1 1 0 0 1 1 1 1 1 0 0 1-1 1 1 1 0 0 1-1-1 1 1 0 0 1 1-1m6 0a1 1 0 0 1 1 1 1 1 0 0 1-1 1 1 1 0 0 1-1-1 1 1 0 0 1 1-1m6 0a1 1 0 0 1 1 1 1 1 0 0 1-1 1 1 1 0 0 1-1-1 1 1 0 0 1 1-1m6 0a1 1 0 0 1 1 1 1 1 0 0 1-1 1 1 1 0 0 1-1-1 1 1 0 0 1 1-1"/></svg>
+  
+  <span class="md-ellipsis">
+    
+  
+    Algorithms
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_4_6" >
+        
+          
+          <label class="md-nav__link" for="__nav_4_6" id="__nav_4_6_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Features
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_6">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Features
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="docs/api/analysis/fitness/" class="md-nav__link">
+        
+  
+  
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 16.5c0 .38-.21.71-.53.88l-7.9 4.44c-.16.12-.36.18-.57.18s-.41-.06-.57-.18l-7.9-4.44A.99.99 0 0 1 3 16.5v-9c0-.38.21-.71.53-.88l7.9-4.44c.16-.12.36-.18.57-.18s.41.06.57.18l7.9 4.44c.32.17.53.5.53.88zM12 4.15 6.04 7.5 12 10.85l5.96-3.35zM5 15.91l6 3.38v-6.71L5 9.21zm14 0v-6.7l-6 3.37v6.71z"/></svg>
+  
+  <span class="md-ellipsis">
+    
+  
+    Fitness
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="docs/api/analysis/epistasis/" class="md-nav__link">
+        
+  
+  
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 16.5c0 .38-.21.71-.53.88l-7.9 4.44c-.16.12-.36.18-.57.18s-.41-.06-.57-.18l-7.9-4.44A.99.99 0 0 1 3 16.5v-9c0-.38.21-.71.53-.88l7.9-4.44c.16-.12.36-.18.57-.18s.41.06.57.18l7.9 4.44c.32.17.53.5.53.88zM12 4.15 6.04 7.5 12 10.85l5.96-3.35zM5 15.91l6 3.38v-6.71L5 9.21zm14 0v-6.7l-6 3.37v6.71z"/></svg>
+  
+  <span class="md-ellipsis">
+    
+  
+    Epistasis
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="docs/api/analysis/navigability/" class="md-nav__link">
+        
+  
+  
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 16.5c0 .38-.21.71-.53.88l-7.9 4.44c-.16.12-.36.18-.57.18s-.41-.06-.57-.18l-7.9-4.44A.99.99 0 0 1 3 16.5v-9c0-.38.21-.71.53-.88l7.9-4.44c.16-.12.36-.18.57-.18s.41.06.57.18l7.9 4.44c.32.17.53.5.53.88zM12 4.15 6.04 7.5 12 10.85l5.96-3.35zM5 15.91l6 3.38v-6.71L5 9.21zm14 0v-6.7l-6 3.37v6.71z"/></svg>
+  
+  <span class="md-ellipsis">
+    
+  
+    Navigability
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="docs/api/analysis/ruggedness/" class="md-nav__link">
+        
+  
+  
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 16.5c0 .38-.21.71-.53.88l-7.9 4.44c-.16.12-.36.18-.57.18s-.41-.06-.57-.18l-7.9-4.44A.99.99 0 0 1 3 16.5v-9c0-.38.21-.71.53-.88l7.9-4.44c.16-.12.36-.18.57-.18s.41.06.57.18l7.9 4.44c.32.17.53.5.53.88zM12 4.15 6.04 7.5 12 10.85l5.96-3.35zM5 15.91l6 3.38v-6.71L5 9.21zm14 0v-6.7l-6 3.37v6.71z"/></svg>
+  
+  <span class="md-ellipsis">
+    
+  
+    Ruggedness
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="docs/api/analysis/robustness/" class="md-nav__link">
+        
+  
+  
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 16.5c0 .38-.21.71-.53.88l-7.9 4.44c-.16.12-.36.18-.57.18s-.41-.06-.57-.18l-7.9-4.44A.99.99 0 0 1 3 16.5v-9c0-.38.21-.71.53-.88l7.9-4.44c.16-.12.36-.18.57-.18s.41.06.57.18l7.9 4.44c.32.17.53.5.53.88zM12 4.15 6.04 7.5 12 10.85l5.96-3.35zM5 15.91l6 3.38v-6.71L5 9.21zm14 0v-6.7l-6 3.37v6.71z"/></svg>
+  
+  <span class="md-ellipsis">
+    
+  
+    Robutness
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="docs/api/templates_test/" class="md-nav__link">
+        
+  
+  
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 22A10 10 0 0 1 2 12 10 10 0 0 1 12 2c5.5 0 10 4 10 9a6 6 0 0 1-6 6h-1.8c-.3 0-.5.2-.5.5 0 .1.1.2.1.3.4.5.6 1.1.6 1.7.1 1.4-1 2.5-2.4 2.5m0-18a8 8 0 0 0-8 8 8 8 0 0 0 8 8c.3 0 .5-.2.5-.5 0-.2-.1-.3-.1-.4-.4-.5-.6-1-.6-1.6 0-1.4 1.1-2.5 2.5-2.5H16a4 4 0 0 0 4-4c0-3.9-3.6-7-8-7m-5.5 6c.8 0 1.5.7 1.5 1.5S7.3 13 6.5 13 5 12.3 5 11.5 5.7 10 6.5 10m3-4c.8 0 1.5.7 1.5 1.5S10.3 9 9.5 9 8 8.3 8 7.5 8.7 6 9.5 6m5 0c.8 0 1.5.7 1.5 1.5S15.3 9 14.5 9 13 8.3 13 7.5 13.7 6 14.5 6m3 4c.8 0 1.5.7 1.5 1.5s-.7 1.5-1.5 1.5-1.5-.7-1.5-1.5.7-1.5 1.5-1.5"/></svg>
+  
+  <span class="md-ellipsis">
+    
+  
+    Template Gallery
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_6" >
+        
+          
+          <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Examples
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Examples
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="docs/applications/tf_binding/" class="md-nav__link">
+        
+  
+  
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 16.5c0 .38-.21.71-.53.88l-7.9 4.44c-.16.12-.36.18-.57.18s-.41-.06-.57-.18l-7.9-4.44A.99.99 0 0 1 3 16.5v-9c0-.38.21-.71.53-.88l7.9-4.44c.16-.12.36-.18.57-.18s.41.06.57.18l7.9 4.44c.32.17.53.5.53.88zM12 4.15 6.04 7.5 12 10.85l5.96-3.35z"/></svg>
+  
+  <span class="md-ellipsis">
+    
+  
+    TF Binding Landscape
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="docs/applications/rnagym/" class="md-nav__link">
+        
+  
+  
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 16.5c0 .38-.21.71-.53.88l-7.9 4.44c-.16.12-.36.18-.57.18s-.41-.06-.57-.18l-7.9-4.44A.99.99 0 0 1 3 16.5v-9c0-.38.21-.71.53-.88l7.9-4.44c.16-.12.36-.18.57-.18s.41.06.57.18l7.9 4.44c.32.17.53.5.53.88zM12 4.15 6.04 7.5 12 10.85l5.96-3.35z"/></svg>
+  
+  <span class="md-ellipsis">
+    
+  
+    RNAGym Landscape
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="docs/applications/proteingym/" class="md-nav__link">
+        
+  
+  
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 16.5c0 .38-.21.71-.53.88l-7.9 4.44c-.16.12-.36.18-.57.18s-.41-.06-.57-.18l-7.9-4.44A.99.99 0 0 1 3 16.5v-9c0-.38.21-.71.53-.88l7.9-4.44c.16-.12.36-.18.57-.18s.41.06.57.18l7.9 4.44c.32.17.53.5.53.88zM12 4.15 6.04 7.5 12 10.85l5.96-3.35z"/></svg>
+  
+  <span class="md-ellipsis">
+    
+  
+    ProteinGym Landscape
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+                
+
+
+
+  
+
+
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+  <h1>Home</h1>
+
+
+
+
+
+
+
+
+
+  
+  
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+  <script>var tabs=__md_get("__tabs");if(Array.isArray(tabs))e:for(var set of document.querySelectorAll(".tabbed-set")){var labels=set.querySelector(".tabbed-labels");for(var tab of tabs)for(var label of labels.getElementsByTagName("label"))if(label.innerText.trim()===tab){var input=document.getElementById(label.htmlFor);input.checked=!0;continue e}}</script>
+
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <!--
+  Copyright (c) 2016-2024 Martin Donath <martin.donath@squidfunk.com>
+
+  Permission is hereby granted, free of charge, to any person obtaining a copy
+  of this software and associated documentation files (the "Software"), to
+  deal in the Software without restriction, including without limitation the
+  rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
+  sell copies of the Software, and to permit persons to whom the Software is
+  furnished to do so, subject to the following conditions:
+
+  The above copyright notice and this permission notice shall be included in
+  all copies or substantial portions of the Software.
+
+  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE
+  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+  IN THE SOFTWARE.
+-->
+
+<!-- Footer -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Footer Example</title>
+<style>
+    .footer {
+        width: 100%;
+        background-color: #333; /* Dark background */
+        color: #fff; /* Light text */
+        padding: 20px;
+        box-sizing: border-box;
+    }
+    .footer-container {
+        display: flex;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        width: 80%;
+        max-width: 1000px; /* Match this width with your site's main content width */
+        margin: 20px auto 0; /* Adjust the top margin as needed */
+        padding-bottom: 0; /* Remove any bottom padding */
+    }
+    .footer-column {
+        width: 20%; /* You can adjust the width as needed */
+        margin-bottom: 20px;
+    }
+    .footer-column h3 {
+    margin-bottom: 5px;
+    color: #fff; /* White color for titles */
+    }
+
+    /* Subsections in the ToC */
+    .footer-column ul {
+        list-style: none;
+        padding: 0;
+        font-size: 1.2em;
+    }
+
+    .footer-column ul li a {
+        color: #ccc; /* Light grey color for subsections */
+        text-decoration: none;
+        line-height: 2;
+    }
+    @media screen and (max-width: 768px) {
+        .footer-column {
+            width: 50%;
+        }
+    }
+    @media screen and (max-width: 480px) {
+        .footer-column {
+            width: 100%;
+        }
+    }
+</style>
+</head>
+<body>
+
+<footer class="md-footer">
+
+    <!-- Table of Contents -->
+    <div class="footer-container">
+        <div class="footer-column">
+            <h3>Home</h3>
+            <ul>
+                <li><a href="index.md">Home</a></li>
+            </ul>
+        </div>
+        <div class="footer-column">
+            <h3>Architecture</h3>
+            <ul>
+                <li><a href="docs/demo.md">Getting Started</a></li>
+                <li><a href="docs/demo.md">Advanced Usage</a></li>
+            </ul>
+        </div>
+        <div class="footer-column">
+            <h3>Getting Started</h3>
+            <ul>
+                <li><a href="docs/demo.md">Installation</a></li>
+                <li><a href="docs/demo.md">Configuration</a></li>
+            </ul>
+        </div>
+        <div class="footer-column">
+            <h3>API Reference</h3>
+            <ul>
+                <li><a href="docs/api/problems.md">Landscapes</a></li>
+                <li><a href="docs/api/algorithms.md">Metrics</a></li>
+                <li><a href="docs/api/operators.md">Visualization</a></li>
+                <li><a href="docs/api/indicators.md">Distances</a></li>
+                <li><a href="docs/api/visualization.md">Problems</a></li>
+                <li><a href="docs/api/analysis.md">Comparison</a></li>
+            </ul>
+        </div>
+        <div class="footer-column">
+            <h3>Use Cases</h3>
+            <ul>
+                <li><a href="docs/applications/hpo.md">Hyperparameter Optimization</a></li>
+                <li><a href="docs/applications/nas.md">Combinatorial Optimization</a></li>
+                <li><a href="docs/applications/protein.md">Protein Engineering</a></li>
+                <li><a href="docs/applications/water.md">Software Engineering</a></li>
+            </ul>
+        </div>
+        
+    </div>
+    
+
+    <!-- Link to previous and/or next page -->
+    
+  
+    <!-- Further information -->
+    <div class="md-footer-meta md-typeset">
+      <div class="md-footer-meta__inner md-grid">
+        <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      &copy; 2025 <a href="https://github.com/COLA-Laboratory/GraphFLA"  target="_blank" rel="noopener">Mingyu Huang</a>
+    </div>
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+  
+        <!-- Social links -->
+        
+          
+<div class="md-social">
+  
+    
+    
+    
+    
+      
+      
+    
+    <a href="https://github.com/COLA-Laboratory/GraphFLA" target="_blank" rel="noopener" title="github.com" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M202.1 328.7c0 20.9-10.9 55.1-36.7 55.1s-36.7-34.2-36.7-55.1 10.9-55.1 36.7-55.1 36.7 34.2 36.7 55.1M496 278.2c0 31.9-3.2 65.7-17.5 95-37.9 76.6-142.1 74.8-216.7 74.8-75.8 0-186.2 2.7-225.6-74.8-14.6-29-20.2-63.1-20.2-95 0-41.9 13.9-81.5 41.5-113.6-5.2-15.8-7.7-32.4-7.7-48.8 0-21.5 4.9-32.3 14.6-51.8 45.3 0 74.3 9 108.8 36 29-6.9 58.8-10 88.7-10 27 0 54.2 2.9 80.4 9.2 34-26.7 63-35.2 107.8-35.2 9.8 19.5 14.6 30.3 14.6 51.8 0 16.4-2.6 32.7-7.7 48.2 27.5 32.4 39 72.3 39 114.2m-64.3 50.5c0-43.9-26.7-82.6-73.5-82.6-18.9 0-37 3.4-56 6-14.9 2.3-29.8 3.2-45.1 3.2-15.2 0-30.1-.9-45.1-3.2-18.7-2.6-37-6-56-6-46.8 0-73.5 38.7-73.5 82.6 0 87.8 80.4 101.3 150.4 101.3h48.2c70.3 0 150.6-13.4 150.6-101.3m-82.6-55.1c-25.8 0-36.7 34.2-36.7 55.1s10.9 55.1 36.7 55.1 36.7-34.2 36.7-55.1-10.9-55.1-36.7-55.1"/></svg>
+    </a>
+  
+</div>
+        
+      </div>
+    </div>
+  </footer>
+
+</body>
+</html>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+      <div class="md-progress" data-md-component="progress" role="progressbar"></div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": ".", "features": ["math", "navigation.tabs", "navigation.sections", "navigation.tracking", "navigation.instant", "navigation.instant.preview", "navigation.instant.progress", "navigation.instant.prefetch", "navigation.top", "navigation.path", "navigation.expand", "navigation.indexes", "announce.dismiss", "header.autohide", "search.suggest", "search.highlight", "search.share", "content.tabs.link", "content.code.annotation", "content.code.copy", "content.code.select"], "search": "assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+        <script src="js/custom.js"></script>
+      
+        <script src="javascripts/mathjax.js"></script>
+      
+        <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+      
+        <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+      
+    
+  </body>
+</html>

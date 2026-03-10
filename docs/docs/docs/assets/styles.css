@@ -1,0 +1,387 @@
+/* ==========================================================================
+   Original signature styling (used in existing pages)
+   ========================================================================== */
+
+.method-signature {
+  font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace !important;
+  padding: 0.8em 1em;
+  margin: 0.5em 0;
+  font-size: 0.85em;
+  background: #f5f5f5;
+  border-radius: 5px;
+  word-break: break-word;
+  white-space: pre-wrap;
+  display: block;
+  border-left: 3px solid #e8e8e8;
+  color: #333;
+}
+
+.py-keyword {
+  color: rgb(143, 80, 189);
+  font-weight: bold;
+}
+
+.py-function-name {
+  color: rgb(83, 117, 207);
+  font-weight: bold;
+}
+
+.py-class-name {
+  color: rgb(0, 0, 0);
+  font-weight: bold;
+}
+
+.py-parameter-name {
+  color: rgb(68, 148, 153);
+  font-weight: bold;
+}
+
+.py-literal-number {
+  color: rgb(175, 90, 87);
+  font-weight: normal;
+}
+
+.py-literal-string {
+  color: rgb(188, 108, 104);
+  font-weight: normal;
+}
+
+/* ==========================================================================
+   Template Gallery — Enhanced API Documentation Styles
+   ========================================================================== */
+
+/* --- Signature Variants --- */
+
+.sig-block {
+  font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace !important;
+  padding: 0.9em 1.2em;
+  margin: 0.8em 0 1.2em;
+  font-size: 0.84em;
+  background: linear-gradient(135deg, #f8f9fb 0%, #eef0f4 100%);
+  border-radius: 6px;
+  border-left: 4px solid #7c4dff;
+  word-break: break-word;
+  white-space: pre-wrap;
+  display: block;
+  color: #333;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
+  line-height: 1.65;
+}
+
+.sig-block-alt {
+  font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace !important;
+  padding: 0.9em 1.2em;
+  margin: 0.8em 0 1.2em;
+  font-size: 0.84em;
+  background: #1e1e2e;
+  border-radius: 6px;
+  border-left: 4px solid #89b4fa;
+  word-break: break-word;
+  white-space: pre-wrap;
+  display: block;
+  color: #cdd6f4;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.15);
+  line-height: 1.65;
+}
+
+.sig-block-alt .py-keyword { color: #cba6f7; }
+.sig-block-alt .py-function-name { color: #89b4fa; }
+.sig-block-alt .py-class-name { color: #f5c2e7; }
+.sig-block-alt .py-parameter-name { color: #94e2d5; }
+.sig-block-alt .py-literal-number { color: #fab387; }
+.sig-block-alt .py-literal-string { color: #a6e3a1; }
+.sig-block-alt .py-type { color: #f9e2af; }
+
+.sig-block-minimal {
+  font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace !important;
+  padding: 0.7em 0;
+  margin: 0.5em 0 1em;
+  font-size: 0.88em;
+  background: transparent;
+  border-bottom: 2px solid #e0e0e0;
+  word-break: break-word;
+  white-space: pre-wrap;
+  display: block;
+  color: #333;
+  line-height: 1.65;
+}
+
+/* Type annotations in signatures */
+.py-type {
+  color: #6a7fc1;
+  font-weight: normal;
+}
+
+/* --- Parameter Tables --- */
+
+.param-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  margin: 1em 0 1.5em;
+  font-size: 0.88em;
+  border: 1px solid #e4e7ec;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.param-table thead th {
+  background: #f7f8fa;
+  padding: 0.7em 1em;
+  text-align: left;
+  font-weight: 600;
+  font-size: 0.85em;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: #555;
+  border-bottom: 2px solid #e4e7ec;
+}
+
+.param-table tbody td {
+  padding: 0.7em 1em;
+  border-bottom: 1px solid #f0f1f3;
+  vertical-align: top;
+  line-height: 1.5;
+}
+
+.param-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.param-table tbody tr:hover {
+  background: #f9fafb;
+}
+
+.param-table code {
+  font-size: 0.88em;
+  padding: 0.15em 0.4em;
+  background: #eef1f6;
+  border-radius: 3px;
+  color: #3b4a6b;
+}
+
+/* --- Returns Block --- */
+
+.returns-block {
+  background: #f0faf4;
+  border-left: 3px solid #4caf50;
+  padding: 0.7em 1em;
+  border-radius: 0 6px 6px 0;
+  margin: 1em 0;
+  font-size: 0.92em;
+}
+
+.returns-block code {
+  background: #dff2e5;
+  padding: 0.15em 0.4em;
+  border-radius: 3px;
+  font-size: 0.88em;
+  color: #2e7d32;
+}
+
+/* --- Definition List Styling for Parameters --- */
+
+.param-defs dt {
+  font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+  font-size: 0.9em;
+  font-weight: 600;
+  color: #2c3e50;
+  margin-top: 0.8em;
+  padding-bottom: 0.15em;
+  border-bottom: 1px dotted #ddd;
+}
+
+.param-defs dd {
+  margin-left: 1.2em;
+  margin-top: 0.3em;
+  margin-bottom: 0.5em;
+  color: #4a5568;
+  line-height: 1.6;
+}
+
+.param-defs dd code {
+  font-size: 0.85em;
+  background: #eef1f6;
+  padding: 0.1em 0.35em;
+  border-radius: 3px;
+}
+
+/* --- Type Badge --- */
+
+.type-badge {
+  display: inline-block;
+  padding: 0.12em 0.45em;
+  background: #e8eaf6;
+  border-radius: 4px;
+  font-family: "SFMono-Regular", Consolas, monospace;
+  font-size: 0.82em;
+  color: #3949ab;
+  font-weight: 500;
+}
+
+/* --- Method Card --- */
+
+.method-card {
+  border: 1px solid #e4e7ec;
+  border-radius: 8px;
+  padding: 1.2em 1.5em;
+  margin: 1.2em 0;
+  background: #fff;
+  transition: box-shadow 0.2s ease, border-color 0.2s ease;
+}
+
+.method-card:hover {
+  box-shadow: 0 3px 12px rgba(0, 0, 0, 0.07);
+  border-color: #c5cae9;
+}
+
+.method-card h4 {
+  margin-top: 0 !important;
+}
+
+/* --- Section Divider --- */
+
+.api-divider {
+  border: none;
+  border-top: 2px solid #e8e8e8;
+  margin: 2.5em 0;
+}
+
+/* --- Template Section Wrapper --- */
+
+.template-section {
+  border: 1px solid #e0e4ea;
+  border-radius: 10px;
+  padding: 1.5em 1.8em 1.2em;
+  margin: 1.5em 0 2em;
+  background: #fefefe;
+  position: relative;
+}
+
+.template-label {
+  display: inline-block;
+  position: absolute;
+  top: -0.75em;
+  left: 1.2em;
+  background: #fefefe;
+  padding: 0 0.6em;
+  font-size: 0.75em;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #7c4dff;
+  border: 1px solid #e0e4ea;
+  border-radius: 4px;
+}
+
+/* --- Quick-Reference Method Table --- */
+
+.method-summary-table {
+  width: 100%;
+  font-size: 0.88em;
+  border-collapse: separate;
+  border-spacing: 0;
+  border: 1px solid #e4e7ec;
+  border-radius: 8px;
+  overflow: hidden;
+  margin: 1em 0;
+}
+
+.method-summary-table th {
+  background: #f7f8fa;
+  padding: 0.6em 1em;
+  text-align: left;
+  font-weight: 600;
+  font-size: 0.85em;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: #555;
+  border-bottom: 2px solid #e4e7ec;
+}
+
+.method-summary-table td {
+  padding: 0.55em 1em;
+  border-bottom: 1px solid #f0f1f3;
+}
+
+.method-summary-table tr:last-child td {
+  border-bottom: none;
+}
+
+.method-summary-table code {
+  font-weight: 600;
+  color: rgb(83, 117, 207);
+  background: transparent;
+  padding: 0;
+}
+
+/* --- Attribute List Styling --- */
+
+.attr-list {
+  list-style: none;
+  padding-left: 0;
+  margin: 0.5em 0;
+}
+
+.attr-list li {
+  padding: 0.5em 0;
+  border-bottom: 1px solid #f3f4f6;
+  line-height: 1.5;
+}
+
+.attr-list li:last-child {
+  border-bottom: none;
+}
+
+.attr-name {
+  font-family: "SFMono-Regular", Consolas, monospace;
+  font-weight: 600;
+  color: #2c3e50;
+}
+
+.attr-type {
+  font-family: "SFMono-Regular", Consolas, monospace;
+  font-size: 0.85em;
+  color: #6a7fc1;
+  margin-left: 0.3em;
+}
+
+/* --- Class Header Banner --- */
+
+.class-banner {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 1.5em 1.8em;
+  border-radius: 10px;
+  margin: 1em 0 1.5em;
+}
+
+.class-banner h3 {
+  color: white !important;
+  margin: 0 0 0.4em !important;
+  font-size: 1.3em;
+}
+
+.class-banner p {
+  margin: 0;
+  opacity: 0.92;
+  font-size: 0.95em;
+  line-height: 1.5;
+}
+
+.class-banner code {
+  background: rgba(255, 255, 255, 0.15) !important;
+  color: white !important;
+  padding: 0.15em 0.4em;
+  border-radius: 3px;
+}
+
+/* --- API Card — bounding box for function/method docs --- */
+
+.api-card {
+  border: 1px solid #e0e4ea;
+  border-radius: 10px;
+  padding: 1.5em 1.8em 1.2em;
+  margin: 1.2em 0 1.8em;
+  background: #fefefe;
+}

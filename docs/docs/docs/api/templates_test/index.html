@@ -1,0 +1,3469 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+      
+        <link rel="prev" href="../analysis/robustness/">
+      
+      
+        <link rel="next" href="../../applications/tf_binding/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.4">
+    
+    
+      
+        <title>Template Gallery - GraphFLA</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.484c7ddc.min.css">
+      
+        
+        <link rel="stylesheet" href="../../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.2/css/all.css">
+    
+      <link rel="stylesheet" href="../../assets/styles.css">
+    
+    <script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+
+
+
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="black" data-md-color-accent="purple">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#documentation-template-gallery" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../../.." title="GraphFLA" class="md-header__button md-logo" aria-label="GraphFLA" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            GraphFLA
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Template Gallery
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="black" data-md-color-accent="purple"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M17 6H7c-3.31 0-6 2.69-6 6s2.69 6 6 6h10c3.31 0 6-2.69 6-6s-2.69-6-6-6m0 10H7c-2.21 0-4-1.79-4-4s1.79-4 4-4h10c2.21 0 4 1.79 4 4s-1.79 4-4 4M7 9c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+          <a href="javascript:void(0)" class="md-search__icon md-icon" title="Share" aria-label="Share" data-clipboard data-clipboard-text="" data-md-component="search-share" tabindex="-1">
+            
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9a3 3 0 0 0-3 3 3 3 0 0 0 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.15c-.05.21-.08.43-.08.66 0 1.61 1.31 2.91 2.92 2.91s2.92-1.3 2.92-2.91A2.92 2.92 0 0 0 18 16.08"/></svg>
+          </a>
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/COLA-Laboratory/GraphFLA" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../.." class="md-tabs__link">
+        
+  
+  
+    
+  
+  Home
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../demo/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Architecture
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../tutorials/installation/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Getting Started
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../landscape/landscape/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  API Reference
+
+        </a>
+      </li>
+    
+  
+
+    
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    <li class="md-tabs__item md-tabs__item--active">
+      <a href="./" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Template Gallery
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../applications/tf_binding/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Examples
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../../.." title="GraphFLA" class="md-nav__button md-logo" aria-label="GraphFLA" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    GraphFLA
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/COLA-Laboratory/GraphFLA" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Architecture
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Architecture
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../demo/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Getting Started
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../demo/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Getting Started
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Getting Started
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Getting Started
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../tutorials/installation/" class="md-nav__link">
+        
+  
+  
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M5 20h14v-2H5m14-9h-4V3H9v6H5l7 7z"/></svg>
+  
+  <span class="md-ellipsis">
+    
+  
+    Installation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../tutorials/quickstart/" class="md-nav__link">
+        
+  
+  
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M18.1 4.8c-.1-.5-.5-.8-1-.8H13l.2 3h-2.4l.2-3H6.8c-.5 0-.9.4-1 .8l-2.7 14c-.1.6.4 1.2 1 1.2H10l.3-5h3.4l.3 5h5.8c.6 0 1.1-.6 1-1.2zM10.4 13l.2-4h2.6l.2 4z"/></svg>
+  
+  <span class="md-ellipsis">
+    
+  
+    Quickstart
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    API Reference
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    API Reference
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_4_1" >
+        
+          
+          <label class="md-nav__link" for="__nav_4_1" id="__nav_4_1_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Landscapes
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_1">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Landscapes
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../landscape/landscape/" class="md-nav__link">
+        
+  
+  
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 16.5c0 .38-.21.71-.53.88l-7.9 4.44c-.16.12-.36.18-.57.18s-.41-.06-.57-.18l-7.9-4.44A.99.99 0 0 1 3 16.5v-9c0-.38.21-.71.53-.88l7.9-4.44c.16-.12.36-.18.57-.18s.41.06.57.18l7.9 4.44c.32.17.53.5.53.88zM12 4.15 6.04 7.5 12 10.85l5.96-3.35z"/></svg>
+  
+  <span class="md-ellipsis">
+    
+  
+    Basic Landscape
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../landscape/dna_landscape/" class="md-nav__link">
+        
+  
+  
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 2h2v2c0 1.44.68 2.61 1.88 3.78.86.83 2.01 1.63 3.21 2.42l-1.83 1.19C8.27 10.72 7.31 10 6.5 9.21 5.07 7.82 4 6.1 4 4zm14 0h2v2c0 2.1-1.07 3.82-2.5 5.21-1.41 1.38-3.21 2.52-4.96 3.63-1.75 1.12-3.45 2.21-4.66 3.38C6.68 17.39 6 18.56 6 20v2H4v-2c0-2.1 1.07-3.82 2.5-5.21 1.41-1.38 3.21-2.52 4.96-3.63 1.75-1.12 3.45-2.21 4.66-3.38C17.32 6.61 18 5.44 18 4zm-3.26 10.61c.99.67 1.95 1.39 2.76 2.18C18.93 16.18 20 17.9 20 20v2h-2v-2c0-1.44-.68-2.61-1.88-3.78-.86-.83-2.01-1.63-3.21-2.42zM7 3h10v1l-.06.5H7.06L7 4zm.68 3h8.64c-.24.34-.52.69-.9 1.06l-.51.44H9.07l-.49-.44c-.38-.37-.66-.72-.9-1.06m1.41 10.5h5.84l.49.44c.38.37.66.72.9 1.06H7.68c.24-.34.52-.69.9-1.06zm-2.03 3h9.88l.06.5v1H7v-1z"/></svg>
+  
+  <span class="md-ellipsis">
+    
+  
+    DNA Landscape
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../landscape/rna_landscape/" class="md-nav__link">
+        
+  
+  
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M15.78 8.348c-.77 0-1.396.615-1.396 1.37 0 1.075.406 2.058 1.075 2.813.277.312.598.584.956.807a5 5 0 0 0 .736-3.874q-.009-.043-.02-.087a1.39 1.39 0 0 0-1.35-1.029zm-8.612 3.958q.208.55.533 1.032c.356-.223.678-.495.955-.807a4.22 4.22 0 0 0 1.076-2.813c0-.755-.626-1.37-1.397-1.37-.65 0-1.195.438-1.35 1.029q-.01.043-.02.086a5 5 0 0 0 .205 2.843zm15.501-.67L24 12.29a5.87 5.87 0 0 1-5.243 3.18 6 6 0 0 1-1.926-.32 6.75 6.75 0 0 1-4.774 1.963 6.74 6.74 0 0 1-4.774-1.964 6 6 0 0 1-1.926.32A5.87 5.87 0 0 1 0 12.054l1.362-.595a4.38 4.38 0 0 0 3.995 2.549q.487-.002.946-.102a6.45 6.45 0 0 1-.945-3.367 6.5 6.5 0 0 1 .19-1.554c.328-1.208 1.45-2.098 2.786-2.098l.079.002q.121.003.242.016c1.444.157 2.565 1.357 2.565 2.814 0 1.958-.999 3.687-2.522 4.724a5.24 5.24 0 0 0 3.36 1.21 5.25 5.25 0 0 0 3.358-1.21c-1.523-1.037-2.522-2.767-2.522-4.724 0-1.458 1.122-2.658 2.564-2.814q.12-.013.242-.016l.08-.002a2.88 2.88 0 0 1 2.832 2.286 6.48 6.48 0 0 1-.8 4.733q.457.1.945.102c1.71 0 3.191-.967 3.91-2.372z"/></svg>
+  
+  <span class="md-ellipsis">
+    
+  
+    RNA Landscape
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../landscape/protein_landscape/" class="md-nav__link">
+        
+  
+  
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M2.95 3 2 6.91l17.34 4.34.95-3.91zm3.14 3.89-1.93-.48.48-1.95 1.93.48zm3.85.97L8 7.38l.5-1.96 1.92.49zm3.86.96-1.93-.48.48-1.95 1.92.48zm3.85.97-1.93-.48.48-1.96 1.93.49zM4.66 12.75l-.95 3.91L21.05 21l.95-3.9zm3.14 3.9-1.92-.49.47-1.95 1.93.48zm3.85.96-1.92-.48.47-1.95 1.93.48zm3.85.97-1.92-.49.48-1.95 1.94.48zm3.86.96-1.93-.48.48-1.95 1.93.48zM6.25 12.11 11 10.2l6.75 1.69L13 13.8z"/></svg>
+  
+  <span class="md-ellipsis">
+    
+  
+    Protein Landscape
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../landscape/boolean_landscape/" class="md-nav__link">
+        
+  
+  
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 19H5V5h14m0-2H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14c1.11 0 2-.89 2-2V5a2 2 0 0 0-2-2M8 17h2V7H6v2h2m6-2h2a2 2 0 0 1 2 2v6c0 1.11-.89 2-2 2h-2a2 2 0 0 1-2-2V9a2 2 0 0 1 2-2m0 2v6h2V9z"/></svg>
+  
+  <span class="md-ellipsis">
+    
+  
+    Boolean Landscape
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../landscape/ordinal_landscape/" class="md-nav__link">
+        
+  
+  
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 17V9H2V7h4v10zm18-2a2 2 0 0 1-2 2h-4v-2h4v-2h-2v-2h2V9h-4V7h4a2 2 0 0 1 2 2v1.5a1.5 1.5 0 0 1-1.5 1.5 1.5 1.5 0 0 1 1.5 1.5zm-8 0v2H8v-4a2 2 0 0 1 2-2h2V9H8V7h4a2 2 0 0 1 2 2v2a2 2 0 0 1-2 2h-2v2z"/></svg>
+  
+  <span class="md-ellipsis">
+    
+  
+    Ordinal Landscape
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../plotting/" class="md-nav__link">
+        
+  
+  
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M2 2h2v18h18v2H2zm7 8a3 3 0 0 1 3 3 3 3 0 0 1-3 3 3 3 0 0 1-3-3 3 3 0 0 1 3-3m4-8a3 3 0 0 1 3 3 3 3 0 0 1-3 3 3 3 0 0 1-3-3 3 3 0 0 1 3-3m5 10a3 3 0 0 1 3 3 3 3 0 0 1-3 3 3 3 0 0 1-3-3 3 3 0 0 1 3-3"/></svg>
+  
+  <span class="md-ellipsis">
+    
+  
+    Plotting
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../problems/" class="md-nav__link">
+        
+  
+  
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 9V3.5L18.5 9M6 2c-1.11 0-2 .89-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-6-6z"/></svg>
+  
+  <span class="md-ellipsis">
+    
+  
+    Problems
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../data/" class="md-nav__link">
+        
+  
+  
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 3C7.58 3 4 4.79 4 7s3.58 4 8 4 8-1.79 8-4-3.58-4-8-4M4 9v3c0 2.21 3.58 4 8 4s8-1.79 8-4V9c0 2.21-3.58 4-8 4s-8-1.79-8-4m0 5v3c0 2.21 3.58 4 8 4s8-1.79 8-4v-3c0 2.21-3.58 4-8 4s-8-1.79-8-4"/></svg>
+  
+  <span class="md-ellipsis">
+    
+  
+    Data
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../algorithms/" class="md-nav__link">
+        
+  
+  
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 1a2.5 2.5 0 0 0-2.5 2.5A2.5 2.5 0 0 0 11 5.79V7H7a2 2 0 0 0-2 2v.71A2.5 2.5 0 0 0 3.5 12 2.5 2.5 0 0 0 5 14.29V15H4a2 2 0 0 0-2 2v1.21A2.5 2.5 0 0 0 .5 20.5 2.5 2.5 0 0 0 3 23a2.5 2.5 0 0 0 2.5-2.5A2.5 2.5 0 0 0 4 18.21V17h4v1.21a2.5 2.5 0 0 0-1.5 2.29A2.5 2.5 0 0 0 9 23a2.5 2.5 0 0 0 2.5-2.5 2.5 2.5 0 0 0-1.5-2.29V17a2 2 0 0 0-2-2H7v-.71A2.5 2.5 0 0 0 8.5 12 2.5 2.5 0 0 0 7 9.71V9h10v.71A2.5 2.5 0 0 0 15.5 12a2.5 2.5 0 0 0 1.5 2.29V15h-1a2 2 0 0 0-2 2v1.21a2.5 2.5 0 0 0-1.5 2.29A2.5 2.5 0 0 0 15 23a2.5 2.5 0 0 0 2.5-2.5 2.5 2.5 0 0 0-1.5-2.29V17h4v1.21a2.5 2.5 0 0 0-1.5 2.29A2.5 2.5 0 0 0 21 23a2.5 2.5 0 0 0 2.5-2.5 2.5 2.5 0 0 0-1.5-2.29V17a2 2 0 0 0-2-2h-1v-.71A2.5 2.5 0 0 0 20.5 12 2.5 2.5 0 0 0 19 9.71V9a2 2 0 0 0-2-2h-4V5.79a2.5 2.5 0 0 0 1.5-2.29A2.5 2.5 0 0 0 12 1m0 1.5a1 1 0 0 1 1 1 1 1 0 0 1-1 1 1 1 0 0 1-1-1 1 1 0 0 1 1-1M6 11a1 1 0 0 1 1 1 1 1 0 0 1-1 1 1 1 0 0 1-1-1 1 1 0 0 1 1-1m12 0a1 1 0 0 1 1 1 1 1 0 0 1-1 1 1 1 0 0 1-1-1 1 1 0 0 1 1-1M3 19.5a1 1 0 0 1 1 1 1 1 0 0 1-1 1 1 1 0 0 1-1-1 1 1 0 0 1 1-1m6 0a1 1 0 0 1 1 1 1 1 0 0 1-1 1 1 1 0 0 1-1-1 1 1 0 0 1 1-1m6 0a1 1 0 0 1 1 1 1 1 0 0 1-1 1 1 1 0 0 1-1-1 1 1 0 0 1 1-1m6 0a1 1 0 0 1 1 1 1 1 0 0 1-1 1 1 1 0 0 1-1-1 1 1 0 0 1 1-1"/></svg>
+  
+  <span class="md-ellipsis">
+    
+  
+    Algorithms
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_4_6" >
+        
+          
+          <label class="md-nav__link" for="__nav_4_6" id="__nav_4_6_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Features
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_6">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Features
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../analysis/fitness/" class="md-nav__link">
+        
+  
+  
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 16.5c0 .38-.21.71-.53.88l-7.9 4.44c-.16.12-.36.18-.57.18s-.41-.06-.57-.18l-7.9-4.44A.99.99 0 0 1 3 16.5v-9c0-.38.21-.71.53-.88l7.9-4.44c.16-.12.36-.18.57-.18s.41.06.57.18l7.9 4.44c.32.17.53.5.53.88zM12 4.15 6.04 7.5 12 10.85l5.96-3.35zM5 15.91l6 3.38v-6.71L5 9.21zm14 0v-6.7l-6 3.37v6.71z"/></svg>
+  
+  <span class="md-ellipsis">
+    
+  
+    Fitness
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../analysis/epistasis/" class="md-nav__link">
+        
+  
+  
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 16.5c0 .38-.21.71-.53.88l-7.9 4.44c-.16.12-.36.18-.57.18s-.41-.06-.57-.18l-7.9-4.44A.99.99 0 0 1 3 16.5v-9c0-.38.21-.71.53-.88l7.9-4.44c.16-.12.36-.18.57-.18s.41.06.57.18l7.9 4.44c.32.17.53.5.53.88zM12 4.15 6.04 7.5 12 10.85l5.96-3.35zM5 15.91l6 3.38v-6.71L5 9.21zm14 0v-6.7l-6 3.37v6.71z"/></svg>
+  
+  <span class="md-ellipsis">
+    
+  
+    Epistasis
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../analysis/navigability/" class="md-nav__link">
+        
+  
+  
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 16.5c0 .38-.21.71-.53.88l-7.9 4.44c-.16.12-.36.18-.57.18s-.41-.06-.57-.18l-7.9-4.44A.99.99 0 0 1 3 16.5v-9c0-.38.21-.71.53-.88l7.9-4.44c.16-.12.36-.18.57-.18s.41.06.57.18l7.9 4.44c.32.17.53.5.53.88zM12 4.15 6.04 7.5 12 10.85l5.96-3.35zM5 15.91l6 3.38v-6.71L5 9.21zm14 0v-6.7l-6 3.37v6.71z"/></svg>
+  
+  <span class="md-ellipsis">
+    
+  
+    Navigability
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../analysis/ruggedness/" class="md-nav__link">
+        
+  
+  
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 16.5c0 .38-.21.71-.53.88l-7.9 4.44c-.16.12-.36.18-.57.18s-.41-.06-.57-.18l-7.9-4.44A.99.99 0 0 1 3 16.5v-9c0-.38.21-.71.53-.88l7.9-4.44c.16-.12.36-.18.57-.18s.41.06.57.18l7.9 4.44c.32.17.53.5.53.88zM12 4.15 6.04 7.5 12 10.85l5.96-3.35zM5 15.91l6 3.38v-6.71L5 9.21zm14 0v-6.7l-6 3.37v6.71z"/></svg>
+  
+  <span class="md-ellipsis">
+    
+  
+    Ruggedness
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../analysis/robustness/" class="md-nav__link">
+        
+  
+  
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 16.5c0 .38-.21.71-.53.88l-7.9 4.44c-.16.12-.36.18-.57.18s-.41-.06-.57-.18l-7.9-4.44A.99.99 0 0 1 3 16.5v-9c0-.38.21-.71.53-.88l7.9-4.44c.16-.12.36-.18.57-.18s.41.06.57.18l7.9 4.44c.32.17.53.5.53.88zM12 4.15 6.04 7.5 12 10.85l5.96-3.35zM5 15.91l6 3.38v-6.71L5 9.21zm14 0v-6.7l-6 3.37v6.71z"/></svg>
+  
+  <span class="md-ellipsis">
+    
+  
+    Robutness
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 22A10 10 0 0 1 2 12 10 10 0 0 1 12 2c5.5 0 10 4 10 9a6 6 0 0 1-6 6h-1.8c-.3 0-.5.2-.5.5 0 .1.1.2.1.3.4.5.6 1.1.6 1.7.1 1.4-1 2.5-2.4 2.5m0-18a8 8 0 0 0-8 8 8 8 0 0 0 8 8c.3 0 .5-.2.5-.5 0-.2-.1-.3-.1-.4-.4-.5-.6-1-.6-1.6 0-1.4 1.1-2.5 2.5-2.5H16a4 4 0 0 0 4-4c0-3.9-3.6-7-8-7m-5.5 6c.8 0 1.5.7 1.5 1.5S7.3 13 6.5 13 5 12.3 5 11.5 5.7 10 6.5 10m3-4c.8 0 1.5.7 1.5 1.5S10.3 9 9.5 9 8 8.3 8 7.5 8.7 6 9.5 6m5 0c.8 0 1.5.7 1.5 1.5S15.3 9 14.5 9 13 8.3 13 7.5 13.7 6 14.5 6m3 4c.8 0 1.5.7 1.5 1.5s-.7 1.5-1.5 1.5-1.5-.7-1.5-1.5.7-1.5 1.5-1.5"/></svg>
+  
+  <span class="md-ellipsis">
+    
+  
+    Template Gallery
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 22A10 10 0 0 1 2 12 10 10 0 0 1 12 2c5.5 0 10 4 10 9a6 6 0 0 1-6 6h-1.8c-.3 0-.5.2-.5.5 0 .1.1.2.1.3.4.5.6 1.1.6 1.7.1 1.4-1 2.5-2.4 2.5m0-18a8 8 0 0 0-8 8 8 8 0 0 0 8 8c.3 0 .5-.2.5-.5 0-.2-.1-.3-.1-.4-.4-.5-.6-1-.6-1.6 0-1.4 1.1-2.5 2.5-2.5H16a4 4 0 0 0 4-4c0-3.9-3.6-7-8-7m-5.5 6c.8 0 1.5.7 1.5 1.5S7.3 13 6.5 13 5 12.3 5 11.5 5.7 10 6.5 10m3-4c.8 0 1.5.7 1.5 1.5S10.3 9 9.5 9 8 8.3 8 7.5 8.7 6 9.5 6m5 0c.8 0 1.5.7 1.5 1.5S15.3 9 14.5 9 13 8.3 13 7.5 13.7 6 14.5 6m3 4c.8 0 1.5.7 1.5 1.5s-.7 1.5-1.5 1.5-1.5-.7-1.5-1.5.7-1.5 1.5-1.5"/></svg>
+  
+  <span class="md-ellipsis">
+    
+  
+    Template Gallery
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#function-templates" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Function Templates
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Function Templates">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#template-f1-table-parameters" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Template F1 — Table Parameters
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Template F1 — Table Parameters">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#parameters" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Parameters
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#returns" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Returns
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#template-f2-tabbed-layout" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Template F2 — Tabbed Layout
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#template-f3-admonition-blocks" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Template F3 — Admonition Blocks
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#template-f4-definition-lists" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Template F4 — Definition Lists
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#template-f5-progressive-disclosure" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Template F5 — Progressive Disclosure
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#class-templates" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Class Templates
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Class Templates">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#template-c1-structured-sections" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Template C1 — Structured Sections
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Template C1 — Structured Sections">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#constructor-parameters" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Constructor Parameters
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#attributes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Attributes
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#methods" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Methods
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#example" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Example
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#template-c2-tabbed-class" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Template C2 — Tabbed Class
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#template-c3-method-accordion" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Template C3 — Method Accordion
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Template C3 — Method Accordion">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#constructor" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Constructor
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#attributes_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Attributes
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#method-reference" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Method Reference
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#methods_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Methods
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#example_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Example
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#template-c4-card-based-methods" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Template C4 — Card-Based Methods
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#landscape" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Landscape
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Landscape">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#methods_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Methods
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#build_from_data" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        build_from_data
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#get_data" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        get_data
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#describe" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        describe
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#template-c5-minimal-clean" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Template C5 — Minimal Clean
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_6" >
+        
+          
+          <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Examples
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Examples
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../applications/tf_binding/" class="md-nav__link">
+        
+  
+  
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 16.5c0 .38-.21.71-.53.88l-7.9 4.44c-.16.12-.36.18-.57.18s-.41-.06-.57-.18l-7.9-4.44A.99.99 0 0 1 3 16.5v-9c0-.38.21-.71.53-.88l7.9-4.44c.16-.12.36-.18.57-.18s.41.06.57.18l7.9 4.44c.32.17.53.5.53.88zM12 4.15 6.04 7.5 12 10.85l5.96-3.35z"/></svg>
+  
+  <span class="md-ellipsis">
+    
+  
+    TF Binding Landscape
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../applications/rnagym/" class="md-nav__link">
+        
+  
+  
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 16.5c0 .38-.21.71-.53.88l-7.9 4.44c-.16.12-.36.18-.57.18s-.41-.06-.57-.18l-7.9-4.44A.99.99 0 0 1 3 16.5v-9c0-.38.21-.71.53-.88l7.9-4.44c.16-.12.36-.18.57-.18s.41.06.57.18l7.9 4.44c.32.17.53.5.53.88zM12 4.15 6.04 7.5 12 10.85l5.96-3.35z"/></svg>
+  
+  <span class="md-ellipsis">
+    
+  
+    RNAGym Landscape
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../applications/proteingym/" class="md-nav__link">
+        
+  
+  
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 16.5c0 .38-.21.71-.53.88l-7.9 4.44c-.16.12-.36.18-.57.18s-.41-.06-.57-.18l-7.9-4.44A.99.99 0 0 1 3 16.5v-9c0-.38.21-.71.53-.88l7.9-4.44c.16-.12.36-.18.57-.18s.41.06.57.18l7.9 4.44c.32.17.53.5.53.88zM12 4.15 6.04 7.5 12 10.85l5.96-3.35z"/></svg>
+  
+  <span class="md-ellipsis">
+    
+  
+    ProteinGym Landscape
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#function-templates" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Function Templates
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Function Templates">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#template-f1-table-parameters" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Template F1 — Table Parameters
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Template F1 — Table Parameters">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#parameters" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Parameters
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#returns" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Returns
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#template-f2-tabbed-layout" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Template F2 — Tabbed Layout
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#template-f3-admonition-blocks" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Template F3 — Admonition Blocks
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#template-f4-definition-lists" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Template F4 — Definition Lists
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#template-f5-progressive-disclosure" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Template F5 — Progressive Disclosure
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#class-templates" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Class Templates
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Class Templates">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#template-c1-structured-sections" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Template C1 — Structured Sections
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Template C1 — Structured Sections">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#constructor-parameters" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Constructor Parameters
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#attributes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Attributes
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#methods" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Methods
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#example" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Example
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#template-c2-tabbed-class" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Template C2 — Tabbed Class
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#template-c3-method-accordion" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Template C3 — Method Accordion
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Template C3 — Method Accordion">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#constructor" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Constructor
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#attributes_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Attributes
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#method-reference" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Method Reference
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#methods_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Methods
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#example_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Example
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#template-c4-card-based-methods" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Template C4 — Card-Based Methods
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#landscape" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Landscape
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Landscape">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#methods_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Methods
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#build_from_data" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        build_from_data
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#get_data" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        get_data
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#describe" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        describe
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#template-c5-minimal-clean" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Template C5 — Minimal Clean
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+                
+
+
+
+  
+
+
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="documentation-template-gallery"><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M17.5 12a1.5 1.5 0 0 1-1.5-1.5A1.5 1.5 0 0 1 17.5 9a1.5 1.5 0 0 1 1.5 1.5 1.5 1.5 0 0 1-1.5 1.5m-3-4A1.5 1.5 0 0 1 13 6.5 1.5 1.5 0 0 1 14.5 5 1.5 1.5 0 0 1 16 6.5 1.5 1.5 0 0 1 14.5 8m-5 0A1.5 1.5 0 0 1 8 6.5 1.5 1.5 0 0 1 9.5 5 1.5 1.5 0 0 1 11 6.5 1.5 1.5 0 0 1 9.5 8m-3 4A1.5 1.5 0 0 1 5 10.5 1.5 1.5 0 0 1 6.5 9 1.5 1.5 0 0 1 8 10.5 1.5 1.5 0 0 1 6.5 12M12 3a9 9 0 0 0-9 9 9 9 0 0 0 9 9 1.5 1.5 0 0 0 1.5-1.5c0-.39-.15-.74-.39-1-.23-.27-.38-.62-.38-1a1.5 1.5 0 0 1 1.5-1.5H16a5 5 0 0 0 5-5c0-4.42-4.03-8-9-8"/></svg></span> Documentation Template Gallery</h1>
+<p>Compare <strong>5 function templates</strong> and <strong>5 class templates</strong> below. Each uses the same API content presented with a different layout strategy.</p>
+<hr />
+<h2 id="function-templates"><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12.42 5.29c-1.1-.1-2.07.71-2.17 1.82L10 10h2.82v2h-3l-.44 5.07A4.001 4.001 0 0 1 2 18.83l1.5-1.5c.33 1.05 1.46 1.64 2.5 1.3.78-.24 1.33-.93 1.4-1.74L7.82 12h-3v-2H8l.27-3.07a4.01 4.01 0 0 1 4.33-3.65c1.26.11 2.4.81 3.06 1.89l-1.5 1.5c-.25-.77-.93-1.31-1.74-1.38M22 13.65l-1.41-1.41-2.83 2.83-2.83-2.83-1.43 1.41 2.85 2.85-2.85 2.81 1.43 1.41 2.83-2.83 2.83 2.83L22 19.31l-2.83-2.81z"/></svg></span> Function Templates</h2>
+<p>All function templates below document the same function: <code>classify_epistasis</code>.</p>
+<hr class="api-divider">
+
+<h3 id="template-f1-table-parameters">Template F1 — Table Parameters</h3>
+<p><em>Clean tabular layout. Parameters and returns displayed as structured tables. Familiar to users of scikit-learn or pandas documentation.</em></p>
+<div class="template-section">
+<p><span class="template-label">F1</span></p>
+<p><span class="sig-block"><span class="py-keyword">def</span> <span class="py-class-name">graphfla.analysis.</span><span class="py-function-name">classify_epistasis</span>(<span class="py-parameter-name">landscape</span>, <span class="py-parameter-name">approximate</span>=<span class="py-literal-number">False</span>, <span class="py-parameter-name">sample_cut_prob</span>=<span class="py-literal-number">0.2</span>) → <span class="py-type">Dict</span>[<span class="py-type">str</span>, <span class="py-type">float</span>]</span></p>
+<p>Calculates the prevalence of five types of epistasis in a fitness landscape. Epistatic interactions are classified into positive, negative, magnitude, sign, and reciprocal sign epistasis based on pairwise mutation analysis using the <code>motif</code> function in <code>igraph</code>.</p>
+<h4 id="parameters">Parameters</h4>
+<table class="param-table">
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>landscape</code></td>
+<td><code>Landscape</code></td>
+<td><em>required</em></td>
+<td>The fitness landscape object.</td>
+</tr>
+<tr>
+<td><code>approximate</code></td>
+<td><code>bool</code></td>
+<td><code>False</code></td>
+<td>If <code>True</code>, estimates motif counts instead of exact enumeration. Recommended for large landscapes (&gt;10,000 mutants).</td>
+</tr>
+<tr>
+<td><code>sample_cut_prob</code></td>
+<td><code>float</code></td>
+<td><code>0.2</code></td>
+<td>Pruning probability for the search tree. Only used when <code>approximate=True</code>. Higher = faster but less accurate. Must be in [0, 1].</td>
+</tr>
+</tbody>
+</table>
+<h4 id="returns">Returns</h4>
+<table class="param-table">
+<thead>
+<tr>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>Dict[str, float]</code></td>
+<td>Dictionary mapping 5 epistasis types to their proportions. Positive + negative sum to 1; magnitude + sign + reciprocal sign sum to 1.</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Computationally expensive for large landscapes (&gt;10,000 mutants). Use <code>approximate=True</code> with a higher <code>sample_cut_prob</code> value.</p>
+</div>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="o">&gt;&gt;&gt;</span> <span class="n">classify_epistasis</span><span class="p">(</span><span class="n">landscape</span><span class="p">,</span> <span class="n">approximate</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">sample_cut_prob</span><span class="o">=</span><span class="mf">0.1</span><span class="p">)</span>
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="p">{</span><span class="s1">&#39;magnitude epistasis&#39;</span><span class="p">:</span> <span class="mf">0.909</span><span class="p">,</span> <span class="s1">&#39;sign epistasis&#39;</span><span class="p">:</span> <span class="mf">0.076</span><span class="p">,</span>
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a> <span class="s1">&#39;reciprocal sign epistasis&#39;</span><span class="p">:</span> <span class="mf">0.016</span><span class="p">,</span> <span class="s1">&#39;positive epistasis&#39;</span><span class="p">:</span> <span class="mf">0.365</span><span class="p">,</span>
+<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a> <span class="s1">&#39;negative epistasis&#39;</span><span class="p">:</span> <span class="mf">0.635</span><span class="p">}</span>
+</code></pre></div>
+</div>
+<hr class="api-divider">
+
+<h3 id="template-f2-tabbed-layout">Template F2 — Tabbed Layout</h3>
+<p><em>Organized into switchable tabs. Keeps the page compact while making all information accessible. Ideal for dense API references with many functions.</em></p>
+<div class="template-section">
+<p><span class="template-label">F2</span></p>
+<p><span class="sig-block"><span class="py-keyword">def</span> <span class="py-class-name">graphfla.analysis.</span><span class="py-function-name">classify_epistasis</span>(<span class="py-parameter-name">landscape</span>, <span class="py-parameter-name">approximate</span>=<span class="py-literal-number">False</span>, <span class="py-parameter-name">sample_cut_prob</span>=<span class="py-literal-number">0.2</span>) → <span class="py-type">Dict</span>[<span class="py-type">str</span>, <span class="py-type">float</span>]</span></p>
+<p>Calculates the prevalence of five types of epistasis in a fitness landscape.</p>
+<div class="tabbed-set tabbed-alternate" data-tabs="1:4"><input checked="checked" id="__tabbed_1_1" name="__tabbed_1" type="radio" /><input id="__tabbed_1_2" name="__tabbed_1" type="radio" /><input id="__tabbed_1_3" name="__tabbed_1" type="radio" /><input id="__tabbed_1_4" name="__tabbed_1" type="radio" /><div class="tabbed-labels"><label for="__tabbed_1_1">Description</label><label for="__tabbed_1_2">Parameters</label><label for="__tabbed_1_3">Returns</label><label for="__tabbed_1_4">Example</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<p>Epistatic interactions are classified into five types based on pairwise mutation analysis: positive, negative, magnitude, sign, and reciprocal sign epistasis. Uses the <code>motif</code> function in <code>igraph</code> internally.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The fractions for positive and negative epistasis always sum to 1 (mutually exclusive and exhaustive). Likewise for magnitude, sign, and reciprocal sign.</p>
+</div>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Computationally expensive for large landscapes (&gt;10,000 mutants). Use <code>approximate=True</code> for better performance.</p>
+</div>
+</div>
+<div class="tabbed-block">
+<dl>
+<dt><strong>landscape</strong> : <code>Landscape</code></dt>
+<dd>The fitness landscape object.</dd>
+<dt><strong>approximate</strong> : <code>bool</code>, default=<code>False</code></dt>
+<dd>If <code>True</code>, estimates motif counts instead of exact enumeration. Recommended for large landscapes (&gt;10,000 mutants).</dd>
+<dt><strong>sample_cut_prob</strong> : <code>float</code>, default=<code>0.2</code></dt>
+<dd>Pruning probability for the search tree. Only used when <code>approximate=True</code>. Higher values lead to faster computation but potentially less accurate estimations. Must be between 0 and 1.</dd>
+</dl>
+</div>
+<div class="tabbed-block">
+<dl>
+<dt><strong>Dict[str, float]</strong></dt>
+<dd>A dictionary where keys are the 5 epistasis type names and values are their calculated proportions.</dd>
+</dl>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Key</th>
+<th style="text-align: left;">Range</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><code>'magnitude epistasis'</code></td>
+<td style="text-align: left;">[0, 1]</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>'sign epistasis'</code></td>
+<td style="text-align: left;">[0, 1]</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>'reciprocal sign epistasis'</code></td>
+<td style="text-align: left;">[0, 1]</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>'positive epistasis'</code></td>
+<td style="text-align: left;">[0, 1]</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>'negative epistasis'</code></td>
+<td style="text-align: left;">[0, 1]</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="tabbed-block">
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">graphfla.analysis</span><span class="w"> </span><span class="kn">import</span> <span class="n">classify_epistasis</span>
+<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>
+<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="n">result</span> <span class="o">=</span> <span class="n">classify_epistasis</span><span class="p">(</span><span class="n">landscape</span><span class="p">,</span> <span class="n">approximate</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">sample_cut_prob</span><span class="o">=</span><span class="mf">0.1</span><span class="p">)</span>
+<a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="nb">print</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+<a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="c1"># {&#39;magnitude epistasis&#39;: 0.909, &#39;sign epistasis&#39;: 0.076,</span>
+<a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a><span class="c1">#  &#39;reciprocal sign epistasis&#39;: 0.016, &#39;positive epistasis&#39;: 0.365,</span>
+<a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a><span class="c1">#  &#39;negative epistasis&#39;: 0.635}</span>
+</code></pre></div>
+</div>
+</div>
+</div>
+</div>
+<hr class="api-divider">
+
+<h3 id="template-f3-admonition-blocks">Template F3 — Admonition Blocks</h3>
+<p><em>Uses colored admonition blocks to visually distinguish parameters, returns, and examples. Each section has a distinct color identity for quick scanning.</em></p>
+<div class="template-section">
+<p><span class="template-label">F3</span></p>
+<p><span class="sig-block-alt"><span class="py-keyword">def</span> <span class="py-class-name">graphfla.analysis.</span><span class="py-function-name">classify_epistasis</span>(<span class="py-parameter-name">landscape</span>, <span class="py-parameter-name">approximate</span>=<span class="py-literal-number">False</span>, <span class="py-parameter-name">sample_cut_prob</span>=<span class="py-literal-number">0.2</span>) → <span class="py-type">Dict</span>[<span class="py-type">str</span>, <span class="py-type">float</span>]</span></p>
+<p>Calculates the prevalence of five types of epistasis in a fitness landscape. Epistatic interactions are classified into positive, negative, magnitude, sign, and reciprocal sign epistasis based on pairwise mutation analysis.</p>
+<div class="admonition abstract">
+<p class="admonition-title">Parameters</p>
+<p><strong><code>landscape</code></strong> : <em>Landscape</em> — The fitness landscape object.</p>
+<p><strong><code>approximate</code></strong> : <em>bool, default=False</em> — If <code>True</code>, estimates motif counts instead of exact enumeration. Recommended for large landscapes (&gt;10,000 mutants).</p>
+<p><strong><code>sample_cut_prob</code></strong> : <em>float, default=0.2</em> — Pruning probability for the search tree (only when <code>approximate=True</code>). Higher = faster but less accurate. Must be in [0, 1].</p>
+</div>
+<div class="admonition success">
+<p class="admonition-title">Returns</p>
+<p><strong>Dict[str, float]</strong> — Dictionary mapping 5 epistasis types to their calculated proportions. Positive + negative sum to 1; magnitude + sign + reciprocal sign sum to 1.</p>
+</div>
+<div class="admonition warning">
+<p class="admonition-title">Performance Note</p>
+<p>This method can be quite computationally expensive for large landscapes (&gt;10,000 mutants). Using <code>approximate=True</code> and a higher <code>sample_cut_prob</code> value is highly recommended.</p>
+</div>
+<div class="admonition example">
+<p class="admonition-title">Usage</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">graphfla.analysis</span><span class="w"> </span><span class="kn">import</span> <span class="n">classify_epistasis</span>
+<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>
+<a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="n">result</span> <span class="o">=</span> <span class="n">classify_epistasis</span><span class="p">(</span><span class="n">landscape</span><span class="p">,</span> <span class="n">approximate</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">sample_cut_prob</span><span class="o">=</span><span class="mf">0.1</span><span class="p">)</span>
+<a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="c1"># {&#39;magnitude epistasis&#39;: 0.909, &#39;sign epistasis&#39;: 0.076,</span>
+<a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="c1">#  &#39;reciprocal sign epistasis&#39;: 0.016, &#39;positive epistasis&#39;: 0.365,</span>
+<a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a><span class="c1">#  &#39;negative epistasis&#39;: 0.635}</span>
+</code></pre></div>
+</div>
+<div class="admonition tip">
+<p class="admonition-title">References</p>
+<ul>
+<li>Patrick C. Phillips. "Epistasis—the essential role of gene interactions in the structure and evolution of genetic systems." <em>Nat. Rev. Genet.</em> (2008).</li>
+<li>Frank J. Poelwijk <em>et al.</em>, "Empirical fitness landscapes reveal accessible evolutionary paths." <em>Nature.</em> (2007).</li>
+</ul>
+</div>
+</div>
+<hr class="api-divider">
+
+<h3 id="template-f4-definition-lists">Template F4 — Definition Lists</h3>
+<p><em>Uses definition list formatting for parameters. Compact, scannable, and elegant — inspired by NumPy/SciPy documentation style.</em></p>
+<div class="template-section">
+<p><span class="template-label">F4</span></p>
+<p><span class="sig-block-minimal"><span class="py-keyword">def</span> <span class="py-class-name">graphfla.analysis.</span><span class="py-function-name">classify_epistasis</span>(<span class="py-parameter-name">landscape</span>, <span class="py-parameter-name">approximate</span>=<span class="py-literal-number">False</span>, <span class="py-parameter-name">sample_cut_prob</span>=<span class="py-literal-number">0.2</span>) → <span class="py-type">Dict</span>[<span class="py-type">str</span>, <span class="py-type">float</span>]</span></p>
+<p>Calculates the prevalence of five types of epistasis in a fitness landscape. Epistatic interactions are classified into positive, negative, magnitude, sign, and reciprocal sign epistasis based on pairwise mutation analysis.</p>
+<p class="param-defs"><strong>Parameters</strong></p>
+<dl>
+<dt><code>landscape</code> : <em>Landscape</em></dt>
+<dd>The fitness landscape object.</dd>
+<dt><code>approximate</code> : <em>bool, default=False</em></dt>
+<dd>If <code>True</code>, estimates motif counts instead of exact enumeration. Recommended for large landscapes (&gt;10,000 mutants).</dd>
+<dt><code>sample_cut_prob</code> : <em>float, default=0.2</em></dt>
+<dd>Pruning probability for the search tree. Only relevant when <code>approximate=True</code>. Higher values = faster computation but less accurate. Must be between 0 and 1.</dd>
+</dl>
+<p class="param-defs"><strong>Returns</strong></p>
+<dl>
+<dt><code>Dict[str, float]</code></dt>
+<dd>Dictionary where keys are 5 epistasis types and values are their calculated proportions.</dd>
+</dl>
+<p><strong>Notes</strong></p>
+<ul>
+<li>The fractions for positive and negative epistasis always sum to 1.</li>
+<li>The fractions for magnitude, sign, and reciprocal sign epistasis also sum to 1.</li>
+<li>Computationally expensive for large landscapes. Use <code>approximate=True</code> for graphs with &gt;10,000 mutants.</li>
+</ul>
+<p><strong>Example</strong></p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="o">&gt;&gt;&gt;</span> <span class="n">classify_epistasis</span><span class="p">(</span><span class="n">landscape</span><span class="p">,</span> <span class="n">approximate</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">sample_cut_prob</span><span class="o">=</span><span class="mf">0.1</span><span class="p">)</span>
+<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="p">{</span><span class="s1">&#39;magnitude epistasis&#39;</span><span class="p">:</span> <span class="mf">0.909</span><span class="p">,</span> <span class="s1">&#39;sign epistasis&#39;</span><span class="p">:</span> <span class="mf">0.076</span><span class="p">,</span>
+<a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a> <span class="s1">&#39;reciprocal sign epistasis&#39;</span><span class="p">:</span> <span class="mf">0.016</span><span class="p">,</span> <span class="s1">&#39;positive epistasis&#39;</span><span class="p">:</span> <span class="mf">0.365</span><span class="p">,</span>
+<a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a> <span class="s1">&#39;negative epistasis&#39;</span><span class="p">:</span> <span class="mf">0.635</span><span class="p">}</span>
+</code></pre></div>
+<p><strong>References</strong></p>
+<p>Phillips (2008). <em>Nat. Rev. Genet.</em> · Poelwijk <em>et al.</em> (2007). <em>Nature.</em></p>
+</div>
+<hr class="api-divider">
+
+<h3 id="template-f5-progressive-disclosure">Template F5 — Progressive Disclosure</h3>
+<p><em>Uses collapsible sections for a compact initial view. Users expand only the sections they need — great for reference pages with many functions.</em></p>
+<div class="template-section">
+<p><span class="template-label">F5</span></p>
+<p><span class="sig-block"><span class="py-keyword">def</span> <span class="py-class-name">graphfla.analysis.</span><span class="py-function-name">classify_epistasis</span>(<span class="py-parameter-name">landscape</span>, <span class="py-parameter-name">approximate</span>=<span class="py-literal-number">False</span>, <span class="py-parameter-name">sample_cut_prob</span>=<span class="py-literal-number">0.2</span>) → <span class="py-type">Dict</span>[<span class="py-type">str</span>, <span class="py-type">float</span>]</span></p>
+<p>Calculates the prevalence of five types of epistasis in a fitness landscape. Classifies into positive, negative, magnitude, sign, and reciprocal sign epistasis.</p>
+<details class="abstract">
+<summary>Parameters</summary>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Type</th>
+<th style="text-align: left;">Default</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><code>landscape</code></td>
+<td style="text-align: left;"><code>Landscape</code></td>
+<td style="text-align: left;"><em>required</em></td>
+<td style="text-align: left;">The fitness landscape object.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>approximate</code></td>
+<td style="text-align: left;"><code>bool</code></td>
+<td style="text-align: left;"><code>False</code></td>
+<td style="text-align: left;">If <code>True</code>, estimates motif counts instead of exact enumeration.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>sample_cut_prob</code></td>
+<td style="text-align: left;"><code>float</code></td>
+<td style="text-align: left;"><code>0.2</code></td>
+<td style="text-align: left;">Search tree pruning probability (only when <code>approximate=True</code>).</td>
+</tr>
+</tbody>
+</table>
+</details>
+<details class="success">
+<summary>Returns</summary>
+<p><code>Dict[str, float]</code> — Dictionary mapping 5 epistasis types to proportions.</p>
+<p>Positive + negative sum to 1. Magnitude + sign + reciprocal sign sum to 1.</p>
+</details>
+<details class="warning">
+<summary>Performance</summary>
+<p>Computationally expensive for large landscapes (&gt;10,000 mutants). Use <code>approximate=True</code> with a higher <code>sample_cut_prob</code> value.</p>
+</details>
+<details class="example">
+<summary>Usage</summary>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">graphfla.analysis</span><span class="w"> </span><span class="kn">import</span> <span class="n">classify_epistasis</span>
+<a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>
+<a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="n">result</span> <span class="o">=</span> <span class="n">classify_epistasis</span><span class="p">(</span><span class="n">landscape</span><span class="p">,</span> <span class="n">approximate</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">sample_cut_prob</span><span class="o">=</span><span class="mf">0.1</span><span class="p">)</span>
+<a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a><span class="c1"># {&#39;magnitude epistasis&#39;: 0.909, &#39;sign epistasis&#39;: 0.076, ...}</span>
+</code></pre></div>
+</details>
+<details class="quote">
+<summary>References</summary>
+<ul>
+<li>Phillips (2008). <em>Nat. Rev. Genet.</em></li>
+<li>Poelwijk <em>et al.</em> (2007). <em>Nature.</em></li>
+</ul>
+</details>
+</div>
+<hr />
+<h2 id="class-templates"><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 16.5c0 .38-.21.71-.53.88l-7.9 4.44c-.16.12-.36.18-.57.18s-.41-.06-.57-.18l-7.9-4.44A.99.99 0 0 1 3 16.5v-9c0-.38.21-.71.53-.88l7.9-4.44c.16-.12.36-.18.57-.18s.41.06.57.18l7.9 4.44c.32.17.53.5.53.88zM12 4.15 6.04 7.5 12 10.85l5.96-3.35zM5 15.91l6 3.38v-6.71L5 9.21zm14 0v-6.7l-6 3.37v6.71z"/></svg></span> Class Templates</h2>
+<p>All class templates below document the same class: <code>Landscape</code> (abbreviated for layout comparison).</p>
+<hr class="api-divider">
+
+<h3 id="template-c1-structured-sections">Template C1 — Structured Sections</h3>
+<p><em>Clear horizontal separators between sections. Attributes in a table, methods as individually documented blocks. Traditional and comprehensive.</em></p>
+<div class="template-section">
+<p><span class="template-label">C1</span></p>
+<p><span class="sig-block"><span class="py-keyword">class</span> <span class="py-class-name">graphfla.landscape.</span><span class="py-function-name">Landscape</span>(<span class="py-parameter-name">type</span>=<span class="py-literal-string">'default'</span>, <span class="py-parameter-name">maximize</span>=<span class="py-literal-number">True</span>)</span></p>
+<p>Fitness landscape represented as a directed graph where nodes are genotypes and edges connect mutational neighbors pointing towards fitter variants.</p>
+<h4 id="constructor-parameters">Constructor Parameters</h4>
+<table class="param-table">
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>type</code></td>
+<td><code>str</code></td>
+<td><code>'default'</code></td>
+<td>Landscape type. One of <code>'default'</code>, <code>'boolean'</code>, <code>'dna'</code>, <code>'rna'</code>, <code>'protein'</code>.</td>
+</tr>
+<tr>
+<td><code>maximize</code></td>
+<td><code>bool</code></td>
+<td><code>True</code></td>
+<td>If <code>True</code>, higher fitness is better (peaks are optima). If <code>False</code>, seeks lower values.</td>
+</tr>
+</tbody>
+</table>
+<h4 id="attributes">Attributes</h4>
+<table class="param-table">
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>graph</code></td>
+<td><code>igraph.Graph</code></td>
+<td>The directed graph representing the fitness landscape.</td>
+</tr>
+<tr>
+<td><code>n_configs</code></td>
+<td><code>int</code></td>
+<td>Total number of configurations (nodes) in the landscape.</td>
+</tr>
+<tr>
+<td><code>n_vars</code></td>
+<td><code>int</code></td>
+<td>Number of variables defining a configuration.</td>
+</tr>
+<tr>
+<td><code>n_lo</code></td>
+<td><code>int</code></td>
+<td>Number of local optima in the landscape.</td>
+</tr>
+<tr>
+<td><code>go</code></td>
+<td><code>int</code></td>
+<td>Node index of the global optimum.</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h4 id="methods">Methods</h4>
+<p><span class="sig-block"><span class="py-function-name">.build_from_data</span>(<span class="py-parameter-name">X</span>, <span class="py-parameter-name">f</span>, <span class="py-parameter-name">data_types</span>=<span class="py-literal-number">None</span>, <span class="py-parameter-name">calculate_basins</span>=<span class="py-literal-number">True</span>, <span class="py-parameter-name">verbose</span>=<span class="py-literal-number">True</span>) → <span class="py-type">None</span></span></p>
+<p>Construct the landscape graph from configuration data. Populates core attributes and enables analysis.</p>
+<table class="param-table">
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>X</code></td>
+<td><code>DataFrame</code></td>
+<td><em>required</em></td>
+<td>Configuration data where rows are genotypes and columns are variables.</td>
+</tr>
+<tr>
+<td><code>f</code></td>
+<td><code>Series</code></td>
+<td><em>required</em></td>
+<td>Fitness values for each configuration. Must match length of <code>X</code>.</td>
+</tr>
+<tr>
+<td><code>data_types</code></td>
+<td><code>dict</code></td>
+<td><code>None</code></td>
+<td>Dictionary specifying variable types (<code>'boolean'</code>, <code>'categorical'</code>, <code>'ordinal'</code>).</td>
+</tr>
+<tr>
+<td><code>calculate_basins</code></td>
+<td><code>bool</code></td>
+<td><code>True</code></td>
+<td>Whether to compute basins of attraction for each local optimum.</td>
+</tr>
+<tr>
+<td><code>verbose</code></td>
+<td><code>bool</code></td>
+<td><code>True</code></td>
+<td>Print progress during construction.</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<p><span class="sig-block"><span class="py-function-name">.get_data</span>(<span class="py-parameter-name">lo_only</span>=<span class="py-literal-number">False</span>) → <span class="py-type">pandas.DataFrame</span></span></p>
+<p>Extracts landscape data as a pandas DataFrame where rows are configurations and columns are attributes.</p>
+<table class="param-table">
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>lo_only</code></td>
+<td><code>bool</code></td>
+<td><code>False</code></td>
+<td>If <code>True</code>, returns only local optima data (with LON attributes if available).</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<p><span class="sig-block"><span class="py-function-name">.describe</span>() → <span class="py-type">None</span></span></p>
+<p>Prints a summary of the landscape including size, optima count, and analysis status.</p>
+<h4 id="example">Example</h4>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">graphfla.landscape</span><span class="w"> </span><span class="kn">import</span> <span class="n">Landscape</span>
+<a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>
+<a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a><span class="n">landscape</span> <span class="o">=</span> <span class="n">Landscape</span><span class="p">(</span><span class="nb">type</span><span class="o">=</span><span class="s2">&quot;boolean&quot;</span><span class="p">,</span> <span class="n">maximize</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a><span class="n">landscape</span><span class="o">.</span><span class="n">build_from_data</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">fitness</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Configurations: </span><span class="si">{</span><span class="n">landscape</span><span class="o">.</span><span class="n">n_configs</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Local optima: </span><span class="si">{</span><span class="n">landscape</span><span class="o">.</span><span class="n">n_lo</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<a id="__codelineno-5-7" name="__codelineno-5-7" href="#__codelineno-5-7"></a><span class="n">landscape</span><span class="o">.</span><span class="n">describe</span><span class="p">()</span>
+</code></pre></div>
+</div>
+<hr class="api-divider">
+
+<h3 id="template-c2-tabbed-class">Template C2 — Tabbed Class</h3>
+<p><em>All class information organized into tabs. Keeps the page extremely compact while giving each section full room when selected.</em></p>
+<div class="template-section">
+<p><span class="template-label">C2</span></p>
+<p><span class="sig-block"><span class="py-keyword">class</span> <span class="py-class-name">graphfla.landscape.</span><span class="py-function-name">Landscape</span>(<span class="py-parameter-name">type</span>=<span class="py-literal-string">'default'</span>, <span class="py-parameter-name">maximize</span>=<span class="py-literal-number">True</span>)</span></p>
+<p>Fitness landscape represented as a directed graph where nodes are genotypes and edges connect mutational neighbors pointing towards fitter variants.</p>
+<div class="tabbed-set tabbed-alternate" data-tabs="2:4"><input checked="checked" id="__tabbed_2_1" name="__tabbed_2" type="radio" /><input id="__tabbed_2_2" name="__tabbed_2" type="radio" /><input id="__tabbed_2_3" name="__tabbed_2" type="radio" /><input id="__tabbed_2_4" name="__tabbed_2" type="radio" /><div class="tabbed-labels"><label for="__tabbed_2_1">Constructor</label><label for="__tabbed_2_2">Attributes</label><label for="__tabbed_2_3">Methods</label><label for="__tabbed_2_4">Example</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Type</th>
+<th style="text-align: left;">Default</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><code>type</code></td>
+<td style="text-align: left;"><code>str</code></td>
+<td style="text-align: left;"><code>'default'</code></td>
+<td style="text-align: left;">Landscape type: <code>'default'</code>, <code>'boolean'</code>, <code>'dna'</code>, <code>'rna'</code>, <code>'protein'</code>.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>maximize</code></td>
+<td style="text-align: left;"><code>bool</code></td>
+<td style="text-align: left;"><code>True</code></td>
+<td style="text-align: left;">If <code>True</code>, higher fitness = better.</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="tabbed-block">
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Attribute</th>
+<th style="text-align: left;">Type</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><code>graph</code></td>
+<td style="text-align: left;"><code>igraph.Graph</code></td>
+<td style="text-align: left;">Directed graph representing the fitness landscape.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>configs</code></td>
+<td style="text-align: left;"><code>pd.Series</code></td>
+<td style="text-align: left;">Maps node indices to configuration tuples.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>n_configs</code></td>
+<td style="text-align: left;"><code>int</code></td>
+<td style="text-align: left;">Total configurations in landscape.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>n_vars</code></td>
+<td style="text-align: left;"><code>int</code></td>
+<td style="text-align: left;">Number of variables per configuration.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>n_lo</code></td>
+<td style="text-align: left;"><code>int</code></td>
+<td style="text-align: left;">Number of local optima.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>go</code></td>
+<td style="text-align: left;"><code>int</code></td>
+<td style="text-align: left;">Node index of the global optimum.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>shape</code></td>
+<td style="text-align: left;"><code>tuple</code></td>
+<td style="text-align: left;"><code>(n_configs, n_edges)</code> of the landscape graph.</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="tabbed-block">
+<hr />
+<p><span class="sig-block"><span class="py-function-name">.build_from_data</span>(<span class="py-parameter-name">X</span>, <span class="py-parameter-name">f</span>, <span class="py-parameter-name">data_types</span>=<span class="py-literal-number">None</span>, <span class="py-parameter-name">calculate_basins</span>=<span class="py-literal-number">True</span>, <span class="py-parameter-name">verbose</span>=<span class="py-literal-number">True</span>) → <span class="py-type">None</span></span></p>
+<p>Construct the landscape graph from configuration data.</p>
+<dl>
+<dt><code>X</code> : <em>DataFrame</em> — Configuration data (rows = genotypes, columns = variables).</dt>
+<dd><code>f</code> : <em>Series</em> — Fitness values corresponding to each configuration.</dd>
+</dl>
+<hr />
+<p><span class="sig-block"><span class="py-function-name">.get_data</span>(<span class="py-parameter-name">lo_only</span>=<span class="py-literal-number">False</span>) → <span class="py-type">pandas.DataFrame</span></span></p>
+<p>Extract landscape data as a DataFrame. Set <code>lo_only=True</code> for local optima only.</p>
+<hr />
+<p><span class="sig-block"><span class="py-function-name">.describe</span>() → <span class="py-type">None</span></span></p>
+<p>Print a summary of landscape properties.</p>
+</div>
+<div class="tabbed-block">
+<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">graphfla.landscape</span><span class="w"> </span><span class="kn">import</span> <span class="n">Landscape</span>
+<a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a><span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a>
+<a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a><span class="n">X</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span><span class="s1">&#39;var_0&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="s1">&#39;var_1&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]})</span>
+<a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a><span class="n">f</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">([</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">,</span> <span class="mf">3.0</span><span class="p">,</span> <span class="mf">2.5</span><span class="p">])</span>
+<a id="__codelineno-6-6" name="__codelineno-6-6" href="#__codelineno-6-6"></a>
+<a id="__codelineno-6-7" name="__codelineno-6-7" href="#__codelineno-6-7"></a><span class="n">landscape</span> <span class="o">=</span> <span class="n">Landscape</span><span class="p">(</span><span class="nb">type</span><span class="o">=</span><span class="s2">&quot;boolean&quot;</span><span class="p">,</span> <span class="n">maximize</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<a id="__codelineno-6-8" name="__codelineno-6-8" href="#__codelineno-6-8"></a><span class="n">landscape</span><span class="o">.</span><span class="n">build_from_data</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<a id="__codelineno-6-9" name="__codelineno-6-9" href="#__codelineno-6-9"></a>
+<a id="__codelineno-6-10" name="__codelineno-6-10" href="#__codelineno-6-10"></a><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Configs: </span><span class="si">{</span><span class="n">landscape</span><span class="o">.</span><span class="n">n_configs</span><span class="si">}</span><span class="s2">, Local optima: </span><span class="si">{</span><span class="n">landscape</span><span class="o">.</span><span class="n">n_lo</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<a id="__codelineno-6-11" name="__codelineno-6-11" href="#__codelineno-6-11"></a><span class="c1"># Configs: 4, Local optima: 1</span>
+<a id="__codelineno-6-12" name="__codelineno-6-12" href="#__codelineno-6-12"></a>
+<a id="__codelineno-6-13" name="__codelineno-6-13" href="#__codelineno-6-13"></a><span class="n">df</span> <span class="o">=</span> <span class="n">landscape</span><span class="o">.</span><span class="n">get_data</span><span class="p">()</span>
+<a id="__codelineno-6-14" name="__codelineno-6-14" href="#__codelineno-6-14"></a><span class="nb">print</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">head</span><span class="p">())</span>
+</code></pre></div>
+</div>
+</div>
+</div>
+</div>
+<hr class="api-divider">
+
+<h3 id="template-c3-method-accordion">Template C3 — Method Accordion</h3>
+<p><em>Quick-reference method table at top for navigation. Each method expands into full documentation on click. Best for classes with many methods.</em></p>
+<div class="template-section">
+<p><span class="template-label">C3</span></p>
+<p><span class="sig-block"><span class="py-keyword">class</span> <span class="py-class-name">graphfla.landscape.</span><span class="py-function-name">Landscape</span>(<span class="py-parameter-name">type</span>=<span class="py-literal-string">'default'</span>, <span class="py-parameter-name">maximize</span>=<span class="py-literal-number">True</span>)</span></p>
+<p>Fitness landscape represented as a directed graph where nodes are genotypes and edges connect mutational neighbors pointing towards fitter variants.</p>
+<h4 id="constructor">Constructor</h4>
+<dl>
+<dt><code>type</code> : <em>str, default='default'</em></dt>
+<dd>Landscape type: <code>'default'</code>, <code>'boolean'</code>, <code>'dna'</code>, <code>'rna'</code>, <code>'protein'</code>.</dd>
+<dt><code>maximize</code> : <em>bool, default=True</em></dt>
+<dd>Optimization direction. <code>True</code> for maximization (peaks are optima).</dd>
+</dl>
+<h4 id="attributes_1">Attributes</h4>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Attribute</th>
+<th style="text-align: left;">Type</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><code>graph</code></td>
+<td style="text-align: left;"><code>igraph.Graph</code></td>
+<td style="text-align: left;">Directed graph of the fitness landscape.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>n_configs</code></td>
+<td style="text-align: left;"><code>int</code></td>
+<td style="text-align: left;">Total configurations.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>n_vars</code></td>
+<td style="text-align: left;"><code>int</code></td>
+<td style="text-align: left;">Number of variables per configuration.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>n_lo</code></td>
+<td style="text-align: left;"><code>int</code></td>
+<td style="text-align: left;">Number of local optima.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>go</code></td>
+<td style="text-align: left;"><code>int</code></td>
+<td style="text-align: left;">Node index of the global optimum.</td>
+</tr>
+</tbody>
+</table>
+<h4 id="method-reference">Method Reference</h4>
+<table class="method-summary-table">
+<thead>
+<tr>
+<th>Method</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>build_from_data()</code></td>
+<td>Build landscape graph from configuration data.</td>
+</tr>
+<tr>
+<td><code>build_from_graph()</code></td>
+<td>Load landscape from a saved graph file.</td>
+</tr>
+<tr>
+<td><code>get_data()</code></td>
+<td>Extract landscape data as a DataFrame.</td>
+</tr>
+<tr>
+<td><code>describe()</code></td>
+<td>Print landscape summary.</td>
+</tr>
+<tr>
+<td><code>get_lon()</code></td>
+<td>Construct the Local Optima Network.</td>
+</tr>
+</tbody>
+</table>
+<h4 id="methods_1">Methods</h4>
+<details class="abstract">
+<summary>build_from_data(X, f, data_types=None, calculate_basins=True, verbose=True)</summary>
+<p>Construct the landscape graph and properties from configuration data. Populates core attributes and enables further analysis.</p>
+<p><strong>Parameters</strong></p>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Type</th>
+<th style="text-align: left;">Default</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><code>X</code></td>
+<td style="text-align: left;"><code>DataFrame</code></td>
+<td style="text-align: left;"><em>required</em></td>
+<td style="text-align: left;">Configuration data (rows = genotypes).</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>f</code></td>
+<td style="text-align: left;"><code>Series</code></td>
+<td style="text-align: left;"><em>required</em></td>
+<td style="text-align: left;">Fitness values for each configuration.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>data_types</code></td>
+<td style="text-align: left;"><code>dict</code></td>
+<td style="text-align: left;"><code>None</code></td>
+<td style="text-align: left;">Variable type specification.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>calculate_basins</code></td>
+<td style="text-align: left;"><code>bool</code></td>
+<td style="text-align: left;"><code>True</code></td>
+<td style="text-align: left;">Compute basins of attraction.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>verbose</code></td>
+<td style="text-align: left;"><code>bool</code></td>
+<td style="text-align: left;"><code>True</code></td>
+<td style="text-align: left;">Print progress output.</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Either <code>build_from_data</code> or <code>build_from_graph</code> must be called before any analysis.</p>
+</div>
+</details>
+<details class="abstract">
+<summary>get_data(lo_only=False)</summary>
+<p>Extract landscape data as a pandas DataFrame.</p>
+<p><strong>Parameters</strong></p>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Type</th>
+<th style="text-align: left;">Default</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><code>lo_only</code></td>
+<td style="text-align: left;"><code>bool</code></td>
+<td style="text-align: left;"><code>False</code></td>
+<td style="text-align: left;">If <code>True</code>, returns only local optima data.</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Returns</strong> — <code>pandas.DataFrame</code> with configuration attributes as columns.</p>
+</details>
+<details class="abstract">
+<summary>describe()</summary>
+<p>Prints a summary of the landscape including number of variables, configurations, edges, local optima, and status of optional analyses.</p>
+</details>
+<h4 id="example_1">Example</h4>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="n">landscape</span> <span class="o">=</span> <span class="n">Landscape</span><span class="p">(</span><span class="nb">type</span><span class="o">=</span><span class="s2">&quot;boolean&quot;</span><span class="p">,</span> <span class="n">maximize</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a><span class="n">landscape</span><span class="o">.</span><span class="n">build_from_data</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">fitness</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a><span class="n">landscape</span><span class="o">.</span><span class="n">describe</span><span class="p">()</span>
+<a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a><span class="c1"># Landscape with 9 variables, 135178 configurations, ...</span>
+</code></pre></div>
+</div>
+<hr class="api-divider">
+
+<h3 id="template-c4-card-based-methods">Template C4 — Card-Based Methods</h3>
+<p><em>Each method presented as a distinct visual card. Strong visual separation makes it easy to find specific methods while scrolling. Class overview uses a colored banner.</em></p>
+<div class="template-section">
+<p><span class="template-label">C4</span></p>
+<div class="class-banner">
+<h3 id="landscape">Landscape</h3>
+<p><code>graphfla.landscape.Landscape(type='default', maximize=True)</code></p>
+<p>Fitness landscape represented as a directed graph where nodes are genotypes and edges connect mutational neighbors pointing towards fitter variants.</p>
+</div>
+<div class="admonition info">
+<p class="admonition-title">Constructor Parameters</p>
+<p><strong>type</strong> : <code>str</code>, default=<code>'default'</code> — Landscape type (<code>'default'</code>, <code>'boolean'</code>, <code>'dna'</code>, <code>'rna'</code>, <code>'protein'</code>).</p>
+<p><strong>maximize</strong> : <code>bool</code>, default=<code>True</code> — Optimization direction. <code>True</code> means higher fitness is better.</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Key Attributes</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Attribute</th>
+<th style="text-align: left;">Type</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><code>graph</code></td>
+<td style="text-align: left;"><code>igraph.Graph</code></td>
+<td style="text-align: left;">Directed fitness landscape graph.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>n_configs</code></td>
+<td style="text-align: left;"><code>int</code></td>
+<td style="text-align: left;">Total configurations.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>n_lo</code></td>
+<td style="text-align: left;"><code>int</code></td>
+<td style="text-align: left;">Number of local optima.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>go</code></td>
+<td style="text-align: left;"><code>int</code></td>
+<td style="text-align: left;">Global optimum node index.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>shape</code></td>
+<td style="text-align: left;"><code>tuple</code></td>
+<td style="text-align: left;"><code>(n_configs, n_edges)</code> of the graph.</td>
+</tr>
+</tbody>
+</table>
+</div>
+<h4 id="methods_2">Methods</h4>
+<div class="method-card">
+<h4 id="build_from_data"><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 13c-2.17 0-4.07 1.16-5.12 2.89-.6.07-1.23.11-1.88.11-4.42 0-8-1.79-8-4V9c0 2.21 3.58 4 8 4s8-1.79 8-4v3c0 .36-.1.71-.28 1.05C19.5 13 19.24 13 19 13m-7-2c4.42 0 8-1.79 8-4s-3.58-4-8-4-8 1.79-8 4 3.58 4 8 4m1.1 6.96c-.36.04-.73.04-1.1.04-4.42 0-8-1.79-8-4v3c0 2.21 3.58 4 8 4 .46 0 .9 0 1.33-.06A6 6 0 0 1 13 19c0-.36.04-.7.1-1.04M19 15l-3 3h2v4h2v-4h2z"/></svg></span> build_from_data</h4>
+<p><span class="sig-block"><span class="py-function-name">.build_from_data</span>(<span class="py-parameter-name">X</span>, <span class="py-parameter-name">f</span>, <span class="py-parameter-name">data_types</span>=<span class="py-literal-number">None</span>, <span class="py-parameter-name">calculate_basins</span>=<span class="py-literal-number">True</span>, <span class="py-parameter-name">verbose</span>=<span class="py-literal-number">True</span>) → <span class="py-type">None</span></span></p>
+<p>Construct the landscape graph from configuration data. Populates core attributes and enables analysis.</p>
+<dl>
+<dt><code>X</code> : <em>DataFrame</em></dt>
+<dd>Configuration data where rows are genotypes and columns are variables.</dd>
+<dt><code>f</code> : <em>Series</em></dt>
+<dd>Fitness values corresponding to each configuration.</dd>
+<dt><code>data_types</code> : <em>dict, optional</em></dt>
+<dd>Dictionary specifying variable types.</dd>
+<dt><code>calculate_basins</code> : <em>bool, default=True</em></dt>
+<dd>Whether to compute basins of attraction.</dd>
+</dl>
+</div>
+<div class="method-card">
+<h4 id="get_data"><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 3h14a2 2 0 0 1 2 2v7.08a6 6 0 0 0-4.32.92H12v4h1.08c-.11.68-.11 1.35 0 2H4a2 2 0 0 1-2-2V5c0-1.1.9-2 2-2m0 4v4h6V7zm8 0v4h6V7zm-8 6v4h6v-4zm15.44 8v-2h-4v-2h4v-2l3 3z"/></svg></span> get_data</h4>
+<p><span class="sig-block"><span class="py-function-name">.get_data</span>(<span class="py-parameter-name">lo_only</span>=<span class="py-literal-number">False</span>) → <span class="py-type">pandas.DataFrame</span></span></p>
+<p>Extract landscape data as a DataFrame. Returns all configurations by default, or local optima only with <code>lo_only=True</code>.</p>
+</div>
+<div class="method-card">
+<h4 id="describe"><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M11 9h2V7h-2m1 13c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8m0-18A10 10 0 0 0 2 12a10 10 0 0 0 10 10 10 10 0 0 0 10-10A10 10 0 0 0 12 2m-1 15h2v-6h-2z"/></svg></span> describe</h4>
+<p><span class="sig-block"><span class="py-function-name">.describe</span>() → <span class="py-type">None</span></span></p>
+<p>Print a summary of the landscape including size, optima count, optimization direction, and analysis status.</p>
+</div>
+<div class="admonition example">
+<p class="admonition-title">Usage</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">graphfla.landscape</span><span class="w"> </span><span class="kn">import</span> <span class="n">Landscape</span>
+<a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a>
+<a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a><span class="n">landscape</span> <span class="o">=</span> <span class="n">Landscape</span><span class="p">(</span><span class="nb">type</span><span class="o">=</span><span class="s2">&quot;boolean&quot;</span><span class="p">,</span> <span class="n">maximize</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a><span class="n">landscape</span><span class="o">.</span><span class="n">build_from_data</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">fitness</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<a id="__codelineno-8-5" name="__codelineno-8-5" href="#__codelineno-8-5"></a>
+<a id="__codelineno-8-6" name="__codelineno-8-6" href="#__codelineno-8-6"></a><span class="nb">print</span><span class="p">(</span><span class="n">landscape</span><span class="p">)</span>
+<a id="__codelineno-8-7" name="__codelineno-8-7" href="#__codelineno-8-7"></a><span class="c1"># Landscape with 9 variables, 135178 configurations, ...</span>
+<a id="__codelineno-8-8" name="__codelineno-8-8" href="#__codelineno-8-8"></a>
+<a id="__codelineno-8-9" name="__codelineno-8-9" href="#__codelineno-8-9"></a><span class="n">df</span> <span class="o">=</span> <span class="n">landscape</span><span class="o">.</span><span class="n">get_data</span><span class="p">()</span>
+<a id="__codelineno-8-10" name="__codelineno-8-10" href="#__codelineno-8-10"></a><span class="n">df_lo</span> <span class="o">=</span> <span class="n">landscape</span><span class="o">.</span><span class="n">get_data</span><span class="p">(</span><span class="n">lo_only</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</code></pre></div>
+</div>
+</div>
+<hr class="api-divider">
+
+<h3 id="template-c5-minimal-clean">Template C5 — Minimal Clean</h3>
+<p><em>Typography-focused with minimal decoration. Uses definition lists and subtle separators for an elegant, distraction-free reading experience.</em></p>
+<div class="template-section">
+<p><span class="template-label">C5</span></p>
+<p><span class="sig-block-minimal"><span class="py-keyword">class</span> <span class="py-class-name">graphfla.landscape.</span><span class="py-function-name">Landscape</span>(<span class="py-parameter-name">type</span>=<span class="py-literal-string">'default'</span>, <span class="py-parameter-name">maximize</span>=<span class="py-literal-number">True</span>)</span></p>
+<p>Fitness landscape represented as a directed graph where nodes are genotypes and edges connect mutational neighbors pointing towards fitter variants. Landscape can be constructed from raw data (<code>build_from_data</code>) or from an existing graph (<code>build_from_graph</code>).</p>
+<p><strong>Constructor</strong></p>
+<dl>
+<dt><code>type</code> : <em>str, default='default'</em></dt>
+<dd>Landscape type. One of <code>'default'</code>, <code>'boolean'</code>, <code>'dna'</code>, <code>'rna'</code>, <code>'protein'</code>, <code>'sequence'</code>.</dd>
+<dt><code>maximize</code> : <em>bool, default=True</em></dt>
+<dd>Optimization direction. <code>True</code> = maximize fitness (peaks are optima).</dd>
+</dl>
+<p><strong>Attributes</strong></p>
+<dl>
+<dt><code>graph</code> : <em>igraph.Graph</em></dt>
+<dd>The directed graph representing the fitness landscape.</dd>
+<dt><code>n_configs</code> : <em>int</em></dt>
+<dd>Total number of configurations (nodes) in the landscape.</dd>
+<dt><code>n_vars</code> : <em>int</em></dt>
+<dd>Number of variables defining a configuration.</dd>
+<dt><code>n_lo</code> : <em>int</em></dt>
+<dd>Number of local optima in the landscape.</dd>
+<dt><code>go</code> : <em>int</em></dt>
+<dd>Node index of the global optimum.</dd>
+<dt><code>shape</code> : <em>tuple</em></dt>
+<dd><code>(n_configs, n_edges)</code> of the landscape graph.</dd>
+</dl>
+<hr />
+<p><strong>Methods</strong></p>
+<hr />
+<p><span class="sig-block-minimal"><span class="py-function-name">.build_from_data</span>(<span class="py-parameter-name">X</span>, <span class="py-parameter-name">f</span>, <span class="py-parameter-name">data_types</span>=<span class="py-literal-number">None</span>, <span class="py-parameter-name">calculate_basins</span>=<span class="py-literal-number">True</span>, <span class="py-parameter-name">verbose</span>=<span class="py-literal-number">True</span>) → <span class="py-type">None</span></span></p>
+<p>Construct the landscape graph from configuration data.</p>
+<dl>
+<dt><code>X</code> : <em>DataFrame</em></dt>
+<dd>Configuration data (rows = genotypes, columns = variables).</dd>
+<dt><code>f</code> : <em>Series</em></dt>
+<dd>Fitness values for each configuration.</dd>
+<dt><code>data_types</code> : <em>dict, optional</em></dt>
+<dd>Variable type specification. Required when <code>type='default'</code>.</dd>
+<dt><code>calculate_basins</code> : <em>bool, default=True</em></dt>
+<dd>Whether to compute basins of attraction for each local optimum.</dd>
+<dt><code>verbose</code> : <em>bool, default=True</em></dt>
+<dd>Print progress during construction.</dd>
+</dl>
+<hr />
+<p><span class="sig-block-minimal"><span class="py-function-name">.get_data</span>(<span class="py-parameter-name">lo_only</span>=<span class="py-literal-number">False</span>) → <span class="py-type">pandas.DataFrame</span></span></p>
+<p>Extract landscape data as a pandas DataFrame.</p>
+<dl>
+<dt><code>lo_only</code> : <em>bool, default=False</em></dt>
+<dd>If <code>True</code>, returns only local optima data with LON attributes when available.</dd>
+</dl>
+<hr />
+<p><span class="sig-block-minimal"><span class="py-function-name">.describe</span>() → <span class="py-type">None</span></span></p>
+<p>Print a summary of the landscape properties, including size, optima count, and analysis status.</p>
+<hr />
+<p><strong>Example</strong></p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">graphfla.landscape</span><span class="w"> </span><span class="kn">import</span> <span class="n">Landscape</span>
+<a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a><span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a>
+<a id="__codelineno-9-4" name="__codelineno-9-4" href="#__codelineno-9-4"></a><span class="n">X</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span><span class="s1">&#39;var_0&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="s1">&#39;var_1&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]})</span>
+<a id="__codelineno-9-5" name="__codelineno-9-5" href="#__codelineno-9-5"></a><span class="n">f</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">([</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">,</span> <span class="mf">3.0</span><span class="p">,</span> <span class="mf">2.5</span><span class="p">])</span>
+<a id="__codelineno-9-6" name="__codelineno-9-6" href="#__codelineno-9-6"></a>
+<a id="__codelineno-9-7" name="__codelineno-9-7" href="#__codelineno-9-7"></a><span class="n">landscape</span> <span class="o">=</span> <span class="n">Landscape</span><span class="p">(</span><span class="nb">type</span><span class="o">=</span><span class="s2">&quot;boolean&quot;</span><span class="p">,</span> <span class="n">maximize</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<a id="__codelineno-9-8" name="__codelineno-9-8" href="#__codelineno-9-8"></a><span class="n">landscape</span><span class="o">.</span><span class="n">build_from_data</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<a id="__codelineno-9-9" name="__codelineno-9-9" href="#__codelineno-9-9"></a>
+<a id="__codelineno-9-10" name="__codelineno-9-10" href="#__codelineno-9-10"></a><span class="nb">print</span><span class="p">(</span><span class="n">landscape</span><span class="p">)</span>
+<a id="__codelineno-9-11" name="__codelineno-9-11" href="#__codelineno-9-11"></a><span class="c1"># Landscape with 2 variables, 4 configurations, ...</span>
+</code></pre></div>
+</div>
+
+
+
+
+
+
+
+  
+  
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+  <script>var tabs=__md_get("__tabs");if(Array.isArray(tabs))e:for(var set of document.querySelectorAll(".tabbed-set")){var labels=set.querySelector(".tabbed-labels");for(var tab of tabs)for(var label of labels.getElementsByTagName("label"))if(label.innerText.trim()===tab){var input=document.getElementById(label.htmlFor);input.checked=!0;continue e}}</script>
+
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <!--
+  Copyright (c) 2016-2024 Martin Donath <martin.donath@squidfunk.com>
+
+  Permission is hereby granted, free of charge, to any person obtaining a copy
+  of this software and associated documentation files (the "Software"), to
+  deal in the Software without restriction, including without limitation the
+  rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
+  sell copies of the Software, and to permit persons to whom the Software is
+  furnished to do so, subject to the following conditions:
+
+  The above copyright notice and this permission notice shall be included in
+  all copies or substantial portions of the Software.
+
+  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE
+  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+  IN THE SOFTWARE.
+-->
+
+<!-- Footer -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Footer Example</title>
+<style>
+    .footer {
+        width: 100%;
+        background-color: #333; /* Dark background */
+        color: #fff; /* Light text */
+        padding: 20px;
+        box-sizing: border-box;
+    }
+    .footer-container {
+        display: flex;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        width: 80%;
+        max-width: 1000px; /* Match this width with your site's main content width */
+        margin: 20px auto 0; /* Adjust the top margin as needed */
+        padding-bottom: 0; /* Remove any bottom padding */
+    }
+    .footer-column {
+        width: 20%; /* You can adjust the width as needed */
+        margin-bottom: 20px;
+    }
+    .footer-column h3 {
+    margin-bottom: 5px;
+    color: #fff; /* White color for titles */
+    }
+
+    /* Subsections in the ToC */
+    .footer-column ul {
+        list-style: none;
+        padding: 0;
+        font-size: 1.2em;
+    }
+
+    .footer-column ul li a {
+        color: #ccc; /* Light grey color for subsections */
+        text-decoration: none;
+        line-height: 2;
+    }
+    @media screen and (max-width: 768px) {
+        .footer-column {
+            width: 50%;
+        }
+    }
+    @media screen and (max-width: 480px) {
+        .footer-column {
+            width: 100%;
+        }
+    }
+</style>
+</head>
+<body>
+
+<footer class="md-footer">
+
+    <!-- Table of Contents -->
+    <div class="footer-container">
+        <div class="footer-column">
+            <h3>Home</h3>
+            <ul>
+                <li><a href="index.md">Home</a></li>
+            </ul>
+        </div>
+        <div class="footer-column">
+            <h3>Architecture</h3>
+            <ul>
+                <li><a href="docs/demo.md">Getting Started</a></li>
+                <li><a href="docs/demo.md">Advanced Usage</a></li>
+            </ul>
+        </div>
+        <div class="footer-column">
+            <h3>Getting Started</h3>
+            <ul>
+                <li><a href="docs/demo.md">Installation</a></li>
+                <li><a href="docs/demo.md">Configuration</a></li>
+            </ul>
+        </div>
+        <div class="footer-column">
+            <h3>API Reference</h3>
+            <ul>
+                <li><a href="docs/api/problems.md">Landscapes</a></li>
+                <li><a href="docs/api/algorithms.md">Metrics</a></li>
+                <li><a href="docs/api/operators.md">Visualization</a></li>
+                <li><a href="docs/api/indicators.md">Distances</a></li>
+                <li><a href="docs/api/visualization.md">Problems</a></li>
+                <li><a href="docs/api/analysis.md">Comparison</a></li>
+            </ul>
+        </div>
+        <div class="footer-column">
+            <h3>Use Cases</h3>
+            <ul>
+                <li><a href="docs/applications/hpo.md">Hyperparameter Optimization</a></li>
+                <li><a href="docs/applications/nas.md">Combinatorial Optimization</a></li>
+                <li><a href="docs/applications/protein.md">Protein Engineering</a></li>
+                <li><a href="docs/applications/water.md">Software Engineering</a></li>
+            </ul>
+        </div>
+        
+    </div>
+    
+
+    <!-- Link to previous and/or next page -->
+    
+  
+    <!-- Further information -->
+    <div class="md-footer-meta md-typeset">
+      <div class="md-footer-meta__inner md-grid">
+        <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      &copy; 2025 <a href="https://github.com/COLA-Laboratory/GraphFLA"  target="_blank" rel="noopener">Mingyu Huang</a>
+    </div>
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+  
+        <!-- Social links -->
+        
+          
+<div class="md-social">
+  
+    
+    
+    
+    
+      
+      
+    
+    <a href="https://github.com/COLA-Laboratory/GraphFLA" target="_blank" rel="noopener" title="github.com" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M202.1 328.7c0 20.9-10.9 55.1-36.7 55.1s-36.7-34.2-36.7-55.1 10.9-55.1 36.7-55.1 36.7 34.2 36.7 55.1M496 278.2c0 31.9-3.2 65.7-17.5 95-37.9 76.6-142.1 74.8-216.7 74.8-75.8 0-186.2 2.7-225.6-74.8-14.6-29-20.2-63.1-20.2-95 0-41.9 13.9-81.5 41.5-113.6-5.2-15.8-7.7-32.4-7.7-48.8 0-21.5 4.9-32.3 14.6-51.8 45.3 0 74.3 9 108.8 36 29-6.9 58.8-10 88.7-10 27 0 54.2 2.9 80.4 9.2 34-26.7 63-35.2 107.8-35.2 9.8 19.5 14.6 30.3 14.6 51.8 0 16.4-2.6 32.7-7.7 48.2 27.5 32.4 39 72.3 39 114.2m-64.3 50.5c0-43.9-26.7-82.6-73.5-82.6-18.9 0-37 3.4-56 6-14.9 2.3-29.8 3.2-45.1 3.2-15.2 0-30.1-.9-45.1-3.2-18.7-2.6-37-6-56-6-46.8 0-73.5 38.7-73.5 82.6 0 87.8 80.4 101.3 150.4 101.3h48.2c70.3 0 150.6-13.4 150.6-101.3m-82.6-55.1c-25.8 0-36.7 34.2-36.7 55.1s10.9 55.1 36.7 55.1 36.7-34.2 36.7-55.1-10.9-55.1-36.7-55.1"/></svg>
+    </a>
+  
+</div>
+        
+      </div>
+    </div>
+  </footer>
+
+</body>
+</html>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+      <div class="md-progress" data-md-component="progress" role="progressbar"></div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../../..", "features": ["math", "navigation.tabs", "navigation.sections", "navigation.tracking", "navigation.instant", "navigation.instant.preview", "navigation.instant.progress", "navigation.instant.prefetch", "navigation.top", "navigation.path", "navigation.expand", "navigation.indexes", "announce.dismiss", "header.autohide", "search.suggest", "search.highlight", "search.share", "content.tabs.link", "content.code.annotation", "content.code.copy", "content.code.select"], "search": "../../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+        <script src="../../../js/custom.js"></script>
+      
+        <script src="../../../javascripts/mathjax.js"></script>
+      
+        <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+      
+        <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+      
+    
+  </body>
+</html>
