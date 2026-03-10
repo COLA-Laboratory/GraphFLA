@@ -79,18 +79,6 @@ class Max3Sat(OptimizationProblem):
         """Convert binary string to Boolean configuration (True/False)."""
         return tuple(c == "1" for c in s)
 
-    def get_all_configs(self):
-        """
-        Generate all possible configurations (Boolean assignments) for the Max-3-SAT problem.
-
-        Returns
-        -------
-        iterator
-            An iterator over all Boolean configurations (tuples of True/False) of length `n`.
-        """
-        # Efficiently yields configurations one by one.
-        return itertools.product((True, False), repeat=self.n)
-
     def evaluate(self, config):
         """
         Evaluate the fitness of a configuration (Boolean assignment) in the Max-3-SAT problem.
@@ -208,17 +196,6 @@ class Knapsack(OptimizationProblem):
 
         return weights, values
 
-    def get_all_configs(self):
-        """
-        Generate all possible binary configurations for the Knapsack problem.
-
-        Returns
-        -------
-        iterator
-            An iterator over all binary configurations (tuples) of length `n`.
-        """
-        return itertools.product((0, 1), repeat=self.n)
-
     def evaluate(self, config):
         """
         Evaluate the fitness of a configuration in the Knapsack problem.
@@ -305,17 +282,6 @@ class NumberPartitioning(OptimizationProblem):
         """
         max_value = (1 << self.bit_precision) - 1  # 2^(alpha*n) - 1
         return [self.rng.randint(1, max_value) for _ in range(self.n)]
-
-    def get_all_configs(self):
-        """
-        Generate all possible binary configurations for the Number Partitioning problem.
-
-        Returns
-        -------
-        iterator
-            An iterator over all binary configurations (tuples) of length `n`.
-        """
-        return itertools.product((0, 1), repeat=self.n)
 
     def evaluate(self, config):
         """

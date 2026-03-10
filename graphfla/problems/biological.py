@@ -45,18 +45,6 @@ class NK(OptimizationProblem):
         # Using a dictionary is efficient for sparse access needed here.
         self.values = {}
 
-    def get_all_configs(self):
-        """
-        Generate all possible binary configurations for the NK model.
-
-        Returns
-        -------
-        iterator
-            An iterator over all binary configurations (tuples) of length `n`.
-        """
-        # itertools.product is memory-efficient as it yields configurations one by one.
-        return itertools.product((0, 1), repeat=self.n)
-
     def evaluate(self, config):
         """
         Evaluate the fitness of a configuration in the NK model.
@@ -139,17 +127,6 @@ class RoughMountFuji(OptimizationProblem):
 
         # Initialize rugged component values lazily during evaluation
         self.random_values = {}
-
-    def get_all_configs(self):
-        """
-        Generate all possible binary configurations for the RMF model.
-
-        Returns
-        -------
-        iterator
-            An iterator over all binary configurations (tuples) of length `n`.
-        """
-        return itertools.product((0, 1), repeat=self.n)
 
     def evaluate(self, config):
         """
@@ -281,17 +258,6 @@ class Additive(OptimizationProblem):
         #     [self.rng.random(), self.rng.random()] for _ in self.variables
         # ]) # Shape (n, 2)
 
-    def get_all_configs(self):
-        """
-        Generate all possible binary configurations for the Additive model.
-
-        Returns
-        -------
-        iterator
-            An iterator over all binary configurations (tuples) of length `n`.
-        """
-        return itertools.product((0, 1), repeat=self.n)
-
     def evaluate(self, config):
         """
         Evaluate the fitness of a configuration in the Additive model.
@@ -352,17 +318,6 @@ class Eggbox(OptimizationProblem):
         if frequency <= 0:
             raise ValueError("Frequency must be positive.")
         self.frequency = float(frequency)
-
-    def get_all_configs(self):
-        """
-        Generate all possible binary configurations for the Eggbox model.
-
-        Returns
-        -------
-        iterator
-            An iterator over all binary configurations (tuples) of length `n`.
-        """
-        return itertools.product((0, 1), repeat=self.n)
 
     def evaluate(self, config):
         """

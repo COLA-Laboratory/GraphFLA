@@ -50,29 +50,6 @@ class OptimizationProblem:
         """
         raise NotImplementedError("Subclasses should implement this method.")
 
-    def get_all_configs(self):
-        """
-        Generate all possible configurations for the problem.
-
-        This method should be implemented by subclasses to provide the
-        complete set of possible configurations for the problem.
-        For high-dimensional binary problems (large n), iterating through all
-        2^n configurations can be computationally infeasible.
-
-        Returns
-        -------
-        iterator
-            An iterator over all possible configurations.
-
-        Raises
-        ------
-        NotImplementedError
-            If the method is not implemented in a subclass.
-        """
-        raise NotImplementedError(
-            "Subclasses should define this method to generate all configurations."
-        )
-
     def _binary_string_to_config(self, s: str):
         """
         Convert a binary string to a configuration for evaluation.
