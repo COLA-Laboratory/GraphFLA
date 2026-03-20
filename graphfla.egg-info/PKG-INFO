@@ -1,6 +1,6 @@
 Metadata-Version: 2.4
 Name: graphfla
-Version: 0.2.4
+Version: 0.2.5
 Summary: A Python package for Graph-based Fitness Landscape Analysis.
 Home-page: https://github.com/COLA-Laboratory/GraphFLA/tree/main
 Author: Mingyu Huang
