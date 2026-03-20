@@ -22,6 +22,20 @@ import numpy as np
 from tqdm import tqdm
 
 
+def _neutral_abs_threshold(epsilon: float) -> float:
+    """Inclusive bound on |Δf| for classifying a neighbor pair as neutral.
+
+    For ``epsilon > 0``, returns the next float above *epsilon* so values that
+    differ from *epsilon* only at the last ULP (common after arithmetic on
+    fitness arrays) still count as neutral. For ``epsilon == 0``, returns
+    ``0.0`` so only exactly-zero |Δf| is neutral.
+    """
+    eps = float(epsilon)
+    if eps <= 0.0:
+        return 0.0
+    return float(np.nextafter(eps, np.inf))
+
+
 # ===================================================================
 # Neighbor generators
 # ===================================================================
@@ -62,12 +76,12 @@ class BooleanNeighborGenerator:
     ) -> List[Tuple]:
         """Generate neighbors by flipping bits."""
         if n_edit != 1:
-            warnings.warn(
-                f"BooleanNeighborGenerator only supports n_edit=1. "
-                f"Received n_edit={n_edit}. Returning no neighbors.",
-                UserWarning,
+            raise ValueError(
+                f"BooleanNeighborGenerator only supports n_edit=1 "
+                f"(single-bit flips). Received n_edit={n_edit}. "
+                f"Use neighborhood_strategy='pairwise' or 'broadcast' if you need "
+                f"Hamming neighborhoods with n_edit>1."
             )
-            return []
 
         return [
             config[:i] + (1 - config[i],) + config[i + 1 :]
@@ -94,12 +108,12 @@ class SequenceNeighborGenerator:
     ) -> List[Tuple]:
         """Generate neighbors by substituting at each position."""
         if n_edit != 1:
-            warnings.warn(
-                f"SequenceNeighborGenerator only supports n_edit=1. "
-                f"Received n_edit={n_edit}. Returning no neighbors.",
-                UserWarning,
+            raise ValueError(
+                f"SequenceNeighborGenerator only supports n_edit=1 "
+                f"(single-position substitutions). Received n_edit={n_edit}. "
+                f"Use neighborhood_strategy='pairwise' or 'broadcast' for "
+                f"Hamming neighborhoods with n_edit>1."
             )
-            return []
 
         neighbors = []
         for i, original in enumerate(config):
@@ -118,10 +132,11 @@ class DefaultNeighborGenerator:
     ) -> List[Tuple]:
         """Generate neighbors based on data types in config_dict."""
         if n_edit != 1:
-            warnings.warn(
-                f"DefaultNeighborGenerator only fully supports n_edit=1. "
-                f"Received n_edit={n_edit}.",
-                UserWarning,
+            raise ValueError(
+                f"DefaultNeighborGenerator only supports n_edit=1. "
+                f"Received n_edit={n_edit}. "
+                f"Use neighborhood_strategy='pairwise' or 'broadcast' for "
+                f"Hamming neighborhoods with n_edit>1."
             )
 
         neighbors = []
@@ -424,8 +439,13 @@ def _build_broadcast(
     n = len(data)
     fitness = data["fitness"].values
     configs_array = _as_config_matrix(configs, configs_array)
+    n_vars = configs_array.shape[1]
+    # Avoid allocating (n-i) x n_vars boolean arrays per row; chunk along j.
+    max_chunk_bytes = 128 * 1024**2
+    chunk_rows = max(1, max_chunk_bytes // max(n_vars, 1))
 
     edges, delta_fits, neutral = [], [], []
+    neutral_eps = _neutral_abs_threshold(epsilon)
 
     outer = (
         tqdm(range(n - 1), desc="# Constructing neighborhoods (broadcast)")
@@ -433,38 +453,47 @@ def _build_broadcast(
         else range(n - 1)
     )
 
+    row_view = configs_array
+
     for i in outer:
-        remaining = configs_array[i + 1:]
-        dists = np.count_nonzero(remaining != configs_array[i], axis=1)
-        valid_local = np.where((dists > 0) & (dists <= n_edit))[0]
+        row = row_view[i]
+        j_start = i + 1
+        while j_start < n:
+            j_end = min(j_start + chunk_rows, n)
+            block = row_view[j_start:j_end]
+            dists = np.count_nonzero(block != row, axis=1)
+            valid_local = np.where((dists > 0) & (dists <= n_edit))[0]
 
-        if len(valid_local) == 0:
-            continue
+            if len(valid_local) == 0:
+                j_start = j_end
+                continue
 
-        j_indices = (i + 1 + valid_local).astype(np.intp)
-        fit_diffs = fitness[i] - fitness[j_indices]
-        abs_diffs = np.abs(fit_diffs)
+            j_indices = (j_start + valid_local).astype(np.intp)
+            fit_diffs = fitness[i] - fitness[j_indices]
+            abs_diffs = np.abs(fit_diffs)
 
-        neutral_mask = abs_diffs <= epsilon
-        if np.any(neutral_mask):
-            neutral_j = j_indices[neutral_mask]
-            neutral.extend((i, int(j)) for j in neutral_j)
+            neutral_mask = abs_diffs <= neutral_eps
+            if np.any(neutral_mask):
+                neutral_j = j_indices[neutral_mask]
+                neutral.extend((i, int(j)) for j in neutral_j)
 
-        improving_mask = ~neutral_mask
-        if np.any(improving_mask):
-            imp_j = j_indices[improving_mask]
-            imp_diffs = fit_diffs[improving_mask]
-            imp_abs = abs_diffs[improving_mask]
+            improving_mask = ~neutral_mask
+            if np.any(improving_mask):
+                imp_j = j_indices[improving_mask]
+                imp_diffs = fit_diffs[improving_mask]
+                imp_abs = abs_diffs[improving_mask]
 
-            if maximize:
-                src = np.where(imp_diffs < 0, i, imp_j)
-                tgt = np.where(imp_diffs < 0, imp_j, i)
-            else:
-                src = np.where(imp_diffs > 0, i, imp_j)
-                tgt = np.where(imp_diffs > 0, imp_j, i)
+                if maximize:
+                    src = np.where(imp_diffs < 0, i, imp_j)
+                    tgt = np.where(imp_diffs < 0, imp_j, i)
+                else:
+                    src = np.where(imp_diffs > 0, i, imp_j)
+                    tgt = np.where(imp_diffs > 0, imp_j, i)
 
-            edges.extend(zip(src.tolist(), tgt.tolist()))
-            delta_fits.extend(imp_abs.tolist())
+                edges.extend(zip(src.tolist(), tgt.tolist()))
+                delta_fits.extend(imp_abs.tolist())
+
+            j_start = j_end
 
     if verbose:
         print(f" - Identified {len(edges)} improving connections.")
@@ -512,7 +541,8 @@ def _classify_pairs(i_arr, j_arr, fitness, epsilon, maximize, verbose):
     deltas = fit_i - fit_j
     abs_deltas = np.abs(deltas)
 
-    neutral_mask = abs_deltas <= epsilon
+    neutral_eps = _neutral_abs_threshold(epsilon)
+    neutral_mask = abs_deltas <= neutral_eps
     neutral_pairs = list(
         zip(i_arr[neutral_mask].tolist(), j_arr[neutral_mask].tolist())
     )
@@ -565,6 +595,7 @@ def _active_boolean_bytemap(
     append_edge = edges.append
     append_delta = delta_fits.append
     append_neutral = neutral_pairs.append
+    neutral_eps = _neutral_abs_threshold(epsilon)
 
     it = (
         tqdm(
@@ -591,7 +622,7 @@ def _active_boolean_bytemap(
             delta = current_fit - fitness[nid]
             abs_delta = abs(delta)
 
-            if abs_delta <= epsilon:
+            if abs_delta <= neutral_eps:
                 if cid < nid:
                     append_neutral((cid, nid))
             else:
@@ -611,6 +642,7 @@ def _active_sequence_bytemap(
     append_edge = edges.append
     append_delta = delta_fits.append
     append_neutral = neutral_pairs.append
+    neutral_eps = _neutral_abs_threshold(epsilon)
 
     it = (
         tqdm(
@@ -640,7 +672,7 @@ def _active_sequence_bytemap(
                 delta = current_fit - fitness[nid]
                 abs_delta = abs(delta)
 
-                if abs_delta <= epsilon:
+                if abs_delta <= neutral_eps:
                     if cid < nid:
                         append_neutral((cid, nid))
                 else:
@@ -665,6 +697,7 @@ def _active_generic(
     append_edge = edges.append
     append_delta = delta_fits.append
     append_neutral = neutral_pairs.append
+    neutral_eps = _neutral_abs_threshold(epsilon)
 
     it = (
         tqdm(
@@ -686,7 +719,7 @@ def _active_generic(
             delta = current_fit - fitness[nid]
             abs_delta = abs(delta)
 
-            if abs_delta <= epsilon:
+            if abs_delta <= neutral_eps:
                 if cid < nid:
                     append_neutral((cid, nid))
             else:

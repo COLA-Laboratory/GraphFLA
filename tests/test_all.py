@@ -366,6 +366,93 @@ def test_build_generic_landscape_protein(protein_sequence_data):
     )
 
 
+def test_plateau_containing_global_max_is_still_local_optimum():
+    X = pd.DataFrame(list(product([0, 1], repeat=3)))
+    fitness = [10.0, 9.6, 0.0, 9.1, -1.0, -1.0, 0.0, 9.7]
+
+    landscape = BooleanLandscape()
+    landscape.build_from_data(
+        X,
+        fitness,
+        epsilon=0.5,
+        calculate_basins=True,
+        calculate_paths=True,
+        verbose=False,
+    )
+
+    assert landscape.n_lo == 4
+    assert landscape.lo_index == [0, 1, 3, 7]
+    assert landscape.n_peak == 2
+    assert landscape._peak_index == [0, 7]
+    assert landscape.plateau_lo_index == [0]
+    assert landscape.plateaus[0] == [0, 1, 3]
+    assert landscape.graph.vs["is_lo"] == [
+        True,
+        True,
+        False,
+        True,
+        False,
+        False,
+        False,
+        True,
+    ]
+    assert [landscape.graph.vs["basin_index"][i] for i in [0, 1, 3]] == [0, 0, 0]
+
+
+def test_plateau_regression_no_zero_local_optima():
+    X = pd.DataFrame(list(product([0, 1], repeat=5)))
+    fitness = [
+        -1.1599119397622075,
+        0.6558030084807731,
+        0.8412870743140487,
+        0.9648669963989759,
+        -1.7702534901744165,
+        -1.888160042310207,
+        0.985754214100929,
+        -0.05748776728510379,
+        1.4481631496200673,
+        -0.8291688360102019,
+        0.9208080312017977,
+        -0.6643568253334865,
+        -0.65715768237795,
+        1.0941330885608245,
+        0.6444863655928873,
+        1.3135399812532982,
+        -0.9631077235435761,
+        0.3272278805444076,
+        -0.08292316594241168,
+        0.6175586221504188,
+        -0.624660158560445,
+        0.9854652119195818,
+        0.7162382007229012,
+        0.570823371894565,
+        0.45577948038404925,
+        0.23033813421912877,
+        0.5264799381021805,
+        -1.6830230096239733,
+        -0.4691233473478074,
+        -1.798799136014413,
+        -0.63883339770879,
+        -0.6969173560844198,
+    ]
+
+    landscape = BooleanLandscape()
+    landscape.build_from_data(
+        X,
+        fitness,
+        epsilon=1.0,
+        calculate_basins=True,
+        calculate_paths=True,
+        verbose=False,
+    )
+
+    assert landscape.go_index == 8
+    assert landscape.n_lo > 0
+    assert landscape.graph.vs["is_lo"][8]
+    assert 8 in landscape.lo_index
+    assert landscape.n_peak > 0
+
+
 # ------
 # Feature Calculation Tests (Boolean Landscape)
 # ------

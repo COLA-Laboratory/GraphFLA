@@ -88,32 +88,26 @@ def determine_accessible_paths(self):
     dict_size = defaultdict(int)
 
     try:
-        if self._has_plateaus and self.plateau_lo_index:
-            # Plateau-aware: union ancestors of all members per plateau-LO
-            plateau_lo_items = []
-            for item in self.plateau_lo_index:
-                if item in self._plateaus:
-                    plateau_lo_items.append(("plateau", item))
-                else:
-                    plateau_lo_items.append(("node", item))
-
-            items_iter = (
-                tqdm(plateau_lo_items, desc="   - Finding ancestors")
+        if self._has_plateaus and self._peak_index:
+            peak_iter = (
+                tqdm(self._peak_index, desc="   - Finding ancestors")
                 if self.verbose
-                else plateau_lo_items
+                else self._peak_index
             )
 
-            for kind, item_id in items_iter:
-                if kind == "plateau":
-                    members = self._plateaus[item_id]
+            for rep in peak_iter:
+                pid = int(self._node_to_plateau[rep])
+                if pid >= 0 and pid in self.plateaus:
+                    members = self.plateaus[pid]
                     ancestors = set()
                     for member in members:
-                        ancestors.update(self.graph.subcomponent(member, mode="in"))
-                    representative = min(members)
-                    dict_size[representative] = len(ancestors)
+                        ancestors.update(
+                            self.graph.subcomponent(member, mode="in")
+                        )
+                    dict_size[rep] = len(ancestors)
                 else:
-                    ancestors_set = self.graph.subcomponent(item_id, mode="in")
-                    dict_size[item_id] = len(ancestors_set)
+                    ancestors_set = self.graph.subcomponent(rep, mode="in")
+                    dict_size[rep] = len(ancestors_set)
         else:
             los_iter = (
                 tqdm(self.lo_index, total=self.n_lo, desc="   - Finding ancestors")

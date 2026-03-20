@@ -21,7 +21,7 @@ def timeit(method):
         result = method(*args, **kwargs)
         end_time = time.time()
         elapsed_time = end_time - start_time
-        print(f"Method {method.__name__} executed in {elapsed_time:.4f} seconds.")
+        # print(f"Method {method.__name__} executed in {elapsed_time:.4f} seconds.")
         return result
 
     return timed
@@ -122,6 +122,63 @@ def filter_graph(graph, maximize, tau, filter_mode, verbose):
         )
 
     return graph, n_configs, n_edges, kept_vertex_indices
+
+
+def remove_isolated_nodes(graph, verbose=False):
+    """Remove nodes with no incident edges from the landscape graph.
+
+    Parameters
+    ----------
+    graph : ig.Graph
+        The directed landscape graph.
+    verbose : bool, default=False
+        Whether to print removal information.
+
+    Returns
+    -------
+    tuple (graph, n_configs, n_edges, kept_indices) or None
+        ``None`` when no isolated nodes exist; otherwise the pruned graph
+        and the original vertex indices that were retained.
+
+    Raises
+    ------
+    ValueError
+        If the graph contains no edges at all (fully disconnected).
+    """
+    if graph.ecount() == 0:
+        raise ValueError(
+            "Landscape graph has no edges. No neighboring configurations "
+            "were detected in the dataset. This usually means the "
+            "configuration space is too sparsely sampled or the "
+            "neighborhood definition (n_edit, encoding) does not match "
+            "the data."
+        )
+
+    total_degree = np.asarray(graph.degree())
+    isolated_mask = total_degree == 0
+    n_isolated = int(isolated_mask.sum())
+
+    if n_isolated == 0:
+        return None
+
+    warnings.warn(
+        f"{n_isolated} isolated configuration(s) with no neighbors "
+        f"detected and removed from the landscape graph. These nodes "
+        f"had no mutational neighbors in the dataset under the current "
+        f"neighborhood definition.",
+        UserWarning,
+    )
+
+    kept_indices = np.flatnonzero(~isolated_mask).tolist()
+    graph = graph.induced_subgraph(kept_indices)
+
+    if verbose:
+        print(
+            f" - Removed {n_isolated} isolated node(s); "
+            f"{graph.vcount()} nodes remain."
+        )
+
+    return graph, graph.vcount(), graph.ecount(), kept_indices
 
 
 def autocorr_numpy(x, lag=1):

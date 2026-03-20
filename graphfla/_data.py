@@ -254,6 +254,14 @@ class DefaultHandler:
                 raise TypeError(
                     f"Could not convert input X (ndarray) to DataFrame: {e}"
                 )
+            # When X is an ndarray the caller may naturally use integer column
+            # indices as data_types keys (e.g. {0: 'boolean', 1: 'categorical'}).
+            # Silently remap them to the var_i names assigned above so users
+            # don't have to know the internal column naming convention.
+            if isinstance(data_types, dict) and data_types and all(
+                isinstance(k, (int, np.integer)) for k in data_types.keys()
+            ):
+                data_types = {f"var_{k}": v for k, v in data_types.items()}
         elif isinstance(X, pd.DataFrame):
             X_df = X.copy()
         else:
@@ -432,11 +440,11 @@ def clean_data(
     f_in: pd.Series,
     verbose: bool = False,
 ) -> Tuple[pd.DataFrame, pd.Series]:
-    """Clean unusable rows and duplicate configurations."""
+    """Warn on missing values (no row drops) and remove duplicate configurations."""
     if verbose:
         print(" - Handling missing values and duplicates...")
 
-    X_clean, f_clean = _drop_missing(X_in, f_in, verbose=verbose)
+    X_clean, f_clean = _warn_if_missing(X_in, f_in, verbose=verbose)
     if len(X_clean) == 0:
         raise ValueError("All data removed during missing value handling.")
 
@@ -461,8 +469,12 @@ def encode_data(
     nunique = X.nunique()
     invariant_cols = nunique.index[nunique <= 1].tolist()
 
+    # X_for_encoding is the reduced view used internally for neighbor computation
+    # and graph construction.  The full original X is kept so that invariant
+    # columns remain visible to the user via get_data().
+    X_for_encoding = X
     if invariant_cols:
-        X = X.drop(columns=invariant_cols)
+        X_for_encoding = X.drop(columns=invariant_cols)
         prepared_data_types = {
             key: value
             for key, value in prepared_data_types.items()
@@ -470,15 +482,42 @@ def encode_data(
         }
         if verbose:
             print(
-                f" - Removed {len(invariant_cols)} invariant variable(s); "
-                f"{len(prepared_data_types)} variable(s) remaining."
+                f" - Removed {len(invariant_cols)} invariant variable(s) from "
+                f"internal encoding; {len(prepared_data_types)} variable(s) used "
+                f"for neighbor computation. Invariant column(s) are preserved in "
+                f"the node attributes visible via get_data()."
             )
+
+    if not prepared_data_types:
+        raise ValueError(
+            "All variables are invariant (take a single unique value across "
+            "every configuration). This typically happens when all input rows "
+            "are identical and deduplication reduces the data to a single "
+            "configuration. The landscape cannot be built from data with no "
+            "variation — there are no pairs of neighbors to connect. "
+            "Ensure your dataset contains at least two distinct configurations "
+            "that differ in at least one variable."
+        )
 
     encoded_columns = {}
     for col, dtype in prepared_data_types.items():
-        col_data = X[col]
+        col_data = X_for_encoding[col]
         if dtype == "boolean":
-            encoded_columns[col] = col_data.astype(bool).astype(int)
+            num = pd.to_numeric(col_data, errors="coerce")
+            invalid = col_data.notna() & (num.isna() | ~((num == 0) | (num == 1)))
+            if invalid.any():
+                bad = col_data.loc[invalid].head(5).tolist()
+                raise ValueError(
+                    f"Column {col!r} is declared 'boolean' but contains values that "
+                    f"are not 0/1 (or True/False) after numeric coercion (examples: {bad}). "
+                    "Fix the column or choose a different data_types entry."
+                )
+            if num.isnull().any():
+                raise ValueError(
+                    f"Column {col!r} contains NaN. Impute, drop those rows, or remove "
+                    "the site before building the landscape."
+                )
+            encoded_columns[col] = num.astype(int)
         elif dtype == "categorical":
             if isinstance(col_data.dtype, pd.CategoricalDtype):
                 encoded_columns[col] = col_data.cat.codes
@@ -494,7 +533,20 @@ def encode_data(
                 f"Unsupported data type '{dtype}' encountered during encoding."
             )
 
-    X_encoded = pd.DataFrame(encoded_columns, index=X.index, copy=False)
+    if X_for_encoding.isnull().any().any():
+        nan_cols = X_for_encoding.columns[X_for_encoding.isnull().any()].tolist()
+        raise ValueError(
+            "Cannot encode configurations: NaN in feature column(s) "
+            f"{nan_cols[:25]}{'...' if len(nan_cols) > 25 else ''}. "
+            "Impute, drop affected rows, or remove sites before building."
+        )
+
+    if f.isnull().any():
+        raise ValueError(
+            "Fitness `f` contains NaN. Remove or impute missing fitness values before building."
+        )
+
+    X_encoded = pd.DataFrame(encoded_columns, index=X_for_encoding.index, copy=False)
     encoded_array = X_encoded.to_numpy(copy=False)
     max_code = int(encoded_array.max()) if encoded_array.size else 0
     if max_code <= np.iinfo(np.uint8).max:
@@ -523,7 +575,17 @@ def encode_data(
 
     config_dict = _build_config_dict(prepared_data_types, X_encoded)
 
-    data_for_attributes = X.reset_index(drop=True)
+    # Build data_for_attributes from the FULL original X so invariant columns are
+    # visible to users calling get_data().  Non-invariant columns come first so
+    # that the rename logic in get_data() (which maps the first n_vars columns to
+    # data_types.keys()) remains correct.
+    if invariant_cols:
+        X_display = pd.concat(
+            [X[list(prepared_data_types.keys())], X[invariant_cols]], axis=1
+        )
+    else:
+        X_display = X
+    data_for_attributes = X_display.reset_index(drop=True)
     data_for_attributes["fitness"] = f.to_numpy(copy=False)
 
     return PreparedData(
@@ -844,49 +906,50 @@ def _parse_sequence_input(
     return X_df, data_types, seq_len
 
 
-def _drop_missing(
+def _warn_if_missing(
     X_in: pd.DataFrame,
     f_in: pd.Series,
     verbose: bool = False,
 ) -> Tuple[pd.DataFrame, pd.Series]:
-    """Handle missing values by dropping incomplete rows."""
-    if verbose:
-        print(" - Handling missing values...")
+    """Detect missing values in X or f and warn; do not alter rows.
 
-    X_out, f_out = X_in, f_in
-    initial_count = len(X_out)
+    Rows with NaNs are left in place so callers can impute, drop, or
+    otherwise handle them explicitly. :func:`encode_data` raises if NaNs
+    remain at encoding time.
+    """
+    if verbose:
+        print(" - Checking for missing values...")
+
+    X_out = X_in
 
     if X_out.isnull().values.any():
         nan_rows_X = X_out.isnull().any(axis=1)
-        n_removed_X = nan_rows_X.sum()
-        if verbose:
-            print(
-                f"   - Found {n_removed_X} rows with NaN in X (features). Removing them."
-            )
-        X_out = X_out.loc[~nan_rows_X]
-        f_out = f_out.loc[~nan_rows_X]
-        if len(X_out) == 0:
-            warnings.warn("All rows removed due to NaNs in X.", RuntimeWarning)
-            return X_out, f_out
-
-    nan_mask_f = f_out.isnull()
-    if nan_mask_f.any():
-        n_missing_f = nan_mask_f.sum()
-        if verbose:
-            print(
-                f"   - Found {n_missing_f} rows with NaN in f (fitness). Removing them."
-            )
-        X_out = X_out.loc[~nan_mask_f]
-        f_out = f_out.loc[~nan_mask_f]
-
-    final_count = len(X_out)
-    if verbose and initial_count != final_count:
-        print(
-            f"   - Missing value handling complete. Kept {final_count}/{initial_count} configurations."
+        n_nan_X = int(nan_rows_X.sum())
+        nan_cols = X_out.columns[X_out.isnull().any()].tolist()
+        msg = (
+            f"Found {n_nan_X} row(s) with NaN in feature matrix X (affected columns "
+            f"include {nan_cols[:15]}{'...' if len(nan_cols) > 15 else ''}). "
+            "Rows were not dropped; impute or drop NaNs before building, or "
+            "encode_data will raise."
         )
+        warnings.warn(msg, UserWarning)
+        if verbose:
+            print(f"   - {msg}")
 
-    f_out = f_out.loc[X_out.index]
-    return X_out, f_out
+    f_aligned = f_in.loc[X_out.index]
+    nan_mask_f = f_aligned.isnull()
+    if nan_mask_f.any():
+        n_missing_f = int(nan_mask_f.sum())
+        msg = (
+            f"Found {n_missing_f} row(s) with NaN in fitness f (for rows in X). "
+            "Rows were not dropped; fix fitness values before building, or "
+            "encode_data will raise."
+        )
+        warnings.warn(msg, UserWarning)
+        if verbose:
+            print(f"   - {msg}")
+
+    return X_out, f_aligned
 
 
 def _drop_duplicates(
