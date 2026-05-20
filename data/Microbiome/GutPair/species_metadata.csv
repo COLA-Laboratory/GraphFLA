@@ -1,0 +1,16 @@
+species_code,species_long,internal_strain_id,strain_id,uniprot_proteome,n_proteins
+Ar,Agathobacter rectalis (formerly Eubacterium rectale),NT5009,DSM 17629,UP000007057,2898
+Bt,Bacteroides thetaiotaomicron,NT5004,DSM 2079,UP000001414,4782
+Bu,Bacteroides uniformis,NT5002,DSM 6597,UP000183225,3820
+Ca,Collinsella aerofaciens,NT5073,DSM 3979,UP000002979,2320
+Cd,Clostridioides difficile (formerly Clostridium difficile),NT5083,DSM 27543,UP000001978,3762
+Cs,Clostridium sporogenes,KPG25,DSM 1664,UP000473819,3637
+Ec,Escherichia coli,NT5077,IAI1,UP000007098,4331
+Ka,Klebsiella aerogenes,KPG27,DSM 30053,UP000268666,5670
+La,Lactobacillus acidophilus,NT5041,ATCC 700396,UP000006381,1859
+Lg,Lactobacillus gasseri,NT5007,DSM 20243,UP000003684,2244
+Ls,Lacrimispora saccharolytica (formerly Clostridium saccharolyticum),NT5037,DSM 2544,UP000001662,4133
+Pm,Parabacteroides merdae ,NT5071,DSM 19495,UP000004276,4351
+Pv,Phocaeicola vulgatus (formerly Bacteroides vulgatus),KPG23,DSM 1447 ,UP000002861,3982
+Rg,Ruminococcus gnavus,KPG22,DSM 108212 ,UP000004410,3881
+Sc,Segatella copri (formerly Prevotella copri),KPG12,DSM 18205,UP000004477,3331

@@ -1,0 +1,9 @@
+solvent,solvent_long,polarity_bucket,dielectric_25C,boiling_point_C
+benzene,Benzene,nonpolar-apolar,2.28,80.1
+toluene,Toluene,nonpolar-apolar,2.38,110.6
+etoac,Ethyl acetate,polar-aprotic,6.02,77.1
+acet,Acetone,polar-aprotic,20.7,56.0
+dmso,Dimethyl sulfoxide,polar-aprotic,46.68,189.0
+dmf,"N,N-Dimethylformamide",polar-aprotic,36.71,153.0
+etoh,Ethanol,polar-protic,24.55,78.4
+h2o,Water,polar-protic,78.54,100.0

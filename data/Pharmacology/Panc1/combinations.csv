@@ -1,0 +1,497 @@
+compound_a,compound_b,gamma,label_synergistic,moa_a,moa_b
+Daporinad,Pralatrexate,0.980325,0,NAMPT Inhibitor,Dihydrofolate Reductase (DHFR) Inhibitors
+Daporinad,RGB-286147,0.970045,0,NAMPT Inhibitor,CDK1/2/3/7/9 Inhibitor
+Daporinad,GMX-1778,0.60559,1,NAMPT Inhibitor,IKK beta Inhibitor
+Daporinad,KX-01,0.90619,1,NAMPT Inhibitor,Src Kinase Inhibitor
+Bortezomib,Daporinad,0.870655,1,Proteasome Inhibitor,NAMPT Inhibitor
+Daporinad,Sepantronium bromide,1.032325,0,NAMPT Inhibitor,Survivin Inhibitor
+CPG-52364,Daporinad,1.06726,0,"TLR 7, 8 and 9 Antagonist",NAMPT Inhibitor
+Daporinad,HMSL10077,0.953735,0,NAMPT Inhibitor,BTK Inhibitor
+Daporinad,Dinaciclib (SCH727965),1.048415,0,NAMPT Inhibitor,CDK1/2/5/9 Inhibitor
+Daporinad,MK-1775,0.97986,0,NAMPT Inhibitor,Wee1 Kinase Inhibitor
+Daporinad,Panobinostat,0.647755,1,NAMPT Inhibitor,HDAC Inhibitor
+Carfilzomib,Daporinad,0.363185,1,Proteasome Inhibitor,NAMPT Inhibitor
+Daporinad,Fascaplysin,0.754665,1,NAMPT Inhibitor,CDK4/6 Inhibitor
+Daporinad,Oprozomib,0.7344999999999999,1,NAMPT Inhibitor,Proteasome Inhibitor
+CAY-10581,Daporinad,0.868555,1,IDO Inhibitor,NAMPT Inhibitor
+Daporinad,GW-843682X,0.850025,1,NAMPT Inhibitor,Polo-like Kinase-1 (Plk-1) Inhibitor
+Daporinad,NSC-319726,0.9822,0,NAMPT Inhibitor,Mutant p53 Activator
+Daporinad,IVX-214,0.97896,0,NAMPT Inhibitor,Polo-like Kinase-1 (Plk-1) Inhibitor
+BMS-3,Daporinad,0.86819,1,LIMK Inhibitor,NAMPT Inhibitor
+Daporinad,NCGC00188382-01,1.0901,0,NAMPT Inhibitor,ITK inhibitor
+BS-194,Daporinad,1.064615,0,CDK1/2/5/9 Inhibitor,NAMPT Inhibitor
+"Akt-I-1,2",Daporinad,1.06765,0,AKT Inhibitor,NAMPT Inhibitor
+Daporinad,Volasertib,0.995335,0,NAMPT Inhibitor,Polo-like Kinase-1 (Plk-1) Inhibitor
+Daporinad,JS-59-4,0.993775,0,NAMPT Inhibitor,nitric oxide donors
+BI-2536,Daporinad,0.91023,1,Polo-like Kinase-1 (Plk-1) Inhibitor,NAMPT Inhibitor
+Daporinad,Parogrelil,0.7792749999999999,1,NAMPT Inhibitor,Phosphodiesterase III/Va (PDE) Inhibitor
+Daporinad,GSK-461364A,0.870115,1,NAMPT Inhibitor,Polo-like Kinase-1 (Plk-1) Inhibitor
+Daporinad,Osanetant,0.827245,1,NAMPT Inhibitor,Tachykinin NK3 Antagonist
+Pralatrexate,RGB-286147,1.0121099999999998,0,Dihydrofolate Reductase (DHFR) Inhibitors,CDK1/2/3/7/9 Inhibitor
+KX-01,RGB-286147,0.8942649999999999,1,Src Kinase Inhibitor,CDK1/2/3/7/9 Inhibitor
+HMSL10077,RGB-286147,0.806735,1,BTK Inhibitor,CDK1/2/3/7/9 Inhibitor
+Dinaciclib (SCH727965),RGB-286147,0.818225,1,CDK1/2/5/9 Inhibitor,CDK1/2/3/7/9 Inhibitor
+Fascaplysin,RGB-286147,0.8144750000000001,1,CDK4/6 Inhibitor,CDK1/2/3/7/9 Inhibitor
+NSC-319726,RGB-286147,0.8843749999999999,1,Mutant p53 Activator,CDK1/2/3/7/9 Inhibitor
+IVX-214,RGB-286147,0.879775,1,Polo-like Kinase-1 (Plk-1) Inhibitor,CDK1/2/3/7/9 Inhibitor
+BMS-3,RGB-286147,0.913285,1,LIMK Inhibitor,CDK1/2/3/7/9 Inhibitor
+BS-194,RGB-286147,0.7811300000000001,1,CDK1/2/5/9 Inhibitor,CDK1/2/3/7/9 Inhibitor
+"Akt-I-1,2",RGB-286147,0.826355,1,AKT Inhibitor,CDK1/2/3/7/9 Inhibitor
+JS-59-4,RGB-286147,0.811085,1,nitric oxide donors,CDK1/2/3/7/9 Inhibitor
+Parogrelil,RGB-286147,0.8405800000000001,1,Phosphodiesterase III/Va (PDE) Inhibitor,CDK1/2/3/7/9 Inhibitor
+GMX-1778,Pralatrexate,0.98488,0,IKK beta Inhibitor,Dihydrofolate Reductase (DHFR) Inhibitors
+GMX-1778,RGB-286147,1.104005,0,IKK beta Inhibitor,CDK1/2/3/7/9 Inhibitor
+GMX-1778,KX-01,1.02792,0,IKK beta Inhibitor,Src Kinase Inhibitor
+GMX-1778,HMSL10077,0.96849,0,IKK beta Inhibitor,BTK Inhibitor
+Dinaciclib (SCH727965),GMX-1778,1.193215,0,CDK1/2/5/9 Inhibitor,IKK beta Inhibitor
+Fascaplysin,GMX-1778,0.8026899999999999,1,CDK4/6 Inhibitor,IKK beta Inhibitor
+GMX-1778,Oprozomib,0.673875,1,IKK beta Inhibitor,Proteasome Inhibitor
+GMX-1778,NSC-319726,0.9032,1,IKK beta Inhibitor,Mutant p53 Activator
+GMX-1778,IVX-214,0.95602,0,IKK beta Inhibitor,Polo-like Kinase-1 (Plk-1) Inhibitor
+BMS-3,GMX-1778,0.94614,1,LIMK Inhibitor,IKK beta Inhibitor
+BS-194,GMX-1778,1.0287000000000002,0,CDK1/2/5/9 Inhibitor,IKK beta Inhibitor
+"Akt-I-1,2",GMX-1778,0.898695,1,AKT Inhibitor,IKK beta Inhibitor
+GMX-1778,JS-59-4,0.940215,1,IKK beta Inhibitor,nitric oxide donors
+GMX-1778,Parogrelil,0.7721199999999999,1,IKK beta Inhibitor,Phosphodiesterase III/Va (PDE) Inhibitor
+KX-01,Pralatrexate,1.097535,0,Src Kinase Inhibitor,Dihydrofolate Reductase (DHFR) Inhibitors
+HMSL10077,KX-01,0.92041,1,BTK Inhibitor,Src Kinase Inhibitor
+Dinaciclib (SCH727965),KX-01,0.901095,1,CDK1/2/5/9 Inhibitor,Src Kinase Inhibitor
+Fascaplysin,KX-01,1.017665,0,CDK4/6 Inhibitor,Src Kinase Inhibitor
+KX-01,NSC-319726,0.8888199999999999,1,Src Kinase Inhibitor,Mutant p53 Activator
+JS-59-4,KX-01,1.028235,0,nitric oxide donors,Src Kinase Inhibitor
+Bortezomib,Pralatrexate,0.99565,0,Proteasome Inhibitor,Dihydrofolate Reductase (DHFR) Inhibitors
+Bortezomib,RGB-286147,0.818285,1,Proteasome Inhibitor,CDK1/2/3/7/9 Inhibitor
+Bortezomib,GMX-1778,0.828125,1,Proteasome Inhibitor,IKK beta Inhibitor
+Bortezomib,KX-01,0.89331,1,Proteasome Inhibitor,Src Kinase Inhibitor
+Bortezomib,Sepantronium bromide,0.860355,1,Proteasome Inhibitor,Survivin Inhibitor
+Bortezomib,CPG-52364,0.92263,1,Proteasome Inhibitor,"TLR 7, 8 and 9 Antagonist"
+Bortezomib,HMSL10077,0.911865,1,Proteasome Inhibitor,BTK Inhibitor
+Bortezomib,Dinaciclib (SCH727965),0.90078,1,Proteasome Inhibitor,CDK1/2/5/9 Inhibitor
+Bortezomib,MK-1775,1.02378,0,Proteasome Inhibitor,Wee1 Kinase Inhibitor
+Bortezomib,Panobinostat,0.354935,1,Proteasome Inhibitor,HDAC Inhibitor
+Bortezomib,Carfilzomib,0.3801799999999999,1,Proteasome Inhibitor,Proteasome Inhibitor
+Bortezomib,Fascaplysin,1.000365,0,Proteasome Inhibitor,CDK4/6 Inhibitor
+Bortezomib,Oprozomib,0.52598,1,Proteasome Inhibitor,Proteasome Inhibitor
+Bortezomib,CAY-10581,0.8627849999999999,1,Proteasome Inhibitor,IDO Inhibitor
+Bortezomib,NSC-319726,0.9251,1,Proteasome Inhibitor,Mutant p53 Activator
+Bortezomib,IVX-214,0.91414,1,Proteasome Inhibitor,Polo-like Kinase-1 (Plk-1) Inhibitor
+BMS-3,Bortezomib,0.913135,1,LIMK Inhibitor,Proteasome Inhibitor
+BS-194,Bortezomib,0.8810150000000001,1,CDK1/2/5/9 Inhibitor,Proteasome Inhibitor
+"Akt-I-1,2",Bortezomib,0.940175,1,AKT Inhibitor,Proteasome Inhibitor
+Bortezomib,Volasertib,1.135255,0,Proteasome Inhibitor,Polo-like Kinase-1 (Plk-1) Inhibitor
+Bortezomib,JS-59-4,0.934335,1,Proteasome Inhibitor,nitric oxide donors
+BI-2536,Bortezomib,1.12322,0,Polo-like Kinase-1 (Plk-1) Inhibitor,Proteasome Inhibitor
+Bortezomib,Parogrelil,1.0060049999999998,0,Proteasome Inhibitor,Phosphodiesterase III/Va (PDE) Inhibitor
+Bortezomib,GSK-461364A,1.136035,0,Proteasome Inhibitor,Polo-like Kinase-1 (Plk-1) Inhibitor
+Bortezomib,Osanetant,0.8852549999999999,1,Proteasome Inhibitor,Tachykinin NK3 Antagonist
+Pralatrexate,Sepantronium bromide,0.91084,1,Dihydrofolate Reductase (DHFR) Inhibitors,Survivin Inhibitor
+RGB-286147,Sepantronium bromide,0.732275,1,CDK1/2/3/7/9 Inhibitor,Survivin Inhibitor
+GMX-1778,Sepantronium bromide,0.857205,1,IKK beta Inhibitor,Survivin Inhibitor
+KX-01,Sepantronium bromide,0.87887,1,Src Kinase Inhibitor,Survivin Inhibitor
+CPG-52364,Sepantronium bromide,1.081345,0,"TLR 7, 8 and 9 Antagonist",Survivin Inhibitor
+HMSL10077,Sepantronium bromide,0.862125,1,BTK Inhibitor,Survivin Inhibitor
+Dinaciclib (SCH727965),Sepantronium bromide,0.77239,1,CDK1/2/5/9 Inhibitor,Survivin Inhibitor
+MK-1775,Sepantronium bromide,1.00779,0,Wee1 Kinase Inhibitor,Survivin Inhibitor
+Panobinostat,Sepantronium bromide,0.745895,1,HDAC Inhibitor,Survivin Inhibitor
+Carfilzomib,Sepantronium bromide,0.65496,1,Proteasome Inhibitor,Survivin Inhibitor
+Fascaplysin,Sepantronium bromide,0.857175,1,CDK4/6 Inhibitor,Survivin Inhibitor
+Oprozomib,Sepantronium bromide,0.880405,1,Proteasome Inhibitor,Survivin Inhibitor
+CAY-10581,Sepantronium bromide,0.6710499999999999,1,IDO Inhibitor,Survivin Inhibitor
+NSC-319726,Sepantronium bromide,0.575,1,Mutant p53 Activator,Survivin Inhibitor
+IVX-214,Sepantronium bromide,0.768165,1,Polo-like Kinase-1 (Plk-1) Inhibitor,Survivin Inhibitor
+BMS-3,Sepantronium bromide,0.8381350000000001,1,LIMK Inhibitor,Survivin Inhibitor
+BS-194,Sepantronium bromide,0.903565,1,CDK1/2/5/9 Inhibitor,Survivin Inhibitor
+"Akt-I-1,2",Sepantronium bromide,0.989525,0,AKT Inhibitor,Survivin Inhibitor
+Sepantronium bromide,Volasertib,0.81177,1,Survivin Inhibitor,Polo-like Kinase-1 (Plk-1) Inhibitor
+JS-59-4,Sepantronium bromide,0.94253,1,nitric oxide donors,Survivin Inhibitor
+BI-2536,Sepantronium bromide,0.872995,1,Polo-like Kinase-1 (Plk-1) Inhibitor,Survivin Inhibitor
+Parogrelil,Sepantronium bromide,1.139235,0,Phosphodiesterase III/Va (PDE) Inhibitor,Survivin Inhibitor
+GSK-461364A,Sepantronium bromide,1.00962,0,Polo-like Kinase-1 (Plk-1) Inhibitor,Survivin Inhibitor
+Osanetant,Sepantronium bromide,0.849465,1,Tachykinin NK3 Antagonist,Survivin Inhibitor
+Daporinad,Methotrexate,0.8902350000000001,1,NAMPT Inhibitor,Dihydrofolate Reductase (DHFR) Inhibitor
+Methotrexate,Pralatrexate,0.765185,1,Dihydrofolate Reductase (DHFR) Inhibitor,Dihydrofolate Reductase (DHFR) Inhibitors
+Methotrexate,RGB-286147,0.976075,0,Dihydrofolate Reductase (DHFR) Inhibitor,CDK1/2/3/7/9 Inhibitor
+GMX-1778,Methotrexate,0.97002,0,IKK beta Inhibitor,Dihydrofolate Reductase (DHFR) Inhibitor
+KX-01,Methotrexate,1.09971,0,Src Kinase Inhibitor,Dihydrofolate Reductase (DHFR) Inhibitor
+Bortezomib,Methotrexate,1.1596449999999998,0,Proteasome Inhibitor,Dihydrofolate Reductase (DHFR) Inhibitor
+Methotrexate,Sepantronium bromide,1.14319,0,Dihydrofolate Reductase (DHFR) Inhibitor,Survivin Inhibitor
+CPG-52364,Methotrexate,1.11824,0,"TLR 7, 8 and 9 Antagonist",Dihydrofolate Reductase (DHFR) Inhibitor
+HMSL10077,Methotrexate,1.1014399999999998,0,BTK Inhibitor,Dihydrofolate Reductase (DHFR) Inhibitor
+Dinaciclib (SCH727965),Methotrexate,1.02456,0,CDK1/2/5/9 Inhibitor,Dihydrofolate Reductase (DHFR) Inhibitor
+MK-1775,Methotrexate,1.2679200000000002,0,Wee1 Kinase Inhibitor,Dihydrofolate Reductase (DHFR) Inhibitor
+Methotrexate,Panobinostat,1.14089,0,Dihydrofolate Reductase (DHFR) Inhibitor,HDAC Inhibitor
+Carfilzomib,Methotrexate,0.96382,0,Proteasome Inhibitor,Dihydrofolate Reductase (DHFR) Inhibitor
+Fascaplysin,Methotrexate,1.020045,0,CDK4/6 Inhibitor,Dihydrofolate Reductase (DHFR) Inhibitor
+Methotrexate,Oprozomib,1.2285149999999998,0,Dihydrofolate Reductase (DHFR) Inhibitor,Proteasome Inhibitor
+CAY-10581,Methotrexate,1.03599,0,IDO Inhibitor,Dihydrofolate Reductase (DHFR) Inhibitor
+GW-843682X,Methotrexate,1.037405,0,Polo-like Kinase-1 (Plk-1) Inhibitor,Dihydrofolate Reductase (DHFR) Inhibitor
+Methotrexate,NSC-319726,1.2105,0,Dihydrofolate Reductase (DHFR) Inhibitor,Mutant p53 Activator
+IVX-214,Methotrexate,1.1420400000000002,0,Polo-like Kinase-1 (Plk-1) Inhibitor,Dihydrofolate Reductase (DHFR) Inhibitor
+BMS-3,Methotrexate,1.11802,0,LIMK Inhibitor,Dihydrofolate Reductase (DHFR) Inhibitor
+Methotrexate,NCGC00188382-01,1.151955,0,Dihydrofolate Reductase (DHFR) Inhibitor,ITK inhibitor
+BS-194,Methotrexate,1.07261,0,CDK1/2/5/9 Inhibitor,Dihydrofolate Reductase (DHFR) Inhibitor
+"Akt-I-1,2",Methotrexate,1.042965,0,AKT Inhibitor,Dihydrofolate Reductase (DHFR) Inhibitor
+Methotrexate,Volasertib,1.211915,0,Dihydrofolate Reductase (DHFR) Inhibitor,Polo-like Kinase-1 (Plk-1) Inhibitor
+JS-59-4,Methotrexate,1.055835,0,nitric oxide donors,Dihydrofolate Reductase (DHFR) Inhibitor
+BI-2536,Methotrexate,1.243945,0,Polo-like Kinase-1 (Plk-1) Inhibitor,Dihydrofolate Reductase (DHFR) Inhibitor
+Methotrexate,Parogrelil,0.92721,1,Dihydrofolate Reductase (DHFR) Inhibitor,Phosphodiesterase III/Va (PDE) Inhibitor
+GSK-461364A,Methotrexate,1.2485849999999998,0,Polo-like Kinase-1 (Plk-1) Inhibitor,Dihydrofolate Reductase (DHFR) Inhibitor
+Methotrexate,Osanetant,1.00283,0,Dihydrofolate Reductase (DHFR) Inhibitor,Tachykinin NK3 Antagonist
+CPG-52364,Pralatrexate,1.066795,0,"TLR 7, 8 and 9 Antagonist",Dihydrofolate Reductase (DHFR) Inhibitors
+CPG-52364,RGB-286147,0.92339,1,"TLR 7, 8 and 9 Antagonist",CDK1/2/3/7/9 Inhibitor
+CPG-52364,GMX-1778,1.02185,0,"TLR 7, 8 and 9 Antagonist",IKK beta Inhibitor
+CPG-52364,KX-01,1.063505,0,"TLR 7, 8 and 9 Antagonist",Src Kinase Inhibitor
+CPG-52364,HMSL10077,1.00271,0,"TLR 7, 8 and 9 Antagonist",BTK Inhibitor
+CPG-52364,Dinaciclib (SCH727965),0.945705,1,"TLR 7, 8 and 9 Antagonist",CDK1/2/5/9 Inhibitor
+CPG-52364,MK-1775,0.9178,1,"TLR 7, 8 and 9 Antagonist",Wee1 Kinase Inhibitor
+CPG-52364,Panobinostat,0.90386,1,"TLR 7, 8 and 9 Antagonist",HDAC Inhibitor
+CPG-52364,Fascaplysin,0.909155,1,"TLR 7, 8 and 9 Antagonist",CDK4/6 Inhibitor
+CPG-52364,Oprozomib,0.955265,0,"TLR 7, 8 and 9 Antagonist",Proteasome Inhibitor
+CAY-10581,CPG-52364,0.920425,1,IDO Inhibitor,"TLR 7, 8 and 9 Antagonist"
+CPG-52364,NSC-319726,0.86963,1,"TLR 7, 8 and 9 Antagonist",Mutant p53 Activator
+CPG-52364,IVX-214,0.98979,0,"TLR 7, 8 and 9 Antagonist",Polo-like Kinase-1 (Plk-1) Inhibitor
+BMS-3,CPG-52364,0.9113,1,LIMK Inhibitor,"TLR 7, 8 and 9 Antagonist"
+BS-194,CPG-52364,1.036475,0,CDK1/2/5/9 Inhibitor,"TLR 7, 8 and 9 Antagonist"
+"Akt-I-1,2",CPG-52364,1.02753,0,AKT Inhibitor,"TLR 7, 8 and 9 Antagonist"
+CPG-52364,Volasertib,1.12678,0,"TLR 7, 8 and 9 Antagonist",Polo-like Kinase-1 (Plk-1) Inhibitor
+CPG-52364,JS-59-4,1.03784,0,"TLR 7, 8 and 9 Antagonist",nitric oxide donors
+CPG-52364,Parogrelil,0.898255,1,"TLR 7, 8 and 9 Antagonist",Phosphodiesterase III/Va (PDE) Inhibitor
+CPG-52364,GSK-461364A,1.081105,0,"TLR 7, 8 and 9 Antagonist",Polo-like Kinase-1 (Plk-1) Inhibitor
+CPG-52364,Osanetant,0.92539,1,"TLR 7, 8 and 9 Antagonist",Tachykinin NK3 Antagonist
+HMSL10077,Pralatrexate,0.973435,0,BTK Inhibitor,Dihydrofolate Reductase (DHFR) Inhibitors
+HMSL10077,NSC-319726,0.94751,1,BTK Inhibitor,Mutant p53 Activator
+HMSL10077,JS-59-4,0.966295,0,BTK Inhibitor,nitric oxide donors
+Dinaciclib (SCH727965),Pralatrexate,0.93477,1,CDK1/2/5/9 Inhibitor,Dihydrofolate Reductase (DHFR) Inhibitors
+Dinaciclib (SCH727965),HMSL10077,0.8917949999999999,1,CDK1/2/5/9 Inhibitor,BTK Inhibitor
+Dinaciclib (SCH727965),Fascaplysin,0.945535,1,CDK1/2/5/9 Inhibitor,CDK4/6 Inhibitor
+Dinaciclib (SCH727965),NSC-319726,0.7949200000000001,1,CDK1/2/5/9 Inhibitor,Mutant p53 Activator
+Dinaciclib (SCH727965),JS-59-4,0.90188,1,CDK1/2/5/9 Inhibitor,nitric oxide donors
+MK-1775,Pralatrexate,1.072925,0,Wee1 Kinase Inhibitor,Dihydrofolate Reductase (DHFR) Inhibitors
+MK-1775,RGB-286147,0.857425,1,Wee1 Kinase Inhibitor,CDK1/2/3/7/9 Inhibitor
+GMX-1778,MK-1775,0.89839,1,IKK beta Inhibitor,Wee1 Kinase Inhibitor
+KX-01,MK-1775,0.92102,1,Src Kinase Inhibitor,Wee1 Kinase Inhibitor
+HMSL10077,MK-1775,0.895105,1,BTK Inhibitor,Wee1 Kinase Inhibitor
+Dinaciclib (SCH727965),MK-1775,0.90704,1,CDK1/2/5/9 Inhibitor,Wee1 Kinase Inhibitor
+Fascaplysin,MK-1775,0.8801749999999999,1,CDK4/6 Inhibitor,Wee1 Kinase Inhibitor
+MK-1775,Oprozomib,0.92229,1,Wee1 Kinase Inhibitor,Proteasome Inhibitor
+CAY-10581,MK-1775,0.88733,1,IDO Inhibitor,Wee1 Kinase Inhibitor
+MK-1775,NSC-319726,0.848755,1,Wee1 Kinase Inhibitor,Mutant p53 Activator
+IVX-214,MK-1775,0.943175,1,Polo-like Kinase-1 (Plk-1) Inhibitor,Wee1 Kinase Inhibitor
+BMS-3,MK-1775,0.96195,0,LIMK Inhibitor,Wee1 Kinase Inhibitor
+BS-194,MK-1775,1.07898,0,CDK1/2/5/9 Inhibitor,Wee1 Kinase Inhibitor
+"Akt-I-1,2",MK-1775,0.8536250000000001,1,AKT Inhibitor,Wee1 Kinase Inhibitor
+JS-59-4,MK-1775,0.8451150000000001,1,nitric oxide donors,Wee1 Kinase Inhibitor
+MK-1775,Parogrelil,0.893725,1,Wee1 Kinase Inhibitor,Phosphodiesterase III/Va (PDE) Inhibitor
+Panobinostat,Pralatrexate,0.957005,0,HDAC Inhibitor,Dihydrofolate Reductase (DHFR) Inhibitors
+Panobinostat,RGB-286147,0.92595,1,HDAC Inhibitor,CDK1/2/3/7/9 Inhibitor
+GMX-1778,Panobinostat,0.609105,1,IKK beta Inhibitor,HDAC Inhibitor
+KX-01,Panobinostat,0.960695,0,Src Kinase Inhibitor,HDAC Inhibitor
+HMSL10077,Panobinostat,0.837375,1,BTK Inhibitor,HDAC Inhibitor
+Dinaciclib (SCH727965),Panobinostat,0.9885,0,CDK1/2/5/9 Inhibitor,HDAC Inhibitor
+MK-1775,Panobinostat,0.94889,1,Wee1 Kinase Inhibitor,HDAC Inhibitor
+Fascaplysin,Panobinostat,0.7877449999999999,1,CDK4/6 Inhibitor,HDAC Inhibitor
+Oprozomib,Panobinostat,0.10762,1,Proteasome Inhibitor,HDAC Inhibitor
+CAY-10581,Panobinostat,0.7392350000000001,1,IDO Inhibitor,HDAC Inhibitor
+NSC-319726,Panobinostat,0.298825,1,Mutant p53 Activator,HDAC Inhibitor
+IVX-214,Panobinostat,0.7625500000000001,1,Polo-like Kinase-1 (Plk-1) Inhibitor,HDAC Inhibitor
+BMS-3,Panobinostat,0.7099150000000001,1,LIMK Inhibitor,HDAC Inhibitor
+BS-194,Panobinostat,0.8505100000000001,1,CDK1/2/5/9 Inhibitor,HDAC Inhibitor
+"Akt-I-1,2",Panobinostat,0.8630950000000001,1,AKT Inhibitor,HDAC Inhibitor
+JS-59-4,Panobinostat,0.92672,1,nitric oxide donors,HDAC Inhibitor
+Panobinostat,Parogrelil,0.924695,1,HDAC Inhibitor,Phosphodiesterase III/Va (PDE) Inhibitor
+Carfilzomib,Pralatrexate,1.124905,0,Proteasome Inhibitor,Dihydrofolate Reductase (DHFR) Inhibitors
+Carfilzomib,RGB-286147,0.72434,1,Proteasome Inhibitor,CDK1/2/3/7/9 Inhibitor
+Carfilzomib,GMX-1778,0.36724,1,Proteasome Inhibitor,IKK beta Inhibitor
+Carfilzomib,KX-01,0.82898,1,Proteasome Inhibitor,Src Kinase Inhibitor
+CPG-52364,Carfilzomib,0.5996100000000001,1,"TLR 7, 8 and 9 Antagonist",Proteasome Inhibitor
+Carfilzomib,HMSL10077,0.588745,1,Proteasome Inhibitor,BTK Inhibitor
+Carfilzomib,Dinaciclib (SCH727965),0.720505,1,Proteasome Inhibitor,CDK1/2/5/9 Inhibitor
+Carfilzomib,MK-1775,0.582425,1,Proteasome Inhibitor,Wee1 Kinase Inhibitor
+Carfilzomib,Panobinostat,0.04141,1,Proteasome Inhibitor,HDAC Inhibitor
+Carfilzomib,Fascaplysin,0.66201,1,Proteasome Inhibitor,CDK4/6 Inhibitor
+Carfilzomib,Oprozomib,0.498045,1,Proteasome Inhibitor,Proteasome Inhibitor
+CAY-10581,Carfilzomib,0.63887,1,IDO Inhibitor,Proteasome Inhibitor
+Carfilzomib,NSC-319726,0.85151,1,Proteasome Inhibitor,Mutant p53 Activator
+Carfilzomib,IVX-214,0.7385299999999999,1,Proteasome Inhibitor,Polo-like Kinase-1 (Plk-1) Inhibitor
+BMS-3,Carfilzomib,0.6125,1,LIMK Inhibitor,Proteasome Inhibitor
+BS-194,Carfilzomib,0.8383799999999999,1,CDK1/2/5/9 Inhibitor,Proteasome Inhibitor
+"Akt-I-1,2",Carfilzomib,0.76399,1,AKT Inhibitor,Proteasome Inhibitor
+Carfilzomib,Volasertib,0.56377,1,Proteasome Inhibitor,Polo-like Kinase-1 (Plk-1) Inhibitor
+Carfilzomib,JS-59-4,0.5519499999999999,1,Proteasome Inhibitor,nitric oxide donors
+BI-2536,Carfilzomib,0.6414550000000001,1,Polo-like Kinase-1 (Plk-1) Inhibitor,Proteasome Inhibitor
+Carfilzomib,Parogrelil,0.8537600000000001,1,Proteasome Inhibitor,Phosphodiesterase III/Va (PDE) Inhibitor
+Carfilzomib,GSK-461364A,0.6855249999999999,1,Proteasome Inhibitor,Polo-like Kinase-1 (Plk-1) Inhibitor
+Carfilzomib,Osanetant,0.53115,1,Proteasome Inhibitor,Tachykinin NK3 Antagonist
+Fascaplysin,Pralatrexate,0.987305,0,CDK4/6 Inhibitor,Dihydrofolate Reductase (DHFR) Inhibitors
+Fascaplysin,HMSL10077,0.954405,0,CDK4/6 Inhibitor,BTK Inhibitor
+Fascaplysin,NSC-319726,0.7242149999999999,1,CDK4/6 Inhibitor,Mutant p53 Activator
+Fascaplysin,JS-59-4,0.97621,0,CDK4/6 Inhibitor,nitric oxide donors
+Oprozomib,Pralatrexate,1.2643049999999998,0,Proteasome Inhibitor,Dihydrofolate Reductase (DHFR) Inhibitors
+Oprozomib,RGB-286147,0.78589,1,Proteasome Inhibitor,CDK1/2/3/7/9 Inhibitor
+KX-01,Oprozomib,0.86008,1,Src Kinase Inhibitor,Proteasome Inhibitor
+HMSL10077,Oprozomib,0.7822,1,BTK Inhibitor,Proteasome Inhibitor
+Dinaciclib (SCH727965),Oprozomib,0.738135,1,CDK1/2/5/9 Inhibitor,Proteasome Inhibitor
+Fascaplysin,Oprozomib,0.81077,1,CDK4/6 Inhibitor,Proteasome Inhibitor
+NSC-319726,Oprozomib,0.889945,1,Mutant p53 Activator,Proteasome Inhibitor
+IVX-214,Oprozomib,0.975855,0,Polo-like Kinase-1 (Plk-1) Inhibitor,Proteasome Inhibitor
+BMS-3,Oprozomib,0.869165,1,LIMK Inhibitor,Proteasome Inhibitor
+BS-194,Oprozomib,0.950755,0,CDK1/2/5/9 Inhibitor,Proteasome Inhibitor
+"Akt-I-1,2",Oprozomib,0.8739049999999999,1,AKT Inhibitor,Proteasome Inhibitor
+JS-59-4,Oprozomib,0.803445,1,nitric oxide donors,Proteasome Inhibitor
+Oprozomib,Parogrelil,1.051785,0,Proteasome Inhibitor,Phosphodiesterase III/Va (PDE) Inhibitor
+CAY-10581,Pralatrexate,0.95056,0,IDO Inhibitor,Dihydrofolate Reductase (DHFR) Inhibitors
+CAY-10581,RGB-286147,0.861815,1,IDO Inhibitor,CDK1/2/3/7/9 Inhibitor
+CAY-10581,GMX-1778,0.916695,1,IDO Inhibitor,IKK beta Inhibitor
+CAY-10581,KX-01,0.92938,1,IDO Inhibitor,Src Kinase Inhibitor
+CAY-10581,HMSL10077,1.008085,0,IDO Inhibitor,BTK Inhibitor
+CAY-10581,Dinaciclib (SCH727965),0.91404,1,IDO Inhibitor,CDK1/2/5/9 Inhibitor
+CAY-10581,Fascaplysin,0.8334250000000001,1,IDO Inhibitor,CDK4/6 Inhibitor
+CAY-10581,Oprozomib,0.838355,1,IDO Inhibitor,Proteasome Inhibitor
+CAY-10581,NSC-319726,0.64934,1,IDO Inhibitor,Mutant p53 Activator
+CAY-10581,IVX-214,0.97594,0,IDO Inhibitor,Polo-like Kinase-1 (Plk-1) Inhibitor
+BMS-3,CAY-10581,0.965845,0,LIMK Inhibitor,IDO Inhibitor
+BS-194,CAY-10581,0.97003,0,CDK1/2/5/9 Inhibitor,IDO Inhibitor
+"Akt-I-1,2",CAY-10581,0.92334,1,AKT Inhibitor,IDO Inhibitor
+CAY-10581,JS-59-4,0.931885,1,IDO Inhibitor,nitric oxide donors
+CAY-10581,Parogrelil,0.92539,1,IDO Inhibitor,Phosphodiesterase III/Va (PDE) Inhibitor
+GW-843682X,Pralatrexate,1.0280299999999998,0,Polo-like Kinase-1 (Plk-1) Inhibitor,Dihydrofolate Reductase (DHFR) Inhibitors
+GW-843682X,RGB-286147,0.81453,1,Polo-like Kinase-1 (Plk-1) Inhibitor,CDK1/2/3/7/9 Inhibitor
+GMX-1778,GW-843682X,0.94734,1,IKK beta Inhibitor,Polo-like Kinase-1 (Plk-1) Inhibitor
+GW-843682X,KX-01,1.0202399999999998,0,Polo-like Kinase-1 (Plk-1) Inhibitor,Src Kinase Inhibitor
+Bortezomib,GW-843682X,0.920165,1,Proteasome Inhibitor,Polo-like Kinase-1 (Plk-1) Inhibitor
+GW-843682X,Sepantronium bromide,0.859645,1,Polo-like Kinase-1 (Plk-1) Inhibitor,Survivin Inhibitor
+CPG-52364,GW-843682X,1.007885,0,"TLR 7, 8 and 9 Antagonist",Polo-like Kinase-1 (Plk-1) Inhibitor
+GW-843682X,HMSL10077,0.9588,0,Polo-like Kinase-1 (Plk-1) Inhibitor,BTK Inhibitor
+Dinaciclib (SCH727965),GW-843682X,0.943675,1,CDK1/2/5/9 Inhibitor,Polo-like Kinase-1 (Plk-1) Inhibitor
+GW-843682X,MK-1775,1.0631849999999998,0,Polo-like Kinase-1 (Plk-1) Inhibitor,Wee1 Kinase Inhibitor
+GW-843682X,Panobinostat,0.929615,1,Polo-like Kinase-1 (Plk-1) Inhibitor,HDAC Inhibitor
+Carfilzomib,GW-843682X,0.4059549999999999,1,Proteasome Inhibitor,Polo-like Kinase-1 (Plk-1) Inhibitor
+Fascaplysin,GW-843682X,1.136275,0,CDK4/6 Inhibitor,Polo-like Kinase-1 (Plk-1) Inhibitor
+GW-843682X,Oprozomib,0.7814749999999999,1,Polo-like Kinase-1 (Plk-1) Inhibitor,Proteasome Inhibitor
+CAY-10581,GW-843682X,0.88325,1,IDO Inhibitor,Polo-like Kinase-1 (Plk-1) Inhibitor
+GW-843682X,NSC-319726,0.860795,1,Polo-like Kinase-1 (Plk-1) Inhibitor,Mutant p53 Activator
+GW-843682X,IVX-214,0.992275,0,Polo-like Kinase-1 (Plk-1) Inhibitor,Polo-like Kinase-1 (Plk-1) Inhibitor
+BMS-3,GW-843682X,0.99673,0,LIMK Inhibitor,Polo-like Kinase-1 (Plk-1) Inhibitor
+BS-194,GW-843682X,1.0,0,CDK1/2/5/9 Inhibitor,Polo-like Kinase-1 (Plk-1) Inhibitor
+"Akt-I-1,2",GW-843682X,0.964035,0,AKT Inhibitor,Polo-like Kinase-1 (Plk-1) Inhibitor
+GW-843682X,Volasertib,1.03445,0,Polo-like Kinase-1 (Plk-1) Inhibitor,Polo-like Kinase-1 (Plk-1) Inhibitor
+GW-843682X,JS-59-4,0.964185,0,Polo-like Kinase-1 (Plk-1) Inhibitor,nitric oxide donors
+BI-2536,GW-843682X,0.97448,0,Polo-like Kinase-1 (Plk-1) Inhibitor,Polo-like Kinase-1 (Plk-1) Inhibitor
+GW-843682X,Parogrelil,0.876665,1,Polo-like Kinase-1 (Plk-1) Inhibitor,Phosphodiesterase III/Va (PDE) Inhibitor
+GSK-461364A,GW-843682X,1.1314,0,Polo-like Kinase-1 (Plk-1) Inhibitor,Polo-like Kinase-1 (Plk-1) Inhibitor
+GW-843682X,Osanetant,1.00991,0,Polo-like Kinase-1 (Plk-1) Inhibitor,Tachykinin NK3 Antagonist
+NSC-319726,Pralatrexate,1.051835,0,Mutant p53 Activator,Dihydrofolate Reductase (DHFR) Inhibitors
+IVX-214,Pralatrexate,1.17891,0,Polo-like Kinase-1 (Plk-1) Inhibitor,Dihydrofolate Reductase (DHFR) Inhibitors
+IVX-214,KX-01,1.01598,0,Polo-like Kinase-1 (Plk-1) Inhibitor,Src Kinase Inhibitor
+HMSL10077,IVX-214,1.04811,0,BTK Inhibitor,Polo-like Kinase-1 (Plk-1) Inhibitor
+Dinaciclib (SCH727965),IVX-214,0.969385,0,CDK1/2/5/9 Inhibitor,Polo-like Kinase-1 (Plk-1) Inhibitor
+Fascaplysin,IVX-214,0.913645,1,CDK4/6 Inhibitor,Polo-like Kinase-1 (Plk-1) Inhibitor
+IVX-214,NSC-319726,0.83657,1,Polo-like Kinase-1 (Plk-1) Inhibitor,Mutant p53 Activator
+IVX-214,JS-59-4,0.8985650000000001,1,Polo-like Kinase-1 (Plk-1) Inhibitor,nitric oxide donors
+BMS-3,Pralatrexate,1.01248,0,LIMK Inhibitor,Dihydrofolate Reductase (DHFR) Inhibitors
+BMS-3,KX-01,0.90872,1,LIMK Inhibitor,Src Kinase Inhibitor
+BMS-3,HMSL10077,0.8680150000000001,1,LIMK Inhibitor,BTK Inhibitor
+BMS-3,Dinaciclib (SCH727965),0.8867799999999999,1,LIMK Inhibitor,CDK1/2/5/9 Inhibitor
+BMS-3,Fascaplysin,0.94539,1,LIMK Inhibitor,CDK4/6 Inhibitor
+BMS-3,NSC-319726,0.93792,1,LIMK Inhibitor,Mutant p53 Activator
+BMS-3,IVX-214,1.040685,0,LIMK Inhibitor,Polo-like Kinase-1 (Plk-1) Inhibitor
+BMS-3,BS-194,1.00449,0,LIMK Inhibitor,CDK1/2/5/9 Inhibitor
+BMS-3,JS-59-4,1.07727,0,LIMK Inhibitor,nitric oxide donors
+BMS-3,Parogrelil,0.993325,0,LIMK Inhibitor,Phosphodiesterase III/Va (PDE) Inhibitor
+Aminopterin,Daporinad,0.998,0,Dihydrofolate Reductase (DHFR) Inhibitor,NAMPT Inhibitor
+Aminopterin,Pralatrexate,0.75305,1,Dihydrofolate Reductase (DHFR) Inhibitor,Dihydrofolate Reductase (DHFR) Inhibitors
+Aminopterin,RGB-286147,0.90283,1,Dihydrofolate Reductase (DHFR) Inhibitor,CDK1/2/3/7/9 Inhibitor
+Aminopterin,GMX-1778,0.99579,0,Dihydrofolate Reductase (DHFR) Inhibitor,IKK beta Inhibitor
+Aminopterin,KX-01,1.012635,0,Dihydrofolate Reductase (DHFR) Inhibitor,Src Kinase Inhibitor
+Aminopterin,Bortezomib,1.04098,0,Dihydrofolate Reductase (DHFR) Inhibitor,Proteasome Inhibitor
+Aminopterin,Sepantronium bromide,1.05592,0,Dihydrofolate Reductase (DHFR) Inhibitor,Survivin Inhibitor
+Aminopterin,Methotrexate,0.89763,1,Dihydrofolate Reductase (DHFR) Inhibitor,Dihydrofolate Reductase (DHFR) Inhibitor
+Aminopterin,CPG-52364,1.091555,0,Dihydrofolate Reductase (DHFR) Inhibitor,"TLR 7, 8 and 9 Antagonist"
+Aminopterin,HMSL10077,1.049985,0,Dihydrofolate Reductase (DHFR) Inhibitor,BTK Inhibitor
+Aminopterin,Dinaciclib (SCH727965),0.95527,0,Dihydrofolate Reductase (DHFR) Inhibitor,CDK1/2/5/9 Inhibitor
+Aminopterin,MK-1775,1.060095,0,Dihydrofolate Reductase (DHFR) Inhibitor,Wee1 Kinase Inhibitor
+Aminopterin,Panobinostat,1.035935,0,Dihydrofolate Reductase (DHFR) Inhibitor,HDAC Inhibitor
+Aminopterin,Carfilzomib,0.74414,1,Dihydrofolate Reductase (DHFR) Inhibitor,Proteasome Inhibitor
+Aminopterin,Fascaplysin,0.955495,0,Dihydrofolate Reductase (DHFR) Inhibitor,CDK4/6 Inhibitor
+Aminopterin,Oprozomib,1.110205,0,Dihydrofolate Reductase (DHFR) Inhibitor,Proteasome Inhibitor
+Aminopterin,CAY-10581,0.913065,1,Dihydrofolate Reductase (DHFR) Inhibitor,IDO Inhibitor
+Aminopterin,GW-843682X,0.98352,0,Dihydrofolate Reductase (DHFR) Inhibitor,Polo-like Kinase-1 (Plk-1) Inhibitor
+Aminopterin,NSC-319726,1.098765,0,Dihydrofolate Reductase (DHFR) Inhibitor,Mutant p53 Activator
+Aminopterin,IVX-214,1.080595,0,Dihydrofolate Reductase (DHFR) Inhibitor,Polo-like Kinase-1 (Plk-1) Inhibitor
+Aminopterin,BMS-3,1.102225,0,Dihydrofolate Reductase (DHFR) Inhibitor,LIMK Inhibitor
+Aminopterin,NCGC00188382-01,1.058985,0,Dihydrofolate Reductase (DHFR) Inhibitor,ITK inhibitor
+Aminopterin,BS-194,1.05713,0,Dihydrofolate Reductase (DHFR) Inhibitor,CDK1/2/5/9 Inhibitor
+"Akt-I-1,2",Aminopterin,1.05303,0,AKT Inhibitor,Dihydrofolate Reductase (DHFR) Inhibitor
+Aminopterin,Volasertib,1.1110349999999998,0,Dihydrofolate Reductase (DHFR) Inhibitor,Polo-like Kinase-1 (Plk-1) Inhibitor
+Aminopterin,Niacin,0.936515,1,Dihydrofolate Reductase (DHFR) Inhibitor,Nicotinic acid
+Aminopterin,JS-59-4,1.02715,0,Dihydrofolate Reductase (DHFR) Inhibitor,nitric oxide donors
+Aminopterin,BI-2536,1.134255,0,Dihydrofolate Reductase (DHFR) Inhibitor,Polo-like Kinase-1 (Plk-1) Inhibitor
+Aminopterin,Parogrelil,0.969065,0,Dihydrofolate Reductase (DHFR) Inhibitor,Phosphodiesterase III/Va (PDE) Inhibitor
+Aminopterin,GSK-461364A,1.0562,0,Dihydrofolate Reductase (DHFR) Inhibitor,Polo-like Kinase-1 (Plk-1) Inhibitor
+Aminopterin,Osanetant,0.98736,0,Dihydrofolate Reductase (DHFR) Inhibitor,Tachykinin NK3 Antagonist
+NCGC00188382-01,Pralatrexate,1.1778300000000002,0,ITK inhibitor,Dihydrofolate Reductase (DHFR) Inhibitors
+NCGC00188382-01,RGB-286147,0.792335,1,ITK inhibitor,CDK1/2/3/7/9 Inhibitor
+GMX-1778,NCGC00188382-01,1.0676,0,IKK beta Inhibitor,ITK inhibitor
+KX-01,NCGC00188382-01,0.99636,0,Src Kinase Inhibitor,ITK inhibitor
+Bortezomib,NCGC00188382-01,0.7437750000000001,1,Proteasome Inhibitor,ITK inhibitor
+NCGC00188382-01,Sepantronium bromide,0.8251,1,ITK inhibitor,Survivin Inhibitor
+CPG-52364,NCGC00188382-01,0.83596,1,"TLR 7, 8 and 9 Antagonist",ITK inhibitor
+HMSL10077,NCGC00188382-01,0.8048550000000001,1,BTK Inhibitor,ITK inhibitor
+Dinaciclib (SCH727965),NCGC00188382-01,0.81144,1,CDK1/2/5/9 Inhibitor,ITK inhibitor
+MK-1775,NCGC00188382-01,0.84788,1,Wee1 Kinase Inhibitor,ITK inhibitor
+NCGC00188382-01,Panobinostat,0.707475,1,ITK inhibitor,HDAC Inhibitor
+Carfilzomib,NCGC00188382-01,0.30498,1,Proteasome Inhibitor,ITK inhibitor
+Fascaplysin,NCGC00188382-01,0.927905,1,CDK4/6 Inhibitor,ITK inhibitor
+NCGC00188382-01,Oprozomib,0.6157699999999999,1,ITK inhibitor,Proteasome Inhibitor
+CAY-10581,NCGC00188382-01,0.98578,0,IDO Inhibitor,ITK inhibitor
+GW-843682X,NCGC00188382-01,1.0301399999999998,0,Polo-like Kinase-1 (Plk-1) Inhibitor,ITK inhibitor
+NCGC00188382-01,NSC-319726,0.92725,1,ITK inhibitor,Mutant p53 Activator
+IVX-214,NCGC00188382-01,1.03898,0,Polo-like Kinase-1 (Plk-1) Inhibitor,ITK inhibitor
+BMS-3,NCGC00188382-01,0.78623,1,LIMK Inhibitor,ITK inhibitor
+BS-194,NCGC00188382-01,0.77639,1,CDK1/2/5/9 Inhibitor,ITK inhibitor
+"Akt-I-1,2",NCGC00188382-01,0.77461,1,AKT Inhibitor,ITK inhibitor
+NCGC00188382-01,Volasertib,0.78433,1,ITK inhibitor,Polo-like Kinase-1 (Plk-1) Inhibitor
+JS-59-4,NCGC00188382-01,0.883155,1,nitric oxide donors,ITK inhibitor
+BI-2536,NCGC00188382-01,0.939355,1,Polo-like Kinase-1 (Plk-1) Inhibitor,ITK inhibitor
+NCGC00188382-01,Parogrelil,0.94773,1,ITK inhibitor,Phosphodiesterase III/Va (PDE) Inhibitor
+GSK-461364A,NCGC00188382-01,0.95371,0,Polo-like Kinase-1 (Plk-1) Inhibitor,ITK inhibitor
+NCGC00188382-01,Osanetant,0.94336,1,ITK inhibitor,Tachykinin NK3 Antagonist
+BS-194,Pralatrexate,1.079175,0,CDK1/2/5/9 Inhibitor,Dihydrofolate Reductase (DHFR) Inhibitors
+BS-194,KX-01,0.97737,0,CDK1/2/5/9 Inhibitor,Src Kinase Inhibitor
+BS-194,HMSL10077,0.95841,0,CDK1/2/5/9 Inhibitor,BTK Inhibitor
+BS-194,Dinaciclib (SCH727965),0.851675,1,CDK1/2/5/9 Inhibitor,CDK1/2/5/9 Inhibitor
+BS-194,Fascaplysin,0.8775350000000001,1,CDK1/2/5/9 Inhibitor,CDK4/6 Inhibitor
+BS-194,NSC-319726,0.916575,1,CDK1/2/5/9 Inhibitor,Mutant p53 Activator
+BS-194,IVX-214,0.979075,0,CDK1/2/5/9 Inhibitor,Polo-like Kinase-1 (Plk-1) Inhibitor
+BS-194,JS-59-4,0.97561,0,CDK1/2/5/9 Inhibitor,nitric oxide donors
+BS-194,Parogrelil,0.95611,0,CDK1/2/5/9 Inhibitor,Phosphodiesterase III/Va (PDE) Inhibitor
+"Akt-I-1,2",Pralatrexate,0.93717,1,AKT Inhibitor,Dihydrofolate Reductase (DHFR) Inhibitors
+"Akt-I-1,2",KX-01,0.961425,0,AKT Inhibitor,Src Kinase Inhibitor
+"Akt-I-1,2",HMSL10077,1.0132249999999998,0,AKT Inhibitor,BTK Inhibitor
+"Akt-I-1,2",Dinaciclib (SCH727965),0.94718,1,AKT Inhibitor,CDK1/2/5/9 Inhibitor
+"Akt-I-1,2",Fascaplysin,0.99175,0,AKT Inhibitor,CDK4/6 Inhibitor
+"Akt-I-1,2",NSC-319726,0.784375,1,AKT Inhibitor,Mutant p53 Activator
+"Akt-I-1,2",IVX-214,0.92079,1,AKT Inhibitor,Polo-like Kinase-1 (Plk-1) Inhibitor
+"Akt-I-1,2",BMS-3,0.975645,0,AKT Inhibitor,LIMK Inhibitor
+"Akt-I-1,2",BS-194,0.947325,1,AKT Inhibitor,CDK1/2/5/9 Inhibitor
+"Akt-I-1,2",JS-59-4,0.957115,0,AKT Inhibitor,nitric oxide donors
+"Akt-I-1,2",Parogrelil,0.96702,0,AKT Inhibitor,Phosphodiesterase III/Va (PDE) Inhibitor
+Pralatrexate,Volasertib,1.2666,0,Dihydrofolate Reductase (DHFR) Inhibitors,Polo-like Kinase-1 (Plk-1) Inhibitor
+RGB-286147,Volasertib,0.79314,1,CDK1/2/3/7/9 Inhibitor,Polo-like Kinase-1 (Plk-1) Inhibitor
+GMX-1778,Volasertib,0.92905,1,IKK beta Inhibitor,Polo-like Kinase-1 (Plk-1) Inhibitor
+KX-01,Volasertib,1.088965,0,Src Kinase Inhibitor,Polo-like Kinase-1 (Plk-1) Inhibitor
+HMSL10077,Volasertib,1.0983899999999998,0,BTK Inhibitor,Polo-like Kinase-1 (Plk-1) Inhibitor
+Dinaciclib (SCH727965),Volasertib,0.95664,0,CDK1/2/5/9 Inhibitor,Polo-like Kinase-1 (Plk-1) Inhibitor
+MK-1775,Volasertib,0.8800299999999999,1,Wee1 Kinase Inhibitor,Polo-like Kinase-1 (Plk-1) Inhibitor
+Panobinostat,Volasertib,0.872165,1,HDAC Inhibitor,Polo-like Kinase-1 (Plk-1) Inhibitor
+Fascaplysin,Volasertib,0.72488,1,CDK4/6 Inhibitor,Polo-like Kinase-1 (Plk-1) Inhibitor
+Oprozomib,Volasertib,0.92012,1,Proteasome Inhibitor,Polo-like Kinase-1 (Plk-1) Inhibitor
+CAY-10581,Volasertib,0.6649400000000001,1,IDO Inhibitor,Polo-like Kinase-1 (Plk-1) Inhibitor
+NSC-319726,Volasertib,0.7728550000000001,1,Mutant p53 Activator,Polo-like Kinase-1 (Plk-1) Inhibitor
+IVX-214,Volasertib,1.14126,0,Polo-like Kinase-1 (Plk-1) Inhibitor,Polo-like Kinase-1 (Plk-1) Inhibitor
+BMS-3,Volasertib,1.19558,0,LIMK Inhibitor,Polo-like Kinase-1 (Plk-1) Inhibitor
+BS-194,Volasertib,0.8725700000000001,1,CDK1/2/5/9 Inhibitor,Polo-like Kinase-1 (Plk-1) Inhibitor
+"Akt-I-1,2",Volasertib,1.0625,0,AKT Inhibitor,Polo-like Kinase-1 (Plk-1) Inhibitor
+JS-59-4,Volasertib,1.246215,0,nitric oxide donors,Polo-like Kinase-1 (Plk-1) Inhibitor
+Parogrelil,Volasertib,0.95374,0,Phosphodiesterase III/Va (PDE) Inhibitor,Polo-like Kinase-1 (Plk-1) Inhibitor
+GSK-461364A,Volasertib,1.025365,0,Polo-like Kinase-1 (Plk-1) Inhibitor,Polo-like Kinase-1 (Plk-1) Inhibitor
+Osanetant,Volasertib,0.69163,1,Tachykinin NK3 Antagonist,Polo-like Kinase-1 (Plk-1) Inhibitor
+Daporinad,Niacin,1.30283,0,NAMPT Inhibitor,Nicotinic acid
+Niacin,Pralatrexate,0.98358,0,Nicotinic acid,Dihydrofolate Reductase (DHFR) Inhibitors
+Niacin,RGB-286147,0.993455,0,Nicotinic acid,CDK1/2/3/7/9 Inhibitor
+GMX-1778,Niacin,1.29497,0,IKK beta Inhibitor,Nicotinic acid
+KX-01,Niacin,1.01175,0,Src Kinase Inhibitor,Nicotinic acid
+Bortezomib,Niacin,0.940395,1,Proteasome Inhibitor,Nicotinic acid
+Niacin,Sepantronium bromide,0.93533,1,Nicotinic acid,Survivin Inhibitor
+Methotrexate,Niacin,0.98716,0,Dihydrofolate Reductase (DHFR) Inhibitor,Nicotinic acid
+CPG-52364,Niacin,0.9963,0,"TLR 7, 8 and 9 Antagonist",Nicotinic acid
+HMSL10077,Niacin,1.012545,0,BTK Inhibitor,Nicotinic acid
+Dinaciclib (SCH727965),Niacin,0.997115,0,CDK1/2/5/9 Inhibitor,Nicotinic acid
+MK-1775,Niacin,1.00614,0,Wee1 Kinase Inhibitor,Nicotinic acid
+Niacin,Panobinostat,0.9759,0,Nicotinic acid,HDAC Inhibitor
+Carfilzomib,Niacin,1.0401,0,Proteasome Inhibitor,Nicotinic acid
+Fascaplysin,Niacin,1.0128400000000002,0,CDK4/6 Inhibitor,Nicotinic acid
+Niacin,Oprozomib,0.95498,0,Nicotinic acid,Proteasome Inhibitor
+CAY-10581,Niacin,0.988525,0,IDO Inhibitor,Nicotinic acid
+GW-843682X,Niacin,0.99449,0,Polo-like Kinase-1 (Plk-1) Inhibitor,Nicotinic acid
+NSC-319726,Niacin,0.8542000000000001,1,Mutant p53 Activator,Nicotinic acid
+IVX-214,Niacin,0.967405,0,Polo-like Kinase-1 (Plk-1) Inhibitor,Nicotinic acid
+BMS-3,Niacin,0.99238,0,LIMK Inhibitor,Nicotinic acid
+NCGC00188382-01,Niacin,1.000505,0,ITK inhibitor,Nicotinic acid
+BS-194,Niacin,1.022605,0,CDK1/2/5/9 Inhibitor,Nicotinic acid
+"Akt-I-1,2",Niacin,0.96449,0,AKT Inhibitor,Nicotinic acid
+Niacin,Volasertib,0.96079,0,Nicotinic acid,Polo-like Kinase-1 (Plk-1) Inhibitor
+JS-59-4,Niacin,0.982435,0,nitric oxide donors,Nicotinic acid
+BI-2536,Niacin,1.02362,0,Polo-like Kinase-1 (Plk-1) Inhibitor,Nicotinic acid
+Niacin,Parogrelil,1.0054800000000002,0,Nicotinic acid,Phosphodiesterase III/Va (PDE) Inhibitor
+GSK-461364A,Niacin,0.962485,0,Polo-like Kinase-1 (Plk-1) Inhibitor,Nicotinic acid
+Niacin,Osanetant,0.989055,0,Nicotinic acid,Tachykinin NK3 Antagonist
+JS-59-4,Pralatrexate,1.10962,0,nitric oxide donors,Dihydrofolate Reductase (DHFR) Inhibitors
+JS-59-4,NSC-319726,0.87156,1,nitric oxide donors,Mutant p53 Activator
+BI-2536,Pralatrexate,1.34995,0,Polo-like Kinase-1 (Plk-1) Inhibitor,Dihydrofolate Reductase (DHFR) Inhibitors
+BI-2536,RGB-286147,0.8549900000000001,1,Polo-like Kinase-1 (Plk-1) Inhibitor,CDK1/2/3/7/9 Inhibitor
+BI-2536,GMX-1778,1.05422,0,Polo-like Kinase-1 (Plk-1) Inhibitor,IKK beta Inhibitor
+BI-2536,KX-01,0.864795,1,Polo-like Kinase-1 (Plk-1) Inhibitor,Src Kinase Inhibitor
+BI-2536,CPG-52364,0.8709450000000001,1,Polo-like Kinase-1 (Plk-1) Inhibitor,"TLR 7, 8 and 9 Antagonist"
+BI-2536,HMSL10077,0.80751,1,Polo-like Kinase-1 (Plk-1) Inhibitor,BTK Inhibitor
+BI-2536,Dinaciclib (SCH727965),0.700025,1,Polo-like Kinase-1 (Plk-1) Inhibitor,CDK1/2/5/9 Inhibitor
+BI-2536,MK-1775,0.8190149999999999,1,Polo-like Kinase-1 (Plk-1) Inhibitor,Wee1 Kinase Inhibitor
+BI-2536,Panobinostat,0.93601,1,Polo-like Kinase-1 (Plk-1) Inhibitor,HDAC Inhibitor
+BI-2536,Fascaplysin,0.90006,1,Polo-like Kinase-1 (Plk-1) Inhibitor,CDK4/6 Inhibitor
+BI-2536,Oprozomib,0.97598,0,Polo-like Kinase-1 (Plk-1) Inhibitor,Proteasome Inhibitor
+BI-2536,CAY-10581,1.0286149999999998,0,Polo-like Kinase-1 (Plk-1) Inhibitor,IDO Inhibitor
+BI-2536,NSC-319726,0.926755,1,Polo-like Kinase-1 (Plk-1) Inhibitor,Mutant p53 Activator
+BI-2536,IVX-214,1.106395,0,Polo-like Kinase-1 (Plk-1) Inhibitor,Polo-like Kinase-1 (Plk-1) Inhibitor
+BI-2536,BMS-3,1.2917999999999998,0,Polo-like Kinase-1 (Plk-1) Inhibitor,LIMK Inhibitor
+BI-2536,BS-194,0.80193,1,Polo-like Kinase-1 (Plk-1) Inhibitor,CDK1/2/5/9 Inhibitor
+"Akt-I-1,2",BI-2536,0.67461,1,AKT Inhibitor,Polo-like Kinase-1 (Plk-1) Inhibitor
+BI-2536,Volasertib,0.8864150000000001,1,Polo-like Kinase-1 (Plk-1) Inhibitor,Polo-like Kinase-1 (Plk-1) Inhibitor
+BI-2536,JS-59-4,0.95294,0,Polo-like Kinase-1 (Plk-1) Inhibitor,nitric oxide donors
+BI-2536,Parogrelil,0.897705,1,Polo-like Kinase-1 (Plk-1) Inhibitor,Phosphodiesterase III/Va (PDE) Inhibitor
+BI-2536,GSK-461364A,0.922765,1,Polo-like Kinase-1 (Plk-1) Inhibitor,Polo-like Kinase-1 (Plk-1) Inhibitor
+BI-2536,Osanetant,0.905495,1,Polo-like Kinase-1 (Plk-1) Inhibitor,Tachykinin NK3 Antagonist
+Parogrelil,Pralatrexate,1.003395,0,Phosphodiesterase III/Va (PDE) Inhibitor,Dihydrofolate Reductase (DHFR) Inhibitors
+KX-01,Parogrelil,0.972925,0,Src Kinase Inhibitor,Phosphodiesterase III/Va (PDE) Inhibitor
+HMSL10077,Parogrelil,1.001225,0,BTK Inhibitor,Phosphodiesterase III/Va (PDE) Inhibitor
+Dinaciclib (SCH727965),Parogrelil,0.942505,1,CDK1/2/5/9 Inhibitor,Phosphodiesterase III/Va (PDE) Inhibitor
+Fascaplysin,Parogrelil,1.003235,0,CDK4/6 Inhibitor,Phosphodiesterase III/Va (PDE) Inhibitor
+NSC-319726,Parogrelil,0.90431,1,Mutant p53 Activator,Phosphodiesterase III/Va (PDE) Inhibitor
+IVX-214,Parogrelil,0.960815,0,Polo-like Kinase-1 (Plk-1) Inhibitor,Phosphodiesterase III/Va (PDE) Inhibitor
+JS-59-4,Parogrelil,1.00469,0,nitric oxide donors,Phosphodiesterase III/Va (PDE) Inhibitor
+GSK-461364A,Pralatrexate,1.00244,0,Polo-like Kinase-1 (Plk-1) Inhibitor,Dihydrofolate Reductase (DHFR) Inhibitors
+GSK-461364A,RGB-286147,0.72749,1,Polo-like Kinase-1 (Plk-1) Inhibitor,CDK1/2/3/7/9 Inhibitor
+GMX-1778,GSK-461364A,0.901855,1,IKK beta Inhibitor,Polo-like Kinase-1 (Plk-1) Inhibitor
+GSK-461364A,KX-01,1.170165,0,Polo-like Kinase-1 (Plk-1) Inhibitor,Src Kinase Inhibitor
+GSK-461364A,HMSL10077,0.916115,1,Polo-like Kinase-1 (Plk-1) Inhibitor,BTK Inhibitor
+Dinaciclib (SCH727965),GSK-461364A,0.926575,1,CDK1/2/5/9 Inhibitor,Polo-like Kinase-1 (Plk-1) Inhibitor
+GSK-461364A,MK-1775,0.94614,1,Polo-like Kinase-1 (Plk-1) Inhibitor,Wee1 Kinase Inhibitor
+GSK-461364A,Panobinostat,0.969995,0,Polo-like Kinase-1 (Plk-1) Inhibitor,HDAC Inhibitor
+Fascaplysin,GSK-461364A,1.08407,0,CDK4/6 Inhibitor,Polo-like Kinase-1 (Plk-1) Inhibitor
+GSK-461364A,Oprozomib,0.967215,0,Polo-like Kinase-1 (Plk-1) Inhibitor,Proteasome Inhibitor
+CAY-10581,GSK-461364A,0.78145,1,IDO Inhibitor,Polo-like Kinase-1 (Plk-1) Inhibitor
+GSK-461364A,NSC-319726,0.77224,1,Polo-like Kinase-1 (Plk-1) Inhibitor,Mutant p53 Activator
+GSK-461364A,IVX-214,0.95061,0,Polo-like Kinase-1 (Plk-1) Inhibitor,Polo-like Kinase-1 (Plk-1) Inhibitor
+BMS-3,GSK-461364A,1.20371,0,LIMK Inhibitor,Polo-like Kinase-1 (Plk-1) Inhibitor
+BS-194,GSK-461364A,1.00264,0,CDK1/2/5/9 Inhibitor,Polo-like Kinase-1 (Plk-1) Inhibitor
+"Akt-I-1,2",GSK-461364A,1.02074,0,AKT Inhibitor,Polo-like Kinase-1 (Plk-1) Inhibitor
+GSK-461364A,JS-59-4,1.221825,0,Polo-like Kinase-1 (Plk-1) Inhibitor,nitric oxide donors
+GSK-461364A,Parogrelil,1.1396000000000002,0,Polo-like Kinase-1 (Plk-1) Inhibitor,Phosphodiesterase III/Va (PDE) Inhibitor
+Osanetant,Pralatrexate,1.00438,0,Tachykinin NK3 Antagonist,Dihydrofolate Reductase (DHFR) Inhibitors
+Osanetant,RGB-286147,1.008985,0,Tachykinin NK3 Antagonist,CDK1/2/3/7/9 Inhibitor
+GMX-1778,Osanetant,0.8008299999999999,1,IKK beta Inhibitor,Tachykinin NK3 Antagonist
+KX-01,Osanetant,0.957555,0,Src Kinase Inhibitor,Tachykinin NK3 Antagonist
+HMSL10077,Osanetant,0.96069,0,BTK Inhibitor,Tachykinin NK3 Antagonist
+Dinaciclib (SCH727965),Osanetant,0.93318,1,CDK1/2/5/9 Inhibitor,Tachykinin NK3 Antagonist
+MK-1775,Osanetant,0.96299,0,Wee1 Kinase Inhibitor,Tachykinin NK3 Antagonist
+Osanetant,Panobinostat,0.92793,1,Tachykinin NK3 Antagonist,HDAC Inhibitor
+Fascaplysin,Osanetant,0.951675,0,CDK4/6 Inhibitor,Tachykinin NK3 Antagonist
+Oprozomib,Osanetant,0.88196,1,Proteasome Inhibitor,Tachykinin NK3 Antagonist
+CAY-10581,Osanetant,1.027625,0,IDO Inhibitor,Tachykinin NK3 Antagonist
+NSC-319726,Osanetant,0.902645,1,Mutant p53 Activator,Tachykinin NK3 Antagonist
+IVX-214,Osanetant,0.9944,0,Polo-like Kinase-1 (Plk-1) Inhibitor,Tachykinin NK3 Antagonist
+BMS-3,Osanetant,0.992465,0,LIMK Inhibitor,Tachykinin NK3 Antagonist
+BS-194,Osanetant,0.98975,0,CDK1/2/5/9 Inhibitor,Tachykinin NK3 Antagonist
+"Akt-I-1,2",Osanetant,0.978005,0,AKT Inhibitor,Tachykinin NK3 Antagonist
+JS-59-4,Osanetant,0.965565,0,nitric oxide donors,Tachykinin NK3 Antagonist
+Osanetant,Parogrelil,0.977535,0,Tachykinin NK3 Antagonist,Phosphodiesterase III/Va (PDE) Inhibitor
+GSK-461364A,Osanetant,1.12517,0,Polo-like Kinase-1 (Plk-1) Inhibitor,Tachykinin NK3 Antagonist

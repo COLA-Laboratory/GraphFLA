@@ -1,0 +1,83 @@
+viral_family,rbp,rbp_construct,ncbi_accession,fusion_class,protein_size_aa,pct_n_glyco,pct_o_glyco,Amino acid range,Human codon-optimized gene synthesis,Tag,Checked by WB
+Togaviridae,Sindbis virus,E3E26kE1,NP_062890.1,2.0,981.0,0.611620795107034,0.203873598369011,265-1245,Yes,His-Tag (C-term.),Yes
+Togaviridae,Venezuelan equine encephalitis virus,E3E26kE1,YP_010775819.1,2.0,980.0,0.408163265306122,0.510204081632653,276-1255,Yes,His-Tag (C-term.),Yes
+Togaviridae,Pixuna virus,E3E26kE1,YP_009507801.1,2.0,978.0,0.306748466257669,0.306748466257669,276-1253,Yes,His-Tag (C-term.),Yes
+Togaviridae,Harbor porpoise alphavirus,E3E26kE1,QJE50388.1,2.0,984.0,0.304878048780488,0.813008130081301,237-1220,Yes,His-Tag (C-term.),Yes
+Togaviridae,Caaingua virus,E3E26kE1,YP_010087635.1,2.0,979.0,0.817160367722165,1.22574055158325,270-1248,Yes,His-Tag (C-term.),Yes
+Matonaviridae,Rubella virus,CE2E1,NP_062884.1,2.0,763.0,0.917431192660551,1.70380078636959,All,Yes,His-Tag (C-term.),Yes
+Matonaviridae,Rustrela virus,CE2E1,QKO01653.2,2.0,751.0,0.739827373612824,1.33155792276964,All,Yes,His-Tag (C-term.),Yes
+Flaviviridae,Hepatitis C virus,C(C-ter)E1E2,NP_671491.1,2.0,555.0,3.06306306306306,3.24324324324324,132-746,Yes,His-Tag (C-term.),No (infectious pseudotype)
+Flaviviridae,Bat hepacivirus M,C(C-ter)E1E2,YP_009506362.1,2.0,514.0,1.94552529182879,1.75097276264591,154-707,Yes,His-Tag (C-term.),No (infectious pseudotype)
+Flaviviridae,Porcine pestivirus,C(C-ter)ErnsE1E2,YP_008992092.1,2.0,574.0,1.21951219512195,0.696864111498258,244-1074,Yes,His-Tag (C-term.),No (infectious pseudotype)
+Coronaviridae,Severe acute respiratory syndrome coronavirus 2,Spike,YP_009724390.1,1.0,1273.0,1.72820109976434,0.314218381775334,All,Yes,His-Tag (C-term.),Yes
+Coronaviridae,Middle East respiratory syndrome coronavirus,Spike,YP_009047204.1,1.0,1353.0,1.6260162601626,1.25646711012565,All,Yes,His-Tag (C-term.),Yes
+Coronaviridae,Porcine hemagglutinating encephalomyelitis virus,Spike,AAY68297.1,1.0,1349.0,1.55670867309118,1.03780578206079,All,Yes,His-Tag (C-term.),Yes
+Orthomyxoviridae,Influenza C virus,HEF,YP_089655.1,1.0,655.0,1.22137404580153,1.37404580152672,All,Yes,His-Tag (C-term.),Yes
+Orthomyxoviridae,Wellfleet Bay virus,HA,YP_009110688.1,1.0,507.0,0.986193293885602,0.394477317554241,All,Yes,His-Tag (C-term.),Yes
+Orthomyxoviridae,Oz virus,G,YP_009553284.1,1.0,512.0,1.171875,0.1953125,All,Yes,His-Tag (C-term.),Yes
+Orthomyxoviridae,Sinu virus,G,YP_010840496.1,1.0,498.0,1.40562248995984,0.401606425702811,All,Yes,His-Tag (C-term.),Yes
+Arenaviridae,Lassa virus,GPC,NP_694870.1,1.0,492.0,2.23577235772358,1.6260162601626,All,Yes,His-Tag (C-term.),Yes
+Arenaviridae,Morogoro virus,GPC,YP_003090214.1,1.0,490.0,2.44897959183673,1.42857142857143,All,Yes,His-Tag (C-term.),Yes
+Arenaviridae,Lymphocytic choriomeningitis virus,GPC,NP_694851.1,1.0,499.0,1.80360721442886,1.20240480961924,All,Yes,His-Tag (C-term.),Yes
+Arenaviridae,Lunk virus,GPC,YP_006858706.1,1.0,496.0,2.01612903225806,1.41129032258065,All,Yes,His-Tag (C-term.),No (infectious pseudotype)
+Arenaviridae,Lujo virus,GPC,YP_002929490.1,1.0,454.0,2.42290748898678,1.3215859030837,All,Yes,His-Tag (C-term.),Yes
+Arenaviridae,Xapuri virus,GPC,YP_010086246.1,1.0,513.0,2.92397660818713,1.75438596491228,All,Yes,His-Tag (C-term.),Yes
+Arenaviridae,Junin virus,GPC,NP_899218.1,1.0,486.0,1.85185185185185,1.85185185185185,All,Yes,His-Tag (C-term.),Yes
+Arenaviridae,Aporé virus,GPC,YP_009553321.1,1.0,489.0,2.65848670756646,0.81799591002045,All,Yes,His-Tag (C-term.),Yes
+Arenaviridae,Tamiami virus,GPC,YP_001911115.1,1.0,486.0,2.26337448559671,1.85185185185185,All,No,-,No (infectious pseudotype)
+Hantaviridae,Hantaan virus,GPC,NP_941978.1,2.0,1135.0,0.52863436123348,0.0,All,Yes,His-Tag (C-term.),No (infectious pseudotype)
+Hantaviridae,Oxbow virus,GPC,YP_009665161.1,2.0,1141.0,0.438212094653812,0.175284837861525,All,Yes,His-Tag (C-term.),No (infectious pseudotype)
+Hantaviridae,Sin Nombre virus,GPC,NP_941974.1,2.0,1140.0,0.350877192982456,0.263157894736842,All,Yes,His-Tag (C-term.),Yes
+Hantaviridae,Montano virus,GPC,YP_009361843.1,2.0,1139.0,0.351185250219491,0.351185250219491,All,Yes,His-Tag (C-term.),No (infectious pseudotype)
+Hantaviridae,Rockport virus,GPC,YP_009507826.1,2.0,1136.0,0.440140845070423,0.176056338028169,All,Yes,His-Tag (C-term.),No (infectious pseudotype)
+Hantaviridae,Nova virus,GPC,YP_009362037.1,2.0,1127.0,0.443655723158829,0.0,All,Yes,His-Tag (C-term.),Yes
+Hantaviridae,Thottopalayam virus,GPC,YP_001911125.1,2.0,1121.0,0.356824264049955,0.178412132024978,All,Yes,His-Tag (C-term.),Yes
+Nairoviridae,Leopards Hill virus,GPC,YP_009111285.1,2.0,1420.0,0.774647887323944,0.211267605633803,All,Yes,His-Tag (C-term.),Yes
+Nairoviridae,Keterah virus,GPC,YP_009361833.1,2.0,1659.0,1.08499095840868,0.180831826401447,All,Yes,His-Tag (C-term.),Yes
+Nairoviridae,Thiafora virus,GPC,YP_009513192.1,2.0,1281.0,0.858704137392662,0.312256049960968,All,Yes,His-Tag (C-term.),Yes
+Nairoviridae,Tamdy virus,GPC,QFU19353.1,2.0,1361.0,0.661278471711977,0.587803085966201,All,Yes,His-Tag (C-term.),Yes
+Nairoviridae,Dera Ghazi Khan virus,GPC,YP_010229104.1,2.0,1412.0,0.991501416430595,0.212464589235127,All,Yes,His-Tag (C-term.),Yes
+Nairoviridae,Hughes virus,GPC,AMT75408.1,2.0,1372.0,0.801749271137026,0.291545189504373,All,Yes,His-Tag (C-term.),Yes
+Peribunyaviridae,Sabo virus,GPC,YP_009666874.1,2.0,1399.0,0.214438884917798,0.0714796283059328,All,Yes,His-Tag (C-term.),Yes
+Peribunyaviridae,Shuni virus,GPC,YP_009667050.1,2.0,1404.0,0.213675213675214,0.142450142450142,All,Yes,His-Tag (C-term.),Yes
+Peribunyaviridae,Manzanilla virus,GPC,YP_010839446.1,2.0,1433.0,0.418702023726448,0.0,All,Yes,His-Tag (C-term.),Yes
+Peribunyaviridae,Ness Ziona virus,GPC,YP_010840908.1,2.0,1387.0,0.648882480173035,0.0720980533525595,All,Yes,His-Tag (C-term.),Yes
+Peribunyaviridae,Vinces virus,GPC,QLA46882.1,2.0,1428.0,0.350140056022409,0.0700280112044818,All,Yes,His-Tag (C-term.),Yes
+Peribunyaviridae,Wolkberg virus,GPC,YP_009362985.1,2.0,1421.0,0.351864883884588,0.0703729767769177,All,Yes,His-Tag (C-term.),Yes
+Peribunyaviridae,Calchaqui virus,GPC,AIS74642.1,2.0,1590.0,0.691823899371069,0.188679245283019,All,Yes,His-Tag (C-term.),Yes
+Peribunyaviridae,Anhembi virus,GPC,YP_009666890.1,2.0,1418.0,0.282087447108604,0.0705218617771509,All,Yes,His-Tag (C-term.),Yes
+Peribunyaviridae,South River virus,GPC,APA28982.1,2.0,1444.0,0.346260387811634,0.138504155124654,All,Yes,His-Tag (C-term.),Yes
+Peribunyaviridae,Murrumbidgee virus,GPC,YP_008709777.1,2.0,1371.0,0.437636761487965,0.0,All,Yes,His-Tag (C-term.),Yes
+Peribunyaviridae,Triniti virus,GPC,YP_010839940.1,2.0,1444.0,0.415512465373961,0.0692520775623269,All,Yes,His-Tag (C-term.),Yes (faint)
+Phenuiviridae,Rio Grande virus,GPC,YP_010086080.1,2.0,1366.0,0.512445095168375,0.292825768667643,All,Yes,His-Tag (C-term.),Yes
+Phenuiviridae,Viola virus,GPC,YP_010086245.1,2.0,1342.0,0.3725782414307,0.29806259314456,All,Yes,His-Tag (C-term.),Yes
+Phenuiviridae,Medjerda Valley virus,GPC,YP_010086173.1,2.0,1333.0,0.375093773443361,0.0750187546886722,All,Yes,His-Tag (C-term.),Yes
+Phenuiviridae,Kismayo virus,GPC,YP_010839723.1,2.0,1076.0,0.464684014869888,0.371747211895911,All,Yes,His-Tag (C-term.),Yes
+Phenuiviridae,Dabie bandavirus,GPC,YP_006504094.1,2.0,1073.0,0.465983224603914,0.279589934762349,All,Yes,His-Tag (C-term.),Yes (faint)
+Bornaviridae,Borna disease virus 2,G,YP_009268921.1,3.0,503.0,2.98210735586481,0.795228628230616,All,Yes,His-Tag (C-term.),Yes
+Bornaviridae,Parrot bornavirus 5,G,YP_009512938.1,3.0,499.0,3.80761523046092,1.20240480961924,All,Yes,His-Tag (C-term.),Yes
+Bornaviridae,Parrot bornavirus 1,G,YP_009512932.1,3.0,500.0,3.8,1.0,All,Yes,His-Tag (C-term.),Yes
+Filoviridae,Zaire ebolavirus,GP,AIE11800.1,1.0,676.0,2.50737463126844,1.62721893491124,All,No,-,No (infectious pseudotype)
+Filoviridae,Lloviu virus,GP,UJP71058.1,1.0,735.0,2.31292517006803,1.9047619047619,All,Yes,His-Tag (C-term.),Yes
+Filoviridae,Mengla virus,GP,YP_010087186.1,1.0,662.0,2.27272727272727,1.96374622356495,All,Yes,His-Tag (C-term.),Yes
+Paramyxoviridae,Measles virus,HA,NP_056923.1,1.0,617.0,0.809061488673139,0.486223662884927,All,Yes,His-Tag (N-term.),Yes
+Paramyxoviridae,Nipah virus,G,NP_112027.1,1.0,602.0,0.995024875621891,1.66112956810631,All,Yes,-,No (infectious pseudotype)
+Paramyxoviridae,Cedar virus,G,YP_009094086.1,1.0,622.0,1.4446227929374,1.60771704180064,All,Yes,His-Tag (N-term.),Yes
+Paramyxoviridae,Caprine parainfluenza virus 3,HN,YP_009179211.1,1.0,574.0,0.521739130434783,0.522648083623693,All,Yes,His-Tag (N-term.),Yes
+Rhabdoviridae,Rabies virus,G,NP_056796.1,3.0,524.0,1.14285714285714,1.7175572519084,All,Yes,His-Tag (C-term.),Yes
+Rhabdoviridae,Gannoruwa bat lyssavirus,G,YP_009325517.1,3.0,526.0,0.379506641366224,1.90114068441065,All,Yes,His-Tag (C-term.),Yes
+Rhabdoviridae,Lleida bat lyssavirus,G,YP_009325415.1,3.0,525.0,1.14068441064639,0.571428571428571,All,Yes,His-Tag (C-term.),Yes
+Rhabdoviridae,Tupaia rhabdovirus,G,YP_238533.1,3.0,531.0,0.75187969924812,0.376647834274953,All,Yes,His-Tag (C-term.),Yes
+Rhabdoviridae,Sunguru virus,G,YP_009094440.1,3.0,567.0,0.352112676056338,0.529100529100529,All,Yes,His-Tag (C-term.),Yes
+Rhabdoviridae,Kumasi rhabdovirus,G,YP_009177013.1,3.0,551.0,1.44927536231884,1.08892921960073,All,Yes,His-Tag (C-term.),Yes
+Rhabdoviridae,Niakha virus,G,YP_009094470.1,3.0,531.0,0.37593984962406,0.188323917137476,All,Yes,His-Tag (C-term.),Yes
+Rhabdoviridae,Pike fry rhabdovirus,G,YP_009094124.1,3.0,508.0,1.37524557956778,0.78740157480315,All,Yes,His-Tag (C-term.),Yes
+Rhabdoviridae,Santa Barbara virus,G,YP_009176997.1,3.0,702.0,0.995732574679943,1.99430199430199,All,Yes,His-Tag (C-term.),Yes
+Rhabdoviridae,Bovine ephemeral fever virus,G,NP_065402.1,3.0,623.0,0.801282051282051,0.321027287319422,All,Yes,His-Tag (C-term.),Yes
+Rhabdoviridae,Itacaiunas virus,G,YP_009362164.1,3.0,784.0,1.40127388535032,0.510204081632653,All,Yes,His-Tag (C-term.),Yes
+Rhabdoviridae,Tibrogargan virus,G,YP_007641373.1,3.0,662.0,1.35746606334842,0.302114803625378,All,Yes,His-Tag (C-term.),Yes
+Rhabdoviridae,Flanders virus,G,YP_009512995.1,3.0,618.0,1.45395799676898,0.647249190938511,All,Yes,His-Tag (C-term.),Yes
+Rhabdoviridae,Wongabel virus,G,YP_002333278.1,3.0,623.0,1.28205128205128,0.642054574638844,All,Yes,His-Tag (C-term.),Yes
+Rhabdoviridae,Piry virus,G,YP_009505535.1,3.0,529.0,0.566037735849057,0.378071833648393,All,Yes,His-Tag (C-term.),Yes
+Rhabdoviridae,Morreton virus,G,YP_009362085.1,3.0,513.0,0.583657587548638,0.584795321637427,All,Yes,His-Tag (C-term.),Yes
+Rhabdoviridae,Vesicular stomatitis virus,G,ACK77584.1,3.0,511.0,0.5859375,0.195694716242661,1-511,No,-,No (infectious pseudotype)

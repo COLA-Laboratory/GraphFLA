@@ -1,0 +1,224 @@
+focal_species,partner_species,focal_species_long,partner_species_long,fold_change,p,padj,interaction_type
+Bt,Bt,Bacteroides thetaiotaomicron,Bacteroides thetaiotaomicron,1.0,1.0,1.0,
+Bt,Bu,Bacteroides thetaiotaomicron,Bacteroides uniformis,0.589743045588453,6.47601200116009e-17,9.627671175058e-16,competition
+Bt,Pv,Bacteroides thetaiotaomicron,Phocaeicola vulgatus (formerly Bacteroides vulgatus),0.510567246028375,7.3232186801852e-19,2.08769531344444e-17,competition
+Bt,Ca,Bacteroides thetaiotaomicron,Collinsella aerofaciens,1.023459390227,0.223265417758603,0.260671142199835,amensalism
+Bt,Cd,Bacteroides thetaiotaomicron,Clostridioides difficile (formerly Clostridium difficile),0.648890278408908,2.72121694172168e-15,3.03415689001967e-14,exploitation
+Bt,Cs,Bacteroides thetaiotaomicron,Clostridium sporogenes,0.782971940818175,7.42673714529403e-12,3.68036085200126e-11,competition
+Bt,Ec,Bacteroides thetaiotaomicron,Escherichia coli,0.865448753253329,1.44364506179528e-07,3.36745520018645e-07,competition
+Bt,Ar,Bacteroides thetaiotaomicron,Agathobacter rectalis (formerly Eubacterium rectale),0.938830967452726,0.0157381383343662,0.0204046793521143,amensalism
+Bt,Ka,Bacteroides thetaiotaomicron,Klebsiella aerogenes,0.60943127654157,3.22907784149908e-16,4.35856697869052e-15,exploitation
+Bt,La,Bacteroides thetaiotaomicron,Lactobacillus acidophilus,0.693169156987393,1.99493838310678e-11,9.44464600881809e-11,exploitation
+Bt,Lg,Bacteroides thetaiotaomicron,Lactobacillus gasseri,0.731270353887301,7.85006807327768e-13,5.14872111864977e-12,competition
+Bt,Ls,Bacteroides thetaiotaomicron,Lacrimispora saccharolytica (formerly Clostridium saccharolyticum),0.868601953539429,3.24537628290059e-08,8.31860817341185e-08,exploitation
+Bt,Sc,Bacteroides thetaiotaomicron,Segatella copri (formerly Prevotella copri),0.818350735255695,2.29380684258049e-10,8.38555616222051e-10,competition
+Bt,Pm,Bacteroides thetaiotaomicron,Parabacteroides merdae ,0.854128943004251,5.44088491061686e-09,1.59647017772047e-08,competition
+Bt,Rg,Bacteroides thetaiotaomicron,Ruminococcus gnavus,0.818576116290506,1.20552708725553e-08,3.3764332133096e-08,competition
+Bu,Bt,Bacteroides uniformis,Bacteroides thetaiotaomicron,0.486494350312425,3.63004323527337e-18,8.09499641465962e-17,competition
+Bu,Bu,Bacteroides uniformis,Bacteroides uniformis,1.0,1.0,1.0,
+Bu,Pv,Bacteroides uniformis,Phocaeicola vulgatus (formerly Bacteroides vulgatus),0.423424389844884,1.35152091280529e-17,2.73990148686892e-16,competition
+Bu,Ca,Bacteroides uniformis,Collinsella aerofaciens,1.34553900926717,7.33221804345591e-15,7.10906358126377e-14,exploitation
+Bu,Cd,Bacteroides uniformis,Clostridioides difficile (formerly Clostridium difficile),0.87327058640747,6.96687261351098e-08,1.70726658550873e-07,exploitation
+Bu,Cs,Bacteroides uniformis,Clostridium sporogenes,0.876442711806216,1.30447368920417e-06,2.6206993936264e-06,amensalism
+Bu,Ec,Bacteroides uniformis,Escherichia coli,0.991670064257145,0.681255840590032,0.74107342659306,amensalism
+Bu,Ar,Bacteroides uniformis,Agathobacter rectalis (formerly Eubacterium rectale),0.98168061368195,0.275006656893373,0.319408773370949,amensalism
+Bu,Ka,Bacteroides uniformis,Klebsiella aerogenes,0.737001938928465,5.50929325287634e-10,1.95011491331972e-09,exploitation
+Bu,La,Bacteroides uniformis,Lactobacillus acidophilus,0.737912927822142,2.43595467566608e-12,1.35734734048161e-11,exploitation
+Bu,Lg,Bacteroides uniformis,Lactobacillus gasseri,0.79899209849132,2.12996435163895e-10,7.91636750692479e-10,competition
+Bu,Ls,Bacteroides uniformis,Lacrimispora saccharolytica (formerly Clostridium saccharolyticum),0.779653993710797,2.07528096157886e-11,9.44464600881809e-11,exploitation
+Bu,Sc,Bacteroides uniformis,Segatella copri (formerly Prevotella copri),0.845732949812555,5.63751327491423e-08,1.41254546101783e-07,competition
+Bu,Pm,Bacteroides uniformis,Parabacteroides merdae ,0.893199529403351,9.01758381421189e-07,1.84488182621032e-06,competition
+Bu,Rg,Bacteroides uniformis,Ruminococcus gnavus,0.8934770508521,2.33640916375469e-05,4.16815394813837e-05,competition
+Pv,Bt,Phocaeicola vulgatus (formerly Bacteroides vulgatus),Bacteroides thetaiotaomicron,0.66977747801083,2.26697802399447e-13,1.74322792879575e-12,competition
+Pv,Bu,Phocaeicola vulgatus (formerly Bacteroides vulgatus),Bacteroides uniformis,0.657597664061402,1.80391489156254e-11,8.74506566996626e-11,competition
+Pv,Pv,Phocaeicola vulgatus (formerly Bacteroides vulgatus),Phocaeicola vulgatus (formerly Bacteroides vulgatus),1.0,1.0,1.0,
+Pv,Ca,Phocaeicola vulgatus (formerly Bacteroides vulgatus),Collinsella aerofaciens,0.971131046339024,0.0935697602217564,0.112789494753792,amensalism
+Pv,Cd,Phocaeicola vulgatus (formerly Bacteroides vulgatus),Clostridioides difficile (formerly Clostridium difficile),0.731886662433141,5.71368172190857e-10,1.96023234459324e-09,exploitation
+Pv,Cs,Phocaeicola vulgatus (formerly Bacteroides vulgatus),Clostridium sporogenes,0.734768188580562,3.33635106431713e-11,1.45883585753474e-10,amensalism
+Pv,Ec,Phocaeicola vulgatus (formerly Bacteroides vulgatus),Escherichia coli,0.770598272838442,1.60335574546152e-08,4.30781121973397e-08,competition
+Pv,Ar,Phocaeicola vulgatus (formerly Bacteroides vulgatus),Agathobacter rectalis (formerly Eubacterium rectale),0.99986131131095,0.994569206527643,1.0,amensalism
+Pv,Ka,Phocaeicola vulgatus (formerly Bacteroides vulgatus),Klebsiella aerogenes,0.575892427766697,2.50824596381501e-11,1.11867769986149e-10,exploitation
+Pv,La,Phocaeicola vulgatus (formerly Bacteroides vulgatus),Lactobacillus acidophilus,0.769927323163371,2.85816511330463e-08,7.41128860775503e-08,exploitation
+Pv,Lg,Phocaeicola vulgatus (formerly Bacteroides vulgatus),Lactobacillus gasseri,0.754125453950659,6.28389697689122e-09,1.81988185174901e-08,competition
+Pv,Ls,Phocaeicola vulgatus (formerly Bacteroides vulgatus),Lacrimispora saccharolytica (formerly Clostridium saccharolyticum),0.715423066121814,2.49557134348637e-12,1.35734734048161e-11,exploitation
+Pv,Sc,Phocaeicola vulgatus (formerly Bacteroides vulgatus),Segatella copri (formerly Prevotella copri),1.01297537701717,0.421368017794667,0.476980040447771,amensalism
+Pv,Pm,Phocaeicola vulgatus (formerly Bacteroides vulgatus),Parabacteroides merdae ,0.875678777227204,4.78333383156131e-07,1.02565715811362e-06,competition
+Ca,Bt,Collinsella aerofaciens,Bacteroides thetaiotaomicron,0.577881503736506,6.9857121074393e-11,2.83846021728287e-10,amensalism
+Ca,Bu,Collinsella aerofaciens,Bacteroides uniformis,0.605625195521454,5.53209005638104e-13,3.85517525804053e-12,exploitation
+Ca,Pv,Collinsella aerofaciens,Phocaeicola vulgatus (formerly Bacteroides vulgatus),0.52211657174446,2.15494142139118e-14,1.92220774788093e-13,amensalism
+Ca,Ca,Collinsella aerofaciens,Collinsella aerofaciens,1.0,1.0,1.0,
+Ca,Cd,Collinsella aerofaciens,Clostridioides difficile (formerly Clostridium difficile),0.52417975847886,7.64379353987277e-10,2.54412829759944e-09,exploitation
+Ca,Cs,Collinsella aerofaciens,Clostridium sporogenes,0.64423882879375,9.73876872154424e-10,3.14745713754255e-09,competition
+Ca,Ec,Collinsella aerofaciens,Escherichia coli,0.610225541407169,5.17579070373876e-14,4.27481972938424e-13,competition
+Ca,Ar,Collinsella aerofaciens,Agathobacter rectalis (formerly Eubacterium rectale),1.45608063982635,1.80841095306626e-10,6.83518038192842e-10,exploitation
+Ca,Ka,Collinsella aerofaciens,Klebsiella aerogenes,0.399844728558625,1.02221191535196e-14,9.49805238014537e-14,exploitation
+Ca,La,Collinsella aerofaciens,Lactobacillus acidophilus,0.728794713239075,2.73866874283657e-09,8.25301526557509e-09,amensalism
+Ca,Lg,Collinsella aerofaciens,Lactobacillus gasseri,0.347956393860503,2.43689338566561e-17,4.18020942310332e-16,competition
+Ca,Ls,Collinsella aerofaciens,Lacrimispora saccharolytica (formerly Clostridium saccharolyticum),0.618314413704627,2.24386055213056e-12,1.31679185032925e-11,amensalism
+Ca,Sc,Collinsella aerofaciens,Segatella copri (formerly Prevotella copri),0.515582651034429,2.07238894049122e-11,9.44464600881809e-11,amensalism
+Ca,Pm,Collinsella aerofaciens,Parabacteroides merdae ,0.815090448689555,7.69015271526075e-05,0.000128940154549108,amensalism
+Ca,Rg,Collinsella aerofaciens,Ruminococcus gnavus,0.722905522814016,2.00583415979638e-08,5.32501211469753e-08,competition
+Cd,Bt,Clostridioides difficile (formerly Clostridium difficile),Bacteroides thetaiotaomicron,1.55346094744993,1.54939648141959e-08,4.21360262629963e-08,exploitation
+Cd,Bu,Clostridioides difficile (formerly Clostridium difficile),Bacteroides uniformis,1.84121887286696,6.39618988129864e-11,2.69122706326339e-10,exploitation
+Cd,Pv,Clostridioides difficile (formerly Clostridium difficile),Phocaeicola vulgatus (formerly Bacteroides vulgatus),2.03542076611204,1.98011721190471e-12,1.19342199528311e-11,exploitation
+Cd,Ca,Clostridioides difficile (formerly Clostridium difficile),Collinsella aerofaciens,1.36972822650367,0.000121051399784886,0.000198488692294335,exploitation
+Cd,Cd,Clostridioides difficile (formerly Clostridium difficile),Clostridioides difficile (formerly Clostridium difficile),1.0,1.0,1.0,
+Cd,Cs,Clostridioides difficile (formerly Clostridium difficile),Clostridium sporogenes,0.745427232111215,0.00120048765383892,0.00175075443355091,competition
+Cd,Ec,Clostridioides difficile (formerly Clostridium difficile),Escherichia coli,0.890813465506806,0.0793684019690969,0.0961910523864598,competition
+Cd,Ar,Clostridioides difficile (formerly Clostridium difficile),Agathobacter rectalis (formerly Eubacterium rectale),1.17822319429509,0.015542031343306,0.020268263096826,mutualism
+Cd,Ka,Clostridioides difficile (formerly Clostridium difficile),Klebsiella aerogenes,0.687444001501649,0.000227179274570277,0.000359297717937389,amensalism
+Cd,La,Clostridioides difficile (formerly Clostridium difficile),Lactobacillus acidophilus,0.922142467270502,0.20127910713248,0.236238109950226,amensalism
+Cd,Lg,Clostridioides difficile (formerly Clostridium difficile),Lactobacillus gasseri,1.11905952287617,0.104553202215045,0.125351419859974,exploitation
+Cd,Ls,Clostridioides difficile (formerly Clostridium difficile),Lacrimispora saccharolytica (formerly Clostridium saccharolyticum),0.67451016636486,0.00014871555397758,0.000242069843335769,competition
+Cd,Sc,Clostridioides difficile (formerly Clostridium difficile),Segatella copri (formerly Prevotella copri),2.10208671867692,2.78496992924665e-13,2.07016098074001e-12,exploitation
+Cd,Pm,Clostridioides difficile (formerly Clostridium difficile),Parabacteroides merdae ,1.90160980363015,4.15326778646802e-12,2.17524810025846e-11,exploitation
+Cd,Rg,Clostridioides difficile (formerly Clostridium difficile),Ruminococcus gnavus,1.11398368934824,0.0721723466030323,0.0884309521564627,exploitation
+Cs,Bt,Clostridium sporogenes,Bacteroides thetaiotaomicron,0.58896868077258,2.49735109026981e-10,8.98240795371241e-10,competition
+Cs,Bu,Clostridium sporogenes,Bacteroides uniformis,0.919767450801069,0.0429061540495984,0.0534529181735221,amensalism
+Cs,Pv,Clostridium sporogenes,Phocaeicola vulgatus (formerly Bacteroides vulgatus),0.917355323934419,0.0171162658183119,0.0220631634536622,amensalism
+Cs,Ca,Clostridium sporogenes,Collinsella aerofaciens,0.878087537155619,0.00213953967824512,0.00300073803929976,competition
+Cs,Cd,Clostridium sporogenes,Clostridioides difficile (formerly Clostridium difficile),0.672236961072731,1.43914691196029e-08,3.96209581934746e-08,competition
+Cs,Cs,Clostridium sporogenes,Clostridium sporogenes,0.999999999999999,1.0,1.0,
+Cs,Ec,Clostridium sporogenes,Escherichia coli,0.771344605463531,1.362205342485e-06,2.71224813726924e-06,competition
+Cs,Ar,Clostridium sporogenes,Agathobacter rectalis (formerly Eubacterium rectale),0.842897948769332,0.000119430089985256,0.000197280815308979,competition
+Cs,Ka,Clostridium sporogenes,Klebsiella aerogenes,0.724258673104232,9.38517538243647e-08,2.2504237744982e-07,exploitation
+Cs,La,Clostridium sporogenes,Lactobacillus acidophilus,0.945673274487977,0.109990118877206,0.129776701109085,commensalism
+Cs,Lg,Clostridium sporogenes,Lactobacillus gasseri,1.01727728519213,0.588654519606932,0.649851276595772,amensalism
+Cs,Ls,Clostridium sporogenes,Lacrimispora saccharolytica (formerly Clostridium saccharolyticum),0.75142367871876,7.37805920843058e-06,1.38261109536136e-05,exploitation
+Cs,Sc,Clostridium sporogenes,Segatella copri (formerly Prevotella copri),0.927787806871091,0.0381808649257063,0.0481035755843645,amensalism
+Cs,Pm,Clostridium sporogenes,Parabacteroides merdae ,1.0564393125506,0.108821301478511,0.129770856843358,amensalism
+Cs,Rg,Clostridium sporogenes,Ruminococcus gnavus,0.886370799254491,0.00700431410298015,0.00935306613751242,competition
+Ec,Bt,Escherichia coli,Bacteroides thetaiotaomicron,0.586013028149934,3.4298945707974e-05,6.02257078179386e-05,competition
+Ec,Bu,Escherichia coli,Bacteroides uniformis,0.693645960075446,0.000663772168111362,0.000990165141426122,amensalism
+Ec,Pv,Escherichia coli,Phocaeicola vulgatus (formerly Bacteroides vulgatus),0.807083552458781,0.0331388017237853,0.0419883680932052,competition
+Ec,Ca,Escherichia coli,Collinsella aerofaciens,0.861566446948731,0.0729427995284339,0.0888865808461243,competition
+Ec,Cd,Escherichia coli,Clostridioides difficile (formerly Clostridium difficile),0.685580888035277,0.000311277523516447,0.00047872336375288,competition
+Ec,Cs,Escherichia coli,Clostridium sporogenes,0.7774194703499,0.00618882180681569,0.00831389917421627,competition
+Ec,Ec,Escherichia coli,Escherichia coli,1.0,1.0,1.0,
+Ec,Ar,Escherichia coli,Agathobacter rectalis (formerly Eubacterium rectale),0.499655299360178,1.04203099096984e-06,2.11248100896614e-06,exploitation
+Ec,Ka,Escherichia coli,Klebsiella aerogenes,0.39308209930053,7.2388345666707e-07,1.50061589635123e-06,competition
+Ec,La,Escherichia coli,Lactobacillus acidophilus,0.957013811411173,0.581308373333938,0.64493416544014,amensalism
+Ec,Lg,Escherichia coli,Lactobacillus gasseri,0.918994826834344,0.346216752021907,0.39659282336771,amensalism
+Ec,Ls,Escherichia coli,Lacrimispora saccharolytica (formerly Clostridium saccharolyticum),0.707760234563672,0.00120119026158426,0.00175075443355091,competition
+Ec,Sc,Escherichia coli,Segatella copri (formerly Prevotella copri),0.564641295785264,9.03517614355617e-06,1.67903690001085e-05,amensalism
+Ec,Pm,Escherichia coli,Parabacteroides merdae ,0.796220860115683,0.0109524699682934,0.0145381000174371,competition
+Ec,Rg,Escherichia coli,Ruminococcus gnavus,0.992108767681514,0.916457565226831,0.992087558473705,amensalism
+Ar,Bt,Agathobacter rectalis (formerly Eubacterium rectale),Bacteroides thetaiotaomicron,0.242862167425242,3.54840245861817e-15,3.7680654679612e-14,amensalism
+Ar,Bu,Agathobacter rectalis (formerly Eubacterium rectale),Bacteroides uniformis,0.334282351458684,2.68512721348387e-14,2.3030129561804e-13,amensalism
+Ar,Pv,Agathobacter rectalis (formerly Eubacterium rectale),Phocaeicola vulgatus (formerly Bacteroides vulgatus),0.566418586293444,7.00068663455418e-11,2.83846021728287e-10,amensalism
+Ar,Ca,Agathobacter rectalis (formerly Eubacterium rectale),Collinsella aerofaciens,0.891451218480949,0.00356705124203914,0.00485031967667517,exploitation
+Ar,Cd,Agathobacter rectalis (formerly Eubacterium rectale),Clostridioides difficile (formerly Clostridium difficile),1.1688130195995,0.000252209711821364,0.00039607581504341,mutualism
+Ar,Cs,Agathobacter rectalis (formerly Eubacterium rectale),Clostridium sporogenes,0.827466136240975,5.0107006928091e-05,8.59527888074176e-05,competition
+Ar,Ec,Agathobacter rectalis (formerly Eubacterium rectale),Escherichia coli,1.25217746853002,2.15481319857017e-07,4.90329942123621e-07,exploitation
+Ar,Ar,Agathobacter rectalis (formerly Eubacterium rectale),Agathobacter rectalis (formerly Eubacterium rectale),1.0,1.0,1.0,
+Ar,Ka,Agathobacter rectalis (formerly Eubacterium rectale),Klebsiella aerogenes,0.858303133789589,0.00119138882919463,0.00175075443355091,amensalism
+Ar,La,Agathobacter rectalis (formerly Eubacterium rectale),Lactobacillus acidophilus,0.961249940325174,0.346796415052482,0.39659282336771,commensalism
+Ar,Lg,Agathobacter rectalis (formerly Eubacterium rectale),Lactobacillus gasseri,1.15478247565395,0.00055034394719736,0.00083487551173477,exploitation
+Ar,Ls,Agathobacter rectalis (formerly Eubacterium rectale),Lacrimispora saccharolytica (formerly Clostridium saccharolyticum),0.529696620566503,4.19442458794233e-12,2.17524810025846e-11,exploitation
+Ar,Sc,Agathobacter rectalis (formerly Eubacterium rectale),Segatella copri (formerly Prevotella copri),0.725449881195895,5.91657834500316e-08,1.465996634373e-07,competition
+Ar,Pm,Agathobacter rectalis (formerly Eubacterium rectale),Parabacteroides merdae ,1.12052055964725,0.00215858647672182,0.00300852990193104,exploitation
+Ar,Rg,Agathobacter rectalis (formerly Eubacterium rectale),Ruminococcus gnavus,0.705267171224973,1.1786729426279e-08,3.36979572059002e-08,exploitation
+Ka,Bt,Klebsiella aerogenes,Bacteroides thetaiotaomicron,1.18520006388036,0.00136078670094836,0.00195777699555797,exploitation
+Ka,Bu,Klebsiella aerogenes,Bacteroides uniformis,1.41171147211114,2.89424157684439e-05,5.12234818758969e-05,exploitation
+Ka,Pv,Klebsiella aerogenes,Phocaeicola vulgatus (formerly Bacteroides vulgatus),1.42064040735743,6.3545018329465e-05,0.000107352568844475,exploitation
+Ka,Ca,Klebsiella aerogenes,Collinsella aerofaciens,1.39403407443647,1.12560337065954e-05,2.04072806225267e-05,exploitation
+Ka,Cd,Klebsiella aerogenes,Clostridioides difficile (formerly Clostridium difficile),0.99525289695436,0.930635467124374,1.0,amensalism
+Ka,Cs,Klebsiella aerogenes,Clostridium sporogenes,1.24868767990906,9.55027122184742e-05,0.000158933618094923,exploitation
+Ka,Ec,Klebsiella aerogenes,Escherichia coli,0.845357067309024,0.029115581134917,0.0371015691033514,competition
+Ka,Ar,Klebsiella aerogenes,Agathobacter rectalis (formerly Eubacterium rectale),1.0350032832169,0.524114613866848,0.590290701476299,amensalism
+Ka,Ka,Klebsiella aerogenes,Klebsiella aerogenes,1.0,1.0,1.0,
+Ka,La,Klebsiella aerogenes,Lactobacillus acidophilus,1.06419016617714,0.290996521137743,0.336229141003713,amensalism
+Ka,Lg,Klebsiella aerogenes,Lactobacillus gasseri,1.10725055077484,0.109477755532579,0.129776701109085,exploitation
+Ka,Ls,Klebsiella aerogenes,Lacrimispora saccharolytica (formerly Clostridium saccharolyticum),0.682169516779691,3.52767973332489e-05,6.14587953540197e-05,competition
+Ka,Sc,Klebsiella aerogenes,Segatella copri (formerly Prevotella copri),1.22372525729443,0.0014509017130477,0.00207404539749768,exploitation
+Ka,Pm,Klebsiella aerogenes,Parabacteroides merdae ,1.43830409881434,6.30047961419712e-06,1.20062747111449e-05,exploitation
+Ka,Rg,Klebsiella aerogenes,Ruminococcus gnavus,1.35550934635921,0.000258295496409561,0.000399999275689806,exploitation
+La,Bt,Lactobacillus acidophilus,Bacteroides thetaiotaomicron,1.96256678300178,0.00158303509796297,0.00224851482067352,exploitation
+La,Bu,Lactobacillus acidophilus,Bacteroides uniformis,1.51658007565271,5.0682773596647e-05,8.62767825347503e-05,exploitation
+La,Pv,Lactobacillus acidophilus,Phocaeicola vulgatus (formerly Bacteroides vulgatus),1.21642159011922,0.0152676390999452,0.0200275501134575,exploitation
+La,Ca,Lactobacillus acidophilus,Collinsella aerofaciens,0.953832789890358,0.55895442687228,0.626366016042806,amensalism
+La,Cd,Lactobacillus acidophilus,Clostridioides difficile (formerly Clostridium difficile),0.805250269477649,0.0143799744005258,0.0189747591202205,amensalism
+La,Cs,Lactobacillus acidophilus,Clostridium sporogenes,1.13548305242677,0.0606109263069044,0.0746753401460756,commensalism
+La,Ec,Lactobacillus acidophilus,Escherichia coli,0.614765591154205,4.94752407141853e-05,8.55269665059173e-05,amensalism
+La,Ar,Lactobacillus acidophilus,Agathobacter rectalis (formerly Eubacterium rectale),1.98538133110162,8.96768066865148e-10,2.94087174869011e-09,commensalism
+La,Ka,Lactobacillus acidophilus,Klebsiella aerogenes,0.337294864797576,4.70364420411226e-07,1.01836180341459e-06,amensalism
+La,La,Lactobacillus acidophilus,Lactobacillus acidophilus,1.0,1.0,1.0,
+La,Lg,Lactobacillus acidophilus,Lactobacillus gasseri,1.2232276553435,0.0499607525618844,0.0618958212294457,exploitation
+La,Ls,Lactobacillus acidophilus,Lacrimispora saccharolytica (formerly Clostridium saccharolyticum),0.655443557909585,0.000666030364187974,0.000990165141426122,competition
+La,Sc,Lactobacillus acidophilus,Segatella copri (formerly Prevotella copri),2.18761389721438,1.44966681263632e-07,3.36745520018645e-07,exploitation
+La,Pm,Lactobacillus acidophilus,Parabacteroides merdae ,1.22479097027893,0.0195862973458781,0.025101978782361,exploitation
+La,Rg,Lactobacillus acidophilus,Ruminococcus gnavus,1.04802015492168,0.616869202932022,0.677644493861285,amensalism
+Lg,Bt,Lactobacillus gasseri,Bacteroides thetaiotaomicron,0.670724189063293,1.12357616847527e-05,2.04072806225267e-05,competition
+Lg,Bu,Lactobacillus gasseri,Bacteroides uniformis,0.433761279538635,4.19086082729418e-07,9.16237220084904e-07,competition
+Lg,Pv,Lactobacillus gasseri,Phocaeicola vulgatus (formerly Bacteroides vulgatus),0.650829796265634,0.000256785071183703,0.000399999275689806,competition
+Lg,Ca,Lactobacillus gasseri,Collinsella aerofaciens,0.686939917860167,1.72944513564236e-05,3.11021181651813e-05,competition
+Lg,Cd,Lactobacillus gasseri,Clostridioides difficile (formerly Clostridium difficile),0.478531179500456,2.41935086566431e-06,4.69143689602731e-06,exploitation
+Lg,Cs,Lactobacillus gasseri,Clostridium sporogenes,0.52759178071023,6.04792378230006e-07,1.28446381281229e-06,amensalism
+Lg,Ec,Lactobacillus gasseri,Escherichia coli,0.318347941337042,3.09570543296944e-07,6.83507239160579e-07,amensalism
+Lg,Ar,Lactobacillus gasseri,Agathobacter rectalis (formerly Eubacterium rectale),0.734354718666844,0.00123860917544465,0.00179357042937765,exploitation
+Lg,Ka,Lactobacillus gasseri,Klebsiella aerogenes,0.258075769444624,2.29674476171658e-08,6.02557743367997e-08,exploitation
+Lg,La,Lactobacillus gasseri,Lactobacillus acidophilus,0.645220168327273,0.000221854948928954,0.000353383240079692,exploitation
+Lg,Lg,Lactobacillus gasseri,Lactobacillus gasseri,0.999999999999999,1.0,1.0,
+Lg,Ls,Lactobacillus gasseri,Lacrimispora saccharolytica (formerly Clostridium saccharolyticum),0.353649268717313,1.64109081008792e-07,3.77281701700624e-07,exploitation
+Lg,Sc,Lactobacillus gasseri,Segatella copri (formerly Prevotella copri),0.96816502276925,0.628990246692678,0.687572671629741,neutralism
+Lg,Pm,Lactobacillus gasseri,Parabacteroides merdae ,0.639132675524669,0.000617610306986623,0.000930588503094709,competition
+Lg,Rg,Lactobacillus gasseri,Ruminococcus gnavus,0.622244696464582,0.000194653516587603,0.000312285857547018,competition
+Ls,Bt,Lacrimispora saccharolytica (formerly Clostridium saccharolyticum),Bacteroides thetaiotaomicron,1.67605395920922,7.73741452447116e-16,9.58579688309483e-15,exploitation
+Ls,Bu,Lacrimispora saccharolytica (formerly Clostridium saccharolyticum),Bacteroides uniformis,2.04001145977849,6.74505029685135e-19,2.08769531344444e-17,exploitation
+Ls,Pv,Lacrimispora saccharolytica (formerly Clostridium saccharolyticum),Phocaeicola vulgatus (formerly Bacteroides vulgatus),2.02566563071407,7.26083498914805e-20,8.09583101290008e-18,exploitation
+Ls,Ca,Lacrimispora saccharolytica (formerly Clostridium saccharolyticum),Collinsella aerofaciens,1.06309655543348,0.350067665699659,0.398291272709306,amensalism
+Ls,Cd,Lacrimispora saccharolytica (formerly Clostridium saccharolyticum),Clostridioides difficile (formerly Clostridium difficile),0.842204063220494,6.35309603549376e-06,1.20062747111449e-05,competition
+Ls,Cs,Lacrimispora saccharolytica (formerly Clostridium saccharolyticum),Clostridium sporogenes,1.44893266084356,6.74673285277506e-10,2.27957791843763e-09,exploitation
+Ls,Ec,Lacrimispora saccharolytica (formerly Clostridium saccharolyticum),Escherichia coli,0.867958248788858,0.00263770401702756,0.00365346581240464,competition
+Ls,Ar,Lacrimispora saccharolytica (formerly Clostridium saccharolyticum),Agathobacter rectalis (formerly Eubacterium rectale),2.58468264614226,8.88946707573024e-21,1.98235115788784e-18,exploitation
+Ls,Ka,Lacrimispora saccharolytica (formerly Clostridium saccharolyticum),Klebsiella aerogenes,0.63941351387718,5.37760929188836e-11,2.30616706171366e-10,competition
+Ls,La,Lacrimispora saccharolytica (formerly Clostridium saccharolyticum),Lactobacillus acidophilus,0.733143203745941,2.03064321611723e-06,3.97222313328196e-06,competition
+Ls,Lg,Lacrimispora saccharolytica (formerly Clostridium saccharolyticum),Lactobacillus gasseri,1.21510559177669,6.86577393774392e-07,1.44440338501593e-06,exploitation
+Ls,Ls,Lacrimispora saccharolytica (formerly Clostridium saccharolyticum),Lacrimispora saccharolytica (formerly Clostridium saccharolyticum),1.0,1.0,1.0,
+Ls,Sc,Lacrimispora saccharolytica (formerly Clostridium saccharolyticum),Segatella copri (formerly Prevotella copri),2.30829690613384,8.42567615291479e-19,2.08769531344444e-17,exploitation
+Ls,Pm,Lacrimispora saccharolytica (formerly Clostridium saccharolyticum),Parabacteroides merdae ,1.93840240433574,5.24897936400441e-19,2.08769531344444e-17,exploitation
+Ls,Rg,Lacrimispora saccharolytica (formerly Clostridium saccharolyticum),Ruminococcus gnavus,1.46670649911707,7.60461151125542e-11,3.02826494108921e-10,exploitation
+Sc,Bt,Segatella copri (formerly Prevotella copri),Bacteroides thetaiotaomicron,0.290475313146892,1.531500541982e-17,2.84603850718322e-16,competition
+Sc,Bu,Segatella copri (formerly Prevotella copri),Bacteroides uniformis,0.355032440483736,4.88963114253843e-15,4.95630793084577e-14,competition
+Sc,Pv,Segatella copri (formerly Prevotella copri),Phocaeicola vulgatus (formerly Bacteroides vulgatus),0.290244300098663,5.96233304870748e-17,9.49714478472692e-16,amensalism
+Sc,Ca,Segatella copri (formerly Prevotella copri),Collinsella aerofaciens,1.0935154060259,0.00269455360703906,0.00370916947141796,amensalism
+Sc,Cd,Segatella copri (formerly Prevotella copri),Clostridioides difficile (formerly Clostridium difficile),0.614772384262819,5.94964958064113e-12,3.01539058291584e-11,exploitation
+Sc,Cs,Segatella copri (formerly Prevotella copri),Clostridium sporogenes,0.695403856641865,5.61846573527243e-10,1.95768415463398e-09,amensalism
+Sc,Ec,Segatella copri (formerly Prevotella copri),Escherichia coli,1.01642369618376,0.578080909231837,0.644560213793498,amensalism
+Sc,Ar,Segatella copri (formerly Prevotella copri),Agathobacter rectalis (formerly Eubacterium rectale),0.789524755286794,2.92165219447897e-07,6.58109534715971e-07,competition
+Sc,Ka,Segatella copri (formerly Prevotella copri),Klebsiella aerogenes,0.747713974854508,7.95280177993078e-08,1.92768999665713e-07,exploitation
+Sc,La,Segatella copri (formerly Prevotella copri),Lactobacillus acidophilus,0.817298317634529,2.97147611503815e-06,5.7124066694268e-06,exploitation
+Sc,Lg,Segatella copri (formerly Prevotella copri),Lactobacillus gasseri,0.93316982053355,0.0401799126499226,0.0503377557355772,neutralism
+Sc,Ls,Segatella copri (formerly Prevotella copri),Lacrimispora saccharolytica (formerly Clostridium saccharolyticum),0.862686067835767,0.000176027706689219,0.000284450569505043,exploitation
+Sc,Sc,Segatella copri (formerly Prevotella copri),Segatella copri (formerly Prevotella copri),1.0,1.0,1.0,
+Sc,Pm,Segatella copri (formerly Prevotella copri),Parabacteroides merdae ,0.803752283770893,7.26755680744095e-07,1.50061589635123e-06,competition
+Sc,Rg,Segatella copri (formerly Prevotella copri),Ruminococcus gnavus,0.841786168624175,1.07562703263802e-05,1.98235395271306e-05,competition
+Pm,Bt,Parabacteroides merdae ,Bacteroides thetaiotaomicron,0.237339405080723,7.55769688540988e-19,2.08769531344444e-17,competition
+Pm,Bu,Parabacteroides merdae ,Bacteroides uniformis,0.226254826788485,4.68365110342831e-19,2.08769531344444e-17,competition
+Pm,Pv,Parabacteroides merdae ,Phocaeicola vulgatus (formerly Bacteroides vulgatus),0.187135600432629,2.44251434954787e-19,1.81560233316392e-17,competition
+Pm,Ca,Parabacteroides merdae ,Collinsella aerofaciens,1.07637780713227,0.00522056148580497,0.00705566794748187,amensalism
+Pm,Cd,Parabacteroides merdae ,Clostridioides difficile (formerly Clostridium difficile),0.809512052457942,1.21127648907967e-08,3.3764332133096e-08,exploitation
+Pm,Cs,Parabacteroides merdae ,Clostridium sporogenes,0.737672829624582,1.36022656237136e-09,4.3332931915545e-09,amensalism
+Pm,Ec,Parabacteroides merdae ,Escherichia coli,0.780861957811034,1.73007130194627e-09,5.35841528241692e-09,competition
+Pm,Ar,Parabacteroides merdae ,Agathobacter rectalis (formerly Eubacterium rectale),0.444754388435888,3.32267437837394e-16,4.35856697869052e-15,exploitation
+Pm,Ka,Parabacteroides merdae ,Klebsiella aerogenes,0.682972181535213,1.14473851204798e-10,4.40132221011554e-10,exploitation
+Pm,La,Parabacteroides merdae ,Lactobacillus acidophilus,0.646938758423747,7.7223808984934e-13,5.14872111864977e-12,exploitation
+Pm,Lg,Parabacteroides merdae ,Lactobacillus gasseri,0.760512099249815,1.25083830527415e-07,2.96741427740569e-07,competition
+Pm,Ls,Parabacteroides merdae ,Lacrimispora saccharolytica (formerly Clostridium saccharolyticum),0.551563990811353,2.09279360476236e-13,1.66676062093574e-12,exploitation
+Pm,Sc,Parabacteroides merdae ,Segatella copri (formerly Prevotella copri),0.485712013613019,1.13994650371152e-15,1.33793721225089e-14,competition
+Pm,Pm,Parabacteroides merdae ,Parabacteroides merdae ,1.0,1.0,1.0,
+Pm,Rg,Parabacteroides merdae ,Ruminococcus gnavus,0.886721960295734,0.000510402252535146,0.000779587002159846,competition
+Rg,Bt,Ruminococcus gnavus,Bacteroides thetaiotaomicron,0.692823820422495,2.06787339297076e-09,6.31692831003398e-09,competition
+Rg,Bu,Ruminococcus gnavus,Bacteroides uniformis,0.620161138952863,4.17644508758619e-08,1.05834915287695e-07,competition
+Rg,Ca,Ruminococcus gnavus,Collinsella aerofaciens,0.715757259994982,1.57744568728553e-06,3.1130122855281e-06,competition
+Rg,Cd,Ruminococcus gnavus,Clostridioides difficile (formerly Clostridium difficile),0.474248192961593,2.46279515140132e-12,1.35734734048161e-11,exploitation
+Rg,Cs,Ruminococcus gnavus,Clostridium sporogenes,0.613033054840632,1.53366207666051e-09,4.81699497317317e-09,competition
+Rg,Ec,Ruminococcus gnavus,Escherichia coli,0.376537091581114,1.02135352347928e-12,6.50748102102516e-12,amensalism
+Rg,Ar,Ruminococcus gnavus,Agathobacter rectalis (formerly Eubacterium rectale),1.96310804793592,4.13455412375519e-13,2.97421151483035e-12,exploitation
+Rg,Ka,Ruminococcus gnavus,Klebsiella aerogenes,0.333138094201267,9.58239296593311e-11,3.74890110772471e-10,exploitation
+Rg,La,Ruminococcus gnavus,Lactobacillus acidophilus,0.660615975491356,3.03765858077201e-07,6.77397863512159e-07,amensalism
+Rg,Lg,Ruminococcus gnavus,Lactobacillus gasseri,0.880074202115003,0.00206503740055638,0.00291457810331691,competition
+Rg,Ls,Ruminococcus gnavus,Lacrimispora saccharolytica (formerly Clostridium saccharolyticum),0.420269305834787,1.8866705616099e-12,1.16868759788613e-11,exploitation
+Rg,Sc,Ruminococcus gnavus,Segatella copri (formerly Prevotella copri),0.892050940993605,0.00349248832528883,0.00477806684993503,competition
+Rg,Pm,Ruminococcus gnavus,Parabacteroides merdae ,0.528510099857878,4.93484807532498e-09,1.46729482772996e-08,competition
+Rg,Rg,Ruminococcus gnavus,Ruminococcus gnavus,1.0,1.0,1.0,
