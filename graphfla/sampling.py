@@ -109,7 +109,10 @@ def latin_hypercube_sampling(param_distributions, n_iter, evaluate, seed=None):
 
     num_continuous = len(continuous_params)
     sampler = qmc.LatinHypercube(d=num_continuous, seed=seed)
-    sample = sampler.random(n=n_iter)  
+    sample = sampler.random(n=n_iter)
+    # Seed the categorical draws from the same seed so the whole sample
+    # (continuous + categorical) is reproducible, as the docstring promises.
+    rng = np.random.default_rng(seed)
 
     scaled_sample = np.empty_like(sample)
     for i, (param, dist) in enumerate(continuous_params.items()):
@@ -121,7 +124,7 @@ def latin_hypercube_sampling(param_distributions, n_iter, evaluate, seed=None):
         for j, param in enumerate(continuous_params.keys()):
             config[param] = scaled_sample[i, j]
         for param, choices in categorical_params.items():
-            config[param] = np.random.choice(choices)
+            config[param] = rng.choice(choices)
         # Evaluate fitness
         fitness = evaluate(config)
         config['fitness'] = fitness
@@ -168,7 +171,9 @@ def sobol_sampling(param_distributions, n_iter, evaluate, scramble=True, seed=No
 
     num_continuous = len(continuous_params)
     sampler = qmc.Sobol(d=num_continuous, scramble=scramble, seed=seed)
-    sample = sampler.random(n=n_iter)  
+    sample = sampler.random(n=n_iter)
+    # Seed the categorical draws so the whole sample is reproducible.
+    rng = np.random.default_rng(seed)
 
     scaled_sample = np.empty_like(sample)
     for i, (param, dist) in enumerate(continuous_params.items()):
@@ -180,7 +185,7 @@ def sobol_sampling(param_distributions, n_iter, evaluate, scramble=True, seed=No
         for j, param in enumerate(continuous_params.keys()):
             config[param] = scaled_sample[i, j]
         for param, choices in categorical_params.items():
-            config[param] = np.random.choice(choices)
+            config[param] = rng.choice(choices)
         fitness = evaluate(config)
         config['fitness'] = fitness
         results.append(config)
