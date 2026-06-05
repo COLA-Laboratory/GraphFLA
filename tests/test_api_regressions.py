@@ -253,7 +253,7 @@ def rugged_landscape():
 
 
 def test_plotting_smoke_all_single_arg_draws(rugged_landscape):
-    import matplotlib
+    matplotlib = pytest.importorskip("matplotlib")  # plotting is an optional extra
 
     matplotlib.use("Agg")
     import matplotlib.pyplot as plt
