@@ -219,9 +219,11 @@ def fitness_distance_corr(
 
     Returns
     -------
-    (float, float) : tuple
-        A tuple containing the FDC value and the p-value. The FDC value ranges from -1 to 1, where a value
-        close to 1 indicates a positive correlation between fitness and distance to the global optimum.
+    float
+        The FDC value, ranging from -1 to 1. A value close to 1 indicates a
+        positive correlation between fitness and distance to the global optimum
+        (and a strongly negative value the usual "easy" gradient-toward-optimum
+        structure under maximization).
     """
 
     # Check if the landscape has dist_go calculated

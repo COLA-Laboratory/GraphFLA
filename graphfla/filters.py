@@ -147,11 +147,13 @@ class LandscapeFilter:
             elif op == "not_in":
                 rule_mask = ~df[column].isin(rule["value"])
             elif op == "contains":
-                if df[column].dtype == object:  # For string/object columns
-                    rule_mask = df[column].str.contains(rule["value"], na=False)
-                else:
-                    # For non-string columns, try a different approach if sensible
-                    rule_mask = pd.Series(False, index=df.index)
+                if df[column].dtype != object:
+                    raise TypeError(
+                        f"The 'contains' operation requires a string/object column, "
+                        f"but column '{column}' has dtype {df[column].dtype}. Use a "
+                        f"comparison operator (e.g. '==', 'in') for non-string columns."
+                    )
+                rule_mask = df[column].str.contains(rule["value"], na=False)
             elif op == "custom":
                 # Custom function should return a boolean Series with the same index
                 rule_mask = rule["function"](df[column])

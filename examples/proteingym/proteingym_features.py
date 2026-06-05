@@ -243,19 +243,18 @@ def build_landscape(reduced_seqs: List[str], scores: np.ndarray, maximize: bool 
 def reregister_sequence_type(ls) -> None:
     """Re-register the dynamic protein sequence type after unpickling.
 
-    SequenceLandscape registers its handler/generator under a type key derived
-    from ``id(alphabet)``, which is process-specific. After unpickling in a
-    fresh process the class-level registries lack that key; restore it so any
-    strategy lookup keeps working.
+    SequenceLandscape registers its handler/generator on the instance under a
+    type key derived from ``id(alphabet)``, which is process-specific. The
+    instance-level registries normally travel with the pickle, but restore the
+    entry defensively in case an older/partial pickle lacks it.
     """
-    from graphfla.landscape.landscape import Landscape
     from graphfla._data import SequenceHandler
     from graphfla._neighbors import SequenceNeighborGenerator
 
     alphabet = list("ACDEFGHIKLMNPQRSTVWY")
-    if ls.type not in Landscape._input_handlers:
-        Landscape.register_input_handler(ls.type, SequenceHandler(alphabet))
-        Landscape.register_neighbor_generator(
+    if ls.type not in ls._input_handlers:
+        ls.register_input_handler(ls.type, SequenceHandler(alphabet))
+        ls.register_neighbor_generator(
             ls.type, SequenceNeighborGenerator(len(alphabet))
         )
 

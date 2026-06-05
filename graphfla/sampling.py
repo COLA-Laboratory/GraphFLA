@@ -74,7 +74,7 @@ def grid_search(param_grid, evaluate):
     results_df = pd.DataFrame(results)
     return results_df
 
-def latin_hypercube_sampling(param_distributions, n_iter, evaluate):
+def latin_hypercube_sampling(param_distributions, n_iter, evaluate, seed=None):
     """
     Perform Latin Hypercube Sampling (LHS) over the given parameter distributions.
 
@@ -88,6 +88,9 @@ def latin_hypercube_sampling(param_distributions, n_iter, evaluate):
 
     - evaluate: function
         Function that takes a configuration (dict) and returns a fitness value.
+
+    - seed: int or None, optional (default=None)
+        Seed for the sampler, making the drawn sample reproducible.
 
     Returns:
     - results_df: pandas DataFrame
@@ -105,7 +108,7 @@ def latin_hypercube_sampling(param_distributions, n_iter, evaluate):
             raise ValueError(f"Unsupported distribution type for parameter '{param}'. Must be a list or a distribution with a 'ppf' method.")
 
     num_continuous = len(continuous_params)
-    sampler = qmc.LatinHypercube(d=num_continuous, seed=None)
+    sampler = qmc.LatinHypercube(d=num_continuous, seed=seed)
     sample = sampler.random(n=n_iter)  
 
     scaled_sample = np.empty_like(sample)

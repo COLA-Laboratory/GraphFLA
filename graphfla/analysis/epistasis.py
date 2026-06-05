@@ -11,6 +11,26 @@ import warnings
 import itertools
 import math
 import copy
+import random
+import contextlib
+
+
+@contextlib.contextmanager
+def _seeded_igraph(seed):
+    """Temporarily route igraph's RNG through a locally-seeded generator.
+
+    Makes the sampling in ``motifs_randesu(cut_prob=...)`` reproducible when a
+    seed is given. Restores igraph's default generator afterwards so global
+    state is left untouched. A no-op when ``seed is None``.
+    """
+    if seed is None:
+        yield
+        return
+    ig.set_random_number_generator(random.Random(seed))
+    try:
+        yield
+    finally:
+        ig.set_random_number_generator(None)
 
 
 def _pythonize(value):
@@ -205,7 +225,7 @@ def _calculate_pos_neg_epistasis_igraph(squares_with_roles):
     })
 
 
-def classify_epistasis(landscape, approximate=False, sample_cut_prob=0.2):
+def classify_epistasis(landscape, approximate=False, sample_cut_prob=0.2, seed=None):
     """
     Calculates proportions of five epistasis types using 4-node motifs in an igraph graph.
 
@@ -272,23 +292,24 @@ def classify_epistasis(landscape, approximate=False, sample_cut_prob=0.2):
 
     # --- Step 1 & 3 Combined (Motif Finding & Instance Collection) ---
     if approximate:
-        # Run 1: Get estimated counts for mag/sign/recip calculation
-        estimated_motif_counts = landscape.graph.motifs_randesu(
-            size=motif_size, cut_prob=cut_prob_vector
-        )
-
         # Define callback for collecting sampled instances
         def motif_collector_callback_approx(graph, vertices, isoclass):
             if isoclass in square_indices:
                 collected_square_instances[isoclass].append(tuple(sorted(vertices)))
             return False  # Continue search
 
-        # Run 2: Collect a *sample* of square instances
-        landscape.graph.motifs_randesu(
-            size=motif_size,
-            cut_prob=cut_prob_vector,
-            callback=motif_collector_callback_approx,
-        )
+        # Seed the sampling RNG so approximate results are reproducible.
+        with _seeded_igraph(seed):
+            # Run 1: estimated counts for mag/sign/recip proportions
+            estimated_motif_counts = landscape.graph.motifs_randesu(
+                size=motif_size, cut_prob=cut_prob_vector
+            )
+            # Run 2: collect a *sample* of square instances
+            landscape.graph.motifs_randesu(
+                size=motif_size,
+                cut_prob=cut_prob_vector,
+                callback=motif_collector_callback_approx,
+            )
 
         # Use estimated counts for mag/sign/recip proportions
         reci_sign_count = (
@@ -479,7 +500,7 @@ def idiosyncratic_index(landscape, mutation, min_pairs: int = 3):
     return _pythonize(idiosyncratic_val)
 
 
-def global_idiosyncratic_index(landscape, n_jobs=-1, random_seed=None, min_pairs: int = 3):
+def global_idiosyncratic_index(landscape, n_jobs=-1, seed=None, min_pairs: int = 3):
     """
     Calculates the global idiosyncratic index for the entire fitness landscape using parallel processing.
 
@@ -498,9 +519,10 @@ def global_idiosyncratic_index(landscape, n_jobs=-1, random_seed=None, min_pairs
         The fitness landscape object.
     n_jobs : int, optional
         Number of parallel jobs to use. Default is -1 (all available cores).
-    random_seed : int, optional
-        Retained for backward compatibility. The index is now computed
-        deterministically (analytic random-pair baseline), so this has no effect.
+    seed : int, optional
+        Accepted for API consistency with other stochastic functions, but the
+        index is computed deterministically (analytic random-pair baseline), so
+        this has no effect on the result.
     min_pairs : int, default=3
         Minimum number of shared genetic backgrounds for a mutation to contribute
         (passed to :func:`idiosyncratic_index`).
@@ -1491,7 +1513,7 @@ def _V_matrix(str_coef, num_states=2, invert=False):
     return V
 
 
-def extradimensional_bypass_analysis(landscape, approximate=False, sample_cut_prob=0.2):
+def extradimensional_bypass_analysis(landscape, approximate=False, sample_cut_prob=0.2, seed=None):
     """
     Analyzes extradimensional bypasses in reciprocal sign epistasis motifs.
 
@@ -1558,6 +1580,7 @@ def extradimensional_bypass_analysis(landscape, approximate=False, sample_cut_pr
             target_motif_type=19,
             approximate=approximate,
             sample_cut_prob=sample_cut_prob,
+            seed=seed,
         )
     except Exception as e:
         raise RuntimeError(f"Failed to find motif instances: {e}")
@@ -1633,7 +1656,8 @@ def extradimensional_bypass_analysis(landscape, approximate=False, sample_cut_pr
 
 
 def get_motif_node_indices(
-    graph, motif_size=4, target_motif_type=19, approximate=False, sample_cut_prob=0.2
+    graph, motif_size=4, target_motif_type=19, approximate=False, sample_cut_prob=0.2,
+    seed=None,
 ):
     """
     Find all instances of a specific motif type and return their node indices.
@@ -1678,12 +1702,14 @@ def get_motif_node_indices(
             collected_motifs.append(tuple(sorted(vertices)))
         return False  # Continue search
 
-    # Find motifs with or without sampling
-    if approximate:
-        graph.motifs_randesu(
-            size=motif_size, cut_prob=cut_prob_vector, callback=motif_collector_callback
-        )
-    else:
-        graph.motifs_randesu(size=motif_size, callback=motif_collector_callback)
+    # Find motifs with or without sampling (seeded RNG only matters for the
+    # approximate, sampling-based path).
+    with _seeded_igraph(seed if approximate else None):
+        if approximate:
+            graph.motifs_randesu(
+                size=motif_size, cut_prob=cut_prob_vector, callback=motif_collector_callback
+            )
+        else:
+            graph.motifs_randesu(size=motif_size, callback=motif_collector_callback)
 
     return collected_motifs
