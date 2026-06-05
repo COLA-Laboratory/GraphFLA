@@ -5,7 +5,6 @@ import warnings
 import random
 
 from ..algorithms import random_walk
-from ..utils import autocorr_numpy
 from typing import Tuple
 from sklearn.linear_model import LinearRegression
 
@@ -78,17 +77,31 @@ def autocorrelation(
     autocorr : Dict
         the mean of the autocorrelation values.
     """
-    corr_list = []
-
+    # Collect the fitness series of every walk, then pool the lagged products
+    # using a single grand mean. Centering each short walk by its *own* mean
+    # (the previous behaviour) removes the slow component of the series and
+    # biases the autocorrelation strongly toward zero; pooling with the common
+    # walk-sampled mean is the unbiased estimator of the random-walk
+    # autocorrelation of Weinberger (1990).
+    series = []
     for _ in range(walk_times):
         random_node = random.randrange(0, landscape.n_configs)
         logger = random_walk(landscape.graph, random_node, "fitness", walk_length)
-        fitness_values = np.array(logger)[:, 2].astype(float)
-        ac = autocorr_numpy(fitness_values, lag=lag)
-        corr_list.append(ac)
+        if logger.shape[0] > lag:
+            series.append(np.asarray(logger[:, 2], dtype=float))
 
-    corr_array = np.array(corr_list)
-    return _pythonize(np.nanmean(corr_array))
+    if not series:
+        return _pythonize(np.nan)
+
+    grand_mean = np.concatenate(series).mean()
+    num = 0.0
+    den = 0.0
+    for x in series:
+        xc = x - grand_mean
+        num += float(np.dot(xc[: len(xc) - lag], xc[lag:]))
+        den += float(np.dot(xc, xc))
+
+    return _pythonize(num / den if den else np.nan)
 
 
 def gradient_intensity(landscape) -> float:
@@ -177,7 +190,13 @@ def r_s_ratio(landscape) -> float:
     X_transform_list = []
     cols = list(data_types.keys())  # Maintain order
 
-    for col in cols:
+    # Canonical integer encoding (vertex-aligned with get_data()), used to keep
+    # ordinal codes consistent with how the landscape was built.
+    configs_array = getattr(landscape, "_configs_array", None)
+    if configs_array is not None and configs_array.shape[0] != len(raw_X):
+        configs_array = None
+
+    for j, col in enumerate(cols):
         dtype = data_types[col]
         if dtype == "boolean":
             # Convert boolean to 0/1 integer representation
@@ -190,9 +209,16 @@ def r_s_ratio(landscape) -> float:
             one_hot = pd.get_dummies(cat_series, drop_first=True)
             X_transform_list.append(one_hot.values)
         elif dtype == "ordinal":
-            # For ordinal variables, use numerical codes that preserve order
-            col_values = pd.Categorical(raw_X[col], ordered=True).codes
-            X_transform_list.append(col_values.reshape(-1, 1))
+            # Order-preserving numerical codes.
+            if configs_array is not None:
+                col_values = np.asarray(
+                    configs_array[:, j], dtype=float
+                ).reshape(-1, 1)
+            else:
+                col_values = pd.Categorical(
+                    raw_X[col], ordered=True
+                ).codes.reshape(-1, 1)
+            X_transform_list.append(col_values)
         else:
             raise ValueError(
                 f"Unsupported data type '{dtype}' for r/s ratio calculation in column '{col}'"

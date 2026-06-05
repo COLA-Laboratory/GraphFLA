@@ -2,7 +2,7 @@ import numpy as np
 import pandas as pd
 import warnings
 from scipy.stats import spearmanr, pearsonr, kendalltau
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING
 
 from ..algorithms import hill_climb
 
@@ -16,7 +16,7 @@ def _pythonize(value):
     if isinstance(value, list):
         return [_pythonize(item) for item in value]
     if isinstance(value, tuple):
-        return tuple[dict[Any, dict[Any, dict | list[dict | list | tuple | Any] | tuple | Any] | list[dict | list | tuple | Any] | tuple | Any] | list[dict | list | tuple | Any] | tuple | Any, ...](_pythonize(item) for item in value)
+        return tuple(_pythonize(item) for item in value)
     if isinstance(value, np.generic):
         return value.item()
     return value
@@ -132,13 +132,9 @@ def neighbor_fit_corr(landscape, auto_calculate=True, method="pearson"):
 
     Returns
     -------
-    dict
-        A dictionary containing:
-        - 'correlation': The correlation coefficient between fitness and mean neighbor fitness
-        - 'p_value': The p-value of the correlation test
-        - 'method': The correlation method used
-        - 'n_nodes': The number of nodes used in the calculation
-        - 'stats': Additional descriptive statistics
+    float
+        The correlation coefficient between fitness and mean neighbor fitness.
+        Returns NaN if no valid data is available.
 
     Raises
     ------
@@ -189,21 +185,13 @@ def neighbor_fit_corr(landscape, auto_calculate=True, method="pearson"):
     # Remove rows with NaN (nodes with no neighbors)
     data_clean = data.dropna()
     n_nodes = len(data_clean)
-    n_excluded = len(data) - n_nodes
 
     if n_nodes == 0:
         if landscape.verbose:
             print(
                 "Warning: No valid data for correlation calculation after removing NaNs."
             )
-        return _pythonize({
-            "correlation": np.nan,
-            "p_value": np.nan,
-            "method": method,
-            "n_nodes": 0,
-            "n_excluded": n_excluded,
-            "stats": {"fitness_mean": np.nan, "neighbor_fitness_mean": np.nan},
-        })
+        return _pythonize(np.nan)
 
     # Calculate correlation
     if method == "pearson":
@@ -279,9 +267,9 @@ def fitness_flattening_index(
 
     Returns
     -------
-    tuple
-        A tuple containing the FFI value and the p-value. The FFI value ranges from -1 to 1,
-        where a value close to 1 indicates a flatter landscape around the global optimum.
+    float
+        The FFI value, ranging from -1 to 1, where a value close to 1 indicates
+        a flatter landscape around the global optimum.
     """
 
     def check_diminishing_differences(data, method):
@@ -341,8 +329,8 @@ def basin_fit_corr(landscape, method: str = "spearman"):
 
     Returns
     -------
-    tuple
-        A tuple containing the correlation coefficient and the p-value.
+    float
+        The correlation coefficient between basin size and local-optimum fitness.
     """
     # Check if basins have been calculated
     if "size_basin_greedy" not in landscape.graph.vs.attributes():
@@ -363,22 +351,10 @@ def basin_fit_corr(landscape, method: str = "spearman"):
     fitness_values = lo_data["fitness"]
 
     if method == "spearman":
-        corr_greedy, _ = spearmanr(basin_sizes, fitness_values)
+        corr, _ = spearmanr(basin_sizes, fitness_values)
     elif method == "pearson":
-        corr_greedy, _ = pearsonr(basin_sizes, fitness_values)
+        corr, _ = pearsonr(basin_sizes, fitness_values)
     else:
         raise ValueError(f"Invalid method '{method}'. Choose 'spearman' or 'pearson'.")
 
-    if "size_basin_accessible" in lo_data.columns:
-        basin_sizes_accessible = lo_data["size_basin_accessible"]
-        if method == "spearman":
-            corr_accessible, _ = spearmanr(basin_sizes_accessible, fitness_values)
-        elif method == "pearson":
-            corr_accessible, _ = pearsonr(basin_sizes_accessible, fitness_values)
-
-        return _pythonize({
-            "greedy": corr_greedy,
-            "accessible": corr_accessible,
-        })
-
-    return _pythonize(corr_greedy)
+    return _pythonize(corr)

@@ -285,7 +285,7 @@ def create_lon(
         lon_vertex = lon.vs[i]
 
         # Extract required vertex attributes
-        for attr in ["fitness", "size_basin", "max_radius_basin", "config"]:
+        for attr in ["fitness", "size_basin_greedy", "radius_basin_greedy", "config"]:
             if attr in lo_subgraph.vs.attributes():
                 lon_vertex[attr] = lo_subgraph.vs[i][attr]
 

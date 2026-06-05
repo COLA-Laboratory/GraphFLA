@@ -28,9 +28,9 @@ def draw_diminishing_return(
     ----------
     landscape : Landscape
         An initialized and built fitness landscape object.
-    figsize : tuple, default=(10, 6)
+    figsize : tuple, default=(7, 6)
         Figure size as (width, height) in inches.
-    alpha : float, default=0.6
+    alpha : float, default=1
         Transparency level for hexbin plot (0-1).
     color_scheme : str, default='viridis'
         Matplotlib colormap name for hexbin coloring.
@@ -42,7 +42,7 @@ def draw_diminishing_return(
         Path to save the figure. If None, figure is not saved.
     dpi : int, default=300
         Resolution for saved figure.
-    gridsize : int, default=30
+    gridsize : int, default=50
         Number of hexagons in the x-direction for hexbin plot.
 
     Returns
@@ -186,7 +186,7 @@ def draw_diminishing_return(
         )
         print(f"Figure saved to: {save_path}")
 
-    return None
+    return fig, ax
 
 
 def draw_fitness_distance_corr(
@@ -559,7 +559,7 @@ def draw_adaptive_walk(
         If float (0-1), fraction of total configurations to sample.
     walk_type : str, default="best-improvement"
         Type of adaptive walk. Options: "best-improvement", "first-improvement".
-    figsize : tuple, default=(12, 8)
+    figsize : tuple, default=(8, 6)
         Figure size as (width, height) in inches.
     alpha_walks : float, default=0.3
         Transparency level for individual walk lines (0-1).
@@ -1416,11 +1416,12 @@ def draw_fitness_effects(
     if len(new_data) == 0:
         raise ValueError("No genotypes found with the specified new alleles")
 
-    # Identify background columns (all columns except the mutation positions and fitness)
-    exclude_cols = (
-        ["fitness"] + positions + ["in_degree", "out_degree", "pagerank", "is_lo"]
-    )
-    background_cols = [col for col in data.columns if col not in exclude_cols]
+    # Background = the configuration/feature columns minus the mutation
+    # positions. Using the declared feature columns (rather than a denylist of
+    # graph metrics) keeps the merge robust to whichever metrics were computed
+    # during build (dist_go, mean_neighbor_fit, plateau_id, ...).
+    feature_cols = list(landscape.data_types.keys())
+    background_cols = [col for col in feature_cols if col not in positions]
 
     if len(background_cols) == 0:
         raise ValueError("No background columns found for comparison")
@@ -1686,8 +1687,10 @@ def draw_basin_fit_corr(
 
     Returns
     -------
-    fig, ax : tuple
-        Matplotlib figure and axes objects.
+    tuple
+        ``(fig, ax)`` — the Matplotlib figure and its axes. When accessible-basin
+        data is available, a two-panel figure is drawn and the second element is
+        a ``(ax1, ax2)`` tuple of the two axes instead of a single axes.
 
     Raises
     ------

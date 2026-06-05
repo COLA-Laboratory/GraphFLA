@@ -124,7 +124,7 @@ def filter_graph(graph, maximize, tau, filter_mode, verbose):
     return graph, n_configs, n_edges, kept_vertex_indices
 
 
-def remove_isolated_nodes(graph, verbose=False):
+def remove_isolated_nodes(graph, verbose=False, protected=None):
     """Remove nodes with no incident edges from the landscape graph.
 
     Parameters
@@ -133,6 +133,12 @@ def remove_isolated_nodes(graph, verbose=False):
         The directed landscape graph.
     verbose : bool, default=False
         Whether to print removal information.
+    protected : set[int] or None, default=None
+        Vertex indices to exempt from removal even if they have directed
+        degree 0. Used to keep plateau-interior nodes that are connected to
+        the landscape only by neutral (tied / within-epsilon) edges, which
+        live outside the directed improving-edge graph and would otherwise
+        look isolated before the plateau layer is built.
 
     Returns
     -------
@@ -156,6 +162,8 @@ def remove_isolated_nodes(graph, verbose=False):
 
     total_degree = np.asarray(graph.degree())
     isolated_mask = total_degree == 0
+    if protected:
+        isolated_mask[list(protected)] = False
     n_isolated = int(isolated_mask.sum())
 
     if n_isolated == 0:

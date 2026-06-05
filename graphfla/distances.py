@@ -1,11 +1,11 @@
 import numpy as np
-from typing import Dict
+from typing import Dict, Optional
 
 
 def euclidean_distance(
     X: np.ndarray,
     x: np.ndarray,
-    data_types: None,
+    data_types: Optional[Dict[int, str]] = None,
 ) -> np.ndarray:
     """
     Compute the Euclidean distance between each row of X and the reference vector x.
@@ -22,10 +22,18 @@ def euclidean_distance(
     np.ndarray
         A 1D array of Euclidean distances.
     """
+    # Cast to signed/float to avoid unsigned-integer underflow on (X - x).
+    X = np.asarray(X)
+    x = np.asarray(x)
+    if np.issubdtype(X.dtype, np.unsignedinteger) or np.issubdtype(x.dtype, np.unsignedinteger):
+        X = X.astype(np.int64, copy=False)
+        x = x.astype(np.int64, copy=False)
     return np.sqrt(np.sum((X - x) ** 2, axis=1))
 
 
-def hamming_distance(X: np.ndarray, x: np.ndarray, data_types: None) -> np.ndarray:
+def hamming_distance(
+    X: np.ndarray, x: np.ndarray, data_types: Optional[Dict[int, str]] = None
+) -> np.ndarray:
     """
     Compute the Hamming distance between each row of X and the reference vector x.
 
@@ -44,7 +52,9 @@ def hamming_distance(X: np.ndarray, x: np.ndarray, data_types: None) -> np.ndarr
     return np.sum(X != x, axis=1)
 
 
-def manhattan_distance(X: np.ndarray, x: np.ndarray, data_types: None) -> np.ndarray:
+def manhattan_distance(
+    X: np.ndarray, x: np.ndarray, data_types: Optional[Dict[int, str]] = None
+) -> np.ndarray:
     """
     Compute the Manhattan distance between each row of X and the reference vector x.
 
@@ -60,6 +70,12 @@ def manhattan_distance(X: np.ndarray, x: np.ndarray, data_types: None) -> np.nda
     np.ndarray
         A 1D array of Manhattan distances.
     """
+    # Cast to signed/float to avoid unsigned-integer underflow on (X - x).
+    X = np.asarray(X)
+    x = np.asarray(x)
+    if np.issubdtype(X.dtype, np.unsignedinteger) or np.issubdtype(x.dtype, np.unsignedinteger):
+        X = X.astype(np.int64, copy=False)
+        x = x.astype(np.int64, copy=False)
     return np.sum(np.abs(X - x), axis=1)
 
 

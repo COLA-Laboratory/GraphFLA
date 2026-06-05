@@ -23,17 +23,21 @@ def determine_local_optima(landscape):
     is_lo : vertex attribute (bool)
         True for every LO node (single-point LOs + all plateau-LO members).
     lo_index : list[int]
-        Sorted list of all LO node indices.
+        Sorted list of all LO *node* indices.
     n_lo : int
-        ``len(lo_index)`` — total number of LO *nodes*.
+        Number of distinct local optima (each plateau-LO counts once, plus
+        every single-point LO). This is the "number of local optima".
+    n_lo_members : int
+        ``len(lo_index)`` — total number of LO member *nodes* (every member of
+        every plateau-LO plus single-point LOs).
     plateau_lo_index : list[int]
         Plateau IDs (0-based) of plateaus that are local optima.
         Does **not** include single-point LOs.
     n_plateau_lo : int
         ``len(plateau_lo_index)``.
     n_peak : int
-        Number of distinct peaks (``n_plateau_lo`` + number of
-        single-point LOs).
+        Alias of ``n_lo`` (number of distinct peaks), kept for backward
+        compatibility.
     _peak_index : list[int]
         One representative node per peak (``min(members)`` for each
         plateau-LO, the node index itself for single-point LOs).
@@ -83,8 +87,8 @@ def determine_local_optima(landscape):
                 is_lo[members] = True
 
         self.graph.vs["is_lo"] = is_lo.tolist()
-        self.n_lo = int(is_lo.sum())
         self.lo_index = sorted(np.where(is_lo)[0].tolist())
+        self.n_lo_members = int(is_lo.sum())
 
         self.plateau_lo_index = sorted(
             pid for pid, v in plateau_is_lo.items() if v
@@ -97,7 +101,9 @@ def determine_local_optima(landscape):
         plateau_reps = sorted(
             min(self.plateaus[pid]) for pid in self.plateau_lo_index
         )
-        self.n_peak = self.n_plateau_lo + len(singleton_los)
+        # n_lo counts distinct optima: each plateau-LO is one optimum.
+        self.n_lo = self.n_plateau_lo + len(singleton_los)
+        self.n_peak = self.n_lo
         self._peak_index = sorted(plateau_reps + singleton_los)
 
         if self.n_lo == 0 and self.graph.vcount() > 0:
@@ -109,21 +115,23 @@ def determine_local_optima(landscape):
 
         if self.verbose:
             print(
-                f"   - Found {self.n_lo} LO nodes across "
-                f"{self.n_peak} distinct peaks "
-                f"({self.n_plateau_lo} plateau-LOs, "
+                f"   - Found {self.n_lo} local optima "
+                f"({self.n_lo_members} member nodes: "
+                f"{self.n_plateau_lo} plateau-LOs + "
                 f"{len(singleton_los)} single-point LOs)."
             )
     else:
         # --- No plateaus: classic out_degree == 0 ---
         is_lo = out_degrees == 0
         self.graph.vs["is_lo"] = is_lo.tolist()
-        self.n_lo = int(is_lo.sum())
         self.lo_index = sorted(np.where(is_lo)[0].tolist())
+        # No plateaus: every LO is a single node, so optima == member nodes.
+        self.n_lo_members = int(is_lo.sum())
+        self.n_lo = self.n_lo_members
+        self.n_peak = self.n_lo
 
         self.plateau_lo_index = []
         self.n_plateau_lo = 0
-        self.n_peak = self.n_lo
         self._peak_index = list(self.lo_index)
 
         if self.n_lo == 0 and self.graph.vcount() > 0:

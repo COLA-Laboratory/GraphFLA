@@ -1,2 +1,5 @@
 docs/site/
 .DS_Store
+
+# landscape-analysis verification (uncommitted)
+_verify/

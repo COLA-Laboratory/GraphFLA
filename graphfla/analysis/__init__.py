@@ -24,6 +24,7 @@ from .navigability import (
     mean_path_lengths,
     mean_path_lengths_go,
     mean_dist_lo,
+    mean_dist_go,
 )
 from .robustness import (
     neutrality,
@@ -49,7 +50,6 @@ __all__ = [
     "higher_order_epistasis",
     "fitness_distance_corr",
     "fitness_flattening_index",
-    "ffi",
     "basin_fit_corr",
     "neighbor_fit_corr",
     "fitness_distribution",
@@ -72,6 +72,7 @@ __all__ = [
     "global_optima_accessibility",
     "local_optima_accessibility",
     "mean_dist_lo",
+    "mean_dist_go",
     "mean_path_lengths",
     "mean_path_lengths_go",
     "neutrality",

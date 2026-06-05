@@ -5,6 +5,7 @@ from itertools import product
 import numpy as np
 
 from graphfla.analysis import *
+from graphfla.analysis import ffi  # deprecated alias, intentionally not in __all__
 from graphfla.landscape import (
     BooleanLandscape,
     DNALandscape,
@@ -380,9 +381,10 @@ def test_plateau_containing_global_max_is_still_local_optimum():
         verbose=False,
     )
 
-    assert landscape.n_lo == 4
+    assert landscape.n_lo == 2  # distinct optima: plateau {0,1,3} + singleton 7
+    assert landscape.n_lo_members == 4  # member nodes: 0, 1, 3, 7
     assert landscape.lo_index == [0, 1, 3, 7]
-    assert landscape.n_peak == 2
+    assert landscape.n_peak == 2  # backward-compatible alias of n_lo
     assert landscape._peak_index == [0, 7]
     assert landscape.plateau_lo_index == [0]
     assert landscape.plateaus[0] == [0, 1, 3]
@@ -541,12 +543,12 @@ def test_feature_fdc(boolean_landscape):
 
 def test_feature_bfc_greedy(boolean_landscape):
     result = basin_fit_corr(boolean_landscape)
-    assert "greedy" in result
+    assert isinstance(result, (float, np.floating))
 
 
 def test_feature_bfc_accessible(boolean_landscape):
     result = basin_fit_corr(boolean_landscape)
-    assert "accessible" in result
+    assert isinstance(result, (float, np.floating))
 
 
 def test_feature_bfc_greedy_only(boolean_landscape_data):

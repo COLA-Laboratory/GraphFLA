@@ -124,6 +124,44 @@ class SequenceNeighborGenerator:
         return neighbors
 
 
+class OrdinalNeighborGenerator:
+    """Neighbor generator for ordinal spaces (±1 step on the ordinal scale).
+
+    For an ordinal variable with allowed encoded values ``0..max``, each
+    configuration has at most two neighbors per position: one ``+1`` step
+    (if ``current < max``) and one ``-1`` step (if ``current > 0``).
+    This corresponds to a Manhattan-distance-1 neighborhood on each axis,
+    which is the standard definition of an ordinal-landscape neighborhood
+    in the literature.
+    """
+
+    def generate(
+        self, config: Tuple, config_dict: Dict, n_edit: int = 1
+    ) -> List[Tuple]:
+        """Generate ±1-step neighbors at each ordinal position."""
+        if n_edit != 1:
+            raise ValueError(
+                f"OrdinalNeighborGenerator only supports n_edit=1 "
+                f"(single ±1 step on the ordinal scale). Received n_edit={n_edit}. "
+                f"Use neighborhood_strategy='pairwise' or 'broadcast' for "
+                f"larger Hamming-style neighborhoods (note: those use Hamming, "
+                f"not Manhattan, distance)."
+            )
+
+        neighbors = []
+        for i in range(len(config)):
+            info = config_dict[i]
+            current = int(config[i])
+            max_val = int(info["max"])
+            for delta in (-1, 1):
+                new_val = current + delta
+                if 0 <= new_val <= max_val:
+                    neighbor = list(config)
+                    neighbor[i] = new_val
+                    neighbors.append(tuple(neighbor))
+        return neighbors
+
+
 class DefaultNeighborGenerator:
     """Neighbor generator for mixed data types (boolean / categorical / ordinal)."""
 
@@ -147,8 +185,13 @@ class DefaultNeighborGenerator:
 
             if dtype == "boolean":
                 new_vals = [1 - current]
-            elif dtype in ("categorical", "ordinal"):
+            elif dtype == "categorical":
                 new_vals = [v for v in range(info["max"] + 1) if v != current]
+            elif dtype == "ordinal":
+                # ±1 step on the ordinal scale, as in OrdinalNeighborGenerator.
+                cur = int(current)
+                max_val = int(info["max"])
+                new_vals = [v for v in (cur - 1, cur + 1) if 0 <= v <= max_val]
             else:
                 warnings.warn(
                     f"Unsupported dtype '{dtype}', skipping variable {i}.",
