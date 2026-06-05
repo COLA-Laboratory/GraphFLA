@@ -237,7 +237,13 @@ class Landscape:
         "default": DefaultNeighborGenerator(),
     }
 
-    def __init__(self, type: str = "default", maximize: bool = True):
+    def __init__(
+        self,
+        type: str = "default",
+        maximize: bool = True,
+        input_handler: Optional[InputHandler] = None,
+        neighbor_generator: Optional[NeighborGenerator] = None,
+    ):
         # Core attributes
         self.graph = None
         self.configs = None
@@ -256,9 +262,25 @@ class Landscape:
         self.has_lon = False
         self.type = type
 
+        # Per-instance strategy registries, copied from the class-level defaults
+        # so that registering a custom handler/generator (e.g. for a sequence
+        # alphabet) never mutates global state or leaks across instances.
+        self._input_handlers = dict(Landscape._input_handlers)
+        self._neighbor_generators = dict(Landscape._neighbor_generators)
+        if input_handler is not None:
+            self._input_handlers[type] = input_handler
+        if neighbor_generator is not None:
+            self._neighbor_generators[type] = neighbor_generator
+        if type not in self._input_handlers or type not in self._neighbor_generators:
+            raise ValueError(
+                f"Unknown landscape type {type!r}. Registered types: "
+                f"{sorted(self._input_handlers)}. Register a custom type by passing "
+                f"input_handler= and neighbor_generator= to the constructor."
+            )
+
         # Landscape construction parameters
         self.maximize = maximize
-        self.epsilon = 0
+        self.epsilon = 0.0
         self.verbose = False
 
         # Plateau / neutrality layer attributes
@@ -355,19 +377,17 @@ class Landscape:
         """Return True if the landscape is built and has configurations."""
         return self._is_built and self.graph is not None and self.graph.vcount() > 0
 
-    @classmethod
     def register_input_handler(
-        cls, data_type: str, handler: InputHandler
+        self, data_type: str, handler: InputHandler
     ) -> None:
-        """Register a custom input handler for a data type."""
-        cls._input_handlers[data_type] = handler
+        """Register a custom input handler for a data type on this instance."""
+        self._input_handlers[data_type] = handler
 
-    @classmethod
     def register_neighbor_generator(
-        cls, data_type: str, generator: NeighborGenerator
+        self, data_type: str, generator: NeighborGenerator
     ) -> None:
-        """Register a custom neighbor generator for a data type."""
-        cls._neighbor_generators[data_type] = generator
+        """Register a custom neighbor generator for a data type on this instance."""
+        self._neighbor_generators[data_type] = generator
 
     @timeit
     def build_from_data(
@@ -387,7 +407,7 @@ class Landscape:
         verbose: Optional[bool] = True,
         accessible_paths_max_configs: int = 200_000,
         force_accessible_paths: bool = False,
-    ) -> None:
+    ) -> "Landscape":
         """Construct the landscape graph and properties from configuration data.
 
         This method takes genotype-phenotype data (configurations `X` and their
@@ -570,7 +590,7 @@ class Landscape:
 
         self._finalize_build()
 
-        return None
+        return self
 
     @classmethod
     def build_from_graph(
@@ -1000,7 +1020,13 @@ class Landscape:
 
         return data
 
-    def get_lon(self, *args, **kwargs) -> ig.Graph:
+    def get_lon(
+        self,
+        mlon: bool = True,
+        min_edge_freq: int = 3,
+        trim: Optional[int] = None,
+        verbose: Optional[bool] = None,
+    ) -> ig.Graph:
         """Constructs and returns the Local Optima Network (LON).
 
         The LON is a coarse-grained representation of the fitness landscape
@@ -1010,14 +1036,22 @@ class Landscape:
         between the optima. This method requires the landscape graph to be
         built and local optima to be identified.
 
+        The landscape's own graph, configurations, optima and ``config_dict``
+        are supplied automatically; the parameters below control the LON itself
+        and are forwarded to :func:`graphfla.lon.get_lon`.
+
         Parameters
         ----------
-        *args :
-            Positional arguments passed to the underlying `lon.get_lon` function.
-        **kwargs :
-            Keyword arguments passed to the underlying `lon.get_lon` function.
-            Common arguments might include distance metrics or transition probability
-            thresholds. Refer to the `lon.get_lon` documentation for details.
+        mlon : bool, default=True
+            If True, also build the monotonic LON (edges restricted to
+            non-worsening transitions).
+        min_edge_freq : int, default=3
+            Keep a LON edge only when the number of basin transitions between
+            two optima is strictly greater than this threshold.
+        trim : int, optional
+            If given, keep only the ``trim`` strongest outgoing edges per node.
+        verbose : bool, optional
+            Verbosity override; defaults to the landscape's own ``verbose``.
 
         Returns
         -------
@@ -1058,8 +1092,10 @@ class Landscape:
             lo_index=self._peak_index,
             config_dict=self.config_dict,
             maximize=self.maximize,
-            verbose=self.verbose,
-            **kwargs,
+            mlon=mlon,
+            min_edge_freq=min_edge_freq,
+            trim=trim,
+            verbose=self.verbose if verbose is None else verbose,
         )
         self.has_lon = True  # Set flag
 
@@ -1300,8 +1336,11 @@ class Landscape:
         plateau-LO counted once) with ``_peak_index`` (one representative
         node per optimum, used by LON construction). ``n_peak`` is a
         backward-compatible alias of ``n_lo``.
+
+        Returns the landscape instance (``self``) for method chaining.
         """
-        return optima.determine_local_optima(self)
+        optima.determine_local_optima(self)
+        return self
 
     def determine_basin_of_attraction(self, plateau_exit_mode="first-improvement"):
         """Calculates the basin of attraction for each node via hill climbing.
@@ -1313,10 +1352,13 @@ class Landscape:
         ``"best-improvement"``). Basin assignments are
         canonicalized so that all members of a plateau-LO share the same
         representative (minimum-index member).
+
+        Returns the landscape instance (``self``) for method chaining.
         """
-        return basin.determine_basin_of_attraction(
+        basin.determine_basin_of_attraction(
             self, plateau_exit_mode=plateau_exit_mode
         )
+        return self
 
     def determine_accessible_paths(self):
         """Determines the size of basins based on accessible paths (ancestors).
@@ -1330,8 +1372,11 @@ class Landscape:
         -----
         This method is computationally intensive and might be slow for large
         landscapes.
+
+        Returns the landscape instance (``self``) for method chaining.
         """
-        return navigability.determine_accessible_paths(self)
+        navigability.determine_accessible_paths(self)
+        return self
 
     def determine_neighbor_fitness(self) -> "Landscape":
         """Calculates the mean fitness of neighbors for each node and the difference
@@ -1366,13 +1411,21 @@ class Landscape:
         """
         return correlation.determine_neighbor_fitness(self)
 
-    def determine_global_optimum(self):
-        """Identifies the global optimum node in the landscape graph using igraph."""
-        return navigability.determine_global_optimum(self)
+    def determine_global_optimum(self) -> "Landscape":
+        """Identifies the global optimum node in the landscape graph using igraph.
 
-    def determine_dist_to_go(self, distance=None):
-        """Calculates the distance from each node to the global optimum."""
-        return navigability.determine_dist_to_go(self, distance=distance)
+        Returns the landscape instance (``self``) for method chaining.
+        """
+        navigability.determine_global_optimum(self)
+        return self
+
+    def determine_dist_to_go(self, distance=None) -> "Landscape":
+        """Calculates the distance from each node to the global optimum.
+
+        Returns the landscape instance (``self``) for method chaining.
+        """
+        navigability.determine_dist_to_go(self, distance=distance)
+        return self
 
     def describe(self) -> None:
         """Prints a summary description of the landscape properties.

@@ -29,9 +29,13 @@ class SequenceLandscape(Landscape):
         handler = SequenceHandler(alphabet)
         neighbor_generator = SequenceNeighborGenerator(len(alphabet))
 
+        # Register the alphabet-specific strategies on this instance only (no
+        # global class-registry mutation), via the base constructor.
         type_key = f"sequence_{id(alphabet)}"
-        Landscape.register_input_handler(type_key, handler)
-        Landscape.register_neighbor_generator(type_key, neighbor_generator)
-
-        super().__init__(type=type_key, maximize=maximize)
+        super().__init__(
+            type=type_key,
+            maximize=maximize,
+            input_handler=handler,
+            neighbor_generator=neighbor_generator,
+        )
         self.alphabet = alphabet

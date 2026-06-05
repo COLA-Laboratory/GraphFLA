@@ -336,6 +336,7 @@ def mean_path_lengths(
     lo: Union[int, List[int]] = None,
     accessible: bool = True,
     n_samples: Optional[Union[int, float]] = None,
+    seed: Optional[int] = None,
 ) -> Union[dict, List[dict]]:
     """
     Calculate the mean and variance of the shortest path lengths from configurations to local optima.
@@ -463,8 +464,9 @@ def mean_path_lengths(
                 "n_samples must be a float between 0 and 1 or a positive integer."
             )
 
-        # Sample node indices
-        sampled_indices = random.sample(range(n_configs), sample_size)
+        # Sample node indices (local RNG when a seed is given, else global state)
+        rand = random.Random(seed) if seed is not None else random
+        sampled_indices = rand.sample(range(n_configs), sample_size)
     else:
         # Use all configurations
         sampled_indices = range(n_configs)
@@ -500,7 +502,10 @@ def mean_path_lengths(
 
 
 def mean_path_lengths_go(
-    landscape, accessible: bool = True, n_samples: Optional[Union[int, float]] = None
+    landscape,
+    accessible: bool = True,
+    n_samples: Optional[Union[int, float]] = None,
+    seed: Optional[int] = None,
 ) -> float:
     """
     Calculate the mean and variance of the shortest path lengths from configurations to the global optimum.
@@ -552,15 +557,13 @@ def mean_path_lengths_go(
 
     # Delegate the calculation to path_lengths with go_index
     result = mean_path_lengths(
-        landscape, lo=landscape.go_index, accessible=accessible, n_samples=n_samples
+        landscape,
+        lo=landscape.go_index,
+        accessible=accessible,
+        n_samples=n_samples,
+        seed=seed,
     )
     return _pythonize(result["mean"])
-
-
-def accessible_fract(landscape):
-    raise NotImplementedError(
-        "The function 'accessible_fract' is not implemented yet. Please check back later."
-    )
 
 
 def mean_dist_lo(

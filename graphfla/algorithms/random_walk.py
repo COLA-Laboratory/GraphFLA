@@ -11,6 +11,7 @@ def random_walk(
     attribute: Optional[str] = None,
     walk_length: int = 100,
     neutral_neighbors: Optional[Dict[int, List[int]]] = None,
+    seed: Optional[int] = None,
 ) -> np.ndarray:
     """
     Performs a random walk on a directed graph starting from a specified node,
@@ -37,6 +38,11 @@ def random_walk(
         neighbors that have no directed edge in the graph). Typically obtained
         from ``landscape._neutral_neighbors``.
 
+    seed : int, optional
+        Seed for a local random number generator, making the walk reproducible.
+        If None (default), the global ``random`` state is used (which respects
+        ``GRAPHFLA_SEED``).
+
     Returns
     -------
     np.ndarray
@@ -45,6 +51,8 @@ def random_walk(
     """
     if start_node < 0 or start_node >= graph.vcount():
         raise ValueError(f"Node {start_node} not in graph")
+
+    rand = random.Random(seed) if seed is not None else random
 
     has_attribute = attribute is not None and attribute in graph.vs.attributes()
 
@@ -69,7 +77,7 @@ def random_walk(
         if not neighbors:
             break
 
-        node = random.choice(neighbors)
+        node = rand.choice(neighbors)
         cnt += 1
 
     return logger[:cnt]

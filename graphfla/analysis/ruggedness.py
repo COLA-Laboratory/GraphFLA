@@ -47,7 +47,11 @@ def lo_ratio(landscape) -> float:
 
 
 def autocorrelation(
-    landscape, walk_length: int = 20, walk_times: int = 1000, lag: int = 1
+    landscape,
+    walk_length: int = 20,
+    walk_times: int = 1000,
+    lag: int = 1,
+    seed: int = None,
 ) -> float:
     """
     A measure of landscape ruggedness. It operates by calculating the autocorrelation of
@@ -67,6 +71,10 @@ def autocorrelation(
     lag : int, default=1
         The distance lag used for calculating autocorrelation.
 
+    seed : int, optional
+        Seed for a local RNG, making the set of random walks reproducible. If
+        None (default), the global ``random`` state is used.
+
     References:
     ----------
     [1] E. Weinberger, "Correlated and Uncorrelated Fitness Landscapes and How to Tell
@@ -85,10 +93,14 @@ def autocorrelation(
     # biases the autocorrelation strongly toward zero; pooling with the common
     # walk-sampled mean is the unbiased estimator of the random-walk
     # autocorrelation of Weinberger (1990).
+    rand = random.Random(seed) if seed is not None else random
     series = []
     for _ in range(walk_times):
-        random_node = random.randrange(0, landscape.n_configs)
-        logger = random_walk(landscape.graph, random_node, "fitness", walk_length)
+        random_node = rand.randrange(0, landscape.n_configs)
+        walk_seed = rand.getrandbits(32) if seed is not None else None
+        logger = random_walk(
+            landscape.graph, random_node, "fitness", walk_length, seed=walk_seed
+        )
         if logger.shape[0] > lag:
             series.append(np.asarray(logger[:, 2], dtype=float))
 
