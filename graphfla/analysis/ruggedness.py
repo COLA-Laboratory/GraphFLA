@@ -74,8 +74,10 @@ def autocorrelation(
 
     Returns:
     -------
-    autocorr : Dict
-        the mean of the autocorrelation values.
+    float
+        The lag-``lag`` autocorrelation of fitness, pooled across all random
+        walks under a single grand mean. Returns NaN if no walk yields more
+        than ``lag`` steps.
     """
     # Collect the fitness series of every walk, then pool the lagged products
     # using a single grand mean. Centering each short walk by its *own* mean
