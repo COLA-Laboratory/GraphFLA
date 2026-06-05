@@ -215,6 +215,42 @@ class SequenceHandler:
             )
 
 
+class OrdinalHandler:
+    """Input handler for ordinal (integer-coded ordered) configuration spaces.
+
+    Every column of the input is treated as an *ordered* discrete variable;
+    the natural neighborhood is a ±1 step on the ordinal scale (handled by
+    :class:`OrdinalNeighborGenerator`).
+    """
+
+    def prepare(
+        self,
+        X: Union[List[Any], pd.DataFrame, np.ndarray, pd.Series],
+        f: Union[pd.Series, list, np.ndarray],
+        verbose: bool = True,
+    ) -> Tuple[pd.DataFrame, pd.Series, Dict[str, str], int]:
+        """Prepare ordinal data."""
+        X_df, ord_data_types, n_vars = _parse_ordinal_input(
+            X_input=X, verbose=verbose
+        )
+
+        if isinstance(f, (list, np.ndarray)):
+            f_series = pd.Series(f, name="fitness")
+        elif isinstance(f, pd.Series):
+            f_series = f.copy()
+            f_series.name = "fitness"
+        else:
+            raise TypeError(
+                f"Input f must be a pandas Series, list, or numpy ndarray, got {type(f)}."
+            )
+
+        X_df.reset_index(drop=True, inplace=True)
+        f_series.reset_index(drop=True, inplace=True)
+        f_series.index = X_df.index
+
+        return X_df, f_series, ord_data_types, n_vars
+
+
 class DefaultHandler:
     """Input handler for mixed data types (boolean / categorical / ordinal)."""
 
@@ -484,8 +520,7 @@ def encode_data(
             print(
                 f" - Removed {len(invariant_cols)} invariant variable(s) from "
                 f"internal encoding; {len(prepared_data_types)} variable(s) used "
-                f"for neighbor computation. Invariant column(s) are preserved in "
-                f"the node attributes visible via get_data()."
+                f"for neighbor computation."
             )
 
     if not prepared_data_types:
@@ -791,6 +826,99 @@ def _parse_boolean_input(
     return X_df, data_types, bit_length
 
 
+def _parse_ordinal_input(
+    X_input: Union[List[Any], pd.DataFrame, np.ndarray, pd.Series],
+    verbose: bool = True,
+) -> Tuple[pd.DataFrame, Dict[str, str], int]:
+    """Validate and standardise ordinal input into a DataFrame of ordered columns.
+
+    Handles three common input formats:
+
+    - ``list[list[int]]`` / ``list[tuple[int]]`` — one row per configuration.
+    - ``numpy.ndarray`` of shape ``(n_samples, n_vars)``.
+    - ``pandas.DataFrame`` — columns are variables.
+
+    The columns must contain *orderable* values. Integer-coded levels
+    (``0, 1, 2, ...``) are the recommended representation. Pandas
+    ``Categorical(..., ordered=True)`` with an explicit category order is
+    also accepted; in that case the saved order is preserved.
+
+    .. warning::
+
+        If you pass non-integer values (e.g., strings such as ``"low"``,
+        ``"mid"``, ``"high"``) without an explicit ordered Categorical,
+        pandas will fall back to lexicographic sorting, which is almost
+        never the order you want. Either pre-convert to integers or use
+        ``pd.Categorical(col, ordered=True, categories=[...])`` to fix the
+        intended order.
+
+    Returns
+    -------
+    tuple[DataFrame, dict[str, str], int]
+        Standardised DataFrame, ``{col: 'ordinal', ...}`` dict, and the
+        number of variables.
+    """
+    if verbose:
+        print("Preparing Ordinal input...")
+
+    if not hasattr(X_input, "__len__") or len(X_input) == 0:
+        raise ValueError("Input configuration data `X` cannot be empty.")
+
+    if isinstance(X_input, np.ndarray):
+        if X_input.ndim != 2:
+            raise ValueError(
+                f"Ordinal input ndarray must be 2-D (n_samples, n_vars); "
+                f"got shape {X_input.shape}."
+            )
+        try:
+            X_df = pd.DataFrame(X_input)
+        except Exception as e:
+            raise TypeError(f"Could not convert NumPy array to DataFrame: {e}")
+    elif isinstance(X_input, pd.DataFrame):
+        X_df = X_input.copy()
+    elif isinstance(X_input, (list, tuple)):
+        if not X_input:
+            raise ValueError("Input sequence is empty.")
+        first = X_input[0]
+        if not isinstance(first, (list, tuple, np.ndarray)):
+            raise TypeError(
+                "If X is a list/tuple, each element must itself be a "
+                "list/tuple/ndarray representing one configuration."
+            )
+        row_lens = {len(r) for r in X_input}
+        if len(row_lens) != 1:
+            raise ValueError(
+                f"All inner sequences must have the same length; "
+                f"found lengths {sorted(row_lens)}."
+            )
+        try:
+            X_df = pd.DataFrame(list(X_input))
+        except Exception as e:
+            raise TypeError(f"Could not convert list input to DataFrame: {e}")
+    else:
+        raise TypeError(
+            f"Unsupported input type for X: {type(X_input)}. Expected "
+            "DataFrame, 2-D ndarray, or list of lists/tuples."
+        )
+
+    if X_df.empty:
+        raise ValueError("Input X is empty after parsing.")
+    n_vars = X_df.shape[1]
+    if n_vars == 0:
+        raise ValueError("Input X must have at least one column.")
+
+    if all(isinstance(c, (int, np.integer)) for c in X_df.columns):
+        X_df.columns = [f"var_{i}" for i in range(n_vars)]
+
+    data_types = {col: "ordinal" for col in X_df.columns}
+
+    if verbose:
+        print(
+            f"Ordinal input preparation complete. Detected {n_vars} variable(s)."
+        )
+    return X_df, data_types, n_vars
+
+
 def _parse_sequence_input(
     X_input: Union[List[str], pd.Series, np.ndarray, pd.DataFrame],
     alphabet: List[str],
@@ -1006,6 +1134,7 @@ __all__ = [
     "PreparedData",
     "InputHandler",
     "BooleanHandler",
+    "OrdinalHandler",
     "SequenceHandler",
     "DefaultHandler",
     "filter_data",

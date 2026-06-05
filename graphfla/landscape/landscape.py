@@ -17,6 +17,7 @@ from .._data import (
     InputHandler,
     BooleanHandler,
     DefaultHandler,
+    OrdinalHandler,
     SequenceHandler,
     filter_data,
     prepare_data,
@@ -36,6 +37,7 @@ from .._neighbors import (
     NeighborGenerator,
     BooleanNeighborGenerator,
     DefaultNeighborGenerator,
+    OrdinalNeighborGenerator,
     SequenceNeighborGenerator,
     build_edges,
 )
@@ -107,15 +109,21 @@ class Landscape:
         The total number of directed edges (connections) in the landscape graph.
         Populated after calling `build_from_data` or `build_from_graph`.
     n_lo : int or None
-        The total number of local-optimum *nodes* (plateau-aware). This
-        includes every member of every plateau-LO plus single-point LOs.
+        The number of distinct local optima (plateau-aware): each neutral
+        plateau-LO counts once, plus every single-point LO. This is the
+        "number of local optima". Populated after graph analysis.
+    n_lo_members : int or None
+        The total number of local-optimum *member nodes* (every member of
+        every plateau-LO plus single-point LOs); equals ``len(lo_index)``.
+        For a landscape with no neutral plateaus this equals ``n_lo``.
         Populated after graph analysis.
     lo_index : list[int] or None
         A sorted list of all node indices that are local optima
-        (plateau-aware). Populated after graph analysis.
+        (plateau-aware); its length is ``n_lo_members``. Populated after
+        graph analysis.
     n_peak : int or None
-        The number of distinct peaks (each plateau-LO counts as one peak,
-        plus single-point LOs). Populated after graph analysis.
+        Alias of ``n_lo`` (number of distinct peaks), kept for backward
+        compatibility. Populated after graph analysis.
     go_index : int or None
         The node index of the global optimum (the configuration with the
         highest or lowest fitness). Populated after graph analysis.
@@ -186,15 +194,11 @@ class Landscape:
     --------
     >>> import pandas as pd
     >>> import numpy as np
-    # Example Data (replace with actual data)
     >>> X_data = pd.DataFrame({'var_0': [0, 0, 1, 1], 'var_1': [0, 1, 0, 1]})
     >>> f_data = pd.Series([1.0, 2.0, 3.0, 2.5])
-    >>> data_types_dict = {'var_0': 'boolean', 'var_1': 'boolean'}
 
-    >>> # Use the Landscape factory for automatic type selection (recommended)
-    >>> # from landscape_lib import Landscape # Assuming library structure
     >>> # landscape = Landscape(type="boolean").build_from_data(X_data, f_data)
-    >>> landscape.describe()  # doctest: +SKIP
+    >>> landscape.describe() 
     --- Landscape Summary ---
     Class: Landscape
     Built: True
@@ -208,15 +212,16 @@ class Landscape:
     Paths Calculated: False
     LON Calculated: False
     ---
-    >>> print(f"Number of configurations: {landscape.n_configs}")  # doctest: +SKIP
+    >>> print(f"Number of configurations: {landscape.n_configs}") 
     Number of configurations: 4
-    >>> print(f"Global optimum fitness: {landscape.go['fitness']}")  # doctest: +SKIP
+    >>> print(f"Global optimum fitness: {landscape.go['fitness']}")  
     Global optimum fitness: 3.0
     """
 
     # Class-level registries for strategies
     _input_handlers = {
         "boolean": BooleanHandler(),
+        "ordinal": OrdinalHandler(),
         "dna": SequenceHandler(DNA_ALPHABET),
         "rna": SequenceHandler(RNA_ALPHABET),
         "protein": SequenceHandler(PROTEIN_ALPHABET),
@@ -225,6 +230,7 @@ class Landscape:
 
     _neighbor_generators = {
         "boolean": BooleanNeighborGenerator(),
+        "ordinal": OrdinalNeighborGenerator(),
         "dna": SequenceNeighborGenerator(len(DNA_ALPHABET)),
         "rna": SequenceNeighborGenerator(len(RNA_ALPHABET)),
         "protein": SequenceNeighborGenerator(len(PROTEIN_ALPHABET)),
@@ -242,6 +248,7 @@ class Landscape:
         self.n_vars = None
         self.n_edges = None
         self.n_lo = None
+        self.n_lo_members = None
         self.lo_index = None
         self.go_index = None
         self.go = None
@@ -256,7 +263,7 @@ class Landscape:
 
         # Plateau / neutrality layer attributes
         self._has_plateaus = False
-        self._node_to_plateau = None   # np.ndarray int32: node_idx → plateau_id (-1 = singleton)
+        self._node_to_plateau = None    # np.ndarray int32: node_idx → plateau_id (-1 = singleton)
         self.plateaus = None            # dict: plateau_id → list[int] of member nodes (0-based IDs)
         self._neutral_neighbors = None  # dict: node_idx → list[int] of neutral neighbors
         self.n_plateau = None           # number of neutral plateaus (multi-member components)
@@ -743,22 +750,27 @@ class Landscape:
             verbose=instance.verbose,
         )
 
-        # Determine if this is a specialized landscape subclass
-        landscape_class = (
-            graph["landscape_class"]
-            if "landscape_class" in graph.attributes()
-            else "BaseLandscape"
-        )
+        # Restore subclass convenience attributes by landscape type.
+        restore_type = instance.type
+        if (
+            not isinstance(restore_type, str) or restore_type in ("", "default")
+        ) and "landscape_class" in graph.attributes():
+            # Legacy graphs predating landscape_type: infer from class name.
+            legacy_class = graph["landscape_class"]
+            if legacy_class in (
+                "SequenceLandscape",
+                "DNALandscape",
+                "RNALandscape",
+                "ProteinLandscape",
+            ):
+                restore_type = "sequence"
+            elif legacy_class == "BooleanLandscape":
+                restore_type = "boolean"
 
-        if landscape_class == "SequenceLandscape" or landscape_class in [
-            "DNALandscape",
-            "RNALandscape",
-            "ProteinLandscape",
-        ]:
-            if instance.n_vars is not None:
+        if instance.n_vars is not None and isinstance(restore_type, str):
+            if restore_type.startswith("sequence"):
                 instance.sequence_length = instance.n_vars
-        elif landscape_class == "BooleanLandscape":
-            if instance.n_vars is not None:
+            elif restore_type == "boolean":
                 instance.bit_length = instance.n_vars
 
         # Reconstruct plateau data structures if saved in the graph
@@ -1157,7 +1169,25 @@ class Landscape:
             self.graph, self.maximize, tau, filter_mode, verbose
         )
 
-        iso_result = remove_isolated_nodes(self.graph, self.verbose)
+        # Protect plateau-interior nodes (connected to the landscape only via
+        # neutral/tied edges) from isolation pruning, which runs before the
+        # plateau layer is built and would otherwise delete them as "isolated".
+        protected = None
+        if neutral_pairs:
+            if kept_indices is not None:
+                tau_map = {old: new for new, old in enumerate(kept_indices)}
+                protected = {
+                    tau_map[n]
+                    for pair in neutral_pairs
+                    for n in pair
+                    if n in tau_map
+                }
+            else:
+                protected = {n for pair in neutral_pairs for n in pair}
+
+        iso_result = remove_isolated_nodes(
+            self.graph, self.verbose, protected=protected
+        )
         if iso_result is not None:
             self.graph, self.n_configs, self.n_edges, iso_kept = iso_result
             if kept_indices is not None:
@@ -1263,11 +1293,13 @@ class Landscape:
         """Identify local optima with plateau-aware semantics.
 
         A node is a local optimum if it has no way to improve fitness,
-        taking neutral plateaus into account.  Results are stored in
-        ``n_lo`` / ``lo_index`` / ``is_lo`` (node-level) and
-        ``n_plateau_lo`` / ``plateau_lo_index`` (plateau-level).
-        ``n_peak`` / ``_peak_index`` provide the distinct-peak view
-        used by LON construction.
+        taking neutral plateaus into account.  Results are stored at the
+        node level in ``n_lo_members`` / ``lo_index`` / ``is_lo``, at the
+        plateau level in ``n_plateau_lo`` / ``plateau_lo_index``, and at the
+        distinct-optimum level in ``n_lo`` (number of local optima, each
+        plateau-LO counted once) with ``_peak_index`` (one representative
+        node per optimum, used by LON construction). ``n_peak`` is a
+        backward-compatible alias of ``n_lo``.
         """
         return optima.determine_local_optima(self)
 
@@ -1364,14 +1396,14 @@ class Landscape:
                 f"Connections (n_edges): {self.n_edges if self.n_edges is not None else 'Unknown'}"
             )
             print(
-                f"Local Optima Nodes (n_lo): {self.n_lo if self.n_lo is not None else 'Not Calculated'}"
+                f"Local Optima (n_lo): {self.n_lo if self.n_lo is not None else 'Not Calculated'}"
             )
             if self._has_plateaus:
+                if self.n_lo_members is not None:
+                    print(f"  LO member nodes (n_lo_members): {self.n_lo_members}")
                 print(f"Neutral Plateaus (n_plateau): {self.n_plateau}")
                 if self.n_plateau_lo is not None:
                     print(f"Plateau-Level LOs (n_plateau_lo): {self.n_plateau_lo}")
-            if self.n_peak is not None:
-                print(f"Distinct Peaks (n_peak): {self.n_peak}")
             go_idx_str = (
                 str(self.go_index)
                 if self.go_index is not None
@@ -1428,6 +1460,7 @@ class Landscape:
         if self.graph.vcount() == 0:
             warnings.warn("Cannot analyze an empty graph.", RuntimeWarning)
             self.n_lo = 0
+            self.n_lo_members = 0
             self.lo_index = []
             self.n_peak = 0
             self._peak_index = []

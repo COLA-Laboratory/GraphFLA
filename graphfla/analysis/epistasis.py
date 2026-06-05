@@ -1,8 +1,7 @@
 from sklearn.preprocessing import OneHotEncoder
 from scipy.stats import spearmanr, pearsonr
-from typing import Any, Tuple, Literal
+from typing import Literal
 from collections import defaultdict
-from itertools import product, combinations
 from joblib import Parallel, delayed
 
 import numpy as np
@@ -24,6 +23,92 @@ def _pythonize(value):
     if isinstance(value, np.generic):
         return value.item()
     return value
+
+
+# Module-level workers for process-based parallelism (must be importable so
+# joblib's loky backend can pickle them; large code arrays are auto-memmapped).
+def _idiosyncratic_pair_worker(Xcodes, f, std_baseline, pos_idx, allele_a, allele_b,
+                               min_pairs, other):
+    """Idiosyncratic index for one (allele_a, pos, allele_b) mutation.
+
+    Numpy/dict reimplementation of :func:`idiosyncratic_index`'s core, giving
+    identical values: keep-first dedup per background, analytic random-pair
+    baseline, and NaN for degenerate (too-few-background) mutations so that
+    unmeasurable mutations are excluded from — rather than diluting — the
+    landscape average.
+    """
+    rows_a = np.flatnonzero(Xcodes[:, pos_idx] == allele_a)
+    rows_b = np.flatnonzero(Xcodes[:, pos_idx] == allele_b)
+    if rows_a.size == 0 or rows_b.size == 0:
+        return np.nan
+    bg_a = {}
+    for i in rows_a:
+        k = Xcodes[i, other].tobytes()
+        if k not in bg_a:
+            bg_a[k] = f[i]
+    bg_b = {}
+    for i in rows_b:
+        k = Xcodes[i, other].tobytes()
+        if k not in bg_b:
+            bg_b[k] = f[i]
+    common = bg_a.keys() & bg_b.keys()
+    if len(common) < min_pairs:
+        return np.nan
+    eff = np.fromiter((bg_b[k] - bg_a[k] for k in common), dtype=float, count=len(common))
+    return float(np.std(eff) / std_baseline)
+
+
+def _gamma_position_pair_worker(Xcodes, f, p1, p2, alleles1, alleles2, other):
+    """Pooled gamma / gamma* contributions for one ordered position pair (p1, p2).
+
+    Implements the Ferretti et al. (2016) correlation of fitness effects: for the
+    p1-mutation, correlate its effect on backgrounds with allele ``b`` at p2 with
+    its effect on backgrounds with allele ``B`` at p2, across all shared genetic
+    backgrounds. The correlation is *non-centered* (a raw second-moment ratio, as
+    in eq. 3 of the paper), so it equals +1 for additive landscapes rather than
+    being undefined. Returns the partial sums ``(num, den, snum, sden)`` to be
+    pooled across all ordered pairs by :func:`_gamma_statistics`, giving
+    ``gamma = num / den`` and ``gamma_star = snum / sden``.
+    """
+    col1 = Xcodes[:, p1]
+    col2 = Xcodes[:, p2]
+    bg = Xcodes[:, other]
+    groups = {}
+    for i in range(Xcodes.shape[0]):
+        key = (col1[i], col2[i])
+        d = groups.get(key)
+        if d is None:
+            d = groups[key] = {}
+        bk = bg[i].tobytes()
+        if bk not in d:
+            d[bk] = f[i]
+    num = den = snum = sden = 0.0
+    for ai in range(len(alleles1)):
+        for aj in range(ai + 1, len(alleles1)):
+            a, A_ = alleles1[ai], alleles1[aj]
+            for bi in range(len(alleles2)):
+                for bj in range(bi + 1, len(alleles2)):
+                    b, B_ = alleles2[bi], alleles2[bj]
+                    g_ab = groups.get((a, b))
+                    g_Ab = groups.get((A_, b))
+                    g_aB = groups.get((a, B_))
+                    g_AB = groups.get((A_, B_))
+                    if not (g_ab and g_Ab and g_aB and g_AB):
+                        continue
+                    common = g_ab.keys() & g_Ab.keys() & g_aB.keys() & g_AB.keys()
+                    if not common:
+                        continue
+                    common = list(common)
+                    n = len(common)
+                    bvec = np.fromiter((g_ab[k] - g_Ab[k] for k in common), float, n)
+                    Bvec = np.fromiter((g_aB[k] - g_AB[k] for k in common), float, n)
+                    num += float(np.dot(bvec, Bvec))
+                    den += 0.5 * float(np.dot(bvec, bvec) + np.dot(Bvec, Bvec))
+                    sb = np.sign(bvec)
+                    sB = np.sign(Bvec)
+                    snum += float(np.dot(sb, sB))
+                    sden += 0.5 * float(np.count_nonzero(sb) + np.count_nonzero(sB))
+    return num, den, snum, sden
 
 
 def _assign_roles_for_epistasis_igraph(graph, squares):
@@ -278,19 +363,19 @@ def classify_epistasis(landscape, approximate=False, sample_cut_prob=0.2):
     return _pythonize(final_results)
 
 
-def idiosyncratic_index(landscape, mutation):
+def idiosyncratic_index(landscape, mutation, min_pairs: int = 3):
     """
     Calculates the idiosyncratic index for the fitness landscape proposed in [1].
 
     The idiosyncratic index of a specific genetic mutation quantifies the sensitivity
-    of a specific mutation to idiosyncratic epistasis. It is defined as the as the
+    of a specific mutation to idiosyncratic epistasis. It is defined as the
     variation in the fitness difference between genotypes that differ by the mutation,
-    relative to the variation in the fitness difference between random genotypes for
-    the same number of genotype pairs. We compute this for the entire fitness landscape
-    by averaging it across individual mutations.
+    relative to the variation in the fitness difference between random genotype pairs.
+    We compute this for the entire fitness landscape by averaging it across individual
+    mutations.
 
-    The idiosyncratic index for a landscape varies from 0 to 1, corresponding to the
-    minimum and maximum levels of idiosyncrasy, respectively.
+    The index is typically in [0, 1] (0 = no idiosyncrasy); a mutation whose effect
+    varies more across backgrounds than random genotype pairs can exceed 1.
 
     For more information, please refer to the original paper:
 
@@ -308,10 +393,17 @@ def idiosyncratic_index(landscape, mutation):
         - pos: The position in the configuration where the mutation occurs.
         - B: The new variable value (allele) after the mutation.
 
+    min_pairs : int, default=3
+        Minimum number of shared genetic backgrounds required to estimate the
+        index. Mutations with fewer background-matched pairs yield an unstable
+        effect-variance estimate and return NaN (so they are excluded from any
+        landscape average rather than biasing it toward zero).
+
     Returns
     -------
     float
-        The calculated idiosyncratic index.
+        The calculated idiosyncratic index, or NaN when it cannot be estimated
+        (fewer than ``min_pairs`` shared backgrounds).
     """
     A, pos, B = mutation
 
@@ -361,38 +453,33 @@ def idiosyncratic_index(landscape, mutation):
     df_merged = pd.merge(df_A, df_B, left_index=True, right_index=True, how="inner")
 
     if df_merged.empty:
-        return 0.0
+        return _pythonize(np.nan)
 
     mutation_effects = df_merged["fitness_B"] - df_merged["fitness_A"]
     n_pairs = len(mutation_effects)
 
-    if n_pairs <= 1:
-        return 0.0
+    if n_pairs < min_pairs:
+        return _pythonize(np.nan)
 
-    std_mutation_effect = np.std(mutation_effects)
     all_fitness_values = f.values
-
     if len(all_fitness_values) <= 1 or np.all(
         all_fitness_values == all_fitness_values[0]
     ):
         return 0.0
 
-    rand_f1 = np.random.choice(all_fitness_values, size=n_pairs, replace=True)
-    rand_f2 = np.random.choice(all_fitness_values, size=n_pairs, replace=True)
-
-    random_diffs = rand_f1 - rand_f2
-
-    std_random_diff = np.std(random_diffs)
-
-    if std_random_diff == 0:
-        return 0.0
+    # Random genotype pairs are differences of two i.i.d. draws from the fitness
+    # distribution, so Var(diff) = 2*Var(f) exactly. Using this closed form
+    # (rather than one noisy n_pairs-sized sample) keeps the index deterministic
+    # and avoids a near-zero denominator blowing the ratio up.
+    std_mutation_effect = np.std(mutation_effects)
+    std_random_diff = np.sqrt(2.0) * np.std(all_fitness_values)
 
     idiosyncratic_val = std_mutation_effect / std_random_diff
 
     return _pythonize(idiosyncratic_val)
 
 
-def global_idiosyncratic_index(landscape, n_jobs=-1, random_seed=None):
+def global_idiosyncratic_index(landscape, n_jobs=-1, random_seed=None, min_pairs: int = 3):
     """
     Calculates the global idiosyncratic index for the entire fitness landscape using parallel processing.
 
@@ -401,7 +488,9 @@ def global_idiosyncratic_index(landscape, n_jobs=-1, random_seed=None):
     The global index quantifies the overall sensitivity of the landscape to idiosyncratic
     epistasis.
 
-    The index ranges from 0 to 1, with higher values indicating stronger idiosyncratic effects.
+    The index is typically in [0, 1], with higher values indicating stronger idiosyncratic
+    effects; individual mutations whose effects vary more than random genotype pairs can push
+    the average above 1.
 
     Parameters
     ----------
@@ -410,7 +499,11 @@ def global_idiosyncratic_index(landscape, n_jobs=-1, random_seed=None):
     n_jobs : int, optional
         Number of parallel jobs to use. Default is -1 (all available cores).
     random_seed : int, optional
-        Seed for random number generation to ensure reproducibility.
+        Retained for backward compatibility. The index is now computed
+        deterministically (analytic random-pair baseline), so this has no effect.
+    min_pairs : int, default=3
+        Minimum number of shared genetic backgrounds for a mutation to contribute
+        (passed to :func:`idiosyncratic_index`).
 
     Returns
     -------
@@ -422,61 +515,48 @@ def global_idiosyncratic_index(landscape, n_jobs=-1, random_seed=None):
     .. [1] Daniel M. Lyons et al, "Idiosyncratic epistasis creates universals in mutational
        effects and evolutionary trajectories", Nat. Ecol. Evo., 2020.
     """
-    from joblib import Parallel, delayed
-
-    if random_seed is not None:
-        np.random.seed(random_seed)
-
     data = landscape.get_data()
     X = data.iloc[:, : landscape.n_vars]
+    f = data["fitness"].to_numpy(dtype=float)
 
-    # Generate all possible mutations to process in parallel
-    mutations_to_process = []
-    for pos in X.columns:
-        unique_alleles = sorted(X[pos].unique())
-        for i in range(len(unique_alleles)):
-            for j in range(i + 1, len(unique_alleles)):
-                A, B = unique_alleles[i], unique_alleles[j]
-                mutations_to_process.append((A, pos, B))
+    # Degenerate (flat) landscape: every mutation contributes 0.0, as in
+    # idiosyncratic_index. Mirror that so the average is 0.0, not NaN.
+    if len(f) <= 1 or np.all(f == f[0]):
+        return _pythonize(0.0)
+    std_baseline = float(np.sqrt(2.0) * np.std(f))
 
-    # Define a worker function to compute idiosyncratic index for each mutation
-    def compute_index(mutation):
-        try:
-            A, pos, B = mutation
-            index_value = idiosyncratic_index(landscape, mutation)
-            return {"mutation": mutation, "pos": pos, "index": index_value}
-        except Exception as e:
-            print(
-                f"Warning: Could not calculate index for mutation {A}->{B} at position {pos}: {e}"
-            )
-            return {"mutation": mutation, "pos": pos, "index": np.nan}
+    # Code genotypes once (sorted-allele codes, matching the original sorted
+    # iteration); the arrays are memmapped to worker processes by joblib.
+    Xcodes = np.column_stack(
+        [pd.Categorical(X[c], categories=sorted(X[c].unique())).codes for c in X.columns]
+    ).astype(np.int32)
 
-    # Execute in parallel
-    results = Parallel(n_jobs=n_jobs, prefer="threads")(
-        delayed(compute_index)(mutation) for mutation in mutations_to_process
+    tasks = []
+    for j in range(Xcodes.shape[1]):
+        other = np.delete(np.arange(Xcodes.shape[1]), j)
+        alleles = np.unique(Xcodes[:, j])
+        for ai in range(len(alleles)):
+            for bi in range(ai + 1, len(alleles)):
+                tasks.append((int(alleles[ai]), int(alleles[bi]), j, other))
+
+    # Process-based parallelism (default loky backend) actually uses the cores,
+    # unlike the previous thread backend which was GIL-bound for this work.
+    values = Parallel(n_jobs=n_jobs)(
+        delayed(_idiosyncratic_pair_worker)(Xcodes, f, std_baseline, j, a, b, min_pairs, other)
+        for (a, b, j, other) in tasks
     )
-
-    # Process results
-    position_indices = defaultdict(list)
-    all_indices = []
-
-    for result in results:
-        index_value = result["index"]
-        pos = result["pos"]
-
-        if not np.isnan(index_value):
-            position_indices[pos].append(index_value)
-            all_indices.append(index_value)
-
-    # Calculate global index
-    global_index = np.mean(all_indices) if all_indices else np.nan
-    return _pythonize(global_index)
+    # Mutations with too few shared backgrounds return NaN and are excluded from
+    # the average (rather than padded with 0.0, which would bias sparse
+    # landscapes toward zero idiosyncrasy).
+    if not values or np.all(np.isnan(values)):
+        return _pythonize(np.nan)
+    return _pythonize(float(np.nanmean(values)))
 
 
 def diminishing_returns_index(
     landscape,
     method: Literal["pearson", "spearman", "regression"] = "pearson",
-) -> Tuple[float, float]:
+) -> float:
     """Measures diminishing returns epistasis in a fitness landscape.
 
     Diminishing returns epistasis occurs when the fitness benefit of new
@@ -503,9 +583,6 @@ def diminishing_returns_index(
         For 'pearson' or 'spearman': The correlation coefficient between node fitness
         and average successor fitness improvement.
         For 'regression': The slope of the linear regression.
-        Returns NaN if calculation is not possible.
-    p_value : float
-        The p-value associated with the correlation test or regression.
         Returns NaN if calculation is not possible.
 
     Raises
@@ -751,112 +828,43 @@ def _gamma_statistics(landscape, n_jobs=-1):
     df = landscape.get_data()
     X = df.iloc[:, : landscape.n_vars]
 
-    def get_all_mutations(df, pos):
-        combs = list(combinations(df[pos].unique(), 2))
-        return combs
-
-    mutation_dict = {col: get_all_mutations(X, col) for col in X.columns}
-
-    positions = list(X.columns)
-    position_pairs = [
-        (pos1, pos2) for pos1 in positions for pos2 in positions if pos1 != pos2
-    ]
-
-    def count_differing_bits(list1, list2):
-        if len(list1) != len(list2):
-            raise ValueError("Lists must be of the same length.")
-
-        total_diff_bits = 0
-        for a, b in zip(list1, list2):
-            xor = a ^ b
-            total_diff_bits += bin(xor).count("1")
-
-        return total_diff_bits
-
-    def process_mutation_pair(i, pos1, pos2, mutation1, mutation2):
-        index_cols = list(X.drop(columns=[pos1, pos2]).columns)
-
-        mask_pos1_0 = df[pos1] == mutation1[0]
-        mask_pos1_1 = df[pos1] == mutation1[1]
-        mask_pos2_0 = df[pos2] == mutation2[0]
-        mask_pos2_1 = df[pos2] == mutation2[1]
-
-        df_ab = df[mask_pos1_0 & mask_pos2_0]
-        df_Ab = df[mask_pos1_1 & mask_pos2_0]
-        df_aB = df[mask_pos1_0 & mask_pos2_1]
-        df_AB = df[mask_pos1_1 & mask_pos2_1]
-
-        if any(len(data) == 0 for data in [df_ab, df_Ab, df_aB, df_AB]):
-            return None
-
-        for data in [df_ab, df_Ab, df_aB, df_AB]:
-            if len(data) > 0:
-                data.set_index(index_cols, inplace=True)
-
-        fit_effects_b = df_ab["fitness"] - df_Ab["fitness"]
-        fit_effects_B = df_aB["fitness"] - df_AB["fitness"]
-
-        fit_effects_b_aligned, fit_effects_B_aligned = fit_effects_b.align(
-            fit_effects_B
+    if landscape.n_vars < 2:
+        warnings.warn(
+            "Gamma statistics require at least 2 variables so that fitness "
+            f"effects of one mutation can be compared; this landscape has "
+            f"{landscape.n_vars}. Returning NaN.",
+            UserWarning,
         )
-
-        if len(fit_effects_b_aligned) > 0:
-            valid_mask = ~(
-                np.isnan(fit_effects_b_aligned) | np.isnan(fit_effects_B_aligned)
-            )
-            if valid_mask.sum() > 1:
-                fit_effects_b = fit_effects_b_aligned[valid_mask]
-                fit_effects_B = fit_effects_B_aligned[valid_mask]
-
-                gamma_value = np.corrcoef(fit_effects_b, fit_effects_B)[0, 1]
-
-                fit_effects_b = fit_effects_b.map(
-                    lambda x: 1 if x > 0 else (-1 if x < 0 else 0)
-                ).to_list()
-                fit_effects_B = fit_effects_B.map(
-                    lambda x: 1 if x > 0 else (-1 if x < 0 else 0)
-                ).to_list()
-
-                gamma_star_value = 1 - count_differing_bits(
-                    fit_effects_b, fit_effects_B
-                ) / len(fit_effects_b)
-
-                return {"gamma": gamma_value, "gamma_star": gamma_star_value}
-
-        return None
-
-    def process_position_pair(i, pos1, pos2):
-        results = []
-        mutations1 = mutation_dict[pos1]
-        mutations2 = mutation_dict[pos2]
-
-        for mutation1, mutation2 in product(mutations1, mutations2):
-            result = process_mutation_pair(i, pos1, pos2, mutation1, mutation2)
-            if result is not None:
-                results.append(result)
-
-        return results
-
-    results = Parallel(n_jobs=n_jobs, prefer="threads")(
-        delayed(process_position_pair)(i, pos1, pos2)
-        for i, (pos1, pos2) in enumerate(position_pairs)
-    )
-
-    all_gamma = []
-    all_gamma_star = []
-
-    for sublist in results:
-        for result in sublist:
-            if result is not None:
-                all_gamma.append(result["gamma"])
-                all_gamma_star.append(result["gamma_star"])
-
-    if not all_gamma:
         return {"gamma": np.nan, "gamma_star": np.nan}
 
+    # Code genotypes once (appearance-order codes, matching the original
+    # df[pos].unique() iteration). Arrays are memmapped to worker processes.
+    f = df["fitness"].to_numpy(dtype=float)
+    Xcodes = np.column_stack([pd.factorize(X[c])[0] for c in X.columns]).astype(np.int32)
+    P = Xcodes.shape[1]
+    alleles = [np.unique(Xcodes[:, j]) for j in range(P)]
+    position_pairs = [(p1, p2) for p1 in range(P) for p2 in range(P) if p1 != p2]
+
+    # Process-based parallelism over ordered position pairs (default loky
+    # backend uses the cores; the previous thread backend was GIL-bound).
+    results = Parallel(n_jobs=n_jobs)(
+        delayed(_gamma_position_pair_worker)(
+            Xcodes, f, p1, p2, alleles[p1], alleles[p2], np.delete(np.arange(P), [p1, p2])
+        )
+        for p1, p2 in position_pairs
+    )
+
+    # Pool numerator/denominator across all ordered pairs (and, via the two
+    # orderings of each pair, across both sides of every square motif) to form
+    # the single global non-centered correlation of Ferretti et al. (2016).
+    num = sum(r[0] for r in results)
+    den = sum(r[1] for r in results)
+    snum = sum(r[2] for r in results)
+    sden = sum(r[3] for r in results)
+
     return {
-        "gamma": np.mean(all_gamma),
-        "gamma_star": np.mean(all_gamma_star),
+        "gamma": num / den if den else np.nan,
+        "gamma_star": snum / sden if sden else np.nan,
     }
 
 
@@ -883,9 +891,19 @@ def gamma_statistic(landscape, n_jobs=-1):
     - The gamma statistic measures the correlation between fitness effects of mutations
       across different genetic backgrounds, providing a measure of epistatic interactions
       in the landscape.
+    - It is computed as the non-centered (raw second-moment) correlation of fitness
+      effects pooled over all square motifs, following eq. (3) of Ferretti et al.
+      (2016). Hence a purely additive landscape gives gamma = 1, a House-of-Cards
+      landscape gives gamma ~ 0, and a reciprocal-sign-dominated landscape gives
+      gamma < 0.
     - The gamma_star statistic focuses only on sign consistency, ignoring the magnitude
       of fitness effects. It indicates whether mutations tend to have consistent
       directional effects across different genetic backgrounds.
+
+    References
+    ----------
+    .. [1] L. Ferretti et al., "Measuring epistasis in fitness landscapes: The
+       correlation of fitness effects of mutations", J. Theor. Biol. 396, 132-143 (2016).
     """
 
     stats = _gamma_statistics(landscape, n_jobs=n_jobs)
@@ -929,10 +947,10 @@ def higher_order_epistasis(landscape, order=2, verbose=False, n_jobs=1):
         of the polynomial, where an order of k allows for modeling interactions between
         up to k variables. Must be between 1 and the total number of variables in the landscape.
         Default is 2 (quadratic terms and pairwise interactions).
-    random_state : int, optional
-        Random seed for reproducibility. Default is 42.
     verbose : bool, optional
         Whether to print progress information. Default is False.
+    n_jobs : int, optional
+        Number of CPU cores used by the underlying linear regression. Default is 1.
 
     Returns
     -------
@@ -1142,8 +1160,13 @@ def walsh_hadamard_coefficient(landscape, max_order=2, max_cells=1e9, chunk_size
             # Fallback: treat as categorical and convert to strings
             X_strings = ["".join(map(str, row)) for _, row in X.iterrows()]
     else:
-        # For default/categorical landscapes, convert to strings
-        X_strings = ["".join(map(str, row)) for _, row in X.iterrows()]
+        # Map each variable's values to a single symbol so that multi-level
+        # ordinal/categorical alleles occupy exactly one string position
+        # (joining raw str() values splits multi-digit codes across positions).
+        # Codes start at 1 so no symbol collides with "0", which marks
+        # wildtype-matching positions downstream.
+        codes = X.apply(lambda col: pd.factorize(col)[0] + 1).to_numpy()
+        X_strings = ["".join(chr(48 + c) for c in row) for row in codes]
 
     # Determine wildtype (first configuration or all zeros for binary)
     if landscape.type == "boolean":

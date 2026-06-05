@@ -3,6 +3,7 @@
 from .landscape import Landscape
 
 from .boolean import BooleanLandscape
+from .ordinal import OrdinalLandscape
 from .sequence import SequenceLandscape
 
 from .dna import DNALandscape
@@ -12,6 +13,7 @@ from .protein import ProteinLandscape
 __all__ = [
     "Landscape",
     "BooleanLandscape",
+    "OrdinalLandscape",
     "SequenceLandscape",
     "DNALandscape",
     "RNALandscape",
