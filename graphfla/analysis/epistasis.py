@@ -632,8 +632,13 @@ def diminishing_returns_index(
 
         successors = v.successors()
         if successors:
-            improvements = [s["fitness"] - current_fitness for s in successors]
-            # Filter out non-positive improvements (should not happen with current graph def)
+            # Improvement is measured toward the optimum, so it is positive along
+            # every improving edge for both maximization and minimization.
+            improvements = [
+                (s["fitness"] - current_fitness) if landscape.maximize
+                else (current_fitness - s["fitness"])
+                for s in successors
+            ]
             positive_improvements = [imp for imp in improvements if imp > 0]
             if positive_improvements:
                 avg_improvement = np.mean(positive_improvements)
@@ -771,8 +776,13 @@ def increasing_costs_index(
 
         predecessors = v.predecessors()
         if predecessors:
-            costs = [current_fitness - p["fitness"] for p in predecessors]
-            # Filter out non-positive costs (should not happen with graph def)
+            # Cost is the fitness sacrificed moving away from the optimum, so it
+            # is positive along every improving edge under either direction.
+            costs = [
+                (current_fitness - p["fitness"]) if landscape.maximize
+                else (p["fitness"] - current_fitness)
+                for p in predecessors
+            ]
             positive_costs = [c for c in costs if c > 0]
             if positive_costs:
                 avg_cost = np.mean(positive_costs)

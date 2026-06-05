@@ -176,8 +176,24 @@ def determine_dist_to_go(self, distance=None):
             configs = self._configs_array
         else:
             configs = np.array(self.configs.tolist())
-        go_config = configs[self.go_index]
-        distances = distance(configs, go_config, self.data_types)
+
+        # Distance to the NEAREST global optimum. When several configurations
+        # tie for the best fitness, the distance-to-optimum (and hence FDC) uses
+        # the closest one, per the standard Jones & Forrest (1995) definition;
+        # for a unique optimum this is just the distance to it.
+        fitness = np.asarray(self.graph.vs["fitness"], dtype=float)
+        best = float(fitness.max()) if self.maximize else float(fitness.min())
+        go_indices = np.where(fitness == best)[0]
+        if go_indices.size <= 1:
+            distances = distance(configs, configs[self.go_index], self.data_types)
+        else:
+            distances = np.min(
+                np.stack(
+                    [distance(configs, configs[gi], self.data_types) for gi in go_indices],
+                    axis=0,
+                ),
+                axis=0,
+            )
 
         self.graph.vs["dist_go"] = distances.tolist()
         self._distance_calculated = True
