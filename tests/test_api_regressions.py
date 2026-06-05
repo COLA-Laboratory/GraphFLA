@@ -253,7 +253,10 @@ def rugged_landscape():
 
 
 def test_plotting_smoke_all_single_arg_draws(rugged_landscape):
-    matplotlib = pytest.importorskip("matplotlib")  # plotting is an optional extra
+    # graphfla.plotting relies on optional extras (matplotlib + seaborn) that
+    # are not core install_requires; skip cleanly if the module can't import.
+    pytest.importorskip("graphfla.plotting")
+    import matplotlib
 
     matplotlib.use("Agg")
     import matplotlib.pyplot as plt
