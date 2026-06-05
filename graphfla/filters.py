@@ -147,7 +147,11 @@ class LandscapeFilter:
             elif op == "not_in":
                 rule_mask = ~df[column].isin(rule["value"])
             elif op == "contains":
-                if df[column].dtype != object:
+                # Allow object- and string-dtype columns (modern pandas may
+                # store text as a dedicated 'str'/StringDtype rather than
+                # 'object'); reject numeric/boolean columns, where 'contains'
+                # is meaningless.
+                if pd.api.types.is_numeric_dtype(df[column]):
                     raise TypeError(
                         f"The 'contains' operation requires a string/object column, "
                         f"but column '{column}' has dtype {df[column].dtype}. Use a "
