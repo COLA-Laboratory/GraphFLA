@@ -121,9 +121,6 @@ class Landscape:
         A sorted list of all node indices that are local optima
         (plateau-aware); its length is ``n_lo_members``. Populated after
         graph analysis.
-    n_peak : int or None
-        Alias of ``n_lo`` (number of distinct peaks), kept for backward
-        compatibility. Populated after graph analysis.
     go_index : int or None
         The node index of the global optimum (the configuration with the
         highest or lowest fitness). Populated after graph analysis.
@@ -237,6 +234,12 @@ class Landscape:
         "default": DefaultNeighborGenerator(),
     }
 
+    #: Default ``neighborhood_strategy`` for this class when the caller passes
+    #: ``None`` to :meth:`build_from_data`. Subclasses override this instead of
+    #: re-declaring the whole ``build_from_data`` signature (e.g. ordinal
+    #: landscapes set ``"active"`` to enforce ±1 Manhattan neighbours).
+    _default_neighborhood_strategy: str = "auto"
+
     def __init__(
         self,
         type: str = "default",
@@ -250,9 +253,12 @@ class Landscape:
         self._configs_array = None
         self.config_dict = None
         self.data_types = None
-        self.n_configs = None
+        # Working counts used during construction (before self.graph exists);
+        # the public n_configs / n_edges properties prefer the graph once built,
+        # giving a single source of truth post-build.
+        self._n_configs = None
+        self._n_edges = None
         self.n_vars = None
-        self.n_edges = None
         self.n_lo = None
         self.n_lo_members = None
         self.lo_index = None
@@ -291,7 +297,6 @@ class Landscape:
         self.n_plateau = None           # number of neutral plateaus (multi-member components)
         self.n_plateau_lo = None        # number of plateau-LOs (multi-member only)
         self.plateau_lo_index = None    # list of plateau IDs that are LOs (multi-member only)
-        self.n_peak = None              # distinct peaks: n_plateau_lo + single-point LOs
         self._peak_index = None         # one representative node per peak (for LON)
 
         # Build status flags
@@ -305,12 +310,74 @@ class Landscape:
         self._neighbor_generator = None
 
     @property
+    def n_configs(self):
+        """Number of configurations (nodes). Derived from the graph once built
+        (single source of truth); falls back to the working count during
+        construction, before ``self.graph`` exists."""
+        if self.graph is not None:
+            return self.graph.vcount()
+        return self._n_configs
+
+    @property
+    def n_edges(self):
+        """Number of directed edges. Derived from the graph once built (single
+        source of truth); falls back to the working count during construction."""
+        if self.graph is not None:
+            return self.graph.ecount()
+        return self._n_edges
+
+    @property
     def shape(self):
-        """Return the shape (n_configs, n_edges) of the landscape graph."""
+        """Return the shape ``(n_configs, n_edges)`` of the landscape graph."""
         self._check_built()
         if self.graph is None:
             return (0, 0)
-        return (self.graph.vcount(), self.graph.ecount())
+        return (self.n_configs, self.n_edges)
+
+    # ------------------------------------------------------------------
+    # Lazy, cached analysis properties.
+    #
+    # Each computes its quantity on first access and caches via the corresponding
+    # ``_*_calculated`` guard, so repeat access is free. These are the canonical
+    # (and only) way to obtain basins / distances / neighbour fitness /
+    # accessible-path sizes.
+    # ------------------------------------------------------------------
+    @property
+    def basins(self) -> pd.Series:
+        """Per-node greedy basin size (``size_basin_greedy``), computed lazily."""
+        self._check_built()
+        if not self._basin_calculated:
+            basin.determine_basin_of_attraction(self)
+        return pd.Series(self.graph.vs["size_basin_greedy"], name="size_basin_greedy")
+
+    @property
+    def accessible_paths(self) -> pd.Series:
+        """Per-node accessible-basin size (``size_basin_accessible``), computed lazily."""
+        self._check_built()
+        if not self._path_calculated:
+            navigability.determine_accessible_paths(self)
+        return pd.Series(
+            self.graph.vs["size_basin_accessible"], name="size_basin_accessible"
+        )
+
+    @property
+    def dist_to_go(self) -> pd.Series:
+        """Per-node configuration distance to the nearest global optimum
+        (``dist_go``), computed lazily."""
+        self._check_built()
+        if not self._distance_calculated:
+            navigability.determine_dist_to_go(
+                self, distance=self._get_default_distance_metric()
+            )
+        return pd.Series(self.graph.vs["dist_go"], name="dist_go")
+
+    @property
+    def neighbor_fitness(self) -> pd.Series:
+        """Per-node mean neighbour fitness (``mean_neighbor_fit``), computed lazily."""
+        self._check_built()
+        if not self._neighbor_fit_calculated:
+            correlation.determine_neighbor_fitness(self)
+        return pd.Series(self.graph.vs["mean_neighbor_fit"], name="mean_neighbor_fit")
 
     def __getitem__(self, index):
         """Return the node attributes dictionary for the given index."""
@@ -396,17 +463,11 @@ class Landscape:
         f: Union[pd.Series, list, np.ndarray],
         data_types: Optional[Dict[str, str]] = None,
         epsilon: float = 0,
-        calculate_basins: bool = False,
-        calculate_paths: bool = False,
-        calculate_distance: bool = False,
-        calculate_neighbor_fit: bool = False,
         tau: Optional[float] = None,
         filter_mode: str = "any",
         n_edit: int = 1,
-        neighborhood_strategy: str = "auto",
+        neighborhood_strategy: Optional[str] = None,
         verbose: Optional[bool] = True,
-        accessible_paths_max_configs: int = 200_000,
-        force_accessible_paths: bool = False,
     ) -> "Landscape":
         """Construct the landscape graph and properties from configuration data.
 
@@ -414,8 +475,11 @@ class Landscape:
         corresponding fitness values `f`) and builds the underlying graph
         structure of the fitness landscape. Nodes represent configurations, and
         edges connect neighbors based on the specified edit distance (`n_edit`).
-        It then calculates various basic landscape properties like local optima,
-        basins of attraction, and the global optimum (if specified).
+        It then determines the basic landscape properties (local optima and the
+        global optimum). More expensive analyses — basins of attraction,
+        accessible paths, distance-to-optimum and neighbour fitness — are computed
+        lazily on first access via the ``.basins`` / ``.accessible_paths`` /
+        ``.dist_to_go`` / ``.neighbor_fitness`` properties.
 
         This method populates the core attributes of the `Landscape` instance.
 
@@ -427,12 +491,17 @@ class Landscape:
         f : pandas.Series, list, or numpy.ndarray
             The fitness values corresponding to each configuration in `X`. Must
             have the same length as `X`.
-        data_types : dict[str, str]
+        data_types : dict[str, str], optional
             A dictionary specifying the type of each variable (column in `X` if
             DataFrame, or inferred column index if ndarray). Keys must match
             column names/indices, and values must be one of 'boolean',
             'categorical', or 'ordinal'. This information is crucial for
             determining neighborhood relationships and calculating distances.
+            Optional: the typed landscape subclasses (``BooleanLandscape``,
+            ``OrdinalLandscape``, ``DNALandscape``/``RNALandscape``/
+            ``ProteinLandscape``) auto-detect it. Supply it explicitly for a
+            generic ``Landscape(type="default")`` with heterogeneous (mixed)
+            columns.
         epsilon : float, default=0
             Neutrality threshold. Neighboring configurations whose absolute
             fitness difference is ``<= epsilon`` are treated as neutral
@@ -443,21 +512,6 @@ class Landscape:
             plateau-aware. A higher epsilon produces a smoother landscape with
             fewer, larger local optima; ``epsilon=0`` preserves strict-inequality
             behavior (the default).
-        calculate_basins : bool, default=False
-            If True, calculates the basins of attraction for each local optimum
-            using a greedy hill-climbing algorithm. This identifies which configurations
-            lead to which peak. Populates the `size_basin_greedy` and `radius_basin_greedy`
-            attributes for each local optimum.
-        calculate_paths : bool, default=False
-            If True, calculates accessible paths (ancestors) for local optima.
-            This can be computationally intensive for large landscapes. Populates the
-            `size_basin_accessible` attribute for each local optimum.
-        calculate_distance : bool, default=False
-            If True, calculates the distance from each node to the global optimum
-            and stores it in the `dist_go` vertex attribute.
-        calculate_neighbor_fit : bool, default=False
-            If True, calculates mean neighbor fitness per node and delta mean neighbor
-            fitness along edges; populates `mean_neighbor_fit` and `delta_mean_neighbor_fit`.
         tau : float, optional
             Functional threshold. Configurations whose fitness is above
             (when ``maximize=True``) or below (when ``maximize=False``) this
@@ -481,8 +535,15 @@ class Landscape:
             strategy uses type-specific generators, which only support
             ``n_edit=1`` for boolean, sequence, and default landscapes (use
             ``pairwise`` or ``broadcast`` for multi-edit Hamming graphs).
-        neighborhood_strategy : str, default='auto'
-            Strategy for identifying neighboring configurations. Options:
+        neighborhood_strategy : str, optional
+            Strategy for identifying neighboring configurations. When ``None``
+            (the default), the class default is used
+            (:attr:`_default_neighborhood_strategy` — ``'auto'`` for most
+            landscapes, ``'active'`` for ordinal). On ordinal (or mixed
+            landscapes containing an ordinal variable), ``'auto'`` resolves to
+            ``'active'`` and the Hamming-based ``'pairwise'``/``'broadcast'``
+            strategies emit a warning, because they ignore the ±1-step ordinal
+            adjacency. Options:
 
             - ``'auto'``: Automatically selects the fastest strategy based on
               dataset size, sequence length, and alphabet size. Uses
@@ -508,19 +569,12 @@ class Landscape:
         verbose : bool, optional
             If provided, overrides the instance's verbosity setting for this
             method call. Controls printed output during the build process.
-        accessible_paths_max_configs : int, default=200_000
-            When ``calculate_paths`` is True, skip
-            :meth:`determine_accessible_paths` if ``n_configs`` exceeds this
-            threshold (unless ``force_accessible_paths`` is True).
-        force_accessible_paths : bool, default=False
-            If True, run accessible-paths analysis regardless of
-            ``accessible_paths_max_configs``.
 
         Returns
         -------
-        None
-            The method modifies the instance in place (populates the graph and
-            landscape properties). Nothing is returned.
+        Landscape
+            The populated instance itself (``self``), to support method
+            chaining (e.g. ``BooleanLandscape().build_from_data(X, f)``).
 
         Raises
         ------
@@ -552,6 +606,11 @@ class Landscape:
         self.epsilon = float(epsilon)
         self.verbose = verbose
 
+        # Resolve the per-class default neighbourhood strategy (e.g. ordinal
+        # landscapes default to "active"); see ``_default_neighborhood_strategy``.
+        if neighborhood_strategy is None:
+            neighborhood_strategy = self._default_neighborhood_strategy
+
         if verbose:
             print("Building Landscape from data...")
 
@@ -565,6 +624,27 @@ class Landscape:
             filter_mode=filter_mode,
             verbose=verbose,
         )
+
+        # Enforce a type-correct neighbourhood on ordinal/mixed landscapes: the
+        # Hamming-based "pairwise"/"broadcast" strategies treat any single-position
+        # change as adjacent, ignoring the ±1-step (Manhattan-1) semantics of
+        # ordinal variables. data_types is known only after preprocessing.
+        has_ordinal = (self.type == "ordinal") or bool(
+            self.data_types and "ordinal" in self.data_types.values()
+        )
+        if has_ordinal:
+            if neighborhood_strategy in ("pairwise", "broadcast"):
+                warnings.warn(
+                    f"neighborhood_strategy={neighborhood_strategy!r} uses Hamming "
+                    "distance, which ignores the ±1-step (Manhattan-1) semantics of "
+                    "ordinal variables and treats any single-position change as "
+                    "adjacent. Use 'active' for a correct ordinal neighbourhood.",
+                    UserWarning,
+                    stacklevel=3,  # skip the @timeit wrapper to point at the caller
+                )
+            elif neighborhood_strategy == "auto":
+                neighborhood_strategy = "active"
+
         neutral_pairs = self._construct_graph(
             processed_data,
             n_edit=n_edit,
@@ -579,14 +659,7 @@ class Landscape:
 
         plateaus.build_plateaus(self, neutral_pairs)
 
-        self._analyze(
-            calculate_distance=calculate_distance,
-            calculate_basins=calculate_basins,
-            calculate_paths=calculate_paths,
-            calculate_neighbor_fit=calculate_neighbor_fit,
-            accessible_paths_max_configs=accessible_paths_max_configs,
-            force_accessible_paths=force_accessible_paths,
-        )
+        self._analyze()
 
         self._finalize_build()
 
@@ -763,7 +836,7 @@ class Landscape:
                     print("Warning: Could not parse config_dict from graph attributes.")
 
         # Infer basic properties (n_configs, n_edges, n_vars)
-        instance.n_configs, instance.n_edges, instance.n_vars = infer_graph_properties(
+        instance._n_configs, instance._n_edges, instance.n_vars = infer_graph_properties(
             instance.graph,
             data_types=instance.data_types,
             configs=instance.configs,
@@ -1083,6 +1156,10 @@ class Landscape:
             self.has_lon = True
             return self.lon
 
+        # The LON is built from basin membership; compute basins lazily if needed.
+        if not self._basin_calculated:
+            self.basins
+
         if self.verbose:
             print("Constructing Local Optima Network (LON)...")
 
@@ -1170,7 +1247,7 @@ class Landscape:
         self.config_dict = prepared.config_dict
 
         processed_data = prepared.data_for_attributes
-        self.n_configs = len(processed_data)
+        self._n_configs = len(processed_data)
         return processed_data
 
     @timeit
@@ -1201,7 +1278,7 @@ class Landscape:
         verbose: Optional[bool],
     ) -> List[Tuple[int, int]]:
         """Apply graph pruning and remap cached metadata when vertices are removed."""
-        self.graph, self.n_configs, self.n_edges, kept_indices = filter_graph(
+        self.graph, self._n_configs, self._n_edges, kept_indices = filter_graph(
             self.graph, self.maximize, tau, filter_mode, verbose
         )
 
@@ -1225,7 +1302,7 @@ class Landscape:
             self.graph, self.verbose, protected=protected
         )
         if iso_result is not None:
-            self.graph, self.n_configs, self.n_edges, iso_kept = iso_result
+            self.graph, self._n_configs, self._n_edges, iso_kept = iso_result
             if kept_indices is not None:
                 kept_indices = [kept_indices[i] for i in iso_kept]
             else:
@@ -1314,7 +1391,7 @@ class Landscape:
             edge_attrs={"delta_fit": delta_fits} if delta_fits else {},
         )
 
-        self.n_edges = graph.ecount()  # Update edge count based on final graph
+        self._n_edges = graph.ecount()  # Update edge count based on final graph
 
         return graph
 
@@ -1334,82 +1411,12 @@ class Landscape:
         plateau level in ``n_plateau_lo`` / ``plateau_lo_index``, and at the
         distinct-optimum level in ``n_lo`` (number of local optima, each
         plateau-LO counted once) with ``_peak_index`` (one representative
-        node per optimum, used by LON construction). ``n_peak`` is a
-        backward-compatible alias of ``n_lo``.
+        node per optimum, used by LON construction).
 
         Returns the landscape instance (``self``) for method chaining.
         """
         optima.determine_local_optima(self)
         return self
-
-    def determine_basin_of_attraction(self, plateau_exit_mode="first-improvement"):
-        """Calculates the basin of attraction for each node via hill climbing.
-
-        For each node, a greedy hill climb follows improving edges until a
-        local optimum is reached. When plateaus are present, the climb is
-        extended across neutral plateaus. Plateau exits are selected using
-        ``plateau_exit_mode`` (``"first-improvement"`` or
-        ``"best-improvement"``). Basin assignments are
-        canonicalized so that all members of a plateau-LO share the same
-        representative (minimum-index member).
-
-        Returns the landscape instance (``self``) for method chaining.
-        """
-        basin.determine_basin_of_attraction(
-            self, plateau_exit_mode=plateau_exit_mode
-        )
-        return self
-
-    def determine_accessible_paths(self):
-        """Determines the size of basins based on accessible paths (ancestors).
-
-        Identifies all nodes from which a local optimum can be reached via any
-        fitness-increasing path. When plateaus are active, ancestors are computed
-        for each plateau-level LO by taking the union of ancestors across all
-        plateau members,    assigned to the canonical representative (min index).
-
-        Notes
-        -----
-        This method is computationally intensive and might be slow for large
-        landscapes.
-
-        Returns the landscape instance (``self``) for method chaining.
-        """
-        navigability.determine_accessible_paths(self)
-        return self
-
-    def determine_neighbor_fitness(self) -> "Landscape":
-        """Calculates the mean fitness of neighbors for each node and the difference
-        in mean neighbor fitness between connected nodes.
-
-        This method adds two new attributes to the landscape graph:
-        1. 'mean_neighbor_fit': A vertex attribute representing the mean fitness of all
-        neighboring nodes.
-        2. 'delta_mean_neighbor_fit': An edge attribute representing the difference in
-        mean neighbor fitness along the improving (lower-fitness → higher-fitness)
-        direction, i.e. mean_neighbor_fit(target) - mean_neighbor_fit(source).
-
-        This can be useful for identifying evolvability-enhancing (EE) mutations as
-        introduced in Wagner (2023).
-
-        References
-        ----------
-        .. [Wagner 2023] Wagner, A. The role of evolvability in the evolution of
-           complex traits. Nat Rev Genet 24, 1-16 (2023).
-           https://doi.org/10.1038/s41576-023-00559-0
-
-        Returns
-        -------
-        Landscape
-            The landscape instance (self) with the new attributes added, for
-            method chaining.
-
-        Raises
-        ------
-        RuntimeError
-            If the landscape has not been built yet.
-        """
-        return correlation.determine_neighbor_fitness(self)
 
     def determine_global_optimum(self) -> "Landscape":
         """Identifies the global optimum node in the landscape graph using igraph.
@@ -1417,14 +1424,6 @@ class Landscape:
         Returns the landscape instance (``self``) for method chaining.
         """
         navigability.determine_global_optimum(self)
-        return self
-
-    def determine_dist_to_go(self, distance=None) -> "Landscape":
-        """Calculates the distance from each node to the global optimum.
-
-        Returns the landscape instance (``self``) for method chaining.
-        """
-        navigability.determine_dist_to_go(self, distance=distance)
         return self
 
     def describe(self) -> None:
@@ -1473,38 +1472,14 @@ class Landscape:
         print("---")
 
     @timeit
-    def _analyze(
-        self,
-        calculate_distance: bool,
-        calculate_basins: bool,
-        calculate_paths: bool,
-        calculate_neighbor_fit: bool,
-        *,
-        accessible_paths_max_configs: int = 200_000,
-        force_accessible_paths: bool = False,
-    ) -> None:
-        """Internal helper to run analysis steps on the landscape graph.
+    def _analyze(self) -> None:
+        """Run the mandatory analysis steps after the graph is constructed.
 
-        This method orchestrates the calculation of key landscape properties
-        after the graph has been constructed or provided.
-
-        Parameters
-        ----------
-        calculate_distance : bool
-            Whether to calculate distance-based metrics, specifically the
-            distance of each node to the global optimum. Requires `configs`
-            and `data_types` attributes to be set.
-        calculate_basins : bool
-            Whether to calculate basins of attraction.
-        calculate_paths : bool
-            Whether to calculate accessible paths (ancestors).
-        calculate_neighbor_fit : bool
-            Whether to calculate mean neighbor fitness.
-        accessible_paths_max_configs : int
-            Skip accessible paths when ``n_configs`` exceeds this value unless
-            ``force_accessible_paths`` is True.
-        force_accessible_paths : bool
-            If True, ignore ``accessible_paths_max_configs``.
+        This computes network metrics, local optima and the global optimum.
+        The more expensive, optional analyses (basins, accessible paths,
+        distance-to-optimum, neighbour fitness) are computed lazily on first
+        access via the ``.basins`` / ``.accessible_paths`` / ``.dist_to_go`` /
+        ``.neighbor_fitness`` properties.
         """
         if self.graph is None:
             # This check is primarily for internal consistency.
@@ -1515,7 +1490,6 @@ class Landscape:
             self.n_lo = 0
             self.n_lo_members = 0
             self.lo_index = []
-            self.n_peak = 0
             self._peak_index = []
             self.plateau_lo_index = []
             self.n_plateau_lo = 0
@@ -1523,8 +1497,6 @@ class Landscape:
             self.go = None
             self.lon = None
             self.has_lon = False
-            self._basin_calculated = calculate_basins  # Mark as attempted/done
-            self._path_calculated = calculate_paths  # Mark as attempted/done
             return
 
         if self.verbose:
@@ -1532,8 +1504,6 @@ class Landscape:
 
         # Add basic network metrics if they don't already exist
         if "out_degree" not in self.graph.vs.attributes():
-            if self.verbose:
-                print(" - Adding network metrics (degrees)...")
             # Assumes 'delta_fit' exists if built from data, might need adjustment
             # if graph provided externally lacks this weight.
             weight_key = (
@@ -1543,62 +1513,7 @@ class Landscape:
                 print(" - Calculating network metrics (degrees)...")
             self.graph = add_network_metrics(self.graph, weight=weight_key)
 
-        # Determine Optima
+        # Determine optima (basins / paths / distance / neighbour fitness are lazy).
         self.determine_local_optima()
-        self.determine_global_optimum()  # Needs LO info if maximize=False? Check logic. GO depends only on fitness attr.
-
-        # Determine Basins (requires optima info)
-        if calculate_basins:
-            self.determine_basin_of_attraction()
-        else:
-            self._basin_calculated = False
-            if self.verbose:
-                print(" - Skipping basin calculation.")
-
-        # Determine Accessible Paths (requires optima info)
-        if calculate_paths:
-            over_threshold = (
-                self.n_configs is not None
-                and self.n_configs > accessible_paths_max_configs
-            )
-            if force_accessible_paths or not over_threshold:
-                self.determine_accessible_paths()
-            else:
-                warnings.warn(
-                    f"Landscape size ({self.n_configs} nodes) exceeds "
-                    f"accessible_paths_max_configs ({accessible_paths_max_configs}). "
-                    f"Skipping accessible paths calculation. "
-                    f"Pass force_accessible_paths=True to run anyway.",
-                    RuntimeWarning,
-                )
-                self._path_calculated = False
-        else:
-            self._path_calculated = False
-            if self.verbose:
-                print(" - Skipping accessible paths calculation.")
-
-        # Distance Calculation (requires configs, data_types, and GO)
-        if calculate_distance:
-            if (
-                self.configs is not None
-                and self.go_index is not None
-                and self.data_types is not None
-            ):
-                distance_func = getattr(
-                    self, "_get_default_distance_metric", lambda: mixed_distance
-                )()
-                self.determine_dist_to_go(distance=distance_func)
-            elif self.verbose:
-                print(
-                    "   - Skipping distance to Global Optimum calculation "
-                    "(requires configuration data, data_types, and successful "
-                    "GO identification)."
-                )
-        elif self.verbose:
-            print(" - Skipping distance to Global Optimum calculation (not requested).")
-
-        if calculate_neighbor_fit:
-            self.determine_neighbor_fitness()
-        elif self.verbose:
-            print(" - Skipping neighbor fitness calculation (not requested).")
+        self.determine_global_optimum()
 

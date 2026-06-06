@@ -26,8 +26,7 @@ from graphfla.analysis import (
 def build(e):
     k = e["kind"]; gts = e["genotypes"]; f = list(e["fitness"])
     mx = e["maximize"]; eps = e["epsilon"]; npos = e["n_positions"]
-    kw = dict(epsilon=eps, calculate_basins=True, calculate_paths=True,
-              calculate_distance=True, calculate_neighbor_fit=True, verbose=False)
+    kw = dict(epsilon=eps, verbose=False)
     if k == "boolean":
         ls = BooleanLandscape(maximize=mx); ls.build_from_data([tuple(g) for g in gts], f, **kw)
     elif k == "ordinal":
@@ -42,6 +41,9 @@ def build(e):
         ab = e["alphabet"]; seqs = ["".join(ab[i] for i in g) for g in gts]
         cls = {"dna": DNALandscape, "rna": RNALandscape, "protein": ProteinLandscape}[k]
         ls = cls(maximize=mx); ls.build_from_data(seqs, f, **kw)
+    # Trigger the lazy, cached analyses the extractor reads directly (this
+    # replaces the deprecated eager calculate_* build flags).
+    ls.basins; ls.accessible_paths; ls.dist_to_go; ls.neighbor_fitness
     return ls
 
 

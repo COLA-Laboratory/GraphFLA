@@ -161,7 +161,7 @@ def test_fitness_distance_corr_onemax_is_minus_one():
     # OneMax: fitness = n - distance_to_optimum exactly, so the (Spearman)
     # correlation of distance vs fitness is exactly -1. The *sign* is the
     # load-bearing property; a distance/direction flip would invert it.
-    ls = onemax(5, calculate_distance=True)
+    ls = onemax(5)
     assert fitness_distance_corr(ls) == pytest.approx(-1.0, abs=1e-9)
 
 
@@ -173,7 +173,7 @@ def test_fitness_distance_corr_onemax_is_minus_one():
 def test_neighbor_fit_corr_additive_is_one():
     # For additive f, mean-neighbour-fitness is an exactly linear function of
     # f (the quadratic terms cancel), so Pearson correlation is exactly +1.
-    ls = onemax(5, calculate_neighbor_fit=True)
+    ls = onemax(5)
     assert neighbor_fit_corr(ls, method="pearson") == pytest.approx(1.0, abs=1e-6)
 
 

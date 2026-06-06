@@ -32,7 +32,7 @@ from _landscapes import onemax, from_map, TWO_PEAK_3CUBE
 def test_onemax_cube_construction_invariants():
     # A complete boolean n-cube has n * 2^(n-1) Hamming-1 edges; with strict
     # monotone fitness every edge is improving and there is a single sink.
-    ls = onemax(3, calculate_basins=True)
+    ls = onemax(3)
     assert ls.n_configs == 8
     assert ls.graph.ecount() == 3 * 2 ** 2  # 12 directed improving edges
     assert ls.n_lo == 1
@@ -89,11 +89,12 @@ def test_local_optima_outdegree_branch_additive():
 
 
 def test_two_peak_optima_and_greedy_basins():
-    ls = from_map(TWO_PEAK_3CUBE, 3, calculate_basins=True)
+    ls = from_map(TWO_PEAK_3CUBE, 3)
     assert ls.n_lo == 2
     assert ls.lo_index == [0, 7]
     assert ls.go_index == 0  # f(000)=10 is the global max
     # Greedy (best-improvement) basins partition the 8 nodes 4/4.
+    ls.basins  # compute basins lazily (populates basin_index / size_basin_greedy)
     basin_index = ls.graph.vs["basin_index"]
     assert set(basin_index) == {0, 7}
     assert ls.graph.vs[0]["size_basin_greedy"] == 4
