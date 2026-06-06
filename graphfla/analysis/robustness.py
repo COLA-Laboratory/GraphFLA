@@ -37,7 +37,8 @@ def evol_enhance_mutations(landscape, epsilon=0, auto_calculate=True):
         Tolerance threshold for detecting significant differences in mean neighbor fitness.
         Only edges with delta_mean_neighbor_fit > epsilon are counted as EE mutations.
     auto_calculate : bool, default=True
-        If True, automatically runs determine_neighbor_fitness() if needed.
+        If True, automatically computes neighbour fitness (via the
+        landscape's .neighbor_fitness property) if needed.
         If False, raises an exception when neighbor fitness metrics are missing.
 
     Returns
@@ -62,14 +63,12 @@ def evol_enhance_mutations(landscape, epsilon=0, auto_calculate=True):
     if "delta_mean_neighbor_fit" not in landscape.graph.es.attributes():
         if auto_calculate:
             if landscape.verbose:
-                print(
-                    "Neighbor fitness metrics not found. Running determine_neighbor_fitness()..."
-                )
-            landscape.determine_neighbor_fitness()
+                print("Neighbor fitness metrics not found. Computing them...")
+            landscape.neighbor_fitness  # lazily computes mean/delta neighbor fitness
         else:
             raise RuntimeError(
                 "Neighbor fitness metrics haven't been calculated. "
-                "Either call landscape.determine_neighbor_fitness() first "
+                "Either access landscape.neighbor_fitness first "
                 "or set auto_calculate=True."
             )
 

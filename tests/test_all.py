@@ -67,10 +67,6 @@ def boolean_landscape(boolean_landscape_data):
         X,
         fitness,
         verbose=False,
-        calculate_basins=True,
-        calculate_paths=True,
-        calculate_distance=True,
-        calculate_neighbor_fit=True,
     )
     return landscape
 
@@ -133,10 +129,6 @@ def test_build_boolean_landscape(boolean_landscape_data):
         X,
         fitness,
         verbose=False,
-        calculate_basins=True,
-        calculate_paths=True,
-        calculate_distance=True,
-        calculate_neighbor_fit=True,
     )
     assert landscape.n_configs == 16
     assert landscape.graph.ecount() > 0
@@ -149,10 +141,6 @@ def test_build_dna_landscape_from_list(dna_sequence_data):
         sequences,
         fitness,
         verbose=False,
-        calculate_basins=True,
-        calculate_paths=True,
-        calculate_distance=True,
-        calculate_neighbor_fit=True,
     )
     assert landscape.n_configs == 16
     assert landscape.graph.ecount() > 0
@@ -189,10 +177,6 @@ def test_build_dna_landscape_from_df_int_cols(dna_sequence_data):
         X_dna,
         fitness,
         verbose=False,
-        calculate_basins=True,
-        calculate_paths=True,
-        calculate_distance=True,
-        calculate_neighbor_fit=True,
     )
     assert landscape.n_configs == 16
     assert landscape.graph.ecount() > 0
@@ -207,10 +191,6 @@ def test_build_dna_landscape_from_df_str_cols(dna_sequence_data):
         X_dna,
         fitness,
         verbose=False,
-        calculate_basins=True,
-        calculate_paths=True,
-        calculate_distance=True,
-        calculate_neighbor_fit=True,
     )
     assert landscape.n_configs == 16
     assert landscape.graph.ecount() > 0
@@ -223,10 +203,6 @@ def test_build_generic_landscape_dna(dna_sequence_data):
         sequences,
         fitness,
         verbose=False,
-        calculate_basins=True,
-        calculate_paths=True,
-        calculate_distance=True,
-        calculate_neighbor_fit=True,
     )
     assert landscape.n_configs == 16
     assert landscape.graph.ecount() > 0
@@ -239,10 +215,6 @@ def test_build_rna_landscape_from_list(rna_sequence_data):
         sequences,
         fitness,
         verbose=False,
-        calculate_basins=True,
-        calculate_paths=True,
-        calculate_distance=True,
-        calculate_neighbor_fit=True,
     )
     assert landscape.n_configs == 16
     assert landscape.graph.ecount() > 0
@@ -256,10 +228,6 @@ def test_build_rna_landscape_from_df_int_cols(rna_sequence_data):
         X_rna,
         fitness,
         verbose=False,
-        calculate_basins=True,
-        calculate_paths=True,
-        calculate_distance=True,
-        calculate_neighbor_fit=True,
     )
     assert landscape.n_configs == 16
     assert landscape.graph.ecount() > 0
@@ -274,10 +242,6 @@ def test_build_rna_landscape_from_df_str_cols(rna_sequence_data):
         X_rna,
         fitness,
         verbose=False,
-        calculate_basins=True,
-        calculate_paths=True,
-        calculate_distance=True,
-        calculate_neighbor_fit=True,
     )
     assert landscape.n_configs == 16
     assert landscape.graph.ecount() > 0
@@ -298,10 +262,6 @@ def test_build_protein_landscape_from_list(protein_sequence_data):
         sequences,
         fitness,
         verbose=False,
-        calculate_basins=True,
-        calculate_paths=True,
-        calculate_distance=True,
-        calculate_neighbor_fit=True,
     )
     assert landscape.n_configs == 64
     assert landscape.graph.ecount() > 0
@@ -315,10 +275,6 @@ def test_build_protein_landscape_from_df_int_cols(protein_sequence_data):
         X_protein,
         fitness,
         verbose=False,
-        calculate_basins=True,
-        calculate_paths=True,
-        calculate_distance=True,
-        calculate_neighbor_fit=True,
     )
     assert landscape.n_configs == 64
     assert landscape.graph.ecount() > 0
@@ -333,10 +289,6 @@ def test_build_protein_landscape_from_df_str_cols(protein_sequence_data):
         X_protein,
         fitness,
         verbose=False,
-        calculate_basins=True,
-        calculate_paths=True,
-        calculate_distance=True,
-        calculate_neighbor_fit=True,
     )
     assert landscape.n_configs == 64
     assert landscape.graph.ecount() > 0
@@ -349,10 +301,6 @@ def test_build_generic_landscape_protein(protein_sequence_data):
         sequences,
         fitness,
         verbose=False,
-        calculate_basins=True,
-        calculate_paths=True,
-        calculate_distance=True,
-        calculate_neighbor_fit=True,
     )
     assert landscape.n_configs == 64
     assert landscape.graph.ecount() > 0
@@ -367,15 +315,12 @@ def test_plateau_containing_global_max_is_still_local_optimum():
         X,
         fitness,
         epsilon=0.5,
-        calculate_basins=True,
-        calculate_paths=True,
         verbose=False,
     )
 
     assert landscape.n_lo == 2  # distinct optima: plateau {0,1,3} + singleton 7
     assert landscape.n_lo_members == 4  # member nodes: 0, 1, 3, 7
     assert landscape.lo_index == [0, 1, 3, 7]
-    assert landscape.n_peak == 2  # backward-compatible alias of n_lo
     assert landscape._peak_index == [0, 7]
     assert landscape.plateau_lo_index == [0]
     assert landscape.plateaus[0] == [0, 1, 3]
@@ -389,6 +334,7 @@ def test_plateau_containing_global_max_is_still_local_optimum():
         False,
         True,
     ]
+    landscape.basins  # lazily compute basins (populates basin_index)
     assert [landscape.graph.vs["basin_index"][i] for i in [0, 1, 3]] == [0, 0, 0]
 
 
@@ -434,8 +380,6 @@ def test_plateau_regression_no_zero_local_optima():
         X,
         fitness,
         epsilon=1.0,
-        calculate_basins=True,
-        calculate_paths=True,
         verbose=False,
     )
 
@@ -443,7 +387,6 @@ def test_plateau_regression_no_zero_local_optima():
     assert landscape.n_lo > 0
     assert landscape.graph.vs["is_lo"][8]
     assert 8 in landscape.lo_index
-    assert landscape.n_peak > 0
 
 
 def test_feature_ee_frac_deprecated_alias(boolean_landscape):

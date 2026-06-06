@@ -35,9 +35,6 @@ def determine_local_optima(landscape):
         Does **not** include single-point LOs.
     n_plateau_lo : int
         ``len(plateau_lo_index)``.
-    n_peak : int
-        Alias of ``n_lo`` (number of distinct peaks), kept for backward
-        compatibility.
     _peak_index : list[int]
         One representative node per peak (``min(members)`` for each
         plateau-LO, the node index itself for single-point LOs).
@@ -103,7 +100,6 @@ def determine_local_optima(landscape):
         )
         # n_lo counts distinct optima: each plateau-LO is one optimum.
         self.n_lo = self.n_plateau_lo + len(singleton_los)
-        self.n_peak = self.n_lo
         self._peak_index = sorted(plateau_reps + singleton_los)
 
         if self.n_lo == 0 and self.graph.vcount() > 0:
@@ -128,7 +124,6 @@ def determine_local_optima(landscape):
         # No plateaus: every LO is a single node, so optima == member nodes.
         self.n_lo_members = int(is_lo.sum())
         self.n_lo = self.n_lo_members
-        self.n_peak = self.n_lo
 
         self.plateau_lo_index = []
         self.n_plateau_lo = 0

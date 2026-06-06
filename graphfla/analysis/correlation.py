@@ -122,7 +122,8 @@ def neighbor_fit_corr(landscape, auto_calculate=True, method="pearson"):
     landscape : BaseLandscape
         The fitness landscape object.
     auto_calculate : bool, default=True
-        If True, automatically runs determine_neighbor_fitness() if needed.
+        If True, automatically computes neighbour fitness (via the
+        landscape's .neighbor_fitness property) if needed.
         If False, raises an exception when neighbor fitness metrics are missing.
     method : str, default='pearson'
         The correlation method to use. Options are:
@@ -157,14 +158,12 @@ def neighbor_fit_corr(landscape, auto_calculate=True, method="pearson"):
     if "mean_neighbor_fit" not in landscape.graph.vs.attributes():
         if auto_calculate:
             if landscape.verbose:
-                print(
-                    "Neighbor fitness metrics not found. Running determine_neighbor_fitness()..."
-                )
-            landscape.determine_neighbor_fitness()
+                print("Neighbor fitness metrics not found. Computing them...")
+            landscape.neighbor_fitness  # lazily computes mean/delta neighbor fitness
         else:
             raise RuntimeError(
                 "Neighbor fitness metrics haven't been calculated. "
-                "Either call landscape.determine_neighbor_fitness() first "
+                "Either access landscape.neighbor_fitness first "
                 "or set auto_calculate=True."
             )
 
@@ -228,8 +227,8 @@ def fitness_distance_corr(
 
     # Check if the landscape has dist_go calculated
     if "dist_go" not in landscape.graph.vs.attributes():
-        # If dist_go is not available, calculate it
-        landscape.determine_dist_to_go()
+        # If dist_go is not available, calculate it lazily.
+        landscape.dist_to_go
 
         # Check again in case calculation failed
         if "dist_go" not in landscape.graph.vs.attributes():
@@ -339,7 +338,7 @@ def basin_fit_corr(landscape, method: str = "spearman"):
         # If basin sizes are not available, calculate them
         if landscape.verbose:
             print("Basin sizes not found. Calculating basins of attraction...")
-        landscape.determine_basin_of_attraction()
+        landscape.basins  # lazily computes greedy basins (size_basin_greedy, ...)
 
         # Check again in case calculation failed
         if "size_basin_greedy" not in landscape.graph.vs.attributes():

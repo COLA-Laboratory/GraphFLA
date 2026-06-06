@@ -45,13 +45,53 @@ def test_build_from_data_returns_self():
 
 
 def test_determine_methods_return_self():
-    ls = onemax(3, calculate_basins=True)
+    ls = onemax(3)
+    # The optima determiners return self for chaining.
     assert ls.determine_local_optima() is ls
     assert ls.determine_global_optimum() is ls
-    assert ls.determine_basin_of_attraction() is ls
-    assert ls.determine_accessible_paths() is ls
-    assert ls.determine_neighbor_fitness() is ls
-    assert ls.determine_dist_to_go(distance=hamming_distance) is ls
+
+
+def test_cached_analysis_properties_compute_lazily():
+    """The canonical cached properties compute on first access (no build flags)
+    and cache via the guard flags."""
+    ls = onemax(3)  # built without any calculate_* flag
+    assert not ls._basin_calculated and not ls._distance_calculated
+    # Hamming distance to the unique all-ones optimum = number of zeros.
+    assert sorted(ls.dist_to_go) == [0, 1, 1, 1, 2, 2, 2, 3]
+    assert ls._distance_calculated  # cached after first access
+    assert len(ls.basins) == ls.n_configs and ls._basin_calculated
+    assert len(ls.neighbor_fitness) == ls.n_configs and ls._neighbor_fit_calculated
+    assert len(ls.accessible_paths) == ls.n_configs and ls._path_calculated
+
+
+def test_count_properties_single_source_from_graph():
+    """n_configs / n_edges / shape derive from the graph (single source of truth)."""
+    ls = onemax(4)
+    assert ls.n_configs == ls.graph.vcount() == 16
+    assert ls.n_edges == ls.graph.ecount()
+    assert ls.shape == (ls.n_configs, ls.n_edges)
+    # They are read-only properties now (no stored field to drift).
+    with pytest.raises(AttributeError):
+        ls.n_configs = 99
+    with pytest.raises(AttributeError):
+        ls.n_edges = 99
+
+
+def test_ordinal_default_strategy_and_hamming_warning():
+    """Ordinal landscapes default to the type-correct 'active' neighbourhood and
+    warn when a Hamming strategy (pairwise/broadcast) is requested (fix 3 + 5)."""
+    from graphfla.landscape import OrdinalLandscape
+
+    assert OrdinalLandscape._default_neighborhood_strategy == "active"
+    X = pd.DataFrame({"a": [0, 1, 2, 0, 1, 2], "b": [0, 0, 0, 1, 1, 1]})
+    f = [0.1, 0.5, 0.9, 0.2, 0.6, 1.0]
+    # Default (None) resolves to 'active' for ordinal — builds without warning.
+    OrdinalLandscape().build_from_data(X, f, verbose=False)
+    # Explicit Hamming strategy on ordinal data warns.
+    with pytest.warns(UserWarning, match="ordinal"):
+        OrdinalLandscape().build_from_data(
+            X, f, neighborhood_strategy="pairwise", verbose=False
+        )
 
 
 # ----------------------------------------------------------------------
@@ -118,7 +158,7 @@ def test_register_handler_is_instance_isolated():
 
 
 def test_boolean_landscape_pickle_roundtrip():
-    ls = onemax(4, calculate_basins=True)
+    ls = onemax(4)
     ls2 = pickle.loads(pickle.dumps(ls))
     assert ls2.n_lo == ls.n_lo
     assert ls2.go_index == ls.go_index
@@ -175,14 +215,14 @@ def test_landscapefilter_contains_on_string_column():
 
 
 def test_lon_node_count_matches_optima():
-    ls = from_map(TWO_PEAK_3CUBE, 3, calculate_basins=True)
+    ls = from_map(TWO_PEAK_3CUBE, 3)
     lon = ls.get_lon(mlon=False, min_edge_freq=0, verbose=False)
     assert lon.vcount() == ls.n_lo == 2
     assert set(lon.vs["name"]) == set(ls._peak_index)
 
 
 def test_mlon_keeps_only_non_worsening_edges():
-    ls = from_map(TWO_PEAK_3CUBE, 3, calculate_basins=True)
+    ls = from_map(TWO_PEAK_3CUBE, 3)
     lon = ls.get_lon(mlon=True, min_edge_freq=0, verbose=False)
     fit = dict(zip(lon.vs["name"], lon.vs["fitness"]))
     for e in lon.es:
@@ -195,7 +235,7 @@ def test_lon_min_edge_freq_boundary():
     # Each peak has C(3,2)=3 two-edit neighbours in the other basin -> escape
     # frequency 3. The mask is `lo_adj <= min_edge_freq -> 0` (strictly greater
     # survives): freq 3 is KEPT at threshold 2 but DROPPED at threshold 3.
-    ls = from_map(TWO_PEAK_3CUBE, 3, calculate_basins=True)
+    ls = from_map(TWO_PEAK_3CUBE, 3)
     keep = ls.get_lon(mlon=False, min_edge_freq=2, verbose=False)
     drop = ls.get_lon(mlon=False, min_edge_freq=3, verbose=False)
     assert keep.ecount() > drop.ecount()
@@ -241,15 +281,7 @@ def test_sobol_seed_reproducible_categorical():
 def rugged_landscape():
     from _landscapes import nk_landscape
 
-    return nk_landscape(
-        6,
-        3,
-        seed=1,
-        calculate_basins=True,
-        calculate_paths=True,
-        calculate_distance=True,
-        calculate_neighbor_fit=True,
-    )
+    return nk_landscape(6, 3, seed=1)
 
 
 def test_plotting_smoke_all_single_arg_draws(rugged_landscape):

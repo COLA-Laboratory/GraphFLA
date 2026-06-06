@@ -247,8 +247,8 @@ def draw_fitness_distance_corr(
 
     # Check if the landscape has dist_go calculated
     if "dist_go" not in landscape.graph.vs.attributes():
-        # If dist_go is not available, calculate it
-        landscape.determine_dist_to_go()
+        # If dist_go is not available, calculate it lazily.
+        landscape.dist_to_go
 
         # Check again in case calculation failed
         if "dist_go" not in landscape.graph.vs.attributes():
@@ -374,7 +374,8 @@ def draw_neighbor_fit_corr(
     gridsize : int, default=50
         Number of hexagons in the x-direction for hexbin plot.
     auto_calculate : bool, default=True
-        If True, automatically runs determine_neighbor_fitness() if needed.
+        If True, automatically computes neighbour fitness (via the
+        landscape's .neighbor_fitness property) if needed.
 
     Returns
     -------
@@ -400,11 +401,11 @@ def draw_neighbor_fit_corr(
     # Check if neighbor fitness has been calculated
     if "mean_neighbor_fit" not in landscape.graph.vs.attributes():
         if auto_calculate:
-            landscape.determine_neighbor_fitness()
+            landscape.neighbor_fitness  # lazily computes mean/delta neighbor fitness
         else:
             raise RuntimeError(
                 "Neighbor fitness metrics haven't been calculated. "
-                "Either call landscape.determine_neighbor_fitness() first "
+                "Either access landscape.neighbor_fitness first "
                 "or set auto_calculate=True."
             )
 
@@ -1714,10 +1715,10 @@ def draw_basin_fit_corr(
 
     # Check if basins have been calculated
     if "size_basin_greedy" not in landscape.graph.vs.attributes():
-        # If basin sizes are not available, calculate them
+        # If basin sizes are not available, calculate them lazily.
         if landscape.verbose:
             print("Basin sizes not found. Calculating basins of attraction...")
-        landscape.determine_basin_of_attraction()
+        landscape.basins
 
         # Check again in case calculation failed
         if "size_basin_greedy" not in landscape.graph.vs.attributes():
