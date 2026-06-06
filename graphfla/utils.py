@@ -21,7 +21,7 @@ def timeit(method):
         result = method(*args, **kwargs)
         end_time = time.time()
         elapsed_time = end_time - start_time
-        # print(f"Method {method.__name__} executed in {elapsed_time:.4f} seconds.")
+        print(f"Method {method.__name__} executed in {elapsed_time:.4f} seconds.")
         return result
 
     return timed
