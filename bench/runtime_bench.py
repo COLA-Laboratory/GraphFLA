@@ -58,6 +58,7 @@ REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DATA_BIO = os.path.join(REPO, "data", "BioSequence")
 DATA_WREOS = os.path.join(REPO, "data", "Materials", "WReOs")
 HPO_LOCAL = os.path.join(REPO, "bench", "_localdata", "HPO_44136.csv")
+DMS_DIR = "/Users/arwen/Documents/GitHub/proteingym_run/dms_data/DMS_ProteinGym_substitutions"
 
 CLS = {"protein": ProteinLandscape, "dna": DNALandscape,
        "boolean": BooleanLandscape, "ordinal": OrdinalLandscape}
@@ -88,7 +89,21 @@ DATASETS = [
          path=HPO_LOCAL,
          xcols=["learning_rate", "subsample", "max_depth",
                 "min_child_weight", "n_estimators"], fcol="mean_r2"),
+    # --- SPARSE high-dim ProteinGym DMS (reduce-to-mutated-positions loader) ---
+    # cover the strategies sparse data triggers: pairwise / broadcast / active.
+    dict(name="UBE4B_sparse_S", type="protein", loader="proteingym",
+         path=os.path.join(DMS_DIR, "UBE4B_HUMAN_Tsuboyama_2023_3L1X.csv")),
+    dict(name="D7PM05_sparse_M", type="protein", loader="proteingym",
+         path=os.path.join(DMS_DIR, "D7PM05_CLYGR_Somermeyer_2022.csv")),
+    dict(name="GFP_sparse_L_broadcast", type="protein", loader="proteingym",
+         path=os.path.join(DMS_DIR, "GFP_AEQVI_Sarkisyan_2016.csv")),
+    dict(name="PHOT_sparse_L_active", type="protein", loader="proteingym",
+         path=os.path.join(DMS_DIR, "PHOT_CHLRE_Chen_2023.csv")),
+    dict(name="HIS7_sparse_XL_active", type="protein", loader="proteingym",
+         path=os.path.join(DMS_DIR, "HIS7_YEAST_Pokusaeva_2019.csv")),
 ]
+SPARSE = ["UBE4B_sparse_S", "D7PM05_sparse_M", "GFP_sparse_L_broadcast",
+          "PHOT_sparse_L_active", "HIS7_sparse_XL_active"]
 
 # Current-branch (post A1+A2) local baseline total_s per dataset -> per-rep kill
 # timeout. Update when the branch baseline shifts after merging winners.
@@ -97,6 +112,9 @@ BASELINE_S = {
     "Papkou_dna_large": 1.66, "Westmann_dna_small": 0.55,
     "CR9114h1_boolean_large": 0.29, "CR6261h1_boolean_small": 0.02,
     "WReOs_ordinal_small": 0.01, "HPO_ordinal_large": 1.38,
+    # sparse ProteinGym (generous; on current code some hit the Python-loop slow path)
+    "UBE4B_sparse_S": 3, "D7PM05_sparse_M": 90, "GFP_sparse_L_broadcast": 150,
+    "PHOT_sparse_L_active": 150, "HIS7_sparse_XL_active": 600,
 }
 
 TIMEIT_RE = re.compile(r"Method (\w+) executed in ([\d.eE+-]+) seconds\.")
@@ -166,7 +184,44 @@ def _section(ds, n_variants, extra):
     print("\n".join(lines), flush=True)
 
 
+_MUT_RE = re.compile(r"^([A-Za-z])(\d+)([A-Za-z])$")
+_PROT = set("ACDEFGHIKLMNPQRSTVWY")
+
+
+def _load_proteingym(path):
+    """Reduce a ProteinGym DMS assay to a sparse high-dim protein landscape.
+
+    X = sub-sequence over the UNION of mutated positions; f = DMS_score; drop
+    rows with NaN score / length mismatch / non-standard AA / duplicate reduced
+    genotype (mirrors examples/proteingym/proteingym_features.
+    reduce_to_mutated_positions via the mutated_sequence column).
+    """
+    df = pd.read_csv(path, usecols=["mutant", "mutated_sequence", "DMS_score"])
+    df = df.dropna(subset=["DMS_score"]).reset_index(drop=True)
+    positions = sorted({
+        int(m.group(2))
+        for s in df["mutant"].astype(str) for tok in s.split(":")
+        for m in (_MUT_RE.match(tok.strip()),) if m
+    })
+    seqs = df["mutated_sequence"].to_numpy()
+    scores = df["DMS_score"].to_numpy(dtype=float)
+    L = len(seqs[0]) if len(seqs) else 0
+    red, sc, seen = [], [], set()
+    for s, score in zip(seqs, scores):
+        if not isinstance(s, str) or len(s) != L:
+            continue
+        g = "".join(s[p - 1] for p in positions)
+        if not (set(g) <= _PROT) or g in seen:
+            continue
+        seen.add(g)
+        red.append(g)
+        sc.append(score)
+    return pd.Series(red), pd.Series(sc, dtype=float)
+
+
 def load_xy(ds):
+    if ds.get("loader") == "proteingym":
+        return _load_proteingym(ds["path"])
     xcols = ds["xcols"]
     if ds["type"] == "ordinal":
         df = pd.read_csv(ds["path"])
