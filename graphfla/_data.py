@@ -646,8 +646,13 @@ def encode_data(
         encoded_dtype = np.uint64
 
     configs_array = np.ascontiguousarray(encoded_array, dtype=encoded_dtype)
+    # Convert the whole encoded matrix to nested Python lists in a single C-level
+    # ``tolist()`` call, then wrap each row in ``tuple`` via ``map`` (avoiding a
+    # per-row ``ndarray.tolist()`` call and a generator frame). The resulting
+    # tuples of Python ``int`` are identical to ``tuple(row.tolist())`` for every
+    # landscape type (boolean/sequence/ordinal share this path).
     config_objects = np.fromiter(
-        (tuple(row.tolist()) for row in configs_array),
+        map(tuple, configs_array.tolist()),
         dtype=object,
         count=len(configs_array),
     )
@@ -711,6 +716,38 @@ def _apply_mask(values, mask):
     return np.asarray(values)[mask]
 
 
+def _validate_bitstrings_fast(bitstrings, bit_length):
+    """Vectorized validation/decoding of a list of equal-length 0/1 bitstrings.
+
+    Returns the flat ``uint8`` array of ASCII byte codes for
+    ``"".join(bitstrings)`` when *every* string has length ``bit_length`` and
+    contains only ``'0'``/``'1'`` (ASCII); otherwise returns ``None`` to signal
+    that the caller should fall back to the element-by-element loop (which
+    reproduces the exact original error: the first offending index and, for a
+    bad character, the ``invalid_chars`` set).
+
+    All elements are assumed to already be Python ``str`` (the caller checks
+    this up-front via ``isinstance``).
+    """
+    joined = "".join(bitstrings)
+    # A single length mismatch makes the flat join un-reshapeable; defer so the
+    # slow loop can pinpoint the first offending string.
+    if len(joined) != bit_length * len(bitstrings):
+        return None
+    try:
+        byte_codes = np.frombuffer(joined.encode("ascii"), dtype=np.uint8)
+    except UnicodeEncodeError:
+        # Non-ASCII character somewhere: let the slow loop raise the original
+        # invalid-character error for the first offending bitstring.
+        return None
+    if byte_codes.size:
+        # ord('0') == 48, ord('1') == 49; anything else is an invalid char.
+        uniq = np.unique(byte_codes)
+        if uniq[0] < 48 or uniq[-1] > 49:
+            return None
+    return byte_codes
+
+
 def _parse_boolean_input(
     X_input: Union[List[Any], pd.DataFrame, np.ndarray, pd.Series],
     verbose: bool = True,
@@ -770,22 +807,29 @@ def _parse_boolean_input(
         if bit_length == 0:
             raise ValueError("Bitstrings cannot be empty.")
 
-        validated_bitstrings = []
-        for i, bstr in enumerate(bitstrings):
-            if len(bstr) != bit_length:
-                raise ValueError(
-                    f"All bitstrings must have the same length (expected {bit_length}, got {len(bstr)} for string {i})."
-                )
-            if not all(c in "01" for c in bstr):
-                invalid_chars = set(bstr) - set("01")
-                raise ValueError(
-                    f"Bitstring {i} contains invalid characters: {invalid_chars}. Only '0' and '1' allowed."
-                )
-            validated_bitstrings.append(bstr)
+        # Fast path: when every bitstring has the same length and contains only
+        # '0'/'1' (ASCII), validate and decode them in one vectorized pass over
+        # the joined bytes, skipping the per-string ``all(c in "01" ...)`` loop.
+        # ``None`` signals a length/character violation; we then fall back to the
+        # element-by-element loop, which reproduces the exact original error
+        # (first offending index and the ``invalid_chars`` set).
+        byte_codes = _validate_bitstrings_fast(bitstrings, bit_length)
+        if byte_codes is None:
+            for i, bstr in enumerate(bitstrings):
+                if len(bstr) != bit_length:
+                    raise ValueError(
+                        f"All bitstrings must have the same length (expected {bit_length}, got {len(bstr)} for string {i})."
+                    )
+                if not all(c in "01" for c in bstr):
+                    invalid_chars = set(bstr) - set("01")
+                    raise ValueError(
+                        f"Bitstring {i} contains invalid characters: {invalid_chars}. Only '0' and '1' allowed."
+                    )
+            byte_codes = np.frombuffer(
+                "".join(bitstrings).encode("ascii"), dtype=np.uint8
+            )
 
-        bit_array = np.frombuffer(
-            "".join(validated_bitstrings).encode("ascii"), dtype=np.uint8
-        ).reshape(len(validated_bitstrings), bit_length) - ord("0")
+        bit_array = byte_codes.reshape(len(bitstrings), bit_length) - ord("0")
         X_df = pd.DataFrame(bit_array, copy=False)
 
     # --- Format 2: sequences of 0/1 ---
