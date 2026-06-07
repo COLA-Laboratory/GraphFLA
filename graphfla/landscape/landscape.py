@@ -1373,6 +1373,7 @@ class Landscape:
         )
         return result.edges, result.delta_fits, result.neutral_pairs
 
+    @timeit
     def _build_graph(self, data, edges, delta_fits):
         """Build the igraph representation from nodes and improving edges."""
         if self.verbose:
