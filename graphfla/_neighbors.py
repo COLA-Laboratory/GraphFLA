@@ -369,22 +369,26 @@ def _build_active(
 ):
     """Enumerate candidate neighbors and look them up via hash set.
 
-    Three fast-paths are tried in order:
+    Four fast-paths are tried in order:
 
     1. Byte-map lookup for boolean generators (single bit flips).
     2. Byte-map lookup for sequence generators (single substitutions).
-    3. Generic tuple-based lookup for arbitrary generators.
+    3. Mixed-radix vectorised lookup for ordinal generators (±1 steps).
+    4. Generic tuple-based lookup for arbitrary generators.
     """
     fitness = data["fitness"].to_numpy(copy=False)
     edges, delta_fits, neutral_pairs = [], [], []
 
     generator_obj = getattr(neighbor_generator, "__self__", None)
-    can_use_bytemap = (
+    numeric_configs_array = (
         n_edit == 1
         and configs_array is not None
         and configs_array.ndim == 2
         and configs_array.size > 0
         and np.issubdtype(configs_array.dtype, np.integer)
+    )
+    can_use_bytemap = (
+        numeric_configs_array
         and int(np.max(configs_array)) <= np.iinfo(np.uint8).max
     )
 
@@ -398,6 +402,15 @@ def _build_active(
             configs_array, fitness, epsilon, maximize, verbose,
             generator_obj.alphabet_size, edges, delta_fits, neutral_pairs,
         )
+    elif (
+        numeric_configs_array
+        and isinstance(generator_obj, OrdinalNeighborGenerator)
+        and _active_ordinal_vectorized(
+            configs_array, config_dict, fitness, epsilon, maximize, verbose,
+            edges, delta_fits, neutral_pairs,
+        )
+    ):
+        pass  # handled by the vectorised ordinal fast-path
     else:
         _active_generic(
             configs, config_dict, fitness, n_edit, epsilon, maximize, verbose,
@@ -937,3 +950,133 @@ def _active_generic(
                 if (maximize and delta < 0) or (not maximize and delta > 0):
                     append_edge((cid, nid))
                     append_delta(abs_delta)
+
+
+def _active_ordinal_vectorized(
+    configs_array, config_dict, fitness, epsilon, maximize, verbose,
+    edges, delta_fits, neutral_pairs,
+):
+    """Vectorised ±1-step (Manhattan-1) lookup for ordinal generators.
+
+    Equivalent to :func:`_active_generic` driven by
+    :class:`OrdinalNeighborGenerator` with ``n_edit == 1``, but replaces the
+    per-configuration Python loop with a mixed-radix integer encoding plus
+    ``searchsorted`` to locate neighbours in bulk.
+
+    Each configuration is mapped to a single integer key over the per-variable
+    cardinalities ``card_j = config_dict[j]["max"] + 1``. For every variable
+    *j* and direction *d* in ``(+1, -1)`` the neighbour key is ``key +
+    d * radix_j`` (computed only for rows whose code stays in ``[0, card_j-1]``),
+    and an exact ``searchsorted`` match recovers the neighbour row. This
+    enumerates exactly the directed ``(source, neighbour)`` lookups that succeed
+    in the generic path, so the classification rules below reproduce its edge
+    set, neutral-pair set, and edge/Δf correspondence identically.
+
+    Returns
+    -------
+    bool
+        ``True`` if the fast-path ran (results appended in-place); ``False`` if
+        it bailed out *before appending anything* (e.g. mixed-radix overflow),
+        so the caller can fall back to :func:`_active_generic`.
+    """
+    n_vars = configs_array.shape[1]
+
+    # Per-variable cardinalities from config_dict (the same source the generic
+    # generator reads via OrdinalNeighborGenerator: config_dict[j]["max"]).
+    cards = np.empty(n_vars, dtype=np.int64)
+    try:
+        for j in range(n_vars):
+            cards[j] = int(config_dict[j]["max"]) + 1
+    except (KeyError, TypeError, ValueError):
+        return False  # malformed config_dict -> let the generic path handle it
+    if np.any(cards <= 0):
+        return False
+
+    # Mixed-radix place values: radix_j = prod(card_0 .. card_{j-1}).
+    # Guard against int64 overflow of the full key space prod(card) > 2**63.
+    radices = np.empty(n_vars, dtype=np.int64)
+    acc = 1  # Python int: exact, no overflow during the product itself
+    for j in range(n_vars):
+        radices[j] = acc
+        acc *= int(cards[j])
+        if acc > (1 << 63) - 1:
+            return False  # key space exceeds int64 -> fall back to generic
+
+    # Committed to the fast-path from here on (only appends follow).
+    codes = configs_array.astype(np.int64, copy=False)
+    keys = codes @ radices  # (n_rows,) int64 mixed-radix key per configuration
+
+    order = np.argsort(keys, kind="stable")
+    skeys = keys[order]
+
+    neutral_eps = _neutral_abs_threshold(epsilon)
+
+    # Collect every directed (source_row, neighbour_row) adjacency, mirroring
+    # the generic loop's successful lookups, then classify all at once.
+    src_parts, nbr_parts = [], []
+    for j in range(n_vars):
+        col = codes[:, j]
+        radix_j = radices[j]
+        card_j = cards[j]
+        for d in (1, -1):
+            new_code = col + d
+            valid = (new_code >= 0) & (new_code <= card_j - 1)
+            if not np.any(valid):
+                continue
+            src_rows = np.nonzero(valid)[0]
+            nbr_keys = keys[src_rows] + d * radix_j
+            pos = np.searchsorted(skeys, nbr_keys)
+            in_range = pos < skeys.shape[0]
+            if not np.any(in_range):
+                continue
+            pos = pos[in_range]
+            src_rows = src_rows[in_range]
+            match = skeys[pos] == nbr_keys[in_range]
+            if not np.any(match):
+                continue
+            src_parts.append(src_rows[match])
+            nbr_parts.append(order[pos[match]])
+
+    if verbose:
+        print(" - Constructing neighborhoods (ordinal vectorised)...")
+
+    if not src_parts:
+        if verbose:
+            print(" - Identified 0 improving connections.")
+        return True
+
+    src = np.concatenate(src_parts)
+    nbr = np.concatenate(nbr_parts)
+
+    delta = fitness[src] - fitness[nbr]
+    abs_delta = np.abs(delta)
+
+    # Neutral: |Δf| <= eps, deduped to the canonical (cid < nid) endpoint,
+    # exactly as the generic loop records each neutral pair once.
+    neutral_mask = abs_delta <= neutral_eps
+    if np.any(neutral_mask):
+        n_src = src[neutral_mask]
+        n_nbr = nbr[neutral_mask]
+        keep = n_src < n_nbr
+        if np.any(keep):
+            neutral_pairs.extend(
+                zip(n_src[keep].tolist(), n_nbr[keep].tolist())
+            )
+
+    # Improving: recorded once, from the worse endpoint (source), matching the
+    # generic direction test (maximize: delta < 0; minimize: delta > 0).
+    imp_mask = ~neutral_mask
+    if maximize:
+        imp_mask &= delta < 0
+    else:
+        imp_mask &= delta > 0
+    if np.any(imp_mask):
+        edges.extend(zip(src[imp_mask].tolist(), nbr[imp_mask].tolist()))
+        delta_fits.extend(abs_delta[imp_mask].tolist())
+
+    if verbose:
+        print(f" - Identified {len(edges)} improving connections.")
+        if neutral_pairs:
+            print(f" - Identified {len(neutral_pairs)} neutral neighbor pairs.")
+
+    return True
