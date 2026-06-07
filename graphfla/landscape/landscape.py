@@ -1375,21 +1375,33 @@ class Landscape:
 
     @timeit
     def _build_graph(self, data, edges, delta_fits):
-        """Build the igraph representation from nodes and improving edges."""
+        """Build the igraph representation from nodes and improving edges.
+
+        ``edges`` is the directed ``(source, target)`` edge list and
+        ``delta_fits`` the aligned ``|Δfitness|`` weights, as produced by
+        :func:`graphfla._neighbors.build_edges`. Depending on the neighbourhood
+        strategy these are either numpy arrays (``active``: an ``(E, 2)`` int64
+        edge array + 1-D float weights, with no per-edge Python objects) or
+        Python lists of tuples/floats (``pairwise`` / ``broadcast``). igraph
+        0.11 ingests either form directly, so neither is converted here. Edge
+        order is preserved, keeping ``delta_fits[i]`` aligned with edge ``i``.
+        """
         if self.verbose:
             print(" - Constructing graph object...")
 
         if self.verbose:
             print(" - Adding node attributes (fitness, etc.)...")
+
+        n_edges = len(edges)
         graph = ig.Graph(
             n=len(data),
-            edges=edges,
+            edges=edges if n_edges else None,
             directed=True,
             vertex_attrs={
                 str(column): data[column].to_numpy(copy=False)
                 for column in data.columns
             },
-            edge_attrs={"delta_fit": delta_fits} if delta_fits else {},
+            edge_attrs={"delta_fit": delta_fits} if n_edges else {},
         )
 
         self._n_edges = graph.ecount()  # Update edge count based on final graph
