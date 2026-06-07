@@ -15,7 +15,7 @@ The single public entry point for edge construction is :func:`build_edges`.
 
 from dataclasses import dataclass
 from math import comb
-from typing import Protocol, Tuple, Dict, List, Callable, runtime_checkable
+from typing import Protocol, Tuple, Dict, List, Callable, Union, runtime_checkable
 import warnings
 
 import numpy as np
@@ -211,12 +211,61 @@ class DefaultNeighborGenerator:
 # ===================================================================
 
 
+def _empty_edges() -> np.ndarray:
+    """Return a canonical empty ``(0, 2)`` int64 edge array."""
+    return np.empty((0, 2), dtype=np.int64)
+
+
+def _empty_deltas() -> np.ndarray:
+    """Return a canonical empty 1-D float64 delta-fit array."""
+    return np.empty(0, dtype=np.float64)
+
+
+def _stack_edges(src: np.ndarray, tgt: np.ndarray) -> np.ndarray:
+    """Stack aligned source/target index arrays into an ``(E, 2)`` int64 array."""
+    if src.size == 0:
+        return _empty_edges()
+    out = np.empty((src.shape[0], 2), dtype=np.int64)
+    out[:, 0] = src
+    out[:, 1] = tgt
+    return out
+
+
+def _edge_arrays_from_lists(edge_list, delta_list):
+    """Convert Python edge/delta lists (slow fallback paths) to ndarrays."""
+    edges = (
+        np.asarray(edge_list, dtype=np.int64) if edge_list else _empty_edges()
+    )
+    delta_fits = (
+        np.asarray(delta_list, dtype=np.float64)
+        if delta_list
+        else _empty_deltas()
+    )
+    return edges, delta_fits
+
+
 @dataclass(frozen=True)
 class EdgeResult:
-    """Container for the output of :func:`build_edges`."""
+    """Container for the output of :func:`build_edges`.
 
-    edges: List[Tuple[int, int]]
-    delta_fits: List[float]
+    ``edges`` holds directed ``(source, target)`` node-index pairs and
+    ``delta_fits`` the aligned ``|Δfitness|`` edge weights (``delta_fits[i]`` is
+    the weight of edge ``i``). Both are kept in whichever container the chosen
+    producer emits:
+
+    * the ``active`` strategy returns an ``(E, 2)`` ``int64`` ndarray of edges
+      and a 1-D ``float64`` ndarray of weights (no per-edge Python objects);
+    * the ``pairwise`` / ``broadcast`` strategies return a Python list of
+      ``(int, int)`` tuples and a list of floats.
+
+    The empty case is always the canonical ``(0, 2)`` / ``(0,)`` ndarrays.
+    igraph 0.11 ingests either container, so :meth:`Landscape._build_graph`
+    consumes both without conversion. ``neutral_pairs`` is always a Python list
+    of ``(int, int)`` tuples.
+    """
+
+    edges: Union[np.ndarray, List[Tuple[int, int]]]
+    delta_fits: Union[np.ndarray, List[float]]
     neutral_pairs: List[Tuple[int, int]]
     strategy: str
 
@@ -306,12 +355,34 @@ def build_edges(
     else:
         edges, delta_fits, neutral_pairs = _build_active(**kwargs)
 
+    edges, delta_fits = _normalize_edge_output(edges, delta_fits)
+
     return EdgeResult(
         edges=edges,
         delta_fits=delta_fits,
         neutral_pairs=neutral_pairs,
         strategy=resolved,
     )
+
+
+def _normalize_edge_output(edges, delta_fits):
+    """Canonicalise the empty case while preserving the producer's container.
+
+    The ``active`` producer returns ``(E, 2)`` int64 / 1-D float64 ndarrays;
+    the ``pairwise``/``broadcast`` producers return Python lists of
+    ``(source, target)`` tuples and floats. Both forms are accepted directly by
+    igraph 0.11's edge-list / edge-attr ingestion, so they are passed through
+    unchanged here. Converting the list producers to arrays is deliberately
+    avoided: ``np.asarray`` over a large list of tuples is costly and igraph
+    ingests a Python tuple list faster than an ndarray, so forcing arrays would
+    regress those (small-cardinality, dense-pairwise) datasets.
+
+    Only the empty case is normalised, to the canonical ``(0, 2)`` / ``(0,)``
+    ndarray shapes, so :meth:`Landscape._build_graph` has one empty sentinel.
+    """
+    edges_out = edges if len(edges) else _empty_edges()
+    delta_out = delta_fits if len(delta_fits) else _empty_deltas()
+    return edges_out, delta_out
 
 
 # ===================================================================
@@ -375,9 +446,13 @@ def _build_active(
     2. Byte-map lookup for sequence generators (single substitutions).
     3. Mixed-radix vectorised lookup for ordinal generators (±1 steps).
     4. Generic tuple-based lookup for arbitrary generators.
+
+    Returns ``(edges, delta_fits, neutral_pairs)`` where ``edges`` is an
+    ``(E, 2)`` int64 ndarray and ``delta_fits`` the aligned 1-D float64 ndarray.
+    ``neutral_pairs`` stays a Python list of ``(int, int)`` tuples.
     """
     fitness = data["fitness"].to_numpy(copy=False)
-    edges, delta_fits, neutral_pairs = [], [], []
+    neutral_pairs: List[Tuple[int, int]] = []
 
     generator_obj = getattr(neighbor_generator, "__self__", None)
     numeric_configs_array = (
@@ -392,30 +467,36 @@ def _build_active(
         and int(np.max(configs_array)) <= np.iinfo(np.uint8).max
     )
 
+    edges = delta_fits = None  # set by whichever path runs
+
     if can_use_bytemap and isinstance(generator_obj, BooleanNeighborGenerator):
-        _active_boolean_bytemap(
-            configs_array, fitness, epsilon, maximize, verbose,
-            edges, delta_fits, neutral_pairs,
+        edges, delta_fits = _active_boolean_bytemap(
+            configs_array, fitness, epsilon, maximize, verbose, neutral_pairs,
         )
     elif can_use_bytemap and isinstance(generator_obj, SequenceNeighborGenerator):
-        _active_sequence_bytemap(
+        edges, delta_fits = _active_sequence_bytemap(
             configs_array, fitness, epsilon, maximize, verbose,
-            generator_obj.alphabet_size, edges, delta_fits, neutral_pairs,
+            generator_obj.alphabet_size, neutral_pairs,
         )
-    elif (
-        numeric_configs_array
-        and isinstance(generator_obj, OrdinalNeighborGenerator)
-        and _active_ordinal_vectorized(
-            configs_array, config_dict, fitness, epsilon, maximize, verbose,
-            edges, delta_fits, neutral_pairs,
-        )
+    elif numeric_configs_array and isinstance(
+        generator_obj, OrdinalNeighborGenerator
     ):
-        pass  # handled by the vectorised ordinal fast-path
-    else:
+        result = _active_ordinal_vectorized(
+            configs_array, config_dict, fitness, epsilon, maximize, verbose,
+            neutral_pairs,
+        )
+        if result is not None:  # None => mixed-radix overflow, fall back
+            edges, delta_fits = result
+
+    if edges is None:
+        # Generic Python fallback builds lists; convert at the boundary.
+        edge_list: List[Tuple[int, int]] = []
+        delta_list: List[float] = []
         _active_generic(
             configs, config_dict, fitness, n_edit, epsilon, maximize, verbose,
-            neighbor_generator, edges, delta_fits, neutral_pairs,
+            neighbor_generator, edge_list, delta_list, neutral_pairs,
         )
+        edges, delta_fits = _edge_arrays_from_lists(edge_list, delta_list)
 
     if verbose:
         print(f" - Identified {len(edges)} improving connections.")
@@ -436,8 +517,28 @@ def _build_pairwise(
     config_dict=None,
     neighbor_generator=None,
 ):
-    """Full pairwise Hamming via ``pdist``.  O(n^2) memory."""
-    from scipy.spatial.distance import pdist
+    """Blocked upper-triangle Hamming, low peak memory.
+
+    Computes exactly the same neighbor pairs as a full
+    ``pdist(metric="hamming")`` scan (Hamming distance in ``[1, n_edit]``)
+    without ever allocating the ``n*(n-1)/2`` float64 condensed array that
+    drives ``pdist``'s peak memory (~1.3 GB for n~18k). The upper triangle is
+    split into independent pieces, each computed and reduced to compact index
+    arrays before the next is touched, so peak memory is bounded by a single
+    block instead of the whole matrix:
+
+    * **within-block diagonal** ``[i0, i1) x [i0, i1)`` via ``pdist`` (no
+      wasted work, condensed form decoded to ``(i, j)``);
+    * **below-block rectangle** ``[i0, i1) x [i1, n)`` via ``cdist`` — every
+      pair here is needed, so there is no redundant computation.
+
+    ``pdist`` and ``cdist`` share the same per-pair C cost, and reducing each
+    block immediately with ``np.flatnonzero`` keeps both runtime and memory
+    low. The matched ``(i, j)`` arrays are handed to ``_classify_pairs`` once,
+    which pairs each edge with its ``delta_fit`` in lockstep, so the edge set,
+    per-edge delta, and neutral set are identical to the ``pdist`` path.
+    """
+    from scipy.spatial.distance import pdist, cdist
 
     n = len(data)
     fitness = data["fitness"].values
@@ -445,36 +546,90 @@ def _build_pairwise(
     n_vars = configs_array.shape[1]
 
     if verbose:
-        print(f" - Computing pairwise distances for {n} configurations (pdist)...")
+        print(
+            f" - Computing pairwise distances for {n} configurations "
+            f"(blocked Hamming)..."
+        )
 
-    hamming_fracs = pdist(configs_array, metric="hamming")
+    if n < 2:
+        return [], [], []
 
     frac_threshold = (n_edit + 0.5) / n_vars
-    valid_mask = (hamming_fracs > 0) & (hamming_fracs <= frac_threshold)
-    valid_indices = np.where(valid_mask)[0]
-    del valid_mask
+
+    # Bound the largest float64 distance buffer to ``budget_bytes``. Block rows
+    # are chosen so the diagonal condensed array (~b^2/2 * 8) fits the budget,
+    # and the below-block rectangle is further split into tail-column chunks so
+    # its (b * cols * 8) buffer also fits. This keeps peak memory in the tens of
+    # MB regardless of n (vs pdist's full n^2/2 * 8 array) while keeping the
+    # per-block work large enough to amortise Python-loop overhead. When the
+    # whole condensed array already fits the budget (small n) there is a single
+    # diagonal block and no chunking, so behaviour matches the plain pdist path.
+    budget_bytes = 64 * 1024**2
+    budget_cells = max(1, budget_bytes // 8)
+    block_rows = max(2, int(budget_cells**0.5))
+
+    i_parts: List[np.ndarray] = []
+    j_parts: List[np.ndarray] = []
+
+    for i0 in range(0, n, block_rows):
+        i1 = min(i0 + block_rows, n)
+        b = i1 - i0
+
+        # Diagonal block: upper triangle within [i0, i1) via pdist (no waste).
+        if b >= 2:
+            hf = pdist(configs_array[i0:i1], metric="hamming")
+            local = np.flatnonzero((hf > 0) & (hf <= frac_threshold))
+            del hf
+            if len(local):
+                bf = float(b)
+                k = local.astype(np.float64)
+                ri = (
+                    bf - 2 - np.floor(
+                        np.sqrt(-8.0 * k + 4.0 * bf * (bf - 1) - 7.0) / 2.0 - 0.5
+                    )
+                ).astype(np.intp)
+                rj = (
+                    k + ri + 1
+                    - bf * (bf - 1) / 2
+                    + (bf - ri) * ((bf - ri) - 1) / 2
+                ).astype(np.intp)
+                i_parts.append(ri + i0)
+                j_parts.append(rj + i0)
+
+        # Below-block rectangle: [i0, i1) x [i1, n). Every pair is needed.
+        # Chunk the tail columns so the cdist buffer stays within the budget.
+        if i1 < n:
+            col_chunk = max(1, budget_cells // b)
+            j_start = i1
+            while j_start < n:
+                j_end = min(j_start + col_chunk, n)
+                n_cols = j_end - j_start
+                d = cdist(
+                    configs_array[i0:i1], configs_array[j_start:j_end],
+                    metric="hamming",
+                )
+                flat = np.flatnonzero(((d > 0) & (d <= frac_threshold)).ravel())
+                del d
+                if len(flat):
+                    # Row-major flat index -> (row in block, col in tail chunk).
+                    i_parts.append((i0 + flat // n_cols).astype(np.intp))
+                    j_parts.append((j_start + flat % n_cols).astype(np.intp))
+                j_start = j_end
+
+    if not j_parts:
+        if verbose:
+            print(f" - Found 0 neighbor pairs within edit distance {n_edit}.")
+        return [], [], []
+
+    i_arr = np.concatenate(i_parts)
+    j_arr = np.concatenate(j_parts)
+    del i_parts, j_parts
 
     if verbose:
         print(
-            f" - Found {len(valid_indices)} neighbor pairs "
+            f" - Found {len(j_arr)} neighbor pairs "
             f"within edit distance {n_edit}."
         )
-
-    if len(valid_indices) == 0:
-        return [], [], []
-
-    n_f = float(n)
-    k = valid_indices.astype(np.float64)
-    i_arr = (
-        n_f - 2 - np.floor(
-            np.sqrt(-8.0 * k + 4.0 * n_f * (n_f - 1) - 7.0) / 2.0 - 0.5
-        )
-    ).astype(np.intp)
-    j_arr = (
-        k + i_arr + 1
-        - n_f * (n_f - 1) / 2
-        + (n_f - i_arr) * ((n_f - i_arr) - 1) / 2
-    ).astype(np.intp)
 
     return _classify_pairs(i_arr, j_arr, fitness, epsilon, maximize, verbose)
 
@@ -671,8 +826,7 @@ def _mixed_radix_keys(configs_array, base):
 
 
 def _active_bytemap_vectorized(
-    configs_array, fitness, neutral_eps, maximize, base,
-    edges, delta_fits, neutral_pairs,
+    configs_array, fitness, neutral_eps, maximize, base, neutral_pairs,
 ):
     """Vectorised single-substitution neighbour finder via mixed-radix keys.
 
@@ -689,16 +843,19 @@ def _active_bytemap_vectorized(
       (``(maximize and delta < 0) or (not maximize and delta > 0)``), a directed
       edge ``src -> nbr`` is emitted with ``delta_fit = abs(delta)``.
 
+    Neutral pairs are appended to the ``neutral_pairs`` list in place.
+
     Returns
     -------
-    bool
-        ``True`` if vectorisation ran (results appended to the output lists);
-        ``False`` if the mixed-radix key would overflow and the caller must use
-        the exact Python fallback instead.
+    tuple[np.ndarray, np.ndarray] | None
+        ``(edges, delta_fits)`` where ``edges`` is an ``(E, 2)`` int64 ndarray
+        and ``delta_fits`` the aligned 1-D float64 ndarray, when vectorisation
+        ran; ``None`` if the mixed-radix key would overflow and the caller must
+        use the exact Python fallback instead.
     """
     keys, place_values = _mixed_radix_keys(configs_array, base)
     if keys is None:
-        return False
+        return None
 
     n, n_vars = configs_array.shape
     row_idx = np.arange(n)
@@ -738,7 +895,7 @@ def _active_bytemap_vectorized(
             nbr_list.append(hit_nbr)
 
     if not src_list:
-        return True
+        return _empty_edges(), _empty_deltas()
 
     src = np.concatenate(src_list)
     nbr = np.concatenate(nbr_list)
@@ -757,40 +914,41 @@ def _active_bytemap_vectorized(
             )
 
     imp_mask = ~neutral_mask
+    # Worse-endpoint emission, matching the baseline direction guard.
+    if maximize:
+        imp_mask &= delta < 0
+    else:
+        imp_mask &= delta > 0
     if imp_mask.any():
-        idelta = delta[imp_mask]
-        # Worse-endpoint emission, matching the baseline direction guard.
-        if maximize:
-            edge_mask = idelta < 0
-        else:
-            edge_mask = idelta > 0
-        if edge_mask.any():
-            esrc = src[imp_mask][edge_mask]
-            enbr = nbr[imp_mask][edge_mask]
-            edge_abs = abs_delta[imp_mask][edge_mask]
-            edges.extend(zip(esrc.tolist(), enbr.tolist()))
-            delta_fits.extend(edge_abs.tolist())
+        edges = _stack_edges(src[imp_mask], nbr[imp_mask])
+        delta_fits = np.ascontiguousarray(abs_delta[imp_mask])
+        return edges, delta_fits
 
-    return True
+    return _empty_edges(), _empty_deltas()
 
 
 def _active_boolean_bytemap(
-    configs_array, fitness, epsilon, maximize, verbose,
-    edges, delta_fits, neutral_pairs,
+    configs_array, fitness, epsilon, maximize, verbose, neutral_pairs,
 ):
-    """Byte-map lookup specialised for single bit flips."""
+    """Byte-map lookup specialised for single bit flips.
+
+    Returns ``(edges, delta_fits)`` as ndarrays; ``neutral_pairs`` is mutated
+    in place.
+    """
     neutral_eps = _neutral_abs_threshold(epsilon)
     rows = np.ascontiguousarray(configs_array, dtype=np.uint8)
-    if _active_bytemap_vectorized(
-        rows, fitness, neutral_eps, maximize, 2,
-        edges, delta_fits, neutral_pairs,
-    ):
-        return
+    result = _active_bytemap_vectorized(
+        rows, fitness, neutral_eps, maximize, 2, neutral_pairs,
+    )
+    if result is not None:
+        return result
 
+    edge_list, delta_list = [], []
     _active_boolean_bytemap_loop(
         rows, fitness, neutral_eps, maximize, verbose,
-        edges, delta_fits, neutral_pairs,
+        edge_list, delta_list, neutral_pairs,
     )
+    return _edge_arrays_from_lists(edge_list, delta_list)
 
 
 def _active_boolean_bytemap_loop(
@@ -840,21 +998,27 @@ def _active_boolean_bytemap_loop(
 
 def _active_sequence_bytemap(
     configs_array, fitness, epsilon, maximize, verbose, alphabet_size,
-    edges, delta_fits, neutral_pairs,
+    neutral_pairs,
 ):
-    """Byte-map lookup specialised for single-position substitutions."""
+    """Byte-map lookup specialised for single-position substitutions.
+
+    Returns ``(edges, delta_fits)`` as ndarrays; ``neutral_pairs`` is mutated
+    in place.
+    """
     neutral_eps = _neutral_abs_threshold(epsilon)
     rows = np.ascontiguousarray(configs_array, dtype=np.uint8)
-    if _active_bytemap_vectorized(
-        rows, fitness, neutral_eps, maximize, alphabet_size,
-        edges, delta_fits, neutral_pairs,
-    ):
-        return
+    result = _active_bytemap_vectorized(
+        rows, fitness, neutral_eps, maximize, alphabet_size, neutral_pairs,
+    )
+    if result is not None:
+        return result
 
+    edge_list, delta_list = [], []
     _active_sequence_bytemap_loop(
         rows, fitness, neutral_eps, maximize, verbose, alphabet_size,
-        edges, delta_fits, neutral_pairs,
+        edge_list, delta_list, neutral_pairs,
     )
+    return _edge_arrays_from_lists(edge_list, delta_list)
 
 
 def _active_sequence_bytemap_loop(
@@ -954,7 +1118,7 @@ def _active_generic(
 
 def _active_ordinal_vectorized(
     configs_array, config_dict, fitness, epsilon, maximize, verbose,
-    edges, delta_fits, neutral_pairs,
+    neutral_pairs,
 ):
     """Vectorised ±1-step (Manhattan-1) lookup for ordinal generators.
 
@@ -972,12 +1136,16 @@ def _active_ordinal_vectorized(
     in the generic path, so the classification rules below reproduce its edge
     set, neutral-pair set, and edge/Δf correspondence identically.
 
+    Neutral pairs are appended to the ``neutral_pairs`` list in place.
+
     Returns
     -------
-    bool
-        ``True`` if the fast-path ran (results appended in-place); ``False`` if
-        it bailed out *before appending anything* (e.g. mixed-radix overflow),
-        so the caller can fall back to :func:`_active_generic`.
+    tuple[np.ndarray, np.ndarray] | None
+        ``(edges, delta_fits)`` where ``edges`` is an ``(E, 2)`` int64 ndarray
+        and ``delta_fits`` the aligned 1-D float64 ndarray, when the fast-path
+        ran; ``None`` if it bailed out *before appending anything* (e.g.
+        mixed-radix overflow), so the caller can fall back to
+        :func:`_active_generic`.
     """
     n_vars = configs_array.shape[1]
 
@@ -988,9 +1156,9 @@ def _active_ordinal_vectorized(
         for j in range(n_vars):
             cards[j] = int(config_dict[j]["max"]) + 1
     except (KeyError, TypeError, ValueError):
-        return False  # malformed config_dict -> let the generic path handle it
+        return None  # malformed config_dict -> let the generic path handle it
     if np.any(cards <= 0):
-        return False
+        return None
 
     # Mixed-radix place values: radix_j = prod(card_0 .. card_{j-1}).
     # Guard against int64 overflow of the full key space prod(card) > 2**63.
@@ -1000,9 +1168,9 @@ def _active_ordinal_vectorized(
         radices[j] = acc
         acc *= int(cards[j])
         if acc > (1 << 63) - 1:
-            return False  # key space exceeds int64 -> fall back to generic
+            return None  # key space exceeds int64 -> fall back to generic
 
-    # Committed to the fast-path from here on (only appends follow).
+    # Committed to the fast-path from here on.
     codes = configs_array.astype(np.int64, copy=False)
     keys = codes @ radices  # (n_rows,) int64 mixed-radix key per configuration
 
@@ -1043,7 +1211,7 @@ def _active_ordinal_vectorized(
     if not src_parts:
         if verbose:
             print(" - Identified 0 improving connections.")
-        return True
+        return _empty_edges(), _empty_deltas()
 
     src = np.concatenate(src_parts)
     nbr = np.concatenate(nbr_parts)
@@ -1071,12 +1239,14 @@ def _active_ordinal_vectorized(
     else:
         imp_mask &= delta > 0
     if np.any(imp_mask):
-        edges.extend(zip(src[imp_mask].tolist(), nbr[imp_mask].tolist()))
-        delta_fits.extend(abs_delta[imp_mask].tolist())
+        edges = _stack_edges(src[imp_mask], nbr[imp_mask])
+        delta_fits = np.ascontiguousarray(abs_delta[imp_mask])
+    else:
+        edges, delta_fits = _empty_edges(), _empty_deltas()
 
     if verbose:
         print(f" - Identified {len(edges)} improving connections.")
         if neutral_pairs:
             print(f" - Identified {len(neutral_pairs)} neutral neighbor pairs.")
 
-    return True
+    return edges, delta_fits
