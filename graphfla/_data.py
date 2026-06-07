@@ -426,16 +426,53 @@ class DefaultHandler:
 # ===================================================================
 
 
+def configs_series_from_array(
+    configs_array: np.ndarray, index: Any = None
+) -> pd.Series:
+    """Build the per-row configuration tuple ``Series`` from the numeric matrix.
+
+    The result is *byte-for-byte* what :func:`encode_data` historically produced
+    eagerly: an ``object`` ``Series`` whose values are ``tuple`` objects of plain
+    Python ``int`` (one element per encoded variable), indexed by ``index``
+    (the caller's encoded-frame index; defaults to a ``RangeIndex``).
+
+    Construction mirrors the previous in-line code exactly -- a single C-level
+    ``ndarray.tolist()`` followed by ``map(tuple, ...)`` -- so the tuples and
+    their element types match for every landscape type (boolean / sequence /
+    ordinal share this path). It is factored out here so the ``Series`` can be
+    produced *lazily*, on first access, rather than always during construction:
+    the numeric ``configs_array`` (not this tuple ``Series``) is what every
+    neighbour-construction strategy consumes, so most builds never need it.
+    """
+    config_objects = np.fromiter(
+        map(tuple, configs_array.tolist()),
+        dtype=object,
+        count=len(configs_array),
+    )
+    return pd.Series(config_objects, index=index, copy=False)
+
+
 @dataclass(frozen=True)
 class PreparedData:
-    """Encoded configuration data plus the metadata needed by ``Landscape``."""
+    """Encoded configuration data plus the metadata needed by ``Landscape``.
+
+    The per-row configuration tuple ``Series`` is exposed lazily via the
+    :attr:`configs` property (built from :attr:`configs_array` on demand) rather
+    than stored eagerly -- it is a pure downstream artifact and the numeric
+    ``configs_array`` is what graph construction actually consumes.
+    """
 
     data_for_attributes: pd.DataFrame
     data_types: Dict[str, str]
     n_vars: int
-    configs: pd.Series
     config_dict: Dict[int, Dict[str, int]]
     configs_array: np.ndarray
+    configs_index: Any = None
+
+    @property
+    def configs(self) -> pd.Series:
+        """The per-row configuration tuple ``Series`` (built on access)."""
+        return configs_series_from_array(self.configs_array, self.configs_index)
 
 
 # ===================================================================
@@ -646,24 +683,22 @@ def encode_data(
         encoded_dtype = np.uint64
 
     configs_array = np.ascontiguousarray(encoded_array, dtype=encoded_dtype)
-    # Convert the whole encoded matrix to nested Python lists in a single C-level
-    # ``tolist()`` call, then wrap each row in ``tuple`` via ``map`` (avoiding a
-    # per-row ``ndarray.tolist()`` call and a generator frame). The resulting
-    # tuples of Python ``int`` are identical to ``tuple(row.tolist())`` for every
-    # landscape type (boolean/sequence/ordinal share this path).
-    config_objects = np.fromiter(
-        map(tuple, configs_array.tolist()),
-        dtype=object,
-        count=len(configs_array),
-    )
-    configs = pd.Series(config_objects, index=X_encoded.index, copy=False)
 
-    if configs.duplicated().any():
-        warnings.warn(
-            "Duplicate encoded configurations found after validation. "
-            "This might indicate issues in the duplicate handling step.",
-            RuntimeWarning,
-        )
+    # The per-row configuration tuple ``Series`` is built lazily (see
+    # ``PreparedData.configs`` / ``configs_series_from_array``) instead of here:
+    # it is a pure downstream artifact and the numeric ``configs_array`` above is
+    # what every neighbour-construction strategy consumes.  Materialising 8.4e7
+    # boxed ints + n tuples eagerly was the single largest cost of this function
+    # on high-dimensional inputs and is skipped on builds that never touch it.
+    #
+    # The historical post-encoding "duplicate encoded configurations" check
+    # (``configs.duplicated()``) is likewise dropped: every encoder above maps
+    # distinct per-column values to distinct integer codes (boolean -> 0/1,
+    # categorical/ordinal -> ``factorize``/``cat.codes``), so the encoding is
+    # injective on rows.  ``clean_data`` already removed duplicate prepared rows
+    # over *all* columns (invariant columns are constant and cannot distinguish
+    # rows), hence the encoded configurations are duplicate-free by construction
+    # on every pipeline-reachable input and the warning could never fire.
 
     config_dict = _build_config_dict(prepared_data_types, X_encoded)
 
@@ -684,9 +719,9 @@ def encode_data(
         data_for_attributes=data_for_attributes,
         data_types=prepared_data_types,
         n_vars=len(prepared_data_types),
-        configs=configs,
         config_dict=config_dict,
         configs_array=configs_array,
+        configs_index=X_encoded.index,
     )
 
 
@@ -1249,6 +1284,7 @@ __all__ = [
     "RNA_ALPHABET",
     "PROTEIN_ALPHABET",
     "PreparedData",
+    "configs_series_from_array",
     "InputHandler",
     "BooleanHandler",
     "OrdinalHandler",

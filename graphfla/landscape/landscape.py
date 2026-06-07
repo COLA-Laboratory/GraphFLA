@@ -23,6 +23,7 @@ from .._data import (
     prepare_data,
     clean_data,
     encode_data,
+    configs_series_from_array,
 )
 from ..utils import (
     filter_graph,
@@ -248,7 +249,13 @@ class Landscape:
     ):
         # Core attributes
         self.graph = None
-        self.configs = None
+        # ``configs`` (the per-row tuple ``Series``) is exposed via a lazy
+        # property: it is built from ``_configs_array`` on first access and
+        # cached in ``_configs``.  Graph construction consumes the numeric
+        # ``_configs_array`` directly, so the tuple ``Series`` is never
+        # materialised on builds that do not need it.
+        self._configs = None
+        self._configs_index = None
         self._configs_array = None
         self.config_dict = None
         self.data_types = None
@@ -333,6 +340,38 @@ class Landscape:
         if self.graph is None:
             return (0, 0)
         return (self.n_configs, self.n_edges)
+
+    @property
+    def configs(self) -> Optional[pd.Series]:
+        """Per-node configuration tuple ``Series`` (built lazily, then cached).
+
+        The numeric ``_configs_array`` is the source of truth and is what graph
+        construction consumes; this tuple ``Series`` is a downstream artifact
+        used only by analyses that need per-node configuration tuples.  It is
+        materialised from ``_configs_array`` on first access -- builds that never
+        read ``configs`` (the common construction-only path) skip the cost
+        entirely.  Returns ``None`` only when neither the cached ``Series`` nor a
+        numeric array is available (e.g. an unbuilt landscape, or a graph load
+        from which configurations could not be reconstructed).
+
+        Note: a ``landscape.configs is None`` check materialises the ``Series``
+        if ``_configs_array`` is present; this matches the previous eager
+        attribute (which was always present) and is intended -- every caller that
+        performs such a check goes on to use the configurations.
+        """
+        if self._configs is not None:
+            return self._configs
+        if self._configs_array is not None:
+            self._configs = configs_series_from_array(
+                self._configs_array, self._configs_index
+            )
+            return self._configs
+        return None
+
+    @configs.setter
+    def configs(self, value: Optional[pd.Series]) -> None:
+        """Set (or clear) the cached configuration tuple ``Series`` directly."""
+        self._configs = value
 
     # ------------------------------------------------------------------
     # Lazy, cached analysis properties.
@@ -1277,8 +1316,13 @@ class Landscape:
         """Persist encoded build metadata on the landscape instance."""
         self.data_types = prepared.data_types
         self.n_vars = prepared.n_vars
+        # Store the numeric matrix (the source of truth for construction) and the
+        # encoded-frame index, and leave the tuple ``Series`` cache empty so the
+        # ``configs`` property builds it lazily from the array only when (and if)
+        # a consumer reads it.
         self._configs_array = prepared.configs_array
-        self.configs = prepared.configs
+        self._configs_index = prepared.configs_index
+        self._configs = None
         self.config_dict = prepared.config_dict
 
         processed_data = prepared.data_for_attributes
@@ -1356,11 +1400,20 @@ class Landscape:
 
         old_to_new = {old: new for new, old in enumerate(kept_indices)}
 
-        if self.configs is not None:
-            self.configs = self.configs.take(kept_indices)
-            self.configs.index = range(len(kept_indices))
+        # Remap the numeric matrix (the source of truth) and reset the encoded
+        # index to a contiguous range, matching the post-filter relabelling.  The
+        # tuple ``Series`` is intentionally *not* accessed here (that would force
+        # an otherwise-unnecessary materialisation during construction): if it was
+        # already built, remap the cache in lockstep; otherwise leave it empty so
+        # the ``configs`` property rebuilds it lazily from the remapped array,
+        # producing the identical tuples/order with the same ``RangeIndex``.
         if self._configs_array is not None:
             self._configs_array = self._configs_array[kept_indices]
+        self._configs_index = range(len(kept_indices))
+        if self._configs is not None:
+            remapped = self._configs.take(kept_indices)
+            remapped.index = range(len(kept_indices))
+            self._configs = remapped
 
         if not neutral_pairs:
             return neutral_pairs
@@ -1392,8 +1445,14 @@ class Landscape:
         if self._neighbor_generator is None:
             raise RuntimeError("Neighbor generator not set before build.")
 
+        # Pass the *cached* tuple ``Series`` (``self._configs``) rather than the
+        # ``configs`` property: during a fresh build the cache is empty (``None``)
+        # and every fast strategy consumes ``configs_array`` instead, so this
+        # avoids materialising the tuple ``Series`` on the construction path.
+        # ``build_edges`` builds the tuples on demand from ``configs_array`` only
+        # for the generic fallback that actually needs them.
         result = build_edges(
-            configs=self.configs,
+            configs=self._configs,
             config_dict=self.config_dict,
             data=data,
             n_configs=self.n_configs,
