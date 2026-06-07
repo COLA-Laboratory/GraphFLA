@@ -177,8 +177,27 @@ def remove_isolated_nodes(graph, verbose=False, protected=None):
         UserWarning,
     )
 
+    # ``kept_indices`` (ascending) is the new-index -> old-index map used to
+    # remap cached metadata.
+    #
+    # ``induced_subgraph(kept)`` (the historical call) rebuilds the whole graph
+    # and dominates this routine on large sparse landscapes even when only a tiny
+    # fraction of nodes are isolated.  When few nodes are removed, igraph's
+    # ``induced_subgraph(implementation="auto")`` internally uses the
+    # *copy-and-delete* strategy, which is exactly what ``delete_vertices`` does
+    # in place -- it produces a byte-identical result (same vertex order, same
+    # edgelist order, same positional edge attributes) at lower cost.  igraph
+    # only switches ``auto`` to the (edge-reordering) *create-from-scratch*
+    # strategy once a large share of the graph is dropped (empirically at a
+    # removed fraction of ~0.5, independent of edge density).  We therefore take
+    # the fast in-place deletion only when the removed fraction is comfortably
+    # below that switchover and otherwise fall back to the original
+    # ``induced_subgraph`` call, guaranteeing identical output in every case.
     kept_indices = np.flatnonzero(~isolated_mask).tolist()
-    graph = graph.induced_subgraph(kept_indices)
+    if n_isolated <= 0.4 * total_degree.size:
+        graph.delete_vertices(np.flatnonzero(isolated_mask).tolist())
+    else:
+        graph = graph.induced_subgraph(kept_indices)
 
     if verbose:
         print(

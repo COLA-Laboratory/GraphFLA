@@ -1398,7 +1398,8 @@ class Landscape:
         if kept_indices is None:
             return neutral_pairs
 
-        old_to_new = {old: new for new, old in enumerate(kept_indices)}
+        kept_arr = np.asarray(kept_indices, dtype=np.int64)
+        n_kept = kept_arr.size
 
         # Remap the numeric matrix (the source of truth) and reset the encoded
         # index to a contiguous range, matching the post-filter relabelling.  The
@@ -1408,21 +1409,36 @@ class Landscape:
         # the ``configs`` property rebuilds it lazily from the remapped array,
         # producing the identical tuples/order with the same ``RangeIndex``.
         if self._configs_array is not None:
-            self._configs_array = self._configs_array[kept_indices]
-        self._configs_index = range(len(kept_indices))
+            self._configs_array = self._configs_array[kept_arr]
+        self._configs_index = range(n_kept)
         if self._configs is not None:
             remapped = self._configs.take(kept_indices)
-            remapped.index = range(len(kept_indices))
+            remapped.index = range(n_kept)
             self._configs = remapped
 
         if not neutral_pairs:
             return neutral_pairs
 
-        return [
-            (old_to_new[u], old_to_new[v])
-            for u, v in neutral_pairs
-            if u in old_to_new and v in old_to_new
-        ]
+        # Vectorised old->new index remap of the neutral pairs (Python-dict +
+        # list-comprehension is the dominant cost here on large sparse graphs
+        # with hundreds of thousands of tied pairs).  ``inv`` maps each surviving
+        # old index to its new contiguous index and -1 for dropped vertices; the
+        # boolean mask drops any pair touching a removed vertex.  This reproduces
+        # the previous comprehension's output exactly: same surviving pairs, same
+        # order, plain Python ``int`` tuples.
+        pairs = np.asarray(neutral_pairs, dtype=np.int64)
+        # ``inv`` must span every old index it will be indexed by: any surviving
+        # vertex (``kept_arr``) and any neutral-pair endpoint (``pairs``).  Use
+        # ``.max()`` (not the last element) so the sizing is correct regardless
+        # of whether ``kept_indices`` is sorted.
+        n_inv = int(max(int(kept_arr.max()), int(pairs.max()))) + 1
+        inv = np.full(n_inv, -1, dtype=np.int64)
+        inv[kept_arr] = np.arange(n_kept, dtype=np.int64)
+
+        u = inv[pairs[:, 0]]
+        v = inv[pairs[:, 1]]
+        keep = (u >= 0) & (v >= 0)
+        return list(zip(u[keep].tolist(), v[keep].tolist()))
 
     @timeit
     def _finalize_build(self) -> None:
