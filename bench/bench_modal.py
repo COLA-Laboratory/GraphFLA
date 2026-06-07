@@ -205,6 +205,11 @@ def main(action: str = "bench", label: str = "baseline", only: str = "",
         print(peek.remote())
         return
     out = run_all.remote(label=label, only=only, reps=reps)
+    txt = json.dumps(out, indent=2)
+    path = f"/tmp/graphfla_bench_{label}.json"
+    with open(path, "w") as fh:
+        fh.write(txt)
     print("=== BENCH_JSON_START ===")
-    print(json.dumps(out, indent=2))
+    print(txt)
     print("=== BENCH_JSON_END ===")
+    print("WROTE " + path)
