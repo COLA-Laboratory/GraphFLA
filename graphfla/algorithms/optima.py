@@ -45,7 +45,14 @@ def determine_local_optima(landscape):
     if self.verbose:
         print(" - Determining local optima...")
 
-    out_degrees = np.asarray(self.graph.outdegree())
+    # Reuse the eagerly-stored out-degree attribute when present (set in
+    # ``_analyze``) to avoid recomputing the full degree sequence; fall back to
+    # an on-the-fly C call for graphs that lack the attribute. Values are
+    # identical either way.
+    if "out_degree" in self.graph.vs.attributes():
+        out_degrees = np.asarray(self.graph.vs["out_degree"])
+    else:
+        out_degrees = np.asarray(self.graph.outdegree())
 
     if self._has_plateaus:
         # --- Plateau-aware LO detection ---

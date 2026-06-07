@@ -25,7 +25,6 @@ from .._data import (
     encode_data,
 )
 from ..utils import (
-    add_network_metrics,
     filter_graph,
     remove_isolated_nodes,
     infer_graph_properties,
@@ -305,6 +304,7 @@ class Landscape:
         self._basin_calculated = False
         self._distance_calculated = False
         self._neighbor_fit_calculated = False
+        self._pagerank_calculated = False
 
         # Strategy object for neighborhood generation (set in build_from_data)
         self._neighbor_generator = None
@@ -378,6 +378,36 @@ class Landscape:
         if not self._neighbor_fit_calculated:
             correlation.determine_neighbor_fitness(self)
         return pd.Series(self.graph.vs["mean_neighbor_fit"], name="mean_neighbor_fit")
+
+    @property
+    def pagerank(self) -> pd.Series:
+        """Per-node PageRank centrality, computed lazily.
+
+        PageRank is not used by any landscape metric; it is only an optional,
+        descriptive node attribute. To keep it off the construction critical
+        path (where it was the single dominant cost) it is computed on first
+        access here -- producing values identical to the eager computation
+        (weighted by ``delta_fit`` when present, ``directed=True``)."""
+        self._check_built()
+        self._ensure_pagerank()
+        return pd.Series(self.graph.vs["pagerank"], name="pagerank")
+
+    def _ensure_pagerank(self) -> None:
+        """Materialise the ``pagerank`` node attribute if it is not present.
+
+        Idempotent: respects an externally supplied ``pagerank`` attribute and
+        only computes once. Used by the lazy ``pagerank`` property and by any
+        consumer (e.g. ``get_data``) that must expose the full attribute set."""
+        if self._pagerank_calculated or "pagerank" in self.graph.vs.attributes():
+            self._pagerank_calculated = True
+            return
+        weights = (
+            "delta_fit" if "delta_fit" in self.graph.es.attributes() else None
+        )
+        self.graph.vs["pagerank"] = self.graph.pagerank(
+            weights=weights, directed=True
+        )
+        self._pagerank_calculated = True
 
     def __getitem__(self, index):
         """Return the node attributes dictionary for the given index."""
@@ -1000,6 +1030,11 @@ class Landscape:
         if self.graph is None:
             raise RuntimeError("Graph is None despite landscape being built.")
 
+        # PageRank is computed lazily (off the construction critical path); make
+        # sure it is materialised so the returned DataFrame exposes it, matching
+        # the historical column set.
+        self._ensure_pagerank()
+
         if lo_only:
             if self.lo_index is None or not self.lo_index:
                 warnings.warn(
@@ -1381,10 +1416,21 @@ class Landscape:
         ``delta_fits`` the aligned ``|Δfitness|`` weights, as produced by
         :func:`graphfla._neighbors.build_edges`. Depending on the neighbourhood
         strategy these are either numpy arrays (``active``: an ``(E, 2)`` int64
-        edge array + 1-D float weights, with no per-edge Python objects) or
-        Python lists of tuples/floats (``pairwise`` / ``broadcast``). igraph
-        0.11 ingests either form directly, so neither is converted here. Edge
-        order is preserved, keeping ``delta_fits[i]`` aligned with edge ``i``.
+        edge array + 1-D float64 weights) or Python lists of tuples/floats
+        (``pairwise`` / ``broadcast``).
+
+        Edge *list* ingest uses the ``(E, 2)`` int64 ndarray directly (igraph
+        0.11's fastest path; an array->list conversion is a net loss). The
+        per-edge ``delta_fit`` *attribute*, however, ingests ~2x faster when
+        igraph reads it through the buffer protocol than when it iterates a
+        float64 ndarray element-by-element: the ndarray path boxes each element
+        as a Python ``np.float64`` object, which a ``memoryview`` over the same
+        (zero-copy) buffer avoids. So a contiguous 1-D ``delta_fits`` array is
+        wrapped in a ``memoryview`` here (no data copy, unlike ``.tolist()``).
+        igraph then stores the values as plain Python ``float`` objects --
+        matching what the ``pairwise``/``broadcast`` producers already emit, and
+        identical in value (``float(x) == np.float64(x)``). Edge order is
+        preserved, keeping ``delta_fits[i]`` aligned with edge ``i``.
         """
         if self.verbose:
             print(" - Constructing graph object...")
@@ -1393,6 +1439,22 @@ class Landscape:
             print(" - Adding node attributes (fitness, etc.)...")
 
         n_edges = len(edges)
+        if n_edges:
+            # igraph ingests the per-edge float attribute faster from a buffer
+            # (memoryview) than from a float64 ndarray (see method docstring).
+            # The wrap is zero-copy and only applies to a contiguous 1-D float
+            # array; any other container is passed through unchanged.
+            delta_attr = delta_fits
+            if (
+                isinstance(delta_fits, np.ndarray)
+                and delta_fits.ndim == 1
+                and delta_fits.flags["C_CONTIGUOUS"]
+            ):
+                delta_attr = memoryview(delta_fits)
+            edge_attrs = {"delta_fit": delta_attr}
+        else:
+            edge_attrs = {}
+
         graph = ig.Graph(
             n=len(data),
             edges=edges if n_edges else None,
@@ -1401,7 +1463,7 @@ class Landscape:
                 str(column): data[column].to_numpy(copy=False)
                 for column in data.columns
             },
-            edge_attrs={"delta_fit": delta_fits} if n_edges else {},
+            edge_attrs=edge_attrs,
         )
 
         self._n_edges = graph.ecount()  # Update edge count based on final graph
@@ -1515,16 +1577,19 @@ class Landscape:
         if self.verbose:
             print("Calculating landscape properties...")
 
-        # Add basic network metrics if they don't already exist
+        # Add basic degree metrics if they don't already exist. PageRank is the
+        # dominant cost of the old ``add_network_metrics`` call (~70-90% of this
+        # method on large landscapes) yet is consumed by nothing on the analysis
+        # path -- only surfaced as an optional node attribute. It is therefore
+        # deferred to the lazy ``pagerank`` property (same pattern as basins /
+        # distances / neighbour fitness), keeping construction off its critical
+        # path while producing identical values on first access. In/out degree
+        # stay eager: they are cheap and feed local-optimum detection.
         if "out_degree" not in self.graph.vs.attributes():
-            # Assumes 'delta_fit' exists if built from data, might need adjustment
-            # if graph provided externally lacks this weight.
-            weight_key = (
-                "delta_fit" if "delta_fit" in self.graph.es.attributes() else None
-            )
             if self.verbose:
                 print(" - Calculating network metrics (degrees)...")
-            self.graph = add_network_metrics(self.graph, weight=weight_key)
+            self.graph.vs["in_degree"] = self.graph.indegree()
+            self.graph.vs["out_degree"] = self.graph.outdegree()
 
         # Determine optima (basins / paths / distance / neighbour fitness are lazy).
         self.determine_local_optima()
