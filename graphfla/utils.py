@@ -224,8 +224,11 @@ def add_network_metrics(graph: ig.Graph, weight: str = "delta_fit") -> ig.Graph:
     graph.vs["in_degree"] = graph.indegree()
     graph.vs["out_degree"] = graph.outdegree()
 
-    # Compute PageRank (with weights if the attribute exists)
-    weights = graph.es[weight] if weight in graph.edge_attributes() else None
+    # Compute PageRank (with weights if the attribute exists). igraph accepts
+    # the edge-attribute *name* directly and reads it from its C-level store,
+    # which avoids materialising the full weight list in Python (a large cost
+    # for graphs with millions of edges) while producing identical values.
+    weights = weight if weight in graph.edge_attributes() else None
     pagerank = graph.pagerank(weights=weights, directed=True)
 
     graph.vs["pagerank"] = pagerank
