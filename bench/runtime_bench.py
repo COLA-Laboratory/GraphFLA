@@ -40,8 +40,14 @@ import statistics
 import threading
 import time
 
+import sys
+
 import psutil
 import pandas as pd
+
+# Prefer THIS checkout's graphfla (e.g. an agent's worktree variant) over the
+# editable-installed copy, so concurrent worktree benchmarks test their own code.
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from graphfla.landscape.protein import ProteinLandscape
 from graphfla.landscape.dna import DNALandscape
@@ -84,13 +90,13 @@ DATASETS = [
                 "min_child_weight", "n_estimators"], fcol="mean_r2"),
 ]
 
-# baseline total_s per dataset -> per-rep kill timeout. Updated after the first
-# local baseline; values here are an initial (generous) guess.
+# Current-branch (post A1+A2) local baseline total_s per dataset -> per-rep kill
+# timeout. Update when the branch baseline shifts after merging winners.
 BASELINE_S = {
-    "GB1_protein_large": 9.0, "TrpB3I_protein_small": 0.3,
-    "Papkou_dna_large": 6.6, "Westmann_dna_small": 1.1,
-    "CR9114h1_boolean_large": 1.6, "CR6261h1_boolean_small": 0.06,
-    "WReOs_ordinal_small": 0.02, "HPO_ordinal_large": 6.5,
+    "GB1_protein_large": 2.06, "TrpB3I_protein_small": 0.10,
+    "Papkou_dna_large": 1.66, "Westmann_dna_small": 0.55,
+    "CR9114h1_boolean_large": 0.29, "CR6261h1_boolean_small": 0.02,
+    "WReOs_ordinal_small": 0.01, "HPO_ordinal_large": 1.38,
 }
 
 TIMEIT_RE = re.compile(r"Method (\w+) executed in ([\d.eE+-]+) seconds\.")
@@ -174,7 +180,9 @@ def load_xy(ds):
 
 def bench_dataset(ds, reps):
     base = BASELINE_S.get(ds["name"], 60.0)
-    kill_s = max(20.0, 2.0 * base + 10.0)
+    # ~3x baseline: headroom for contention when agents run concurrently; true
+    # algorithmic blowups (the thing we want to kill fast) are >>3x.
+    kill_s = max(10.0, 3.0 * base)
     X, f = load_xy(ds)
     cls = CLS[ds["type"]]
     dtypes = ds.get("data_types")
