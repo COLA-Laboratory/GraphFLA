@@ -3,3 +3,7 @@ docs/site/
 
 # landscape-analysis verification (uncommitted)
 _verify/
+
+# construction performance campaign (uncommitted results/state)
+BENCH_RESULTS.md
+bench/__pycache__/
