@@ -825,46 +825,153 @@ def _mixed_radix_keys(configs_array, base):
     return keys, place_values
 
 
-def _active_bytemap_vectorized(
-    configs_array, fitness, neutral_eps, maximize, base, neutral_pairs,
+# Largest mixed-radix key space (``base ** n_vars`` distinct keys) for which a
+# direct-index lookup table (key -> row, ``-1`` = absent) is built instead of
+# binary search. Combinatorially (near-)complete landscapes have a key space of
+# the same order as the row count, so the table costs ~8 bytes/cell here (16 M
+# cells -> 128 MB worst case) yet turns every neighbour lookup into an O(1)
+# gather, replacing the O(M log n) ``searchsorted`` (which profiling shows is
+# ~95% of the edge-finding cost) and the argsort. Sparse high-dimensional spaces
+# exceed this and fall back to the per-cell ``searchsorted`` loop, which has no
+# table to allocate.
+_LUT_MAX_CELLS = 16_000_000
+
+# Max candidate neighbour keys materialised per generation block on the LUT
+# path. Bounds the transient ``nbr_keys`` + gathered-row buffers so peak memory
+# stays at/below the all-at-once key array while keeping blocks large enough to
+# amortise numpy dispatch.
+_BYTEMAP_CHUNK_CANDIDATES = 4_000_000
+
+
+def _bytemap_lut_block(
+    keys, lut, a_row, codes_block, place_block, row_offset,
+    src_list, nbr_list,
 ):
-    """Vectorised single-substitution neighbour finder via mixed-radix keys.
+    """Resolve one batched block of single-substitution candidates via a LUT.
 
-    Enumerates exactly the same ordered ``(source_row -> neighbour_row)`` visits
-    that the per-cell Python loop would (every row, every position ``p``, every
-    alternative value ``v != current_code[p]``) but resolves all rows for a
-    given ``(p, v)`` in one ``searchsorted`` lookup. The classification of each
-    visit is identical to the baseline:
+    For the row range starting at ``row_offset`` and the positions in
+    ``codes_block`` / ``place_block``, build every ``(row, position,
+    alternative-value)`` neighbour key, look each up in the direct-index table
+    ``lut`` (``lut[key]`` is the neighbour row, or ``-1`` when absent), and
+    append the hit source/neighbour row indices to ``src_list`` / ``nbr_list``.
 
-    * ``delta = fitness[source] - fitness[neighbour]``;
-    * ``abs(delta) <= neutral_eps`` -> neutral pair, recorded as ``(src, nbr)``
-      only when ``src < nbr`` (so each undirected neutral pair is kept once);
-    * otherwise, if the source is the worse endpoint
-      (``(maximize and delta < 0) or (not maximize and delta > 0)``), a directed
-      edge ``src -> nbr`` is emitted with ``delta_fit = abs(delta)``.
-
-    Neutral pairs are appended to the ``neutral_pairs`` list in place.
-
-    Returns
-    -------
-    tuple[np.ndarray, np.ndarray] | None
-        ``(edges, delta_fits)`` where ``edges`` is an ``(E, 2)`` int64 ndarray
-        and ``delta_fits`` the aligned 1-D float64 ndarray, when vectorisation
-        ran; ``None`` if the mixed-radix key would overflow and the caller must
-        use the exact Python fallback instead.
+    Parameters
+    ----------
+    keys : np.ndarray
+        Mixed-radix key per row (int64).
+    lut : np.ndarray
+        Direct-index table of length ``base ** n_vars`` with ``lut[keys[r]] = r``
+        and ``-1`` elsewhere.
+    a_row : np.ndarray
+        ``arange(base - 1)`` reused across blocks (alternative-value index).
+    codes_block : np.ndarray, shape ``(rb, pb)``
+        int64 per-position codes for the ``rb`` rows and ``pb`` positions.
+    place_block : np.ndarray, shape ``(pb,)``
+        Mixed-radix place values for the block's positions.
+    row_offset : int
+        Index of the first row in the block (added back to recover global ids).
     """
-    keys, place_values = _mixed_radix_keys(configs_array, base)
-    if keys is None:
+    rb, pb = codes_block.shape
+    n_alt = a_row.shape[0]
+
+    # Neighbour key for (row r, local position pl, alt index a):
+    #   key[r] + (v - code) * place,   v = a + (a >= code)
+    # so the value delta (v - code) is  a - code + (a >= code). Every neighbour
+    # key stays in [0, base**n_vars), so the LUT gather is always in range.
+    cb = codes_block[:, :, None]                       # (rb, pb, 1)
+    a3 = a_row[None, None, :]                           # (1, 1, n_alt)
+    vdelta = (a3 - cb) + (a3 >= cb)                     # (rb, pb, n_alt)
+    del cb
+    nbr_keys = (
+        keys[row_offset:row_offset + rb][:, None, None]
+        + vdelta * place_block[None, :, None]
+    ).reshape(-1)
+    del vdelta
+
+    nbr_rows = lut[nbr_keys]
+    del nbr_keys  # not needed past the gather; free before collecting hits
+    hit = np.flatnonzero(nbr_rows >= 0)
+    if hit.size == 0:
+        return
+    # Source row recovered from the flat index: layout is row-major over
+    # (rb, pb, n_alt), so the row stride is pb * n_alt.
+    src_list.append(row_offset + hit // (pb * n_alt))
+    nbr_list.append(nbr_rows[hit])
+
+
+def _bytemap_lut_adjacency(keys, place_values, codes, n, n_vars, n_alt, base):
+    """Enumerate all directed single-substitution adjacencies via a LUT.
+
+    Builds the direct-index table once, then generates candidate neighbour keys
+    in memory-bounded blocks (grouping whole positions up to the candidate
+    budget, splitting a single over-budget position over row chunks) and gathers
+    the matches. Returns ``(src, nbr)`` concatenated hit arrays, or ``None`` if
+    the key space exceeds :data:`_LUT_MAX_CELLS` (caller uses ``searchsorted``).
+    """
+    key_space = base ** n_vars
+    if key_space > _LUT_MAX_CELLS:
         return None
 
-    n, n_vars = configs_array.shape
-    row_idx = np.arange(n)
+    # key -> row table; -1 marks an absent configuration. int64 keeps row ids
+    # exact for any realistic n while the table itself is small (key_space is
+    # bounded above).
+    lut = np.full(key_space, -1, dtype=np.int64)
+    lut[keys] = np.arange(n)
 
+    a_row = np.arange(n_alt, dtype=np.int64)
+    src_list: List[np.ndarray] = []
+    nbr_list: List[np.ndarray] = []
+
+    rows_per_pos = n * n_alt
+    p = 0
+    while p < n_vars:
+        if rows_per_pos > _BYTEMAP_CHUNK_CANDIDATES:
+            # Single position too wide: split its rows into chunks.
+            row_block = max(1, _BYTEMAP_CHUNK_CANDIDATES // n_alt)
+            r0 = 0
+            while r0 < n:
+                r1 = min(r0 + row_block, n)
+                _bytemap_lut_block(
+                    keys, lut, a_row,
+                    codes[r0:r1, p:p + 1], place_values[p:p + 1],
+                    r0, src_list, nbr_list,
+                )
+                r0 = r1
+            p += 1
+            continue
+
+        # Pack as many whole positions as fit in the candidate budget.
+        max_group = max(1, _BYTEMAP_CHUNK_CANDIDATES // rows_per_pos)
+        p_end = min(p + max_group, n_vars)
+        _bytemap_lut_block(
+            keys, lut, a_row,
+            codes[:, p:p_end], place_values[p:p_end],
+            0, src_list, nbr_list,
+        )
+        p = p_end
+
+    del lut
+    if not src_list:
+        return (
+            np.empty(0, dtype=np.intp), np.empty(0, dtype=np.intp),
+        )
+    return np.concatenate(src_list), np.concatenate(nbr_list)
+
+
+def _bytemap_searchsorted_adjacency(keys, place_values, configs_array, n, n_vars, base):
+    """Enumerate all directed single-substitution adjacencies via ``searchsorted``.
+
+    Sparse fallback used when the key space is too large for a direct-index
+    table. For each ``(position, value)`` the source rows (whose code differs
+    from ``value``) are resolved in one binary search over the sorted keys.
+    Returns ``(src, nbr)`` concatenated hit arrays.
+    """
     order = np.argsort(keys, kind="stable")
     skeys = keys[order]
+    row_idx = np.arange(n)
 
-    src_list = []        # source row indices, in visit order
-    nbr_list = []        # matched neighbour row indices
+    src_list: List[np.ndarray] = []
+    nbr_list: List[np.ndarray] = []
 
     for p in range(n_vars):
         place = int(place_values[p])
@@ -879,8 +986,8 @@ def _active_bytemap_vectorized(
             nbr_keys = keys[src_rows] + (v - codes_p[src_mask]) * place
 
             pos = np.searchsorted(skeys, nbr_keys)
-            # Verify exact key match (searchsorted gives an insertion point;
-            # only positions in-range whose key equals the query are real hits).
+            # searchsorted gives an insertion point; only in-range positions
+            # whose key equals the query are real hits.
             valid = pos < n
             if not valid.any():
                 continue
@@ -889,16 +996,84 @@ def _active_bytemap_vectorized(
             if not exact.any():
                 continue
 
-            hit_src = src_rows[valid][exact]
-            hit_nbr = order[pos_valid[exact]]
-            src_list.append(hit_src)
-            nbr_list.append(hit_nbr)
+            src_list.append(src_rows[valid][exact])
+            nbr_list.append(order[pos_valid[exact]])
 
     if not src_list:
+        return (
+            np.empty(0, dtype=np.intp), np.empty(0, dtype=np.intp),
+        )
+    return np.concatenate(src_list), np.concatenate(nbr_list)
+
+
+def _active_bytemap_vectorized(
+    configs_array, fitness, neutral_eps, maximize, base, neutral_pairs,
+):
+    """Vectorised single-substitution neighbour finder via mixed-radix keys.
+
+    Enumerates exactly the same ``(source_row -> neighbour_row)`` adjacencies
+    that the per-cell Python loop would (every row, every position ``p``, every
+    alternative value ``v != current_code[p]``) and classifies them identically,
+    but resolves the lookups in bulk. Two interchangeable enumeration backends
+    produce the *same* adjacency set:
+
+    * **direct-index table** (default for combinatorially dense key spaces):
+      a ``key -> row`` table turns every neighbour lookup into an O(1) gather,
+      avoiding both the argsort and the ``searchsorted`` that dominate the cost.
+      Candidates for each ``(row, p)`` are generated directly via the index remap
+      ``v = a + (a >= code)`` (``a in 0..base-2``), so no self-pair is ever
+      materialised, in memory-bounded blocks;
+    * **binary search** (sparse fallback, when ``base ** n_vars`` would make the
+      table too large): one ``searchsorted`` per ``(position, value)``.
+
+    The classification of each adjacency is identical to the baseline:
+
+    * ``delta = fitness[source] - fitness[neighbour]``;
+    * ``abs(delta) <= neutral_eps`` -> neutral pair, recorded as ``(src, nbr)``
+      only when ``src < nbr`` (so each undirected neutral pair is kept once);
+    * otherwise, if the source is the worse endpoint
+      (``(maximize and delta < 0) or (not maximize and delta > 0)``), a directed
+      edge ``src -> nbr`` is emitted with ``delta_fit = abs(delta)``.
+
+    Because every neighbour differs in exactly one position, each ordered
+    adjacent ``(src, nbr)`` pair is produced exactly once regardless of backend
+    or iteration order, so the resulting edge set, neutral set, and the edge/Δf
+    correspondence match the per-cell loop exactly. Neutral pairs are appended to
+    the ``neutral_pairs`` list in place.
+
+    Returns
+    -------
+    tuple[np.ndarray, np.ndarray] | None
+        ``(edges, delta_fits)`` where ``edges`` is an ``(E, 2)`` int64 ndarray
+        and ``delta_fits`` the aligned 1-D float64 ndarray, when vectorisation
+        ran; ``None`` if the mixed-radix key would overflow and the caller must
+        use the exact Python fallback instead.
+    """
+    keys, place_values = _mixed_radix_keys(configs_array, base)
+    if keys is None:
+        return None
+
+    n, n_vars = configs_array.shape
+
+    # A single-value alphabet has no alternative substitutions, so there are no
+    # candidate neighbours at all (the per-cell loop's inner range is empty).
+    n_alt = base - 1
+    if n_alt <= 0:
         return _empty_edges(), _empty_deltas()
 
-    src = np.concatenate(src_list)
-    nbr = np.concatenate(nbr_list)
+    codes = configs_array.astype(np.int64, copy=False)
+
+    result = _bytemap_lut_adjacency(
+        keys, place_values, codes, n, n_vars, n_alt, base,
+    )
+    if result is None:  # key space too large for a direct-index table
+        result = _bytemap_searchsorted_adjacency(
+            keys, place_values, configs_array, n, n_vars, base,
+        )
+    src, nbr = result
+
+    if src.size == 0:
+        return _empty_edges(), _empty_deltas()
 
     delta = fitness[src] - fitness[nbr]
     abs_delta = np.abs(delta)
@@ -1124,15 +1299,17 @@ def _active_ordinal_vectorized(
 
     Equivalent to :func:`_active_generic` driven by
     :class:`OrdinalNeighborGenerator` with ``n_edit == 1``, but replaces the
-    per-configuration Python loop with a mixed-radix integer encoding plus
-    ``searchsorted`` to locate neighbours in bulk.
+    per-configuration Python loop with a mixed-radix integer encoding and a bulk
+    neighbour lookup.
 
     Each configuration is mapped to a single integer key over the per-variable
     cardinalities ``card_j = config_dict[j]["max"] + 1``. For every variable
     *j* and direction *d* in ``(+1, -1)`` the neighbour key is ``key +
     d * radix_j`` (computed only for rows whose code stays in ``[0, card_j-1]``),
-    and an exact ``searchsorted`` match recovers the neighbour row. This
-    enumerates exactly the directed ``(source, neighbour)`` lookups that succeed
+    and the neighbour row is recovered either by a direct gather through a dense
+    inverse-key index (when the key space is small enough to address) or, for
+    large sparse key spaces, by an exact ``searchsorted`` match. Both branches
+    enumerate exactly the directed ``(source, neighbour)`` lookups that succeed
     in the generic path, so the classification rules below reproduce its edge
     set, neutral-pair set, and edge/Δf correspondence identically.
 
@@ -1170,43 +1347,84 @@ def _active_ordinal_vectorized(
         if acc > (1 << 63) - 1:
             return None  # key space exceeds int64 -> fall back to generic
 
-    # Committed to the fast-path from here on.
+    # Committed to the fast-path from here on. ``acc`` now holds the exact key
+    # space size prod(card) (== max key + 1); every key is in ``[0, acc)`` and,
+    # because rows are unique, the keys are distinct.
+    keyspace = acc
     codes = configs_array.astype(np.int64, copy=False)
+    n = codes.shape[0]
     keys = codes @ radices  # (n_rows,) int64 mixed-radix key per configuration
-
-    order = np.argsort(keys, kind="stable")
-    skeys = keys[order]
 
     neutral_eps = _neutral_abs_threshold(epsilon)
 
-    # Collect every directed (source_row, neighbour_row) adjacency, mirroring
-    # the generic loop's successful lookups, then classify all at once.
-    src_parts, nbr_parts = [], []
-    for j in range(n_vars):
-        col = codes[:, j]
-        radix_j = radices[j]
-        card_j = cards[j]
-        for d in (1, -1):
-            new_code = col + d
-            valid = (new_code >= 0) & (new_code <= card_j - 1)
-            if not np.any(valid):
-                continue
-            src_rows = np.nonzero(valid)[0]
-            nbr_keys = keys[src_rows] + d * radix_j
-            pos = np.searchsorted(skeys, nbr_keys)
-            in_range = pos < skeys.shape[0]
-            if not np.any(in_range):
-                continue
-            pos = pos[in_range]
-            src_rows = src_rows[in_range]
-            match = skeys[pos] == nbr_keys[in_range]
-            if not np.any(match):
-                continue
-            src_parts.append(src_rows[match])
-            nbr_parts.append(order[pos[match]])
-
     if verbose:
         print(" - Constructing neighborhoods (ordinal vectorised)...")
+
+    # Collect every directed (source_row, neighbour_row) adjacency, mirroring
+    # the generic loop's successful lookups, then classify all at once.
+    #
+    # Lookup of the ±1 neighbour key uses a dense inverse index when the key
+    # space is small enough to address directly, otherwise a sorted-key
+    # ``searchsorted``. Both branches enumerate exactly the same successful
+    # ``(source, neighbour)`` adjacencies, so the classification tail below is
+    # identical regardless of which ran.
+    #
+    # Direct addressing replaces an O(log n) binary search per candidate with an
+    # O(1) gather. The inverse-index array costs ``keyspace * 8`` bytes, so it is
+    # only built when bounded by both an absolute floor (64 MiB) and ``4 * n``
+    # entries — the latter ties its footprint to the dataset size (and hence to
+    # the configs/edge arrays already held), so peak memory cannot blow up on a
+    # sparse, high-cardinality lattice; such cases fall back to ``searchsorted``.
+    use_dense_inverse = keyspace <= max(1 << 23, 4 * n)
+
+    src_parts, nbr_parts = [], []
+    if use_dense_inverse:
+        # inv[k] = row id whose key is k, or -1 if absent. Every key < keyspace.
+        inv = np.full(keyspace, -1, dtype=np.int64)
+        inv[keys] = np.arange(n)
+        for j in range(n_vars):
+            col = codes[:, j]
+            radix_j = int(radices[j])
+            card_j = int(cards[j])
+            for d in (1, -1):
+                # Valid sources: +1 needs code < card-1, -1 needs code > 0.
+                # The resulting neighbour key then stays within [0, keyspace),
+                # so inv[...] is always an in-bounds lookup.
+                valid = col != (card_j - 1) if d == 1 else col != 0
+                if not np.any(valid):
+                    continue
+                src_rows = np.nonzero(valid)[0]
+                nbr_rows = inv[keys[src_rows] + d * radix_j]
+                hit = nbr_rows >= 0
+                if not np.any(hit):
+                    continue
+                src_parts.append(src_rows[hit])
+                nbr_parts.append(nbr_rows[hit])
+        del inv
+    else:
+        order = np.argsort(keys, kind="stable")
+        skeys = keys[order]
+        for j in range(n_vars):
+            col = codes[:, j]
+            radix_j = int(radices[j])
+            card_j = int(cards[j])
+            for d in (1, -1):
+                valid = col != (card_j - 1) if d == 1 else col != 0
+                if not np.any(valid):
+                    continue
+                src_rows = np.nonzero(valid)[0]
+                nbr_keys = keys[src_rows] + d * radix_j
+                pos = np.searchsorted(skeys, nbr_keys)
+                in_range = pos < skeys.shape[0]
+                if not np.any(in_range):
+                    continue
+                pos = pos[in_range]
+                src_rows = src_rows[in_range]
+                match = skeys[pos] == nbr_keys[in_range]
+                if not np.any(match):
+                    continue
+                src_parts.append(src_rows[match])
+                nbr_parts.append(order[pos[match]])
 
     if not src_parts:
         if verbose:
