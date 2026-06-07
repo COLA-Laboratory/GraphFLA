@@ -537,7 +537,26 @@ def _build_pairwise(
     low. The matched ``(i, j)`` arrays are handed to ``_classify_pairs`` once,
     which pairs each edge with its ``delta_fit`` in lockstep, so the edge set,
     per-edge delta, and neutral set are identical to the ``pdist`` path.
+
+    For the dominant ``n_edit == 1`` case the O(n^2) Hamming scan is replaced by
+    masked-position grouping (:func:`_build_masked_grouping`), which finds the
+    exact same Hamming-1 pairs in ``O(n * n_vars)`` and feeds the *same*
+    ``_classify_pairs``, so the result is identical. The blocked pdist/cdist
+    path below is retained for ``n_edit > 1`` (Hamming distance up to n_edit).
     """
+    if n_edit == 1:
+        return _build_masked_grouping(
+            configs=configs,
+            config_dict=config_dict,
+            data=data,
+            n_edit=n_edit,
+            epsilon=epsilon,
+            maximize=maximize,
+            verbose=verbose,
+            neighbor_generator=neighbor_generator,
+            configs_array=configs_array,
+        )
+
     from scipy.spatial.distance import pdist, cdist
 
     n = len(data)
@@ -646,7 +665,26 @@ def _build_broadcast(
     config_dict=None,
     neighbor_generator=None,
 ):
-    """Per-row vectorised Hamming, upper triangle only."""
+    """Per-row vectorised Hamming, upper triangle only.
+
+    For ``n_edit == 1`` the per-row O(n^2) scan is replaced by masked-position
+    grouping (:func:`_build_masked_grouping`), which finds the exact same
+    Hamming-1 pairs in ``O(n * n_vars)`` and reuses ``_classify_pairs``, so the
+    result is identical. The per-row loop below is kept for ``n_edit > 1``.
+    """
+    if n_edit == 1:
+        return _build_masked_grouping(
+            configs=configs,
+            config_dict=config_dict,
+            data=data,
+            n_edit=n_edit,
+            epsilon=epsilon,
+            maximize=maximize,
+            verbose=verbose,
+            neighbor_generator=neighbor_generator,
+            configs_array=configs_array,
+        )
+
     n = len(data)
     fitness = data["fitness"].values
     configs_array = _as_config_matrix(configs, configs_array)
@@ -726,6 +764,233 @@ def _as_config_matrix(configs, configs_array=None):
     return np.ascontiguousarray(np.array(config_list))
 
 
+# --- Masked-position grouping (universal Hamming-1 neighbour finder) ----
+
+# Deterministic seed for the random int64 fingerprint weights. Fixing it keeps
+# the fingerprint (and therefore the candidate-grouping order, though never the
+# final exact pair set) reproducible across runs and processes.
+_MASKED_GROUPING_SEED = 0x9E3779B97F4A7C15
+
+
+def _within_run_pairs(group_id, n):
+    """All within-group index pairs (a < b) for elements sharing a group id.
+
+    ``group_id`` is a non-decreasing integer label per element (i.e. elements
+    are already arranged so equal labels are contiguous). For every group of
+    size ``c`` this enumerates its ``c*(c-1)/2`` ordered index pairs without a
+    Python loop, by decoding a per-group condensed (upper-triangular) index —
+    the same closed-form inverse used by :func:`_build_pairwise` to turn a
+    ``pdist`` position into ``(i, j)``.
+
+    Returns
+    -------
+    tuple[np.ndarray, np.ndarray]
+        ``(a_idx, b_idx)`` int64 arrays of positions (into the same ordering as
+        ``group_id``) with ``a_idx < b_idx`` and ``group_id[a] == group_id[b]``.
+    """
+    empty = np.empty(0, dtype=np.intp)
+    if n < 2:
+        return empty, empty
+
+    # Run boundaries: a new run starts where the label changes.
+    change = np.empty(n, dtype=bool)
+    change[0] = True
+    np.not_equal(group_id[1:], group_id[:-1], out=change[1:])
+    starts = np.flatnonzero(change)
+    counts = np.diff(np.append(starts, n))
+
+    big = counts >= 2
+    starts = starts[big]
+    counts = counts[big].astype(np.int64)
+    if starts.size == 0:
+        return empty, empty
+
+    npairs = counts * (counts - 1) // 2
+    total = int(npairs.sum())
+    if total == 0:
+        return empty, empty
+
+    # Map each of the ``total`` pairs back to its group and its offset within
+    # that group's pair block.
+    pair_grp = np.repeat(np.arange(starts.size), npairs)
+    block_start = np.zeros(starts.size, dtype=np.int64)
+    np.cumsum(npairs[:-1], out=block_start[1:])
+    pair_off = np.arange(total, dtype=np.int64) - block_start[pair_grp]
+
+    # Inverse of the condensed (upper-triangular) index within a group of size
+    # ``c``: recover the (a, b) with 0 <= a < b < c. Same formula family as the
+    # pdist decode in _build_pairwise (here per-group, with local size ``c``).
+    cf = counts[pair_grp].astype(np.float64)
+    off = pair_off.astype(np.float64)
+    a = (
+        cf - 2
+        - np.floor(np.sqrt(-8.0 * off + 4.0 * cf * (cf - 1) - 7.0) / 2.0 - 0.5)
+    ).astype(np.int64)
+    b = (
+        off + a + 1
+        - cf * (cf - 1) // 2
+        + (cf - a) * ((cf - a) - 1) // 2
+    ).astype(np.int64)
+
+    base = starts[pair_grp].astype(np.int64)
+    return (base + a).astype(np.intp), (base + b).astype(np.intp)
+
+
+def _masked_grouping_pairs(configs_array):
+    """Find every unordered Hamming-1 pair via masked-position grouping.
+
+    Two configurations are Hamming-1 neighbours iff they are identical at all
+    positions except exactly one. For each position ``p`` this groups the rows
+    by their *masked* row (the row with position ``p`` removed); within a group
+    every pair differs only at ``p`` (a candidate neighbour), and — because the
+    configurations are unique — each true Hamming-1 pair lives in exactly one
+    such position-group, so it is found exactly once.
+
+    Grouping never materialises the masked row. Each masked row is reduced to a
+    scalar int64 fingerprint: with fixed random weights ``R`` (deterministically
+    seeded, shape ``n_vars``), the full fingerprint is ``h = configs @ R`` and
+    the position-``p`` masked fingerprint is ``h - configs[:, p] * R[p]`` (all
+    int64, wraparound is intentional and self-consistent). Rows with equal
+    masked fingerprint form a candidate group, found by sorting the fingerprints
+    and scanning runs of equal value — total cost ``O(n_vars * n log n)`` plus
+    ``O(n_edges)``, independent of the alphabet size and of sparsity.
+
+    Equal fingerprint is *necessary but not sufficient* (hashes can collide), so
+    every emitted candidate pair is verified to have Hamming distance exactly 1
+    (``count_nonzero(configs[i] != configs[j]) == 1``); pairs failing the check
+    are dropped. The result is therefore EXACT regardless of hash collisions.
+
+    Parameters
+    ----------
+    configs_array : np.ndarray, shape ``(n, n_vars)``
+        Integer configuration matrix of unique rows.
+
+    Returns
+    -------
+    tuple[np.ndarray, np.ndarray]
+        ``(i_arr, j_arr)`` int64 index arrays of every verified Hamming-1 pair,
+        with ``i_arr < j_arr`` elementwise. Each undirected pair appears once.
+    """
+    a = np.ascontiguousarray(configs_array)
+    n = a.shape[0]
+    n_vars = a.shape[1] if a.ndim == 2 else 0
+    empty = np.empty(0, dtype=np.intp)
+    if n < 2 or n_vars == 0:
+        return empty, empty
+
+    ai = a.astype(np.int64, copy=False)
+
+    # Fixed random int64 weights; deterministic so the grouping is reproducible.
+    rng = np.random.default_rng(_MASKED_GROUPING_SEED)
+    info = np.iinfo(np.int64)
+    weights = rng.integers(
+        info.min, info.max, size=n_vars, endpoint=True, dtype=np.int64
+    )
+
+    # Full fingerprint h = ai @ weights, with int64 wraparound (intended).
+    with np.errstate(over="ignore"):
+        h = (ai * weights[np.newaxis, :]).sum(axis=1)
+
+    i_parts: List[np.ndarray] = []
+    j_parts: List[np.ndarray] = []
+
+    for p in range(n_vars):
+        # Masked fingerprint: remove position p's contribution. Same modular
+        # int64 arithmetic as h, so two rows identical except at p share it.
+        with np.errstate(over="ignore"):
+            masked = h - ai[:, p] * weights[p]
+
+        order = np.argsort(masked, kind="stable")
+        smasked = masked[order]
+        # Group id in sorted order: increments at each new fingerprint value.
+        change = np.empty(n, dtype=bool)
+        change[0] = True
+        np.not_equal(smasked[1:], smasked[:-1], out=change[1:])
+        gid = np.cumsum(change) - 1
+
+        ca, cb = _within_run_pairs(gid, n)
+        if ca.size == 0:
+            continue
+
+        cand_i = order[ca]
+        cand_j = order[cb]
+
+        # Collision safety: keep only candidates that are truly Hamming-1.
+        # Runs are tiny for sparse data, so this is cheap; it makes the result
+        # exact regardless of fingerprint collisions.
+        hdist = np.count_nonzero(ai[cand_i] != ai[cand_j], axis=1)
+        keep = hdist == 1
+        if not keep.any():
+            continue
+
+        ki = cand_i[keep]
+        kj = cand_j[keep]
+        lo = np.minimum(ki, kj)
+        hi = np.maximum(ki, kj)
+        i_parts.append(lo)
+        j_parts.append(hi)
+
+    if not i_parts:
+        return empty, empty
+
+    i_arr = np.concatenate(i_parts)
+    j_arr = np.concatenate(j_parts)
+    return i_arr, j_arr
+
+
+def _build_masked_grouping(
+    *,
+    configs,
+    config_dict,
+    data,
+    n_edit,
+    epsilon,
+    maximize,
+    verbose,
+    neighbor_generator,
+    configs_array,
+):
+    """Hamming-1 edge builder via masked-position grouping (``n_edit == 1``).
+
+    A universal, alphabet- and sparsity-independent replacement for the
+    O(n^2)/O(n*n_vars*alphabet) Hamming scans on high-dimensional sparse data.
+    Finds every Hamming-1 pair with :func:`_masked_grouping_pairs` (exact, with
+    collision verification), then hands the matched ``(i, j)`` arrays to the
+    shared :func:`_classify_pairs`, so the edge directions, neutral pairs, and
+    per-edge ``delta_fit`` are byte-for-byte identical to the ``pairwise`` and
+    ``broadcast`` strategies.
+
+    Returns ``(edges, delta_fits, neutral_pairs)`` in the same Python-list
+    container the ``pairwise``/``broadcast`` producers use.
+    """
+    fitness = data["fitness"].to_numpy(copy=False)
+    matrix = _as_config_matrix(configs, configs_array)
+    n = matrix.shape[0]
+
+    if verbose:
+        print(
+            f" - Finding Hamming-1 neighbors for {n} configurations "
+            f"(masked-position grouping)..."
+        )
+
+    if n < 2:
+        return [], [], []
+
+    i_arr, j_arr = _masked_grouping_pairs(matrix)
+
+    if i_arr.size == 0:
+        if verbose:
+            print(" - Found 0 neighbor pairs within edit distance 1.")
+        return [], [], []
+
+    if verbose:
+        print(
+            f" - Found {len(j_arr)} neighbor pairs within edit distance 1."
+        )
+
+    return _classify_pairs(i_arr, j_arr, fitness, epsilon, maximize, verbose)
+
+
 def _classify_pairs(i_arr, j_arr, fitness, epsilon, maximize, verbose):
     """Partition (i, j) neighbor pairs into improving edges and neutrals.
 
@@ -790,6 +1055,91 @@ def _classify_pairs(i_arr, j_arr, fitness, epsilon, maximize, verbose):
                 f" - Identified {len(neutral_pairs)} neutral neighbor pairs."
             )
     return edges, delta_fits, neutral_pairs
+
+
+def _classify_pairs_to_arrays(
+    i_arr, j_arr, fitness, neutral_eps, maximize, neutral_pairs,
+):
+    """Array-returning twin of :func:`_classify_pairs` for the active path.
+
+    Applies the *same* classification rules as :func:`_classify_pairs` to the
+    undirected ``(i, j)`` pairs (``i < j``): a pair is neutral when
+    ``|Δf| <= neutral_eps`` (recorded once, as ``(i, j)``), otherwise it yields
+    one directed edge from the worse to the better endpoint with
+    ``delta_fit = |Δf|``. The direction test
+    (``maximize``: worse means ``f[i] < f[j]``) is identical, so the edge set,
+    neutral set, and per-edge Δf match :func:`_classify_pairs` exactly.
+
+    Differs only in *containers*: it returns the active path's ``(E, 2)`` int64
+    edge ndarray and 1-D float64 ``delta_fits`` ndarray, and appends neutral
+    pairs to ``neutral_pairs`` in place (matching the other active fast-paths),
+    instead of building Python lists. ``neutral_eps`` is the already-resolved
+    inclusive bound (:func:`_neutral_abs_threshold`), as used elsewhere on the
+    active path.
+    """
+    deltas = fitness[i_arr] - fitness[j_arr]
+    abs_deltas = np.abs(deltas)
+
+    neutral_mask = abs_deltas <= neutral_eps
+    if neutral_mask.any():
+        neutral_pairs.extend(
+            zip(i_arr[neutral_mask].tolist(), j_arr[neutral_mask].tolist())
+        )
+
+    imp_mask = ~neutral_mask
+    if not imp_mask.any():
+        return _empty_edges(), _empty_deltas()
+
+    imp_i = i_arr[imp_mask]
+    imp_j = j_arr[imp_mask]
+    imp_deltas = deltas[imp_mask]
+    imp_abs = abs_deltas[imp_mask]
+
+    if maximize:
+        src = np.where(imp_deltas < 0, imp_i, imp_j)
+        tgt = np.where(imp_deltas < 0, imp_j, imp_i)
+    else:
+        src = np.where(imp_deltas > 0, imp_i, imp_j)
+        tgt = np.where(imp_deltas > 0, imp_j, imp_i)
+
+    edges = _stack_edges(src, tgt)
+    delta_fits = np.ascontiguousarray(imp_abs, dtype=np.float64)
+    return edges, delta_fits
+
+
+def _active_masked_grouping(
+    rows, fitness, neutral_eps, maximize, verbose, neutral_pairs,
+):
+    """Active-path Hamming-1 finder via masked-position grouping (ndarrays).
+
+    Drop-in replacement for the per-cell Python-loop fallback used when the
+    mixed-radix int key overflows int64 (high-dimensional sparse boolean /
+    sequence landscapes). Finds every Hamming-1 pair with
+    :func:`_masked_grouping_pairs` and classifies them with
+    :func:`_classify_pairs_to_arrays`, so the edge set, neutral pairs, and
+    per-edge Δf are identical to the loop fallback it replaces (and to the
+    ``pairwise``/``broadcast`` strategies), while running in ``O(n * n_vars)``
+    instead of ``O(n * n_vars * alphabet)``.
+
+    Returns ``(edges, delta_fits)`` ndarrays; ``neutral_pairs`` is mutated in
+    place.
+    """
+    n = rows.shape[0]
+    if verbose:
+        print(
+            f" - Finding Hamming-1 neighbors for {n} configurations "
+            f"(masked-position grouping)..."
+        )
+    if n < 2:
+        return _empty_edges(), _empty_deltas()
+
+    i_arr, j_arr = _masked_grouping_pairs(rows)
+    if i_arr.size == 0:
+        return _empty_edges(), _empty_deltas()
+
+    return _classify_pairs_to_arrays(
+        i_arr, j_arr, fitness, neutral_eps, maximize, neutral_pairs,
+    )
 
 
 # --- Active strategy fast-path helpers --------------------------------
@@ -1118,12 +1468,12 @@ def _active_boolean_bytemap(
     if result is not None:
         return result
 
-    edge_list, delta_list = [], []
-    _active_boolean_bytemap_loop(
-        rows, fitness, neutral_eps, maximize, verbose,
-        edge_list, delta_list, neutral_pairs,
+    # Mixed-radix int key overflowed int64 (high-dim sparse). Use masked-
+    # position grouping instead of the O(n * n_vars) per-cell Python loop; both
+    # produce the identical edge/neutral/Δf result, but grouping is far faster.
+    return _active_masked_grouping(
+        rows, fitness, neutral_eps, maximize, verbose, neutral_pairs,
     )
-    return _edge_arrays_from_lists(edge_list, delta_list)
 
 
 def _active_boolean_bytemap_loop(
@@ -1188,12 +1538,12 @@ def _active_sequence_bytemap(
     if result is not None:
         return result
 
-    edge_list, delta_list = [], []
-    _active_sequence_bytemap_loop(
-        rows, fitness, neutral_eps, maximize, verbose, alphabet_size,
-        edge_list, delta_list, neutral_pairs,
+    # Mixed-radix int key overflowed int64 (high-dim sparse). Use masked-
+    # position grouping instead of the O(n * n_vars * alphabet) per-cell Python
+    # loop; both produce the identical edge/neutral/Δf result, far faster.
+    return _active_masked_grouping(
+        rows, fitness, neutral_eps, maximize, verbose, neutral_pairs,
     )
-    return _edge_arrays_from_lists(edge_list, delta_list)
 
 
 def _active_sequence_bytemap_loop(
