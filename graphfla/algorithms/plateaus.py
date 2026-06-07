@@ -33,45 +33,65 @@ def build_plateaus(landscape, neutral_pairs):
         self.n_plateau = 0
         return
 
-    neutral_graph = ig.Graph(n=self.n_configs, edges=neutral_pairs, directed=False)
+    n_configs = self.n_configs
+    neutral_graph = ig.Graph(n=n_configs, edges=neutral_pairs, directed=False)
     components = neutral_graph.connected_components()
 
-    node_to_plateau = np.full(self.n_configs, -1, dtype=np.int32)
-    plateaus = {}
-    next_plateau_id = 0
+    # ``membership[v]`` is the connected-component id of vertex ``v``.  igraph
+    # labels components by first occurrence when scanning vertices 0..n-1, so
+    # filtering the size>1 component ids in ascending id order and renumbering
+    # them 0,1,2,... reproduces exactly the plateau ids the previous
+    # ``for members in components`` loop assigned (which iterated components in
+    # id order, skipping singletons).  This avoids a Python-level pass over all
+    # ``n_configs`` components -- the dominant cost when there are many
+    # singleton components (few/large neutral plateaus or many tiny ones).
+    membership = np.asarray(components.membership)
+    comp_sizes = np.bincount(membership)
+    multi_ids = np.nonzero(comp_sizes > 1)[0]
 
-    for members in components:
-        if len(members) > 1:
-            member_list = sorted(members)
-            plateaus[next_plateau_id] = member_list
-            for node in member_list:
-                node_to_plateau[node] = next_plateau_id
-            next_plateau_id += 1
-
-    if not plateaus:
+    if multi_ids.size == 0:
         self._has_plateaus = False
         self.n_plateau = 0
         return
 
+    n_plateau = multi_ids.size
+    comp_to_plateau = np.full(comp_sizes.shape[0], -1, dtype=np.int32)
+    comp_to_plateau[multi_ids] = np.arange(n_plateau, dtype=np.int32)
+    node_to_plateau = comp_to_plateau[membership]
+
+    # Group member nodes by plateau id.  ``in_plateau_nodes`` is ascending, and
+    # a stable sort by plateau id preserves that ascending node order within
+    # each group, so each member list is already sorted (matching the previous
+    # ``sorted(members)``).
+    in_plateau_nodes = np.nonzero(node_to_plateau >= 0)[0]
+    member_pids = node_to_plateau[in_plateau_nodes]
+    order = np.argsort(member_pids, kind="stable")
+    sorted_nodes = in_plateau_nodes[order]
+    sorted_pids = member_pids[order]
+    split_points = np.nonzero(np.diff(sorted_pids))[0] + 1
+    groups = np.split(sorted_nodes, split_points)
+    plateaus = {pid: grp.tolist() for pid, grp in enumerate(groups)}
+
     self._node_to_plateau = node_to_plateau
     self.plateaus = plateaus
-    self.n_plateau = len(plateaus)
+    self.n_plateau = n_plateau
     self._has_plateaus = True
 
-    # Build per-node neutral neighbor adjacency
+    # Build per-node neutral neighbor adjacency.  The explicit Python loop over
+    # ``neutral_pairs`` is faster here than vectorised regrouping because the
+    # neutral degree per node is high and the list->ndarray conversion of the
+    # pair list is itself costly.
     neutral_neighbors = defaultdict(list)
     for u, v in neutral_pairs:
         neutral_neighbors[u].append(v)
         neutral_neighbors[v].append(u)
     self._neutral_neighbors = dict(neutral_neighbors)
 
-    # Annotate graph vertices
+    # Annotate graph vertices.  Plateau size per node is the size of its
+    # component (1 for singletons), assigned via vectorised scatter.
     self.graph.vs["plateau_id"] = node_to_plateau.tolist()
-    plateau_sizes = np.ones(self.n_configs, dtype=np.int32)
-    for pid, members in plateaus.items():
-        size = len(members)
-        for node in members:
-            plateau_sizes[node] = size
+    plateau_sizes = np.ones(n_configs, dtype=np.int32)
+    plateau_sizes[in_plateau_nodes] = comp_sizes[membership[in_plateau_nodes]]
     self.graph.vs["plateau_size"] = plateau_sizes.tolist()
 
     if self.verbose:
