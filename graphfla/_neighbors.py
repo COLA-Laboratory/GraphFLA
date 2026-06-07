@@ -793,6 +793,12 @@ _MASKED_GROUPING_SEED = 0x9E3779B97F4A7C15
 # amortise numpy dispatch.
 _MASKED_VERIFY_CHUNK = 1_000_000
 
+# Number of configuration columns folded into the running int64 fingerprint
+# ``h`` per block. Bounds the transient ``column-block * weight`` int64 product
+# to ``n * _MASKED_FINGERPRINT_BLOCK`` cells, avoiding a full ``n * n_vars``
+# int64 materialisation, while staying wide enough to amortise the reduction.
+_MASKED_FINGERPRINT_BLOCK = 32
+
 
 def _within_run_pairs(group_id, n):
     """All within-group index pairs (a < b) for elements sharing a group id.
@@ -925,13 +931,15 @@ def _masked_grouping_pairs(configs_array):
     int64, wraparound is intentional and self-consistent). Rows with equal
     masked fingerprint form a candidate group. The groups are found by
     :func:`pandas.factorize` — an O(n) hash that maps each distinct masked
-    fingerprint to a small dense ``int32`` code — followed by a stable sort of
-    those narrow codes (numpy's radix sort over 4 bytes, far cheaper than the
-    8-byte radix sort an int64 ``argsort`` of the raw fingerprints would pay).
-    Positions whose masked fingerprints are *all distinct* (no two rows share
-    one) are skipped immediately, since they can contribute no pair. Total cost
-    is ``O(n_vars * n)`` plus ``O(n_edges)``, independent of the alphabet size
-    and of sparsity.
+    fingerprint to a dense code numbered ``0..K-1`` — followed by a stable
+    ``argsort`` of those codes. Because the codes are densely numbered, numpy's
+    radix sort adapts to their (small) value range and skips the all-zero high
+    bytes, so the sort is as cheap as a narrow-int sort and far cheaper than an
+    argsort of the raw high-entropy int64 fingerprints (no explicit down-cast is
+    needed). Positions whose masked fingerprints are *all distinct* (no two rows
+    share one) are skipped immediately, since they can contribute no pair. Total
+    cost is ``O(n_vars * n)`` plus ``O(n_edges)``, independent of the alphabet
+    size and of sparsity.
 
     Equal fingerprint is *necessary but not sufficient* (hashes can collide), so
     every emitted candidate pair is verified to have Hamming distance exactly 1
@@ -959,10 +967,15 @@ def _masked_grouping_pairs(configs_array):
     if n < 2 or n_vars == 0:
         return empty, empty
 
-    ai = a.astype(np.int64, copy=False)
-    # Narrow view used only for the equality-based Hamming verification; keeping
-    # it separate from the int64 ``ai`` (needed for the wraparound fingerprint
-    # arithmetic) makes the verification ~8x cheaper in both time and memory.
+    # Compact narrow-dtype view used both for the equality-based Hamming
+    # verification and as the source for the per-position fingerprint columns.
+    # For the usual protein/DNA/boolean codes this is the input ``a`` itself
+    # (uint8, no copy). The int64 fingerprint matrix is never materialised: a
+    # full ``a.astype(int64)`` would be 8x ``a`` (~680 MB for HIS7) and, being
+    # row-major, makes every ``[:, p]`` column gather an 8-byte strided
+    # (cache-hostile) read. Instead each masked fingerprint multiplies the
+    # narrow column ``averify[:, p]`` (cast to int64 on the fly), which both
+    # avoids the large allocation and makes the strided column read ~8x cheaper.
     averify = _compact_verify_view(a)
 
     # Fixed random int64 weights; deterministic so the grouping is reproducible.
@@ -972,9 +985,21 @@ def _masked_grouping_pairs(configs_array):
         info.min, info.max, size=n_vars, endpoint=True, dtype=np.int64
     )
 
-    # Full fingerprint h = ai @ weights, with int64 wraparound (intended).
-    with np.errstate(over="ignore"):
-        h = (ai * weights[np.newaxis, :]).sum(axis=1)
+    # Full fingerprint h = configs @ weights, with int64 wraparound (intended).
+    # Summed in column blocks so the transient ``column * weight`` product stays
+    # bounded (n x _MASKED_FINGERPRINT_BLOCK int64) instead of materialising the
+    # whole n x n_vars int64 matrix. Integer addition is associative under the
+    # modular wraparound, so the blocked accumulation is bit-identical to a
+    # single full-width reduction regardless of block size.
+    h = np.zeros(n, dtype=np.int64)
+    blk = _MASKED_FINGERPRINT_BLOCK
+    for p0 in range(0, n_vars, blk):
+        p1 = p0 + blk if p0 + blk < n_vars else n_vars
+        with np.errstate(over="ignore"):
+            h += (
+                averify[:, p0:p1].astype(np.int64)
+                * weights[np.newaxis, p0:p1]
+            ).sum(axis=1)
 
     i_parts: List[np.ndarray] = []
     j_parts: List[np.ndarray] = []
@@ -983,18 +1008,19 @@ def _masked_grouping_pairs(configs_array):
         # Masked fingerprint: remove position p's contribution. Same modular
         # int64 arithmetic as h, so two rows identical except at p share it.
         with np.errstate(over="ignore"):
-            masked = h - ai[:, p] * weights[p]
+            masked = h - averify[:, p].astype(np.int64) * weights[p]
 
         # Group rows by equal masked fingerprint. ``pd.factorize`` is an O(n)
-        # hash returning a dense int32 code per row (one per distinct
-        # fingerprint); sorting those narrow codes is a 4-byte radix sort, much
-        # cheaper than an 8-byte argsort of the raw int64 fingerprints.
+        # hash returning a dense code per row (one per distinct fingerprint),
+        # densely numbered ``0..K-1``. numpy's radix ``argsort`` adapts to that
+        # value range (it skips the all-zero high bytes), so sorting the codes is
+        # as cheap as a narrow-int sort and far cheaper than an argsort of the
+        # raw high-entropy int64 fingerprints — no explicit down-cast needed.
         codes, uniques = pd.factorize(masked, sort=False)
         if uniques.shape[0] == n:
             # Every masked fingerprint is distinct -> no two rows agree on all
             # but position p, so this position yields no candidate pair.
             continue
-        codes = codes.astype(np.int32, copy=False)
 
         order = np.argsort(codes, kind="stable")
         # Group id in sorted order is just the (non-decreasing) sorted codes;
