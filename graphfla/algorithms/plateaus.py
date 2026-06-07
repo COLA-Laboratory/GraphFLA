@@ -1,7 +1,9 @@
 from collections import defaultdict
+from itertools import chain
 
-import igraph as ig
 import numpy as np
+from scipy.sparse import coo_matrix
+from scipy.sparse.csgraph import connected_components
 
 from ..utils import timeit
 
@@ -34,19 +36,41 @@ def build_plateaus(landscape, neutral_pairs):
         return
 
     n_configs = self.n_configs
-    neutral_graph = ig.Graph(n=n_configs, edges=neutral_pairs, directed=False)
-    components = neutral_graph.connected_components()
 
-    # ``membership[v]`` is the connected-component id of vertex ``v``.  igraph
-    # labels components by first occurrence when scanning vertices 0..n-1, so
-    # filtering the size>1 component ids in ascending id order and renumbering
-    # them 0,1,2,... reproduces exactly the plateau ids the previous
-    # ``for members in components`` loop assigned (which iterated components in
-    # id order, skipping singletons).  This avoids a Python-level pass over all
-    # ``n_configs`` components -- the dominant cost when there are many
-    # singleton components (few/large neutral plateaus or many tiny ones).
-    membership = np.asarray(components.membership)
-    comp_sizes = np.bincount(membership)
+    # Connected components of the neutral network via SciPy, built directly from
+    # ``neutral_pairs`` as numpy arrays -- avoids constructing a second igraph.
+    #
+    # ``neutral_pairs`` is a Python list of ``(i, j)`` tuples; flattening it with
+    # ``itertools.chain`` into a single ``np.fromiter`` is ~3x faster than
+    # ``np.asarray`` on the list-of-tuples (which boxes each tuple).  The edges
+    # are loaded into a COO -> CSR matrix in their stored (directed) orientation
+    # only -- ``connected_components(..., connection="weak")`` already treats the
+    # graph as undirected, so materialising the transpose would only double the
+    # nnz and the build cost for no change in the resulting partition.
+    n_pairs = len(neutral_pairs)
+    flat = np.fromiter(
+        chain.from_iterable(neutral_pairs), dtype=np.int64, count=2 * n_pairs
+    )
+    rows = flat[0::2]
+    cols = flat[1::2]
+    data = np.ones(n_pairs, dtype=np.bool_)
+    adjacency = coo_matrix(
+        (data, (rows, cols)), shape=(n_configs, n_configs)
+    ).tocsr()
+    _, membership = connected_components(
+        adjacency, directed=False, connection="weak"
+    )
+    membership = membership.astype(np.int64, copy=False)
+
+    # ``membership[v]`` is the connected-component label of vertex ``v``.  Only
+    # components with more than one member are plateaus.  Plateau ids must match
+    # the previous ``for members in components`` loop, which assigned ids in the
+    # order components were first encountered scanning vertices 0..n-1 (skipping
+    # singletons).  SciPy's component labelling is not contractually tied to
+    # that convention, so plateau ids are assigned explicitly by ascending
+    # first-member (smallest node) index, which reproduces the old ordering
+    # regardless of how SciPy numbers its components.
+    comp_sizes = np.bincount(membership, minlength=n_configs)
     multi_ids = np.nonzero(comp_sizes > 1)[0]
 
     if multi_ids.size == 0:
@@ -54,9 +78,14 @@ def build_plateaus(landscape, neutral_pairs):
         self.n_plateau = 0
         return
 
-    n_plateau = multi_ids.size
+    # ``first_idx[label]`` is the smallest vertex index carrying that label.
+    _, first_idx = np.unique(membership, return_index=True)
+    plateau_order = np.argsort(first_idx[multi_ids], kind="stable")
+    ordered_comp = multi_ids[plateau_order]
+
+    n_plateau = ordered_comp.size
     comp_to_plateau = np.full(comp_sizes.shape[0], -1, dtype=np.int32)
-    comp_to_plateau[multi_ids] = np.arange(n_plateau, dtype=np.int32)
+    comp_to_plateau[ordered_comp] = np.arange(n_plateau, dtype=np.int32)
     node_to_plateau = comp_to_plateau[membership]
 
     # Group member nodes by plateau id.  ``in_plateau_nodes`` is ascending, and
