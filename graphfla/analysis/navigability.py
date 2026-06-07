@@ -36,7 +36,9 @@ def determine_global_optimum(self):
         self.go = None
         return
 
-    fitness_values = np.array(self.graph.vs["fitness"])
+    # ``asarray(..., float64)`` is cheaper than ``array(...)`` for the igraph
+    # attribute list and yields identical arg-extrema for the GO index.
+    fitness_values = np.asarray(self.graph.vs["fitness"], dtype=np.float64)
 
     if self.maximize:
         self.go_index = int(np.argmax(fitness_values))
