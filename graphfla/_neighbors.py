@@ -627,18 +627,169 @@ def _classify_pairs(i_arr, j_arr, fitness, epsilon, maximize, verbose):
 # --- Active strategy fast-path helpers --------------------------------
 
 
+def _mixed_radix_keys(configs_array, base):
+    """Encode each config row as a unique mixed-radix integer key.
+
+    For a row ``c`` of per-position codes in ``0..base-1``, the key is
+    ``sum_j c[j] * base**j`` (little-endian, position 0 is the least
+    significant digit). Because every code is strictly below *base*, the
+    mapping is a bijection over the represented configurations, so keys are
+    unique whenever the rows are unique.
+
+    Returns
+    -------
+    tuple[np.ndarray | None, np.ndarray | None]
+        ``(keys, place_values)`` as ``int64`` arrays, or ``(None, None)`` if
+        the largest representable key would overflow signed 64-bit range
+        (``base**n_vars > 2**63``), signalling the caller to fall back to the
+        exact Python implementation.
+    """
+    n_vars = configs_array.shape[1]
+    # Overflow guard: the maximum key is base**n_vars - 1. Refuse if even the
+    # place value of the most significant digit would not fit in int64.
+    if n_vars >= 64 or base ** n_vars > (1 << 63):
+        return None, None
+
+    place_values = np.array(
+        [base ** j for j in range(n_vars)], dtype=np.int64
+    )
+    keys = configs_array.astype(np.int64) @ place_values
+    return keys, place_values
+
+
+def _active_bytemap_vectorized(
+    configs_array, fitness, neutral_eps, maximize, base,
+    edges, delta_fits, neutral_pairs,
+):
+    """Vectorised single-substitution neighbour finder via mixed-radix keys.
+
+    Enumerates exactly the same ordered ``(source_row -> neighbour_row)`` visits
+    that the per-cell Python loop would (every row, every position ``p``, every
+    alternative value ``v != current_code[p]``) but resolves all rows for a
+    given ``(p, v)`` in one ``searchsorted`` lookup. The classification of each
+    visit is identical to the baseline:
+
+    * ``delta = fitness[source] - fitness[neighbour]``;
+    * ``abs(delta) <= neutral_eps`` -> neutral pair, recorded as ``(src, nbr)``
+      only when ``src < nbr`` (so each undirected neutral pair is kept once);
+    * otherwise, if the source is the worse endpoint
+      (``(maximize and delta < 0) or (not maximize and delta > 0)``), a directed
+      edge ``src -> nbr`` is emitted with ``delta_fit = abs(delta)``.
+
+    Returns
+    -------
+    bool
+        ``True`` if vectorisation ran (results appended to the output lists);
+        ``False`` if the mixed-radix key would overflow and the caller must use
+        the exact Python fallback instead.
+    """
+    keys, place_values = _mixed_radix_keys(configs_array, base)
+    if keys is None:
+        return False
+
+    n, n_vars = configs_array.shape
+    row_idx = np.arange(n)
+
+    order = np.argsort(keys, kind="stable")
+    skeys = keys[order]
+
+    src_list = []        # source row indices, in visit order
+    nbr_list = []        # matched neighbour row indices
+
+    for p in range(n_vars):
+        place = int(place_values[p])
+        codes_p = configs_array[:, p].astype(np.int64)
+        for v in range(base):
+            # Source rows are exactly those whose code at position p differs
+            # from v (the loop's "val != orig" / bit-flip condition).
+            src_mask = codes_p != v
+            if not src_mask.any():
+                continue
+            src_rows = row_idx[src_mask]
+            nbr_keys = keys[src_rows] + (v - codes_p[src_mask]) * place
+
+            pos = np.searchsorted(skeys, nbr_keys)
+            # Verify exact key match (searchsorted gives an insertion point;
+            # only positions in-range whose key equals the query are real hits).
+            valid = pos < n
+            if not valid.any():
+                continue
+            pos_valid = pos[valid]
+            exact = skeys[pos_valid] == nbr_keys[valid]
+            if not exact.any():
+                continue
+
+            hit_src = src_rows[valid][exact]
+            hit_nbr = order[pos_valid[exact]]
+            src_list.append(hit_src)
+            nbr_list.append(hit_nbr)
+
+    if not src_list:
+        return True
+
+    src = np.concatenate(src_list)
+    nbr = np.concatenate(nbr_list)
+
+    delta = fitness[src] - fitness[nbr]
+    abs_delta = np.abs(delta)
+
+    neutral_mask = abs_delta <= neutral_eps
+    if neutral_mask.any():
+        nsrc = src[neutral_mask]
+        nnbr = nbr[neutral_mask]
+        keep = nsrc < nnbr  # dedup: record each undirected neutral pair once
+        if keep.any():
+            neutral_pairs.extend(
+                zip(nsrc[keep].tolist(), nnbr[keep].tolist())
+            )
+
+    imp_mask = ~neutral_mask
+    if imp_mask.any():
+        idelta = delta[imp_mask]
+        # Worse-endpoint emission, matching the baseline direction guard.
+        if maximize:
+            edge_mask = idelta < 0
+        else:
+            edge_mask = idelta > 0
+        if edge_mask.any():
+            esrc = src[imp_mask][edge_mask]
+            enbr = nbr[imp_mask][edge_mask]
+            edge_abs = abs_delta[imp_mask][edge_mask]
+            edges.extend(zip(esrc.tolist(), enbr.tolist()))
+            delta_fits.extend(edge_abs.tolist())
+
+    return True
+
+
 def _active_boolean_bytemap(
     configs_array, fitness, epsilon, maximize, verbose,
     edges, delta_fits, neutral_pairs,
 ):
     """Byte-map lookup specialised for single bit flips."""
+    neutral_eps = _neutral_abs_threshold(epsilon)
     rows = np.ascontiguousarray(configs_array, dtype=np.uint8)
+    if _active_bytemap_vectorized(
+        rows, fitness, neutral_eps, maximize, 2,
+        edges, delta_fits, neutral_pairs,
+    ):
+        return
+
+    _active_boolean_bytemap_loop(
+        rows, fitness, neutral_eps, maximize, verbose,
+        edges, delta_fits, neutral_pairs,
+    )
+
+
+def _active_boolean_bytemap_loop(
+    rows, fitness, neutral_eps, maximize, verbose,
+    edges, delta_fits, neutral_pairs,
+):
+    """Exact Python-loop fallback for single bit flips (overflow path)."""
     index = {row.tobytes(): idx for idx, row in enumerate(rows)}
     get = index.get
     append_edge = edges.append
     append_delta = delta_fits.append
     append_neutral = neutral_pairs.append
-    neutral_eps = _neutral_abs_threshold(epsilon)
 
     it = (
         tqdm(
@@ -679,13 +830,30 @@ def _active_sequence_bytemap(
     edges, delta_fits, neutral_pairs,
 ):
     """Byte-map lookup specialised for single-position substitutions."""
+    neutral_eps = _neutral_abs_threshold(epsilon)
     rows = np.ascontiguousarray(configs_array, dtype=np.uint8)
+    if _active_bytemap_vectorized(
+        rows, fitness, neutral_eps, maximize, alphabet_size,
+        edges, delta_fits, neutral_pairs,
+    ):
+        return
+
+    _active_sequence_bytemap_loop(
+        rows, fitness, neutral_eps, maximize, verbose, alphabet_size,
+        edges, delta_fits, neutral_pairs,
+    )
+
+
+def _active_sequence_bytemap_loop(
+    rows, fitness, neutral_eps, maximize, verbose, alphabet_size,
+    edges, delta_fits, neutral_pairs,
+):
+    """Exact Python-loop fallback for substitutions (overflow path)."""
     index = {row.tobytes(): idx for idx, row in enumerate(rows)}
     get = index.get
     append_edge = edges.append
     append_delta = delta_fits.append
     append_neutral = neutral_pairs.append
-    neutral_eps = _neutral_abs_threshold(epsilon)
 
     it = (
         tqdm(
