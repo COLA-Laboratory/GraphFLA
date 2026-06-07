@@ -7,3 +7,4 @@ _verify/
 # construction performance campaign (uncommitted results/state)
 BENCH_RESULTS.md
 bench/__pycache__/
+bench/_localdata/
