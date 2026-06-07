@@ -259,7 +259,12 @@ class SequenceHandler:
             # Non-ASCII characters: defer to the slow loop, which builds a set
             # (no encoding) and raises the original invalid-character error.
             return None
-        used = {chr(code) for code in np.unique(byte_codes).tolist()}
+        # Distinct byte values via a 256-slot boolean scatter (a single linear
+        # pass, no sort) -- equivalent to, and faster than, ``np.unique`` on the
+        # whole (potentially 8-figure-length) byte buffer.
+        seen = np.zeros(256, dtype=bool)
+        seen[byte_codes] = True
+        used = {chr(code) for code in np.flatnonzero(seen).tolist()}
         if used - valid_chars:
             # An invalid character is present somewhere; let the slow loop find
             # the first offending sequence and raise the original message.
@@ -591,8 +596,7 @@ def encode_data(
         print("Preparing data for landscape construction (encoding variables)...")
 
     prepared_data_types = data_types.copy()
-    nunique = X.nunique()
-    invariant_cols = nunique.index[nunique <= 1].tolist()
+    invariant_cols = _invariant_columns(X)
 
     # X_for_encoding is the reduced view used internally for neighbor computation
     # and graph construction.  The full original X is kept so that invariant
@@ -1100,19 +1104,41 @@ def _parse_sequence_input(
         seq_len = len(sequences[0])
         if seq_len == 0:
             raise ValueError("Sequences cannot be empty strings.")
-        validated_sequences = []
-        for i, seq in enumerate(sequences):
-            seq_upper = seq.upper()
-            if len(seq_upper) != seq_len:
-                raise ValueError(
-                    f"All sequences must have the same length (expected {seq_len}, got {len(seq_upper)} for sequence {i})."
-                )
-            if not validated and not set(seq_upper).issubset(valid_chars):
-                invalid_chars = set(seq_upper) - valid_chars
-                raise ValueError(
-                    f"Sequence {i} contains invalid characters: {invalid_chars}. Allowed: {alphabet}"
-                )
-            validated_sequences.append(seq_upper)
+        n_seq = len(sequences)
+        # Fast path (high-dim): when every sequence already has the common
+        # length we can uppercase the *whole* corpus in one C-level call
+        # (``"".join(...).upper()``) instead of the per-sequence ``.upper()`` +
+        # ``.append`` loop, which dominates for large n. We require *every*
+        # length to equal ``seq_len`` (not merely the total to match, which
+        # could mask compensating over/under-length sequences) so a length
+        # violation still drops to the loop below, which reproduces the exact
+        # original error (first offending index and, for the unvalidated case,
+        # the ``invalid_chars`` set).
+        lengths = [len(s) for s in sequences]
+        # ``seq_len == lengths[0]``, so all-equal lengths implies all == seq_len.
+        uniform_length = min(lengths) == max(lengths)
+        joined_upper = None
+        if uniform_length:
+            joined_upper = "".join(sequences).upper()
+            if not validated and not set(joined_upper).issubset(valid_chars):
+                # An invalid character is somewhere; let the loop find the first
+                # offending sequence and raise the original per-index message.
+                joined_upper = None
+        if joined_upper is None:
+            validated_sequences = []
+            for i, seq in enumerate(sequences):
+                seq_upper = seq.upper()
+                if len(seq_upper) != seq_len:
+                    raise ValueError(
+                        f"All sequences must have the same length (expected {seq_len}, got {len(seq_upper)} for sequence {i})."
+                    )
+                if not validated and not set(seq_upper).issubset(valid_chars):
+                    invalid_chars = set(seq_upper) - valid_chars
+                    raise ValueError(
+                        f"Sequence {i} contains invalid characters: {invalid_chars}. Allowed: {alphabet}"
+                    )
+                validated_sequences.append(seq_upper)
+            joined_upper = "".join(validated_sequences)
         # Build the categorical columns directly from the ASCII bytes via a
         # lookup table (alphabet char -> category code), skipping the costly
         # S1 -> U1 widening and the per-column ``astype`` factorization. The
@@ -1120,21 +1146,27 @@ def _parse_sequence_input(
         # ``DataFrame(...).astype(CategoricalDtype(categories=alphabet))`` path:
         # codes are positions in ``alphabet`` and any character outside the
         # alphabet maps to -1 (NaN), which the shared null check below reports.
+        #
+        # The lookup table is sized to the *final* code dtype (``int8`` for any
+        # alphabet of <=127 symbols, which covers DNA/RNA/protein) so the mapped
+        # ``codes`` array is already the categorical's code dtype -- no wide
+        # int64 intermediate (8x the bytes of the whole matrix) and no per-column
+        # cast. We then materialise the column-major code layout *once* via a
+        # single transpose-to-contiguous, so each ``from_codes`` consumes an
+        # already-contiguous row (no 171 separate strided column copies).
         byte_array = np.frombuffer(
-            "".join(validated_sequences).encode("ascii"), dtype=np.uint8
-        ).reshape(len(validated_sequences), seq_len)
-        code_lut = np.full(256, -1, dtype=np.int64)
+            joined_upper.encode("ascii"), dtype=np.uint8
+        ).reshape(n_seq, seq_len)
+        codes_dtype = np.int8 if len(alphabet) <= np.iinfo(np.int8).max else np.int64
+        code_lut = np.full(256, -1, dtype=codes_dtype)
         for _code, _ch in enumerate(alphabet):
             code_lut[ord(_ch)] = _code
         codes_2d = code_lut[byte_array]
-        codes_dtype = np.int8 if len(alphabet) <= np.iinfo(np.int8).max else np.int64
+        codes_by_col = np.ascontiguousarray(codes_2d.T)  # (seq_len, n_seq)
         cat_dtype = pd.CategoricalDtype(categories=alphabet, ordered=False)
         X_df = pd.DataFrame(
             {
-                f"pos_{i}": pd.Categorical.from_codes(
-                    np.ascontiguousarray(codes_2d[:, i], dtype=codes_dtype),
-                    dtype=cat_dtype,
-                )
+                f"pos_{i}": pd.Categorical.from_codes(codes_by_col[i], dtype=cat_dtype)
                 for i in range(seq_len)
             },
             copy=False,
@@ -1264,6 +1296,43 @@ def _drop_duplicates(
         )
 
     return X_out, f_out
+
+
+def _invariant_columns(X: pd.DataFrame) -> List[str]:
+    """Return the columns of *X* that take at most one distinct value.
+
+    Exactly equivalent to ``X.nunique().index[X.nunique() <= 1].tolist()`` --
+    the column names (in ``X``-column order) for which ``Series.nunique()``
+    (which drops NaN) is ``<= 1`` -- but avoids the full per-column
+    ``factorize``/``unique`` machinery for *categorical* columns. For those the
+    distinct-non-NaN count is read directly off the integer category codes (NaN
+    is code ``-1``), which is an O(n) min/max scan instead of an O(n log n)
+    hash/sort and is dramatically cheaper when there are many wide categorical
+    columns (the high-dimensional sequence case). Non-categorical columns fall
+    back to ``Series.nunique()`` so the result is identical for every dtype.
+    """
+    invariant = []
+    for col in X.columns:
+        series = X[col]
+        if isinstance(series.dtype, pd.CategoricalDtype):
+            codes = series.cat.codes.to_numpy()
+            if codes.size == 0:
+                invariant.append(col)
+                continue
+            mn = codes.min()
+            if mn >= 0:
+                # No NaN present: invariant iff a single distinct code.
+                if mn == codes.max():
+                    invariant.append(col)
+            else:
+                # NaN present (code -1): count distinct among the non-NaN codes,
+                # matching ``nunique(dropna=True)``.
+                nonneg = codes[codes >= 0]
+                if nonneg.size == 0 or nonneg.min() == nonneg.max():
+                    invariant.append(col)
+        elif series.nunique() <= 1:
+            invariant.append(col)
+    return invariant
 
 
 def _build_config_dict(
