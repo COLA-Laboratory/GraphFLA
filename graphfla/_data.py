@@ -157,16 +157,20 @@ class SequenceHandler:
         used_chars = set()
 
         if isinstance(X, (list, tuple, pd.Series)):
-            for idx, seq in enumerate(X):
-                if isinstance(seq, str):
-                    seq_chars = set(seq.upper())
-                    invalid_chars = seq_chars - valid_chars
-                    if invalid_chars:
-                        raise ValueError(
-                            f"Input X values at index {idx} contain {', '.join(invalid_chars)}, "
-                            f"which is not among specified alphabet: {self.alphabet}"
-                        )
-                    used_chars.update(seq_chars)
+            fast_used = self._used_chars_fast(X, valid_chars)
+            if fast_used is not None:
+                used_chars = fast_used
+            else:
+                for idx, seq in enumerate(X):
+                    if isinstance(seq, str):
+                        seq_chars = set(seq.upper())
+                        invalid_chars = seq_chars - valid_chars
+                        if invalid_chars:
+                            raise ValueError(
+                                f"Input X values at index {idx} contain {', '.join(invalid_chars)}, "
+                                f"which is not among specified alphabet: {self.alphabet}"
+                            )
+                        used_chars.update(seq_chars)
 
         elif isinstance(X, pd.DataFrame):
             for col in X.columns:
@@ -182,16 +186,20 @@ class SequenceHandler:
 
         elif isinstance(X, np.ndarray):
             if X.ndim == 1:
-                for idx, seq in enumerate(X):
-                    if isinstance(seq, str):
-                        seq_chars = set(seq.upper())
-                        invalid_chars = seq_chars - valid_chars
-                        if invalid_chars:
-                            raise ValueError(
-                                f"Input X values at index {idx} contain {', '.join(invalid_chars)}, "
-                                f"which is not among specified alphabet: {self.alphabet}"
-                            )
-                        used_chars.update(seq_chars)
+                fast_used = self._used_chars_fast(X, valid_chars)
+                if fast_used is not None:
+                    used_chars = fast_used
+                else:
+                    for idx, seq in enumerate(X):
+                        if isinstance(seq, str):
+                            seq_chars = set(seq.upper())
+                            invalid_chars = seq_chars - valid_chars
+                            if invalid_chars:
+                                raise ValueError(
+                                    f"Input X values at index {idx} contain {', '.join(invalid_chars)}, "
+                                    f"which is not among specified alphabet: {self.alphabet}"
+                                )
+                            used_chars.update(seq_chars)
             else:
                 for i in range(X.shape[0]):
                     for j in range(X.shape[1]):
@@ -213,6 +221,50 @@ class SequenceHandler:
                 f"This might indicate you're using an incorrect alphabet for your data.",
                 UserWarning,
             )
+
+    @staticmethod
+    def _used_chars_fast(X, valid_chars):
+        """Return the set of uppercased characters used across a 1-D string input.
+
+        This is a vectorized equivalent of the per-sequence ``used_chars``
+        accumulation in :meth:`_validate_alphabet` for the common case where
+        *every* element is a (Python ``str``) sequence and all characters are
+        ASCII and within the alphabet.
+
+        Returns
+        -------
+        set or None
+            The set of distinct uppercased characters when the fast path
+            applies and every character is valid; otherwise ``None`` to signal
+            that the caller should fall back to the element-by-element loop
+            (which reproduces the exact error message, non-str skipping, or
+            non-ASCII handling).
+        """
+        if isinstance(X, pd.Series):
+            values = X.to_numpy()
+        else:
+            values = X
+        try:
+            # ``"".join`` only succeeds when every element is a str; a mixed
+            # input (which the slow loop would skip element-wise) raises here
+            # and we fall back.
+            joined = "".join(values)
+        except TypeError:
+            return None
+        if not joined:
+            return set()
+        try:
+            byte_codes = np.frombuffer(joined.upper().encode("ascii"), dtype=np.uint8)
+        except UnicodeEncodeError:
+            # Non-ASCII characters: defer to the slow loop, which builds a set
+            # (no encoding) and raises the original invalid-character error.
+            return None
+        used = {chr(code) for code in np.unique(byte_codes).tolist()}
+        if used - valid_chars:
+            # An invalid character is present somewhere; let the slow loop find
+            # the first offending sequence and raise the original message.
+            return None
+        return used
 
 
 class OrdinalHandler:
@@ -942,6 +994,7 @@ def _parse_sequence_input(
     X_df = None
     seq_len = -1
     valid_chars = set(alphabet)
+    already_categorical = False
 
     # --- Format 1: list/series/array of strings ---
     is_sequence_format = False
@@ -981,14 +1034,33 @@ def _parse_sequence_input(
                     f"Sequence {i} contains invalid characters: {invalid_chars}. Allowed: {alphabet}"
                 )
             validated_sequences.append(seq_upper)
-        sequence_array = np.frombuffer(
-            "".join(validated_sequences).encode("ascii"), dtype="S1"
-        ).reshape(len(validated_sequences), seq_len).astype("U1")
+        # Build the categorical columns directly from the ASCII bytes via a
+        # lookup table (alphabet char -> category code), skipping the costly
+        # S1 -> U1 widening and the per-column ``astype`` factorization. The
+        # result is byte-for-byte identical to the previous
+        # ``DataFrame(...).astype(CategoricalDtype(categories=alphabet))`` path:
+        # codes are positions in ``alphabet`` and any character outside the
+        # alphabet maps to -1 (NaN), which the shared null check below reports.
+        byte_array = np.frombuffer(
+            "".join(validated_sequences).encode("ascii"), dtype=np.uint8
+        ).reshape(len(validated_sequences), seq_len)
+        code_lut = np.full(256, -1, dtype=np.int64)
+        for _code, _ch in enumerate(alphabet):
+            code_lut[ord(_ch)] = _code
+        codes_2d = code_lut[byte_array]
+        codes_dtype = np.int8 if len(alphabet) <= np.iinfo(np.int8).max else np.int64
+        cat_dtype = pd.CategoricalDtype(categories=alphabet, ordered=False)
         X_df = pd.DataFrame(
-            sequence_array,
-            columns=[f"pos_{i}" for i in range(seq_len)],
+            {
+                f"pos_{i}": pd.Categorical.from_codes(
+                    np.ascontiguousarray(codes_2d[:, i], dtype=codes_dtype),
+                    dtype=cat_dtype,
+                )
+                for i in range(seq_len)
+            },
             copy=False,
         )
+        already_categorical = True
 
     # --- Format 2: DataFrame or ndarray ---
     elif isinstance(X_input, (pd.DataFrame, np.ndarray)):
@@ -1020,8 +1092,9 @@ def _parse_sequence_input(
 
     if X_df is None or X_df.empty:
         raise ValueError("Could not process input X into a DataFrame.")
-    cat_dtype = pd.CategoricalDtype(categories=alphabet, ordered=False)
-    X_df = X_df.astype(cat_dtype)
+    if not already_categorical:
+        cat_dtype = pd.CategoricalDtype(categories=alphabet, ordered=False)
+        X_df = X_df.astype(cat_dtype)
     for col in X_df.columns:
         if X_df[col].isnull().any():
             raise ValueError(
