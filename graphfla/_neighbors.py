@@ -19,6 +19,7 @@ from typing import Protocol, Tuple, Dict, List, Callable, Union, runtime_checkab
 import warnings
 
 import numpy as np
+import pandas as pd
 from tqdm import tqdm
 
 
@@ -318,7 +319,11 @@ def build_edges(
     -------
     EdgeResult
     """
-    if configs is None or config_dict is None:
+    # ``configs`` (the per-row tuple ``Series``) may be ``None`` when the caller
+    # defers its construction; the numeric ``configs_array`` is then the source
+    # of truth and the only path that still needs the tuples (``_active_generic``)
+    # derives them from it on demand.
+    if (configs is None and configs_array is None) or config_dict is None:
         raise RuntimeError("Cannot build edges: configs/config_dict missing.")
     if n_configs is None:
         raise RuntimeError("n_configs not set before edge construction.")
@@ -489,12 +494,21 @@ def _build_active(
             edges, delta_fits = result
 
     if edges is None:
-        # Generic Python fallback builds lists; convert at the boundary.
+        # Generic Python fallback builds lists; convert at the boundary. This is
+        # the only ``active`` path that consumes the per-row configuration
+        # *tuples*; if the caller deferred the tuple ``Series`` (passing only the
+        # numeric ``configs_array``), derive the equivalent tuple iterable here so
+        # the hash-lookup keys match the generator's tuple output exactly.
+        generic_configs = configs
+        if generic_configs is None:
+            # Materialise a concrete list of tuples (``_active_generic`` iterates
+            # the configurations twice and calls ``len`` on them).
+            generic_configs = list(map(tuple, configs_array.tolist()))
         edge_list: List[Tuple[int, int]] = []
         delta_list: List[float] = []
         _active_generic(
-            configs, config_dict, fitness, n_edit, epsilon, maximize, verbose,
-            neighbor_generator, edge_list, delta_list, neutral_pairs,
+            generic_configs, config_dict, fitness, n_edit, epsilon, maximize,
+            verbose, neighbor_generator, edge_list, delta_list, neutral_pairs,
         )
         edges, delta_fits = _edge_arrays_from_lists(edge_list, delta_list)
 
@@ -771,6 +785,14 @@ def _as_config_matrix(configs, configs_array=None):
 # final exact pair set) reproducible across runs and processes.
 _MASKED_GROUPING_SEED = 0x9E3779B97F4A7C15
 
+# Max candidate pairs whose two configuration rows are gathered at once during
+# the Hamming-1 collision verification. Bounds the transient
+# ``rows[cand_i]`` / ``rows[cand_j]`` buffers (each ``chunk * n_vars`` of the
+# compact verify dtype) so peak memory stays flat regardless of how many
+# candidates a position produces, while keeping each block large enough to
+# amortise numpy dispatch.
+_MASKED_VERIFY_CHUNK = 1_000_000
+
 
 def _within_run_pairs(group_id, n):
     """All within-group index pairs (a < b) for elements sharing a group id.
@@ -836,6 +858,56 @@ def _within_run_pairs(group_id, n):
     return (base + a).astype(np.intp), (base + b).astype(np.intp)
 
 
+def _compact_verify_view(a):
+    """Return a narrow-dtype copy of ``a`` for the Hamming collision check.
+
+    The verification only tests element equality, so the column codes can be
+    held in the smallest unsigned integer width that fits ``a``'s value range.
+    Narrowing from int64 to uint8 (the usual case: protein/DNA/boolean codes are
+    well under 256) shrinks both the gathered ``rows[cand_i]`` buffers and the
+    per-element ``!=`` work ~8x, which dominates the verification cost. When the
+    input is already ``uint8`` it is returned unchanged (no copy).
+    """
+    if a.dtype == np.uint8:
+        return a
+    vmin = int(a.min())
+    vmax = int(a.max())
+    if vmin >= 0:
+        if vmax <= 0xFF:
+            return a.astype(np.uint8)
+        if vmax <= 0xFFFF:
+            return a.astype(np.uint16)
+        if vmax <= 0xFFFFFFFF:
+            return a.astype(np.uint32)
+    return a.astype(np.int64, copy=False)
+
+
+def _verify_hamming1(rows, cand_i, cand_j):
+    """Keep only candidate pairs that are *exactly* Hamming-1, chunked.
+
+    ``cand_i`` / ``cand_j`` index matched candidate rows that share a masked
+    fingerprint (necessary but not sufficient for Hamming distance 1, since the
+    scalar fingerprint can collide). This confirms each is truly Hamming-1 by
+    counting differing columns over ``rows`` (the compact verify view), in
+    blocks of :data:`_MASKED_VERIFY_CHUNK` so the gathered
+    ``rows[cand_i_block]`` / ``rows[cand_j_block]`` arrays — the verification's
+    peak transient — never exceed one block, bounding peak memory independently
+    of the candidate count.
+
+    Returns the boolean keep mask aligned with ``cand_i`` / ``cand_j``.
+    """
+    m = cand_i.shape[0]
+    keep = np.empty(m, dtype=bool)
+    chunk = _MASKED_VERIFY_CHUNK
+    for s in range(0, m, chunk):
+        e = s + chunk if s + chunk < m else m
+        hdist = np.count_nonzero(
+            rows[cand_i[s:e]] != rows[cand_j[s:e]], axis=1
+        )
+        np.equal(hdist, 1, out=keep[s:e])
+    return keep
+
+
 def _masked_grouping_pairs(configs_array):
     """Find every unordered Hamming-1 pair via masked-position grouping.
 
@@ -851,14 +923,23 @@ def _masked_grouping_pairs(configs_array):
     seeded, shape ``n_vars``), the full fingerprint is ``h = configs @ R`` and
     the position-``p`` masked fingerprint is ``h - configs[:, p] * R[p]`` (all
     int64, wraparound is intentional and self-consistent). Rows with equal
-    masked fingerprint form a candidate group, found by sorting the fingerprints
-    and scanning runs of equal value — total cost ``O(n_vars * n log n)`` plus
-    ``O(n_edges)``, independent of the alphabet size and of sparsity.
+    masked fingerprint form a candidate group. The groups are found by
+    :func:`pandas.factorize` — an O(n) hash that maps each distinct masked
+    fingerprint to a small dense ``int32`` code — followed by a stable sort of
+    those narrow codes (numpy's radix sort over 4 bytes, far cheaper than the
+    8-byte radix sort an int64 ``argsort`` of the raw fingerprints would pay).
+    Positions whose masked fingerprints are *all distinct* (no two rows share
+    one) are skipped immediately, since they can contribute no pair. Total cost
+    is ``O(n_vars * n)`` plus ``O(n_edges)``, independent of the alphabet size
+    and of sparsity.
 
     Equal fingerprint is *necessary but not sufficient* (hashes can collide), so
     every emitted candidate pair is verified to have Hamming distance exactly 1
-    (``count_nonzero(configs[i] != configs[j]) == 1``); pairs failing the check
-    are dropped. The result is therefore EXACT regardless of hash collisions.
+    (``count_nonzero(configs[i] != configs[j]) == 1``, via
+    :func:`_verify_hamming1`); pairs failing the check are dropped. The result is
+    therefore EXACT regardless of hash collisions. The verification compares a
+    compact narrow-dtype view of the rows (:func:`_compact_verify_view`) in
+    bounded chunks, so it is both fast and memory-flat.
 
     Parameters
     ----------
@@ -879,6 +960,10 @@ def _masked_grouping_pairs(configs_array):
         return empty, empty
 
     ai = a.astype(np.int64, copy=False)
+    # Narrow view used only for the equality-based Hamming verification; keeping
+    # it separate from the int64 ``ai`` (needed for the wraparound fingerprint
+    # arithmetic) makes the verification ~8x cheaper in both time and memory.
+    averify = _compact_verify_view(a)
 
     # Fixed random int64 weights; deterministic so the grouping is reproducible.
     rng = np.random.default_rng(_MASKED_GROUPING_SEED)
@@ -900,13 +985,21 @@ def _masked_grouping_pairs(configs_array):
         with np.errstate(over="ignore"):
             masked = h - ai[:, p] * weights[p]
 
-        order = np.argsort(masked, kind="stable")
-        smasked = masked[order]
-        # Group id in sorted order: increments at each new fingerprint value.
-        change = np.empty(n, dtype=bool)
-        change[0] = True
-        np.not_equal(smasked[1:], smasked[:-1], out=change[1:])
-        gid = np.cumsum(change) - 1
+        # Group rows by equal masked fingerprint. ``pd.factorize`` is an O(n)
+        # hash returning a dense int32 code per row (one per distinct
+        # fingerprint); sorting those narrow codes is a 4-byte radix sort, much
+        # cheaper than an 8-byte argsort of the raw int64 fingerprints.
+        codes, uniques = pd.factorize(masked, sort=False)
+        if uniques.shape[0] == n:
+            # Every masked fingerprint is distinct -> no two rows agree on all
+            # but position p, so this position yields no candidate pair.
+            continue
+        codes = codes.astype(np.int32, copy=False)
+
+        order = np.argsort(codes, kind="stable")
+        # Group id in sorted order is just the (non-decreasing) sorted codes;
+        # _within_run_pairs only needs equal labels to be contiguous.
+        gid = codes[order]
 
         ca, cb = _within_run_pairs(gid, n)
         if ca.size == 0:
@@ -916,10 +1009,9 @@ def _masked_grouping_pairs(configs_array):
         cand_j = order[cb]
 
         # Collision safety: keep only candidates that are truly Hamming-1.
-        # Runs are tiny for sparse data, so this is cheap; it makes the result
-        # exact regardless of fingerprint collisions.
-        hdist = np.count_nonzero(ai[cand_i] != ai[cand_j], axis=1)
-        keep = hdist == 1
+        # Verified in bounded chunks against the compact view, so the result is
+        # exact regardless of fingerprint collisions and peak memory stays flat.
+        keep = _verify_hamming1(averify, cand_i, cand_j)
         if not keep.any():
             continue
 
