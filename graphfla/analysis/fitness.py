@@ -158,7 +158,7 @@ def distribution_fit_effects(landscape, mutation):
     A, pos, B = mutation
 
     data = landscape.get_data()
-    X = data.iloc[:, : landscape.n_vars]
+    X = data[list(landscape.data_types.keys())]
 
     unique_alleles = X[pos].unique()
     if A not in unique_alleles:
