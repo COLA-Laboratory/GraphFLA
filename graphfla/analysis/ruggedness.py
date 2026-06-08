@@ -4,7 +4,7 @@ import pandas as pd
 import warnings
 import random
 
-from ..algorithms import random_walk
+from ..algorithms import random_walk, SearchCache
 from typing import Tuple
 from sklearn.linear_model import LinearRegression
 
@@ -91,12 +91,11 @@ def autocorrelation(
     # estimate toward zero; pooling is the unbiased estimator (Weinberger 1990).
     rand = random.Random(seed) if seed is not None else random
     series = []
+    cache = SearchCache(landscape.graph)
     for _ in range(walk_times):
         random_node = rand.randrange(0, landscape.n_configs)
         walk_seed = rand.getrandbits(32) if seed is not None else None
-        logger = random_walk(
-            landscape.graph, random_node, "fitness", walk_length, seed=walk_seed
-        )
+        logger = random_walk(cache, random_node, "fitness", walk_length, seed=walk_seed)
         if logger.shape[0] > lag:
             series.append(np.asarray(logger[:, 2], dtype=float))
 

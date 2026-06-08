@@ -8,3 +8,6 @@ _verify/
 BENCH_RESULTS.md
 bench/__pycache__/
 bench/_localdata/
+
+# algorithms performance work (uncommitted results/state)
+bench/ALGO_BENCH_RESULTS.md
