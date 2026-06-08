@@ -30,11 +30,10 @@ class Max3Sat(OptimizationProblem):
         super().__init__(n, seed)
         if alpha <= 0:
             raise ValueError("Clause-to-variable ratio 'alpha' must be positive.")
-        self.m = math.floor(alpha * n)  # Number of clauses
+        self.m = math.floor(alpha * n)  # number of clauses
         if self.m == 0:
             print(f"Warning: alpha*n ({alpha}*{n}) resulted in 0 clauses.")
         self.alpha = alpha
-        # Generate clauses using the instance's RNG for reproducibility
         self.clauses = self._generate_clauses()
 
     def _generate_clauses(self):
@@ -55,16 +54,14 @@ class Max3Sat(OptimizationProblem):
         attempts = 0
         max_attempts = (
             self.m * 100
-        )  # Heuristic limit to prevent infinite loops if m is very large relative to possible unique clauses
+        )  # guard against infinite loop when m approaches the unique-clause ceiling
 
         while len(clauses) < self.m and attempts < max_attempts:
-            # Sample 3 distinct variable indices using the instance's RNG
             vars_indices = self.rng.sample(self.variables, 3)
-            # For each variable, randomly choose True (positive) or False (negated) literal using instance's RNG
+            # sorted() canonicalizes literal order so permuted-but-equivalent clauses dedup
             clause_literals = tuple(
                 sorted((var, self.rng.choice([True, False])) for var in vars_indices)
             )
-            # Sorting makes the clause representation canonical, preventing equivalent clauses like ( (0,T),(1,F),(2,T) ) and ( (1,F),(0,T),(2,T) ) from being distinct.
             clauses.add(clause_literals)
             attempts += 1
 
@@ -94,30 +91,20 @@ class Max3Sat(OptimizationProblem):
         int
             The number of satisfied clauses for the given configuration.
         """
-        config_tuple = tuple(config)  # Ensure tuple
+        config_tuple = tuple(config)
         if len(config_tuple) != self.n:
             raise ValueError(
                 f"Configuration length {len(config_tuple)} does not match problem dimension {self.n}"
             )
-        # Check if config contains boolean values (or convertible like 0/1)
-        # Optional: Add type/value check if necessary, e.g.
-        # if not all(isinstance(val, bool) or val in {0, 1} for val in config_tuple):
-        #    raise ValueError("Configuration must contain Boolean or 0/1 values.")
 
         num_satisfied = 0
-        # Iterate through the pre-generated clauses
         for clause in self.clauses:
-            # Check if *any* literal in the clause is satisfied by the config
-            # A literal (var, is_positive) is satisfied if:
-            # - is_positive is True and config[var] is True
-            # - is_positive is False and config[var] is False
-            # This is equivalent to checking: config[var] == is_positive
+            # a literal (var, is_positive) is satisfied iff config[var] == is_positive
             if any(
                 config_tuple[var_idx] == is_positive for var_idx, is_positive in clause
             ):
                 num_satisfied += 1
 
-        # The fitness is simply the count of satisfied clauses.
         return num_satisfied
 
 
@@ -156,10 +143,9 @@ class Knapsack(OptimizationProblem):
 
         self.correlation = correlation
 
-        # Generate item weights and values
         self.weights, self.values = self._generate_items()
 
-        # Calculate capacity based on the ratio of total weight
+        # capacity is a fraction of the total weight of all items
         total_weight = sum(self.weights)
         self.capacity = int(total_weight * capacity_ratio)
 
@@ -172,27 +158,23 @@ class Knapsack(OptimizationProblem):
         tuple
             (weights, values) as lists of integers
         """
-        # Generate weights in the range [1, 100]
         weights = [self.rng.randint(1, 100) for _ in range(self.n)]
 
-        if abs(self.correlation) < 0.01:  # Uncorrelated
+        if abs(self.correlation) < 0.01:  # uncorrelated
             values = [self.rng.randint(1, 100) for _ in range(self.n)]
-        elif self.correlation > 0:  # Positively correlated
-            # Value is proportional to weight plus some noise
+        elif self.correlation > 0:  # value tracks weight, noise scaled by 1-correlation
             constant = 10
             values = [
                 int(w + constant + self.rng.uniform(-10, 10) * (1 - self.correlation))
                 for w in weights
             ]
-        else:  # Negatively correlated
-            # Value is inversely proportional to weight
+        else:  # value inversely tracks weight, noise scaled by 1+correlation
             constant = 100
             values = [
                 int(constant - w + self.rng.uniform(-10, 10) * (1 + self.correlation))
                 for w in weights
             ]
-            # Ensure all values are positive
-            values = [max(1, v) for v in values]
+            values = [max(1, v) for v in values]  # keep values positive
 
         return weights, values
 
@@ -213,18 +195,16 @@ class Knapsack(OptimizationProblem):
         float
             The total value of selected items if weight constraint is satisfied, 0 otherwise.
         """
-        config_tuple = tuple(config)  # Ensure tuple
+        config_tuple = tuple(config)
         if len(config_tuple) != self.n:
             raise ValueError(
                 f"Configuration length {len(config_tuple)} does not match problem dimension {self.n}"
             )
 
-        # Calculate total weight and value of selected items
         total_weight = sum(self.weights[i] * config_tuple[i] for i in self.variables)
         total_value = sum(self.values[i] * config_tuple[i] for i in self.variables)
 
-        # Return 0 if weight constraint is violated
-        if total_weight > self.capacity:
+        if total_weight > self.capacity:  # infeasible: over capacity
             return 0.0
 
         return float(total_value)
@@ -261,10 +241,8 @@ class NumberPartitioning(OptimizationProblem):
             raise ValueError("alpha must be positive")
 
         self.alpha = alpha
-        # Calculate bit precision based on alpha and n
         self.bit_precision = int(alpha * n)
 
-        # Generate the set of numbers to be partitioned
         self.numbers = self._generate_numbers()
         self.total_sum = sum(self.numbers)
 
@@ -300,17 +278,15 @@ class NumberPartitioning(OptimizationProblem):
         float
             The negated absolute difference between the sums of the two partitions.
         """
-        config_tuple = tuple(config)  # Ensure tuple
+        config_tuple = tuple(config)
         if len(config_tuple) != self.n:
             raise ValueError(
                 f"Configuration length {len(config_tuple)} does not match problem dimension {self.n}"
             )
 
-        # Calculate sum of the first partition (where config[i] == 0)
+        # first partition is the config[i] == 0 subset; second is the complement
         sum_first = sum(self.numbers[i] * (1 - config_tuple[i]) for i in self.variables)
-
-        # Sum of second partition can be derived from total and first
         sum_second = self.total_sum - sum_first
 
-        # Return negative difference (higher is better, 0 is perfect partition)
+        # negate so higher is better; 0 is a perfect partition
         return -abs(sum_first - sum_second)

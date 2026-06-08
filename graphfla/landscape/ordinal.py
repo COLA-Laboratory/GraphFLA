@@ -58,10 +58,8 @@ class OrdinalLandscape(Landscape):
     >>> landscape = OrdinalLandscape(maximize=True).build_from_data(X, f, verbose=False)
     """
 
-    #: Ordinal landscapes default to the "active" neighbourhood strategy so the
-    #: OrdinalNeighborGenerator enforces ±1-step (Manhattan-1) adjacency. This
-    #: replaces a former ``build_from_data`` override (which re-declared the full
-    #: signature just to flip this default); the base method consults this attr.
+    #: Default to "active" so OrdinalNeighborGenerator enforces ±1-step
+    #: (Manhattan-1) adjacency; the base build_from_data consults this attr.
     _default_neighborhood_strategy = "active"
 
     def __init__(self, maximize: bool = True):

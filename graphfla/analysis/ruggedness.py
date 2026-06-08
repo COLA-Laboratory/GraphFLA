@@ -87,12 +87,8 @@ def autocorrelation(
         walks under a single grand mean. Returns NaN if no walk yields more
         than ``lag`` steps.
     """
-    # Collect the fitness series of every walk, then pool the lagged products
-    # using a single grand mean. Centering each short walk by its *own* mean
-    # (the previous behaviour) removes the slow component of the series and
-    # biases the autocorrelation strongly toward zero; pooling with the common
-    # walk-sampled mean is the unbiased estimator of the random-walk
-    # autocorrelation of Weinberger (1990).
+    # Pool lagged products under one grand mean: per-walk centering biases the
+    # estimate toward zero; pooling is the unbiased estimator (Weinberger 1990).
     rand = random.Random(seed) if seed is not None else random
     series = []
     for _ in range(walk_times):
@@ -139,7 +135,7 @@ def gradient_intensity(landscape) -> float:
     if total_edges == 0:
         return 0.0
 
-    # Get the list of delta_fit values for all edges (default to 0 if missing)
+    # delta_fit defaults to 0 when the attribute is missing on an edge
     delta_fits = [abs(edge.attributes().get("delta_fit", 0)) for edge in graph.es]
     total_delta_fit = sum(delta_fits)
     fitness = landscape.graph.vs["fitness"]
@@ -202,10 +198,9 @@ def r_s_ratio(landscape) -> float:
 
     # 2. Prepare Numerical Genotype Representation for Additive Model
     X_transform_list = []
-    cols = list(data_types.keys())  # Maintain order
+    cols = list(data_types.keys())  # preserve column order
 
-    # Canonical integer encoding (vertex-aligned with get_data()), used to keep
-    # ordinal codes consistent with how the landscape was built.
+    # Vertex-aligned integer encoding; keeps ordinal codes consistent with build.
     configs_array = getattr(landscape, "_configs_array", None)
     if configs_array is not None and configs_array.shape[0] != len(raw_X):
         configs_array = None
@@ -213,17 +208,15 @@ def r_s_ratio(landscape) -> float:
     for j, col in enumerate(cols):
         dtype = data_types[col]
         if dtype == "boolean":
-            # Convert boolean to 0/1 integer representation
             col_values = raw_X[col].astype(bool).astype(int).values.reshape(-1, 1)
             X_transform_list.append(col_values)
         elif dtype == "categorical":
-            # Use one-hot encoding for nominal categorical variables
             cat_series = pd.Categorical(raw_X[col])
-            # Get one-hot encoded columns, drop first category to avoid multicollinearity
+            # drop_first avoids multicollinearity in the one-hot encoding
             one_hot = pd.get_dummies(cat_series, drop_first=True)
             X_transform_list.append(one_hot.values)
         elif dtype == "ordinal":
-            # Order-preserving numerical codes.
+            # order-preserving numerical codes
             if configs_array is not None:
                 col_values = np.asarray(
                     configs_array[:, j], dtype=float
@@ -238,13 +231,11 @@ def r_s_ratio(landscape) -> float:
                 f"Unsupported data type '{dtype}' for r/s ratio calculation in column '{col}'"
             )
 
-    # Combine all transformed columns into a single array
     if len(X_transform_list) == 1:
         X_fit = X_transform_list[0]
     else:
         X_fit = np.hstack(X_transform_list)
 
-    # Check for sufficient data
     n_samples, n_features = X_fit.shape
     if n_samples <= n_features:
         warnings.warn(
@@ -259,15 +250,13 @@ def r_s_ratio(landscape) -> float:
         linear_model = LinearRegression(fit_intercept=True)
         linear_model.fit(X_fit, fitness_values)
 
-        # 4. Calculate Slope (s)
-        # Mean of absolute values of additive coefficients (betas)
+        # slope s = mean absolute additive coefficient (beta)
         additive_coeffs = np.asarray(linear_model.coef_, dtype=np.float64).reshape(-1)
-        # potential case where n_features is 1
         if additive_coeffs.size == 1:
             slope_s = np.abs(additive_coeffs[0])
         elif additive_coeffs.size > 1:
             slope_s = np.mean(np.abs(additive_coeffs))
-        else:  # n_features == 0 (should not happen if validation is correct)
+        else:  # n_features == 0, unreachable if validation holds
             slope_s = 0
 
         if np.isclose(slope_s, 0):
@@ -290,8 +279,7 @@ def r_s_ratio(landscape) -> float:
         )
         residuals = fitness_values - predicted_fitness
 
-        # Calculate roughness as RMSE (root-mean-square error)
-        # This is more consistent with the definition in the literature
+        # roughness r = RMSE of residuals, per the literature definition
         roughness_r = np.sqrt(np.mean(residuals**2))
 
         r_s_ratio_value = roughness_r / slope_s

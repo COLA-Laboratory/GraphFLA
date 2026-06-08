@@ -33,17 +33,14 @@ def local_search(
     Any: The index of the next node to move to, determining the search direction.
     """
 
-    # Get all successor nodes in one call
     successors = graph.neighbors(node, mode="out")
     if not successors:
         return None
 
     if search_method == "best-improvement":
-        # Get fitness of all successors directly
         return max(successors, key=lambda s: graph.vs[s]["fitness"])
 
     elif search_method == "first-improvement":
-        # Randomly select a successor
         return random.choice(successors)
 
     else:
@@ -92,33 +89,29 @@ def hill_climb(
         - The final local optimum node reached.
         - The total number of steps taken in the search process.
     """
-    # Check if node is already a local optimum (has no outgoing edges)
+    # No outgoing edges means the node is already a local optimum.
     if graph.degree(node, mode="out") == 0:
         if return_trace:
             return node, 0, [node]
         return node, 0
 
-    # Initialize tracking
     step = 0
     visited = {node}
     trace = [node] if return_trace else None
     current_node = node
 
-    # Determine if we need verbose output
     verbose_output = verbose > 0
 
     if verbose_output:
         print(f"Hill climbing begins from {node}...")
 
     while True:
-        # Get next node efficiently
         next_node = local_search(graph, current_node, weight, search_method)
 
-        # No better node or we've seen this node before - we've found an optimum or cycle
+        # None = no better neighbour; revisit = cycle; either way we stop.
         if next_node is None or next_node in visited:
             break
 
-        # Update state
         visited.add(next_node)
         if return_trace:
             trace.append(next_node)

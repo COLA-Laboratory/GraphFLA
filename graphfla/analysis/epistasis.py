@@ -141,7 +141,7 @@ def _assign_roles_for_epistasis_igraph(graph, squares):
 
     for square_nodes in squares:
         if len(square_nodes) != 4:
-            continue  # Should already be filtered, but double-check
+            continue  # defensive: should already be filtered
 
         try:
             nodes_in_square = list(square_nodes)
@@ -157,14 +157,14 @@ def _assign_roles_for_epistasis_igraph(graph, squares):
             single_mutants = [p for p in all_predecessors if p in square_set]
 
             if len(single_mutants) != 2:
-                continue  # Skip squares not matching expected structure
+                continue  # not the expected square structure
 
             wild_type_set = square_set - set(single_mutants) - {double_mutant}
             if len(wild_type_set) != 1:
-                continue  # Skip if WT cannot be uniquely identified
+                continue  # WT not uniquely identifiable
             wild_type = list(wild_type_set)[0]
 
-            single_mutants.sort()  # Consistent ordering
+            single_mutants.sort()  # stable ordering
 
             squares_with_roles.append(
                 {
@@ -202,8 +202,7 @@ def _calculate_pos_neg_epistasis_igraph(squares_with_roles):
                 }
             )
         except KeyError as e:
-            # Silently skip squares with missing data from role assignment
-            continue
+            continue  # skip squares with missing role data
 
     if not data_for_df:
         return {"positive epistasis": 0.0, "negative epistasis": 0.0}
@@ -274,9 +273,8 @@ def classify_epistasis(landscape, approximate=False, sample_cut_prob=0.2, seed=N
         If sample_cut_prob is not between 0 and 1, or if fitness attribute missing.
     """
     motif_size = 4
-    square_indices = {19, 52, 66}  # Use set for faster checking in callback
+    square_indices = {19, 52, 66}  # set for O(1) membership in callback
 
-    # --- Validate Input ---
     if not hasattr(landscape, "graph") or not isinstance(landscape.graph, ig.Graph):
         raise AttributeError(
             "Input 'landscape' must have a 'graph' attribute that is an igraph.Graph object."
@@ -286,17 +284,14 @@ def classify_epistasis(landscape, approximate=False, sample_cut_prob=0.2, seed=N
     if approximate and not 0.0 <= sample_cut_prob <= 1.0:
         raise ValueError("sample_cut_prob must be between 0.0 and 1.0")
 
-    # --- Data Structures ---
-    collected_square_instances = defaultdict(list)  # Stores vertex tuples for squares
+    collected_square_instances = defaultdict(list)
     cut_prob_vector = [sample_cut_prob] * motif_size if approximate else None
 
-    # --- Step 1 & 3 Combined (Motif Finding & Instance Collection) ---
     if approximate:
-        # Define callback for collecting sampled instances
         def motif_collector_callback_approx(graph, vertices, isoclass):
             if isoclass in square_indices:
                 collected_square_instances[isoclass].append(tuple(sorted(vertices)))
-            return False  # Continue search
+            return False  # continue search
 
         # Seed the sampling RNG so approximate results are reproducible.
         with _seeded_igraph(seed):
@@ -304,14 +299,13 @@ def classify_epistasis(landscape, approximate=False, sample_cut_prob=0.2, seed=N
             estimated_motif_counts = landscape.graph.motifs_randesu(
                 size=motif_size, cut_prob=cut_prob_vector
             )
-            # Run 2: collect a *sample* of square instances
+            # Run 2: collect a sample of square instances
             landscape.graph.motifs_randesu(
                 size=motif_size,
                 cut_prob=cut_prob_vector,
                 callback=motif_collector_callback_approx,
             )
 
-        # Use estimated counts for mag/sign/recip proportions
         reci_sign_count = (
             np.nan_to_num(estimated_motif_counts[19])
             if len(estimated_motif_counts) > 19
@@ -328,20 +322,16 @@ def classify_epistasis(landscape, approximate=False, sample_cut_prob=0.2, seed=N
             else 0
         )
 
-    else:  # Exact calculation
-        # Define callback for collecting all instances
+    else:  # exact calculation
         def motif_collector_callback_exact(graph, vertices, isoclass):
             if isoclass in square_indices:
-                # Store the vertex indices, sorting is optional but good for consistency
                 collected_square_instances[isoclass].append(tuple(sorted(vertices)))
-            return False  # Continue search
+            return False  # continue search
 
-        # Run 1: Collect all square instances
         landscape.graph.motifs_randesu(
             size=motif_size, callback=motif_collector_callback_exact
         )
 
-        # Derive exact counts from collected instances
         reci_sign_count = len(collected_square_instances.get(19, []))
         sign_count = len(collected_square_instances.get(52, []))
         mag_count = len(collected_square_instances.get(66, []))
@@ -432,7 +422,6 @@ def idiosyncratic_index(landscape, mutation, min_pairs: int = 3):
     X = data.iloc[:, : landscape.n_vars]
     f = data["fitness"]
 
-    # Check if alleles A and B exist at the specified position
     unique_alleles = X[pos].unique()
     if A not in unique_alleles:
         raise ValueError(
@@ -488,10 +477,8 @@ def idiosyncratic_index(landscape, mutation, min_pairs: int = 3):
     ):
         return 0.0
 
-    # Random genotype pairs are differences of two i.i.d. draws from the fitness
-    # distribution, so Var(diff) = 2*Var(f) exactly. Using this closed form
-    # (rather than one noisy n_pairs-sized sample) keeps the index deterministic
-    # and avoids a near-zero denominator blowing the ratio up.
+    # Random-pair baseline uses the exact closed form Var(diff) = 2*Var(f)
+    # (i.i.d. draws): deterministic and avoids a near-zero denominator vs sampling.
     std_mutation_effect = np.std(mutation_effects)
     std_random_diff = np.sqrt(2.0) * np.std(all_fitness_values)
 
@@ -541,14 +528,12 @@ def global_idiosyncratic_index(landscape, n_jobs=-1, seed=None, min_pairs: int =
     X = data.iloc[:, : landscape.n_vars]
     f = data["fitness"].to_numpy(dtype=float)
 
-    # Degenerate (flat) landscape: every mutation contributes 0.0, as in
-    # idiosyncratic_index. Mirror that so the average is 0.0, not NaN.
+    # Flat landscape: mirror idiosyncratic_index (every mutation 0.0) -> avg 0.0, not NaN.
     if len(f) <= 1 or np.all(f == f[0]):
         return _pythonize(0.0)
     std_baseline = float(np.sqrt(2.0) * np.std(f))
 
-    # Code genotypes once (sorted-allele codes, matching the original sorted
-    # iteration); the arrays are memmapped to worker processes by joblib.
+    # Sorted-allele codes (match original sorted iteration); memmapped to workers.
     Xcodes = np.column_stack(
         [pd.Categorical(X[c], categories=sorted(X[c].unique())).codes for c in X.columns]
     ).astype(np.int32)
@@ -561,15 +546,13 @@ def global_idiosyncratic_index(landscape, n_jobs=-1, seed=None, min_pairs: int =
             for bi in range(ai + 1, len(alleles)):
                 tasks.append((int(alleles[ai]), int(alleles[bi]), j, other))
 
-    # Process-based parallelism (default loky backend) actually uses the cores,
-    # unlike the previous thread backend which was GIL-bound for this work.
+    # Process-based (loky) parallelism: actually uses cores, unlike the GIL-bound thread backend.
     values = Parallel(n_jobs=n_jobs)(
         delayed(_idiosyncratic_pair_worker)(Xcodes, f, std_baseline, j, a, b, min_pairs, other)
         for (a, b, j, other) in tasks
     )
-    # Mutations with too few shared backgrounds return NaN and are excluded from
-    # the average (rather than padded with 0.0, which would bias sparse
-    # landscapes toward zero idiosyncrasy).
+    # Too-few-background mutations are NaN and excluded from the mean (padding
+    # 0.0 would bias sparse landscapes toward zero idiosyncrasy).
     if not values or np.all(np.isnan(values)):
         return _pythonize(np.nan)
     return _pythonize(float(np.nanmean(values)))
@@ -615,7 +598,7 @@ def diminishing_returns_index(
         If the graph is missing or the 'fitness' attribute is not found.
         If the correlation method is invalid.
     """
-    landscape._check_built()  # Ensure landscape is built
+    landscape._check_built()
     if landscape.graph is None or "fitness" not in landscape.graph.vs.attributes():
         raise ValueError(
             "Landscape graph or node 'fitness' attribute not found."
@@ -632,8 +615,8 @@ def diminishing_returns_index(
 
         successors = v.successors()
         if successors:
-            # Improvement is measured toward the optimum, so it is positive along
-            # every improving edge for both maximization and minimization.
+            # Improvement measured toward the optimum: positive on improving edges
+            # under both maximization and minimization.
             improvements = [
                 (s["fitness"] - current_fitness) if landscape.maximize
                 else (current_fitness - s["fitness"])
@@ -645,12 +628,10 @@ def diminishing_returns_index(
                 avg_successor_improvement.append(avg_improvement)
                 nodes_with_successors += 1
             else:
-                # Node might be LO or only have neutral/deleterious successors
-                # (should not happen with graph definition, but handle defensively)
+                # defensive: no improving successor (shouldn't occur by graph definition)
                 avg_successor_improvement.append(np.nan)
         else:
-            # Node is a local optimum (no successors)
-            avg_successor_improvement.append(np.nan)
+            avg_successor_improvement.append(np.nan)  # local optimum, no successors
 
     if nodes_with_successors < 2:
         warnings.warn(
@@ -678,23 +659,18 @@ def diminishing_returns_index(
         corr_func = spearmanr
     elif method == "regression":
         try:
-            # Add regression method using numpy's polyfit
             X = np.array(node_fitnesses).reshape(-1, 1)
             y = np.array(avg_improvement)
 
-            # Add a constant (intercept) to the predictor matrix
-            X_with_const = np.column_stack((np.ones(X.shape[0]), X))
+            X_with_const = np.column_stack((np.ones(X.shape[0]), X))  # add intercept
 
-            # Fit linear regression
             beta, residuals, rank, s = np.linalg.lstsq(X_with_const, y, rcond=None)
-            slope = beta[1]  # Slope is the coefficient for X
+            slope = beta[1]
 
-            # Calculate p-value for the slope
             n = len(X)
             if n <= 2:
                 return slope
 
-            # Calculate standard error of the slope
             y_pred = X_with_const.dot(beta)
             residual_SS = np.sum((y - y_pred) ** 2)
             X_mean = np.mean(X)
@@ -759,7 +735,7 @@ def increasing_costs_index(
         If the graph is missing or the 'fitness' attribute is not found.
         If the correlation method is invalid.
     """
-    landscape._check_built()  # Ensure landscape is built
+    landscape._check_built()
     if landscape.graph is None or "fitness" not in landscape.graph.vs.attributes():
         raise ValueError(
             "Landscape graph or node 'fitness' attribute not found."
@@ -776,8 +752,8 @@ def increasing_costs_index(
 
         predecessors = v.predecessors()
         if predecessors:
-            # Cost is the fitness sacrificed moving away from the optimum, so it
-            # is positive along every improving edge under either direction.
+            # Cost = fitness sacrificed moving away from the optimum: positive on
+            # improving edges under either direction.
             costs = [
                 (current_fitness - p["fitness"]) if landscape.maximize
                 else (p["fitness"] - current_fitness)
@@ -789,12 +765,10 @@ def increasing_costs_index(
                 avg_predecessor_cost.append(avg_cost)
                 nodes_with_predecessors += 1
             else:
-                # Node might be source or only have fitter/equal predecessors
-                # (should not happen with graph definition, but handle defensively)
+                # defensive: no costing predecessor (shouldn't occur by graph definition)
                 avg_predecessor_cost.append(np.nan)
         else:
-            # Node is a source node (no predecessors)
-            avg_predecessor_cost.append(np.nan)
+            avg_predecessor_cost.append(np.nan)  # source node, no predecessors
 
     if nodes_with_predecessors < 2:
         warnings.warn(
@@ -822,16 +796,13 @@ def increasing_costs_index(
         corr_func = spearmanr
     elif method == "regression":
         try:
-            # Add regression method using numpy's polyfit
             X = np.array(node_fitnesses).reshape(-1, 1)
             y = np.array(avg_cost)
 
-            # Add a constant (intercept) to the predictor matrix
-            X_with_const = np.column_stack((np.ones(X.shape[0]), X))
+            X_with_const = np.column_stack((np.ones(X.shape[0]), X))  # add intercept
 
-            # Fit linear regression
             beta, residuals, rank, s = np.linalg.lstsq(X_with_const, y, rcond=None)
-            slope = beta[1]  # Slope is the coefficient for X
+            slope = beta[1]
 
             return slope
         except Exception as e:
@@ -869,16 +840,14 @@ def _gamma_statistics(landscape, n_jobs=-1):
         )
         return {"gamma": np.nan, "gamma_star": np.nan}
 
-    # Code genotypes once (appearance-order codes, matching the original
-    # df[pos].unique() iteration). Arrays are memmapped to worker processes.
+    # Appearance-order codes (match original df[pos].unique() iteration); memmapped to workers.
     f = df["fitness"].to_numpy(dtype=float)
     Xcodes = np.column_stack([pd.factorize(X[c])[0] for c in X.columns]).astype(np.int32)
     P = Xcodes.shape[1]
     alleles = [np.unique(Xcodes[:, j]) for j in range(P)]
     position_pairs = [(p1, p2) for p1 in range(P) for p2 in range(P) if p1 != p2]
 
-    # Process-based parallelism over ordered position pairs (default loky
-    # backend uses the cores; the previous thread backend was GIL-bound).
+    # Process-based (loky) parallelism over ordered position pairs; thread backend was GIL-bound.
     results = Parallel(n_jobs=n_jobs)(
         delayed(_gamma_position_pair_worker)(
             Xcodes, f, p1, p2, alleles[p1], alleles[p2], np.delete(np.arange(P), [p1, p2])
@@ -886,8 +855,7 @@ def _gamma_statistics(landscape, n_jobs=-1):
         for p1, p2 in position_pairs
     )
 
-    # Pool numerator/denominator across all ordered pairs (and, via the two
-    # orderings of each pair, across both sides of every square motif) to form
+    # Pool over all ordered pairs (both orderings cover both square sides) into
     # the single global non-centered correlation of Ferretti et al. (2016).
     num = sum(r[0] for r in results)
     den = sum(r[1] for r in results)
@@ -1012,13 +980,11 @@ def higher_order_epistasis(landscape, order=2, verbose=False, n_jobs=1):
             "Please install it with 'pip install scikit-learn'."
         )
 
-    # Check if landscape is built
     landscape._check_built()
 
     if landscape.configs is None or len(landscape.configs) == 0:
         raise ValueError("Landscape has no configuration data.")
 
-    # Validate order parameter
     if not isinstance(order, int):
         raise TypeError(f"Order must be an integer, got {type(order).__name__}")
 
@@ -1034,13 +1000,11 @@ def higher_order_epistasis(landscape, order=2, verbose=False, n_jobs=1):
     if verbose:
         print(f"Calculating order-{order} epistasis using polynomial regression...")
 
-    # Extract configurations and fitness values
     X = np.vstack(landscape.configs.values)
     y = np.array(landscape.graph.vs["fitness"])
 
-    # Build a numerically stable design matrix:
-    # - boolean landscapes already have a suitable 0/1 encoding
-    # - other landscape types need one-hot encoding with a reference level dropped
+    # Boolean is already 0/1; other types need one-hot with a reference level
+    # dropped for a numerically stable design matrix.
     if verbose:
         print(f"Encoding {X.shape[1]} variables...")
 
@@ -1069,14 +1033,13 @@ def higher_order_epistasis(landscape, order=2, verbose=False, n_jobs=1):
     )
     model = LinearRegression(n_jobs=n_jobs)
 
-    # Handle potential numerical issues with large datasets
     try:
         if verbose:
             print(f"Fitting polynomial regression model...")
         X_poly = poly.fit_transform(X_encoded)
         model.fit(X_poly, y)
-        # Avoid np.matmul here because NumPy linked against Accelerate on
-        # macOS arm64 can emit spurious RuntimeWarnings for finite inputs.
+        # Manual dot instead of np.matmul: Accelerate (macOS arm64) emits
+        # spurious RuntimeWarnings on finite inputs.
         coefficients = np.asarray(model.coef_, dtype=np.float64).reshape(-1)
         y_pred = (
             np.sum(
@@ -1153,7 +1116,6 @@ def walsh_hadamard_coefficient(landscape, max_order=2, max_cells=1e9, chunk_size
     >>> print(f"Pairwise interactions: {list(coefficients[2].keys())}")
     """
 
-    # Check if landscape is built
     landscape._check_built()
 
     if landscape.graph is None or "fitness" not in landscape.graph.vs.attributes():
@@ -1162,23 +1124,19 @@ def walsh_hadamard_coefficient(landscape, max_order=2, max_cells=1e9, chunk_size
             "Landscape must be built first."
         )
 
-    # Extract data from landscape
     data = landscape.get_data()
-    X = data.iloc[:, : landscape.n_vars]  # Configuration data
-    f = data["fitness"].values  # Fitness values
+    X = data.iloc[:, : landscape.n_vars]
+    f = data["fitness"].values
 
-    # Convert configurations to string format for Walsh-Hadamard transform
-    # Handle different landscape types appropriately
+    # Walsh-Hadamard transform operates on one symbol per position, so encode
+    # each landscape type to a per-position string.
     if landscape.type in ["boolean"]:
-        # For boolean landscapes, convert to binary strings
         X_strings = ["".join(map(str, row.astype(int))) for _, row in X.iterrows()]
     elif landscape.type in ["dna", "rna", "protein"]:
-        # For sequence landscapes, use the original sequence representation
         if hasattr(landscape, "configs") and landscape.configs is not None:
-            # Try to reconstruct original sequences if available
+            # reconstruct original sequences from encoded configs
             X_strings = []
             for config_tuple in landscape.configs.values:
-                # Convert encoded config back to sequence string
                 if landscape.type == "dna":
                     alphabet = ["A", "C", "G", "T"]
                 elif landscape.type == "rna":
@@ -1189,59 +1147,47 @@ def walsh_hadamard_coefficient(landscape, max_order=2, max_cells=1e9, chunk_size
                 sequence = "".join([alphabet[int(pos)] for pos in config_tuple])
                 X_strings.append(sequence)
         else:
-            # Fallback: treat as categorical and convert to strings
+            # fallback: treat as categorical
             X_strings = ["".join(map(str, row)) for _, row in X.iterrows()]
     else:
-        # Map each variable's values to a single symbol so that multi-level
-        # ordinal/categorical alleles occupy exactly one string position
-        # (joining raw str() values splits multi-digit codes across positions).
-        # Codes start at 1 so no symbol collides with "0", which marks
-        # wildtype-matching positions downstream.
+        # One symbol per variable so multi-digit codes don't split across positions;
+        # +1 so no code collides with "0", which marks WT-matching positions downstream.
         codes = X.apply(lambda col: pd.factorize(col)[0] + 1).to_numpy()
         X_strings = ["".join(chr(48 + c) for c in row) for row in codes]
 
-    # Determine wildtype (first configuration or all zeros for binary)
     if landscape.type == "boolean":
         wildtype = "0" * landscape.n_vars
     else:
-        wildtype = X_strings[0]  # Use first sequence as wildtype
+        wildtype = X_strings[0]  # first sequence is the reference WT
 
     wildtype_split = [c for c in wildtype]
 
-    # Create DataFrame for sequence features
     X_df = pd.DataFrame([list(seq) for seq in X_strings])
 
-    # One-hot encode sequence features
     enc = OneHotEncoder(
         handle_unknown="ignore", drop=np.array(wildtype_split), dtype=int
     )
     enc.fit(X_df)
 
-    # Generate feature names: format "{original}_{position}_{mutant}" for clarity
-    # e.g. "0_12_1" = position 12, mutation from 0 to 1
+    # Feature names "{original}_{position}_{mutant}", e.g. "0_12_1" (pos 12, 0->1).
     one_hot_names = []
     for i, feature_name in enumerate(enc.get_feature_names_out()):
-        pos = int(feature_name.split("_")[0][1:])  # Extract position
-        state = feature_name.split("_")[1]  # Extract state
+        pos = int(feature_name.split("_")[0][1:])
+        state = feature_name.split("_")[1]
         one_hot_names.append(f"{wildtype_split[pos]}_{pos+1}_{state}")
 
-    # Create one-hot encoded DataFrame
     Xoh = pd.DataFrame(enc.transform(X_df).toarray(), columns=one_hot_names)
 
-    # Add WT column
     Xoh = pd.concat([pd.DataFrame({"WT": [1] * len(Xoh)}), Xoh], axis=1)
 
-    # Generate interaction features with memory optimization
     Xohi = _generate_interactions(Xoh, max_order, max_cells)
 
-    # Ensemble encode features using Walsh-Hadamard transform with chunking
     Xensemble = _ensemble_encode_features(
         X_strings, Xohi.columns, wildtype, X_df, chunk_size
     )
 
-    # Compute coefficients with a direct least-squares solve instead of the
-    # normal equations. This is more numerically stable and also avoids the
-    # spurious macOS arm64 Accelerate matmul warnings seen with pinv(X^T X).
+    # Direct least-squares solve, not normal equations: more stable and avoids
+    # spurious macOS arm64 Accelerate matmul warnings from pinv(X^T X).
     Xensemble_values = Xensemble.to_numpy(dtype=np.float64, copy=False)
     coefficients, *_ = np.linalg.lstsq(
         Xensemble_values,
@@ -1249,23 +1195,20 @@ def walsh_hadamard_coefficient(landscape, max_order=2, max_cells=1e9, chunk_size
         rcond=None,
     )
 
-    # Create results dictionary with sorted coefficients
     coef_dict = {}
     for i, feature_name in enumerate(Xohi.columns):
         if feature_name == "WT":
             order = 0
         elif "-" in feature_name:
-            # Multiple mutations joined with "-" (e.g. "0_10_1-0_11_1")
-            order = len(feature_name.split("-"))
+            order = len(feature_name.split("-"))  # "-"-joined mutations
         else:
-            order = 1  # Single mutation
+            order = 1
 
         if order not in coef_dict:
             coef_dict[order] = {}
 
         coef_dict[order][feature_name] = coefficients[i]
 
-    # Sort coefficients within each order
     for order in coef_dict:
         coef_dict[order] = dict(sorted(coef_dict[order].items()))
 
@@ -1277,7 +1220,7 @@ def _generate_interactions(Xoh, max_order, max_cells):
     if max_order < 2:
         return copy.deepcopy(Xoh)
 
-    # Get mutations observed
+    # observed mutations (drop WT and unobserved columns)
     mut_count = list(Xoh.sum(axis=0))
     pheno_mut = [
         Xoh.columns[i]
@@ -1285,14 +1228,14 @@ def _generate_interactions(Xoh, max_order, max_cells):
         if mut_count[i] != 0 and Xoh.columns[i] != "WT"
     ]
 
-    # Group mutations by position (format: original_position_mutant, e.g. "0_12_1")
+    # group mutations by position; name format original_position_mutant ("0_12_1")
     def _get_position(mut_name):
         return mut_name.split("_")[1]
 
     all_pos = list(set([_get_position(i) for i in pheno_mut]))
     all_pos_mut = {p: [j for j in pheno_mut if _get_position(j) == p] for p in all_pos}
 
-    # Generate all theoretical interaction features
+    # enumerate all theoretical interaction features
     all_features = {}
     int_order_dict = {}
 
@@ -1315,32 +1258,26 @@ def _generate_interactions(Xoh, max_order, max_cells):
         )
     )
 
-    # Flatten all features
     all_features_flat = list(itertools.chain(*list(all_features.values())))
 
-    # Create interaction columns with memory checking
     int_list = []
     int_list_names = []
     int_order_dict_retained = {}
 
     for c in all_features_flat:
-        # Mutations joined with "-" (e.g. "0_10_1-0_11_1" for pairwise)
-        c_split = c.split("-")
+        c_split = c.split("-")  # "-"-joined mutations, e.g. "0_10_1-0_11_1"
         int_col = (Xoh.loc[:, c_split].sum(axis=1) == len(c_split)).astype(int)
 
-        # Check if minimum number of observations satisfied (kept >= 0 as in original)
-        if sum(int_col) >= 0:
+        if sum(int_col) >= 0:  # min-observation threshold kept at 0 as in original
             int_list.append(int_col)
             int_list_names.append(c)
 
-            # Track retained features by order
             order = len(c_split)
             if order not in int_order_dict_retained:
                 int_order_dict_retained[order] = 1
             else:
                 int_order_dict_retained[order] += 1
 
-        # Memory footprint check (from original code)
         if len(int_list) * len(Xoh) > max_cells:
             print(
                 f"Error: Too many interaction terms: number of feature matrix cells >{max_cells:>.0e}"
@@ -1362,11 +1299,10 @@ def _generate_interactions(Xoh, max_order, max_cells):
         )
     )
 
-    # Concatenate interaction features
     if len(int_list) > 0:
         Xint = pd.concat(int_list, axis=1)
         Xint.columns = int_list_names
-        # Reorder features to match original order
+        # restore original feature ordering
         Xint = Xint.loc[:, [i for i in all_features_flat if i in Xint.columns]]
         Xohi = pd.concat([Xoh, Xint], axis=1)
     else:
@@ -1378,22 +1314,20 @@ def _generate_interactions(Xoh, max_order, max_cells):
 def _ensemble_encode_features(X, feature_names, wildtype, X_df, chunk_size):
     """Ensemble encode features using Walsh-Hadamard transform with chunking optimization."""
 
-    # Wild-type mask variant sequences
+    # mask each variant against WT: positions matching WT become "0"
     geno_list = []
     for seq in X:
         masked = "".join(x if x != y else "0" for x, y in zip(seq, wildtype))
         geno_list.append(masked)
 
-    # Convert feature names to coefficient strings
     coef_list = [
         _coefficient_to_sequence(coef, len(wildtype)) for coef in feature_names
     ]
 
-    # Determine number of states per position (optimized calculation)
+    # number of observed states per position
     state_counts = X_df.apply(lambda col: col.value_counts(), axis=0)
     state_list = [(state_counts[col] > 0).sum() for col in state_counts.columns]
 
-    # Compute Walsh-Hadamard matrices with chunking
     print("Construction time for H_matrix...")
     hmat_inv = _H_matrix_chunker(
         str_geno=geno_list,
@@ -1405,9 +1339,8 @@ def _ensemble_encode_features(X, feature_names, wildtype, X_df, chunk_size):
 
     vmat_inv = _V_matrix(str_coef=coef_list, num_states=state_list, invert=True)
 
-    # V is diagonal, so H @ V is equivalent to scaling each column of H by the
-    # corresponding diagonal element. This avoids warning-prone np.matmul calls
-    # on macOS arm64 Accelerate while producing the same matrix exactly.
+    # V is diagonal: H @ V == column-scaling H, exactly. Avoids warning-prone
+    # np.matmul on macOS arm64 Accelerate.
     return pd.DataFrame(hmat_inv * np.diag(vmat_inv), columns=feature_names)
 
 
@@ -1422,7 +1355,6 @@ def _coefficient_to_sequence(coefficient, length):
     if coefficient == "WT":
         return "".join(coefficient_seq)
 
-    # Split by "-" to get individual mutations, then parse each
     for mut in coefficient.split("-"):
         parts = mut.split("_")
         if len(parts) >= 3:
@@ -1436,11 +1368,9 @@ def _coefficient_to_sequence(coefficient, length):
 
 def _H_matrix_chunker(str_geno, str_coef, num_states=2, invert=False, chunk_size=1000):
     """Construct Walsh-Hadamard matrix in chunks (memory optimization)."""
-    # Check if chunking not necessary
     if len(str_geno) < chunk_size:
         return _H_matrix(str_geno, str_coef, num_states, invert)
 
-    # Chunk processing
     hmat_list = []
     for i in range(math.ceil(len(str_geno) / chunk_size)):
         from_i = i * chunk_size
@@ -1459,11 +1389,10 @@ def _H_matrix(str_geno, str_coef, num_states=2, invert=False):
     else:
         num_states = [float(i) for i in num_states]
 
-    # Convert to numeric representation (memory efficient)
+    # to numeric (ord codes); "0" -> "." in coefs to mark unconstrained positions
     str_coef_num = [[ord(j) for j in i.replace("0", ".")] for i in str_coef]
     str_geno_num = [[ord(j) for j in i] for i in str_geno]
 
-    # Matrix operations
     num_statesi = np.repeat([num_states], len(str_geno) * len(str_coef), axis=0)
     str_genobi = np.repeat(str_geno_num, len(str_coef), axis=0)
     str_coefbi = np.transpose(
@@ -1610,46 +1539,36 @@ def extradimensional_bypass_analysis(landscape, approximate=False, sample_cut_pr
 
     for motif_nodes in motif_19_instances:
         try:
-            # Get fitness values for all nodes in the motif
             fitness_values = {
                 node: landscape.graph.vs[node]["fitness"] for node in motif_nodes
             }
 
-            # Find the node with highest fitness (AB)
+            # AB = fittest node; ab = the remaining node that is not a direct
+            # predecessor of AB.
             AB = max(fitness_values, key=fitness_values.get)
-
-            # Find the double mutant (ab) - the node that is not a predecessor of AB
-            # and is among the remaining 3 nodes
             remaining_nodes = [node for node in motif_nodes if node != AB]
             AB_predecessors = set(landscape.graph.predecessors(AB))
-
-            # ab should be the node that is NOT a direct predecessor of AB
             ab = [node for node in remaining_nodes if node not in AB_predecessors]
 
             if not ab:
-                # If no ab, skip this motif
                 continue
 
-            # Check if an accessible path exists from ab to AB
             try:
-                # Get shortest path distance in the directed graph
                 distances = landscape.graph.distances(source=ab, target=AB, mode="out")
                 distance = distances[0][0]
 
-                # If distance is finite (not inf), an extradimensional bypass exists
+                # finite distance => an extradimensional bypass exists
                 if not np.isinf(distance):
                     bypass_lengths.append(distance)
                     motifs_with_bypass += 1
 
             except Exception as e:
-                # Skip this motif if distance calculation fails
                 print(
                     f"Warning: Could not calculate distance for motif {motif_nodes}: {e}"
                 )
                 continue
 
         except Exception as e:
-            # Skip this motif if any error occurs during processing
             print(f"Warning: Could not process motif {motif_nodes}: {e}")
             continue
 
@@ -1699,7 +1618,6 @@ def get_motif_node_indices(
     ValueError
         If sample_cut_prob is not between 0 and 1.
     """
-    # Validate input
     if approximate and not 0.0 <= sample_cut_prob <= 1.0:
         raise ValueError("sample_cut_prob must be between 0.0 and 1.0")
 
@@ -1708,9 +1626,8 @@ def get_motif_node_indices(
 
     def motif_collector_callback(graph, vertices, isoclass):
         if isoclass == target_motif_type:
-            # Store the vertex indices as a tuple
             collected_motifs.append(tuple(sorted(vertices)))
-        return False  # Continue search
+        return False  # continue search
 
     # Find motifs with or without sampling (seeded RNG only matters for the
     # approximate, sampling-based path).

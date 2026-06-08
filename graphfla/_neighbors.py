@@ -319,10 +319,8 @@ def build_edges(
     -------
     EdgeResult
     """
-    # ``configs`` (the per-row tuple ``Series``) may be ``None`` when the caller
-    # defers its construction; the numeric ``configs_array`` is then the source
-    # of truth and the only path that still needs the tuples (``_active_generic``)
-    # derives them from it on demand.
+    # ``configs`` (tuple Series) may be None when deferred; ``configs_array`` is
+    # then the source of truth and _active_generic derives tuples on demand.
     if (configs is None and configs_array is None) or config_dict is None:
         raise RuntimeError("Cannot build edges: configs/config_dict missing.")
     if n_configs is None:
@@ -494,15 +492,12 @@ def _build_active(
             edges, delta_fits = result
 
     if edges is None:
-        # Generic Python fallback builds lists; convert at the boundary. This is
-        # the only ``active`` path that consumes the per-row configuration
-        # *tuples*; if the caller deferred the tuple ``Series`` (passing only the
-        # numeric ``configs_array``), derive the equivalent tuple iterable here so
-        # the hash-lookup keys match the generator's tuple output exactly.
+        # Generic Python fallback: the only active path consuming config tuples.
+        # If the tuple Series was deferred, derive tuples from configs_array so
+        # hash-lookup keys match the generator's tuple output exactly.
         generic_configs = configs
         if generic_configs is None:
-            # Materialise a concrete list of tuples (``_active_generic`` iterates
-            # the configurations twice and calls ``len`` on them).
+            # _active_generic iterates the configs twice and calls len on them.
             generic_configs = list(map(tuple, configs_array.tolist()))
         edge_list: List[Tuple[int, int]] = []
         delta_list: List[float] = []
@@ -589,14 +584,10 @@ def _build_pairwise(
 
     frac_threshold = (n_edit + 0.5) / n_vars
 
-    # Bound the largest float64 distance buffer to ``budget_bytes``. Block rows
-    # are chosen so the diagonal condensed array (~b^2/2 * 8) fits the budget,
-    # and the below-block rectangle is further split into tail-column chunks so
-    # its (b * cols * 8) buffer also fits. This keeps peak memory in the tens of
-    # MB regardless of n (vs pdist's full n^2/2 * 8 array) while keeping the
-    # per-block work large enough to amortise Python-loop overhead. When the
-    # whole condensed array already fits the budget (small n) there is a single
-    # diagonal block and no chunking, so behaviour matches the plain pdist path.
+    # Bound each float64 distance buffer to ``budget_bytes`` (block rows sized so
+    # the diagonal ~b^2/2*8 fits; tail columns chunked so b*cols*8 fits). Keeps
+    # peak memory in the tens of MB vs pdist's full n^2/2*8 array; small n falls
+    # to a single block with no chunking, matching the plain pdist path.
     budget_bytes = 64 * 1024**2
     budget_cells = max(1, budget_bytes // 8)
     block_rows = max(2, int(budget_cells**0.5))
@@ -780,23 +771,16 @@ def _as_config_matrix(configs, configs_array=None):
 
 # --- Masked-position grouping (universal Hamming-1 neighbour finder) ----
 
-# Deterministic seed for the random int64 fingerprint weights. Fixing it keeps
-# the fingerprint (and therefore the candidate-grouping order, though never the
-# final exact pair set) reproducible across runs and processes.
+# Deterministic seed for the random int64 fingerprint weights; keeps grouping
+# order reproducible across runs (never affects the final exact pair set).
 _MASKED_GROUPING_SEED = 0x9E3779B97F4A7C15
 
-# Max candidate pairs whose two configuration rows are gathered at once during
-# the Hamming-1 collision verification. Bounds the transient
-# ``rows[cand_i]`` / ``rows[cand_j]`` buffers (each ``chunk * n_vars`` of the
-# compact verify dtype) so peak memory stays flat regardless of how many
-# candidates a position produces, while keeping each block large enough to
-# amortise numpy dispatch.
+# Max candidate pairs whose rows are gathered at once during Hamming-1
+# verification. Bounds the transient row buffers so peak memory stays flat.
 _MASKED_VERIFY_CHUNK = 1_000_000
 
-# Number of configuration columns folded into the running int64 fingerprint
-# ``h`` per block. Bounds the transient ``column-block * weight`` int64 product
-# to ``n * _MASKED_FINGERPRINT_BLOCK`` cells, avoiding a full ``n * n_vars``
-# int64 materialisation, while staying wide enough to amortise the reduction.
+# Columns folded into the int64 fingerprint per block. Bounds the transient
+# column*weight product to n * block cells, avoiding a full n x n_vars int64.
 _MASKED_FINGERPRINT_BLOCK = 32
 
 
@@ -838,16 +822,14 @@ def _within_run_pairs(group_id, n):
     if total == 0:
         return empty, empty
 
-    # Map each of the ``total`` pairs back to its group and its offset within
-    # that group's pair block.
+    # Map each pair back to its group and its offset within the group's block.
     pair_grp = np.repeat(np.arange(starts.size), npairs)
     block_start = np.zeros(starts.size, dtype=np.int64)
     np.cumsum(npairs[:-1], out=block_start[1:])
     pair_off = np.arange(total, dtype=np.int64) - block_start[pair_grp]
 
-    # Inverse of the condensed (upper-triangular) index within a group of size
-    # ``c``: recover the (a, b) with 0 <= a < b < c. Same formula family as the
-    # pdist decode in _build_pairwise (here per-group, with local size ``c``).
+    # Inverse condensed (upper-triangular) index within a group of size c:
+    # recover (a, b) with 0 <= a < b < c. Same decode as _build_pairwise.
     cf = counts[pair_grp].astype(np.float64)
     off = pair_off.astype(np.float64)
     a = (
@@ -967,15 +949,11 @@ def _masked_grouping_pairs(configs_array):
     if n < 2 or n_vars == 0:
         return empty, empty
 
-    # Compact narrow-dtype view used both for the equality-based Hamming
-    # verification and as the source for the per-position fingerprint columns.
-    # For the usual protein/DNA/boolean codes this is the input ``a`` itself
-    # (uint8, no copy). The int64 fingerprint matrix is never materialised: a
-    # full ``a.astype(int64)`` would be 8x ``a`` (~680 MB for HIS7) and, being
-    # row-major, makes every ``[:, p]`` column gather an 8-byte strided
-    # (cache-hostile) read. Instead each masked fingerprint multiplies the
-    # narrow column ``averify[:, p]`` (cast to int64 on the fly), which both
-    # avoids the large allocation and makes the strided column read ~8x cheaper.
+    # Compact narrow-dtype view, reused for both verification and the per-position
+    # fingerprint columns (usually input ``a`` itself, uint8, no copy). Never
+    # materialise a full int64 fingerprint matrix: it would be 8x ``a`` (~680 MB
+    # for HIS7) and make every strided ``[:, p]`` gather cache-hostile; instead
+    # each column is cast to int64 on the fly, ~8x cheaper.
     averify = _compact_verify_view(a)
 
     # Fixed random int64 weights; deterministic so the grouping is reproducible.
@@ -985,12 +963,9 @@ def _masked_grouping_pairs(configs_array):
         info.min, info.max, size=n_vars, endpoint=True, dtype=np.int64
     )
 
-    # Full fingerprint h = configs @ weights, with int64 wraparound (intended).
-    # Summed in column blocks so the transient ``column * weight`` product stays
-    # bounded (n x _MASKED_FINGERPRINT_BLOCK int64) instead of materialising the
-    # whole n x n_vars int64 matrix. Integer addition is associative under the
-    # modular wraparound, so the blocked accumulation is bit-identical to a
-    # single full-width reduction regardless of block size.
+    # Full fingerprint h = configs @ weights, int64 wraparound intended. Summed
+    # in column blocks to bound the transient column*weight product; modular
+    # addition is associative, so this is bit-identical to a full-width reduction.
     h = np.zeros(n, dtype=np.int64)
     blk = _MASKED_FINGERPRINT_BLOCK
     for p0 in range(0, n_vars, blk):
@@ -1005,26 +980,22 @@ def _masked_grouping_pairs(configs_array):
     j_parts: List[np.ndarray] = []
 
     for p in range(n_vars):
-        # Masked fingerprint: remove position p's contribution. Same modular
-        # int64 arithmetic as h, so two rows identical except at p share it.
+        # Masked fingerprint: drop position p's contribution (same modular int64
+        # arithmetic as h), so rows identical except at p share it.
         with np.errstate(over="ignore"):
             masked = h - averify[:, p].astype(np.int64) * weights[p]
 
-        # Group rows by equal masked fingerprint. ``pd.factorize`` is an O(n)
-        # hash returning a dense code per row (one per distinct fingerprint),
-        # densely numbered ``0..K-1``. numpy's radix ``argsort`` adapts to that
-        # value range (it skips the all-zero high bytes), so sorting the codes is
-        # as cheap as a narrow-int sort and far cheaper than an argsort of the
-        # raw high-entropy int64 fingerprints — no explicit down-cast needed.
+        # Group by equal masked fingerprint. factorize is an O(n) hash to dense
+        # codes 0..K-1; numpy's radix argsort adapts to that range (skips zero
+        # high bytes), cheaper than argsorting the raw high-entropy int64s.
         codes, uniques = pd.factorize(masked, sort=False)
         if uniques.shape[0] == n:
-            # Every masked fingerprint is distinct -> no two rows agree on all
-            # but position p, so this position yields no candidate pair.
+            # All fingerprints distinct -> no candidate pair at this position.
             continue
 
         order = np.argsort(codes, kind="stable")
-        # Group id in sorted order is just the (non-decreasing) sorted codes;
-        # _within_run_pairs only needs equal labels to be contiguous.
+        # Sorted codes are the group ids; _within_run_pairs only needs equal
+        # labels to be contiguous.
         gid = codes[order]
 
         ca, cb = _within_run_pairs(gid, n)
@@ -1034,9 +1005,8 @@ def _masked_grouping_pairs(configs_array):
         cand_i = order[ca]
         cand_j = order[cb]
 
-        # Collision safety: keep only candidates that are truly Hamming-1.
-        # Verified in bounded chunks against the compact view, so the result is
-        # exact regardless of fingerprint collisions and peak memory stays flat.
+        # Collision safety: keep only candidates that are truly Hamming-1, so the
+        # result is exact regardless of fingerprint collisions.
         keep = _verify_hamming1(averify, cand_i, cand_j)
         if not keep.any():
             continue
@@ -1254,7 +1224,7 @@ def _classify_directed_adjacency(
             )
 
     imp_mask = ~neutral_mask
-    # Worse-endpoint emission, matching the baseline direction guard.
+    # Worse endpoint emits the edge (matches the baseline direction guard).
     if maximize:
         imp_mask &= delta < 0
     else:
@@ -1323,8 +1293,7 @@ def _mixed_radix_keys(configs_array, base):
         exact Python implementation.
     """
     n_vars = configs_array.shape[1]
-    # Overflow guard: the maximum key is base**n_vars - 1. Refuse if even the
-    # place value of the most significant digit would not fit in int64.
+    # Overflow guard: max key is base**n_vars - 1; refuse if it exceeds int64.
     if n_vars >= 64 or base ** n_vars > (1 << 63):
         return None, None
 
@@ -1335,21 +1304,14 @@ def _mixed_radix_keys(configs_array, base):
     return keys, place_values
 
 
-# Largest mixed-radix key space (``base ** n_vars`` distinct keys) for which a
-# direct-index lookup table (key -> row, ``-1`` = absent) is built instead of
-# binary search. Combinatorially (near-)complete landscapes have a key space of
-# the same order as the row count, so the table costs ~8 bytes/cell here (16 M
-# cells -> 128 MB worst case) yet turns every neighbour lookup into an O(1)
-# gather, replacing the O(M log n) ``searchsorted`` (which profiling shows is
-# ~95% of the edge-finding cost) and the argsort. Sparse high-dimensional spaces
-# exceed this and fall back to the per-cell ``searchsorted`` loop, which has no
-# table to allocate.
+# Largest mixed-radix key space for which a direct-index LUT (key -> row, -1 =
+# absent) is built instead of binary search. ~8 bytes/cell (16 M -> 128 MB worst
+# case) buys an O(1) gather, replacing the O(M log n) searchsorted (~95% of
+# edge-finding cost per profiling). Sparse spaces exceed this and use the loop.
 _LUT_MAX_CELLS = 16_000_000
 
-# Max candidate neighbour keys materialised per generation block on the LUT
-# path. Bounds the transient ``nbr_keys`` + gathered-row buffers so peak memory
-# stays at/below the all-at-once key array while keeping blocks large enough to
-# amortise numpy dispatch.
+# Max candidate neighbour keys materialised per block on the LUT path. Bounds the
+# transient key + gathered-row buffers to ~the all-at-once key array.
 _BYTEMAP_CHUNK_CANDIDATES = 4_000_000
 
 
@@ -1384,10 +1346,9 @@ def _bytemap_lut_block(
     rb, pb = codes_block.shape
     n_alt = a_row.shape[0]
 
-    # Neighbour key for (row r, local position pl, alt index a):
-    #   key[r] + (v - code) * place,   v = a + (a >= code)
-    # so the value delta (v - code) is  a - code + (a >= code). Every neighbour
-    # key stays in [0, base**n_vars), so the LUT gather is always in range.
+    # Neighbour key for (row r, position pl, alt a): key[r] + (v - code) * place
+    # with v = a + (a >= code), so vdelta = a - code + (a >= code). Keys stay in
+    # [0, base**n_vars), so the LUT gather is always in range.
     cb = codes_block[:, :, None]                       # (rb, pb, 1)
     a3 = a_row[None, None, :]                           # (1, 1, n_alt)
     vdelta = (a3 - cb) + (a3 >= cb)                     # (rb, pb, n_alt)
@@ -1399,12 +1360,11 @@ def _bytemap_lut_block(
     del vdelta
 
     nbr_rows = lut[nbr_keys]
-    del nbr_keys  # not needed past the gather; free before collecting hits
+    del nbr_keys  # free before collecting hits
     hit = np.flatnonzero(nbr_rows >= 0)
     if hit.size == 0:
         return
-    # Source row recovered from the flat index: layout is row-major over
-    # (rb, pb, n_alt), so the row stride is pb * n_alt.
+    # Source row from the row-major (rb, pb, n_alt) flat index: row stride pb*n_alt.
     src_list.append(row_offset + hit // (pb * n_alt))
     nbr_list.append(nbr_rows[hit])
 
@@ -1422,9 +1382,7 @@ def _bytemap_lut_adjacency(keys, place_values, codes, n, n_vars, n_alt, base):
     if key_space > _LUT_MAX_CELLS:
         return None
 
-    # key -> row table; -1 marks an absent configuration. int64 keeps row ids
-    # exact for any realistic n while the table itself is small (key_space is
-    # bounded above).
+    # key -> row table; -1 marks an absent configuration.
     lut = np.full(key_space, -1, dtype=np.int64)
     lut[keys] = np.arange(n)
 
@@ -1487,8 +1445,7 @@ def _bytemap_searchsorted_adjacency(keys, place_values, configs_array, n, n_vars
         place = int(place_values[p])
         codes_p = configs_array[:, p].astype(np.int64)
         for v in range(base):
-            # Source rows are exactly those whose code at position p differs
-            # from v (the loop's "val != orig" / bit-flip condition).
+            # Source rows: those whose code at p differs from v ("val != orig").
             src_mask = codes_p != v
             if not src_mask.any():
                 continue
@@ -1496,8 +1453,7 @@ def _bytemap_searchsorted_adjacency(keys, place_values, configs_array, n, n_vars
             nbr_keys = keys[src_rows] + (v - codes_p[src_mask]) * place
 
             pos = np.searchsorted(skeys, nbr_keys)
-            # searchsorted gives an insertion point; only in-range positions
-            # whose key equals the query are real hits.
+            # Insertion point; only in-range positions whose key matches are hits.
             valid = pos < n
             if not valid.any():
                 continue
@@ -1565,8 +1521,7 @@ def _active_bytemap_vectorized(
 
     n, n_vars = configs_array.shape
 
-    # A single-value alphabet has no alternative substitutions, so there are no
-    # candidate neighbours at all (the per-cell loop's inner range is empty).
+    # Single-value alphabet has no alternative substitutions -> no neighbours.
     n_alt = base - 1
     if n_alt <= 0:
         return _empty_edges(), _empty_deltas()
@@ -1606,9 +1561,8 @@ def _active_boolean_bytemap(
     if result is not None:
         return result
 
-    # Mixed-radix int key overflowed int64 (high-dim sparse). Use masked-
-    # position grouping instead of the O(n * n_vars) per-cell Python loop; both
-    # produce the identical edge/neutral/Δf result, but grouping is far faster.
+    # Mixed-radix key overflowed int64 (high-dim sparse): masked-position
+    # grouping gives the identical result far faster than the per-cell loop.
     return _active_masked_grouping(
         rows, fitness, neutral_eps, maximize, verbose, neutral_pairs,
     )
@@ -1631,9 +1585,8 @@ def _active_sequence_bytemap(
     if result is not None:
         return result
 
-    # Mixed-radix int key overflowed int64 (high-dim sparse). Use masked-
-    # position grouping instead of the O(n * n_vars * alphabet) per-cell Python
-    # loop; both produce the identical edge/neutral/Δf result, far faster.
+    # Mixed-radix key overflowed int64 (high-dim sparse): masked-position
+    # grouping gives the identical result far faster than the per-cell loop.
     return _active_masked_grouping(
         rows, fitness, neutral_eps, maximize, verbose, neutral_pairs,
     )
@@ -1720,8 +1673,8 @@ def _active_ordinal_vectorized(
     """
     n_vars = configs_array.shape[1]
 
-    # Per-variable cardinalities from config_dict (the same source the generic
-    # generator reads via OrdinalNeighborGenerator: config_dict[j]["max"]).
+    # Per-variable cardinalities from config_dict[j]["max"] (same source as
+    # OrdinalNeighborGenerator).
     cards = np.empty(n_vars, dtype=np.int64)
     try:
         for j in range(n_vars):
@@ -1731,8 +1684,8 @@ def _active_ordinal_vectorized(
     if np.any(cards <= 0):
         return None
 
-    # Mixed-radix place values: radix_j = prod(card_0 .. card_{j-1}).
-    # Guard against int64 overflow of the full key space prod(card) > 2**63.
+    # Mixed-radix place values radix_j = prod(card_0..card_{j-1}); guard against
+    # int64 overflow when the full key space prod(card) > 2**63.
     radices = np.empty(n_vars, dtype=np.int64)
     acc = 1  # Python int: exact, no overflow during the product itself
     for j in range(n_vars):
@@ -1741,9 +1694,8 @@ def _active_ordinal_vectorized(
         if acc > (1 << 63) - 1:
             return None  # key space exceeds int64 -> fall back to generic
 
-    # Committed to the fast-path from here on. ``acc`` now holds the exact key
-    # space size prod(card) (== max key + 1); every key is in ``[0, acc)`` and,
-    # because rows are unique, the keys are distinct.
+    # Committed to the fast-path. ``acc`` is the exact key space prod(card)
+    # (== max key + 1); every key is in [0, acc) and distinct (rows are unique).
     keyspace = acc
     codes = configs_array.astype(np.int64, copy=False)
     n = codes.shape[0]
@@ -1754,21 +1706,12 @@ def _active_ordinal_vectorized(
     if verbose:
         print(" - Constructing neighborhoods (ordinal vectorised)...")
 
-    # Collect every directed (source_row, neighbour_row) adjacency, mirroring
-    # the generic loop's successful lookups, then classify all at once.
-    #
-    # Lookup of the ±1 neighbour key uses a dense inverse index when the key
-    # space is small enough to address directly, otherwise a sorted-key
-    # ``searchsorted``. Both branches enumerate exactly the same successful
-    # ``(source, neighbour)`` adjacencies, so the classification tail below is
-    # identical regardless of which ran.
-    #
-    # Direct addressing replaces an O(log n) binary search per candidate with an
-    # O(1) gather. The inverse-index array costs ``keyspace * 8`` bytes, so it is
-    # only built when bounded by both an absolute floor (64 MiB) and ``4 * n``
-    # entries — the latter ties its footprint to the dataset size (and hence to
-    # the configs/edge arrays already held), so peak memory cannot blow up on a
-    # sparse, high-cardinality lattice; such cases fall back to ``searchsorted``.
+    # Collect every directed (source, neighbour) adjacency, then classify at once.
+    # The ±1 neighbour lookup uses a dense inverse index (O(1) gather) when the
+    # key space is small, else a sorted-key searchsorted; both enumerate the same
+    # adjacencies. The inverse index (keyspace * 8 bytes) is built only when below
+    # both a 64 MiB floor and 4*n entries, tying its footprint to the dataset so
+    # peak memory can't blow up on a sparse, high-cardinality lattice.
     use_dense_inverse = keyspace <= max(1 << 23, 4 * n)
 
     src_parts, nbr_parts = [], []
@@ -1781,9 +1724,8 @@ def _active_ordinal_vectorized(
             radix_j = int(radices[j])
             card_j = int(cards[j])
             for d in (1, -1):
-                # Valid sources: +1 needs code < card-1, -1 needs code > 0.
-                # The resulting neighbour key then stays within [0, keyspace),
-                # so inv[...] is always an in-bounds lookup.
+                # Valid sources: +1 needs code < card-1, -1 needs code > 0, so
+                # the neighbour key stays in [0, keyspace) (inv lookup in bounds).
                 valid = col != (card_j - 1) if d == 1 else col != 0
                 if not np.any(valid):
                     continue

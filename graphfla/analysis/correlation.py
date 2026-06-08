@@ -59,13 +59,12 @@ def determine_neighbor_fitness(self) -> "Landscape":
     if self.verbose:
         print("Calculating neighbor fitness metrics...")
 
-    # Get total number of vertices for progress tracking
     n_vertices = self.graph.vcount()
 
-    # Pre-fetch all fitness values into a numpy array for faster lookup
+    # Pre-fetch fitness into a numpy array for fast neighbour lookups
     fitness_array = np.array(self.graph.vs["fitness"])
 
-    # Step 1: Calculate mean neighbor fitness for each node
+    # Step 1: mean neighbour fitness per node
     mean_neighbor_fit = np.full(n_vertices, np.nan)
 
     adj_list = self.graph.get_adjlist(mode="all")
@@ -80,13 +79,12 @@ def determine_neighbor_fitness(self) -> "Landscape":
         if neighbors:
             mean_neighbor_fit[vertex_idx] = np.mean(fitness_array[neighbors])
 
-    # Add the mean neighbor fitness as a vertex attribute
     self.graph.vs["mean_neighbor_fit"] = mean_neighbor_fit.tolist()
 
     if self.verbose:
         print(f" - Added 'mean_neighbor_fit' attribute for {n_vertices} nodes")
 
-    # Step 2: Calculate delta mean neighbor fitness for each edge
+    # Step 2: delta mean neighbour fitness along each edge
     n_edges = self.graph.ecount()
 
     edge_list = self.graph.get_edgelist()
@@ -154,7 +152,6 @@ def neighbor_fit_corr(landscape, auto_calculate=True, method="pearson"):
     """
     landscape._check_built()
 
-    # Check if neighbor fitness has been calculated
     if "mean_neighbor_fit" not in landscape.graph.vs.attributes():
         if auto_calculate:
             if landscape.verbose:
@@ -167,13 +164,11 @@ def neighbor_fit_corr(landscape, auto_calculate=True, method="pearson"):
                 "or set auto_calculate=True."
             )
 
-    # Valid correlation methods
     if method not in ["pearson", "spearman", "kendall"]:
         raise ValueError(
             f"Invalid correlation method: {method}. Choose from 'pearson', 'spearman', or 'kendall'"
         )
 
-    # Extract fitness and mean neighbor fitness values
     fitness_values = landscape.graph.vs["fitness"]
     neighbor_fitness_values = landscape.graph.vs["mean_neighbor_fit"]
 
@@ -181,8 +176,7 @@ def neighbor_fit_corr(landscape, auto_calculate=True, method="pearson"):
         {"fitness": fitness_values, "mean_neighbor_fit": neighbor_fitness_values}
     )
 
-    # Remove rows with NaN (nodes with no neighbors)
-    data_clean = data.dropna()
+    data_clean = data.dropna()  # drop nodes with no neighbours (NaN fit)
     n_nodes = len(data_clean)
 
     if n_nodes == 0:
@@ -192,7 +186,6 @@ def neighbor_fit_corr(landscape, auto_calculate=True, method="pearson"):
             )
         return _pythonize(np.nan)
 
-    # Calculate correlation
     if method == "pearson":
         corr, _ = pearsonr(data_clean["fitness"], data_clean["mean_neighbor_fit"])
     elif method == "spearman":
@@ -225,12 +218,9 @@ def fitness_distance_corr(
         structure under maximization).
     """
 
-    # Check if the landscape has dist_go calculated
     if "dist_go" not in landscape.graph.vs.attributes():
-        # If dist_go is not available, calculate it lazily.
-        landscape.dist_to_go
+        landscape.dist_to_go  # lazily compute distance to global optimum
 
-        # Check again in case calculation failed
         if "dist_go" not in landscape.graph.vs.attributes():
             raise RuntimeError(
                 "Could not calculate distance to global optimum. Make sure the landscape "
@@ -333,14 +323,11 @@ def basin_fit_corr(landscape, method: str = "spearman"):
     float
         The correlation coefficient between basin size and local-optimum fitness.
     """
-    # Check if basins have been calculated
     if "size_basin_greedy" not in landscape.graph.vs.attributes():
-        # If basin sizes are not available, calculate them
         if landscape.verbose:
             print("Basin sizes not found. Calculating basins of attraction...")
         landscape.basins  # lazily computes greedy basins (size_basin_greedy, ...)
 
-        # Check again in case calculation failed
         if "size_basin_greedy" not in landscape.graph.vs.attributes():
             raise RuntimeError(
                 "Could not calculate basin sizes. Make sure the landscape "

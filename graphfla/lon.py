@@ -64,7 +64,6 @@ def get_lon(
         lo_configs, config_dict, n_edit=2, verbose=verbose
     )
 
-    # Extract basin_index attribute from graph vertices
     basin_index = pd.Series([graph.vs[i]["basin_index"] for i in range(graph.vcount())])
     basin_index = basin_index.sort_index()
 
@@ -81,13 +80,11 @@ def get_lon(
         verbose=verbose,
     )
 
-    # Create LON as igraph Graph
     lon = create_lon(graph, lo_adj, lo_index, verbose=verbose)
 
     escape_difficulty = calculate_escape_rate(
         lo_adj, lo_index, n_lo=n_lo, verbose=verbose
     )
-    # Set vertex attributes in igraph Graph
     for lo_idx, difficulty in escape_difficulty.items():
         vertex_idx = lon.vs.find(name=lo_idx).index
         lon.vs[vertex_idx]["escape_difficulty"] = difficulty
@@ -256,14 +253,12 @@ def create_lon(
         print("# Creating LON from adjacency matrix...")
     n_lo = len(lo_index)
 
-    # Create igraph Graph
     lon = ig.Graph(directed=True)
 
-    # Add vertices with names matching the original local optima indices
+    # Vertex names mirror the original local optima indices for cross-referencing
     lon.add_vertices(n_lo)
     lon.vs["name"] = lo_index
 
-    # Add edges from adjacency matrix
     edges = []
     weights = []
     for i in range(n_lo):
@@ -276,15 +271,12 @@ def create_lon(
     if edges:
         lon.es["weight"] = weights
 
-    # Create a subgraph of local optima from the original graph
     lo_subgraph = graph.subgraph(lo_index)
 
-    # Transfer vertex attributes from igraph subgraph to LON graph
+    # Carry over per-optimum attributes from the original landscape graph
     for i, lo_idx in enumerate(lo_index):
-        # Match vertex in LON to corresponding vertex in subgraph
         lon_vertex = lon.vs[i]
 
-        # Extract required vertex attributes
         for attr in ["fitness", "size_basin_greedy", "radius_basin_greedy", "config"]:
             if attr in lo_subgraph.vs.attributes():
                 lon_vertex[attr] = lo_subgraph.vs[i][attr]
@@ -362,14 +354,12 @@ def calculate_improve_rate(
         improving_moves_weight = 0
         current_fitness = vertex["fitness"]
 
-        # Get all outgoing edges
         out_edges = lon.es.select(_source=vertex.index)
 
         for edge in out_edges:
             edge_weight = edge["weight"]
             total_outgoing_weight += edge_weight
 
-            # Get target vertex
             target_vertex = lon.vs[edge.target]
             target_fitness = target_vertex["fitness"]
 
@@ -414,7 +404,7 @@ def calculate_lo_accessibility(lon: ig.Graph, verbose: bool = True) -> Dict[Any,
     )
     for vertex in iterator:
         node = vertex["name"]
-        # Find all vertices that have paths to this vertex (ancestors)
+        # Accessibility = count of ancestors (mode="in" follows incoming paths)
         ancestors = lon.subcomponent(vertex.index, mode="in")
         access_lon[node] = len(ancestors)
     return access_lon
@@ -442,7 +432,6 @@ def get_mlon(
     ig.Graph: The resulting M-LON
     """
 
-    # Create list of edges to remove
     edges_to_remove = []
 
     for edge in graph.es:
@@ -459,7 +448,6 @@ def get_mlon(
             if source_fitness < target_fitness:
                 edges_to_remove.append(edge.index)
 
-    # Create a copy of the graph and remove edges
     mlon_graph = graph.copy()
     mlon_graph.delete_edges(edges_to_remove)
 
@@ -486,25 +474,20 @@ def trim_lon(graph: ig.Graph, k: int = 10, attribute: str = "weight") -> ig.Grap
     ig.Graph: The resulting trimmed LON.
     """
 
-    # Create a copy of the graph to modify
     trimmed_graph = graph.copy()
 
-    # Process each vertex
     for vertex in trimmed_graph.vs:
-        # Get all outgoing edges for this vertex
         out_edges = trimmed_graph.es.select(_source=vertex.index)
 
         if len(out_edges) <= k:
-            continue  # Skip if there are k or fewer edges
+            continue
 
-        # Sort edges by weight in descending order
+        # Rank by weight and drop all but the top-k outgoing edges
         edge_weights = [(e.index, e[attribute]) for e in out_edges]
         edge_weights.sort(key=lambda x: x[1], reverse=True)
 
-        # Identify edges to remove (all except the top k)
         edges_to_remove = [idx for idx, _ in edge_weights[k:]]
 
-        # Remove edges
         trimmed_graph.delete_edges(edges_to_remove)
 
     return trimmed_graph

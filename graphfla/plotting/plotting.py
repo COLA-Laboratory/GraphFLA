@@ -15,7 +15,7 @@ def draw_diminishing_return(
     show_stats=True,
     save_path=None,
     dpi=300,
-    gridsize=50,  # New parameter for hexbin grid size
+    gridsize=50,
 ):
     """
     Visualizes diminishing returns epistasis by plotting fitness improvement vs background fitness.
@@ -58,7 +58,6 @@ def draw_diminishing_return(
         If insufficient data is available for plotting.
     """
 
-    # Validate landscape
     landscape._check_built()
     if landscape.graph is None or "fitness" not in landscape.graph.vs.attributes():
         raise ValueError(
@@ -66,7 +65,7 @@ def draw_diminishing_return(
             "Landscape must be built first."
         )
 
-    # Extract data - collect all raw successor improvements
+    # Collect every successor improvement (diminishing-returns needs the raw points)
     node_fitnesses = []
     successor_improvements = []
 
@@ -76,41 +75,36 @@ def draw_diminishing_return(
         if successors:
             for s in successors:
                 improvement = s["fitness"] - current_fitness
-                if improvement > 0:  # Only positive improvements
+                if improvement > 0:  # only beneficial steps
                     node_fitnesses.append(current_fitness)
                     successor_improvements.append(improvement)
 
-    # Convert to arrays
     x_data = np.array(node_fitnesses)
     y_data = np.array(successor_improvements)
 
     if len(x_data) < 2:
         raise ValueError("Not enough valid data points for visualization.")
 
-    # Set up the plot with beautiful styling
     plt.style.use("default")
     sns.set_palette("husl")
 
     fig, ax = plt.subplots(figsize=figsize, dpi=100)
 
-    # Create hexbin plot
     hexbin = ax.hexbin(
         x_data,
         y_data,
         gridsize=gridsize,
         cmap=color_scheme,
         alpha=alpha,
-        mincnt=1,  # Minimum count to display a hexagon
+        mincnt=1,  # drop empty hexagons
         edgecolors="white",
         linewidths=0.2,
         norm=colors.LogNorm(),
     )
 
-    # Add colorbar
     cbar = plt.colorbar(hexbin, ax=ax)
     cbar.set_label("Count", fontsize=12)
 
-    # Calculate and plot linear fit line if requested
     slope = np.nan
     intercept = np.nan
     r_squared = np.nan
@@ -123,7 +117,6 @@ def draw_diminishing_return(
             )
             r_squared = r_value**2
 
-            # Plot linear fit line
             x_line = np.linspace(x_data.min(), x_data.max(), 100)
             y_line = slope * x_line + intercept
             ax.plot(
@@ -137,11 +130,10 @@ def draw_diminishing_return(
         except Exception as e:
             print(f"Warning: Could not calculate linear fit: {e}")
 
-    # Add statistical information if requested
     if show_stats and not np.isnan(slope):
         stats_text = f"Slope: {slope:.3f}\nR²: {r_squared:.3f}\np-value: {p_value:.3e}\nn = {len(x_data)}"
 
-        # Position text box in upper right if negative slope, upper left if positive
+        # Keep the stats box clear of the fit line: right for negative slope, left otherwise
         if slope < 0:
             ax.text(
                 0.95,
@@ -165,21 +157,14 @@ def draw_diminishing_return(
                 fontsize=10,
             )
 
-    # Customize plot appearance
     ax.set_xlabel("Background Fitness", fontsize=14)
     ax.set_ylabel("Fitness Improvement", fontsize=14)
     ax.set_title("Diminishing Returns Epistasis", fontsize=16, pad=20)
 
-    # Add grid for better readability
     ax.grid(True, alpha=0.3, linestyle="--")
-
-    # Improve tick labels
     ax.tick_params(axis="both", which="major", labelsize=11)
-
-    # Adjust layout to prevent label cutoff
     plt.tight_layout()
 
-    # Save figure if path provided
     if save_path:
         plt.savefig(
             save_path, dpi=dpi, bbox_inches="tight", facecolor="white", edgecolor="none"
@@ -237,7 +222,6 @@ def draw_fitness_distance_corr(
         If insufficient data is available for plotting.
     """
 
-    # Validate landscape
     landscape._check_built()
     if landscape.graph is None or "fitness" not in landscape.graph.vs.attributes():
         raise ValueError(
@@ -245,19 +229,15 @@ def draw_fitness_distance_corr(
             "Landscape must be built first."
         )
 
-    # Check if the landscape has dist_go calculated
     if "dist_go" not in landscape.graph.vs.attributes():
-        # If dist_go is not available, calculate it lazily.
-        landscape.dist_to_go
+        landscape.dist_to_go  # lazily compute distance to global optimum
 
-        # Check again in case calculation failed
         if "dist_go" not in landscape.graph.vs.attributes():
             raise RuntimeError(
                 "Could not calculate distance to global optimum. Make sure the landscape "
                 "has proper configuration data and a valid global optimum."
             )
 
-    # Get the data
     data = landscape.get_data()
     distances = data["dist_go"]
     fitnesses = data["fitness"]
@@ -265,7 +245,7 @@ def draw_fitness_distance_corr(
     if len(distances) < 2:
         raise ValueError("Not enough valid data points for visualization.")
 
-    # Calculate average fitness and std for each distance
+    # Mean and std of fitness at each distance shell
     unique_distances = np.sort(np.unique(distances))
     mean_fitness = []
     std_fitness = []
@@ -278,15 +258,12 @@ def draw_fitness_distance_corr(
     mean_fitness = np.array(mean_fitness)
     std_fitness = np.array(std_fitness)
 
-    # Set up the plot
     plt.style.use("default")
     fig, ax = plt.subplots(figsize=figsize, dpi=100)
 
-    # Set std_color if not provided
     if std_color is None:
         std_color = color
 
-    # Plot the main line
     ax.plot(
         unique_distances,
         mean_fitness,
@@ -297,7 +274,6 @@ def draw_fitness_distance_corr(
         label="Mean fitness",
     )
 
-    # Add standard deviation bands if requested
     if show_std:
         ax.fill_between(
             unique_distances,
@@ -308,24 +284,15 @@ def draw_fitness_distance_corr(
             label="± 1 std",
         )
 
-    # Customize plot appearance
     ax.set_xlabel("Distance to Global Optimum", fontsize=14)
     ax.set_ylabel("Fitness", fontsize=14)
     ax.set_title("Fitness-Distance Correlation", fontsize=16, pad=20)
 
-    # Add grid for better readability
     ax.grid(True, alpha=0.3, linestyle="--")
-
-    # Improve tick labels
     ax.tick_params(axis="both", which="major", labelsize=11)
-
-    # Add legend
     ax.legend(frameon=True, fancybox=True, shadow=True, fontsize=10)
-
-    # Adjust layout to prevent label cutoff
     plt.tight_layout()
 
-    # Save figure if path provided
     if save_path:
         plt.savefig(
             save_path, dpi=dpi, bbox_inches="tight", facecolor="white", edgecolor="none"
@@ -390,7 +357,6 @@ def draw_neighbor_fit_corr(
         If insufficient data is available for plotting.
     """
 
-    # Validate landscape
     landscape._check_built()
     if landscape.graph is None or "fitness" not in landscape.graph.vs.attributes():
         raise ValueError(
@@ -398,7 +364,6 @@ def draw_neighbor_fit_corr(
             "Landscape must be built first."
         )
 
-    # Check if neighbor fitness has been calculated
     if "mean_neighbor_fit" not in landscape.graph.vs.attributes():
         if auto_calculate:
             landscape.neighbor_fitness  # lazily computes mean/delta neighbor fitness
@@ -409,49 +374,42 @@ def draw_neighbor_fit_corr(
                 "or set auto_calculate=True."
             )
 
-        # Check again in case calculation failed
         if "mean_neighbor_fit" not in landscape.graph.vs.attributes():
             raise RuntimeError(
                 "Could not calculate neighbor fitness metrics. Make sure the landscape "
                 "has proper graph structure."
             )
 
-    # Extract fitness and mean neighbor fitness values
     fitness_values = np.array(landscape.graph.vs["fitness"])
     neighbor_fitness_values = np.array(landscape.graph.vs["mean_neighbor_fit"])
 
-    # Remove NaN values (nodes with no neighbors)
-    valid_mask = ~np.isnan(neighbor_fitness_values)
+    valid_mask = ~np.isnan(neighbor_fitness_values)  # exclude nodes with no neighbours
     x_data = fitness_values[valid_mask]
     y_data = neighbor_fitness_values[valid_mask]
 
     if len(x_data) < 2:
         raise ValueError("Not enough valid data points for visualization.")
 
-    # Set up the plot with beautiful styling
     plt.style.use("default")
     sns.set_palette("husl")
 
     fig, ax = plt.subplots(figsize=figsize, dpi=100)
 
-    # Create hexbin plot
     hexbin = ax.hexbin(
         x_data,
         y_data,
         gridsize=gridsize,
         cmap=color_scheme,
         alpha=alpha,
-        mincnt=1,  # Minimum count to display a hexagon
+        mincnt=1,  # drop empty hexagons
         edgecolors="white",
         linewidths=0.2,
         norm=colors.LogNorm(),
     )
 
-    # Add colorbar
     cbar = plt.colorbar(hexbin, ax=ax)
     cbar.set_label("Count", fontsize=12)
 
-    # Calculate and plot linear fit line if requested
     slope = np.nan
     intercept = np.nan
     r_squared = np.nan
@@ -464,7 +422,6 @@ def draw_neighbor_fit_corr(
             )
             r_squared = r_value**2
 
-            # Plot linear fit line
             x_line = np.linspace(x_data.min(), x_data.max(), 100)
             y_line = slope * x_line + intercept
             ax.plot(
@@ -478,11 +435,10 @@ def draw_neighbor_fit_corr(
         except Exception as e:
             print(f"Warning: Could not calculate linear fit: {e}")
 
-    # Add statistical information if requested
     if show_stats and not np.isnan(slope):
         stats_text = f"Slope: {slope:.3f}\nR²: {r_squared:.3f}\np-value: {p_value:.3e}\nn = {len(x_data)}"
 
-        # Position text box in upper right if negative slope, upper left if positive
+        # Keep the stats box clear of the fit line: right for negative slope, left otherwise
         if slope < 0:
             ax.text(
                 0.95,
@@ -506,21 +462,14 @@ def draw_neighbor_fit_corr(
                 fontsize=10,
             )
 
-    # Customize plot appearance
     ax.set_xlabel("Node Fitness", fontsize=14)
     ax.set_ylabel("Mean Neighbor Fitness", fontsize=14)
     ax.set_title("Neighbor Fitness Correlation", fontsize=16, pad=20)
 
-    # Add grid for better readability
     ax.grid(True, alpha=0.3, linestyle="--")
-
-    # Improve tick labels
     ax.tick_params(axis="both", which="major", labelsize=11)
-
-    # Adjust layout to prevent label cutoff
     plt.tight_layout()
 
-    # Save figure if path provided
     if save_path:
         plt.savefig(
             save_path, dpi=dpi, bbox_inches="tight", facecolor="white", edgecolor="none"
@@ -594,7 +543,6 @@ def draw_adaptive_walk(
         If invalid parameters are provided.
     """
 
-    # Validate landscape
     landscape._check_built()
     if landscape.graph is None or "fitness" not in landscape.graph.vs.attributes():
         raise ValueError(
@@ -602,7 +550,7 @@ def draw_adaptive_walk(
             "Landscape must be built first."
         )
 
-    # Validate and process n_walks parameter
+    # float n_walks is a fraction of all configs; int is an absolute count
     total_nodes = len(landscape.graph.vs)
     if isinstance(n_walks, float):
         if not 0 < n_walks <= 1:
@@ -614,49 +562,38 @@ def draw_adaptive_walk(
     else:
         raise ValueError("n_walks must be int or float")
 
-    # Validate walk_type
     if walk_type not in ["best-improvement", "first-improvement"]:
         raise ValueError("walk_type must be 'best-improvement' or 'first-improvement'")
 
-    # Import hill_climb function
     from ..algorithms.adaptive_walk import hill_climb
 
-    # Sample starting nodes randomly
     starting_nodes = random.sample(range(total_nodes), n_walks)
-
-    # Store all walk data
     all_walks = []
 
     if verbose > 0:
         print(f"Performing {n_walks} adaptive walks...")
 
-    # Perform adaptive walks
     for i, start_node in enumerate(starting_nodes):
         if verbose > 0 and (i + 1) % max(1, n_walks // 10) == 0:
             print(f"Completed {i + 1}/{n_walks} walks")
 
-        # Perform hill climb with trace
         final_node, steps, trace = hill_climb(
             landscape.graph,
             start_node,
-            "fitness",  # weight parameter (though not directly used in our implementation)
-            verbose=0,  # Keep individual walks quiet
+            "fitness",  # weight arg, unused by this implementation
+            verbose=0,  # keep individual walks quiet
             return_trace=True,
             search_method=walk_type,
         )
 
-        # Extract fitness data for this walk
         walk_fitness = [landscape.graph.vs[node]["fitness"] for node in trace]
-        # Create step numbers starting from 1
-        walk_steps = list(range(1, len(trace) + 1))
+        walk_steps = list(range(1, len(trace) + 1))  # 1-based step index
 
         all_walks.append({"steps": walk_steps, "fitness": walk_fitness, "trace": trace})
 
-    # Set up the plot
     plt.style.use("default")
     fig, ax = plt.subplots(figsize=figsize, dpi=100)
 
-    # Plot individual walks
     for i, walk in enumerate(all_walks):
         ax.plot(
             walk["steps"],
@@ -667,30 +604,24 @@ def draw_adaptive_walk(
             label="Individual walks" if i == 0 else "",
         )
 
-    # Calculate and plot mean fitness trajectory if requested
+    # Mean trajectory: average across walks still alive at each step (lengths differ)
     if show_mean and len(all_walks) > 0:
-        # Find the maximum number of steps across all walks
         max_steps = max(len(walk["steps"]) for walk in all_walks)
 
-        # Calculate mean fitness at each step
         mean_fitness_at_step = []
         for step in range(1, max_steps + 1):
             fitness_values = []
             for walk in all_walks:
                 if step <= len(walk["steps"]):
-                    fitness_values.append(
-                        walk["fitness"][step - 1]
-                    )  # step-1 for 0-indexed list
+                    fitness_values.append(walk["fitness"][step - 1])
 
             if fitness_values:
                 mean_fitness_at_step.append(np.mean(fitness_values))
             else:
                 mean_fitness_at_step.append(np.nan)
 
-        # Create step numbers for mean line
         step_numbers = list(range(1, max_steps + 1))
 
-        # Remove NaN values
         valid_indices = [
             i for i, val in enumerate(mean_fitness_at_step) if not np.isnan(val)
         ]
@@ -704,31 +635,24 @@ def draw_adaptive_walk(
                 color=color_mean,
                 linewidth=linewidth_mean,
                 label="Mean fitness",
-                zorder=10,  # Ensure mean line is on top
+                zorder=10,  # draw mean line on top
             )
 
-    # Customize plot appearance
     ax.set_xlabel("Step Number", fontsize=14)
     ax.set_ylabel("Fitness", fontsize=14)
     ax.set_title(f"Adaptive Walks ({walk_type}, n={n_walks})", fontsize=16, pad=20)
 
-    # Add grid for better readability
     ax.grid(True, alpha=0.3, linestyle="--")
-
-    # Improve tick labels
     ax.tick_params(axis="both", which="major", labelsize=11)
 
-    # Add legend
     handles, labels = ax.get_legend_handles_labels()
     if handles:
         ax.legend(
             handles, labels, frameon=True, fancybox=True, shadow=True, fontsize=10
         )
 
-    # Adjust layout to prevent label cutoff
     plt.tight_layout()
 
-    # Save figure if path provided
     if save_path:
         plt.savefig(
             save_path, dpi=dpi, bbox_inches="tight", facecolor="white", edgecolor="none"
@@ -795,7 +719,6 @@ def draw_global_epistasis(
         If required dependencies (sklearn) are not available.
     """
 
-    # Validate landscape
     landscape._check_built()
     if landscape.graph is None or "fitness" not in landscape.graph.vs.attributes():
         raise ValueError(
@@ -803,7 +726,6 @@ def draw_global_epistasis(
             "Landscape must be built first."
         )
 
-    # Import required libraries
     try:
         from sklearn.linear_model import LinearRegression
         from sklearn.preprocessing import (
@@ -819,10 +741,9 @@ def draw_global_epistasis(
             "Please install them with: pip install scikit-learn pandas"
         )
 
-    # Get the data
     data = landscape.get_data()
 
-    # Extract genotype data (exclude non-genotype columns)
+    # Genotype columns = data columns minus the computed graph metrics below
     exclude_cols = [
         "fitness",
         "in_degree",
@@ -837,27 +758,23 @@ def draw_global_epistasis(
         "dist_go",
     ]
 
-    # Get genotype columns (should be the variable columns)
     genotype_cols = [col for col in data.columns if col not in exclude_cols]
 
     if len(genotype_cols) == 0:
         raise ValueError("No genotype columns found in the data.")
 
-    # Extract genotype data and fitness values
     X_genotype_raw = data[genotype_cols]
     y_fitness = data["fitness"].values
 
     if len(X_genotype_raw) < 2:
         raise ValueError("Not enough valid data points for visualization.")
 
-    # Check data type and encode appropriately
     if landscape.verbose:
         print("Processing genotype data...")
 
-    # Determine if we need categorical encoding
+    # One-hot encode if any column is non-numeric or the landscape is categorical/sequence
     needs_encoding = False
     for col in genotype_cols:
-        # Check if column contains non-numeric data or if landscape data_type indicates categorical
         col_data = X_genotype_raw[col]
         if (
             hasattr(landscape, "data_type")
@@ -870,7 +787,6 @@ def draw_global_epistasis(
         if landscape.verbose:
             print("Detected categorical data, applying one-hot encoding...")
 
-        # Use pandas get_dummies for one-hot encoding
         X_encoded = pd.get_dummies(X_genotype_raw, prefix=genotype_cols)
         X_genotype = X_encoded.values
 
@@ -880,29 +796,24 @@ def draw_global_epistasis(
             )
 
     else:
-        # Data is already numeric (boolean/binary)
-        X_genotype = X_genotype_raw.values
+        X_genotype = X_genotype_raw.values  # already numeric (boolean/binary)
 
         if landscape.verbose:
             print(f"Using {X_genotype.shape[1]} numeric features directly")
 
-    # Fit first-order linear model to get additive effects
     if landscape.verbose:
         print("Fitting first-order linear model...")
 
+    # phi = additive (first-order) prediction; x-axis of the global-epistasis plot
     linear_model = LinearRegression()
     linear_model.fit(X_genotype, y_fitness)
-
-    # Calculate sum of linear predictors (phi)
     phi = linear_model.predict(X_genotype)
 
-    # Set up the plot
     plt.style.use("default")
     sns.set_palette("husl")
 
     fig, ax = plt.subplots(figsize=figsize, dpi=100)
 
-    # Create hexbin plot
     hexbin = ax.hexbin(
         phi,
         y_fitness,
@@ -915,26 +826,20 @@ def draw_global_epistasis(
         norm=colors.LogNorm(),
     )
 
-    # Add colorbar
     cbar = plt.colorbar(hexbin, ax=ax)
     cbar.set_label("Count", fontsize=12)
 
-    # Add binned mean line if requested
     if show_binned_mean:
         try:
-            # Calculate binned statistics
             from scipy import stats as scipy_stats
 
-            # Create bins
             bin_means, bin_edges, _ = scipy_stats.binned_statistic(
                 phi, y_fitness, statistic="mean", bins=n_bins
             )
 
-            # Calculate bin centers
             bin_centers = (bin_edges[:-1] + bin_edges[1:]) / 2
 
-            # Remove NaN values
-            valid_mask = ~np.isnan(bin_means)
+            valid_mask = ~np.isnan(bin_means)  # drop empty bins
             valid_centers = bin_centers[valid_mask]
             valid_means = bin_means[valid_mask]
 
@@ -952,19 +857,16 @@ def draw_global_epistasis(
         except Exception as e:
             print(f"Warning: Could not calculate binned mean: {e}")
 
-    # Add nonlinear fit line if requested
     if show_nonlinear_fit:
         try:
-            # Fit polynomial regression (degree 3) as approximation to spline
+            # Degree-3 polynomial approximates the spline g(phi)
             poly_model = Pipeline(
                 [("poly", PolynomialFeatures(degree=3)), ("linear", LinearRegression())]
             )
 
-            # Reshape phi for sklearn
             phi_reshaped = phi.reshape(-1, 1)
             poly_model.fit(phi_reshaped, y_fitness)
 
-            # Generate smooth line for plotting
             phi_range = np.linspace(phi.min(), phi.max(), 200)
             phi_range_reshaped = phi_range.reshape(-1, 1)
             y_nonlinear = poly_model.predict(phi_range_reshaped)
@@ -981,11 +883,9 @@ def draw_global_epistasis(
         except Exception as e:
             print(f"Warning: Could not calculate nonlinear fit: {e}")
 
-    # Calculate R-squared for linear model
     try:
         r_squared = linear_model.score(X_genotype, y_fitness)
 
-        # Add statistics text
         n_features = X_genotype.shape[1]
         stats_text = (
             f"Linear R²: {r_squared:.3f}\nFeatures: {n_features}\nn = {len(y_fitness)}"
@@ -1004,28 +904,21 @@ def draw_global_epistasis(
     except Exception as e:
         print(f"Warning: Could not calculate R-squared: {e}")
 
-    # Customize plot appearance
     ax.set_xlabel("Sum of Linear Predictors", fontsize=14)
     ax.set_ylabel("Fitness", fontsize=14)
     ax.set_title("Global Epistasis", fontsize=16, pad=20)
 
-    # Add grid for better readability
     ax.grid(True, alpha=0.3, linestyle="--")
-
-    # Improve tick labels
     ax.tick_params(axis="both", which="major", labelsize=11)
 
-    # Add legend if any lines were plotted
     handles, labels = ax.get_legend_handles_labels()
     if handles:
         ax.legend(
             handles, labels, frameon=True, fancybox=True, shadow=True, fontsize=10
         )
 
-    # Adjust layout to prevent label cutoff
     plt.tight_layout()
 
-    # Save figure if path provided
     if save_path:
         plt.savefig(
             save_path, dpi=dpi, bbox_inches="tight", facecolor="white", edgecolor="none"
@@ -1095,7 +988,6 @@ def draw_fitness_distribution(
         If insufficient data is available for plotting.
     """
 
-    # Validate landscape
     landscape._check_built()
     if landscape.graph is None or "fitness" not in landscape.graph.vs.attributes():
         raise ValueError(
@@ -1103,17 +995,14 @@ def draw_fitness_distribution(
             "Landscape must be built first."
         )
 
-    # Extract fitness values
     fitness_values = np.array(landscape.graph.vs["fitness"])
 
     if len(fitness_values) < 2:
         raise ValueError("Not enough fitness data points for visualization.")
 
-    # Set up the plot
     plt.style.use("default")
     fig, ax = plt.subplots(figsize=figsize, dpi=100)
 
-    # Create histogram
     n, bins_edges, patches = ax.hist(
         fitness_values,
         bins=bins,
@@ -1121,18 +1010,15 @@ def draw_fitness_distribution(
         alpha=alpha,
         edgecolor=edgecolor,
         linewidth=linewidth,
-        density=show_kde,  # Use density if showing KDE for proper scaling
+        density=show_kde,  # density so KDE and histogram share a y-scale
     )
 
-    # Add KDE curve if requested
     if show_kde:
         try:
             from scipy.stats import gaussian_kde
 
-            # Create KDE
             kde = gaussian_kde(fitness_values)
 
-            # Generate smooth x values for KDE curve
             x_kde = np.linspace(fitness_values.min(), fitness_values.max(), 200)
             y_kde = kde(x_kde)
 
@@ -1150,7 +1036,6 @@ def draw_fitness_distribution(
         except Exception as e:
             print(f"Warning: Could not calculate KDE: {e}")
 
-    # Calculate and display statistics if requested
     if show_stats:
         try:
             mean_fitness = np.mean(fitness_values)
@@ -1159,7 +1044,6 @@ def draw_fitness_distribution(
             min_fitness = np.min(fitness_values)
             max_fitness = np.max(fitness_values)
 
-            # Calculate skewness and kurtosis
             from scipy import stats as scipy_stats
 
             skewness = scipy_stats.skew(fitness_values)
@@ -1176,7 +1060,6 @@ def draw_fitness_distribution(
                 f"n = {len(fitness_values)}"
             )
 
-            # Position stats box in upper right
             ax.text(
                 0.95,
                 0.95,
@@ -1189,7 +1072,7 @@ def draw_fitness_distribution(
             )
 
         except ImportError:
-            # Basic stats without scipy
+            # scipy missing: skewness/kurtosis omitted
             mean_fitness = np.mean(fitness_values)
             std_fitness = np.std(fitness_values)
             median_fitness = np.median(fitness_values)
@@ -1219,13 +1102,11 @@ def draw_fitness_distribution(
         except Exception as e:
             print(f"Warning: Could not calculate statistics: {e}")
 
-    # Add vertical lines for mean and median
     if show_stats:
         try:
             mean_fitness = np.mean(fitness_values)
             median_fitness = np.median(fitness_values)
 
-            # Add mean line
             ax.axvline(
                 mean_fitness,
                 color="red",
@@ -1235,7 +1116,7 @@ def draw_fitness_distribution(
                 label=f"Mean ({mean_fitness:.3f})",
             )
 
-            # Add median line (only if different from mean)
+            # median line only when it visibly differs from the mean
             if abs(mean_fitness - median_fitness) > 0.001:
                 ax.axvline(
                     median_fitness,
@@ -1249,7 +1130,6 @@ def draw_fitness_distribution(
         except Exception as e:
             print(f"Warning: Could not add reference lines: {e}")
 
-    # Customize plot appearance
     ax.set_xlabel("Fitness", fontsize=14)
 
     if show_kde:
@@ -1259,23 +1139,17 @@ def draw_fitness_distribution(
 
     ax.set_title("Fitness Distribution", fontsize=16, pad=20)
 
-    # Add grid for better readability
     ax.grid(True, alpha=0.3, linestyle="--")
-
-    # Improve tick labels
     ax.tick_params(axis="both", which="major", labelsize=11)
 
-    # Add legend if there are labeled elements
     handles, labels = ax.get_legend_handles_labels()
     if handles:
         ax.legend(
             handles, labels, frameon=True, fancybox=True, shadow=True, fontsize=10
         )
 
-    # Adjust layout to prevent label cutoff
     plt.tight_layout()
 
-    # Save figure if path provided
     if save_path:
         plt.savefig(
             save_path, dpi=dpi, bbox_inches="tight", facecolor="white", edgecolor="none"
@@ -1350,7 +1224,6 @@ def draw_fitness_effects(
         If invalid mutations or insufficient data is provided.
     """
 
-    # Validate landscape
     landscape._check_built()
     if landscape.graph is None or "fitness" not in landscape.graph.vs.attributes():
         raise ValueError(
@@ -1358,10 +1231,9 @@ def draw_fitness_effects(
             "Landscape must be built first."
         )
 
-    # Get the data
     data = landscape.get_data()
 
-    # Normalize mutations input to always be a list of tuples
+    # Normalize a single mutation tuple to a list
     if isinstance(mutations, tuple):
         mutations = [mutations]
     elif isinstance(mutations, list):
@@ -1375,7 +1247,6 @@ def draw_fitness_effects(
             "or a list of such tuples"
         )
 
-    # Validate mutations
     for original_allele, position, new_allele in mutations:
         if position not in data.columns:
             raise ValueError(
@@ -1394,21 +1265,18 @@ def draw_fitness_effects(
                 f"Available alleles: {unique_alleles}"
             )
 
-    # Check for mutations at the same position
     positions = [mut[1] for mut in mutations]
     if len(positions) != len(set(positions)):
         raise ValueError("Multiple mutations cannot occur at the same position")
 
-    # Create filters for original and new genotypes
+    # Boolean masks selecting the pre- and post-mutation genotype sets
     original_filter = True
     new_filter = True
 
-    # Build filters for all mutations
     for original_allele, position, new_allele in mutations:
         original_filter = original_filter & (data[position] == original_allele)
         new_filter = new_filter & (data[position] == new_allele)
 
-    # Filter data to get original and new genotype sets
     original_data = data[original_filter].copy()
     new_data = data[new_filter].copy()
 
@@ -1427,12 +1295,10 @@ def draw_fitness_effects(
     if len(background_cols) == 0:
         raise ValueError("No background columns found for comparison")
 
-    # Align dataframes by common genetic backgrounds
     original_backgrounds = original_data[background_cols]
     new_backgrounds = new_data[background_cols]
 
-    # Find common backgrounds using merge
-    # First add fitness columns with suffixes to track them
+    # Inner-join on backgrounds: each retained row is one mutation effect on a shared background
     original_with_fit = original_data[background_cols + ["fitness"]].copy()
     original_with_fit = original_with_fit.rename(
         columns={"fitness": "fitness_original"}
@@ -1441,7 +1307,6 @@ def draw_fitness_effects(
     new_with_fit = new_data[background_cols + ["fitness"]].copy()
     new_with_fit = new_with_fit.rename(columns={"fitness": "fitness_new"})
 
-    # Merge on background columns to find common backgrounds
     aligned_data = original_with_fit.merge(
         new_with_fit, on=background_cols, how="inner"
     )
@@ -1451,7 +1316,6 @@ def draw_fitness_effects(
             "No common genetic backgrounds found between original and new allele genotypes"
         )
 
-    # Calculate fitness effects (new fitness - original fitness)
     fitness_effects = aligned_data["fitness_new"] - aligned_data["fitness_original"]
 
     if len(fitness_effects) < 2:
@@ -1459,11 +1323,9 @@ def draw_fitness_effects(
             "Not enough common backgrounds for meaningful fitness effects analysis"
         )
 
-    # Set up the plot
     plt.style.use("default")
     fig, ax = plt.subplots(figsize=figsize, dpi=100)
 
-    # Create histogram
     n, bins_edges, patches = ax.hist(
         fitness_effects,
         bins=bins,
@@ -1471,18 +1333,15 @@ def draw_fitness_effects(
         alpha=alpha,
         edgecolor=edgecolor,
         linewidth=linewidth,
-        density=show_kde,  # Use density if showing KDE for proper scaling
+        density=show_kde,  # density so KDE and histogram share a y-scale
     )
 
-    # Add KDE curve if requested
     if show_kde:
         try:
             from scipy.stats import gaussian_kde
 
-            # Create KDE
             kde = gaussian_kde(fitness_effects)
 
-            # Generate smooth x values for KDE curve
             x_kde = np.linspace(fitness_effects.min(), fitness_effects.max(), 200)
             y_kde = kde(x_kde)
 
@@ -1500,7 +1359,6 @@ def draw_fitness_effects(
         except Exception as e:
             print(f"Warning: Could not calculate KDE: {e}")
 
-    # Calculate and display statistics if requested
     if show_stats:
         try:
             mean_effect = np.mean(fitness_effects)
@@ -1509,12 +1367,10 @@ def draw_fitness_effects(
             min_effect = np.min(fitness_effects)
             max_effect = np.max(fitness_effects)
 
-            # Count beneficial, neutral, and deleterious mutations
             beneficial = np.sum(fitness_effects > 0)
             neutral = np.sum(fitness_effects == 0)
             deleterious = np.sum(fitness_effects < 0)
 
-            # Calculate skewness and kurtosis if scipy available
             try:
                 from scipy import stats as scipy_stats
 
@@ -1547,7 +1403,7 @@ def draw_fitness_effects(
                     f"n = {len(fitness_effects)}"
                 )
 
-            # Position stats box in upper right or left depending on skew
+            # Place stats box away from the bulk: right if mean >= 0, else left
             if mean_effect >= 0:
                 ha = "right"
                 x_pos = 0.95
@@ -1569,12 +1425,11 @@ def draw_fitness_effects(
         except Exception as e:
             print(f"Warning: Could not calculate statistics: {e}")
 
-    # Add vertical lines for mean and zero effect
     if show_stats:
         try:
             mean_effect = np.mean(fitness_effects)
 
-            # Add zero line (neutral)
+            # Reference lines: neutral (0) and the mean effect
             ax.axvline(
                 0,
                 color="black",
@@ -1584,7 +1439,6 @@ def draw_fitness_effects(
                 label="Neutral (0)",
             )
 
-            # Add mean line
             ax.axvline(
                 mean_effect,
                 color="red",
@@ -1597,7 +1451,6 @@ def draw_fitness_effects(
         except Exception as e:
             print(f"Warning: Could not add reference lines: {e}")
 
-    # Create mutation description for title
     if len(mutations) == 1:
         original_allele, position, new_allele = mutations[0]
         mutation_desc = f"{original_allele}→{new_allele} at {position}"
@@ -1607,7 +1460,6 @@ def draw_fitness_effects(
             mutation_parts.append(f"{original_allele}→{new_allele}@{position}")
         mutation_desc = ", ".join(mutation_parts)
 
-    # Customize plot appearance
     ax.set_xlabel("Fitness Effect", fontsize=14)
 
     if show_kde:
@@ -1619,23 +1471,17 @@ def draw_fitness_effects(
         f"Distribution of Fitness Effects\n({mutation_desc})", fontsize=16, pad=20
     )
 
-    # Add grid for better readability
     ax.grid(True, alpha=0.3, linestyle="--")
-
-    # Improve tick labels
     ax.tick_params(axis="both", which="major", labelsize=11)
 
-    # Add legend if there are labeled elements
     handles, labels = ax.get_legend_handles_labels()
     if handles:
         ax.legend(
             handles, labels, frameon=True, fancybox=True, shadow=True, fontsize=10
         )
 
-    # Adjust layout to prevent label cutoff
     plt.tight_layout()
 
-    # Save figure if path provided
     if save_path:
         plt.savefig(
             save_path, dpi=dpi, bbox_inches="tight", facecolor="white", edgecolor="none"
@@ -1701,7 +1547,6 @@ def draw_basin_fit_corr(
         If insufficient data is available for plotting or invalid method specified.
     """
 
-    # Validate landscape
     landscape._check_built()
     if landscape.graph is None or "fitness" not in landscape.graph.vs.attributes():
         raise ValueError(
@@ -1709,43 +1554,35 @@ def draw_basin_fit_corr(
             "Landscape must be built first."
         )
 
-    # Validate method
     if method not in ["spearman", "pearson"]:
         raise ValueError(f"Invalid method '{method}'. Choose 'spearman' or 'pearson'.")
 
-    # Check if basins have been calculated
     if "size_basin_greedy" not in landscape.graph.vs.attributes():
-        # If basin sizes are not available, calculate them lazily.
         if landscape.verbose:
             print("Basin sizes not found. Calculating basins of attraction...")
-        landscape.basins
+        landscape.basins  # lazily compute basin sizes
 
-        # Check again in case calculation failed
         if "size_basin_greedy" not in landscape.graph.vs.attributes():
             raise RuntimeError(
                 "Could not calculate basin sizes. Make sure the landscape "
                 "has a valid graph structure for basin calculation."
             )
 
-    # Get local optima data
     lo_data = landscape.get_data(lo_only=True)
 
     if len(lo_data) < 2:
         raise ValueError("Not enough local optima for correlation analysis.")
 
-    # Extract data for plotting
     fitness_values = lo_data["fitness"].values
     basin_sizes_greedy = lo_data["size_basin_greedy"].values
 
-    # Check if accessible basin sizes are available
+    # Second panel only when accessible-basin sizes were computed
     has_accessible = "size_basin_accessible" in lo_data.columns
     if has_accessible:
         basin_sizes_accessible = lo_data["size_basin_accessible"].values
 
-    # Set up the plot
     plt.style.use("default")
 
-    # Create subplots - one or two depending on available data
     if has_accessible:
         fig, (ax1, ax2) = plt.subplots(
             1, 2, figsize=(figsize[0] * 2, figsize[1]), dpi=100
@@ -1759,12 +1596,10 @@ def draw_basin_fit_corr(
         basin_data = [basin_sizes_greedy]
         titles = ["Greedy Basin Size"]
 
-    # Plot data for each basin type
     for idx, (current_ax, basin_sizes, title) in enumerate(
         zip(axes, basin_data, titles)
     ):
 
-        # Create scatter plot
         current_ax.scatter(
             fitness_values,
             basin_sizes,
@@ -1775,7 +1610,6 @@ def draw_basin_fit_corr(
             linewidths=0.5,
         )
 
-        # Calculate and plot regression line if requested
         slope = np.nan
         intercept = np.nan
         r_value = np.nan
@@ -1783,12 +1617,10 @@ def draw_basin_fit_corr(
 
         if show_regression and len(fitness_values) > 1:
             try:
-                # Calculate linear regression
                 slope, intercept, r_value, p_value, std_err = stats.linregress(
                     fitness_values, basin_sizes
                 )
 
-                # Plot regression line
                 x_line = np.linspace(fitness_values.min(), fitness_values.max(), 100)
                 y_line = slope * x_line + intercept
                 current_ax.plot(
@@ -1800,14 +1632,12 @@ def draw_basin_fit_corr(
                     alpha=0.8,
                 )
 
-                # Add 95% confidence interval if requested
                 if show_confidence:
                     try:
-                        # Calculate confidence interval
+                        # 95% CI band around the regression line (t-distribution, n-2 df)
                         n = len(fitness_values)
-                        t_val = stats.t.ppf(0.975, n - 2)  # 95% confidence interval
+                        t_val = stats.t.ppf(0.975, n - 2)
 
-                        # Calculate standard error of prediction
                         x_mean = np.mean(fitness_values)
                         sxx = np.sum((fitness_values - x_mean) ** 2)
                         s_yx = np.sqrt(
@@ -1818,10 +1648,7 @@ def draw_basin_fit_corr(
                             / (n - 2)
                         )
 
-                        # Standard error for each point on the line
                         se = s_yx * np.sqrt(1 / n + (x_line - x_mean) ** 2 / sxx)
-
-                        # Confidence interval
                         ci = t_val * se
 
                         current_ax.fill_between(
@@ -1843,7 +1670,6 @@ def draw_basin_fit_corr(
                 if landscape.verbose:
                     print(f"Warning: Could not calculate linear regression: {e}")
 
-        # Calculate correlation coefficient
         try:
             from scipy.stats import spearmanr, pearsonr
 
@@ -1854,7 +1680,6 @@ def draw_basin_fit_corr(
                 corr_coef, corr_p = pearsonr(fitness_values, basin_sizes)
                 corr_name = "Pearson r"
 
-            # Add statistical information
             if not np.isnan(corr_coef):
                 stats_text = (
                     f"{corr_name}: {corr_coef:.3f}\n"
@@ -1865,7 +1690,6 @@ def draw_basin_fit_corr(
                 if not np.isnan(slope):
                     stats_text += f"\nLinear R²: {r_value**2:.3f}"
 
-                # Position text box
                 current_ax.text(
                     0.05,
                     0.95,
@@ -1884,30 +1708,23 @@ def draw_basin_fit_corr(
             if landscape.verbose:
                 print(f"Warning: Could not calculate correlation: {e}")
 
-        # Customize plot appearance
         current_ax.set_xlabel("Local Optima Fitness", fontsize=14)
         current_ax.set_ylabel("Basin Size", fontsize=14)
         current_ax.set_title(
             f"Basin-Fitness Correlation\n({title})", fontsize=14, pad=15
         )
 
-        # Add grid for better readability
         current_ax.grid(True, alpha=0.3, linestyle="--")
-
-        # Improve tick labels
         current_ax.tick_params(axis="both", which="major", labelsize=11)
 
-        # Add legend if there are labeled elements
         handles, labels = current_ax.get_legend_handles_labels()
         if handles:
             current_ax.legend(
                 handles, labels, frameon=True, fancybox=True, shadow=True, fontsize=9
             )
 
-    # Adjust layout to prevent label cutoff
     plt.tight_layout()
 
-    # Save figure if path provided
     if save_path:
         plt.savefig(
             save_path, dpi=dpi, bbox_inches="tight", facecolor="white", edgecolor="none"

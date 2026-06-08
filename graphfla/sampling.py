@@ -110,8 +110,7 @@ def latin_hypercube_sampling(param_distributions, n_iter, evaluate, seed=None):
     num_continuous = len(continuous_params)
     sampler = qmc.LatinHypercube(d=num_continuous, seed=seed)
     sample = sampler.random(n=n_iter)
-    # Seed the categorical draws from the same seed so the whole sample
-    # (continuous + categorical) is reproducible, as the docstring promises.
+    # Same seed for categorical draws so the whole sample is reproducible.
     rng = np.random.default_rng(seed)
 
     scaled_sample = np.empty_like(sample)
@@ -125,7 +124,6 @@ def latin_hypercube_sampling(param_distributions, n_iter, evaluate, seed=None):
             config[param] = scaled_sample[i, j]
         for param, choices in categorical_params.items():
             config[param] = rng.choice(choices)
-        # Evaluate fitness
         fitness = evaluate(config)
         config['fitness'] = fitness
         results.append(config)

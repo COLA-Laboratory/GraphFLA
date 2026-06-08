@@ -45,10 +45,8 @@ def determine_local_optima(landscape):
     if self.verbose:
         print(" - Determining local optima...")
 
-    # Reuse the eagerly-stored out-degree attribute when present (set in
-    # ``_analyze``) to avoid recomputing the full degree sequence; fall back to
-    # an on-the-fly C call for graphs that lack the attribute. Values are
-    # identical either way.
+    # Reuse the cached out-degree attribute (set in ``_analyze``) when present;
+    # the on-the-fly fallback gives identical values.
     if "out_degree" in self.graph.vs.attributes():
         out_degrees = np.asarray(self.graph.vs["out_degree"])
     else:
@@ -56,16 +54,13 @@ def determine_local_optima(landscape):
 
     if self._has_plateaus:
         # --- Plateau-aware LO detection ---
-        # ``fitness`` is only needed on the plateau path, so it is read here
-        # rather than unconditionally (the no-plateau branch never uses it).
+        # ``fitness`` is only needed here, not on the no-plateau path.
         eps = float(getattr(self, "epsilon", 0) or 0)
         fitness = np.asarray(self.graph.vs["fitness"], dtype=np.float64)
         node_to_plateau = self._node_to_plateau
 
-        # Per-plateau best fitness over its members, computed in one grouped
-        # reduction instead of a per-plateau ``np.max`` call. The array is
-        # sized by the largest plateau id so it stays correct even if ids are
-        # not perfectly dense (e.g. restored from a saved graph).
+        # Per-plateau best fitness via one grouped reduction. Sized by max
+        # plateau id so it tolerates non-dense ids (e.g. restored graphs).
         in_plateau_mask = node_to_plateau >= 0
         member_pids = node_to_plateau[in_plateau_mask]
         member_fits = fitness[in_plateau_mask]

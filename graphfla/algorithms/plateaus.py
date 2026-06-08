@@ -37,16 +37,11 @@ def build_plateaus(landscape, neutral_pairs):
 
     n_configs = self.n_configs
 
-    # Connected components of the neutral network via SciPy, built directly from
-    # ``neutral_pairs`` as numpy arrays -- avoids constructing a second igraph.
-    #
-    # ``neutral_pairs`` is a Python list of ``(i, j)`` tuples; flattening it with
-    # ``itertools.chain`` into a single ``np.fromiter`` is ~3x faster than
-    # ``np.asarray`` on the list-of-tuples (which boxes each tuple).  The edges
-    # are loaded into a COO -> CSR matrix in their stored (directed) orientation
-    # only -- ``connected_components(..., connection="weak")`` already treats the
-    # graph as undirected, so materialising the transpose would only double the
-    # nnz and the build cost for no change in the resulting partition.
+    # Connected components via SciPy, built straight from neutral_pairs as numpy
+    # arrays -- avoids a second igraph. chain + np.fromiter is ~3x faster than
+    # np.asarray on the list-of-tuples (no per-tuple boxing). Edges stay in their
+    # stored (directed) orientation: connection="weak" treats the graph as
+    # undirected, so the transpose would only double the nnz for no change.
     n_pairs = len(neutral_pairs)
     flat = np.fromiter(
         chain.from_iterable(neutral_pairs), dtype=np.int64, count=2 * n_pairs
@@ -62,14 +57,9 @@ def build_plateaus(landscape, neutral_pairs):
     )
     membership = membership.astype(np.int64, copy=False)
 
-    # ``membership[v]`` is the connected-component label of vertex ``v``.  Only
-    # components with more than one member are plateaus.  Plateau ids must match
-    # the previous ``for members in components`` loop, which assigned ids in the
-    # order components were first encountered scanning vertices 0..n-1 (skipping
-    # singletons).  SciPy's component labelling is not contractually tied to
-    # that convention, so plateau ids are assigned explicitly by ascending
-    # first-member (smallest node) index, which reproduces the old ordering
-    # regardless of how SciPy numbers its components.
+    # Only multi-member components are plateaus. SciPy's component labels aren't
+    # ordered by first-member, so assign plateau ids by ascending smallest-node
+    # index to reproduce the legacy 0..n-1 scan order.
     comp_sizes = np.bincount(membership, minlength=n_configs)
     multi_ids = np.nonzero(comp_sizes > 1)[0]
 
@@ -78,7 +68,7 @@ def build_plateaus(landscape, neutral_pairs):
         self.n_plateau = 0
         return
 
-    # ``first_idx[label]`` is the smallest vertex index carrying that label.
+    # first_idx[label]: smallest vertex index carrying that label.
     _, first_idx = np.unique(membership, return_index=True)
     plateau_order = np.argsort(first_idx[multi_ids], kind="stable")
     ordered_comp = multi_ids[plateau_order]
@@ -88,10 +78,8 @@ def build_plateaus(landscape, neutral_pairs):
     comp_to_plateau[ordered_comp] = np.arange(n_plateau, dtype=np.int32)
     node_to_plateau = comp_to_plateau[membership]
 
-    # Group member nodes by plateau id.  ``in_plateau_nodes`` is ascending, and
-    # a stable sort by plateau id preserves that ascending node order within
-    # each group, so each member list is already sorted (matching the previous
-    # ``sorted(members)``).
+    # Group nodes by plateau id. in_plateau_nodes is ascending; a stable sort by
+    # plateau id keeps each group's nodes sorted (matching legacy sorted(members)).
     in_plateau_nodes = np.nonzero(node_to_plateau >= 0)[0]
     member_pids = node_to_plateau[in_plateau_nodes]
     order = np.argsort(member_pids, kind="stable")
@@ -106,18 +94,15 @@ def build_plateaus(landscape, neutral_pairs):
     self.n_plateau = n_plateau
     self._has_plateaus = True
 
-    # Build per-node neutral neighbor adjacency.  The explicit Python loop over
-    # ``neutral_pairs`` is faster here than vectorised regrouping because the
-    # neutral degree per node is high and the list->ndarray conversion of the
-    # pair list is itself costly.
+    # Per-node neutral adjacency. A plain Python loop beats vectorised regrouping
+    # here: high neutral degree and the pair-list->ndarray conversion is costly.
     neutral_neighbors = defaultdict(list)
     for u, v in neutral_pairs:
         neutral_neighbors[u].append(v)
         neutral_neighbors[v].append(u)
     self._neutral_neighbors = dict(neutral_neighbors)
 
-    # Annotate graph vertices.  Plateau size per node is the size of its
-    # component (1 for singletons), assigned via vectorised scatter.
+    # Per-node plateau size is its component size (1 for singletons).
     self.graph.vs["plateau_id"] = node_to_plateau.tolist()
     plateau_sizes = np.ones(n_configs, dtype=np.int32)
     plateau_sizes[in_plateau_nodes] = comp_sizes[membership[in_plateau_nodes]]

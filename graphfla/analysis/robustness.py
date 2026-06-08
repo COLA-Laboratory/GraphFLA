@@ -59,7 +59,6 @@ def evol_enhance_mutations(landscape, epsilon=0, auto_calculate=True):
     """
     landscape._check_built()
 
-    # Check if neighbor fitness has been calculated
     if "delta_mean_neighbor_fit" not in landscape.graph.es.attributes():
         if auto_calculate:
             if landscape.verbose:
@@ -72,7 +71,6 @@ def evol_enhance_mutations(landscape, epsilon=0, auto_calculate=True):
                 "or set auto_calculate=True."
             )
 
-    # Get all delta_mean_neighbor_fit values
     delta_values = landscape.graph.es["delta_mean_neighbor_fit"]
     total_edges = landscape.graph.ecount()
 
@@ -81,7 +79,6 @@ def evol_enhance_mutations(landscape, epsilon=0, auto_calculate=True):
             print("Warning: No edges found in the landscape graph.")
         return 0.0
 
-    # Count edges where delta_mean_neighbor_fit > epsilon
     ee_count = sum(1 for delta in delta_values if delta > epsilon)
     ee_proportion = ee_count / total_edges
 

@@ -245,9 +245,7 @@ class SequenceHandler:
         else:
             values = X
         try:
-            # ``"".join`` only succeeds when every element is a str; a mixed
-            # input (which the slow loop would skip element-wise) raises here
-            # and we fall back.
+            # join raises on mixed (non-str) input; fall back to the slow loop.
             joined = "".join(values)
         except TypeError:
             return None
@@ -256,18 +254,15 @@ class SequenceHandler:
         try:
             byte_codes = np.frombuffer(joined.upper().encode("ascii"), dtype=np.uint8)
         except UnicodeEncodeError:
-            # Non-ASCII characters: defer to the slow loop, which builds a set
-            # (no encoding) and raises the original invalid-character error.
+            # Non-ASCII: defer to the slow loop for the original error message.
             return None
-        # Distinct byte values via a 256-slot boolean scatter (a single linear
-        # pass, no sort) -- equivalent to, and faster than, ``np.unique`` on the
-        # whole (potentially 8-figure-length) byte buffer.
+        # Distinct bytes via a 256-slot boolean scatter: one linear pass, no
+        # sort -- faster than np.unique on the (potentially huge) byte buffer.
         seen = np.zeros(256, dtype=bool)
         seen[byte_codes] = True
         used = {chr(code) for code in np.flatnonzero(seen).tolist()}
         if used - valid_chars:
-            # An invalid character is present somewhere; let the slow loop find
-            # the first offending sequence and raise the original message.
+            # Invalid char present; let the slow loop pinpoint it and raise.
             return None
         return used
 
@@ -347,10 +342,8 @@ class DefaultHandler:
                 raise TypeError(
                     f"Could not convert input X (ndarray) to DataFrame: {e}"
                 )
-            # When X is an ndarray the caller may naturally use integer column
-            # indices as data_types keys (e.g. {0: 'boolean', 1: 'categorical'}).
-            # Silently remap them to the var_i names assigned above so users
-            # don't have to know the internal column naming convention.
+            # Remap integer data_types keys (e.g. {0: 'boolean'}) to the var_i
+            # names so callers needn't know the internal column naming.
             if isinstance(data_types, dict) and data_types and all(
                 isinstance(k, (int, np.integer)) for k in data_types.keys()
             ):
@@ -598,9 +591,8 @@ def encode_data(
     prepared_data_types = data_types.copy()
     invariant_cols = _invariant_columns(X)
 
-    # X_for_encoding is the reduced view used internally for neighbor computation
-    # and graph construction.  The full original X is kept so that invariant
-    # columns remain visible to the user via get_data().
+    # Reduced view for internal neighbor/graph computation; full X is kept so
+    # invariant columns stay visible to the user via get_data().
     X_for_encoding = X
     if invariant_cols:
         X_for_encoding = X.drop(columns=invariant_cols)
@@ -688,28 +680,18 @@ def encode_data(
 
     configs_array = np.ascontiguousarray(encoded_array, dtype=encoded_dtype)
 
-    # The per-row configuration tuple ``Series`` is built lazily (see
-    # ``PreparedData.configs`` / ``configs_series_from_array``) instead of here:
-    # it is a pure downstream artifact and the numeric ``configs_array`` above is
-    # what every neighbour-construction strategy consumes.  Materialising 8.4e7
-    # boxed ints + n tuples eagerly was the single largest cost of this function
-    # on high-dimensional inputs and is skipped on builds that never touch it.
-    #
-    # The historical post-encoding "duplicate encoded configurations" check
-    # (``configs.duplicated()``) is likewise dropped: every encoder above maps
-    # distinct per-column values to distinct integer codes (boolean -> 0/1,
-    # categorical/ordinal -> ``factorize``/``cat.codes``), so the encoding is
-    # injective on rows.  ``clean_data`` already removed duplicate prepared rows
-    # over *all* columns (invariant columns are constant and cannot distinguish
-    # rows), hence the encoded configurations are duplicate-free by construction
-    # on every pipeline-reachable input and the warning could never fire.
+    # configs tuple Series is built lazily (PreparedData.configs); eager
+    # materialisation of all boxed ints + tuples was this function's largest
+    # cost on high-dim inputs and most builds only consume configs_array.
+    # The old post-encoding "duplicate configs" check is dropped: encoders are
+    # injective on rows and clean_data already deduped over all columns, so the
+    # encoding is duplicate-free by construction and the warning never fired.
 
     config_dict = _build_config_dict(prepared_data_types, X_encoded)
 
-    # Build data_for_attributes from the FULL original X so invariant columns are
-    # visible to users calling get_data().  Non-invariant columns come first so
-    # that the rename logic in get_data() (which maps the first n_vars columns to
-    # data_types.keys()) remains correct.
+    # Build from the FULL original X so invariant columns stay visible in
+    # get_data(); non-invariant columns first so get_data()'s rename of the
+    # first n_vars columns to data_types.keys() stays correct.
     if invariant_cols:
         X_display = pd.concat(
             [X[list(prepared_data_types.keys())], X[invariant_cols]], axis=1
@@ -769,18 +751,16 @@ def _validate_bitstrings_fast(bitstrings, bit_length):
     this up-front via ``isinstance``).
     """
     joined = "".join(bitstrings)
-    # A single length mismatch makes the flat join un-reshapeable; defer so the
-    # slow loop can pinpoint the first offending string.
+    # Length mismatch makes the flat join un-reshapeable; defer to the slow loop.
     if len(joined) != bit_length * len(bitstrings):
         return None
     try:
         byte_codes = np.frombuffer(joined.encode("ascii"), dtype=np.uint8)
     except UnicodeEncodeError:
-        # Non-ASCII character somewhere: let the slow loop raise the original
-        # invalid-character error for the first offending bitstring.
+        # Non-ASCII: let the slow loop raise the original error.
         return None
     if byte_codes.size:
-        # ord('0') == 48, ord('1') == 49; anything else is an invalid char.
+        # ord('0') == 48, ord('1') == 49; anything else is invalid.
         uniq = np.unique(byte_codes)
         if uniq[0] < 48 or uniq[-1] > 49:
             return None
@@ -846,12 +826,8 @@ def _parse_boolean_input(
         if bit_length == 0:
             raise ValueError("Bitstrings cannot be empty.")
 
-        # Fast path: when every bitstring has the same length and contains only
-        # '0'/'1' (ASCII), validate and decode them in one vectorized pass over
-        # the joined bytes, skipping the per-string ``all(c in "01" ...)`` loop.
-        # ``None`` signals a length/character violation; we then fall back to the
-        # element-by-element loop, which reproduces the exact original error
-        # (first offending index and the ``invalid_chars`` set).
+        # Fast path: validate/decode uniform-length 0/1 bitstrings in one
+        # vectorized pass; None means fall back to the loop for the exact error.
         byte_codes = _validate_bitstrings_fast(bitstrings, bit_length)
         if byte_codes is None:
             for i, bstr in enumerate(bitstrings):
@@ -1105,24 +1081,18 @@ def _parse_sequence_input(
         if seq_len == 0:
             raise ValueError("Sequences cannot be empty strings.")
         n_seq = len(sequences)
-        # Fast path (high-dim): when every sequence already has the common
-        # length we can uppercase the *whole* corpus in one C-level call
-        # (``"".join(...).upper()``) instead of the per-sequence ``.upper()`` +
-        # ``.append`` loop, which dominates for large n. We require *every*
-        # length to equal ``seq_len`` (not merely the total to match, which
-        # could mask compensating over/under-length sequences) so a length
-        # violation still drops to the loop below, which reproduces the exact
-        # original error (first offending index and, for the unvalidated case,
-        # the ``invalid_chars`` set).
+        # Fast path (high-dim): uppercase the whole corpus in one C-level
+        # "".join(...).upper() instead of the per-sequence loop. Require every
+        # length == seq_len (not just the total) so a violation drops to the
+        # loop below, which raises the exact original error.
         lengths = [len(s) for s in sequences]
-        # ``seq_len == lengths[0]``, so all-equal lengths implies all == seq_len.
+        # seq_len == lengths[0], so all-equal lengths implies all == seq_len.
         uniform_length = min(lengths) == max(lengths)
         joined_upper = None
         if uniform_length:
             joined_upper = "".join(sequences).upper()
             if not validated and not set(joined_upper).issubset(valid_chars):
-                # An invalid character is somewhere; let the loop find the first
-                # offending sequence and raise the original per-index message.
+                # Invalid char somewhere; let the loop raise the per-index error.
                 joined_upper = None
         if joined_upper is None:
             validated_sequences = []
@@ -1139,21 +1109,13 @@ def _parse_sequence_input(
                     )
                 validated_sequences.append(seq_upper)
             joined_upper = "".join(validated_sequences)
-        # Build the categorical columns directly from the ASCII bytes via a
-        # lookup table (alphabet char -> category code), skipping the costly
-        # S1 -> U1 widening and the per-column ``astype`` factorization. The
-        # result is byte-for-byte identical to the previous
-        # ``DataFrame(...).astype(CategoricalDtype(categories=alphabet))`` path:
-        # codes are positions in ``alphabet`` and any character outside the
-        # alphabet maps to -1 (NaN), which the shared null check below reports.
-        #
-        # The lookup table is sized to the *final* code dtype (``int8`` for any
-        # alphabet of <=127 symbols, which covers DNA/RNA/protein) so the mapped
-        # ``codes`` array is already the categorical's code dtype -- no wide
-        # int64 intermediate (8x the bytes of the whole matrix) and no per-column
-        # cast. We then materialise the column-major code layout *once* via a
-        # single transpose-to-contiguous, so each ``from_codes`` consumes an
-        # already-contiguous row (no 171 separate strided column copies).
+        # Build categoricals straight from ASCII bytes via a char->code lookup,
+        # skipping the S1->U1 widening and per-column astype. Byte-for-byte
+        # identical to DataFrame(...).astype(CategoricalDtype(alphabet)): codes
+        # are positions in alphabet, off-alphabet maps to -1 (caught by the null
+        # check below). LUT is sized to the final code dtype (int8 covers
+        # DNA/RNA/protein) to avoid a wide int64 intermediate; one transpose to
+        # contiguous gives each from_codes an already-contiguous row.
         byte_array = np.frombuffer(
             joined_upper.encode("ascii"), dtype=np.uint8
         ).reshape(n_seq, seq_len)

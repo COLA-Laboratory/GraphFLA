@@ -29,8 +29,7 @@ _exported_config_functions = []
 _exported_core_objects = ["Landscape"]
 
 
-# List of submodules and top-level utility modules to be accessible
-# via lazy loading (e.g., graphfla.analysis, graphfla.utils)
+# Lazily loaded submodules (e.g. graphfla.analysis, graphfla.utils)
 _submodules = [
     "analysis",
     "algorithms",
