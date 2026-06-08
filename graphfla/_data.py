@@ -152,75 +152,57 @@ class SequenceHandler:
     def _validate_alphabet(
         self, X: Union[List[str], pd.Series, np.ndarray, pd.DataFrame]
     ) -> None:
-        """Check that all values in X conform to the alphabet."""
+        """Raise if any value in X is not among the specified alphabet.
+
+        Only genuinely out-of-alphabet characters raise. Partial coverage --
+        valid data that exercises only some of the alphabet (a DMS subset, a
+        reduced ProteinGym landscape, a toy DNA example) -- is normal and is NOT
+        flagged.
+        """
         valid_chars = set(self.alphabet)
-        used_chars = set()
 
         if isinstance(X, (list, tuple, pd.Series)):
-            fast_used = self._used_chars_fast(X, valid_chars)
-            if fast_used is not None:
-                used_chars = fast_used
-            else:
+            if self._used_chars_fast(X, valid_chars) is not None:
+                return  # fast path: every character is within the alphabet
+            for idx, seq in enumerate(X):
+                if isinstance(seq, str):
+                    invalid_chars = set(seq.upper()) - valid_chars
+                    if invalid_chars:
+                        raise ValueError(
+                            f"Input X values at index {idx} contain {', '.join(invalid_chars)}, "
+                            f"which is not among specified alphabet: {self.alphabet}"
+                        )
+
+        elif isinstance(X, pd.DataFrame):
+            for col in X.columns:
+                for idx, val in enumerate(X[col]):
+                    if val is not None and str(val).upper() not in valid_chars:
+                        raise ValueError(
+                            f"Input X values at position ({idx}, {col}) contain '{val}', "
+                            f"which is not among specified alphabet: {self.alphabet}"
+                        )
+
+        elif isinstance(X, np.ndarray):
+            if X.ndim == 1:
+                if self._used_chars_fast(X, valid_chars) is not None:
+                    return
                 for idx, seq in enumerate(X):
                     if isinstance(seq, str):
-                        seq_chars = set(seq.upper())
-                        invalid_chars = seq_chars - valid_chars
+                        invalid_chars = set(seq.upper()) - valid_chars
                         if invalid_chars:
                             raise ValueError(
                                 f"Input X values at index {idx} contain {', '.join(invalid_chars)}, "
                                 f"which is not among specified alphabet: {self.alphabet}"
                             )
-                        used_chars.update(seq_chars)
-
-        elif isinstance(X, pd.DataFrame):
-            for col in X.columns:
-                for idx, val in enumerate(X[col]):
-                    if val is not None:
-                        val_upper = str(val).upper()
-                        if val_upper not in valid_chars:
-                            raise ValueError(
-                                f"Input X values at position ({idx}, {col}) contain '{val}', "
-                                f"which is not among specified alphabet: {self.alphabet}"
-                            )
-                        used_chars.add(val_upper)
-
-        elif isinstance(X, np.ndarray):
-            if X.ndim == 1:
-                fast_used = self._used_chars_fast(X, valid_chars)
-                if fast_used is not None:
-                    used_chars = fast_used
-                else:
-                    for idx, seq in enumerate(X):
-                        if isinstance(seq, str):
-                            seq_chars = set(seq.upper())
-                            invalid_chars = seq_chars - valid_chars
-                            if invalid_chars:
-                                raise ValueError(
-                                    f"Input X values at index {idx} contain {', '.join(invalid_chars)}, "
-                                    f"which is not among specified alphabet: {self.alphabet}"
-                                )
-                            used_chars.update(seq_chars)
             else:
                 for i in range(X.shape[0]):
                     for j in range(X.shape[1]):
                         val = X[i, j]
-                        if val is not None:
-                            val_upper = str(val).upper()
-                            if val_upper not in valid_chars:
-                                raise ValueError(
-                                    f"Input X values at position ({i}, {j}) contain '{val}', "
-                                    f"which is not among specified alphabet: {self.alphabet}"
-                                )
-                            used_chars.add(val_upper)
-
-        unused_chars = valid_chars - used_chars
-        if unused_chars:
-            warnings.warn(
-                f"The following characters appear in the alphabet but are missing from input X: "
-                f"{', '.join(sorted(unused_chars))}. "
-                f"This might indicate you're using an incorrect alphabet for your data.",
-                UserWarning,
-            )
+                        if val is not None and str(val).upper() not in valid_chars:
+                            raise ValueError(
+                                f"Input X values at position ({i}, {j}) contain '{val}', "
+                                f"which is not among specified alphabet: {self.alphabet}"
+                            )
 
     @staticmethod
     def _used_chars_fast(X, valid_chars):
@@ -689,15 +671,12 @@ def encode_data(
 
     config_dict = _build_config_dict(prepared_data_types, X_encoded)
 
-    # Build from the FULL original X so invariant columns stay visible in
-    # get_data(); non-invariant columns first so get_data()'s rename of the
-    # first n_vars columns to data_types.keys() stays correct.
-    if invariant_cols:
-        X_display = pd.concat(
-            [X[list(prepared_data_types.keys())], X[invariant_cols]], axis=1
-        )
-    else:
-        X_display = X
+    # Display frame keeps the FULL original X in its ORIGINAL column order, so
+    # invariant columns stay both visible AND in their input positions via
+    # get_data(). Internal encoding above already dropped invariant columns;
+    # downstream feature access selects columns by name (data_types.keys()), so
+    # the user-facing column order is independent of the internal encoding.
+    X_display = X
     data_for_attributes = X_display.reset_index(drop=True)
     data_for_attributes["fitness"] = f.to_numpy(copy=False)
 

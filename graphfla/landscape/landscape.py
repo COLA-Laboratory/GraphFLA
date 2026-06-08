@@ -1020,12 +1020,15 @@ class Landscape:
         except Exception as e:
             raise ValueError(f"Failed to save graph to {filepath}: {e}")
 
-    def get_data(self, lo_only: bool = False) -> pd.DataFrame:
+    def get_data(
+        self, lo_only: bool = False, include_pagerank: bool = False
+    ) -> pd.DataFrame:
         """Extracts landscape data as a pandas DataFrame.
 
         Returns a DataFrame where rows correspond to configurations (nodes)
         and columns correspond to their attributes (e.g., fitness, degree,
-        basin information, original features).
+        basin information, original features). Feature columns appear in the
+        original input order.
 
         Parameters
         ----------
@@ -1035,6 +1038,12 @@ class Landscape:
             (see `get_lon`), data from the LON graph is returned. Otherwise,
             it returns data from the main graph filtered for local optima nodes.
             If False, returns data for all configurations in the main graph.
+
+        include_pagerank : bool, default=False
+            If True, compute (if needed) and include a ``pagerank`` column.
+            PageRank is otherwise omitted -- it is an optional, comparatively
+            expensive centrality that most callers do not need, so ``get_data``
+            no longer triggers it as a hidden side effect.
 
         Returns
         -------
@@ -1054,8 +1063,10 @@ class Landscape:
         if self.graph is None:
             raise RuntimeError("Graph is None despite landscape being built.")
 
-        # PageRank is lazy; materialise it so the DataFrame exposes the column.
-        self._ensure_pagerank()
+        # PageRank is lazy and comparatively expensive; only materialise it when
+        # the caller explicitly asks for it.
+        if include_pagerank:
+            self._ensure_pagerank()
 
         if lo_only:
             if self.lo_index is None or not self.lo_index:
@@ -1137,16 +1148,23 @@ class Landscape:
                 inplace=True,
             )
 
+        if not include_pagerank and "pagerank" in data.columns:
+            data.drop(columns="pagerank", inplace=True)
+
         if self.data_types is not None and self.n_vars is not None:
-            data.rename(
-                columns={
-                    old: new
-                    for old, new in zip(
-                        data.columns[: self.n_vars], self.data_types.keys()
-                    )
-                },
-                inplace=True,
-            )
+            keys = list(self.data_types.keys())
+            # Feature columns built from data already carry their input names in
+            # original input order; only fall back to positionally labelling the
+            # first n_vars columns when those names are absent (e.g. a graph
+            # loaded via build_from_graph with generic vertex attributes).
+            if not all(k in data.columns for k in keys):
+                data.rename(
+                    columns={
+                        old: new
+                        for old, new in zip(data.columns[: self.n_vars], keys)
+                    },
+                    inplace=True,
+                )
 
         return data
 

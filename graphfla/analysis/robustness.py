@@ -229,7 +229,7 @@ def single_mutation_effects(
         })
 
     data = landscape.get_data()
-    X = data.iloc[:, : len(landscape.data_types)]
+    X = data[list(landscape.data_types.keys())]
     f = data["fitness"]
 
     unique_values = X[position].dropna().unique()
@@ -277,7 +277,7 @@ def all_mutation_effects(
         )
 
     data = landscape.get_data()
-    X = data.iloc[:, : len(landscape.data_types)]
+    X = data[list(landscape.data_types.keys())]
 
     positions = list(X.columns)
 

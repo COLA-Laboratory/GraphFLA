@@ -419,7 +419,7 @@ def idiosyncratic_index(landscape, mutation, min_pairs: int = 3):
     A, pos, B = mutation
 
     data = landscape.get_data()
-    X = data.iloc[:, : landscape.n_vars]
+    X = data[list(landscape.data_types.keys())]
     f = data["fitness"]
 
     unique_alleles = X[pos].unique()
@@ -525,7 +525,7 @@ def global_idiosyncratic_index(landscape, n_jobs=-1, seed=None, min_pairs: int =
        effects and evolutionary trajectories", Nat. Ecol. Evo., 2020.
     """
     data = landscape.get_data()
-    X = data.iloc[:, : landscape.n_vars]
+    X = data[list(landscape.data_types.keys())]
     f = data["fitness"].to_numpy(dtype=float)
 
     # Flat landscape: mirror idiosyncratic_index (every mutation 0.0) -> avg 0.0, not NaN.
@@ -829,7 +829,7 @@ def _gamma_statistics(landscape, n_jobs=-1):
         )
 
     df = landscape.get_data()
-    X = df.iloc[:, : landscape.n_vars]
+    X = df[list(landscape.data_types.keys())]
 
     if landscape.n_vars < 2:
         warnings.warn(
@@ -1125,7 +1125,7 @@ def walsh_hadamard_coefficient(landscape, max_order=2, max_cells=1e9, chunk_size
         )
 
     data = landscape.get_data()
-    X = data.iloc[:, : landscape.n_vars]
+    X = data[list(landscape.data_types.keys())]
     f = data["fitness"].values
 
     # Walsh-Hadamard transform operates on one symbol per position, so encode

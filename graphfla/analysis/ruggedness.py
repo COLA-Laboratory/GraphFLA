@@ -191,7 +191,7 @@ def r_s_ratio(landscape) -> float:
     """
     data = landscape.get_data()
 
-    raw_X = data.iloc[:, : landscape.n_vars]
+    raw_X = data[list(landscape.data_types.keys())]
     fitness_values = data["fitness"].values
     data_types = landscape.data_types
 
