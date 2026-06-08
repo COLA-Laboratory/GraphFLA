@@ -6,7 +6,8 @@ the full measurement harness:
 
   * CONSTRUCTION ONLY (no analysis), all 8 datasets in ONE process.
   * 5 reps each (override with --reps). Each CSV is read once, reused per rep.
-  * Per-module runtime from the always-on @timeit stdout + perf_counter total.
+  * Per-module runtime from the @timeit DEBUG logs (captured via the "graphfla"
+    logger, see module top) + perf_counter total.
   * Peak / stable RSS via a measurement-only sampler thread (psutil). The
     construction code itself stays strictly single-threaded; threads are pinned
     to 1 so timings are clean and comparable.
@@ -30,10 +31,10 @@ for _v in ("OMP_NUM_THREADS", "OPENBLAS_NUM_THREADS", "MKL_NUM_THREADS",
     os.environ.setdefault(_v, "1")
 
 import argparse
-import contextlib
 import gc
 import io
 import json
+import logging
 import re
 import signal
 import statistics
@@ -53,6 +54,17 @@ from graphfla.landscape.protein import ProteinLandscape
 from graphfla.landscape.dna import DNALandscape
 from graphfla.landscape.boolean import BooleanLandscape
 from graphfla.landscape.ordinal import OrdinalLandscape
+
+# The library emits per-method @timeit timings at DEBUG level on the "graphfla"
+# logger (silent by default). Capture them into a buffer this harness scrapes
+# via TIMEIT_RE; reset per rep. propagate=False keeps them off the root logger.
+_TIMEIT_BUF = io.StringIO()
+_graphfla_log = logging.getLogger("graphfla")
+_graphfla_log.setLevel(logging.DEBUG)
+_graphfla_log.propagate = False
+_timeit_handler = logging.StreamHandler(_TIMEIT_BUF)
+_timeit_handler.setFormatter(logging.Formatter("%(message)s"))
+_graphfla_log.addHandler(_timeit_handler)
 
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DATA_BIO = os.path.join(REPO, "data", "BioSequence")
@@ -253,14 +265,15 @@ def bench_dataset(ds, reps):
         rss0 = _rss_mb()
         sampler = _Sampler()
         sampler.start()
-        buf = io.StringIO()
+        # Reset the shared @timeit capture buffer for this rep (see module top).
+        _TIMEIT_BUF.seek(0)
+        _TIMEIT_BUF.truncate(0)
         signal.setitimer(signal.ITIMER_REAL, kill_s)
         t0 = time.perf_counter()
         try:
-            with contextlib.redirect_stdout(buf):
-                ls = cls(maximize=True).build_from_data(
-                    Xr, fr, data_types=dtypes,
-                    neighborhood_strategy=strat, verbose=False)
+            ls = cls(maximize=True).build_from_data(
+                Xr, fr, data_types=dtypes,
+                neighborhood_strategy=strat, verbose=False)
             total_s = time.perf_counter() - t0
             signal.setitimer(signal.ITIMER_REAL, 0)
         except _Timeout:
@@ -281,7 +294,7 @@ def bench_dataset(ds, reps):
         peak = sampler.stop()
         rss1 = _rss_mb()
         modules = {m.group(1): float(m.group(2))
-                   for m in TIMEIT_RE.finditer(buf.getvalue())}
+                   for m in TIMEIT_RE.finditer(_TIMEIT_BUF.getvalue())}
         try:
             n_configs = ls.graph.vcount()
             n_edges = ls.graph.ecount()
