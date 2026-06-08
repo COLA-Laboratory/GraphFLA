@@ -1,3 +1,4 @@
+import logging
 import time
 
 import numpy as np
@@ -10,18 +11,30 @@ from functools import wraps
 from ._data import filter_data
 
 
+logger = logging.getLogger(__name__)
+
+
 def timeit(method):
     """
     A decorator to measure and log the execution time of a method.
+
+    The timing is emitted at ``DEBUG`` level on the ``graphfla`` logger, so it
+    is silent by default (logging's default level is ``WARNING``) and honours
+    ``verbose``. To see per-step timings, raise the package log level::
+
+        import logging
+        logging.getLogger("graphfla").setLevel(logging.DEBUG)
+        logging.basicConfig()  # if no handler is configured yet
     """
 
     @wraps(method)
     def timed(*args, **kwargs):
-        start_time = time.time()
+        start_time = time.perf_counter()
         result = method(*args, **kwargs)
-        end_time = time.time()
-        elapsed_time = end_time - start_time
-        print(f"Method {method.__name__} executed in {elapsed_time:.4f} seconds.")
+        elapsed_time = time.perf_counter() - start_time
+        logger.debug(
+            "Method %s executed in %.4f seconds.", method.__name__, elapsed_time
+        )
         return result
 
     return timed
