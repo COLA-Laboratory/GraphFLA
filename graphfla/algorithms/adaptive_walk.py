@@ -1,25 +1,24 @@
 import random
-from typing import List, Any, Tuple
+from typing import Any, List, Tuple
+
+from ._search_cache import SearchCache
 
 
 def local_search(
-    graph, node: Any, weight: str, search_method: str = "best-improvement"
+    cache: SearchCache, node: Any, search_method: str = "best-improvement"
 ) -> Any:
     """
-    Conducts a local search on a directed graph from a specified node, using a specified edge attribute
-    for decision-making regarding the next node.
+    Take a single local-search step from ``node`` on the landscape graph held by
+    ``cache``, using the precomputed fitness vector for decision-making.
 
     Parameters
     ----------
-    graph : ig.Graph
-        The directed graph where the search is carried out.
+    cache : SearchCache
+        Precomputed search data (graph + hoisted fitness vector). Build once
+        with ``SearchCache(graph)`` and reuse across a batch of calls.
 
     node : Any
         The index of the starting node for the local search.
-
-    weight : str
-        The edge attribute key that helps determine the best move during the search.
-        Note: For 'best-improvement' using node fitness directly, this is less relevant.
 
     search_method : str
         Specifies the local search method. Available options:
@@ -30,101 +29,90 @@ def local_search(
 
     Returns
     -------
-    Any: The index of the next node to move to, determining the search direction.
+    Any: The index of the next node to move to, or ``None`` if ``node`` has no
+    improving (out-edge) neighbours.
     """
-
-    successors = graph.neighbors(node, mode="out")
+    successors = cache.graph.neighbors(node, mode="out")
     if not successors:
         return None
 
     if search_method == "best-improvement":
-        return max(successors, key=lambda s: graph.vs[s]["fitness"])
+        # fitness.__getitem__ replaces the per-successor graph.vs[s]["fitness"]
+        # proxy lookup; max() keeps the first-maximum tie-break (successor order
+        # matches the original graph.neighbors order).
+        return max(successors, key=cache.fitness.__getitem__)
 
-    elif search_method == "first-improvement":
+    if search_method == "first-improvement":
         return random.choice(successors)
 
-    else:
-        raise ValueError(f"Unsupported search method: {search_method}")
+    raise ValueError(f"Unsupported search method: {search_method}")
 
 
 def hill_climb(
-    graph,
+    cache: SearchCache,
     node: int,
-    weight: str,
     verbose: int = 0,
     return_trace: bool = False,
     search_method: str = "best-improvement",
 ) -> Tuple[Any, int, List[int]]:
     """
-    Performs hill-climbing local search on a directed graph starting from a specified node, using a particular
-    edge attribute as a guide for climbing.
+    Performs hill-climbing local search on the landscape graph held by ``cache``,
+    starting from a specified node.
 
     Parameters
     ----------
-    graph : ig.Graph
-        The directed graph on which the hill climbing is performed.
+    cache : SearchCache
+        Precomputed search data (graph + hoisted fitness vector). Build once
+        with ``SearchCache(graph)`` and reuse across a batch of climbs.
 
     node : int
         The index of the starting node for the hill climbing search.
 
-    weight : str
-        The edge attribute key used to determine the "weight" during climbing, which guides the search.
-
     verbose : int, default=0
-        The verbosity level for logging progress, where 0 is silent and higher values increase the verbosity.
+        The verbosity level for logging progress, where 0 is silent.
 
     return_trace: bool, default=False
         Whether to return the trace of the search as a list of node indices.
 
     search_method : str
-        Specifies the method of local search to use. Options include:
-        - 'best-improvement': Also known as greedy. Evaluates all neighbors and selects the one with the most significant
-          improvement in the weight attribute.
-        - 'first-improvement': Selects the first neighbor that shows any improvement in the weight attribute.
+        Specifies the method of local search to use ('best-improvement' or
+        'first-improvement').
 
     Returns
     -------
-    Tuple[Any, int]
-        A tuple containing:
-        - The final local optimum node reached.
-        - The total number of steps taken in the search process.
+    Tuple[Any, int] or Tuple[Any, int, List[int]]
+        ``(final_local_optimum, n_steps)`` or, when ``return_trace`` is set,
+        ``(final_local_optimum, n_steps, trace)``.
     """
-    # No outgoing edges means the node is already a local optimum.
-    if graph.degree(node, mode="out") == 0:
-        if return_trace:
-            return node, 0, [node]
-        return node, 0
+    best = search_method == "best-improvement"
+    if not best and search_method != "first-improvement":
+        raise ValueError(f"Unsupported search method: {search_method}")
 
-    step = 0
-    visited = {node}
-    trace = [node] if return_trace else None
-    current_node = node
+    g = cache.graph
+    fit_get = cache.fitness.__getitem__
 
-    verbose_output = verbose > 0
-
-    if verbose_output:
+    if verbose > 0:
         print(f"Hill climbing begins from {node}...")
 
+    step = 0
+    trace = [node] if return_trace else None
+    current = node
+
+    # Every out-edge strictly increases fitness, so a climb is monotone and can
+    # never revisit a node -- no cycle guard / visited set is needed. The walk
+    # stops at the first node with no improving neighbour (out-degree 0).
     while True:
-        next_node = local_search(graph, current_node, weight, search_method)
-
-        # None = no better neighbour; revisit = cycle; either way we stop.
-        if next_node is None or next_node in visited:
+        successors = g.neighbors(current, mode="out")
+        if not successors:
             break
-
-        visited.add(next_node)
-        if return_trace:
-            trace.append(next_node)
+        current = max(successors, key=fit_get) if best else random.choice(successors)
         step += 1
+        if return_trace:
+            trace.append(current)
 
-        if verbose_output:
-            print(f"# step: {step}, move from {current_node} to {next_node}")
-
-        current_node = next_node
-
-    if verbose_output:
-        print(f"Finished at node {current_node} with {step} step(s).")
+    if verbose > 0:
+        print(f"Finished at node {current} with {step} step(s).")
 
     if return_trace:
-        return current_node, step, trace
-    return current_node, step
+        return current, step, trace
+    return current, step

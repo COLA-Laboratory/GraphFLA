@@ -4,6 +4,7 @@ import numpy as np
 from tqdm import tqdm
 
 from .adaptive_walk import hill_climb
+from ._search_cache import SearchCache
 
 
 PLATEAU_EXIT_MODES = {"first-improvement", "best-improvement"}
@@ -98,7 +99,8 @@ def find_plateau_exit(
 
 
 def plateau_aware_climb(
-    landscape, initial_lo, initial_steps, plateau_exit_mode="first-improvement"
+    landscape, initial_lo, initial_steps, plateau_exit_mode="first-improvement",
+    cache=None,
 ):
     """Extend a hill climb across neutral plateaus.
 
@@ -122,6 +124,8 @@ def plateau_aware_climb(
     """
     self = landscape
     _validate_plateau_exit_mode(plateau_exit_mode)
+    if cache is None:
+        cache = SearchCache(self.graph)
 
     current_lo = initial_lo
     total_steps = initial_steps
@@ -142,7 +146,7 @@ def plateau_aware_climb(
             break  # Plateau is a true local optimum
 
         total_steps += 1
-        next_lo, next_steps = hill_climb(self.graph, exit_target, "delta_fit")
+        next_lo, next_steps = hill_climb(cache, exit_target)
         total_steps += next_steps
         current_lo = next_lo
 
@@ -174,6 +178,9 @@ def determine_basin_of_attraction(landscape, plateau_exit_mode="first-improvemen
 
     n_vertices = self.graph.vcount()
 
+    # Hoist the fitness vector once for the whole batch of per-node climbs.
+    cache = SearchCache(self.graph)
+
     basin_indices = np.full(n_vertices, -1, dtype=np.int32)
     step_counts = np.zeros(n_vertices, dtype=np.int32)
 
@@ -202,13 +209,14 @@ def determine_basin_of_attraction(landscape, plateau_exit_mode="first-improvemen
                 continue
 
             try:
-                lo, steps = hill_climb(self.graph, i, "delta_fit")
+                lo, steps = hill_climb(cache, i)
                 if self._has_plateaus:
                     lo, steps = plateau_aware_climb(
                         landscape,
                         lo,
                         steps,
                         plateau_exit_mode=plateau_exit_mode,
+                        cache=cache,
                     )
                 basin_indices[i] = lo
                 step_counts[i] = steps
