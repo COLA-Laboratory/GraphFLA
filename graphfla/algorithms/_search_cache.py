@@ -28,9 +28,14 @@ class SearchCache:
         A built landscape graph carrying a per-vertex ``"fitness"`` attribute.
     """
 
-    __slots__ = ("graph", "n", "fitness")
+    __slots__ = ("graph", "n", "fitness", "fitness_list")
 
     def __init__(self, graph):
         self.graph = graph
         self.n = graph.vcount()
-        self.fitness = np.asarray(graph.vs["fitness"], dtype=np.float64)
+        # `fitness_list` (plain Python floats) is the key for best-improvement
+        # max() -- list indexing returns the existing float object, avoiding the
+        # np.float64 boxing that ndarray.__getitem__ does on every access.
+        # `fitness` (ndarray) is kept for random_walk's vectorised attr gather.
+        self.fitness_list = list(graph.vs["fitness"])
+        self.fitness = np.asarray(self.fitness_list, dtype=np.float64)

@@ -37,10 +37,10 @@ def local_search(
         return None
 
     if search_method == "best-improvement":
-        # fitness.__getitem__ replaces the per-successor graph.vs[s]["fitness"]
+        # fitness_list.__getitem__ replaces the per-successor graph.vs[s]["fitness"]
         # proxy lookup; max() keeps the first-maximum tie-break (successor order
         # matches the original graph.neighbors order).
-        return max(successors, key=cache.fitness.__getitem__)
+        return max(successors, key=cache.fitness_list.__getitem__)
 
     if search_method == "first-improvement":
         return random.choice(successors)
@@ -89,7 +89,7 @@ def hill_climb(
         raise ValueError(f"Unsupported search method: {search_method}")
 
     g = cache.graph
-    fit_get = cache.fitness.__getitem__
+    fit_get = cache.fitness_list.__getitem__
 
     if verbose > 0:
         print(f"Hill climbing begins from {node}...")
