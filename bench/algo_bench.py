@@ -61,6 +61,7 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from graphfla.landscape.protein import ProteinLandscape
 from graphfla.landscape.dna import DNALandscape
 from graphfla.landscape.boolean import BooleanLandscape
+from graphfla.landscape.ordinal import OrdinalLandscape
 from graphfla.algorithms import local_search, hill_climb, random_walk
 
 try:  # present only after the optimisation lands; benchmark works either way
@@ -71,7 +72,8 @@ except ImportError:
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DATA_BIO = os.path.join(REPO, "data", "BioSequence")
 
-CLS = {"protein": ProteinLandscape, "dna": DNALandscape, "boolean": BooleanLandscape}
+CLS = {"protein": ProteinLandscape, "dna": DNALandscape,
+       "boolean": BooleanLandscape, "ordinal": OrdinalLandscape}
 
 DATASETS = [
     dict(name="GB1_protein_large", type="protein",
@@ -80,6 +82,16 @@ DATASETS = [
          path=os.path.join(DATA_BIO, "Papkou2023_DHFR_RAW.csv"), xcol="seq", fcol="fitness"),
     dict(name="CR9114h1_boolean_large", type="boolean",
          path=os.path.join(DATA_BIO, "Phillips2021_CR9114_h1.csv"), xcol="sequences", fcol="fitness"),
+    # --- broader behaviour-consistency coverage (small synthetic + ordinal) ---
+    dict(name="synth_boolean_small", type="boolean", synth="boolean"),
+    dict(name="synth_ordinal_small", type="ordinal", synth="ordinal"),
+    dict(name="WReOs_ordinal_small", type="ordinal",
+         path=os.path.join(REPO, "data", "Materials", "WReOs", "simplex.csv"),
+         xcols=["W", "Re"], fcol="TOPSIS_Ci"),
+    dict(name="HPO_ordinal_large", type="ordinal",
+         path=os.path.join(REPO, "bench", "_localdata", "HPO_44136.csv"),
+         xcols=["learning_rate", "subsample", "max_depth",
+                "min_child_weight", "n_estimators"], fcol="mean_r2"),
 ]
 
 # Fixed seeds -> reproducible start nodes and reproducible stochastic trajectories.
@@ -143,7 +155,33 @@ def _agg(vals):
     )
 
 
+def _synth_boolean(k=12, seed=0):
+    """Complete boolean cube (2**k bitstrings) with seeded random fitness."""
+    rng = np.random.default_rng(seed)
+    X = pd.Series([format(i, f"0{k}b") for i in range(2 ** k)])
+    return X, pd.Series(rng.standard_normal(2 ** k))
+
+
+def _synth_ordinal(levels=6, nvar=3, seed=1):
+    """Complete ordinal grid (levels**nvar, +/-1 Manhattan) with random fitness."""
+    import itertools
+    rng = np.random.default_rng(seed)
+    combos = list(itertools.product(range(levels), repeat=nvar))
+    X = pd.DataFrame(combos, columns=[f"x{i}" for i in range(nvar)])
+    return X, pd.Series(rng.standard_normal(len(combos)))
+
+
 def load_xy(ds):
+    synth = ds.get("synth")
+    if synth == "boolean":
+        return _synth_boolean()
+    if synth == "ordinal":
+        return _synth_ordinal()
+    if ds["type"] == "ordinal":
+        xcols = ds["xcols"]
+        df = pd.read_csv(ds["path"], usecols=[*xcols, ds["fcol"]])
+        df = df.dropna(subset=[ds["fcol"], *xcols]).reset_index(drop=True)
+        return df[xcols], df[ds["fcol"]]
     # bitstrings / sequences must stay str, not parse to int
     df = pd.read_csv(ds["path"], dtype={ds["xcol"]: str})
     df = df.dropna(subset=[ds["fcol"], ds["xcol"]]).reset_index(drop=True)
