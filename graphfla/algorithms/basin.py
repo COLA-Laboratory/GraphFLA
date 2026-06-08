@@ -233,13 +233,13 @@ def determine_basin_of_attraction(landscape, plateau_exit_mode="first-improvemen
             if lo_pid in plateau_representative:
                 basin_indices[i] = plateau_representative[lo_pid]
 
-    # Calculate basin sizes using vectorized numpy operations
+    # Basin sizes: count nodes per representative
     unique_basins, basin_counts = np.unique(basin_indices, return_counts=True)
     basin_size_lookup = np.zeros(n_vertices, dtype=np.int32)
     basin_size_lookup[unique_basins] = basin_counts
     size_basin_values = basin_size_lookup[basin_indices]
 
-    # Calculate basin radii (max step count per basin) using numpy
+    # Basin radius: max step count per basin
     max_steps_lookup = np.zeros(n_vertices, dtype=np.int32)
     np.maximum.at(max_steps_lookup, basin_indices, step_counts)
     radius_basin_values = max_steps_lookup[basin_indices]

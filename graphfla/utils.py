@@ -67,7 +67,6 @@ def filter_graph(graph, maximize, tau, filter_mode, verbose):
 
             initial_edges = graph.ecount()
 
-            # Vectorized edge filtering using numpy
             fitness_arr = np.array(graph.vs["fitness"])
             edge_list = graph.get_edgelist()
 
@@ -190,22 +189,11 @@ def remove_isolated_nodes(graph, verbose=False, protected=None):
         UserWarning,
     )
 
-    # ``kept_indices`` (ascending) is the new-index -> old-index map used to
-    # remap cached metadata.
-    #
-    # ``induced_subgraph(kept)`` (the historical call) rebuilds the whole graph
-    # and dominates this routine on large sparse landscapes even when only a tiny
-    # fraction of nodes are isolated.  When few nodes are removed, igraph's
-    # ``induced_subgraph(implementation="auto")`` internally uses the
-    # *copy-and-delete* strategy, which is exactly what ``delete_vertices`` does
-    # in place -- it produces a byte-identical result (same vertex order, same
-    # edgelist order, same positional edge attributes) at lower cost.  igraph
-    # only switches ``auto`` to the (edge-reordering) *create-from-scratch*
-    # strategy once a large share of the graph is dropped (empirically at a
-    # removed fraction of ~0.5, independent of edge density).  We therefore take
-    # the fast in-place deletion only when the removed fraction is comfortably
-    # below that switchover and otherwise fall back to the original
-    # ``induced_subgraph`` call, guaranteeing identical output in every case.
+    # kept_indices (ascending) is the new-index -> old-index map for remapping
+    # cached metadata. Below the ~0.5 removed-fraction switchover, igraph's
+    # induced_subgraph(auto) just copy-and-deletes, so in-place delete_vertices
+    # is byte-identical but cheaper; above it igraph reorders edges, so fall
+    # back to induced_subgraph to keep output identical.
     kept_indices = np.flatnonzero(~isolated_mask).tolist()
     if n_isolated <= 0.4 * total_degree.size:
         graph.delete_vertices(np.flatnonzero(isolated_mask).tolist())
@@ -256,10 +244,8 @@ def add_network_metrics(graph: ig.Graph, weight: str = "delta_fit") -> ig.Graph:
     graph.vs["in_degree"] = graph.indegree()
     graph.vs["out_degree"] = graph.outdegree()
 
-    # Compute PageRank (with weights if the attribute exists). igraph accepts
-    # the edge-attribute *name* directly and reads it from its C-level store,
-    # which avoids materialising the full weight list in Python (a large cost
-    # for graphs with millions of edges) while producing identical values.
+    # Pass the edge-attribute name (not a Python list) so igraph reads weights
+    # from its C store, avoiding materialising millions of weights in Python.
     weights = weight if weight in graph.edge_attributes() else None
     pagerank = graph.pagerank(weights=weights, directed=True)
 
@@ -295,21 +281,20 @@ def infer_graph_properties(graph, data_types=None, configs=None, verbose=False):
     n_configs = graph.vcount()
     n_edges = graph.ecount()
 
-    # Attempt to infer the number of variables (dimensionality)
+    # Infer dimensionality (n_vars), preferring the most reliable source.
     if data_types:
         n_vars = len(data_types)
     elif configs is not None and len(configs) > 0:
         try:
-            # Assumes configs series contains tuples/lists of variables
+            # configs entries are assumed to be tuples/lists of variables
             n_vars = len(configs.iloc[0])
         except Exception:
-            n_vars = None  # Failed inference
+            n_vars = None
     else:
-        # Fallback: try to guess from node attributes (less reliable)
+        # Last resort: guess from vertex attributes named var_*/pos_*/bit_*
         try:
             if graph.vcount() > 0:
                 vertex_attrs = graph.vs.attributes()
-                # Heuristic: look for attributes like 'var_0', 'pos_1', etc.
                 potential_var_keys = [
                     k
                     for k in vertex_attrs
@@ -318,11 +303,11 @@ def infer_graph_properties(graph, data_types=None, configs=None, verbose=False):
                 if potential_var_keys:
                     n_vars = len(potential_var_keys)
                 else:
-                    n_vars = None  # No obvious variable attributes
+                    n_vars = None
             else:
-                n_vars = None  # No vertices to examine
+                n_vars = None
         except Exception:
-            n_vars = None  # Failed inference
+            n_vars = None
 
     if n_vars is None and verbose:
         warnings.warn(

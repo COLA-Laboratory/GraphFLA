@@ -33,16 +33,14 @@ class NK(OptimizationProblem):
         if not 0 <= k < n:
             raise ValueError("k must be non-negative and less than n.")
         self.k = k
-        self.exponent = float(exponent)  # Ensure exponent is float
+        self.exponent = float(exponent)
 
-        # Generate dependencies using the instance's RNG
         self.dependence = [
             tuple(sorted([i] + self.rng.sample(list(set(self.variables) - {i}), k)))
             for i in self.variables
         ]
 
-        # Initialize fitness contribution table lazily during evaluation
-        # Using a dictionary is efficient for sparse access needed here.
+        # Lazy/sparse fitness contribution table, filled during evaluation.
         self.values = {}
 
     def evaluate(self, config):
@@ -59,7 +57,7 @@ class NK(OptimizationProblem):
         float
             The fitness value of the configuration.
         """
-        config = tuple(config)  # Ensure config is a tuple for consistent hashing
+        config = tuple(config)  # hashable key
         if len(config) != self.n:
             raise ValueError(
                 f"Configuration length {len(config)} does not match problem dimension {self.n}"
@@ -67,25 +65,19 @@ class NK(OptimizationProblem):
 
         total_value = 0.0
         for i in self.variables:
-            # Create the key for the fitness contribution lookup
-            # This involves selecting elements based on the dependency list
+            # Key = variable index plus its dependent sub-configuration.
             dependent_indices = self.dependence[i]
             key_elements = (i,) + tuple(config[j] for j in dependent_indices)
 
-            # Check if the contribution for this sub-configuration is already computed
             if key_elements not in self.values:
-                # Compute and store the contribution using the instance's RNG
                 self.values[key_elements] = self.rng.random()
 
             total_value += self.values[key_elements]
 
-        # Normalize fitness by n
         normalized_value = total_value / self.n
 
-        # Apply exponent if it's not 1
         if self.exponent != 1.0:
-            # Use max(0, ...) to avoid potential domain errors with negative bases if exponent is not an integer
-            # Although normalized_value should be >= 0 here, it's safer
+            # max(0, ...) guards against domain errors on negative bases.
             normalized_value = math.pow(max(0.0, normalized_value), self.exponent)
 
         return normalized_value
@@ -119,13 +111,11 @@ class RoughMountFuji(OptimizationProblem):
             raise ValueError("alpha must be between 0.0 and 1.0.")
         self.alpha = alpha
 
-        # Generate smooth contributions using the instance's RNG
-        # Using a list or numpy array is efficient for O(n) access later.
         self.smooth_contribution = np.array(
             [self.rng.uniform(-1.0, 1.0) for _ in range(n)]
         )
 
-        # Initialize rugged component values lazily during evaluation
+        # Lazy rugged-component cache, filled during evaluation.
         self.random_values = {}
 
     def evaluate(self, config):
@@ -144,28 +134,21 @@ class RoughMountFuji(OptimizationProblem):
         float
             The fitness value of the configuration.
         """
-        config_tuple = tuple(config)  # Ensure tuple for hashing
+        config_tuple = tuple(config)  # hashable key
         if len(config_tuple) != self.n:
             raise ValueError(
                 f"Configuration length {len(config_tuple)} does not match problem dimension {self.n}"
             )
 
-        # Smooth component: Efficient calculation using numpy dot product if config is array-like
-        # or list comprehension/sum otherwise.
-        # Convert config_tuple to numpy array for potential speedup in high-dim
-        # config_array = np.array(config_tuple)
-        # smooth_value = np.dot(self.smooth_contribution, config_array)
-        # Using sum is often fine and avoids numpy dependency if not otherwise needed:
         smooth_value = sum(
             self.smooth_contribution[i] * config_tuple[i] for i in self.variables
         )
 
-        # Rugged component: Lookup or generate using the instance's RNG
         if config_tuple not in self.random_values:
             self.random_values[config_tuple] = self.rng.random()
         rugged_value = self.random_values[config_tuple]
 
-        # Combine the smooth and rugged components using alpha
+        # alpha interpolates smooth vs. rugged contributions.
         fitness = (1.0 - self.alpha) * smooth_value + self.alpha * rugged_value
 
         return fitness
@@ -192,7 +175,7 @@ class HoC(RoughMountFuji):
         """
         Initialize the HoC model with the given number of variables and seed.
         """
-        # Initialize the RMF model with alpha = 1.0 (purely random) and pass the seed
+        # alpha=1.0 makes RMF purely random (smooth part vanishes).
         super().__init__(n, alpha=1.0, seed=seed)
 
     def evaluate(self, config):
@@ -213,15 +196,13 @@ class HoC(RoughMountFuji):
         float
             The random fitness value of the configuration.
         """
-        config_tuple = tuple(config)  # Ensure tuple for hashing
+        config_tuple = tuple(config)  # hashable key
         if len(config_tuple) != self.n:
             raise ValueError(
                 f"Configuration length {len(config_tuple)} does not match problem dimension {self.n}"
             )
 
-        # Purely random fitness, generated using the RNG inherited from RMF (which uses the seed)
         if config_tuple not in self.random_values:
-            # self.rng is initialized in the parent class __init__
             self.random_values[config_tuple] = self.rng.random()
 
         return self.random_values[config_tuple]
@@ -247,16 +228,10 @@ class Additive(OptimizationProblem):
         Initialize the Additive model with the given number of variables and seed.
         """
         super().__init__(n, seed)
-        # Assign random fitness contributions using the instance's RNG
-        # Store as a list of tuples: [(contrib_for_0, contrib_for_1), ...]
-        # This is efficient for access during evaluation.
+        # Per-variable contributions: [(contrib_for_0, contrib_for_1), ...].
         self.contributions = [
             (self.rng.random(), self.rng.random()) for _ in self.variables
         ]
-        # Alternative using numpy (might be slightly faster for very large n):
-        # self.contributions_np = np.array([
-        #     [self.rng.random(), self.rng.random()] for _ in self.variables
-        # ]) # Shape (n, 2)
 
     def evaluate(self, config):
         """
@@ -274,17 +249,13 @@ class Additive(OptimizationProblem):
         float
             The fitness value of the configuration.
         """
-        config_tuple = tuple(config)  # Ensure tuple
+        config_tuple = tuple(config)
         if len(config_tuple) != self.n:
             raise ValueError(
                 f"Configuration length {len(config_tuple)} does not match problem dimension {self.n}"
             )
 
-        # Efficient sum using list comprehension and direct indexing
         fitness = sum(self.contributions[i][config_tuple[i]] for i in self.variables)
-
-        # Numpy alternative (potentially faster for very large n):
-        # fitness = np.sum(self.contributions_np[np.arange(self.n), config_tuple])
 
         return fitness
 
@@ -313,7 +284,7 @@ class Eggbox(OptimizationProblem):
         """
         Initialize the Eggbox model with the given number of variables and frequency.
         """
-        # Pass seed to superclass, although it won't be used here.
+        # seed is unused here; passed only for base-class consistency.
         super().__init__(n, seed)
         if frequency <= 0:
             raise ValueError("Frequency must be positive.")
@@ -336,18 +307,15 @@ class Eggbox(OptimizationProblem):
         float
             The fitness value of the configuration.
         """
-        # No need to convert to tuple if only sum is needed, but good practice
         config_tuple = tuple(config)
         if len(config_tuple) != self.n:
             raise ValueError(
                 f"Configuration length {len(config_tuple)} does not match problem dimension {self.n}"
             )
 
-        # Sum of the binary configuration elements (efficient)
         sum_of_elements = sum(config_tuple)
 
-        # Fitness value using a sine function squared to ensure non-negativity
-        # The argument scales with frequency and the sum
+        # sin**2 keeps fitness non-negative; argument scales with frequency and sum.
         argument = self.frequency * float(sum_of_elements) * math.pi
         fitness = math.sin(argument) ** 2
         return fitness

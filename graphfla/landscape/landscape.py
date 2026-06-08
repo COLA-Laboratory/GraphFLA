@@ -249,19 +249,16 @@ class Landscape:
     ):
         # Core attributes
         self.graph = None
-        # ``configs`` (the per-row tuple ``Series``) is exposed via a lazy
-        # property: it is built from ``_configs_array`` on first access and
-        # cached in ``_configs``.  Graph construction consumes the numeric
-        # ``_configs_array`` directly, so the tuple ``Series`` is never
-        # materialised on builds that do not need it.
+        # ``configs`` tuple Series is built lazily from ``_configs_array`` (the
+        # numeric source of truth that construction consumes), so builds that
+        # never read it skip the cost.
         self._configs = None
         self._configs_index = None
         self._configs_array = None
         self.config_dict = None
         self.data_types = None
-        # Working counts used during construction (before self.graph exists);
-        # the public n_configs / n_edges properties prefer the graph once built,
-        # giving a single source of truth post-build.
+        # Working counts during construction (before self.graph exists); the
+        # public n_configs / n_edges properties read the graph once built.
         self._n_configs = None
         self._n_edges = None
         self.n_vars = None
@@ -274,9 +271,8 @@ class Landscape:
         self.has_lon = False
         self.type = type
 
-        # Per-instance strategy registries, copied from the class-level defaults
-        # so that registering a custom handler/generator (e.g. for a sequence
-        # alphabet) never mutates global state or leaks across instances.
+        # Per-instance copies of the class-level registries so a custom
+        # handler/generator never mutates global state or leaks across instances.
         self._input_handlers = dict(Landscape._input_handlers)
         self._neighbor_generators = dict(Landscape._neighbor_generators)
         if input_handler is not None:
@@ -376,10 +372,9 @@ class Landscape:
     # ------------------------------------------------------------------
     # Lazy, cached analysis properties.
     #
-    # Each computes its quantity on first access and caches via the corresponding
-    # ``_*_calculated`` guard, so repeat access is free. These are the canonical
-    # (and only) way to obtain basins / distances / neighbour fitness /
-    # accessible-path sizes.
+    # Computed on first access and cached via the matching ``_*_calculated``
+    # guard. Canonical (and only) way to get basins / distances / neighbour
+    # fitness / accessible-path sizes.
     # ------------------------------------------------------------------
     @property
     def basins(self) -> pd.Series:
@@ -675,8 +670,7 @@ class Landscape:
         self.epsilon = float(epsilon)
         self.verbose = verbose
 
-        # Resolve the per-class default neighbourhood strategy (e.g. ordinal
-        # landscapes default to "active"); see ``_default_neighborhood_strategy``.
+        # Fall back to the per-class default (e.g. "active" for ordinal).
         if neighborhood_strategy is None:
             neighborhood_strategy = self._default_neighborhood_strategy
 
@@ -694,10 +688,8 @@ class Landscape:
             verbose=verbose,
         )
 
-        # Enforce a type-correct neighbourhood on ordinal/mixed landscapes: the
-        # Hamming-based "pairwise"/"broadcast" strategies treat any single-position
-        # change as adjacent, ignoring the ±1-step (Manhattan-1) semantics of
-        # ordinal variables. data_types is known only after preprocessing.
+        # Ordinal/mixed landscapes need ±1-step (Manhattan-1) neighbours, not
+        # Hamming; data_types is only known after preprocessing, so adjust here.
         has_ordinal = (self.type == "ordinal") or bool(
             self.data_types and "ordinal" in self.data_types.values()
         )
@@ -838,9 +830,9 @@ class Landscape:
             instance.data_types = None
 
         # --- configs reconstruction ---
-        # Preferred path: re-encode directly from the feature-column vertex attributes
-        # that _build_graph always writes.  This avoids the multi-hundred-MB string
-        # that the old configs_data attribute produced for large landscapes.
+        # Preferred path: re-encode from the feature-column vertex attributes
+        # _build_graph always writes, avoiding the huge configs_data string the
+        # old format produced for large landscapes.
         instance.configs = None
         instance._configs_array = None
         instance.config_dict = None
@@ -1000,35 +992,28 @@ class Landscape:
         if self.graph is None:
             raise ValueError("Cannot save an empty graph.")
 
-        # Ensure the filepath has the correct extension
         if not filepath.endswith(".graphml"):
             filepath = f"{filepath}.graphml"
 
-        # Create a copy of the graph to modify
         graph_copy = self.graph.copy()
 
-        # Save essential landscape attributes as graph attributes
+        # Essential landscape attributes saved as graph attributes
         graph_copy["maximize"] = self.maximize
         graph_copy["epsilon"] = str(self.epsilon)
         graph_copy["landscape_class"] = self.__class__.__name__
         graph_copy["landscape_type"] = self.type
 
-        # Configs are preserved implicitly via the feature-column vertex attributes that
-        # _build_graph writes for every node.  build_from_graph reconstructs self.configs
-        # and self._configs_array directly from those attributes, so no separate
-        # configs_data graph attribute is needed.  include_configs is kept in the
-        # signature for backward compatibility but has no effect.
+        # Configs are preserved implicitly via the feature-column vertex
+        # attributes _build_graph writes, so no separate configs_data attribute
+        # is needed. include_configs is kept for back-compat but has no effect.
 
-        # Save config_dict if available
         if self.config_dict is not None:
             graph_copy["config_dict_data"] = str(self.config_dict)
 
-        # Save data_types if available
         if self.data_types is not None:
             graph_copy["data_types_data"] = str(self.data_types)
 
         try:
-            # Save the graph using GraphML format
             graph_copy.write_graphml(filepath)
             if self.verbose:
                 print(f"Landscape graph saved to {filepath}")
@@ -1069,9 +1054,7 @@ class Landscape:
         if self.graph is None:
             raise RuntimeError("Graph is None despite landscape being built.")
 
-        # PageRank is computed lazily (off the construction critical path); make
-        # sure it is materialised so the returned DataFrame exposes it, matching
-        # the historical column set.
+        # PageRank is lazy; materialise it so the DataFrame exposes the column.
         self._ensure_pagerank()
 
         if lo_only:
@@ -1117,9 +1100,9 @@ class Landscape:
                         index=self.lon.vs["name"],
                     )
 
-                    # Build node → peak mapping so that every member of a
-                    # plateau-LO (not just the min-index representative stored
-                    # in lon.vs["name"]) receives the plateau's LON attributes.
+                    # Map every plateau-LO member (not just the min-index
+                    # representative in lon.vs["name"]) to its peak so all
+                    # members receive the plateau's LON attributes.
                     node_to_peak: dict = {}
                     if self._has_plateaus and self._node_to_plateau is not None:
                         for pid in (self.plateau_lo_index or []):
@@ -1248,7 +1231,7 @@ class Landscape:
             trim=trim,
             verbose=self.verbose if verbose is None else verbose,
         )
-        self.has_lon = True  # Set flag
+        self.has_lon = True
 
         if self.verbose:
             print(
@@ -1316,10 +1299,8 @@ class Landscape:
         """Persist encoded build metadata on the landscape instance."""
         self.data_types = prepared.data_types
         self.n_vars = prepared.n_vars
-        # Store the numeric matrix (the source of truth for construction) and the
-        # encoded-frame index, and leave the tuple ``Series`` cache empty so the
-        # ``configs`` property builds it lazily from the array only when (and if)
-        # a consumer reads it.
+        # Store the numeric matrix (source of truth) and index; leave the tuple
+        # Series cache empty so ``configs`` builds it lazily only if read.
         self._configs_array = prepared.configs_array
         self._configs_index = prepared.configs_index
         self._configs = None
@@ -1361,9 +1342,9 @@ class Landscape:
             self.graph, self.maximize, tau, filter_mode, verbose
         )
 
-        # Protect plateau-interior nodes (connected to the landscape only via
-        # neutral/tied edges) from isolation pruning, which runs before the
-        # plateau layer is built and would otherwise delete them as "isolated".
+        # Protect plateau-interior nodes (linked only by neutral/tied edges)
+        # from isolation pruning, which runs before the plateau layer is built
+        # and would otherwise drop them as "isolated".
         protected = None
         if neutral_pairs:
             if kept_indices is not None:
@@ -1401,13 +1382,10 @@ class Landscape:
         kept_arr = np.asarray(kept_indices, dtype=np.int64)
         n_kept = kept_arr.size
 
-        # Remap the numeric matrix (the source of truth) and reset the encoded
-        # index to a contiguous range, matching the post-filter relabelling.  The
-        # tuple ``Series`` is intentionally *not* accessed here (that would force
-        # an otherwise-unnecessary materialisation during construction): if it was
-        # already built, remap the cache in lockstep; otherwise leave it empty so
-        # the ``configs`` property rebuilds it lazily from the remapped array,
-        # producing the identical tuples/order with the same ``RangeIndex``.
+        # Remap the numeric matrix and reset the index to a contiguous range.
+        # Don't touch the tuple Series unless already built (that would force an
+        # unnecessary materialisation); when empty, ``configs`` rebuilds it
+        # lazily from the remapped array with identical tuples/order.
         if self._configs_array is not None:
             self._configs_array = self._configs_array[kept_arr]
         self._configs_index = range(n_kept)
@@ -1419,18 +1397,13 @@ class Landscape:
         if not neutral_pairs:
             return neutral_pairs
 
-        # Vectorised old->new index remap of the neutral pairs (Python-dict +
-        # list-comprehension is the dominant cost here on large sparse graphs
-        # with hundreds of thousands of tied pairs).  ``inv`` maps each surviving
-        # old index to its new contiguous index and -1 for dropped vertices; the
-        # boolean mask drops any pair touching a removed vertex.  This reproduces
-        # the previous comprehension's output exactly: same surviving pairs, same
-        # order, plain Python ``int`` tuples.
+        # Vectorised old->new remap of neutral pairs (the Python-dict +
+        # comprehension was the dominant cost on large sparse graphs). ``inv``
+        # maps each surviving old index to its new contiguous index, -1 for
+        # dropped; the mask drops pairs touching a removed vertex.
         pairs = np.asarray(neutral_pairs, dtype=np.int64)
-        # ``inv`` must span every old index it will be indexed by: any surviving
-        # vertex (``kept_arr``) and any neutral-pair endpoint (``pairs``).  Use
-        # ``.max()`` (not the last element) so the sizing is correct regardless
-        # of whether ``kept_indices`` is sorted.
+        # ``inv`` must span every old index used to index it (kept vertices and
+        # pair endpoints); use ``.max()`` so sizing holds even if unsorted.
         n_inv = int(max(int(kept_arr.max()), int(pairs.max()))) + 1
         inv = np.full(n_inv, -1, dtype=np.int64)
         inv[kept_arr] = np.arange(n_kept, dtype=np.int64)
@@ -1461,12 +1434,10 @@ class Landscape:
         if self._neighbor_generator is None:
             raise RuntimeError("Neighbor generator not set before build.")
 
-        # Pass the *cached* tuple ``Series`` (``self._configs``) rather than the
-        # ``configs`` property: during a fresh build the cache is empty (``None``)
-        # and every fast strategy consumes ``configs_array`` instead, so this
-        # avoids materialising the tuple ``Series`` on the construction path.
-        # ``build_edges`` builds the tuples on demand from ``configs_array`` only
-        # for the generic fallback that actually needs them.
+        # Pass the cached ``self._configs`` (empty during a fresh build), not the
+        # ``configs`` property, so fast strategies use ``configs_array`` and the
+        # tuple Series is never materialised on the construction path;
+        # ``build_edges`` builds tuples on demand only for the generic fallback.
         result = build_edges(
             configs=self._configs,
             config_dict=self.config_dict,
@@ -1515,10 +1486,9 @@ class Landscape:
 
         n_edges = len(edges)
         if n_edges:
-            # igraph ingests the per-edge float attribute faster from a buffer
-            # (memoryview) than from a float64 ndarray (see method docstring).
-            # The wrap is zero-copy and only applies to a contiguous 1-D float
-            # array; any other container is passed through unchanged.
+            # igraph reads the per-edge float attribute faster from a buffer than
+            # from a float64 ndarray (see docstring); zero-copy wrap, contiguous
+            # 1-D only, anything else passed through unchanged.
             delta_attr = delta_fits
             if (
                 isinstance(delta_fits, np.ndarray)
@@ -1541,7 +1511,7 @@ class Landscape:
             edge_attrs=edge_attrs,
         )
 
-        self._n_edges = graph.ecount()  # Update edge count based on final graph
+        self._n_edges = graph.ecount()
 
         return graph
 
@@ -1632,7 +1602,6 @@ class Landscape:
         ``.neighbor_fitness`` properties.
         """
         if self.graph is None:
-            # This check is primarily for internal consistency.
             raise RuntimeError("Graph is None, cannot analyze.")
 
         if self.graph.vcount() == 0:
@@ -1652,14 +1621,9 @@ class Landscape:
         if self.verbose:
             print("Calculating landscape properties...")
 
-        # Add basic degree metrics if they don't already exist. PageRank is the
-        # dominant cost of the old ``add_network_metrics`` call (~70-90% of this
-        # method on large landscapes) yet is consumed by nothing on the analysis
-        # path -- only surfaced as an optional node attribute. It is therefore
-        # deferred to the lazy ``pagerank`` property (same pattern as basins /
-        # distances / neighbour fitness), keeping construction off its critical
-        # path while producing identical values on first access. In/out degree
-        # stay eager: they are cheap and feed local-optimum detection.
+        # In/out degree stay eager: cheap and needed for local-optimum
+        # detection. PageRank (70-90% of the old cost here, used by nothing on
+        # this path) is deferred to the lazy ``pagerank`` property.
         if "out_degree" not in self.graph.vs.attributes():
             if self.verbose:
                 print(" - Calculating network metrics (degrees)...")

@@ -47,13 +47,11 @@ class LandscapeFilter:
             if not isinstance(rule, dict):
                 raise TypeError(f"Rule {i} must be a dictionary")
 
-            # Check required keys
             required_keys = ["column", "operation"]
             for key in required_keys:
                 if key not in rule:
                     raise ValueError(f"Rule {i} missing required key: {key}")
 
-            # Check operation validity
             valid_ops = [
                 ">",
                 "<",
@@ -101,20 +99,17 @@ class LandscapeFilter:
         if len(data) == 0:
             return data
 
-        # For Series input, assume it's fitness data
+        # A bare Series is treated as fitness values.
         if isinstance(data, pd.Series):
-            # Create a temporary DataFrame with the Series as a column
             temp_df = pd.DataFrame({"fitness": data})
             filtered_df = self._apply_rules(temp_df)
-            # Return a Series with the same name and index structure
             return filtered_df["fitness"]
 
-        # For DataFrame input, apply rules directly
         return self._apply_rules(data)
 
     def _apply_rules(self, df: pd.DataFrame) -> pd.DataFrame:
         """Internal method to apply filtering rules to a DataFrame."""
-        # Initialize mask based on combine_with mode
+        # Seed the mask with the identity element for the combine mode.
         if self.combine_with == "and":
             mask = pd.Series(True, index=df.index)
         else:  # 'or'
@@ -123,7 +118,7 @@ class LandscapeFilter:
         for rule in self.rules:
             column = rule["column"]
 
-            # Skip rules for columns not in the data
+            # Skip rules referencing absent columns rather than erroring.
             if column not in df.columns:
                 continue
 
@@ -147,10 +142,8 @@ class LandscapeFilter:
             elif op == "not_in":
                 rule_mask = ~df[column].isin(rule["value"])
             elif op == "contains":
-                # Allow object- and string-dtype columns (modern pandas may
-                # store text as a dedicated 'str'/StringDtype rather than
-                # 'object'); reject numeric/boolean columns, where 'contains'
-                # is meaningless.
+                # Reject numeric/boolean columns; modern pandas may store text
+                # as str/StringDtype rather than object, so allow both.
                 if pd.api.types.is_numeric_dtype(df[column]):
                     raise TypeError(
                         f"The 'contains' operation requires a string/object column, "
@@ -162,7 +155,6 @@ class LandscapeFilter:
                 # Custom function should return a boolean Series with the same index
                 rule_mask = rule["function"](df[column])
 
-            # Combine the rule mask with the overall mask
             if self.combine_with == "and":
                 mask = mask & rule_mask
             else:  # 'or'
@@ -189,18 +181,15 @@ class LandscapeFilter:
         f_filtered : Series
             Filtered fitness values
         """
-        # Convert to standard types if needed
         X_df = X if isinstance(X, pd.DataFrame) else pd.DataFrame(X)
         f_series = f if isinstance(f, pd.Series) else pd.Series(f, name="fitness")
 
-        # Create a combined DataFrame for filtering
+        # Filter X and f jointly so surviving rows stay aligned.
         combined = X_df.copy()
         combined["fitness"] = f_series
 
-        # Apply the rules
         filtered = self._apply_rules(combined)
 
-        # Split back into X and f
         X_filtered = filtered.drop(columns=["fitness"])
         f_filtered = pd.Series(
             filtered["fitness"], name="fitness", index=filtered.index
