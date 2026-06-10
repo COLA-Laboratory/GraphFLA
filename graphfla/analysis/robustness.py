@@ -1,10 +1,11 @@
 from scipy.stats import binomtest
 from itertools import combinations
-from joblib import Parallel, delayed
 import warnings
 
 import numpy as np
 import pandas as pd
+
+from .epistasis import _pack_rows
 
 
 def _pythonize(value):
@@ -17,6 +18,82 @@ def _pythonize(value):
     if isinstance(value, np.generic):
         return value.item()
     return value
+
+
+def _row_group_ids(M):
+    """Dense 0-based id per distinct row of a small-int matrix: fast int64 mixed-
+    radix packing, with a byte-view ``np.unique`` fallback for wide / high-
+    cardinality inputs (so grouping always succeeds)."""
+    if M.shape[1] == 0:
+        return np.zeros(M.shape[0], dtype=np.intp), 1
+    ids, n = _pack_rows(M)
+    if ids is not None:
+        return ids, n
+    Mc = np.ascontiguousarray(M)
+    void = Mc.view([("", Mc.dtype)] * Mc.shape[1]).reshape(-1)
+    uniq, inv = np.unique(void, return_inverse=True)
+    return np.asarray(inv).reshape(-1).astype(np.intp), int(uniq.size)
+
+
+def _mutation_effects_for_position(X, f_arr, f_std, position, test_type):
+    """Fitness effects of every allele-pair mutation at one ``position``, sharing a
+    single background grouping (genetic background = all other positions).
+
+    Vectorised equivalent of the original per-pair ``apply(tuple)`` + merge: each
+    (allele, background) is a unique genotype, so per-allele fitness is gathered
+    into a background-indexed array and a pair's effect is ``f_A - f_B`` over their
+    shared backgrounds. median / mean / binomtest are order-invariant, so values
+    match the original exactly. Returns a list of per-pair result dicts.
+    """
+    pos_vals = X[position].to_numpy()
+    bg_cols = [c for c in X.columns if c != position]
+    if bg_cols:
+        codes = np.column_stack(
+            [pd.factorize(X[c])[0] for c in bg_cols]
+        ).astype(np.int64)
+        bg_ids, n_bg = _row_group_ids(codes)
+    else:
+        bg_ids = np.zeros(len(X), dtype=np.intp)
+        n_bg = 1
+
+    unique_values = sorted(pd.Series(pos_vals).dropna().unique())
+    fit_by_val = {}
+    for v in unique_values:
+        arr = np.full(n_bg, np.nan)
+        rows = np.flatnonzero(pos_vals == v)
+        arr[bg_ids[rows]] = f_arr[rows]
+        fit_by_val[v] = arr
+
+    results = []
+    for A, B in combinations(unique_values, 2):
+        fa = fit_by_val[A]
+        fb = fit_by_val[B]
+        mask = ~(np.isnan(fa) | np.isnan(fb))  # shared genetic backgrounds
+        diff = fa[mask] - fb[mask]             # f_A - f_B (== original fitness_1 - fitness_2)
+        n_trials = int(diff.size)
+        if n_trials == 0:
+            median_effect = np.nan
+            mean_effect = np.nan
+            p_value, significant = np.nan, False
+        else:
+            median_effect = float(np.median(np.abs(diff))) / f_std
+            mean_effect = float(diff.mean())
+            if test_type == "positive":
+                successes = int(np.count_nonzero(diff > 0))
+            else:  # "negative"; validated by the caller
+                successes = int(np.count_nonzero(diff < 0))
+            test_result = binomtest(successes, n_trials, p=0.5, alternative="greater")
+            p_value = test_result.pvalue
+            significant = test_result.pvalue < 0.05
+        results.append(_pythonize({
+            "mutation_from": A,
+            "mutation_to": B,
+            "median_abs_effect": median_effect,
+            "mean_effect": mean_effect,
+            "p_value": p_value,
+            "significant": significant,
+        }))
+    return results
 
 
 def evol_enhance_mutations(landscape, epsilon=0, auto_calculate=True):
@@ -175,76 +252,18 @@ def single_mutation_effects(
         p-values, and significance flags.
     """
 
-    def test_significance(series, test_type="positive"):
-        if test_type == "positive":
-            successes = (series > 0).sum()
-            hypothesized_prob = 0.5
-            alternative = "greater"
-        elif test_type == "negative":
-            successes = (series < 0).sum()
-            hypothesized_prob = 0.5
-            alternative = "greater"
-        else:
-            raise ValueError("test_type must be 'positive' or 'negative'")
-
-        n_trials = len(series)
-        if n_trials == 0:
-            return np.nan, False
-
-        test_result = binomtest(
-            successes, n_trials, p=hypothesized_prob, alternative=alternative
-        )
-        significant = test_result.pvalue < 0.05
-
-        return _pythonize(test_result.pvalue), significant
-
-    def compute_mutation_effect(X, f, position, A, B, test_type):
-        X1 = X[X[position] == A]
-        X2 = X[X[position] == B]
-
-        X1 = pd.Series(X1.drop(columns=[position]).apply(tuple, axis=1))
-        X2 = pd.Series(X2.drop(columns=[position]).apply(tuple, axis=1))
-
-        df1 = pd.concat([X1, f], axis=1, join="inner")
-        df2 = pd.concat([X2, f], axis=1, join="inner")
-        df1.set_index(0, inplace=True)
-        df2.set_index(0, inplace=True)
-
-        df_diff = pd.merge(
-            df1, df2, left_index=True, right_index=True, suffixes=("_1", "_2")
-        )
-        df_diff.index = range(len(df_diff))
-        diff = df_diff["fitness_1"] - df_diff["fitness_2"]
-
-        median_effect = abs(diff).median() / f.std()
-        p_value, significant = test_significance(diff, test_type)
-
-        return _pythonize({
-            "mutation_from": A,
-            "mutation_to": B,
-            "median_abs_effect": median_effect,
-            "mean_effect": diff.mean(),
-            "p_value": p_value,
-            "significant": significant,
-        })
+    if test_type not in ("positive", "negative"):
+        raise ValueError("test_type must be 'positive' or 'negative'")
 
     data = landscape.get_data()
     X = data[list(landscape.data_types.keys())]
     f = data["fitness"]
-
-    unique_values = X[position].dropna().unique()
-    unique_values = sorted(unique_values)
-
-    mutation_pairs = list(combinations(unique_values, 2))
-
-    results = Parallel(n_jobs=n_jobs)(
-        delayed(compute_mutation_effect)(X, f, position, A, B, test_type)
-        for A, B in mutation_pairs
+    # Vectorised over a shared background grouping; the per-pair work is now cheap,
+    # so this runs serially (the previous per-pair joblib fan-out was net-negative).
+    results = _mutation_effects_for_position(
+        X, f.to_numpy(), f.std(), position, test_type
     )
-
-    mutation_effects_df = pd.DataFrame(results)
-
-    return mutation_effects_df
+    return pd.DataFrame(results)
 
 
 def all_mutation_effects(
@@ -271,20 +290,21 @@ def all_mutation_effects(
         p-values, and significance flags.
     """
 
-    def assess_position(position, test_type):
-        return single_mutation_effects(
-            landscape=landscape, position=position, test_type=test_type, n_jobs=1
-        )
+    if test_type not in ("positive", "negative"):
+        raise ValueError("test_type must be 'positive' or 'negative'")
 
     data = landscape.get_data()
     X = data[list(landscape.data_types.keys())]
-
-    positions = list(X.columns)
-
-    all_mutation_effects = Parallel(n_jobs=n_jobs)(
-        delayed(assess_position)(position, test_type) for position in positions
-    )
-
-    all_mutation_effects_df = pd.concat(all_mutation_effects, ignore_index=True)
-
-    return all_mutation_effects_df
+    f = data["fitness"]
+    f_arr = f.to_numpy()
+    f_std = f.std()
+    # Compute the shared data once and run positions serially: each position's
+    # vectorised computation is cheap, and the old per-position joblib fan-out
+    # pickled the whole landscape per worker (net-negative; see ANALYSIS bench).
+    frames = [
+        pd.DataFrame(
+            _mutation_effects_for_position(X, f_arr, f_std, position, test_type)
+        )
+        for position in X.columns
+    ]
+    return pd.concat(frames, ignore_index=True)

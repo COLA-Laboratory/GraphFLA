@@ -11,3 +11,6 @@ bench/_localdata/
 
 # algorithms performance work (uncommitted results/state)
 bench/ALGO_BENCH_RESULTS.md
+
+# landscape-analysis performance work (uncommitted results/state)
+bench/ANALYSIS_BENCH_RESULTS.md

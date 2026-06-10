@@ -273,3 +273,96 @@ def test_gradient_intensity_exact():
     # 2-cube with fitness [0,1,2,3]: mean|delta_fit| == mean(fitness) == 1.5.
     ls = from_map({(0, 0): 0.0, (0, 1): 1.0, (1, 0): 2.0, (1, 1): 3.0}, 2)
     assert gradient_intensity(ls) == pytest.approx(1.0)
+
+
+# ----------------------------------------------------------------------
+# single / all_mutation_effects -- vectorised impl vs an independent
+# brute-force reference (nested-loop background matching). These metrics
+# had no correctness anchor before the vectorisation.
+# ----------------------------------------------------------------------
+import warnings as _warnings
+from itertools import combinations as _combinations
+
+from graphfla.analysis import single_mutation_effects, all_mutation_effects
+
+
+def _ref_mutation_effects(landscape, position, test_type="positive"):
+    """Independent reference: group genotypes by their background tuple (all other
+    positions) and pair alleles, mirroring the original semantics directly."""
+    data = landscape.get_data()
+    X = data[list(landscape.data_types.keys())]
+    f = data["fitness"]
+    f_std = f.std()
+    bg_cols = [c for c in X.columns if c != position]
+    vals = sorted(X[position].dropna().unique())
+    rows = []
+    for A, B in _combinations(vals, 2):
+        bg_a, bg_b = {}, {}
+        for idx in X.index:
+            bg = tuple(X.loc[idx, c] for c in bg_cols)
+            v = X.loc[idx, position]
+            if v == A and bg not in bg_a:
+                bg_a[bg] = f.loc[idx]
+            elif v == B and bg not in bg_b:
+                bg_b[bg] = f.loc[idx]
+        diff = np.array([bg_a[k] - bg_b[k] for k in bg_a if k in bg_b], dtype=float)
+        n = diff.size
+        if n == 0:
+            rows.append((A, B, np.nan, np.nan, np.nan, False))
+            continue
+        succ = int((diff > 0).sum()) if test_type == "positive" else int((diff < 0).sum())
+        r = scipy_stats.binomtest(succ, n, 0.5, alternative="greater")
+        rows.append((A, B, float(np.median(np.abs(diff))) / f_std,
+                     float(diff.mean()), r.pvalue, r.pvalue < 0.05))
+    return rows
+
+
+def _assert_effects_match(df, ref):
+    assert len(df) == len(ref)
+    for row, (A, B, med, mean, pval, sig) in zip(df.to_dict("records"), ref):
+        assert row["mutation_from"] == A and row["mutation_to"] == B
+        assert row["median_abs_effect"] == pytest.approx(med, nan_ok=True, rel=1e-9)
+        assert row["mean_effect"] == pytest.approx(mean, nan_ok=True, rel=1e-9)
+        assert row["p_value"] == pytest.approx(pval, nan_ok=True, rel=1e-9)
+        assert bool(row["significant"]) is bool(sig)
+
+
+def test_single_mutation_effects_matches_reference():
+    ls = hoc_landscape(4, seed=7)
+    X = ls.get_data()[list(ls.data_types.keys())]
+    for pos in X.columns:
+        for tt in ("positive", "negative"):
+            _assert_effects_match(
+                single_mutation_effects(ls, pos, test_type=tt),
+                _ref_mutation_effects(ls, pos, tt),
+            )
+
+
+def test_all_mutation_effects_matches_reference():
+    ls = hoc_landscape(4, seed=11)
+    X = ls.get_data()[list(ls.data_types.keys())]
+    ref = []
+    for pos in X.columns:
+        ref.extend(_ref_mutation_effects(ls, pos, "positive"))
+    _assert_effects_match(
+        all_mutation_effects(ls, test_type="positive").reset_index(drop=True), ref
+    )
+
+
+def test_mutation_effects_multiallele():
+    # A position with 3 levels exercises the combinations(>1 pair) path.
+    from graphfla.landscape import OrdinalLandscape
+    import pandas as pd
+
+    rng = np.random.default_rng(3)
+    combos = [(a, b) for a in range(3) for b in range(2)]
+    Xdf = pd.DataFrame(combos, columns=["p0", "p1"])
+    fser = pd.Series(rng.normal(size=len(combos)))
+    with _warnings.catch_warnings():
+        _warnings.simplefilter("ignore")
+        ls = OrdinalLandscape(maximize=True).build_from_data(Xdf, fser, verbose=False)
+    pos = list(ls.data_types.keys())[0]
+    _assert_effects_match(
+        single_mutation_effects(ls, pos, test_type="positive"),
+        _ref_mutation_effects(ls, pos, "positive"),
+    )
