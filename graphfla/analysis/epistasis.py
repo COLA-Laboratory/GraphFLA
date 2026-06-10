@@ -47,49 +47,94 @@ def _pythonize(value):
 
 # Module-level workers for process-based parallelism (must be importable so
 # joblib's loky backend can pickle them; large code arrays are auto-memmapped).
-def _idiosyncratic_pair_worker(Xcodes, f, std_baseline, pos_idx, allele_a, allele_b,
-                               min_pairs, other):
-    """Idiosyncratic index for one (allele_a, pos, allele_b) mutation.
+def _idiosyncratic_position_worker(Xcodes, f, std_baseline, j, min_pairs):
+    """Idiosyncratic indices for ALL allele pairs at position ``j``, sharing ONE
+    background grouping (computed once, not per pair).
 
-    Numpy/dict reimplementation of :func:`idiosyncratic_index`'s core, giving
-    identical values: keep-first dedup per background, analytic random-pair
-    baseline, and NaN for degenerate (too-few-background) mutations so that
-    unmeasurable mutations are excluded from — rather than diluting — the
-    landscape average.
+    Gives values identical to :func:`idiosyncratic_index`'s core: keep-first dedup
+    per background (a no-op since each (allele, background) is a unique genotype),
+    analytic random-pair baseline, and NaN for too-few-background mutations so they
+    are excluded from -- rather than dilute -- the landscape average. Returns the
+    list of per-mutation indices for this position.
     """
-    rows_a = np.flatnonzero(Xcodes[:, pos_idx] == allele_a)
-    rows_b = np.flatnonzero(Xcodes[:, pos_idx] == allele_b)
-    if rows_a.size == 0 or rows_b.size == 0:
-        return np.nan
-    bg_a = {}
-    for i in rows_a:
-        k = Xcodes[i, other].tobytes()
-        if k not in bg_a:
-            bg_a[k] = f[i]
-    bg_b = {}
-    for i in rows_b:
-        k = Xcodes[i, other].tobytes()
-        if k not in bg_b:
-            bg_b[k] = f[i]
-    common = bg_a.keys() & bg_b.keys()
-    if len(common) < min_pairs:
-        return np.nan
-    eff = np.fromiter((bg_b[k] - bg_a[k] for k in common), dtype=float, count=len(common))
-    return float(np.std(eff) / std_baseline)
+    P = Xcodes.shape[1]
+    other = np.delete(np.arange(P), j)
+    col = Xcodes[:, j]
+    alleles = np.unique(col)  # sorted codes -> same mutation set/order as before
+    bg_ids, n_bg = _pack_rows(Xcodes[:, other])
+    out = []
+    if bg_ids is not None:
+        # Per-allele fitness indexed by background id; one O(V) fill per allele.
+        fit = []
+        for a in alleles:
+            arr = np.full(n_bg, np.nan)
+            rows = np.flatnonzero(col == a)
+            arr[bg_ids[rows]] = f[rows]
+            fit.append(arr)
+        for ai in range(len(alleles)):
+            fa = fit[ai]
+            for bi in range(ai + 1, len(alleles)):
+                fb = fit[bi]
+                mask = ~(np.isnan(fa) | np.isnan(fb))  # shared backgrounds
+                if int(np.count_nonzero(mask)) < min_pairs:
+                    out.append(np.nan)
+                    continue
+                eff = fb[mask] - fa[mask]
+                out.append(float(np.std(eff) / std_baseline))
+    else:
+        # High-dim fallback: per-allele dict grouping, still shared across pairs.
+        bgcols = Xcodes[:, other]
+        dicts = []
+        for a in alleles:
+            d = {}
+            for i in np.flatnonzero(col == a):
+                k = bgcols[i].tobytes()
+                if k not in d:
+                    d[k] = f[i]
+            dicts.append(d)
+        for ai in range(len(alleles)):
+            da = dicts[ai]
+            for bi in range(ai + 1, len(alleles)):
+                db = dicts[bi]
+                common = da.keys() & db.keys()
+                if len(common) < min_pairs:
+                    out.append(np.nan)
+                    continue
+                eff = np.fromiter(
+                    (db[k] - da[k] for k in common), dtype=float, count=len(common)
+                )
+                out.append(float(np.std(eff) / std_baseline))
+    return out
 
 
-def _gamma_position_pair_worker(Xcodes, f, p1, p2, alleles1, alleles2, other):
-    """Pooled gamma / gamma* contributions for one ordered position pair (p1, p2).
+def _pack_rows(M):
+    """Dense 0-based group id per distinct row of a small-int matrix, via
+    mixed-radix packing into a single int64 key (one fast 1D ``np.unique``).
 
-    Implements the Ferretti et al. (2016) correlation of fitness effects: for the
-    p1-mutation, correlate its effect on backgrounds with allele ``b`` at p2 with
-    its effect on backgrounds with allele ``B`` at p2, across all shared genetic
-    backgrounds. The correlation is *non-centered* (a raw second-moment ratio, as
-    in eq. 3 of the paper), so it equals +1 for additive landscapes rather than
-    being undefined. Returns the partial sums ``(num, den, snum, sden)`` to be
-    pooled across all ordered pairs by :func:`_gamma_statistics`, giving
-    ``gamma = num / den`` and ``gamma_star = snum / sden``.
+    Returns ``(ids, n_groups)``; ``(None, 0)`` when the radix product would
+    overflow int64 (high-cardinality / many-column inputs) so callers can fall
+    back to a dict/byte grouping.
     """
+    nrows = M.shape[0]
+    if M.shape[1] == 0:
+        return np.zeros(nrows, dtype=np.intp), 1
+    radices = M.max(axis=0).astype(np.int64) + 1
+    prod = 1
+    for r in radices:
+        prod *= int(r)
+        if prod > (1 << 62):
+            return None, 0
+    mult = np.ones(M.shape[1], dtype=np.int64)
+    for i in range(M.shape[1] - 2, -1, -1):
+        mult[i] = mult[i + 1] * int(radices[i + 1])
+    key = M.astype(np.int64) @ mult
+    uniq, inv = np.unique(key, return_inverse=True)
+    return np.asarray(inv).reshape(-1).astype(np.intp), int(uniq.size)
+
+
+def _gamma_pair_via_dict(Xcodes, f, p1, p2, alleles1, alleles2, other):
+    """Original dict-grouping gamma pair contribution; the high-dimensional
+    fallback used when the background does not pack into an int64 key."""
     col1 = Xcodes[:, p1]
     col2 = Xcodes[:, p2]
     bg = Xcodes[:, other]
@@ -126,6 +171,64 @@ def _gamma_position_pair_worker(Xcodes, f, p1, p2, alleles1, alleles2, other):
                     den += 0.5 * float(np.dot(bvec, bvec) + np.dot(Bvec, Bvec))
                     sb = np.sign(bvec)
                     sB = np.sign(Bvec)
+                    snum += float(np.dot(sb, sB))
+                    sden += 0.5 * float(np.count_nonzero(sb) + np.count_nonzero(sB))
+    return num, den, snum, sden
+
+
+def _gamma_position_pair_worker(Xcodes, f, p1, p2, alleles1, alleles2, other):
+    """Pooled gamma / gamma* contributions for one ordered position pair (p1, p2).
+
+    Implements the Ferretti et al. (2016) correlation of fitness effects: for the
+    p1-mutation, correlate its effect on backgrounds with allele ``b`` at p2 with
+    its effect on backgrounds with allele ``B`` at p2, across all shared genetic
+    backgrounds. The correlation is *non-centered* (a raw second-moment ratio, as
+    in eq. 3 of the paper), so it equals +1 for additive landscapes rather than
+    being undefined. Returns the partial sums ``(num, den, snum, sden)`` to be
+    pooled across all ordered pairs by :func:`_gamma_statistics`, giving
+    ``gamma = num / den`` and ``gamma_star = snum / sden``.
+    """
+    # Group nodes by background. When the background columns pack into an int64
+    # key (boolean / DNA / ordinal / low-dimensional protein) this is a fast 1D
+    # unique and the allele-quadruple correlation vectorises over a fitness grid.
+    # For high-cardinality, many-column backgrounds (high-dim protein) packing
+    # overflows int64 -- there the original dict grouping is faster, so fall back.
+    bg_ids, n_bg = _pack_rows(Xcodes[:, other])
+    if bg_ids is None:
+        return _gamma_pair_via_dict(Xcodes, f, p1, p2, alleles1, alleles2, other)
+
+    col1 = Xcodes[:, p1]
+    col2 = Xcodes[:, p2]
+    A1 = len(alleles1)
+    A2 = len(alleles2)
+    # alleles1/alleles2 are sorted-unique, so searchsorted gives the local index.
+    a1_local = np.searchsorted(alleles1, col1)
+    a2_local = np.searchsorted(alleles2, col2)
+    # G[bg, i, j] = fitness of the genotype (alleles1[i] @ p1, alleles2[j] @ p2, bg);
+    # NaN where that genotype is absent. Each genotype is unique -> no cell collides.
+    G = np.full((n_bg, A1, A2), np.nan)
+    G[bg_ids, a1_local, a2_local] = f
+
+    num = den = snum = sden = 0.0
+    # Same allele-quadruple loops as the dict path, but each (num,den,snum,sden)
+    # update is vectorised over the background axis instead of set intersections.
+    for ai in range(A1):
+        for aj in range(ai + 1, A1):
+            for bi in range(A2):
+                g_ai_bi = G[:, ai, bi]
+                g_aj_bi = G[:, aj, bi]
+                for bj in range(bi + 1, A2):
+                    bvec = g_ai_bi - g_aj_bi          # effect at p2=bi: f(a,b)-f(A,b)
+                    Bvec = G[:, ai, bj] - G[:, aj, bj]  # effect at p2=bj: f(a,B)-f(A,B)
+                    mask = ~(np.isnan(bvec) | np.isnan(Bvec))  # shared backgrounds
+                    if not mask.any():
+                        continue
+                    bv = bvec[mask]
+                    Bv = Bvec[mask]
+                    num += float(np.dot(bv, Bv))
+                    den += 0.5 * float(np.dot(bv, bv) + np.dot(Bv, Bv))
+                    sb = np.sign(bv)
+                    sB = np.sign(Bv)
                     snum += float(np.dot(sb, sB))
                     sden += 0.5 * float(np.count_nonzero(sb) + np.count_nonzero(sB))
     return num, den, snum, sden
@@ -538,19 +641,14 @@ def global_idiosyncratic_index(landscape, n_jobs=-1, seed=None, min_pairs: int =
         [pd.Categorical(X[c], categories=sorted(X[c].unique())).codes for c in X.columns]
     ).astype(np.int32)
 
-    tasks = []
-    for j in range(Xcodes.shape[1]):
-        other = np.delete(np.arange(Xcodes.shape[1]), j)
-        alleles = np.unique(Xcodes[:, j])
-        for ai in range(len(alleles)):
-            for bi in range(ai + 1, len(alleles)):
-                tasks.append((int(alleles[ai]), int(alleles[bi]), j, other))
-
-    # Process-based (loky) parallelism: actually uses cores, unlike the GIL-bound thread backend.
-    values = Parallel(n_jobs=n_jobs)(
-        delayed(_idiosyncratic_pair_worker)(Xcodes, f, std_baseline, j, a, b, min_pairs, other)
-        for (a, b, j, other) in tasks
+    # Process-based (loky) parallelism over POSITIONS: each task computes all of a
+    # position's allele-pair indices from a single shared background grouping
+    # (vs. regrouping once per allele pair), then we flatten.
+    per_pos = Parallel(n_jobs=n_jobs)(
+        delayed(_idiosyncratic_position_worker)(Xcodes, f, std_baseline, j, min_pairs)
+        for j in range(Xcodes.shape[1])
     )
+    values = [v for sub in per_pos for v in sub]
     # Too-few-background mutations are NaN and excluded from the mean (padding
     # 0.0 would bias sparse landscapes toward zero idiosyncrasy).
     if not values or np.all(np.isnan(values)):
@@ -605,33 +703,30 @@ def diminishing_returns_index(
             " Landscape must be built first."
         )
 
-    node_fitnesses = []
-    avg_successor_improvement = []
-
-    nodes_with_successors = 0
-    for v in landscape.graph.vs:
-        current_fitness = v["fitness"]
-        node_fitnesses.append(current_fitness)
-
-        successors = v.successors()
-        if successors:
-            # Improvement measured toward the optimum: positive on improving edges
-            # under both maximization and minimization.
-            improvements = [
-                (s["fitness"] - current_fitness) if landscape.maximize
-                else (current_fitness - s["fitness"])
-                for s in successors
-            ]
-            positive_improvements = [imp for imp in improvements if imp > 0]
-            if positive_improvements:
-                avg_improvement = np.mean(positive_improvements)
-                avg_successor_improvement.append(avg_improvement)
-                nodes_with_successors += 1
-            else:
-                # defensive: no improving successor (shouldn't occur by graph definition)
-                avg_successor_improvement.append(np.nan)
-        else:
-            avg_successor_improvement.append(np.nan)  # local optimum, no successors
+    # Mean improvement toward the optimum across each node's improving out-edges.
+    # `delta_fit` is |Δfitness| -- the positive improvement magnitude on every
+    # improving edge (both maximize and minimize) -- so the per-node mean is simply
+    # the delta_fit-weighted out-strength / out-degree: one C-level pass, no
+    # edge-list materialisation (fast and memory-light). Fallback recomputes from
+    # fitness via the sparse adjacency when delta_fit is absent. NaN = local optima.
+    fitness = np.asarray(landscape.graph.vs["fitness"], dtype=float)
+    node_fitnesses = fitness
+    outdeg = np.asarray(landscape.graph.outdegree(), dtype=float)
+    if "delta_fit" in landscape.graph.es.attributes():
+        per_node = np.asarray(
+            landscape.graph.strength(mode="out", weights="delta_fit"), dtype=float
+        )
+        with np.errstate(invalid="ignore", divide="ignore"):
+            avg_successor_improvement = np.where(outdeg > 0, per_node / outdeg, np.nan)
+    else:
+        mean_succ_fit = landscape.graph.get_adjacency_sparse().dot(fitness)
+        with np.errstate(invalid="ignore", divide="ignore"):
+            mean_succ_fit = np.where(outdeg > 0, mean_succ_fit / outdeg, np.nan)
+        avg_successor_improvement = (
+            mean_succ_fit - fitness if landscape.maximize
+            else fitness - mean_succ_fit
+        )
+    nodes_with_successors = int(np.count_nonzero(outdeg > 0))
 
     if nodes_with_successors < 2:
         warnings.warn(
@@ -742,33 +837,29 @@ def increasing_costs_index(
             " Landscape must be built first."
         )
 
-    node_fitnesses = []
-    avg_predecessor_cost = []
-
-    nodes_with_predecessors = 0
-    for v in landscape.graph.vs:
-        current_fitness = v["fitness"]
-        node_fitnesses.append(current_fitness)
-
-        predecessors = v.predecessors()
-        if predecessors:
-            # Cost = fitness sacrificed moving away from the optimum: positive on
-            # improving edges under either direction.
-            costs = [
-                (current_fitness - p["fitness"]) if landscape.maximize
-                else (p["fitness"] - current_fitness)
-                for p in predecessors
-            ]
-            positive_costs = [c for c in costs if c > 0]
-            if positive_costs:
-                avg_cost = np.mean(positive_costs)
-                avg_predecessor_cost.append(avg_cost)
-                nodes_with_predecessors += 1
-            else:
-                # defensive: no costing predecessor (shouldn't occur by graph definition)
-                avg_predecessor_cost.append(np.nan)
-        else:
-            avg_predecessor_cost.append(np.nan)  # source node, no predecessors
+    # Mirror of diminishing_returns_index over IN-edges: mean cost across each
+    # node's improving predecessors. delta_fit is the positive cost magnitude on
+    # every improving edge, so the per-node mean is the delta_fit-weighted
+    # in-strength / in-degree (fast, memory-light). Fallback via the transposed
+    # sparse adjacency when delta_fit is absent. NaN for source nodes.
+    fitness = np.asarray(landscape.graph.vs["fitness"], dtype=float)
+    node_fitnesses = fitness
+    indeg = np.asarray(landscape.graph.indegree(), dtype=float)
+    if "delta_fit" in landscape.graph.es.attributes():
+        per_node = np.asarray(
+            landscape.graph.strength(mode="in", weights="delta_fit"), dtype=float
+        )
+        with np.errstate(invalid="ignore", divide="ignore"):
+            avg_predecessor_cost = np.where(indeg > 0, per_node / indeg, np.nan)
+    else:
+        mean_pred_fit = landscape.graph.get_adjacency_sparse().T.dot(fitness)
+        with np.errstate(invalid="ignore", divide="ignore"):
+            mean_pred_fit = np.where(indeg > 0, mean_pred_fit / indeg, np.nan)
+        avg_predecessor_cost = (
+            fitness - mean_pred_fit if landscape.maximize
+            else mean_pred_fit - fitness
+        )
+    nodes_with_predecessors = int(np.count_nonzero(indeg > 0))
 
     if nodes_with_predecessors < 2:
         warnings.warn(
@@ -1533,44 +1624,44 @@ def extradimensional_bypass_analysis(landscape, approximate=False, sample_cut_pr
         })
 
     # --- Analyze Each Motif for Extradimensional Bypasses ---
-    bypass_lengths = []
-    motifs_with_bypass = 0
     total_motifs = len(motif_19_instances)
 
+    # Identify (ab, AB) per motif from a precomputed fitness array, caching each
+    # AB's predecessor set (one high-fitness node anchors many reciprocal-sign
+    # squares). AB = fittest node (first on ties, matching the previous dict-max);
+    # ab = first remaining node that is not a direct predecessor of AB.
+    fit = np.asarray(landscape.graph.vs["fitness"], dtype=float)
+    pred_cache = {}
+    ABs_by_ab = defaultdict(list)
     for motif_nodes in motif_19_instances:
-        try:
-            fitness_values = {
-                node: landscape.graph.vs[node]["fitness"] for node in motif_nodes
-            }
-
-            # AB = fittest node; ab = the remaining node that is not a direct
-            # predecessor of AB.
-            AB = max(fitness_values, key=fitness_values.get)
-            remaining_nodes = [node for node in motif_nodes if node != AB]
-            AB_predecessors = set(landscape.graph.predecessors(AB))
-            ab = [node for node in remaining_nodes if node not in AB_predecessors]
-
-            if not ab:
-                continue
-
-            try:
-                distances = landscape.graph.distances(source=ab, target=AB, mode="out")
-                distance = distances[0][0]
-
-                # finite distance => an extradimensional bypass exists
-                if not np.isinf(distance):
-                    bypass_lengths.append(distance)
-                    motifs_with_bypass += 1
-
-            except Exception as e:
-                print(
-                    f"Warning: Could not calculate distance for motif {motif_nodes}: {e}"
-                )
-                continue
-
-        except Exception as e:
-            print(f"Warning: Could not process motif {motif_nodes}: {e}")
+        nodes = list(motif_nodes)
+        AB = nodes[int(np.argmax(fit[nodes]))]
+        pred = pred_cache.get(AB)
+        if pred is None:
+            pred = pred_cache[AB] = set(landscape.graph.predecessors(AB))
+        ab = next((n for n in nodes if n != AB and n not in pred), None)
+        if ab is None:
             continue
+        ABs_by_ab[ab].append(AB)
+
+    # One forward traversal per UNIQUE ab -- the SAME improving (OUT) direction the
+    # original used from the wildtype (whose descendant set is typically far smaller
+    # than the double-mutant's ancestor set, so going from AB instead would be
+    # slower), now covering all of that ab's motifs in a single BFS. igraph forbids
+    # duplicate targets, so query distinct ABs once and count every motif occurrence
+    # (approximate sampling can repeat a motif; the original processed the list
+    # element-wise). A finite distance means an extradimensional bypass exists.
+    bypass_lengths = []
+    motifs_with_bypass = 0
+    for ab, AB_list in ABs_by_ab.items():
+        uniq_ABs = list(dict.fromkeys(AB_list))
+        row = landscape.graph.distances(source=[ab], target=uniq_ABs, mode="out")[0]
+        dist_map = dict(zip(uniq_ABs, row))
+        for AB in AB_list:
+            distance = dist_map[AB]
+            if not np.isinf(distance):
+                bypass_lengths.append(distance)
+                motifs_with_bypass += 1
 
     # --- Calculate Results ---
     bypass_proportion = motifs_with_bypass / total_motifs if total_motifs > 0 else 0.0

@@ -431,6 +431,11 @@ def mean_path_lengths(
 
     # OUT = monotonic fitness-improving paths only; ALL = any path.
     mode = "OUT" if accessible else "ALL"
+    # d(source -> target) over `mode` edges equals d(target -> source) over the
+    # REVERSED edges. So every source's distance to a target can be obtained from
+    # ONE traversal outward from the target, instead of a separate BFS per source
+    # (O(V+E) vs O(N*(V+E))) -- identical integer shortest-path lengths.
+    reverse_mode = {"OUT": "IN", "ALL": "ALL"}[mode]
 
     n_configs = landscape.graph.vcount()
 
@@ -466,12 +471,12 @@ def mean_path_lengths(
     results = []
     try:
         for target_idx in target_indices:
-            path_lengths_results = landscape.graph.distances(
-                source=sampled_indices, target=target_idx, mode=mode
-            )
-
-            # distances() returns a list of lists; flatten to scalars.
-            flattened_distances = [lengths[0] for lengths in path_lengths_results]
+            # Single traversal outward from the target over reversed edges;
+            # row[j] is the distance from sampled source j to target_idx along
+            # `mode` edges (see reverse_mode above).
+            flattened_distances = landscape.graph.distances(
+                source=target_idx, target=sampled_indices, mode=reverse_mode
+            )[0]
 
             # Exclude unreachable (infinite) distances.
             finite_distances = [d for d in flattened_distances if np.isfinite(d)]
