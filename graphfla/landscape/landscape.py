@@ -972,8 +972,8 @@ class Landscape:
 
         # Determine local optima and global optimum from graph structure
         if instance.graph.vcount() > 0:
-            instance.determine_local_optima()
-            instance.determine_global_optimum()
+            instance._compute_local_optima()
+            instance._compute_global_optimum()
 
         # Infer calculation status flags from saved graph attributes
         if "basin_index" in graph.vs.attributes():
@@ -1580,8 +1580,8 @@ class Landscape:
         else:
             return mixed_distance
 
-    def determine_local_optima(self):
-        """Identify local optima with plateau-aware semantics.
+    def _compute_local_optima(self) -> "Landscape":
+        """Identify local optima with plateau-aware semantics (build-time step).
 
         A node is a local optimum if it has no way to improve fitness,
         taking neutral plateaus into account.  Results are stored at the
@@ -1591,15 +1591,17 @@ class Landscape:
         plateau-LO counted once) with ``_peak_index`` (one representative
         node per optimum, used by LON construction).
 
-        Returns the landscape instance (``self``) for method chaining.
+        Internal: the built landscape is treated as immutable, so this runs
+        during construction (and as an idempotent recompute hook); it is not a
+        public, user-facing operation. Returns ``self``.
         """
         optima.determine_local_optima(self)
         return self
 
-    def determine_global_optimum(self) -> "Landscape":
-        """Identifies the global optimum node in the landscape graph using igraph.
+    def _compute_global_optimum(self) -> "Landscape":
+        """Identify the global optimum node (build-time step).
 
-        Returns the landscape instance (``self``) for method chaining.
+        Internal recompute hook; see :meth:`_compute_local_optima`. Returns ``self``.
         """
         navigability.determine_global_optimum(self)
         return self
@@ -1689,6 +1691,6 @@ class Landscape:
             self.graph.vs["out_degree"] = self.graph.outdegree()
 
         # Determine optima (basins / paths / distance / neighbour fitness are lazy).
-        self.determine_local_optima()
-        self.determine_global_optimum()
+        self._compute_local_optima()
+        self._compute_global_optimum()
 

@@ -322,7 +322,7 @@ def global_optima_accessibility(landscape) -> float:
 
     if landscape.go_index is None:
         try:
-            landscape.determine_global_optimum()
+            landscape._compute_global_optimum()
         except Exception as e:
             raise RuntimeError(
                 f"Failed to determine global optimum: {e}. Cannot calculate accessibility."
@@ -390,7 +390,7 @@ def mean_path_lengths(
     if lo is None:
         if landscape.go_index is None:
             try:
-                landscape.determine_global_optimum()
+                landscape._compute_global_optimum()
             except Exception as e:
                 raise RuntimeError(
                     f"Failed to determine global optimum: {e}. Cannot calculate path lengths."
@@ -537,7 +537,7 @@ def mean_path_lengths_go(
 
     if landscape.go_index is None:
         try:
-            landscape.determine_global_optimum()
+            landscape._compute_global_optimum()
         except Exception as e:
             raise RuntimeError(
                 f"Failed to determine global optimum: {e}. Cannot calculate path lengths."
