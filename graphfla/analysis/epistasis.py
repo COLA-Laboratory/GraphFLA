@@ -2,6 +2,7 @@ from sklearn.preprocessing import OneHotEncoder
 from scipy.stats import spearmanr, pearsonr
 from typing import Literal
 from collections import defaultdict
+from dataclasses import dataclass
 from joblib import Parallel, delayed
 
 import numpy as np
@@ -327,6 +328,22 @@ def _calculate_pos_neg_epistasis_igraph(squares_with_roles):
     })
 
 
+@dataclass(frozen=True)
+class EpistasisClassification:
+    """Proportions of the five epistasis types among 4-node motifs.
+
+    ``magnitude`` + ``sign`` + ``reciprocal_sign`` partition the magnitude/sign
+    group (they sum to 1 when any motifs are found); ``positive`` and
+    ``negative`` are a separate decomposition of the same motifs.
+    """
+
+    magnitude: float
+    sign: float
+    reciprocal_sign: float
+    positive: float
+    negative: float
+
+
 def classify_epistasis(landscape, approximate=False, sample_cut_prob=0.2, seed=None):
     """
     Calculates proportions of five epistasis types using 4-node motifs in an igraph graph.
@@ -351,22 +368,22 @@ def classify_epistasis(landscape, approximate=False, sample_cut_prob=0.2, seed=N
 
     Returns
     -------
-    dict
-        A dictionary containing proportions for:
-        - "magnitude epistasis": The magnitude of the combined fitness effect of mutations
+    EpistasisClassification
+        A dataclass with proportion fields:
+        - ``magnitude``: The magnitude of the combined fitness effect of mutations
         differs from the sum of their individual effects, but the direction relative to
         single mutants or wild-type may not change sign.
-        - "sign epistasis": The sign of the fitness effect of at least one mutation changes depending
-        on the presence of other mutations. For example, a mutation beneficialon its own becomes
+        - ``sign``: The sign of the fitness effect of at least one mutation changes depending
+        on the presence of other mutations. For example, a mutation beneficial on its own becomes
         deleterious when combined with another specific mutation.
-        - "reciprocal sign epistasis": A specific form of sign epistasis where the sign of the effect
+        - ``reciprocal_sign``: A specific form of sign epistasis where the sign of the effect
         of *each* mutation depends on the allele state at the other locus.
-        - "positive epistasis": The combined fitness effect of mutations is greater than the sum of
+        - ``positive``: The combined fitness effect of mutations is greater than the sum of
         their individual effects, often referred to as synergistic epistasis.
-        - "negative epistasis": The combined fitness effect of mutations is less than the sum of their
+        - ``negative``: The combined fitness effect of mutations is less than the sum of their
         individual effects, often referred to as antagonistic epistasis.
 
-        Returns zero proportions if relevant counts/instances are zero or cannot be processed.
+        Fields are zero if relevant counts/instances are zero or cannot be processed.
 
     Raises
     ------
@@ -473,8 +490,13 @@ def classify_epistasis(landscape, approximate=False, sample_cut_prob=0.2, seed=N
             pos_neg_props = _calculate_pos_neg_epistasis_igraph(squares_with_roles)
 
     # --- Step 6: Combine Results ---
-    final_results = {**mag_sign_recip_props, **pos_neg_props}
-    return _pythonize(final_results)
+    return EpistasisClassification(
+        magnitude=float(mag_sign_recip_props["magnitude epistasis"]),
+        sign=float(mag_sign_recip_props["sign epistasis"]),
+        reciprocal_sign=float(mag_sign_recip_props["reciprocal sign epistasis"]),
+        positive=float(pos_neg_props["positive epistasis"]),
+        negative=float(pos_neg_props["negative epistasis"]),
+    )
 
 
 def idiosyncratic_index(landscape, mutation, min_pairs: int = 3):
