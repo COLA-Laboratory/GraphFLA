@@ -14,7 +14,14 @@ Baseline: 1267 tests pass. Each phase below is committed green on `refactor/skle
 - ✅ **Phase 7** — full public-analysis naming sweep (rename table applied; `ffi`/`calculate_evol_enhance` deleted). (4176879)
 - ✅ **Phase 5a** — Walsh-Hadamard → tidy DataFrame (the flagship "mess"). (8316a66)
 - ✅ **Phase 5b** — classify_epistasis → `EpistasisClassification` dataclass (kills prose-string keys). (0a5be01)
+- ✅ **Phase 9a** — dead-code removal (euclidean_distance, EdgeResult.strategy, include_configs, ~100 lines commented
+  networkx, unused filter_data re-export) + `_pythonize` deduped 6→1 (analysis/_utils.py). (f15afff)
 - Perf verified: walk/basin neutral (descend allocation-free); build 60ms / basins 30ms on 16k nodes. All green at 1265 tests.
+
+**Gripe coverage:** #1 returns (WHT→DataFrame, classify→dataclass, kind fix) ✅ | #2 naming ✅ | #3 walk API ✅ |
+#4 file size ⏭ deferred (structural) | #5 errors/warnings ⚠ partial (validation + exception taxonomy + NotBuiltError done;
+logging migration + narrow-excepts pending) | #6 dedup/dead-code ✅. Plus: estimator protocol, freeze-after-build,
+future-annotations (partial rollout).
 
 ### Remaining (not yet delivered — for next session)
 - **Phase 5c (more return contract)**: `extradimensional_bypass` prose keys → dataclass (same pattern as classify);
