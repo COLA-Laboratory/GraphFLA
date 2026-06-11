@@ -268,7 +268,6 @@ class EdgeResult:
     edges: Union[np.ndarray, List[Tuple[int, int]]]
     delta_fits: Union[np.ndarray, List[float]]
     neutral_pairs: List[Tuple[int, int]]
-    strategy: str
 
 
 def build_edges(
@@ -364,7 +363,6 @@ def build_edges(
         edges=edges,
         delta_fits=delta_fits,
         neutral_pairs=neutral_pairs,
-        strategy=resolved,
     )
 
 

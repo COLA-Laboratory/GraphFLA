@@ -1,34 +1,7 @@
+from __future__ import annotations
+
 import numpy as np
 from typing import Dict, Optional
-
-
-def euclidean_distance(
-    X: np.ndarray,
-    x: np.ndarray,
-    data_types: Optional[Dict[int, str]] = None,
-) -> np.ndarray:
-    """
-    Compute the Euclidean distance between each row of X and the reference vector x.
-
-    Parameters
-    ----------
-    X : np.ndarray
-        A 2D array containing numerical features.
-    x : np.ndarray
-        A 1D reference vector.
-
-    Returns
-    -------
-    np.ndarray
-        A 1D array of Euclidean distances.
-    """
-    # Cast to signed/float to avoid unsigned-integer underflow on (X - x).
-    X = np.asarray(X)
-    x = np.asarray(x)
-    if np.issubdtype(X.dtype, np.unsignedinteger) or np.issubdtype(x.dtype, np.unsignedinteger):
-        X = X.astype(np.int64, copy=False)
-        x = x.astype(np.int64, copy=False)
-    return np.sqrt(np.sum((X - x) ** 2, axis=1))
 
 
 def hamming_distance(
