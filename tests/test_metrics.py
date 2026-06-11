@@ -191,11 +191,12 @@ def test_higher_order_epistasis_additive_order1_is_one():
 
 def test_walsh_additive_higher_orders_are_zero():
     coeffs = walsh_hadamard(onemax(5), max_order=2)
-    order2 = coeffs.get(2, {})
-    assert order2  # there are pairwise terms to check
-    assert max(abs(v) for v in order2.values()) < 1e-6
+    order2 = coeffs.loc[coeffs["order"] == 2, "coefficient"]
+    assert len(order2)  # there are pairwise terms to check
+    assert order2.abs().max() < 1e-6
     # ...while the additive (order-1) effects are non-trivial.
-    assert max(abs(v) for v in coeffs[1].values()) > 1e-2
+    order1 = coeffs.loc[coeffs["order"] == 1, "coefficient"]
+    assert order1.abs().max() > 1e-2
 
 
 # ----------------------------------------------------------------------
