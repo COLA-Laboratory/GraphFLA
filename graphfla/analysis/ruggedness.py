@@ -4,7 +4,7 @@ import pandas as pd
 import warnings
 import random
 
-from ..algorithms import random_walk, SearchCache
+from ..algorithms import RandomWalk, SearchCache
 from typing import Tuple
 from sklearn.linear_model import LinearRegression
 
@@ -95,9 +95,9 @@ def autocorrelation(
     for _ in range(walk_times):
         random_node = rand.randrange(0, landscape.n_configs)
         walk_seed = rand.getrandbits(32) if seed is not None else None
-        logger = random_walk(cache, random_node, "fitness", walk_length, seed=walk_seed)
-        if logger.shape[0] > lag:
-            series.append(np.asarray(logger[:, 2], dtype=float))
+        result = RandomWalk(cache, length=walk_length, seed=walk_seed).run(random_node)
+        if len(result.path) > lag:
+            series.append(cache.fitness[result.path].astype(float))
 
     if not series:
         return _pythonize(np.nan)
