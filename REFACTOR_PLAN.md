@@ -3,6 +3,38 @@
 Branch: `refactor/sklearn-quality`. Living document. **Phase: DISCUSS & RECORD** (not delivering yet —
 deliver only after the user says they are leaving).
 
+## Progress log (delivery)
+Baseline: 1267 tests pass. Each phase below is committed green on `refactor/sklearn-quality`.
+- ✅ **Phase 0** — exceptions.py taxonomy; fixed broken `graphfla.Landscape` export; dead `__getattr__`/`setup_module` removed. (c4df238)
+- ✅ **Phase 1.1** — semantic `kind` split from registry `_strategy_key`; WHT/distance discriminators fixed (DNA WHT keys now `A_1_C`, values identical). (0d92710)
+- ✅ **Phase 1.2** — upfront build validation + `NotBuiltError` + `verbose` coercion. (e782e32)
+- ✅ **Phase 1.3** — freeze-after-build: `determine_*` → private `_compute_*`. (6ffcce8)
+- ✅ **Phase 1.4** — estimator protocol: get_params/set_params, params-forward repr, structured describe(). (96a5ff4)
+- ✅ **Phase 4** — unified Walk API (Walk/WalkResult/HillClimb/RandomWalk); perf-preserved via `HillClimb.descend`. (7400dfa)
+- ✅ **Phase 7** — full public-analysis naming sweep (rename table applied; `ffi`/`calculate_evol_enhance` deleted). (4176879)
+- ✅ **Phase 5a** — Walsh-Hadamard → tidy DataFrame (the flagship "mess"). (8316a66)
+- ✅ **Phase 5b** — classify_epistasis → `EpistasisClassification` dataclass (kills prose-string keys). (0a5be01)
+- Perf verified: walk/basin neutral (descend allocation-free); build 60ms / basins 30ms on 16k nodes. All green at 1265 tests.
+
+### Remaining (not yet delivered — for next session)
+- **Phase 5c (more return contract)**: `extradimensional_bypass` prose keys → dataclass (same pattern as classify);
+  navigability `mean_path_length_to_local_optima` / `local_optima_accessibility` / `mean_distance_to_local_optima`
+  dict-or-list[dict] polymorphism → always the collection form (DataFrame). Golden extractor translates to keep refs frozen.
+- **Phase 6 (value-changing, E1/E2 — approved, regenerate affected goldens)**: non-finite-fitness build guard;
+  NaN-normalize degenerate metric returns + divide guards; thread `rng` into first-improvement (HillClimb already has
+  `seed=`; wire it through basin's plateau-exit path + any first-improvement caller).
+- **Phase 8 (logging)**: route ~115 `print()`s through the logger; `warnings.warn` for pseudo-warnings; fix the
+  `logger = random_walk(...)` shadow (already moot — random_walk gone — but audit ruggedness).
+- **Phase 9 (mechanical/polish)**: `_pythonize`×6 + `_pack_rows`×2 → `analysis/_utils.py`; alphabet triplication →
+  import from `_data`; dead-code (commented networkx in utils, `euclidean_distance`, `EdgeResult.strategy`,
+  `include_configs`); narrow the ~32 broad `except` with `raise ... from e`; finish `from __future__ import annotations`
+  on untouched modules; type-annotation backfill; docstring-drift fixes.
+- **Structural decomposition (deferred)**: landscape `_io.py`/`_build.py`; `neighbors/` subpackage (+ generator-honesty
+  raise, D6); `_data/` subpackage (handlers own parsing, D5, + `len(X)==len(f)` / reserved-`fitness` guards, column-prefix
+  unify); `analysis/epistasis/` split; move `basin`/`optima`/`plateaus` into `landscape/`.
+- **Final**: full `bench/` run for the formal perf gate; adapt out-of-scope modules (plotting/lon/sampling/filters/
+  problems/examples) when you signal; packaging deferred (version `0.1.dev0` vs `0.2.5`, `py.typed`).
+
 ## Process / rules of engagement
 - First clarify the hard, consultation-worthy decisions; the easy nits (the 5 the user listed) get batched later.
 - Maintain this file as the single source of truth for what to do.
