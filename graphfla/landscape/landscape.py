@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import ast
+import inspect
 import pandas as pd
 import numpy as np
 import igraph as ig
@@ -197,22 +198,12 @@ class Landscape:
     >>> X_data = pd.DataFrame({'var_0': [0, 0, 1, 1], 'var_1': [0, 1, 0, 1]})
     >>> f_data = pd.Series([1.0, 2.0, 3.0, 2.5])
 
-    >>> # landscape = Landscape(kind="boolean").build_from_data(X_data, f_data)
-    >>> landscape.describe() 
-    --- Landscape Summary ---
-    Class: Landscape
-    Built: True
-    Variables (n_vars): 2
-    Configurations (n_configs): 4
-    Connections (n_edges): 4
-    Local Optima (n_lo): 1
-    Global Optimum Index: 2
-    Maximize Fitness: True
-    Basins Calculated: True
-    Paths Calculated: False
-    LON Calculated: False
-    ---
-    >>> print(f"Number of configurations: {landscape.n_configs}") 
+    >>> landscape = BooleanLandscape().build_from_data(X_data, f_data, verbose=False)
+    >>> landscape.describe()["n_lo"]
+    1
+    >>> repr(landscape)
+    'BooleanLandscape(maximize=True)'
+    >>> print(f"Number of configurations: {landscape.n_configs}")
     Number of configurations: 4
     >>> print(f"Global optimum fitness: {landscape.go['fitness']}")  
     Global optimum fitness: 3.0
@@ -473,24 +464,64 @@ class Landscape:
             raise KeyError(f"Index {index} not found among landscape configurations.")
 
     def __str__(self):
-        """Return a string summary of the landscape."""
+        """Human-readable one-line summary (sizes when built)."""
+        head = f"{self.__class__.__name__}(kind={self.kind!r})"
         if not self._is_built:
-            return f"{self.__class__.__name__} object (uninitialized)"
-
-        n_configs = self.graph.vcount() if self.graph is not None else "?"
-        n_edges = self.graph.ecount() if self.graph is not None else "?"
+            return f"{head} — not built"
         n_vars_str = str(self.n_vars) if self.n_vars is not None else "?"
         n_lo_str = str(self.n_lo) if self.n_lo is not None else "?"
-
         return (
-            f"{self.__class__.__name__} with {n_vars_str} variables, "
-            f"{n_configs} configurations, {n_edges} connections, "
-            f"and {n_lo_str} local optima."
+            f"{head}: {n_vars_str} variables, {self.n_configs} configurations, "
+            f"{self.n_edges} edges, {n_lo_str} local optima"
         )
 
     def __repr__(self):
-        """Return a concise string representation of the landscape."""
-        return self.__str__()
+        """Params-forward representation (scikit-learn style)."""
+        params = ", ".join(f"{k}={v!r}" for k, v in self.get_params().items())
+        return f"{self.__class__.__name__}({params})"
+
+    @classmethod
+    def _get_param_names(cls):
+        """Constructor parameter names for ``get_params`` (scikit-learn style).
+
+        Introspects this class's ``__init__`` and drops ``self`` plus the
+        internal strategy-wiring parameters (``input_handler`` /
+        ``neighbor_generator`` / ``strategy_key``), which are implementation
+        details rather than reportable configuration.
+        """
+        sig = inspect.signature(cls.__init__)
+        names = []
+        for name, p in sig.parameters.items():
+            if name == "self" or p.kind in (p.VAR_POSITIONAL, p.VAR_KEYWORD):
+                continue
+            if name in ("input_handler", "neighbor_generator", "strategy_key"):
+                continue
+            names.append(name)
+        return sorted(names)
+
+    def get_params(self, deep: bool = True) -> Dict[str, Any]:
+        """Return the constructor parameters as a dict (scikit-learn style).
+
+        Enables introspection and ``sklearn.base.clone``-style reconstruction
+        (``type(ls)(**ls.get_params())`` yields a fresh, unbuilt landscape).
+        """
+        return {name: getattr(self, name) for name in self._get_param_names()}
+
+    def set_params(self, **params) -> "Landscape":
+        """Set constructor parameters by name (scikit-learn style).
+
+        Intended for configuring an unbuilt landscape; unknown names raise
+        :class:`InvalidParameterError`.
+        """
+        valid = set(self._get_param_names())
+        for key, value in params.items():
+            if key not in valid:
+                raise InvalidParameterError(
+                    f"Invalid parameter {key!r} for {type(self).__name__}; "
+                    f"valid parameters are {sorted(valid)}."
+                )
+            setattr(self, key, value)
+        return self
 
     def __len__(self):
         """Return the number of configurations (nodes) in the landscape."""
@@ -1606,50 +1637,49 @@ class Landscape:
         navigability.determine_global_optimum(self)
         return self
 
-    def describe(self) -> None:
-        """Prints a summary description of the landscape properties.
+    def describe(self) -> Dict[str, Any]:
+        """Return a structured summary of the landscape as a dict.
 
-        Provides a quick overview of the landscape's size, complexity,
-        and analysis status.
+        Unlike a printed summary, the returned mapping is composable and
+        testable -- callers can log it, assert on it, or render it. For a quick
+        human-readable view use ``print(landscape)`` (see :meth:`__str__`).
+
+        Returns
+        -------
+        dict
+            ``class``, ``kind``, ``built``, ``maximize`` and ``epsilon`` are
+            always present. When built, size/optima fields (``n_vars``,
+            ``n_configs``, ``n_edges``, ``n_lo``, ``go_index``), the calculation
+            flags, and -- if a plateau layer exists -- the plateau counts are
+            added.
         """
-        _bold = "\033[1m"
-        _reset = "\033[0m"
-        print(f"{_bold}--- Landscape Summary ---{_reset}")
-        print(f"Class: {self.__class__.__name__}")
-        print(f"Built: {self._is_built}")
-        if self._is_built:
-            print(
-                f"Variables (n_vars): {self.n_vars if self.n_vars is not None else 'Unknown'}"
+        report: Dict[str, Any] = {
+            "class": self.__class__.__name__,
+            "kind": self.kind,
+            "built": self._is_built,
+            "maximize": self.maximize,
+            "epsilon": self.epsilon,
+        }
+        if not self._is_built:
+            return report
+        report.update(
+            n_vars=self.n_vars,
+            n_configs=self.n_configs,
+            n_edges=self.n_edges,
+            n_lo=self.n_lo,
+            go_index=self.go_index,
+            has_plateaus=self._has_plateaus,
+            basins_calculated=self._basin_calculated,
+            paths_calculated=self._path_calculated,
+            lon_calculated=self.has_lon,
+        )
+        if self._has_plateaus:
+            report.update(
+                n_lo_members=self.n_lo_members,
+                n_plateau=self.n_plateau,
+                n_plateau_lo=self.n_plateau_lo,
             )
-            print(
-                f"Configurations (n_configs): {self.n_configs if self.n_configs is not None else 'Unknown'}"
-            )
-            print(
-                f"Connections (n_edges): {self.n_edges if self.n_edges is not None else 'Unknown'}"
-            )
-            print(
-                f"Local Optima (n_lo): {self.n_lo if self.n_lo is not None else 'Not Calculated'}"
-            )
-            if self._has_plateaus:
-                if self.n_lo_members is not None:
-                    print(f"  LO member nodes (n_lo_members): {self.n_lo_members}")
-                print(f"Neutral Plateaus (n_plateau): {self.n_plateau}")
-                if self.n_plateau_lo is not None:
-                    print(f"Plateau-Level LOs (n_plateau_lo): {self.n_plateau_lo}")
-            go_idx_str = (
-                str(self.go_index)
-                if self.go_index is not None
-                else "Not Calculated/Found"
-            )
-            print(f"Global Optimum Index: {go_idx_str}")
-            print(f"Maximize Fitness: {self.maximize}")
-            print(f"Epsilon: {self.epsilon}")
-            print(f"Basins Calculated (Hill Climb): {self._basin_calculated}")
-            print(f"Accessible Paths Calculated: {self._path_calculated}")
-            print(f"LON Calculated: {self.has_lon}")
-        else:
-            print(" (Landscape not built yet)")
-        print("---")
+        return report
 
     @timeit
     def _analyze(self) -> None:
