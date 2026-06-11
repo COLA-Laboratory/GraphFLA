@@ -44,11 +44,15 @@ def test_build_from_data_returns_self():
     assert ls.build_from_data(X, f, verbose=False) is ls
 
 
-def test_determine_methods_return_self():
+def test_compute_optima_methods_idempotent():
     ls = onemax(3)
-    # The optima determiners return self for chaining.
-    assert ls.determine_local_optima() is ls
-    assert ls.determine_global_optimum() is ls
+    n_lo, go = ls.n_lo, ls.go_index
+    # The optima steps are internal build-time recompute hooks now (the built
+    # landscape is treated as immutable); they return self and recompute the
+    # same result.
+    assert ls._compute_local_optima() is ls
+    assert ls._compute_global_optimum() is ls
+    assert ls.n_lo == n_lo and ls.go_index == go
 
 
 def test_cached_analysis_properties_compute_lazily():
