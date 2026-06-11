@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import logging
 import time
 
@@ -7,8 +9,6 @@ import pandas as pd
 import warnings
 
 from functools import wraps
-
-from ._data import filter_data
 
 
 logger = logging.getLogger(__name__)
@@ -318,106 +318,3 @@ def infer_graph_properties(graph, data_types=None, configs=None, verbose=False):
         )
 
     return n_configs, n_edges, n_vars
-
-
-# def is_ancestor_fast(G: nx.DiGraph, start_node: Any, target_node: Any) -> bool:
-#     """
-#     Checks if target_node is reachable from start_node by following directed
-#     edges (successors) in graph G using Depth-First Search.
-
-#     Parameters
-#     ----------
-#     G : nx.DiGraph
-#         The directed graph.
-#     start_node : Any
-#         The node to start the search from.
-#     target_node : Any
-#         The node to check reachability for.
-
-#     Returns
-#     -------
-#     bool
-#         True if target_node is reachable from start_node, False otherwise.
-#     """
-#     if start_node == target_node:
-#         # Consistent with nx.ancestors, a node isn't its own ancestor.
-#         # However, for basin definition, a node *is* in its own basin.
-#         # The logic in global_optima_accessibility handles this by checking
-#         # reachability *to* the GO. If start_node *is* GO, it's trivially reachable.
-#         # Let's return True here if start==target for basin logic.
-#         return True  # Modified: node is reachable from itself
-
-#     stack = [start_node]
-#     visited = {start_node}  # Add start node to visited immediately
-
-#     while stack:
-#         node = stack.pop()
-#         # Check successors only - follows the directed path forward
-#         for successor in G.successors(node):
-#             if successor == target_node:
-#                 return True
-#             if successor not in visited:
-#                 visited.add(successor)
-#                 stack.append(successor)
-#     return False
-
-# def get_embedding(
-#     graph: nx.Graph, data: pd.DataFrame, model: Any, reducer: Any
-# ) -> pd.DataFrame:
-#     """
-#     Processes a graph to generate embeddings using a specified model and then reduces the dimensionality
-#     of these embeddings using a given reduction technique. The function then augments the reduced embeddings
-#     with additional data provided.
-
-#     Parameters
-#     ----------
-#     graph : nx.Graph
-#         The graph structure from which to generate embeddings. This is used as input to the model.
-
-#     data : pd.DataFrame
-#         Additional data to be joined with the dimensionally reduced embeddings.
-
-#     model : Any
-#         The embedding model to be applied on the graph. This model should have fit and get_embedding methods.
-
-#     reducer : Any
-#         The dimensionality reduction model to apply on the high-dimensional embeddings. This model should
-#         have fit_transform methods.
-
-#     Returns
-#     -------
-#     pd.DataFrame
-#         A DataFrame containing the dimensionally reduced embeddings, now augmented with the additional data.
-#         Each embedding is represented in two components ('cmp1' and 'cmp2').
-#     """
-#     model.fit(graph)
-#     embeddings = model.get_embedding()
-#     embeddings = pd.DataFrame(data=embeddings)
-
-#     embeddings_low = reducer.fit_transform(embeddings)
-#     embeddings_low = pd.DataFrame(data=embeddings_low)
-#     embeddings_low.columns = ["cmp1", "cmp2"]
-#     embeddings_low = embeddings_low.join(data)
-
-#     return embeddings_low
-
-
-# def relabel(graph: nx.Graph) -> nx.Graph:
-#     """
-#     Relabels the nodes of a graph to use sequential numerical indices starting from zero. This function
-#     creates a new graph where each node's label is replaced by a numerical index based on its position
-#     in the node enumeration.
-
-#     Parameters
-#     ----------
-#     graph : nx.Graph
-#         The graph whose nodes are to be relabeled.
-
-#     Returns
-#     -------
-#     nx.Graph
-#         A new graph with nodes relabeled as consecutive integers, maintaining the original graph's structure.
-#     """
-#     mapping = {node: idx for idx, node in enumerate(graph.nodes())}
-#     new_graph = nx.relabel_nodes(graph, mapping)
-#     return new_graph

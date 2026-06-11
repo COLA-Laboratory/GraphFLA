@@ -1026,7 +1026,7 @@ class Landscape:
 
         return instance
 
-    def to_graph(self, filepath: str, include_configs: bool = True) -> None:
+    def to_graph(self, filepath: str) -> None:
         """Save the landscape graph and essential attributes to a file.
 
         This method serializes the landscape's graph structure and relevant
@@ -1039,14 +1039,10 @@ class Landscape:
         filepath : str
             The path where the graph file will be saved. If the file doesn't end
             with '.graphml', this extension will be added automatically.
-        include_configs : bool, default=True
-            Whether to include the configurations mapping (self.configs) in the saved
-            graph. Set to False to reduce file size if this information isn't needed
-            or can be reconstructed later.
 
         Raises
         ------
-        RuntimeError
+        NotBuiltError
             If the landscape has not been built.
         ValueError
             If the graph cannot be saved to the specified path.
@@ -1076,7 +1072,7 @@ class Landscape:
 
         # Configs are preserved implicitly via the feature-column vertex
         # attributes _build_graph writes, so no separate configs_data attribute
-        # is needed. include_configs is kept for back-compat but has no effect.
+        # is needed.
 
         if self.config_dict is not None:
             graph_copy["config_dict_data"] = str(self.config_dict)

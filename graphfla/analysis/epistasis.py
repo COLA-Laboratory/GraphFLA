@@ -15,6 +15,8 @@ import copy
 import random
 import contextlib
 
+from ._utils import _pythonize
+
 
 @contextlib.contextmanager
 def _seeded_igraph(seed):
@@ -32,18 +34,6 @@ def _seeded_igraph(seed):
         yield
     finally:
         ig.set_random_number_generator(None)
-
-
-def _pythonize(value):
-    if isinstance(value, dict):
-        return {key: _pythonize(val) for key, val in value.items()}
-    if isinstance(value, list):
-        return [_pythonize(item) for item in value]
-    if isinstance(value, tuple):
-        return tuple(_pythonize(item) for item in value)
-    if isinstance(value, np.generic):
-        return value.item()
-    return value
 
 
 # Module-level workers for process-based parallelism (must be importable so

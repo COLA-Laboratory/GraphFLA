@@ -6,16 +6,7 @@ from scipy.stats import cauchy
 from typing import Dict, Any
 
 
-def _pythonize(value):
-    if isinstance(value, dict):
-        return {key: _pythonize(val) for key, val in value.items()}
-    if isinstance(value, list):
-        return [_pythonize(item) for item in value]
-    if isinstance(value, tuple):
-        return tuple(_pythonize(item) for item in value)
-    if isinstance(value, np.generic):
-        return value.item()
-    return value
+from ._utils import _pythonize
 
 
 def fitness_distribution(landscape) -> Dict[str, Any]:
