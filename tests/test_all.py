@@ -26,9 +26,6 @@ import numpy as np
 from graphfla.analysis import *
 
 
-from graphfla.analysis import ffi  # deprecated alias, intentionally not in __all__
-
-
 from graphfla.landscape import (
     BooleanLandscape,
     DNALandscape,
@@ -389,13 +386,3 @@ def test_plateau_regression_no_zero_local_optima():
     assert 8 in landscape.lo_index
 
 
-def test_feature_ee_frac_deprecated_alias(boolean_landscape):
-    with pytest.warns(FutureWarning):
-        result = calculate_evol_enhance(boolean_landscape)
-    assert isinstance(result, (float, np.floating))
-
-
-def test_feature_ffi_deprecated_alias(boolean_landscape):
-    with pytest.warns(FutureWarning):
-        result = ffi(boolean_landscape)
-    assert isinstance(result, (float, np.floating))

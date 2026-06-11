@@ -26,7 +26,7 @@ from graphfla.analysis import (
     autocorrelation,
     classify_epistasis,
     global_idiosyncratic_index,
-    mean_path_lengths_go,
+    mean_path_length_to_global_optimum,
 )
 
 from _landscapes import onemax, hoc_landscape, from_map, TWO_PEAK_3CUBE
@@ -122,9 +122,9 @@ def test_autocorrelation_seed_reproducible():
 
 def test_mean_path_lengths_go_seed_reproducible():
     ls = onemax(7)  # 128 nodes, so sampling actually subsets
-    m1 = mean_path_lengths_go(ls, n_samples=30, seed=5)
-    m2 = mean_path_lengths_go(ls, n_samples=30, seed=5)
-    m3 = mean_path_lengths_go(ls, n_samples=30, seed=99)
+    m1 = mean_path_length_to_global_optimum(ls, n_samples=30, seed=5)
+    m2 = mean_path_length_to_global_optimum(ls, n_samples=30, seed=5)
+    m3 = mean_path_length_to_global_optimum(ls, n_samples=30, seed=99)
     assert m1 == m2
     assert m1 != m3
 

@@ -118,7 +118,7 @@ def fitness_distribution(landscape) -> Dict[str, Any]:
     })
 
 
-def distribution_fit_effects(landscape, mutation):
+def fitness_effect_distribution(landscape, mutation):
     """
     Calculates the distribution of fitness effects for a specific mutation
     across all possible genetic backgrounds.
