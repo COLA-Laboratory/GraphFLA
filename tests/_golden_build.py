@@ -100,7 +100,19 @@ def extract(e, seed=0):
     _try(out, "gamma", lambda: gamma(ls, n_jobs=1))
     _try(out, "gamma_star", lambda: gamma_star(ls, n_jobs=1))
     # --- classify + bypass ---
-    _try(out, "classify", lambda: classify_epistasis(ls))
+    def _classify():
+        c = classify_epistasis(ls)
+        # Translate the EpistasisClassification dataclass back to the frozen
+        # golden key labels (values unchanged).
+        return {
+            "magnitude epistasis": c.magnitude,
+            "sign epistasis": c.sign,
+            "reciprocal sign epistasis": c.reciprocal_sign,
+            "positive epistasis": c.positive,
+            "negative epistasis": c.negative,
+        }
+
+    _try(out, "classify", _classify)
     _try(out, "bypass", lambda: extradimensional_bypass(ls))
     # --- higher-order / walsh ---
     ho = {}

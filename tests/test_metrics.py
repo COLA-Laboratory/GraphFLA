@@ -81,20 +81,20 @@ def test_gamma_star_magnitude_sign_reciprocal():
 
 
 def test_classify_epistasis_pure_squares():
-    for square, key in [
-        (MAGNITUDE_SQUARE, "magnitude epistasis"),
-        (SIGN_SQUARE, "sign epistasis"),
-        (RECIPROCAL_SQUARE, "reciprocal sign epistasis"),
+    for square, field in [
+        (MAGNITUDE_SQUARE, "magnitude"),
+        (SIGN_SQUARE, "sign"),
+        (RECIPROCAL_SQUARE, "reciprocal_sign"),
     ]:
         res = classify_epistasis(from_map(square, 2))
-        assert res[key] == pytest.approx(1.0)
+        assert getattr(res, field) == pytest.approx(1.0)
 
 
 def test_classify_epistasis_additive_all_magnitude():
     res = classify_epistasis(onemax(4))
-    assert res["magnitude epistasis"] == pytest.approx(1.0)
-    assert res["sign epistasis"] == pytest.approx(0.0)
-    assert res["reciprocal sign epistasis"] == pytest.approx(0.0)
+    assert res.magnitude == pytest.approx(1.0)
+    assert res.sign == pytest.approx(0.0)
+    assert res.reciprocal_sign == pytest.approx(0.0)
 
 
 # ----------------------------------------------------------------------
