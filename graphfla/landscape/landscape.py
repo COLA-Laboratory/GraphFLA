@@ -34,7 +34,7 @@ from ..utils import (
     timeit,
 )
 from ..distances import mixed_distance, hamming_distance
-from ..exceptions import InvalidParameterError
+from ..exceptions import InvalidParameterError, NotBuiltError
 
 from .._neighbors import (
     NeighborGenerator,
@@ -681,8 +681,31 @@ class Landscape:
         """
         self._check_not_built()
 
+        # Validate the build parameters up front with clear messages, before any
+        # state is mutated, instead of failing deep in the pipeline.
+        if filter_mode not in ("any", "both"):
+            raise InvalidParameterError(
+                f"filter_mode must be 'any' or 'both', got {filter_mode!r}."
+            )
+        if neighborhood_strategy is not None and neighborhood_strategy not in (
+            "auto",
+            "active",
+            "pairwise",
+            "broadcast",
+        ):
+            raise InvalidParameterError(
+                "neighborhood_strategy must be one of None, 'auto', 'active', "
+                f"'pairwise', 'broadcast', got {neighborhood_strategy!r}."
+            )
+        if epsilon < 0:
+            raise InvalidParameterError(f"epsilon must be >= 0, got {epsilon!r}.")
+        if n_edit < 1:
+            raise InvalidParameterError(f"n_edit must be >= 1, got {n_edit!r}.")
+
         self.epsilon = float(epsilon)
-        self.verbose = verbose
+        # Coerce to a real bool so the documented bool attribute can't be poisoned
+        # by an explicit verbose=None.
+        self.verbose = bool(verbose)
 
         # Fall back to the per-class default (e.g. "active" for ordinal).
         if neighborhood_strategy is None:
@@ -1457,9 +1480,9 @@ class Landscape:
             self.describe()
 
     def _check_built(self) -> None:
-        """Raise an error if the landscape hasn't been built yet."""
+        """Raise :class:`NotBuiltError` if the landscape hasn't been built yet."""
         if not self._is_built:
-            raise RuntimeError(
+            raise NotBuiltError(
                 "Landscape has not been built yet. Call build_from_data() or "
                 "build_from_graph() first."
             )
