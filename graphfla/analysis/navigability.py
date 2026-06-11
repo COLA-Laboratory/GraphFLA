@@ -335,7 +335,7 @@ def global_optima_accessibility(landscape) -> float:
     return _pythonize(local_optima_accessibility(landscape, lo=landscape.go_index))
 
 
-def mean_path_lengths(
+def mean_path_length_to_local_optima(
     landscape,
     lo: Union[int, List[int]] = None,
     accessible: bool = True,
@@ -494,7 +494,7 @@ def mean_path_lengths(
         raise RuntimeError(f"An error occurred during path length calculation: {e}")
 
 
-def mean_path_lengths_go(
+def mean_path_length_to_global_optimum(
     landscape,
     accessible: bool = True,
     n_samples: Optional[Union[int, float]] = None,
@@ -547,7 +547,7 @@ def mean_path_lengths_go(
                 "Global optimum could not be determined. Cannot calculate path lengths."
             )
 
-    result = mean_path_lengths(
+    result = mean_path_length_to_local_optima(
         landscape,
         lo=landscape.go_index,
         accessible=accessible,
@@ -557,7 +557,7 @@ def mean_path_lengths_go(
     return _pythonize(result["mean"])
 
 
-def mean_dist_lo(
+def mean_distance_to_local_optima(
     landscape, lo: Union[int, List[int]], distance_func: Optional[Callable] = None
 ) -> Union[float, List[float]]:
     """
@@ -639,7 +639,7 @@ def mean_dist_lo(
     return _pythonize(mean_distances[0] if single_input else mean_distances)
 
 
-def mean_dist_go(landscape, distance_func: Optional[Callable] = None) -> float:
+def mean_distance_to_global_optimum(landscape, distance_func: Optional[Callable] = None) -> float:
     """
     Calculate the mean distance from all configurations to the global optimum.
 

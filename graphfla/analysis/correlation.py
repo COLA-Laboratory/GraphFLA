@@ -105,7 +105,7 @@ def determine_neighbor_fitness(self) -> "Landscape":
     return self
 
 
-def neighbor_fit_corr(landscape, auto_calculate=True, method="pearson"):
+def neighbor_fitness_correlation(landscape, auto_calculate=True, method="pearson"):
     """
     Calculates the correlation between a configuration's fitness and the mean fitness
     of its neighbors across the fitness landscape.
@@ -196,10 +196,10 @@ def neighbor_fit_corr(landscape, auto_calculate=True, method="pearson"):
     return _pythonize(corr)
 
 
-def fitness_distance_corr(
+def fdc(
     landscape,
     method: str = "spearman",
-) -> tuple:
+) -> float:
     """
     Calculate the fitness distance correlation (FDC) of a landscape. This metric assesses how likely it is
     to encounter higher fitness values when moving closer to the global optimum.
@@ -296,18 +296,7 @@ def fitness_flattening_index(
     return _pythonize(ffi)
 
 
-def ffi(landscape, min_len: int = 3, method: str = "spearman") -> float:
-    """Deprecated alias for `fitness_flattening_index`."""
-    warnings.warn(
-        "`ffi` is deprecated and will be removed in a future release. "
-        "Use `fitness_flattening_index` instead.",
-        FutureWarning,
-        stacklevel=2,
-    )
-    return fitness_flattening_index(landscape, min_len=min_len, method=method)
-
-
-def basin_fit_corr(landscape, method: str = "spearman"):
+def basin_fitness_correlation(landscape, method: str = "spearman"):
     """
     Calculate the correlation between the size of the basin of attraction and the fitness of local optima.
 

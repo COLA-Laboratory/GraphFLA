@@ -21,7 +21,7 @@ def _pythonize(value):
     return value
 
 
-def lo_ratio(landscape) -> float:
+def local_optima_ratio(landscape) -> float:
     """
     The most intuitive measure of landscape ruggedness. It is based on the ratio
     of the number of local optima to the total number of configurations in the landscape.

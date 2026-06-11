@@ -96,7 +96,7 @@ def _mutation_effects_for_position(X, f_arr, f_std, position, test_type):
     return results
 
 
-def evol_enhance_mutations(landscape, epsilon=0, auto_calculate=True):
+def evolvability_enhancing_mutations(landscape, epsilon=0, auto_calculate=True):
     """
     Calculates the proportion of edges where the higher-fitness node connects to
     a neighborhood with higher mean fitness than the lower-fitness node.
@@ -160,19 +160,6 @@ def evol_enhance_mutations(landscape, epsilon=0, auto_calculate=True):
     ee_proportion = ee_count / total_edges
 
     return _pythonize(ee_proportion)
-
-
-def calculate_evol_enhance(landscape, epsilon=0, auto_calculate=True):
-    """Deprecated alias for `evol_enhance_mutations`."""
-    warnings.warn(
-        "`calculate_evol_enhance` is deprecated and will be removed in a future "
-        "release. Use `evol_enhance_mutations` instead.",
-        FutureWarning,
-        stacklevel=2,
-    )
-    return evol_enhance_mutations(
-        landscape, epsilon=epsilon, auto_calculate=auto_calculate
-    )
 
 
 def neutrality(landscape, threshold: float = 0.01) -> float:

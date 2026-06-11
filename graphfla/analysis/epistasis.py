@@ -959,7 +959,7 @@ def _gamma_statistics(landscape, n_jobs=-1):
     }
 
 
-def gamma_statistic(landscape, n_jobs=-1):
+def gamma(landscape, n_jobs=-1):
     """
     Calculates the gamma and gamma_star statistics for a fitness landscape.
 
@@ -1150,7 +1150,7 @@ def higher_order_epistasis(landscape, order=2, verbose=False, n_jobs=1):
     return _pythonize(r2)
 
 
-def walsh_hadamard_coefficient(landscape, max_order=2, max_cells=1e9, chunk_size=1000):
+def walsh_hadamard(landscape, max_order=2, max_cells=1e9, chunk_size=1000):
     """
     Compute Walsh-Hadamard coefficients for a fitness landscape.
 
@@ -1201,7 +1201,7 @@ def walsh_hadamard_coefficient(landscape, max_order=2, max_cells=1e9, chunk_size
     Examples
     --------
     >>> # Assuming 'landscape' is a built Landscape object
-    >>> coefficients = walsh_hadamard_coefficient(landscape, max_order=3)
+    >>> coefficients = walsh_hadamard(landscape, max_order=3)
     >>> print(f"Wildtype coefficient: {coefficients[0]['WT']}")
     >>> print(f"Single mutation effects: {list(coefficients[1].keys())}")
     >>> print(f"Pairwise interactions: {list(coefficients[2].keys())}")
@@ -1543,7 +1543,7 @@ def _V_matrix(str_coef, num_states=2, invert=False):
     return V
 
 
-def extradimensional_bypass_analysis(landscape, approximate=False, sample_cut_prob=0.2, seed=None):
+def extradimensional_bypass(landscape, approximate=False, sample_cut_prob=0.2, seed=None):
     """
     Analyzes extradimensional bypasses in reciprocal sign epistasis motifs.
 
@@ -1604,7 +1604,7 @@ def extradimensional_bypass_analysis(landscape, approximate=False, sample_cut_pr
 
     # --- Find Type 19 Motifs (Reciprocal Sign Epistasis) ---
     try:
-        motif_19_instances = get_motif_node_indices(
+        motif_19_instances = _get_motif_node_indices(
             landscape.graph,
             motif_size=4,
             target_motif_type=19,
@@ -1675,7 +1675,7 @@ def extradimensional_bypass_analysis(landscape, approximate=False, sample_cut_pr
     })
 
 
-def get_motif_node_indices(
+def _get_motif_node_indices(
     graph, motif_size=4, target_motif_type=19, approximate=False, sample_cut_prob=0.2,
     seed=None,
 ):
