@@ -4,7 +4,7 @@ import warnings
 from scipy.stats import spearmanr, pearsonr, kendalltau
 from typing import TYPE_CHECKING
 
-from ..algorithms import hill_climb, SearchCache
+from ..algorithms import HillClimb, SearchCache
 
 if TYPE_CHECKING:
     from ..landscape.landscape import Landscape
@@ -283,9 +283,11 @@ def fitness_flattening_index(
     ffi_list = []
 
     cache = SearchCache(landscape.graph)
+    climber = HillClimb(cache)
     for i in data.index:
-        lo, _, trace = hill_climb(cache, i, return_trace=True)
-        if len(trace) >= min_len and lo == landscape.go_index:
+        result = climber.run(i)
+        trace = result.path
+        if len(trace) >= min_len and result.final == landscape.go_index:
             fitnesses = fitness.loc[trace]
             ffi, _ = check_diminishing_differences(fitnesses, method)
             ffi_list.append(ffi)

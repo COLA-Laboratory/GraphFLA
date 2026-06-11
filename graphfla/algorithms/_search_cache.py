@@ -4,8 +4,8 @@ import numpy as np
 class SearchCache:
     """Precomputed read-only data for fast repeated traversal of a static graph.
 
-    The trajectory algorithms (``local_search``, ``hill_climb``, ``random_walk``)
-    are called many times over the same landscape graph -- once per starting
+    The trajectory walks (:class:`HillClimb`, :class:`RandomWalk`) are called
+    many times over the same landscape graph -- once per starting
     node, often for tens or hundreds of thousands of nodes. The original
     implementations read fitness through igraph's per-vertex Python attribute
     API (``graph.vs[i]["fitness"]``), which builds a ``Vertex`` proxy object and
@@ -36,6 +36,6 @@ class SearchCache:
         # `fitness_list` (plain Python floats) is the key for best-improvement
         # max() -- list indexing returns the existing float object, avoiding the
         # np.float64 boxing that ndarray.__getitem__ does on every access.
-        # `fitness` (ndarray) is kept for random_walk's vectorised attr gather.
+        # `fitness` (ndarray) is kept for RandomWalk's vectorised attr gather.
         self.fitness_list = list(graph.vs["fitness"])
         self.fitness = np.asarray(self.fitness_list, dtype=np.float64)

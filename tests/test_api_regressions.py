@@ -19,7 +19,7 @@ from scipy import stats as scipy_stats
 from graphfla.landscape import Landscape, BooleanLandscape, DNALandscape
 from graphfla._data import BooleanHandler
 from graphfla.distances import hamming_distance
-from graphfla.algorithms import random_walk, SearchCache
+from graphfla.algorithms import RandomWalk, SearchCache
 from graphfla.filters import LandscapeFilter
 from graphfla.sampling import latin_hypercube_sampling, sobol_sampling
 from graphfla.analysis import (
@@ -106,9 +106,9 @@ def test_ordinal_default_strategy_and_hamming_warning():
 def test_random_walk_seed_reproducible():
     ls = onemax(5)
     cache = SearchCache(ls.graph)
-    w1 = random_walk(cache, 0, "fitness", 60, seed=42)
-    w2 = random_walk(cache, 0, "fitness", 60, seed=42)
-    w3 = random_walk(cache, 0, "fitness", 60, seed=7)
+    w1 = RandomWalk(cache, length=60, seed=42).run(0).path
+    w2 = RandomWalk(cache, length=60, seed=42).run(0).path
+    w3 = RandomWalk(cache, length=60, seed=7).run(0).path
     assert np.array_equal(w1, w2)        # same seed -> identical walk
     assert not np.array_equal(w1, w3)    # different seed -> different walk
 
