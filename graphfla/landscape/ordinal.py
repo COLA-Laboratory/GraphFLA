@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from .landscape import Landscape
 
 
@@ -44,7 +46,7 @@ class OrdinalLandscape(Landscape):
       the explicit order.
     - For a *mixed* landscape combining ordinal variables with boolean
       or categorical ones, use the generic
-      :class:`~graphfla.landscape.Landscape` with ``type="default"`` and
+      :class:`~graphfla.landscape.Landscape` with ``kind="default"`` and
       supply an explicit ``data_types`` dictionary.
 
     Examples
@@ -70,4 +72,4 @@ class OrdinalLandscape(Landscape):
         maximize : bool, default=True
             Determines the optimization direction.
         """
-        super().__init__(type="ordinal", maximize=maximize)
+        super().__init__(kind="ordinal", maximize=maximize)

@@ -145,8 +145,8 @@ def test_global_idiosyncratic_seed_reproducible():
 
 
 def test_register_handler_is_instance_isolated():
-    a = Landscape(type="default")
-    b = Landscape(type="default")
+    a = Landscape(kind="default")
+    b = Landscape(kind="default")
     a.register_input_handler("custom_xyz", BooleanHandler())
     assert "custom_xyz" in a._input_handlers
     assert "custom_xyz" not in b._input_handlers
@@ -168,8 +168,9 @@ def test_boolean_landscape_pickle_roundtrip():
 
 
 def test_sequence_landscape_pickle_roundtrip():
-    # SequenceLandscape keys its handler by id(alphabet); the handler must
-    # travel with the pickled instance (the registry is per-instance).
+    # SequenceLandscape registers its handler under the constant 'sequence'
+    # key; the handler must travel with the pickled instance (per-instance
+    # registry).
     seqs = ["".join(p) for p in product("ACGT", repeat=2)]
     f = [float(i) for i in range(len(seqs))]
     ls = DNALandscape()
@@ -177,8 +178,8 @@ def test_sequence_landscape_pickle_roundtrip():
     ls2 = pickle.loads(pickle.dumps(ls))
     assert ls2.n_configs == ls.n_configs
     assert ls2.graph.ecount() == ls.graph.ecount()
-    assert ls2.type in ls2._input_handlers
-    assert ls2.type in ls2._neighbor_generators
+    assert ls2._strategy_key in ls2._input_handlers
+    assert ls2._strategy_key in ls2._neighbor_generators
 
 
 # ----------------------------------------------------------------------
@@ -188,7 +189,7 @@ def test_sequence_landscape_pickle_roundtrip():
 
 def test_unknown_type_raises_valueerror():
     with pytest.raises(ValueError):
-        Landscape(type="banana")
+        Landscape(kind="banana")
 
 
 # ----------------------------------------------------------------------

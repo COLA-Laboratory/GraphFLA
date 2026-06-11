@@ -1099,7 +1099,7 @@ def higher_order_epistasis(landscape, order=2, verbose=False, n_jobs=1):
     if verbose:
         print(f"Encoding {X.shape[1]} variables...")
 
-    if landscape.type == "boolean":
+    if landscape.kind == "boolean":
         X_encoded = np.asarray(X, dtype=np.float64)
     else:
         encoder = OneHotEncoder(
@@ -1221,16 +1221,16 @@ def walsh_hadamard_coefficient(landscape, max_order=2, max_cells=1e9, chunk_size
 
     # Walsh-Hadamard transform operates on one symbol per position, so encode
     # each landscape type to a per-position string.
-    if landscape.type in ["boolean"]:
+    if landscape.kind in ["boolean"]:
         X_strings = ["".join(map(str, row.astype(int))) for _, row in X.iterrows()]
-    elif landscape.type in ["dna", "rna", "protein"]:
+    elif landscape.kind in ["dna", "rna", "protein"]:
         if hasattr(landscape, "configs") and landscape.configs is not None:
             # reconstruct original sequences from encoded configs
             X_strings = []
             for config_tuple in landscape.configs.values:
-                if landscape.type == "dna":
+                if landscape.kind == "dna":
                     alphabet = ["A", "C", "G", "T"]
-                elif landscape.type == "rna":
+                elif landscape.kind == "rna":
                     alphabet = ["A", "C", "G", "U"]
                 else:  # protein
                     alphabet = list("ACDEFGHIKLMNPQRSTVWY")
@@ -1246,7 +1246,7 @@ def walsh_hadamard_coefficient(landscape, max_order=2, max_cells=1e9, chunk_size
         codes = X.apply(lambda col: pd.factorize(col)[0] + 1).to_numpy()
         X_strings = ["".join(chr(48 + c) for c in row) for row in codes]
 
-    if landscape.type == "boolean":
+    if landscape.kind == "boolean":
         wildtype = "0" * landscape.n_vars
     else:
         wildtype = X_strings[0]  # first sequence is the reference WT

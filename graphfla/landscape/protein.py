@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from .sequence import SequenceLandscape
 
 PROTEIN_ALPHABET = list("ACDEFGHIKLMNPQRSTVWY")
@@ -20,4 +22,5 @@ class ProteinLandscape(SequenceLandscape):
         super().__init__(
             alphabet=PROTEIN_ALPHABET,
             maximize=maximize,
+            kind="protein",
         )

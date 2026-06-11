@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from .sequence import SequenceLandscape
 
 DNA_ALPHABET = ["A", "C", "G", "T"]
@@ -17,4 +19,4 @@ class DNALandscape(SequenceLandscape):
     """
 
     def __init__(self, maximize: bool = True):
-        super().__init__(alphabet=DNA_ALPHABET, maximize=maximize)
+        super().__init__(alphabet=DNA_ALPHABET, maximize=maximize, kind="dna")
