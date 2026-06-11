@@ -17,14 +17,10 @@ their associated fitness functions.
 
 import importlib
 import logging
-import os
-import random
 
 __version__ = "0.1.dev0"
 
 logger = logging.getLogger(__name__)
-
-_exported_config_functions = []
 
 _exported_core_objects = ["Landscape"]
 
@@ -43,7 +39,7 @@ _submodules = [
     "utils",
 ]
 
-__all__ = _submodules + _exported_config_functions + _exported_core_objects
+__all__ = _submodules + _exported_core_objects
 
 
 def __dir__():
@@ -52,36 +48,18 @@ def __dir__():
 
 
 def __getattr__(name):
-    """
-    Lazily imports submodules and top-level modules upon first access.
+    """Lazily import submodules and the top-level ``Landscape`` on first access.
 
-    Example:
+    Example
+    -------
         >>> import graphfla
-        >>> graphfla.analysis.fdc # analysis submodule is imported here
+        >>> graphfla.analysis        # the analysis submodule is imported here
+        >>> graphfla.Landscape       # the core class, imported lazily
     """
     if name in _submodules:
         return importlib.import_module(f".{name}", __name__)
-    elif name in _exported_core_objects or name in _exported_config_functions:
-        try:
-            return globals()[name]
-        except KeyError:
-            raise AttributeError(f"Module '{__name__}' has no attribute '{name}'")
-    else:
-        try:
-            return globals()[name]
-        except KeyError:
-            raise AttributeError(f"Module '{__name__}' has no attribute '{name}'")
+    if name == "Landscape":
+        from .landscape import Landscape
 
-
-def setup_module(module):
-    """Fixture for the tests to assure globally controllable seeding of RNGs."""
-    import numpy as np
-
-    _random_seed = os.environ.get("GRAPHFLA_SEED", None)
-    if _random_seed is None:
-        _random_seed = np.random.uniform() * np.iinfo(np.int32).max
-    _random_seed = int(_random_seed)
-
-    logger.info("I: Seeding RNGs with %r", _random_seed)
-    np.random.seed(_random_seed)
-    random.seed(_random_seed)
+        return Landscape
+    raise AttributeError(f"module {__name__!r} has no attribute {name!r}")
