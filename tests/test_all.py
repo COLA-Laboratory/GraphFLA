@@ -198,7 +198,7 @@ def test_build_dna_landscape_from_df_str_cols(dna_sequence_data):
 
 def test_build_generic_landscape_dna(dna_sequence_data):
     sequences, fitness = dna_sequence_data
-    landscape = Landscape(type="dna")
+    landscape = Landscape(kind="dna")
     landscape.build_from_data(
         sequences,
         fitness,
@@ -249,7 +249,7 @@ def test_build_rna_landscape_from_df_str_cols(rna_sequence_data):
 
 def test_build_generic_landscape_rna(rna_sequence_data):
     sequences, fitness = rna_sequence_data
-    landscape = Landscape(type="rna")
+    landscape = Landscape(kind="rna")
     landscape.build_from_data(sequences, fitness, verbose=False)
     assert landscape.n_configs == 16
     assert landscape.graph.ecount() > 0
@@ -296,7 +296,7 @@ def test_build_protein_landscape_from_df_str_cols(protein_sequence_data):
 
 def test_build_generic_landscape_protein(protein_sequence_data):
     sequences, fitness = protein_sequence_data
-    landscape = Landscape(type="protein")
+    landscape = Landscape(kind="protein")
     landscape.build_from_data(
         sequences,
         fitness,

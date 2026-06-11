@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import ast
 import pandas as pd
 import numpy as np
@@ -32,6 +34,7 @@ from ..utils import (
     timeit,
 )
 from ..distances import mixed_distance, hamming_distance
+from ..exceptions import InvalidParameterError
 
 from .._neighbors import (
     NeighborGenerator,
@@ -194,7 +197,7 @@ class Landscape:
     >>> X_data = pd.DataFrame({'var_0': [0, 0, 1, 1], 'var_1': [0, 1, 0, 1]})
     >>> f_data = pd.Series([1.0, 2.0, 3.0, 2.5])
 
-    >>> # landscape = Landscape(type="boolean").build_from_data(X_data, f_data)
+    >>> # landscape = Landscape(kind="boolean").build_from_data(X_data, f_data)
     >>> landscape.describe() 
     --- Landscape Summary ---
     Class: Landscape
@@ -242,10 +245,11 @@ class Landscape:
 
     def __init__(
         self,
-        type: str = "default",
+        kind: str = "default",
         maximize: bool = True,
         input_handler: Optional[InputHandler] = None,
         neighbor_generator: Optional[NeighborGenerator] = None,
+        strategy_key: Optional[str] = None,
     ):
         # Core attributes
         self.graph = None
@@ -269,20 +273,30 @@ class Landscape:
         self.go = None
         self.lon = None
         self.has_lon = False
-        self.type = type
+        # ``kind`` is the public semantic identity ('boolean'/'ordinal'/'dna'/
+        # 'rna'/'protein'/'default') that downstream code branches on (distance
+        # metric, Walsh-Hadamard encoding). ``_strategy_key`` is the internal
+        # key into the handler/generator registries; it equals ``kind`` except
+        # for sequence subclasses, which share a constant 'sequence' key (the
+        # per-instance registry isolates their alphabet-specific handlers).
+        self.kind = kind
+        self._strategy_key = strategy_key if strategy_key is not None else kind
 
         # Per-instance copies of the class-level registries so a custom
         # handler/generator never mutates global state or leaks across instances.
         self._input_handlers = dict(Landscape._input_handlers)
         self._neighbor_generators = dict(Landscape._neighbor_generators)
         if input_handler is not None:
-            self._input_handlers[type] = input_handler
+            self._input_handlers[self._strategy_key] = input_handler
         if neighbor_generator is not None:
-            self._neighbor_generators[type] = neighbor_generator
-        if type not in self._input_handlers or type not in self._neighbor_generators:
-            raise ValueError(
-                f"Unknown landscape type {type!r}. Registered types: "
-                f"{sorted(self._input_handlers)}. Register a custom type by passing "
+            self._neighbor_generators[self._strategy_key] = neighbor_generator
+        if (
+            self._strategy_key not in self._input_handlers
+            or self._strategy_key not in self._neighbor_generators
+        ):
+            raise InvalidParameterError(
+                f"Unknown landscape kind {kind!r}. Registered kinds: "
+                f"{sorted(self._input_handlers)}. Register a custom kind by passing "
                 f"input_handler= and neighbor_generator= to the constructor."
             )
 
@@ -564,7 +578,7 @@ class Landscape:
             Optional: the typed landscape subclasses (``BooleanLandscape``,
             ``OrdinalLandscape``, ``DNALandscape``/``RNALandscape``/
             ``ProteinLandscape``) auto-detect it. Supply it explicitly for a
-            generic ``Landscape(type="default")`` with heterogeneous (mixed)
+            generic ``Landscape(kind="default")`` with heterogeneous (mixed)
             columns.
         epsilon : float, default=0
             Neutrality threshold. Neighboring configurations whose absolute
@@ -690,7 +704,7 @@ class Landscape:
 
         # Ordinal/mixed landscapes need ±1-step (Manhattan-1) neighbours, not
         # Hamming; data_types is only known after preprocessing, so adjust here.
-        has_ordinal = (self.type == "ordinal") or bool(
+        has_ordinal = (self.kind == "ordinal") or bool(
             self.data_types and "ordinal" in self.data_types.values()
         )
         if has_ordinal:
@@ -816,7 +830,9 @@ class Landscape:
             instance.epsilon = 0.0
 
         if "landscape_type" in graph.attributes():
-            instance.type = graph["landscape_type"]
+            instance._strategy_key = graph["landscape_type"]
+        if "landscape_kind" in graph.attributes():
+            instance.kind = graph["landscape_kind"]
 
         # --- data_types (parsed first; required to reconstruct configs) ---
         if "data_types_data" in graph.attributes():
@@ -904,12 +920,12 @@ class Landscape:
             verbose=instance.verbose,
         )
 
-        # Restore subclass convenience attributes by landscape type.
-        restore_type = instance.type
+        # Restore subclass convenience attributes by landscape kind.
+        restore_kind = instance.kind
         if (
-            not isinstance(restore_type, str) or restore_type in ("", "default")
+            not isinstance(restore_kind, str) or restore_kind in ("", "default")
         ) and "landscape_class" in graph.attributes():
-            # Legacy graphs predating landscape_type: infer from class name.
+            # Legacy graphs predating landscape_kind: infer from class name.
             legacy_class = graph["landscape_class"]
             if legacy_class in (
                 "SequenceLandscape",
@@ -917,14 +933,14 @@ class Landscape:
                 "RNALandscape",
                 "ProteinLandscape",
             ):
-                restore_type = "sequence"
+                restore_kind = "sequence"
             elif legacy_class == "BooleanLandscape":
-                restore_type = "boolean"
+                restore_kind = "boolean"
 
-        if instance.n_vars is not None and isinstance(restore_type, str):
-            if restore_type.startswith("sequence"):
+        if instance.n_vars is not None and isinstance(restore_kind, str):
+            if restore_kind in ("sequence", "dna", "rna", "protein"):
                 instance.sequence_length = instance.n_vars
-            elif restore_type == "boolean":
+            elif restore_kind == "boolean":
                 instance.bit_length = instance.n_vars
 
         # Reconstruct plateau data structures if saved in the graph
@@ -1001,7 +1017,8 @@ class Landscape:
         graph_copy["maximize"] = self.maximize
         graph_copy["epsilon"] = str(self.epsilon)
         graph_copy["landscape_class"] = self.__class__.__name__
-        graph_copy["landscape_type"] = self.type
+        graph_copy["landscape_type"] = self._strategy_key
+        graph_copy["landscape_kind"] = self.kind
 
         # Configs are preserved implicitly via the feature-column vertex
         # attributes _build_graph writes, so no separate configs_data attribute
@@ -1268,16 +1285,16 @@ class Landscape:
     @timeit
     def _resolve_strategies(self) -> InputHandler:
         """Resolve and cache the type-specific strategies for data builds."""
-        handler = self._input_handlers.get(self.type)
+        handler = self._input_handlers.get(self._strategy_key)
         if handler is None:
-            raise ValueError(
-                f"No input handler for landscape type: {self.type}"
+            raise InvalidParameterError(
+                f"No input handler for landscape kind: {self.kind}"
             )
 
-        neighbor_generator = self._neighbor_generators.get(self.type)
+        neighbor_generator = self._neighbor_generators.get(self._strategy_key)
         if neighbor_generator is None:
-            raise ValueError(
-                f"No neighbor generator available for landscape type: {self.type}"
+            raise InvalidParameterError(
+                f"No neighbor generator available for landscape kind: {self.kind}"
             )
 
         self._neighbor_generator = neighbor_generator
@@ -1534,8 +1551,8 @@ class Landscape:
         return graph
 
     def _get_default_distance_metric(self):
-        """Get the appropriate distance metric based on landscape type."""
-        if self.type in ["boolean", "dna", "rna", "protein"]:
+        """Get the appropriate distance metric based on the landscape kind."""
+        if self.kind in ["boolean", "dna", "rna", "protein"]:
             return hamming_distance
         else:
             return mixed_distance

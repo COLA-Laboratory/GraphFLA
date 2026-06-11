@@ -165,7 +165,7 @@ def test_categorical_connects_every_other_value():
     # level 0 and level 2 ARE connected -- the defining ordinal/categorical
     # distinction. Uses the 'active' strategy to exercise the generator.
     X = pd.DataFrame({"d": [0, 1, 2]})
-    ls = Landscape(type="default")
+    ls = Landscape(kind="default")
     ls.build_from_data(
         X,
         [0.0, 1.0, 2.0],

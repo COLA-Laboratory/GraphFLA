@@ -35,7 +35,7 @@ def build(e):
     elif k in ("categorical", "mixed"):
         X = pd.DataFrame(gts, columns=[f"x{i}" for i in range(npos)])
         dt = {f"x{i}": e["position_types"][i] for i in range(npos)}
-        ls = Landscape(type="default", maximize=mx)
+        ls = Landscape(kind="default", maximize=mx)
         ls.build_from_data(X, f, data_types=dt, neighborhood_strategy="active", **kw)
     else:
         ab = e["alphabet"]; seqs = ["".join(ab[i] for i in g) for g in gts]

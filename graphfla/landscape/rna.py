@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from .sequence import SequenceLandscape
 
 RNA_ALPHABET = ["A", "C", "G", "U"]
@@ -17,4 +19,4 @@ class RNALandscape(SequenceLandscape):
     """
 
     def __init__(self, maximize: bool = True):
-        super().__init__(alphabet=RNA_ALPHABET, maximize=maximize)
+        super().__init__(alphabet=RNA_ALPHABET, maximize=maximize, kind="rna")
