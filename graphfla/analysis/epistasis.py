@@ -1174,20 +1174,24 @@ def walsh_hadamard(landscape, max_order=2, max_cells=1e9, chunk_size=1000):
 
     Returns
     -------
-    dict
-        A dictionary with sorted coefficients organized by interaction order:
-        - Keys are integers representing interaction orders (0 for wildtype,
-          1 for single mutations, 2 for pairwise interactions, etc.)
-        - Values are dictionaries mapping feature names to their coefficients
+    pandas.DataFrame
+        One row per coefficient (tidy long form), with columns:
 
-        Feature names use the format ``{original}_{position}_{mutant}`` for
-        single mutations (e.g. ``0_12_1`` = position 12, mutation from 0 to 1).
-        Pairwise and higher-order interactions join mutations with ``-``
-        (e.g. ``0_10_1-0_11_1`` = interaction between positions 10 and 11).
+        - ``order`` (int): interaction order (0 = wildtype/intercept, 1 = single
+          mutation, 2 = pairwise interaction, ...).
+        - ``positions`` (tuple[int, ...]): the position indices involved (empty
+          for the wildtype term).
+        - ``term`` (str): the human-readable feature label. Single mutations use
+          ``{original}_{position}_{mutant}`` (e.g. ``A_12_C``); higher-order
+          interactions join mutations with ``-`` (e.g. ``A_10_C-A_11_G``).
+        - ``coefficient`` (float): the fitted Walsh-Hadamard coefficient.
+
+        Rows are sorted by ``(order, term)``. Filter an order with
+        ``df[df["order"] == 2]`` rather than indexing a nested dict.
 
     Raises
     ------
-    RuntimeError
+    NotBuiltError
         If the landscape has not been built.
     ValueError
         If memory limit is exceeded during computation or if input data is invalid.
@@ -1201,10 +1205,9 @@ def walsh_hadamard(landscape, max_order=2, max_cells=1e9, chunk_size=1000):
     Examples
     --------
     >>> # Assuming 'landscape' is a built Landscape object
-    >>> coefficients = walsh_hadamard(landscape, max_order=3)
-    >>> print(f"Wildtype coefficient: {coefficients[0]['WT']}")
-    >>> print(f"Single mutation effects: {list(coefficients[1].keys())}")
-    >>> print(f"Pairwise interactions: {list(coefficients[2].keys())}")
+    >>> coeffs = walsh_hadamard(landscape, max_order=3)
+    >>> coeffs[coeffs["order"] == 1][["term", "coefficient"]]  # single mutations
+    >>> coeffs.loc[coeffs["coefficient"].abs().idxmax()]       # strongest term
     """
 
     landscape._check_built()
@@ -1286,24 +1289,32 @@ def walsh_hadamard(landscape, max_order=2, max_cells=1e9, chunk_size=1000):
         rcond=None,
     )
 
-    coef_dict = {}
+    rows = []
     for i, feature_name in enumerate(Xohi.columns):
         if feature_name == "WT":
             order = 0
-        elif "-" in feature_name:
-            order = len(feature_name.split("-"))  # "-"-joined mutations
+            positions: tuple = ()
         else:
-            order = 1
+            components = feature_name.split("-")  # "-"-joined mutations
+            order = len(components)
+            # Each component encodes {original}_{position}_{mutant}; recover the
+            # position index where the encoding matches (best-effort, never raises).
+            pos = []
+            for comp in components:
+                parts = comp.split("_")
+                if len(parts) == 3:
+                    try:
+                        pos.append(int(parts[1]))
+                    except ValueError:
+                        pass
+            positions = tuple(pos)
+        rows.append((order, positions, feature_name, float(coefficients[i])))
 
-        if order not in coef_dict:
-            coef_dict[order] = {}
-
-        coef_dict[order][feature_name] = coefficients[i]
-
-    for order in coef_dict:
-        coef_dict[order] = dict(sorted(coef_dict[order].items()))
-
-    return coef_dict
+    return (
+        pd.DataFrame(rows, columns=["order", "positions", "term", "coefficient"])
+        .sort_values(["order", "term"], kind="stable")
+        .reset_index(drop=True)
+    )
 
 
 def _generate_interactions(Xoh, max_order, max_cells):

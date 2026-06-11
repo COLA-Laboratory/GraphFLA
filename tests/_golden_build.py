@@ -115,7 +115,11 @@ def extract(e, seed=0):
         def walsh_maxabs():
             with contextlib.redirect_stdout(io.StringIO()):
                 c = walsh_hadamard(ls, max_order=2)
-            return {str(o): (max(abs(v) for v in c[o].values()) if c.get(o) else 0.0) for o in (0, 1, 2)}
+            out = {}
+            for o in (0, 1, 2):
+                col = c.loc[c["order"] == o, "coefficient"]
+                out[str(o)] = float(col.abs().max()) if len(col) else 0.0
+            return out
         _try(out, "walsh_maxabs_by_order", walsh_maxabs)
     else:
         out["walsh_maxabs_by_order"] = None
