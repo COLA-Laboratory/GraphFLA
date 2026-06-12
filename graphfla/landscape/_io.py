@@ -92,7 +92,7 @@ class _IOMixin:
         except FileNotFoundError:
             raise FileNotFoundError(f"Graph file not found: {filepath}")
         except Exception as e:
-            raise ValueError(f"Failed to load graph from {filepath}: {e}")
+            raise ValueError(f"Failed to load graph from {filepath}: {e}") from e
 
         instance.graph = graph
 
@@ -326,4 +326,4 @@ class _IOMixin:
             if self.verbose:
                 logger.info(f"Landscape graph saved to {filepath}")
         except Exception as e:
-            raise ValueError(f"Failed to save graph to {filepath}: {e}")
+            raise ValueError(f"Failed to save graph to {filepath}: {e}") from e
