@@ -1,8 +1,0 @@
-Feature / function,Baseline memory,Optimized memory,Reduction
-gamma_statistic @1,388 MB,12 MB,33x
-global_idiosyncratic_index @1,55 MB,<1 MB,>55x
-all_mutation_effects @1,349 MB,55 MB,6.3x
-single_mutation_effects @1,113 MB,3 MB,35x
-diminishing_returns_index,27 MB,1 MB,27x
-r_s_ratio,151 MB,147 MB,flat
-"walsh_hadamard / higher_order_epistasis",guarded / skipped on wide landscapes,guarded / skipped,avoided multi-GB risk
