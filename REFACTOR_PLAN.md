@@ -16,6 +16,10 @@ Baseline: 1267 tests pass. Each phase below is committed green on `refactor/skle
 - ✅ **Phase 5b** — classify_epistasis → `EpistasisClassification` dataclass (kills prose-string keys). (0a5be01)
 - ✅ **Phase 9a** — dead-code removal (euclidean_distance, EdgeResult.strategy, include_configs, ~100 lines commented
   networkx, unused filter_data re-export) + `_pythonize` deduped 6→1 (analysis/_utils.py). (f15afff)
+- ✅ **Phase 5c** — finish analysis return contract: the 3 per-LO navigability fns always return a tidy DataFrame
+  (kills dict-or-list[dict] polymorphism); GO wrappers keep returning float; `extradimensional_bypass` →
+  `ExtradimensionalBypass` dataclass; both result dataclasses exported; `_as_lo_list`/`_validate_local_optima`
+  dedup. Golden extractor translates new shapes → frozen labels. (c8350c1)
 - Perf verified: walk/basin neutral (descend allocation-free); build 60ms / basins 30ms on 16k nodes. All green at 1265 tests.
 
 **Gripe coverage:** #1 returns (WHT→DataFrame, classify→dataclass, kind fix) ✅ | #2 naming ✅ | #3 walk API ✅ |
@@ -24,9 +28,9 @@ logging migration + narrow-excepts pending) | #6 dedup/dead-code ✅. Plus: esti
 future-annotations (partial rollout).
 
 ### Remaining (not yet delivered — for next session)
-- **Phase 5c (more return contract)**: `extradimensional_bypass` prose keys → dataclass (same pattern as classify);
-  navigability `mean_path_length_to_local_optima` / `local_optima_accessibility` / `mean_distance_to_local_optima`
-  dict-or-list[dict] polymorphism → always the collection form (DataFrame). Golden extractor translates to keep refs frozen.
+- ✅ **Phase 5c** — DELIVERED (c8350c1). See progress log above.
+- **Structural decomposition (gripe #4 — NEXT)**: split the 5 god-files into subpackages, re-export public symbols so
+  import paths stay stable. Target layouts recorded under "Detailed design specs". landscape/ first (foundation).
 - **Phase 6 (value-changing, E1/E2 — approved, regenerate affected goldens)**: non-finite-fitness build guard;
   NaN-normalize degenerate metric returns + divide guards; thread `rng` into first-improvement (HillClimb already has
   `seed=`; wire it through basin's plateau-exit path + any first-improvement caller).
