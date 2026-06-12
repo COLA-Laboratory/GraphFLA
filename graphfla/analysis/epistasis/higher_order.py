@@ -94,7 +94,7 @@ def higher_order_epistasis(landscape, order=2, verbose=False, n_jobs=1):
         try:
             X_encoded = encoder.fit_transform(X)
         except Exception as e:
-            raise ValueError(f"Failed to one-hot encode configurations: {e}")
+            raise ValueError(f"Failed to one-hot encode configurations: {e}") from e
 
     if verbose:
         logger.info(f"Encoded data shape: {X_encoded.shape}")
@@ -126,7 +126,7 @@ def higher_order_epistasis(landscape, order=2, verbose=False, n_jobs=1):
         )
         r2 = r2_score(y, y_pred)
     except Exception as e:
-        raise RuntimeError(f"Error fitting polynomial regression model: {e}")
+        raise RuntimeError(f"Error fitting polynomial regression model: {e}") from e
 
     if verbose:
         logger.info(f"Order-{order} epistasis R² score: {r2:.4f}")

@@ -467,7 +467,7 @@ def _parse_boolean_input(
         try:
             processed_sequences = [[int(val) for val in seq] for seq in sequences]
         except (ValueError, TypeError) as e:
-            raise ValueError(f"Could not convert inner sequences to integers: {e}")
+            raise ValueError(f"Could not convert inner sequences to integers: {e}") from e
 
         bit_length = len(processed_sequences[0])
         if bit_length == 0:
@@ -497,7 +497,7 @@ def _parse_boolean_input(
             try:
                 X_df = pd.DataFrame(X_input)
             except Exception as e:
-                raise TypeError(f"Could not convert NumPy array to DataFrame: {e}")
+                raise TypeError(f"Could not convert NumPy array to DataFrame: {e}") from e
         else:
             X_df = X_input.copy()
 
@@ -593,7 +593,7 @@ def _parse_ordinal_input(
         try:
             X_df = pd.DataFrame(X_input)
         except Exception as e:
-            raise TypeError(f"Could not convert NumPy array to DataFrame: {e}")
+            raise TypeError(f"Could not convert NumPy array to DataFrame: {e}") from e
     elif isinstance(X_input, pd.DataFrame):
         X_df = X_input.copy()
     elif isinstance(X_input, (list, tuple)):
@@ -614,7 +614,7 @@ def _parse_ordinal_input(
         try:
             X_df = pd.DataFrame(list(X_input))
         except Exception as e:
-            raise TypeError(f"Could not convert list input to DataFrame: {e}")
+            raise TypeError(f"Could not convert list input to DataFrame: {e}") from e
     else:
         raise TypeError(
             f"Unsupported input type for X: {type(X_input)}. Expected "

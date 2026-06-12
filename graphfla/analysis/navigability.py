@@ -110,7 +110,7 @@ def local_optima_accessibility(
             for l_idx in lo_indices
         ]
     except Exception as e:
-        raise RuntimeError(f"An error occurred during accessibility calculation: {e}")
+        raise RuntimeError(f"An error occurred during accessibility calculation: {e}") from e
 
     return pd.DataFrame(
         {"local_optimum": lo_indices, "accessibility": accessibilities}
@@ -294,7 +294,7 @@ def mean_path_length_to_local_optima(
         )
 
     except Exception as e:
-        raise RuntimeError(f"An error occurred during path length calculation: {e}")
+        raise RuntimeError(f"An error occurred during path length calculation: {e}") from e
 
 
 def mean_path_length_to_global_optimum(

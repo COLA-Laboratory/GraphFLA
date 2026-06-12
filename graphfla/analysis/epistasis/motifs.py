@@ -388,7 +388,7 @@ def extradimensional_bypass(landscape, approximate=False, sample_cut_prob=0.2, s
             seed=seed,
         )
     except Exception as e:
-        raise RuntimeError(f"Failed to find motif instances: {e}")
+        raise RuntimeError(f"Failed to find motif instances: {e}") from e
 
     if not motif_19_instances:
         return ExtradimensionalBypass(
