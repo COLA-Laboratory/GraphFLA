@@ -31,7 +31,8 @@ def local_optima_ratio(landscape) -> float:
     n_lo = landscape.n_lo
     n_configs = landscape.n_configs
     if n_configs == 0:
-        return 0.0
+        # Undefined on an empty landscape (no configurations to count).
+        return float("nan")
     ruggedness = n_lo / n_configs
 
     return _pythonize(ruggedness)
@@ -123,14 +124,19 @@ def gradient_intensity(landscape) -> float:
     graph = landscape.graph
     total_edges = graph.ecount()
     if total_edges == 0:
-        return 0.0
+        # Undefined with no edges (no fitness gradients to average).
+        return float("nan")
 
     # delta_fit defaults to 0 when the attribute is missing on an edge
     delta_fits = [abs(edge.attributes().get("delta_fit", 0)) for edge in graph.es]
     total_delta_fit = sum(delta_fits)
     fitness = landscape.graph.vs["fitness"]
 
-    gradient = (total_delta_fit / total_edges) / pd.Series(fitness).mean()
+    mean_fitness = pd.Series(fitness).mean()
+    if mean_fitness == 0:
+        # Normalisation by mean fitness is undefined when the mean is zero.
+        return float("nan")
+    gradient = (total_delta_fit / total_edges) / mean_fitness
     return _pythonize(gradient)
 
 
