@@ -1,10 +1,11 @@
 """airspeed-velocity (asv) benchmark suite for GraphFLA.
 
-Three benchmark groups, each on synthetic self-contained landscapes:
+Three benchmark groups, run primarily on the real empirical landscapes committed
+in ``data/`` (with synthetic NK fallbacks); see benchmarks/README.md:
 
 * ``construction`` -- ``build_from_data`` time and peak memory, per landscape kind/size
-* ``analysis``     -- the landscape-analysis metrics on a fixed NK landscape
+* ``analysis``     -- the landscape-analysis metrics
 * ``algorithms``   -- the trajectory walkers (HillClimb / RandomWalk)
 
-Run with ``asv`` (see benchmarks/README.md). These are NOT pytest tests.
+Run with ``asv``. These are NOT pytest tests.
 """
