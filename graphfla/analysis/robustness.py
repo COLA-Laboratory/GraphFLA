@@ -5,10 +5,7 @@ import warnings
 import numpy as np
 import pandas as pd
 
-from .epistasis import _pack_rows
-
-
-from ._utils import _pythonize
+from ._utils import _pythonize, _pack_rows
 
 
 def _row_group_ids(M):
