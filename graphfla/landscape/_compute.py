@@ -18,6 +18,9 @@ from typing import TYPE_CHECKING
 
 import numpy as np
 from tqdm import tqdm
+import logging
+
+logger = logging.getLogger(__name__)
 
 if TYPE_CHECKING:
     from .landscape import Landscape
@@ -28,7 +31,7 @@ def determine_global_optimum(landscape):
     if landscape.graph is None:
         raise RuntimeError("Graph is None.")  # Internal check
     if landscape.verbose:
-        print(" - Determining global optimum...")
+        logger.info(" - Determining global optimum...")
 
     if "fitness" not in landscape.graph.vs.attributes():
         warnings.warn(
@@ -50,7 +53,7 @@ def determine_global_optimum(landscape):
     try:
         landscape.go = landscape.graph.vs[landscape.go_index].attributes()
         if landscape.verbose:
-            print(
+            logger.info(
                 f"   - Global optimum found at index {landscape.go_index} with fitness {landscape.go['fitness']:.4f}."
             )
     except IndexError:
@@ -87,7 +90,7 @@ def determine_accessible_paths(landscape):
         return
 
     if landscape.verbose:
-        print(" - Determining accessible paths (ancestors)...")
+        logger.info(" - Determining accessible paths (ancestors)...")
 
     dict_size = defaultdict(int)
 
@@ -130,7 +133,7 @@ def determine_accessible_paths(landscape):
 
         landscape._path_calculated = True
         if landscape.verbose:
-            print(
+            logger.info(
                 f"   - Accessible paths calculated for {len(dict_size)} local optima."
             )
     except Exception as e:
@@ -152,14 +155,14 @@ def determine_dist_to_go(landscape, distance=None):
         or landscape.data_types is None
     ):
         if landscape.verbose:
-            print("Skipping distance calculation - missing prerequisites")
+            logger.info("Skipping distance calculation - missing prerequisites")
         return
 
     if distance is None:
         distance = landscape._get_default_distance_metric()
 
     if landscape.verbose:
-        print(
+        logger.info(
             f" - Calculating distances to global optimum using {distance.__name__}..."
         )
 
@@ -199,7 +202,7 @@ def determine_dist_to_go(landscape, distance=None):
         landscape._distance_calculated = True
 
         if landscape.verbose:
-            print(
+            logger.info(
                 "   - Distances to GO calculated and added as node attribute 'dist_go'."
             )
 
@@ -243,7 +246,7 @@ def determine_neighbor_fitness(landscape) -> "Landscape":
         raise RuntimeError("Graph is None despite landscape being built.")
 
     if landscape.verbose:
-        print("Calculating neighbor fitness metrics...")
+        logger.info("Calculating neighbor fitness metrics...")
 
     n_vertices = landscape.graph.vcount()
 
@@ -268,7 +271,7 @@ def determine_neighbor_fitness(landscape) -> "Landscape":
     landscape.graph.vs["mean_neighbor_fit"] = mean_neighbor_fit.tolist()
 
     if landscape.verbose:
-        print(f" - Added 'mean_neighbor_fit' attribute for {n_vertices} nodes")
+        logger.info(f" - Added 'mean_neighbor_fit' attribute for {n_vertices} nodes")
 
     # Step 2: delta mean neighbour fitness along each edge
     n_edges = landscape.graph.ecount()
@@ -285,7 +288,7 @@ def determine_neighbor_fitness(landscape) -> "Landscape":
     landscape.graph.es["delta_mean_neighbor_fit"] = delta_mean_neighbor_fit.tolist()
 
     if landscape.verbose:
-        print(f" - Added 'delta_mean_neighbor_fit' attribute for {n_edges} edges")
+        logger.info(f" - Added 'delta_mean_neighbor_fit' attribute for {n_edges} edges")
 
     landscape._neighbor_fit_calculated = True
     return landscape

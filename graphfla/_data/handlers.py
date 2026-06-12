@@ -10,6 +10,9 @@ import numpy as np
 import pandas as pd
 
 from ._validation import ALLOWED_DATA_TYPES, _validate_bitstrings_fast
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 # ===================================================================
@@ -336,7 +339,7 @@ class DefaultHandler:
     ) -> Dict[str, str]:
         """Validate the data_types dictionary against X's columns."""
         if verbose:
-            print(" - Validating data types dictionary...")
+            logger.info(" - Validating data types dictionary...")
 
         if not isinstance(data_types, dict):
             raise TypeError(f"data_types must be a dictionary, got {type(data_types)}.")
@@ -368,7 +371,7 @@ class DefaultHandler:
         validated_dt = {col: data_types[col] for col in X.columns}
 
         if verbose:
-            print("   - Data types dictionary validation successful.")
+            logger.info("   - Data types dictionary validation successful.")
 
         return validated_dt
 
@@ -390,7 +393,7 @@ def _parse_boolean_input(
         Standardised DataFrame, data-types dictionary, and bit length.
     """
     if verbose:
-        print("Preparing Boolean input...")
+        logger.info("Preparing Boolean input...")
 
     if not hasattr(X_input, "__len__") or len(X_input) == 0:
         raise ValueError("Input configuration data `X` cannot be empty.")
@@ -419,7 +422,7 @@ def _parse_boolean_input(
     # --- Format 1: bitstrings ---
     if is_sequence_of_strings:
         if verbose:
-            print("Detected bitstring sequence format input.")
+            logger.info("Detected bitstring sequence format input.")
         bitstrings = list(X_input)
         if not all(isinstance(s, str) for s in bitstrings):
             raise TypeError(
@@ -456,7 +459,7 @@ def _parse_boolean_input(
     # --- Format 2: sequences of 0/1 ---
     elif is_sequence_of_sequences:
         if verbose:
-            print("Detected sequence of 0/1 lists/tuples format input.")
+            logger.info("Detected sequence of 0/1 lists/tuples format input.")
         sequences = list(X_input)
         if not sequences:
             raise ValueError("Input sequence is empty.")
@@ -488,7 +491,7 @@ def _parse_boolean_input(
     # --- Format 3: DataFrame or ndarray ---
     elif isinstance(X_input, (pd.DataFrame, np.ndarray)):
         if verbose:
-            print("Detected DataFrame/ndarray format input.")
+            logger.info("Detected DataFrame/ndarray format input.")
 
         if isinstance(X_input, np.ndarray):
             try:
@@ -539,7 +542,7 @@ def _parse_boolean_input(
     data_types = {col: "boolean" for col in X_df.columns}
 
     if verbose:
-        print(f"Boolean input preparation complete. Detected bit length: {bit_length}.")
+        logger.info(f"Boolean input preparation complete. Detected bit length: {bit_length}.")
     return X_df, data_types, bit_length
 
 
@@ -576,7 +579,7 @@ def _parse_ordinal_input(
         number of variables.
     """
     if verbose:
-        print("Preparing Ordinal input...")
+        logger.info("Preparing Ordinal input...")
 
     if not hasattr(X_input, "__len__") or len(X_input) == 0:
         raise ValueError("Input configuration data `X` cannot be empty.")
@@ -630,7 +633,7 @@ def _parse_ordinal_input(
     data_types = {col: "ordinal" for col in X_df.columns}
 
     if verbose:
-        print(
+        logger.info(
             f"Ordinal input preparation complete. Detected {n_vars} variable(s)."
         )
     return X_df, data_types, n_vars
@@ -651,7 +654,7 @@ def _parse_sequence_input(
         Standardised DataFrame, data-types dictionary, and sequence length.
     """
     if verbose:
-        print(f"Preparing sequence input for {class_name}...")
+        logger.info(f"Preparing sequence input for {class_name}...")
 
     if not hasattr(X_input, "__len__") or len(X_input) == 0:
         raise ValueError("Input configuration data `X` cannot be empty.")
@@ -675,7 +678,7 @@ def _parse_sequence_input(
 
     if is_sequence_format:
         if verbose:
-            print("Detected sequence string format input.")
+            logger.info("Detected sequence string format input.")
         sequences = list(X_input)
         if not all(isinstance(s, str) for s in sequences):
             raise TypeError(
@@ -744,7 +747,7 @@ def _parse_sequence_input(
     # --- Format 2: DataFrame or ndarray ---
     elif isinstance(X_input, (pd.DataFrame, np.ndarray)):
         if verbose:
-            print("Detected DataFrame/ndarray format input.")
+            logger.info("Detected DataFrame/ndarray format input.")
         if isinstance(X_input, np.ndarray):
             X_df = pd.DataFrame(X_input).astype(str).apply(lambda col: col.str.upper())
         else:
@@ -782,5 +785,5 @@ def _parse_sequence_input(
 
     data_types = {col: "categorical" for col in X_df.columns}
     if verbose:
-        print("Sequence input preparation complete.")
+        logger.info("Sequence input preparation complete.")
     return X_df, data_types, seq_len

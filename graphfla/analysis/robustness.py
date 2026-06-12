@@ -6,6 +6,9 @@ import numpy as np
 import pandas as pd
 
 from ._utils import _pythonize, _pack_rows
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 def _row_group_ids(M):
@@ -127,7 +130,7 @@ def evolvability_enhancing_mutations(landscape, epsilon=0, auto_calculate=True):
     if "delta_mean_neighbor_fit" not in landscape.graph.es.attributes():
         if auto_calculate:
             if landscape.verbose:
-                print("Neighbor fitness metrics not found. Computing them...")
+                logger.info("Neighbor fitness metrics not found. Computing them...")
             landscape.neighbor_fitness  # lazily computes mean/delta neighbor fitness
         else:
             raise RuntimeError(
@@ -140,8 +143,7 @@ def evolvability_enhancing_mutations(landscape, epsilon=0, auto_calculate=True):
     total_edges = landscape.graph.ecount()
 
     if total_edges == 0:
-        if landscape.verbose:
-            print("Warning: No edges found in the landscape graph.")
+        warnings.warn("No edges found in the landscape graph.", RuntimeWarning)
         return 0.0
 
     ee_count = sum(1 for delta in delta_values if delta > epsilon)

@@ -9,6 +9,7 @@ live here to keep landscape.py focused on the class surface.
 from __future__ import annotations
 
 import ast
+import warnings
 from typing import TYPE_CHECKING
 
 import igraph as ig
@@ -16,7 +17,11 @@ import pandas as pd
 
 from .._data import encode_data
 from ..utils import infer_graph_properties
+from .._logging import enable_verbose_logging
 from . import _plateaus
+import logging
+
+logger = logging.getLogger(__name__)
 
 if TYPE_CHECKING:
     from .landscape import Landscape
@@ -76,9 +81,11 @@ class _IOMixin:
         """
         instance = cls()
         instance.verbose = verbose
+        if verbose:
+            enable_verbose_logging()
 
         if verbose:
-            print(f"Loading landscape from {filepath}...")
+            logger.info(f"Loading landscape from {filepath}...")
 
         try:
             graph = ig.Graph.Read_GraphML(filepath)
@@ -93,10 +100,10 @@ class _IOMixin:
             instance.maximize = bool(graph["maximize"])
         else:
             instance.maximize = True
-            if verbose:
-                print(
-                    "Warning: 'maximize' attribute not found in graph. Defaulting to True."
-                )
+            warnings.warn(
+                "'maximize' attribute not found in graph. Defaulting to True.",
+                RuntimeWarning,
+            )
 
         if "epsilon" in graph.attributes():
             try:
@@ -107,10 +114,10 @@ class _IOMixin:
                     instance.epsilon = float(epsilon_str)
             except Exception:
                 instance.epsilon = 0.0
-                if verbose:
-                    print(
-                        "Warning: Could not parse 'epsilon' attribute. Defaulting to 0."
-                    )
+                warnings.warn(
+                    "Could not parse 'epsilon' attribute. Defaulting to 0.",
+                    RuntimeWarning,
+                )
         else:
             instance.epsilon = 0.0
 
@@ -125,8 +132,9 @@ class _IOMixin:
                 instance.data_types = ast.literal_eval(graph["data_types_data"])
             except Exception:
                 instance.data_types = None
-                if verbose:
-                    print("Warning: Could not parse data_types from graph attributes.")
+                warnings.warn(
+                    "Could not parse data_types from graph attributes.", RuntimeWarning
+                )
         else:
             instance.data_types = None
 
@@ -156,10 +164,10 @@ class _IOMixin:
                     instance._configs_array = prepared.configs_array
                     instance.config_dict = prepared.config_dict
             except Exception as e:
-                if verbose:
-                    print(
-                        f"Warning: Could not reconstruct configs from vertex attributes: {e}"
-                    )
+                warnings.warn(
+                    f"Could not reconstruct configs from vertex attributes: {e}",
+                    RuntimeWarning,
+                )
                 instance.configs = None
                 instance._configs_array = None
                 instance.config_dict = None
@@ -174,19 +182,20 @@ class _IOMixin:
                     try:
                         parsed[int(idx_str)] = ast.literal_eval(config_str)
                     except Exception:
-                        if verbose:
-                            print(
-                                f"Warning: Could not parse config entry: {idx_str}"
-                            )
+                        warnings.warn(
+                            f"Could not parse config entry: {idx_str}", RuntimeWarning
+                        )
                 instance.configs = pd.Series(parsed)
             except Exception as e:
-                if verbose:
-                    print(f"Warning: Could not parse legacy configs_data: {e}")
+                warnings.warn(
+                    f"Could not parse legacy configs_data: {e}", RuntimeWarning
+                )
                 instance.configs = None
 
-        if instance.configs is None and verbose:
-            print(
-                "Warning: No configs data found in graph. Some analyses may be limited."
+        if instance.configs is None:
+            warnings.warn(
+                "No configs data found in graph. Some analyses may be limited.",
+                RuntimeWarning,
             )
 
         # config_dict fallback from legacy attribute if reconstruction did not provide it
@@ -194,8 +203,9 @@ class _IOMixin:
             try:
                 instance.config_dict = ast.literal_eval(graph["config_dict_data"])
             except Exception:
-                if verbose:
-                    print("Warning: Could not parse config_dict from graph attributes.")
+                warnings.warn(
+                    "Could not parse config_dict from graph attributes.", RuntimeWarning
+                )
 
         # Infer basic properties (n_configs, n_edges, n_vars)
         instance._n_configs, instance._n_edges, instance.n_vars = infer_graph_properties(
@@ -250,7 +260,7 @@ class _IOMixin:
         instance._is_built = True
 
         if verbose:
-            print(
+            logger.info(
                 f"Landscape successfully loaded. Graph has {instance.n_configs} nodes and {instance.n_edges} edges."
             )
             instance.describe()
@@ -314,6 +324,6 @@ class _IOMixin:
         try:
             graph_copy.write_graphml(filepath)
             if self.verbose:
-                print(f"Landscape graph saved to {filepath}")
+                logger.info(f"Landscape graph saved to {filepath}")
         except Exception as e:
             raise ValueError(f"Failed to save graph to {filepath}: {e}")

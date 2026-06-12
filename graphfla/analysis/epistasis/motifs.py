@@ -14,6 +14,9 @@ import igraph as ig
 import pandas as pd
 
 from .._utils import _pythonize
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 @contextlib.contextmanager
@@ -81,7 +84,7 @@ def _assign_roles_for_epistasis_igraph(graph, squares):
                 }
             )
         except Exception as e:
-            print(
+            logger.info(
                 f"WARN: Could not process square {square_nodes} for role assignment: {e}"
             )
             continue

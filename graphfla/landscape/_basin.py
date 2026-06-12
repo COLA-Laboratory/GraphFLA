@@ -7,6 +7,9 @@ from tqdm import tqdm
 
 from ..algorithms.walk import HillClimb
 from ..algorithms._search_cache import SearchCache
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 PLATEAU_EXIT_MODES = {"first-improvement", "best-improvement"}
@@ -177,7 +180,7 @@ def determine_basin_of_attraction(landscape, plateau_exit_mode="first-improvemen
         raise RuntimeError("n_configs is None.")
 
     if self.verbose:
-        print(" - Calculating basins of attraction via hill climbing...")
+        logger.info(" - Calculating basins of attraction via hill climbing...")
 
     n_vertices = self.graph.vcount()
 
@@ -264,4 +267,4 @@ def determine_basin_of_attraction(landscape, plateau_exit_mode="first-improvemen
     self._basin_calculated = True
 
     if self.verbose:
-        print(f"   - Basins calculated for {len(unique_basins)} local optima.")
+        logger.info(f"   - Basins calculated for {len(unique_basins)} local optima.")

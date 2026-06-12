@@ -6,6 +6,9 @@ from scipy.sparse import coo_matrix
 from scipy.sparse.csgraph import connected_components
 
 from ..utils import timeit
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 @timeit
@@ -110,7 +113,7 @@ def build_plateaus(landscape, neutral_pairs):
 
     if self.verbose:
         total_neutral_nodes = sum(len(m) for m in plateaus.values())
-        print(
+        logger.info(
             f" - Identified {len(plateaus)} neutral plateaus "
             f"covering {total_neutral_nodes} nodes."
         )

@@ -27,6 +27,9 @@ from .._data import (
 from .._neighbors import build_edges
 from ..utils import filter_graph, remove_isolated_nodes, timeit
 from ..exceptions import InvalidParameterError, NotBuiltError
+import logging
+
+logger = logging.getLogger(__name__)
 
 if TYPE_CHECKING:
     from .landscape import Landscape
@@ -115,7 +118,7 @@ class _BuildMixin:
     ) -> List[Tuple[int, int]]:
         """Construct the graph from preprocessed data and return neutral pairs."""
         if self.verbose:
-            print("Constructing landscape graph...")
+            logger.info("Constructing landscape graph...")
 
         edges, delta_fits, neutral_pairs = self._build_edges(
             processed_data, n_edit=n_edit, strategy=neighborhood_strategy
@@ -213,7 +216,7 @@ class _BuildMixin:
         """Mark the instance as built and emit the standard completion output."""
         self._is_built = True
         if self.verbose:
-            print("Landscape built successfully.\n")
+            logger.info("Landscape built successfully.\n")
             self.describe()
 
     def _check_built(self) -> None:
@@ -274,10 +277,10 @@ class _BuildMixin:
         preserved, keeping ``delta_fits[i]`` aligned with edge ``i``.
         """
         if self.verbose:
-            print(" - Constructing graph object...")
+            logger.info(" - Constructing graph object...")
 
         if self.verbose:
-            print(" - Adding node attributes (fitness, etc.)...")
+            logger.info(" - Adding node attributes (fitness, etc.)...")
 
         n_edges = len(edges)
         if n_edges:
@@ -338,14 +341,14 @@ class _BuildMixin:
             return
 
         if self.verbose:
-            print("Calculating landscape properties...")
+            logger.info("Calculating landscape properties...")
 
         # In/out degree stay eager: cheap and needed for local-optimum
         # detection. PageRank (70-90% of the old cost here, used by nothing on
         # this path) is deferred to the lazy ``pagerank`` property.
         if "out_degree" not in self.graph.vs.attributes():
             if self.verbose:
-                print(" - Calculating network metrics (degrees)...")
+                logger.info(" - Calculating network metrics (degrees)...")
             self.graph.vs["in_degree"] = self.graph.indegree()
             self.graph.vs["out_degree"] = self.graph.outdegree()
 

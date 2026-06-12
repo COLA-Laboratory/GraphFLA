@@ -30,6 +30,9 @@ from .generators import (
     SequenceNeighborGenerator,
     OrdinalNeighborGenerator,
 )
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 def _build_active(
@@ -111,9 +114,9 @@ def _build_active(
         edges, delta_fits = _edge_arrays_from_lists(edge_list, delta_list)
 
     if verbose:
-        print(f" - Identified {len(edges)} improving connections.")
+        logger.info(f" - Identified {len(edges)} improving connections.")
         if neutral_pairs:
-            print(f" - Identified {len(neutral_pairs)} neutral neighbor pairs.")
+            logger.info(f" - Identified {len(neutral_pairs)} neutral neighbor pairs.")
     return edges, delta_fits, neutral_pairs
 
 
@@ -177,7 +180,7 @@ def _build_pairwise(
     n_vars = configs_array.shape[1]
 
     if verbose:
-        print(
+        logger.info(
             f" - Computing pairwise distances for {n} configurations "
             f"(blocked Hamming)..."
         )
@@ -245,7 +248,7 @@ def _build_pairwise(
 
     if not j_parts:
         if verbose:
-            print(f" - Found 0 neighbor pairs within edit distance {n_edit}.")
+            logger.info(f" - Found 0 neighbor pairs within edit distance {n_edit}.")
         return [], [], []
 
     i_arr = np.concatenate(i_parts)
@@ -253,7 +256,7 @@ def _build_pairwise(
     del i_parts, j_parts
 
     if verbose:
-        print(
+        logger.info(
             f" - Found {len(j_arr)} neighbor pairs "
             f"within edit distance {n_edit}."
         )
@@ -353,9 +356,9 @@ def _build_broadcast(
             j_start = j_end
 
     if verbose:
-        print(f" - Identified {len(edges)} improving connections.")
+        logger.info(f" - Identified {len(edges)} improving connections.")
         if neutral:
-            print(f" - Identified {len(neutral)} neutral neighbor pairs.")
+            logger.info(f" - Identified {len(neutral)} neutral neighbor pairs.")
     return edges, delta_fits, neutral
 
 
@@ -651,7 +654,7 @@ def _build_masked_grouping(
     n = matrix.shape[0]
 
     if verbose:
-        print(
+        logger.info(
             f" - Finding Hamming-1 neighbors for {n} configurations "
             f"(masked-position grouping)..."
         )
@@ -663,11 +666,11 @@ def _build_masked_grouping(
 
     if i_arr.size == 0:
         if verbose:
-            print(" - Found 0 neighbor pairs within edit distance 1.")
+            logger.info(" - Found 0 neighbor pairs within edit distance 1.")
         return [], [], []
 
     if verbose:
-        print(
+        logger.info(
             f" - Found {len(j_arr)} neighbor pairs within edit distance 1."
         )
 
@@ -693,7 +696,7 @@ def _active_masked_grouping(
     """
     n = rows.shape[0]
     if verbose:
-        print(
+        logger.info(
             f" - Finding Hamming-1 neighbors for {n} configurations "
             f"(masked-position grouping)..."
         )
@@ -1141,7 +1144,7 @@ def _active_ordinal_vectorized(
     neutral_eps = _neutral_abs_threshold(epsilon)
 
     if verbose:
-        print(" - Constructing neighborhoods (ordinal vectorised)...")
+        logger.info(" - Constructing neighborhoods (ordinal vectorised)...")
 
     # Collect every directed (source, neighbour) adjacency, then classify at once.
     # The ±1 neighbour lookup uses a dense inverse index (O(1) gather) when the
@@ -1201,7 +1204,7 @@ def _active_ordinal_vectorized(
 
     if not src_parts:
         if verbose:
-            print(" - Identified 0 improving connections.")
+            logger.info(" - Identified 0 improving connections.")
         return _empty_edges(), _empty_deltas()
 
     src = np.concatenate(src_parts)
@@ -1212,8 +1215,8 @@ def _active_ordinal_vectorized(
     )
 
     if verbose:
-        print(f" - Identified {len(edges)} improving connections.")
+        logger.info(f" - Identified {len(edges)} improving connections.")
         if neutral_pairs:
-            print(f" - Identified {len(neutral_pairs)} neutral neighbor pairs.")
+            logger.info(f" - Identified {len(neutral_pairs)} neutral neighbor pairs.")
 
     return edges, delta_fits
