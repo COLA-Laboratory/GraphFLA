@@ -211,9 +211,14 @@ def encode_data(
             "Impute, drop affected rows, or remove sites before building."
         )
 
-    if f.isnull().any():
+    f_values = np.asarray(f, dtype=float)
+    if not np.isfinite(f_values).all():
+        n_nan = int(np.isnan(f_values).sum())
+        n_inf = int(np.isinf(f_values).sum())
         raise ValueError(
-            "Fitness `f` contains NaN. Remove or impute missing fitness values before building."
+            f"Fitness `f` contains non-finite values ({n_nan} NaN, {n_inf} inf). "
+            "Remove or impute them before building — non-finite fitness breaks "
+            "optimum detection and distance calculations."
         )
 
     X_encoded = pd.DataFrame(encoded_columns, index=X_for_encoding.index, copy=False)
