@@ -1,4 +1,7 @@
 import numpy as np
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 def determine_local_optima(landscape):
@@ -43,7 +46,7 @@ def determine_local_optima(landscape):
     self = landscape
 
     if self.verbose:
-        print(" - Determining local optima...")
+        logger.info(" - Determining local optima...")
 
     # Reuse the cached out-degree attribute (set in ``_analyze``) when present;
     # the on-the-fly fallback gives identical values.
@@ -128,7 +131,7 @@ def determine_local_optima(landscape):
             )
 
         if self.verbose:
-            print(
+            logger.info(
                 f"   - Found {self.n_lo} local optima "
                 f"({self.n_lo_members} member nodes: "
                 f"{self.n_plateau_lo} plateau-LOs + "
@@ -155,4 +158,4 @@ def determine_local_optima(landscape):
             )
 
         if self.verbose:
-            print(f"   - Found {self.n_lo} local optima.")
+            logger.info(f"   - Found {self.n_lo} local optima.")

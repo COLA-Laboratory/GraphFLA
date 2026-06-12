@@ -11,6 +11,9 @@ import warnings
 
 import numpy as np
 import pandas as pd
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 # ===================================================================
@@ -145,7 +148,7 @@ def _warn_if_missing(
     remain at encoding time.
     """
     if verbose:
-        print(" - Checking for missing values...")
+        logger.info(" - Checking for missing values...")
 
     X_out = X_in
 
@@ -161,7 +164,7 @@ def _warn_if_missing(
         )
         warnings.warn(msg, UserWarning)
         if verbose:
-            print(f"   - {msg}")
+            logger.info(f"   - {msg}")
 
     f_aligned = f_in.loc[X_out.index]
     nan_mask_f = f_aligned.isnull()
@@ -174,7 +177,7 @@ def _warn_if_missing(
         )
         warnings.warn(msg, UserWarning)
         if verbose:
-            print(f"   - {msg}")
+            logger.info(f"   - {msg}")
 
     return X_out, f_aligned
 
@@ -186,7 +189,7 @@ def _drop_duplicates(
 ) -> Tuple[pd.DataFrame, pd.Series]:
     """Remove duplicate configurations, keeping the first occurrence."""
     if verbose:
-        print(" - Handling duplicate configurations...")
+        logger.info(" - Handling duplicate configurations...")
 
     initial_count = len(X_in)
     mask_duplicates = X_in.duplicated(keep="first")
@@ -194,19 +197,19 @@ def _drop_duplicates(
 
     if num_removed > 0:
         if verbose:
-            print(
+            logger.info(
                 f"   - Found {num_removed} duplicate configurations in X. Keeping first occurrence."
             )
         X_out = X_in.loc[~mask_duplicates]
         f_out = f_in.loc[~mask_duplicates]
     else:
         if verbose:
-            print("   - No duplicate configurations found.")
+            logger.info("   - No duplicate configurations found.")
         X_out, f_out = X_in, f_in
 
     final_count = len(X_out)
     if verbose and initial_count != final_count:
-        print(
+        logger.info(
             f"   - Duplicate handling complete. Kept {final_count}/{initial_count} configurations."
         )
 

@@ -22,6 +22,9 @@ __version__ = "0.1.dev0"
 
 logger = logging.getLogger(__name__)
 
+# Attach the NullHandler (library logging convention) + set up verbose routing.
+from . import _logging  # noqa: E402,F401
+
 _exported_core_objects = ["Landscape"]
 
 

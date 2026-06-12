@@ -137,8 +137,9 @@ def idiosyncratic_index(landscape, mutation, min_pairs: int = 3):
     X_B = X[X[pos] == B]
 
     if X_A.empty or X_B.empty:
-        print(
-            f"Warning: No genotypes found for allele '{A}' or '{B}' at position '{pos}'. Returning 0.0."
+        warnings.warn(
+            f"No genotypes found for allele '{A}' or '{B}' at position '{pos}'. Returning 0.0.",
+            UserWarning,
         )
         return 0.0
 

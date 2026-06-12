@@ -11,6 +11,9 @@ if TYPE_CHECKING:
 
 
 from ._utils import _pythonize
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 def neighbor_fitness_correlation(landscape, auto_calculate=True, method="pearson"):
@@ -63,7 +66,7 @@ def neighbor_fitness_correlation(landscape, auto_calculate=True, method="pearson
     if "mean_neighbor_fit" not in landscape.graph.vs.attributes():
         if auto_calculate:
             if landscape.verbose:
-                print("Neighbor fitness metrics not found. Computing them...")
+                logger.info("Neighbor fitness metrics not found. Computing them...")
             landscape.neighbor_fitness  # lazily computes mean/delta neighbor fitness
         else:
             raise RuntimeError(
@@ -88,10 +91,10 @@ def neighbor_fitness_correlation(landscape, auto_calculate=True, method="pearson
     n_nodes = len(data_clean)
 
     if n_nodes == 0:
-        if landscape.verbose:
-            print(
-                "Warning: No valid data for correlation calculation after removing NaNs."
-            )
+        warnings.warn(
+            "No valid data for correlation calculation after removing NaNs.",
+            RuntimeWarning,
+        )
         return _pythonize(np.nan)
 
     if method == "pearson":
@@ -223,7 +226,7 @@ def basin_fitness_correlation(landscape, method: str = "spearman"):
     """
     if "size_basin_greedy" not in landscape.graph.vs.attributes():
         if landscape.verbose:
-            print("Basin sizes not found. Calculating basins of attraction...")
+            logger.info("Basin sizes not found. Calculating basins of attraction...")
         landscape.basins  # lazily computes greedy basins (size_basin_greedy, ...)
 
         if "size_basin_greedy" not in landscape.graph.vs.attributes():

@@ -8,6 +8,9 @@ from ._arrays import (
     _empty_deltas,
     _stack_edges,
 )
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 def _classify_undirected_core(i_arr, j_arr, fitness, neutral_eps, maximize):
@@ -87,9 +90,9 @@ def _classify_pairs(i_arr, j_arr, fitness, epsilon, maximize, verbose):
     delta_fits = imp_abs.tolist()
 
     if verbose:
-        print(f" - Identified {len(edges)} improving connections.")
+        logger.info(f" - Identified {len(edges)} improving connections.")
         if neutral_pairs:
-            print(
+            logger.info(
                 f" - Identified {len(neutral_pairs)} neutral neighbor pairs."
             )
     return edges, delta_fits, neutral_pairs

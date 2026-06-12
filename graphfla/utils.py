@@ -60,7 +60,7 @@ def filter_graph(graph, maximize, tau, filter_mode, verbose):
     if tau is not None:
         if filter_mode == "both":
             if verbose:
-                print(
+                logger.info(
                     f" - Applying post-construction functional filter "
                     f"(tau={tau}, filter_mode='both')..."
                 )
@@ -91,14 +91,14 @@ def filter_graph(graph, maximize, tau, filter_mode, verbose):
                 removed_edges = initial_edges - final_edges
 
                 if verbose:
-                    print(
+                    logger.info(
                         f"   - Removed {removed_edges} edges connecting "
                         f"non-functional configurations"
                     )
-                    print(f"   - Kept {final_edges}/{initial_edges} edges")
+                    logger.info(f"   - Kept {final_edges}/{initial_edges} edges")
             else:
                 if verbose:
-                    print("   - No edges removed (all connect functional configs)")
+                    logger.info("   - No edges removed (all connect functional configs)")
 
             # Keep only the largest weakly connected component
             initial_nodes = graph.vcount()
@@ -117,13 +117,13 @@ def filter_graph(graph, maximize, tau, filter_mode, verbose):
             if verbose:
                 removed_nodes = initial_nodes - graph.vcount()
                 if removed_nodes > 0:
-                    print(
+                    logger.info(
                         f"   - Kept largest connected component: "
                         f"{graph.vcount()} nodes "
                         f"({removed_nodes} isolated/minor-component nodes removed)"
                     )
                 else:
-                    print("   - Graph remains fully connected")
+                    logger.info("   - Graph remains fully connected")
 
     n_configs = graph.vcount()
     n_edges = graph.ecount()
@@ -201,7 +201,7 @@ def remove_isolated_nodes(graph, verbose=False, protected=None):
         graph = graph.induced_subgraph(kept_indices)
 
     if verbose:
-        print(
+        logger.info(
             f" - Removed {n_isolated} isolated node(s); "
             f"{graph.vcount()} nodes remain."
         )

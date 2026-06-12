@@ -3,6 +3,9 @@
 import numpy as np
 
 from .._utils import _pythonize
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 def higher_order_epistasis(landscape, order=2, verbose=False, n_jobs=1):
@@ -70,7 +73,7 @@ def higher_order_epistasis(landscape, order=2, verbose=False, n_jobs=1):
         )
 
     if verbose:
-        print(f"Calculating order-{order} epistasis using polynomial regression...")
+        logger.info(f"Calculating order-{order} epistasis using polynomial regression...")
 
     X = np.vstack(landscape.configs.values)
     y = np.array(landscape.graph.vs["fitness"])
@@ -78,7 +81,7 @@ def higher_order_epistasis(landscape, order=2, verbose=False, n_jobs=1):
     # Boolean is already 0/1; other types need one-hot with a reference level
     # dropped for a numerically stable design matrix.
     if verbose:
-        print(f"Encoding {X.shape[1]} variables...")
+        logger.info(f"Encoding {X.shape[1]} variables...")
 
     if landscape.kind == "boolean":
         X_encoded = np.asarray(X, dtype=np.float64)
@@ -94,8 +97,8 @@ def higher_order_epistasis(landscape, order=2, verbose=False, n_jobs=1):
             raise ValueError(f"Failed to one-hot encode configurations: {e}")
 
     if verbose:
-        print(f"Encoded data shape: {X_encoded.shape}")
-        print(f"Creating polynomial features of degree {order}...")
+        logger.info(f"Encoded data shape: {X_encoded.shape}")
+        logger.info(f"Creating polynomial features of degree {order}...")
 
     # Use interaction-only features and let LinearRegression handle the intercept.
     poly = PolynomialFeatures(
@@ -107,7 +110,7 @@ def higher_order_epistasis(landscape, order=2, verbose=False, n_jobs=1):
 
     try:
         if verbose:
-            print(f"Fitting polynomial regression model...")
+            logger.info(f"Fitting polynomial regression model...")
         X_poly = poly.fit_transform(X_encoded)
         model.fit(X_poly, y)
         # Manual dot instead of np.matmul: Accelerate (macOS arm64) emits
@@ -126,6 +129,6 @@ def higher_order_epistasis(landscape, order=2, verbose=False, n_jobs=1):
         raise RuntimeError(f"Error fitting polynomial regression model: {e}")
 
     if verbose:
-        print(f"Order-{order} epistasis R² score: {r2:.4f}")
+        logger.info(f"Order-{order} epistasis R² score: {r2:.4f}")
 
     return _pythonize(r2)

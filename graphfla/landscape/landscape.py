@@ -35,6 +35,7 @@ from ..utils import (
 )
 from ..distances import mixed_distance, hamming_distance
 from ..exceptions import InvalidParameterError, NotBuiltError
+from .._logging import enable_verbose_logging
 
 from .._neighbors import (
     NeighborGenerator,
@@ -46,6 +47,9 @@ from .._neighbors import (
 )
 from ._io import _IOMixin
 from ._build import _BuildMixin
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 class Landscape(_IOMixin, _BuildMixin):
@@ -739,13 +743,15 @@ class Landscape(_IOMixin, _BuildMixin):
         # Coerce to a real bool so the documented bool attribute can't be poisoned
         # by an explicit verbose=None.
         self.verbose = bool(verbose)
+        if self.verbose:
+            enable_verbose_logging()
 
         # Fall back to the per-class default (e.g. "active" for ordinal).
         if neighborhood_strategy is None:
             neighborhood_strategy = self._default_neighborhood_strategy
 
         if verbose:
-            print("Building Landscape from data...")
+            logger.info("Building Landscape from data...")
 
         handler = self._resolve_strategies()
         processed_data = self._preprocess_data(
@@ -1012,7 +1018,7 @@ class Landscape(_IOMixin, _BuildMixin):
             self.basins
 
         if self.verbose:
-            print("Constructing Local Optima Network (LON)...")
+            logger.info("Constructing Local Optima Network (LON)...")
 
         self.lon = get_lon(
             graph=self.graph,
@@ -1028,7 +1034,7 @@ class Landscape(_IOMixin, _BuildMixin):
         self.has_lon = True
 
         if self.verbose:
-            print(
+            logger.info(
                 f"LON constructed with {self.lon.vcount()} nodes "
                 f"and {self.lon.ecount()} edges."
             )

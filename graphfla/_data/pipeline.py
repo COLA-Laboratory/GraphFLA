@@ -18,6 +18,9 @@ from ._validation import (
     _build_config_dict,
 )
 from .handlers import DefaultHandler
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 # ===================================================================
@@ -30,7 +33,7 @@ def filter_data(X, f, maximize, tau, filter_mode, verbose):
     if tau is not None:
         if filter_mode == "any":
             if verbose:
-                print(
+                logger.info(
                     f" - Applying functional threshold filter "
                     f"(tau={tau})..."
                 )
@@ -55,11 +58,11 @@ def filter_data(X, f, maximize, tau, filter_mode, verbose):
                 opposite_op = "<" if comparison_op[0] == ">" else ">"
                 opposite_op += "=" if len(comparison_op) > 1 else ""
 
-                print(
+                logger.info(
                     f"   - Removed {removed_count} configurations with fitness "
                     f"{opposite_op} {tau}"
                 )
-                print(f"   - Kept {final_count}/{initial_count} configurations")
+                logger.info(f"   - Kept {final_count}/{initial_count} configurations")
 
             if final_count == 0:
                 raise ValueError(
@@ -112,7 +115,7 @@ def clean_data(
 ) -> Tuple[pd.DataFrame, pd.Series]:
     """Warn on missing values (no row drops) and remove duplicate configurations."""
     if verbose:
-        print(" - Handling missing values and duplicates...")
+        logger.info(" - Handling missing values and duplicates...")
 
     X_clean, f_clean = _warn_if_missing(X_in, f_in, verbose=verbose)
     if len(X_clean) == 0:
@@ -133,7 +136,7 @@ def encode_data(
 ) -> PreparedData:
     """Encode configurations and assemble metadata for graph construction."""
     if verbose:
-        print("Preparing data for landscape construction (encoding variables)...")
+        logger.info("Preparing data for landscape construction (encoding variables)...")
 
     prepared_data_types = data_types.copy()
     invariant_cols = _invariant_columns(X)
@@ -149,7 +152,7 @@ def encode_data(
             if key not in invariant_cols
         }
         if verbose:
-            print(
+            logger.info(
                 f" - Removed {len(invariant_cols)} invariant variable(s) from "
                 f"internal encoding; {len(prepared_data_types)} variable(s) used "
                 f"for neighbor computation."

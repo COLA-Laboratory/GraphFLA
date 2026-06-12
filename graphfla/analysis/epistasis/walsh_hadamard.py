@@ -8,6 +8,9 @@ import warnings
 import numpy as np
 import pandas as pd
 from sklearn.preprocessing import OneHotEncoder
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 def walsh_hadamard(landscape, max_order=2, max_cells=1e9, chunk_size=1000):
@@ -210,7 +213,7 @@ def _generate_interactions(Xoh, max_order, max_cells):
             ]
         int_order_dict[n] = len(all_features[n])
 
-    print(
+    logger.info(
         "... Total theoretical features (order:count): "
         + ", ".join(
             [
@@ -241,12 +244,12 @@ def _generate_interactions(Xoh, max_order, max_cells):
                 int_order_dict_retained[order] += 1
 
         if len(int_list) * len(Xoh) > max_cells:
-            print(
+            logger.info(
                 f"Error: Too many interaction terms: number of feature matrix cells >{max_cells:>.0e}"
             )
             raise ValueError("Memory limit exceeded")
 
-    print(
+    logger.info(
         "... Total retained features (order:count): "
         + ", ".join(
             [
@@ -290,7 +293,7 @@ def _ensemble_encode_features(X, feature_names, wildtype, X_df, chunk_size):
     state_counts = X_df.apply(lambda col: col.value_counts(), axis=0)
     state_list = [(state_counts[col] > 0).sum() for col in state_counts.columns]
 
-    print("Construction time for H_matrix...")
+    logger.info("Construction time for H_matrix...")
     hmat_inv = _H_matrix_chunker(
         str_geno=geno_list,
         str_coef=coef_list,

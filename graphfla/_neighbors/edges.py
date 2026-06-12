@@ -13,6 +13,9 @@ import numpy as np
 
 from ._arrays import _empty_edges, _empty_deltas
 from ._kernels import _build_active, _build_pairwise, _build_broadcast
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 @dataclass(frozen=True)
@@ -106,7 +109,7 @@ def build_edges(
     if resolved == "auto":
         resolved = _select_strategy(n_configs, n_vars, config_dict, n_edit)
         if verbose:
-            print(f" - Auto-selected '{resolved}' neighborhood strategy.")
+            logger.info(f" - Auto-selected '{resolved}' neighborhood strategy.")
 
     kwargs = dict(
         configs=configs,
