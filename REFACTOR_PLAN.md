@@ -35,8 +35,11 @@ future-annotations (partial rollout).
   - GraphML I/O → landscape/_io.py (`_IOMixin`). (a3ff3e6)
   - build pipeline internals → landscape/_build.py (`_BuildMixin`). (34ff16c)
   - landscape.py 1722 → 1111 lines (−36%). Perf re-verified (build 53ms / basins 17ms on 16k). Mixins = verbatim bodies.
-- **Decomposition — remaining god-files (NEXT)**: `_neighbors.py` (1780) → `neighbors/` (user's first-named file);
-  `analysis/epistasis.py` (1771) → `analysis/epistasis/`; `_data.py` (1307) → `_data/`. Re-export public symbols.
+- ✅ **Decomposition — `_neighbors.py`** (1780, user's first-named file) → `_neighbors/` package (name kept for path
+  stability): _arrays/generators/_classify/_kernels/edges, strict acyclic layering. Call-graph mapped + adversarially
+  verified by a workflow; completeness invariant gated the split. 1265 passed, build 55ms. (2b03e18)
+- **Decomposition — remaining (NEXT)**: `analysis/epistasis.py` (1771) → `analysis/epistasis/`; `_data.py` (1307) →
+  `_data/`. Re-export public symbols. (Both of the user's NAMED files — landscape.py, _neighbors.py — are now done.)
 - **Phase 6 (value-changing, E1/E2 — approved, regenerate affected goldens)**: non-finite-fitness build guard;
   NaN-normalize degenerate metric returns + divide guards; thread `rng` into first-improvement (HillClimb already has
   `seed=`; wire it through basin's plateau-exit path + any first-improvement caller).
