@@ -5,8 +5,8 @@ import warnings
 import numpy as np
 from tqdm import tqdm
 
-from .walk import HillClimb
-from ._search_cache import SearchCache
+from ..algorithms.walk import HillClimb
+from ..algorithms._search_cache import SearchCache
 
 
 PLATEAU_EXIT_MODES = {"first-improvement", "best-improvement"}

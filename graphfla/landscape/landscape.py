@@ -10,7 +10,7 @@ import warnings
 from typing import Tuple, Dict, List, Union, Optional, Any
 
 from ..lon import get_lon
-from ..algorithms import basin, optima, plateaus
+from . import _basin, _optima, _plateaus
 from ..analysis import correlation, navigability
 from .._data import (
     DNA_ALPHABET,
@@ -386,7 +386,7 @@ class Landscape:
         """Per-node greedy basin size (``size_basin_greedy``), computed lazily."""
         self._check_built()
         if not self._basin_calculated:
-            basin.determine_basin_of_attraction(self)
+            _basin.determine_basin_of_attraction(self)
         return pd.Series(self.graph.vs["size_basin_greedy"], name="size_basin_greedy")
 
     @property
@@ -786,7 +786,7 @@ class Landscape:
             verbose=verbose,
         )
 
-        plateaus.build_plateaus(self, neutral_pairs)
+        _plateaus.build_plateaus(self, neutral_pairs)
 
         self._analyze()
 
@@ -999,7 +999,7 @@ class Landscape:
 
         # Reconstruct plateau data structures if saved in the graph
         if "plateau_id" in graph.vs.attributes():
-            plateaus.restore_plateaus(instance)
+            _plateaus.restore_plateaus(instance)
 
         # Determine local optima and global optimum from graph structure
         if instance.graph.vcount() > 0:
@@ -1622,7 +1622,7 @@ class Landscape:
         during construction (and as an idempotent recompute hook); it is not a
         public, user-facing operation. Returns ``self``.
         """
-        optima.determine_local_optima(self)
+        _optima.determine_local_optima(self)
         return self
 
     def _compute_global_optimum(self) -> "Landscape":
