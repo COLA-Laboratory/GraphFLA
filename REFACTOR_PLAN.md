@@ -48,15 +48,18 @@ future-annotations (partial rollout).
   `warnings.warn`; 11 re-raises chained `from e`. (fb0aa33, 637186e)
 - ✅ **GRIPE SCORECARD — ALL SIX ADDRESSED**: #1 returns ✅ · #2 naming ✅ · #3 walk API ✅ · #4 file size ✅ ·
   #5 errors/warnings ✅ · #6 dedup ✅. (Remaining "narrow which exceptions are caught" overlaps value-changing E1.)
-- **Phase 6 (value-changing, E1/E2 — approved, regenerate affected goldens)**: non-finite-fitness build guard;
-  NaN-normalize degenerate metric returns + divide guards; thread `rng` into first-improvement (HillClimb already has
-  `seed=`; wire it through basin's plateau-exit path + any first-improvement caller).
-- **Phase 8 (logging)**: route ~115 `print()`s through the logger; `warnings.warn` for pseudo-warnings; fix the
-  `logger = random_walk(...)` shadow (already moot — random_walk gone — but audit ruggedness).
-- **Phase 9 (mechanical/polish)**: `_pythonize`×6 + `_pack_rows`×2 → `analysis/_utils.py`; alphabet triplication →
-  import from `_data`; dead-code (commented networkx in utils, `euclidean_distance`, `EdgeResult.strategy`,
-  `include_configs`); narrow the ~32 broad `except` with `raise ... from e`; finish `from __future__ import annotations`
-  on untouched modules; type-annotation backfill; docstring-drift fixes.
+- ✅ **Phase 6 (value-changing, E1/E2) — DELIVERED**:
+  - E1(a): build rejects non-finite fitness (inf as well as the already-caught NaN). (9694fea)
+  - E1(b)/(c): degenerate-LANDSCAPE returns → NaN (local_optima_ratio empty; gradient_intensity no-edges + zero-mean
+    divide guard [the one reachable case: inf→NaN]; evolvability_enhancing_mutations no-edges; neutrality no-pairs;
+    idiosyncratic_index flat). Deliberately left classify "no magnitude/sign squares"→0.0 and per-pair "no shared
+    backgrounds"→0.0 (golden-pinned correct values for normal landscapes, NOT degenerate inputs). Empirically golden-
+    safe — 1265 passed, no golden hits a degenerate branch (most are defensive; build rejects edgeless graphs). (b626054)
+  - E2: already delivered by Phase 4's Walk API (HillClimb first-improvement uses seedable `self._rng.choice`). No-op.
+- ✅ **Phase 8 (logging) + Phase 9 (from-e/alphabet dedup) — DELIVERED** (see progress log above).
+- **Phase 9 (remaining low-value polish — deferred)**: narrow the ~32 broad `except` to specific types (behavior-
+  sensitive — changes which exceptions propagate; overlaps E1, do deliberately); finish `from __future__ import
+  annotations` on the new package modules; type-annotation backfill; docstring-drift fixes.
 - **Structural decomposition (deferred)**: landscape `_io.py`/`_build.py`; `neighbors/` subpackage (+ generator-honesty
   raise, D6); `_data/` subpackage (handlers own parsing, D5, + `len(X)==len(f)` / reserved-`fitness` guards, column-prefix
   unify); `analysis/epistasis/` split; move `basin`/`optima`/`plateaus` into `landscape/`.
