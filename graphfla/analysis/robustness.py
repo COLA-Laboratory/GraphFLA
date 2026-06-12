@@ -144,7 +144,8 @@ def evolvability_enhancing_mutations(landscape, epsilon=0, auto_calculate=True):
 
     if total_edges == 0:
         warnings.warn("No edges found in the landscape graph.", RuntimeWarning)
-        return 0.0
+        # Undefined with no edges (no mutations to evaluate).
+        return float("nan")
 
     ee_count = sum(1 for delta in delta_values if delta > epsilon)
     ee_proportion = ee_count / total_edges
@@ -197,7 +198,8 @@ def neutrality(landscape, threshold: float = 0.01) -> float:
                 neutral_pairs += 1
             total_pairs += 1
 
-    neutrality_val = neutral_pairs / total_pairs if total_pairs > 0 else 0
+    # Undefined when there are no neighbour pairs at all.
+    neutrality_val = neutral_pairs / total_pairs if total_pairs > 0 else float("nan")
 
     return _pythonize(neutrality_val)
 

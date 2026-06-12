@@ -177,7 +177,8 @@ def idiosyncratic_index(landscape, mutation, min_pairs: int = 3):
     if len(all_fitness_values) <= 1 or np.all(
         all_fitness_values == all_fitness_values[0]
     ):
-        return 0.0
+        # Idiosyncrasy is undefined on a flat (constant-fitness) landscape.
+        return _pythonize(np.nan)
 
     # Random-pair baseline uses the exact closed form Var(diff) = 2*Var(f)
     # (i.i.d. draws): deterministic and avoids a near-zero denominator vs sampling.
