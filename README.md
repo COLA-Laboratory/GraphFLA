@@ -90,22 +90,32 @@ landscape.build_from_data(X, f, verbose=True)
 
 ### 4. Landscape analysis
 
-Once the landscape is constructed, we can then analyze its features using the available functions (see later).
+The quickest way to characterize a built landscape is `analysis.profile()`: it computes the whole portfolio of landscape-level metrics in one call and returns a tidy `pandas` object — a `Series` for one landscape, or a `DataFrame` (one row each) for several, which is ideal for comparing landscapes.
 
 ```python
-from graphfla.analysis import (
-    lo_ratio,
-    classify_epistasis,
-    r_s_ratio,
-    neutrality,
-    global_optima_accessibility,
-)
+from graphfla import analysis
 
-local_optima_ratio = lo_ratio(landscape)
-epistasis = classify_epistasis(landscape)
-r_s_score = r_s_ratio(landscape)
-neutrality_index = neutrality(landscape)
-go_access = global_optima_accessibility(landscape)
+# every whole-landscape metric, as a pandas Series
+metrics = analysis.profile(landscape)
+print(metrics["gamma"], metrics["fdc"], metrics["epistasis.magnitude"])
+
+# restrict to groups (or `include=[...]` specific metrics, `exclude=[...]` to drop some)
+analysis.profile(landscape, groups=["ruggedness", "epistasis"])
+
+# compare several landscapes side by side -> DataFrame, one row each
+analysis.profile([gb1, dhfr, cr9114], index=["GB1", "DHFR", "CR9114"])
+
+analysis.list_metrics()   # discover what's available
+```
+
+The expensive motif metrics (`classify_epistasis`, `extradimensional_bypass`) auto-tune their sampling to a time budget, so `profile()` stays tractable even on large landscapes such as GB1 or DHFR. You can also call any metric on its own:
+
+```python
+from graphfla.analysis import local_optima_ratio, classify_epistasis, neutrality
+
+local_optima_ratio(landscape)
+classify_epistasis(landscape)      # sample_cut_prob="auto" by default
+neutrality(landscape)
 ```
 ### 5. Playing with arbitrary combinatorial data
 The `type` parameter of the `Landscape` class currently supports `"dna"`, `rna`, `"protein"`, and `"boolean"`. However, this does not mean that `GraphFLA` can only work with these types of data; instead, these registered values are only for convenience and performance optimization purpose. 
