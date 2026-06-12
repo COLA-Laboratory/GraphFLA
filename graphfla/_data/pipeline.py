@@ -4,7 +4,7 @@ The processing steps used by ``Landscape.build_from_data`` to turn validated
 input into the encoded ``PreparedData`` container.
 """
 
-from typing import Any, Dict, Tuple
+from typing import Dict, Tuple
 
 import numpy as np
 import pandas as pd

@@ -5,7 +5,6 @@ import time
 
 import numpy as np
 import igraph as ig
-import pandas as pd
 import warnings
 
 from functools import wraps

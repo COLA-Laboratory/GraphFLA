@@ -1,6 +1,4 @@
-import itertools
 import math
-import pandas as pd
 import numpy as np
 
 from .base_problem import OptimizationProblem

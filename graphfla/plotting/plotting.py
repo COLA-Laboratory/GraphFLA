@@ -723,11 +723,7 @@ def draw_global_epistasis(
 
     try:
         from sklearn.linear_model import LinearRegression
-        from sklearn.preprocessing import (
-            PolynomialFeatures,
-            LabelEncoder,
-            OneHotEncoder,
-        )
+        from sklearn.preprocessing import PolynomialFeatures
         from sklearn.pipeline import Pipeline
         import pandas as pd
     except ImportError:

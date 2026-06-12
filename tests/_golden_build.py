@@ -3,7 +3,6 @@ value, in the same shape as the frozen references (tests/_golden_references.py).
 Used only by tests/test_golden_landscapes.py."""
 import io, contextlib
 import warnings
-import numpy as np
 import pandas as pd
 
 warnings.simplefilter("ignore")
@@ -18,7 +17,7 @@ from graphfla.analysis import (
     gamma, gamma_star, classify_epistasis, higher_order_epistasis,
     walsh_hadamard, global_idiosyncratic_index, extradimensional_bypass,
     diminishing_returns_index, increasing_costs_index,
-    global_optima_accessibility, local_optima_accessibility, mean_path_length_to_local_optima,
+    global_optima_accessibility, mean_path_length_to_local_optima,
     mean_distance_to_global_optimum, neutrality, evolvability_enhancing_mutations,
 )
 

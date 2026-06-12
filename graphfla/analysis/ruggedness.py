@@ -5,7 +5,6 @@ import warnings
 import random
 
 from ..algorithms import RandomWalk, SearchCache
-from typing import Tuple
 from sklearn.linear_model import LinearRegression
 
 

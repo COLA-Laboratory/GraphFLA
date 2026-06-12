@@ -8,10 +8,6 @@ edge-construction layer receives a bound ``generate`` method.
 import warnings
 from typing import Protocol, Tuple, Dict, List, runtime_checkable
 
-import numpy as np
-
-from ._arrays import _neutral_abs_threshold
-
 
 @runtime_checkable
 class NeighborGenerator(Protocol):
