@@ -1,6 +1,0 @@
-Function / workload,Baseline memory,Optimized memory,Reduction
-"local_search, best-improvement",No extra cache,+0-5 MB,flat
-"local_search, first-improvement",No extra cache,+0-5 MB,flat
-"hill_climb, best-improvement",No extra cache,+0-5 MB,flat
-"hill_climb, first-improvement",No extra cache,+0-5 MB,flat
-random_walk,Tiny streaming output,+0-5 MB,flat

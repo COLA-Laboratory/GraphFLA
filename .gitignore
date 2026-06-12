@@ -18,3 +18,6 @@ bench/ANALYSIS_BENCH_RESULTS.md
 # Byte-compiled / cached Python
 __pycache__/
 *.py[cod]
+
+# asv benchmark results / envs
+.asv/
