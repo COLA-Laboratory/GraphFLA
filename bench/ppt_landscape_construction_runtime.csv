@@ -1,0 +1,14 @@
+Dataset,Baseline runtime,Optimized runtime,Reduction
+GB1 protein-L,5.10 s,1.40 s,3.6x
+TrpB3I protein-S,0.148 s,0.061 s,2.4x
+Papkou DNA-L,3.75 s,0.88 s,4.3x
+Westmann DNA-S,0.849 s,0.043 s,19.9x
+CR9114 boolean-L,0.707 s,0.182 s,3.9x
+CR6261 boolean-S,0.023 s,0.011 s,2.0x
+WReOs ordinal-S,0.004 s,0.002 s,1.5x
+HPO ordinal-L,3.25 s,0.658 s,4.9x
+UBE4B sparse-S,0.260 s,0.051 s,5.1x
+D7PM05 sparse-M,30.33 s,0.414 s,73x
+GFP sparse-L,117.1 s,0.701 s,167x
+PHOT sparse-L,60.04 s,1.504 s,40x
+HIS7 sparse-XL,298.7 s,8.007 s,37x

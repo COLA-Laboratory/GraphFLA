@@ -1,4 +1,6 @@
-from .sequence import Landscape
+from __future__ import annotations
+
+from .landscape import Landscape
 
 
 class BooleanLandscape(Landscape):
@@ -31,4 +33,4 @@ class BooleanLandscape(Landscape):
         maximize : bool, default=True
             Determines the optimization direction.
         """
-        super().__init__(type="boolean", maximize=maximize)
+        super().__init__(kind="boolean", maximize=maximize)

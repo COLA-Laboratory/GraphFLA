@@ -20,22 +20,22 @@ import pytest
 from scipy import stats as scipy_stats
 
 from graphfla.analysis import (
-    gamma_statistic,
+    gamma,
     gamma_star,
     classify_epistasis,
     global_idiosyncratic_index,
     autocorrelation,
     r_s_ratio,
-    fitness_distance_corr,
-    neighbor_fit_corr,
+    fdc,
+    neighbor_fitness_correlation,
     higher_order_epistasis,
-    walsh_hadamard_coefficient,
+    walsh_hadamard,
     fitness_distribution,
     neutrality,
-    evol_enhance_mutations,
+    evolvability_enhancing_mutations,
     global_optima_accessibility,
-    mean_path_lengths_go,
-    lo_ratio,
+    mean_path_length_to_global_optimum,
+    local_optima_ratio,
     gradient_intensity,
 )
 
@@ -58,12 +58,12 @@ from _landscapes import (
 def test_gamma_additive_is_one():
     # Purely additive: a mutation's effect is identical on every background,
     # so the (non-centered) correlation of effects is exactly 1.
-    assert gamma_statistic(onemax(5), n_jobs=1) == pytest.approx(1.0, abs=1e-6)
+    assert gamma(onemax(5), n_jobs=1) == pytest.approx(1.0, abs=1e-6)
 
 
 def test_gamma_hoc_near_zero():
     # House-of-Cards: effects are uncorrelated across backgrounds -> ~0.
-    assert abs(gamma_statistic(hoc_landscape(6, seed=3), n_jobs=1)) < 0.5
+    assert abs(gamma(hoc_landscape(6, seed=3), n_jobs=1)) < 0.5
 
 
 def test_gamma_star_magnitude_sign_reciprocal():
@@ -81,20 +81,20 @@ def test_gamma_star_magnitude_sign_reciprocal():
 
 
 def test_classify_epistasis_pure_squares():
-    for square, key in [
-        (MAGNITUDE_SQUARE, "magnitude epistasis"),
-        (SIGN_SQUARE, "sign epistasis"),
-        (RECIPROCAL_SQUARE, "reciprocal sign epistasis"),
+    for square, field in [
+        (MAGNITUDE_SQUARE, "magnitude"),
+        (SIGN_SQUARE, "sign"),
+        (RECIPROCAL_SQUARE, "reciprocal_sign"),
     ]:
         res = classify_epistasis(from_map(square, 2))
-        assert res[key] == pytest.approx(1.0)
+        assert getattr(res, field) == pytest.approx(1.0)
 
 
 def test_classify_epistasis_additive_all_magnitude():
     res = classify_epistasis(onemax(4))
-    assert res["magnitude epistasis"] == pytest.approx(1.0)
-    assert res["sign epistasis"] == pytest.approx(0.0)
-    assert res["reciprocal sign epistasis"] == pytest.approx(0.0)
+    assert res.magnitude == pytest.approx(1.0)
+    assert res.sign == pytest.approx(0.0)
+    assert res.reciprocal_sign == pytest.approx(0.0)
 
 
 # ----------------------------------------------------------------------
@@ -162,7 +162,7 @@ def test_fitness_distance_corr_onemax_is_minus_one():
     # correlation of distance vs fitness is exactly -1. The *sign* is the
     # load-bearing property; a distance/direction flip would invert it.
     ls = onemax(5)
-    assert fitness_distance_corr(ls) == pytest.approx(-1.0, abs=1e-9)
+    assert fdc(ls) == pytest.approx(-1.0, abs=1e-9)
 
 
 # ----------------------------------------------------------------------
@@ -174,7 +174,7 @@ def test_neighbor_fit_corr_additive_is_one():
     # For additive f, mean-neighbour-fitness is an exactly linear function of
     # f (the quadratic terms cancel), so Pearson correlation is exactly +1.
     ls = onemax(5)
-    assert neighbor_fit_corr(ls, method="pearson") == pytest.approx(1.0, abs=1e-6)
+    assert neighbor_fitness_correlation(ls, method="pearson") == pytest.approx(1.0, abs=1e-6)
 
 
 # ----------------------------------------------------------------------
@@ -190,12 +190,13 @@ def test_higher_order_epistasis_additive_order1_is_one():
 
 
 def test_walsh_additive_higher_orders_are_zero():
-    coeffs = walsh_hadamard_coefficient(onemax(5), max_order=2)
-    order2 = coeffs.get(2, {})
-    assert order2  # there are pairwise terms to check
-    assert max(abs(v) for v in order2.values()) < 1e-6
+    coeffs = walsh_hadamard(onemax(5), max_order=2)
+    order2 = coeffs.loc[coeffs["order"] == 2, "coefficient"]
+    assert len(order2)  # there are pairwise terms to check
+    assert order2.abs().max() < 1e-6
     # ...while the additive (order-1) effects are non-trivial.
-    assert max(abs(v) for v in coeffs[1].values()) > 1e-2
+    order1 = coeffs.loc[coeffs["order"] == 1, "coefficient"]
+    assert order1.abs().max() > 1e-2
 
 
 # ----------------------------------------------------------------------
@@ -241,7 +242,7 @@ def test_neutrality_detects_ties():
 
 def test_evol_enhance_additive_is_one():
     # Additive: every improving edge also increases mean neighbour fitness.
-    assert evol_enhance_mutations(onemax(4)) == pytest.approx(1.0)
+    assert evolvability_enhancing_mutations(onemax(4)) == pytest.approx(1.0)
 
 
 # ----------------------------------------------------------------------
@@ -257,7 +258,7 @@ def test_global_optima_accessibility_onemax_is_one():
 def test_mean_path_lengths_go_onemax_is_n_over_2():
     # OneMax(6): improving path length to the all-ones corner equals the number
     # of zeros; averaged over all nodes that is n/2 = 3.
-    assert mean_path_lengths_go(onemax(6)) == pytest.approx(3.0)
+    assert mean_path_length_to_global_optimum(onemax(6)) == pytest.approx(3.0)
 
 
 # ----------------------------------------------------------------------
@@ -266,7 +267,7 @@ def test_mean_path_lengths_go_onemax_is_n_over_2():
 
 
 def test_lo_ratio_single_peak():
-    assert lo_ratio(onemax(4)) == pytest.approx(1.0 / 16.0)
+    assert local_optima_ratio(onemax(4)) == pytest.approx(1.0 / 16.0)
 
 
 def test_gradient_intensity_exact():

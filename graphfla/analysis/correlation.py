@@ -4,108 +4,19 @@ import warnings
 from scipy.stats import spearmanr, pearsonr, kendalltau
 from typing import TYPE_CHECKING
 
-from ..algorithms import hill_climb, SearchCache
+from ..algorithms import HillClimb, SearchCache
 
 if TYPE_CHECKING:
     from ..landscape.landscape import Landscape
 
 
-def _pythonize(value):
-    if isinstance(value, dict):
-        return {key: _pythonize(val) for key, val in value.items()}
-    if isinstance(value, list):
-        return [_pythonize(item) for item in value]
-    if isinstance(value, tuple):
-        return tuple(_pythonize(item) for item in value)
-    if isinstance(value, np.generic):
-        return value.item()
-    return value
+from ._utils import _pythonize
+import logging
+
+logger = logging.getLogger(__name__)
 
 
-def determine_neighbor_fitness(self) -> "Landscape":
-    """Calculates the mean fitness of neighbors for each node and the difference
-    in mean neighbor fitness between connected nodes.
-
-    This method adds two new attributes to the landscape graph:
-    1. 'mean_neighbor_fit': A vertex attribute representing the mean fitness of all
-    neighboring nodes.
-    2. 'delta_mean_neighbor_fit': An edge attribute representing the difference in
-    mean neighbor fitness along the improving (lower-fitness → higher-fitness)
-    direction, i.e. mean_neighbor_fit(target) - mean_neighbor_fit(source).
-
-    This can be useful for identifying evolvability-enhancing (EE) mutations as
-    introduced in Wagner (2023).
-
-    References
-    ----------
-    .. [Wagner 2023] Wagner, A. The role of evolvability in the evolution of
-       complex traits. Nat Rev Genet 24, 1-16 (2023).
-       https://doi.org/10.1038/s41576-023-00559-0
-
-    Returns
-    -------
-    Landscape
-        The landscape instance (self) with the new attributes added, for
-        method chaining.
-
-    Raises
-    ------
-    RuntimeError
-        If the landscape has not been built yet.
-    """
-    if self.graph is None:
-        raise RuntimeError("Graph is None despite landscape being built.")
-
-    if self.verbose:
-        print("Calculating neighbor fitness metrics...")
-
-    n_vertices = self.graph.vcount()
-
-    # Pre-fetch fitness into a numpy array for fast neighbour lookups
-    fitness_array = np.array(self.graph.vs["fitness"])
-
-    # Step 1: mean neighbour fitness per node
-    mean_neighbor_fit = np.full(n_vertices, np.nan)
-
-    adj_list = self.graph.get_adjlist(mode="all")
-
-    for vertex_idx in range(n_vertices):
-        neighbors = adj_list[vertex_idx]
-        if self._neutral_neighbors and vertex_idx in self._neutral_neighbors:
-            neighbors = list(
-                set(neighbors) | set(self._neutral_neighbors[vertex_idx])
-            )
-
-        if neighbors:
-            mean_neighbor_fit[vertex_idx] = np.mean(fitness_array[neighbors])
-
-    self.graph.vs["mean_neighbor_fit"] = mean_neighbor_fit.tolist()
-
-    if self.verbose:
-        print(f" - Added 'mean_neighbor_fit' attribute for {n_vertices} nodes")
-
-    # Step 2: delta mean neighbour fitness along each edge
-    n_edges = self.graph.ecount()
-
-    edge_list = self.graph.get_edgelist()
-    if edge_list:
-        edge_array = np.array(edge_list)
-        delta_mean_neighbor_fit = (
-            mean_neighbor_fit[edge_array[:, 1]] - mean_neighbor_fit[edge_array[:, 0]]
-        )
-    else:
-        delta_mean_neighbor_fit = np.zeros(n_edges)
-
-    self.graph.es["delta_mean_neighbor_fit"] = delta_mean_neighbor_fit.tolist()
-
-    if self.verbose:
-        print(f" - Added 'delta_mean_neighbor_fit' attribute for {n_edges} edges")
-
-    self._neighbor_fit_calculated = True
-    return self
-
-
-def neighbor_fit_corr(landscape, auto_calculate=True, method="pearson"):
+def neighbor_fitness_correlation(landscape, auto_calculate=True, method="pearson"):
     """
     Calculates the correlation between a configuration's fitness and the mean fitness
     of its neighbors across the fitness landscape.
@@ -155,7 +66,7 @@ def neighbor_fit_corr(landscape, auto_calculate=True, method="pearson"):
     if "mean_neighbor_fit" not in landscape.graph.vs.attributes():
         if auto_calculate:
             if landscape.verbose:
-                print("Neighbor fitness metrics not found. Computing them...")
+                logger.info("Neighbor fitness metrics not found. Computing them...")
             landscape.neighbor_fitness  # lazily computes mean/delta neighbor fitness
         else:
             raise RuntimeError(
@@ -180,10 +91,10 @@ def neighbor_fit_corr(landscape, auto_calculate=True, method="pearson"):
     n_nodes = len(data_clean)
 
     if n_nodes == 0:
-        if landscape.verbose:
-            print(
-                "Warning: No valid data for correlation calculation after removing NaNs."
-            )
+        warnings.warn(
+            "No valid data for correlation calculation after removing NaNs.",
+            RuntimeWarning,
+        )
         return _pythonize(np.nan)
 
     if method == "pearson":
@@ -196,10 +107,10 @@ def neighbor_fit_corr(landscape, auto_calculate=True, method="pearson"):
     return _pythonize(corr)
 
 
-def fitness_distance_corr(
+def fdc(
     landscape,
     method: str = "spearman",
-) -> tuple:
+) -> float:
     """
     Calculate the fitness distance correlation (FDC) of a landscape. This metric assesses how likely it is
     to encounter higher fitness values when moving closer to the global optimum.
@@ -283,9 +194,11 @@ def fitness_flattening_index(
     ffi_list = []
 
     cache = SearchCache(landscape.graph)
+    climber = HillClimb(cache)
     for i in data.index:
-        lo, _, trace = hill_climb(cache, i, return_trace=True)
-        if len(trace) >= min_len and lo == landscape.go_index:
+        result = climber.run(i)
+        trace = result.path
+        if len(trace) >= min_len and result.final == landscape.go_index:
             fitnesses = fitness.loc[trace]
             ffi, _ = check_diminishing_differences(fitnesses, method)
             ffi_list.append(ffi)
@@ -294,18 +207,7 @@ def fitness_flattening_index(
     return _pythonize(ffi)
 
 
-def ffi(landscape, min_len: int = 3, method: str = "spearman") -> float:
-    """Deprecated alias for `fitness_flattening_index`."""
-    warnings.warn(
-        "`ffi` is deprecated and will be removed in a future release. "
-        "Use `fitness_flattening_index` instead.",
-        FutureWarning,
-        stacklevel=2,
-    )
-    return fitness_flattening_index(landscape, min_len=min_len, method=method)
-
-
-def basin_fit_corr(landscape, method: str = "spearman"):
+def basin_fitness_correlation(landscape, method: str = "spearman"):
     """
     Calculate the correlation between the size of the basin of attraction and the fitness of local optima.
 
@@ -324,7 +226,7 @@ def basin_fit_corr(landscape, method: str = "spearman"):
     """
     if "size_basin_greedy" not in landscape.graph.vs.attributes():
         if landscape.verbose:
-            print("Basin sizes not found. Calculating basins of attraction...")
+            logger.info("Basin sizes not found. Calculating basins of attraction...")
         landscape.basins  # lazily computes greedy basins (size_basin_greedy, ...)
 
         if "size_basin_greedy" not in landscape.graph.vs.attributes():

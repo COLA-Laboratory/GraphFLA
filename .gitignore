@@ -14,3 +14,7 @@ bench/ALGO_BENCH_RESULTS.md
 
 # landscape-analysis performance work (uncommitted results/state)
 bench/ANALYSIS_BENCH_RESULTS.md
+
+# Byte-compiled / cached Python
+__pycache__/
+*.py[cod]

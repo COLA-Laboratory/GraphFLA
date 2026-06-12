@@ -1,5 +1,8 @@
-from .landscape import Landscape
+from __future__ import annotations
+
 from typing import List
+
+from .landscape import Landscape
 
 
 class SequenceLandscape(Landscape):
@@ -22,6 +25,7 @@ class SequenceLandscape(Landscape):
         self,
         alphabet: List[str],
         maximize: bool = True,
+        kind: str = "sequence",
     ):
         from .._data import SequenceHandler
         from .._neighbors import SequenceNeighborGenerator
@@ -30,12 +34,15 @@ class SequenceLandscape(Landscape):
         neighbor_generator = SequenceNeighborGenerator(len(alphabet))
 
         # Register the alphabet-specific strategies on this instance only (no
-        # global class-registry mutation), via the base constructor.
-        type_key = f"sequence_{id(alphabet)}"
+        # global class-registry mutation), via the base constructor. All sequence
+        # landscapes share the constant 'sequence' registry key -- the per-instance
+        # registry isolates the alphabet -- while ``kind`` carries the semantic
+        # identity ('dna'/'rna'/'protein'/'sequence') used by the discriminators.
         super().__init__(
-            type=type_key,
+            kind=kind,
             maximize=maximize,
             input_handler=handler,
             neighbor_generator=neighbor_generator,
+            strategy_key="sequence",
         )
         self.alphabet = alphabet
