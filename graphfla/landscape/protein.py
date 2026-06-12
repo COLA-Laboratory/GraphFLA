@@ -1,8 +1,7 @@
 from __future__ import annotations
 
 from .sequence import SequenceLandscape
-
-PROTEIN_ALPHABET = list("ACDEFGHIKLMNPQRSTVWY")
+from .._data import PROTEIN_ALPHABET
 
 
 class ProteinLandscape(SequenceLandscape):
