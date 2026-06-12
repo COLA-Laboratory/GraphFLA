@@ -41,6 +41,6 @@ setup(
         "python-igraph>=0.9",
         "scikit-learn>=0.24",
         "scipy>=1.6.0",
-        "tqdm>=4.40",
+        "rich>=13.0",
     ],
 )

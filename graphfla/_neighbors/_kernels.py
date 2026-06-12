@@ -11,7 +11,7 @@ from typing import List, Tuple
 
 import numpy as np
 import pandas as pd
-from tqdm import tqdm
+from .._progress import track
 
 from ._arrays import (
     _neutral_abs_threshold,
@@ -307,10 +307,10 @@ def _build_broadcast(
     edges, delta_fits, neutral = [], [], []
     neutral_eps = _neutral_abs_threshold(epsilon)
 
-    outer = (
-        tqdm(range(n - 1), desc="# Constructing neighborhoods (broadcast)")
-        if verbose
-        else range(n - 1)
+    outer = track(
+        range(n - 1),
+        description="Constructing neighborhoods (broadcast)",
+        verbose=verbose,
     )
 
     row_view = configs_array
@@ -1049,13 +1049,11 @@ def _active_generic(
     append_neutral = neutral_pairs.append
     neutral_eps = _neutral_abs_threshold(epsilon)
 
-    it = (
-        tqdm(
-            config_values, total=len(config_values),
-            desc="# Constructing neighborhoods (active)",
-        )
-        if verbose
-        else config_values
+    it = track(
+        config_values,
+        total=len(config_values),
+        description="Constructing neighborhoods (active)",
+        verbose=verbose,
     )
 
     for cid, cfg in enumerate(it):
