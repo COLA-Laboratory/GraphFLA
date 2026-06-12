@@ -1,4 +1,3 @@
-import itertools
 import math
 
 from .base_problem import OptimizationProblem

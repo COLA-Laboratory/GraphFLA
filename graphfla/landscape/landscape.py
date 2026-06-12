@@ -1,13 +1,12 @@
 from __future__ import annotations
 
-import ast
 import inspect
 import pandas as pd
 import numpy as np
 import igraph as ig
 import warnings
 
-from typing import Tuple, Dict, List, Union, Optional, Any
+from typing import Dict, Union, Optional, Any
 
 from ..lon import get_lon
 from . import _basin, _optima, _plateaus, _compute
@@ -15,26 +14,18 @@ from .._data import (
     DNA_ALPHABET,
     RNA_ALPHABET,
     PROTEIN_ALPHABET,
-    PreparedData,
     InputHandler,
     BooleanHandler,
     DefaultHandler,
     OrdinalHandler,
     SequenceHandler,
-    filter_data,
-    prepare_data,
-    clean_data,
-    encode_data,
     configs_series_from_array,
 )
 from ..utils import (
-    filter_graph,
-    remove_isolated_nodes,
-    infer_graph_properties,
     timeit,
 )
 from ..distances import mixed_distance, hamming_distance
-from ..exceptions import InvalidParameterError, NotBuiltError
+from ..exceptions import InvalidParameterError
 from .._logging import enable_verbose_logging
 
 from .._neighbors import (
@@ -43,7 +34,6 @@ from .._neighbors import (
     DefaultNeighborGenerator,
     OrdinalNeighborGenerator,
     SequenceNeighborGenerator,
-    build_edges,
 )
 from ._io import _IOMixin
 from ._build import _BuildMixin

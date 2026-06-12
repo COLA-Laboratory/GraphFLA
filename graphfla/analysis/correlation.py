@@ -2,13 +2,8 @@ import numpy as np
 import pandas as pd
 import warnings
 from scipy.stats import spearmanr, pearsonr, kendalltau
-from typing import TYPE_CHECKING
 
 from ..algorithms import HillClimb, SearchCache
-
-if TYPE_CHECKING:
-    from ..landscape.landscape import Landscape
-
 
 from ._utils import _pythonize
 import logging

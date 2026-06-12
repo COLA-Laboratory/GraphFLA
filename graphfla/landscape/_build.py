@@ -10,7 +10,7 @@ orchestrates, kept here so landscape.py reads as the class surface.
 from __future__ import annotations
 
 import warnings
-from typing import Any, Dict, List, Optional, Tuple, Union, TYPE_CHECKING
+from typing import Any, Dict, List, Optional, Tuple, Union
 
 import numpy as np
 import pandas as pd
@@ -30,9 +30,6 @@ from ..exceptions import InvalidParameterError, NotBuiltError
 import logging
 
 logger = logging.getLogger(__name__)
-
-if TYPE_CHECKING:
-    from .landscape import Landscape
 
 
 class _BuildMixin:

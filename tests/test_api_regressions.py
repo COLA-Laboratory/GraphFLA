@@ -18,7 +18,6 @@ from scipy import stats as scipy_stats
 
 from graphfla.landscape import Landscape, BooleanLandscape, DNALandscape
 from graphfla._data import BooleanHandler
-from graphfla.distances import hamming_distance
 from graphfla.algorithms import RandomWalk, SearchCache
 from graphfla.filters import LandscapeFilter
 from graphfla.sampling import latin_hypercube_sampling, sobol_sampling
