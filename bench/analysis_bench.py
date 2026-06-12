@@ -63,17 +63,18 @@ from graphfla.landscape.dna import DNALandscape
 from graphfla.landscape.boolean import BooleanLandscape
 from graphfla.landscape.ordinal import OrdinalLandscape
 from graphfla.analysis import (
-    lo_ratio, autocorrelation, r_s_ratio, gradient_intensity,
-    fitness_distance_corr, fitness_flattening_index, basin_fit_corr,
-    neighbor_fit_corr,
+    local_optima_ratio, autocorrelation, r_s_ratio, gradient_intensity,
+    fdc, fitness_flattening_index, basin_fitness_correlation,
+    neighbor_fitness_correlation,
     global_optima_accessibility, local_optima_accessibility,
-    mean_path_lengths_go, mean_dist_lo, mean_dist_go,
+    mean_path_length_to_global_optimum, mean_distance_to_local_optima,
+    mean_distance_to_global_optimum,
     neutrality, single_mutation_effects, all_mutation_effects,
-    evol_enhance_mutations,
+    evolvability_enhancing_mutations,
     classify_epistasis, idiosyncratic_index, global_idiosyncratic_index,
     diminishing_returns_index, increasing_costs_index,
-    gamma_statistic, walsh_hadamard_coefficient,
-    extradimensional_bypass_analysis, higher_order_epistasis,
+    gamma, walsh_hadamard,
+    extradimensional_bypass, higher_order_epistasis,
 )
 
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -358,7 +359,7 @@ def _make_funcs(max_cells):
     return [
         # ---- cheap structural / correlation wrappers ----
         dict(key="lo_ratio", group="cheap",
-             body=lambda ls, c, nj: lo_ratio(ls)),
+             body=lambda ls, c, nj: local_optima_ratio(ls)),
         dict(key="gradient_intensity", group="cheap",
              body=lambda ls, c, nj: gradient_intensity(ls)),
         dict(key="global_optima_accessibility", group="cheap",
@@ -366,19 +367,19 @@ def _make_funcs(max_cells):
         dict(key="local_optima_accessibility", group="cheap",
              body=lambda ls, c, nj: local_optima_accessibility(ls, c["lo0"])),
         dict(key="mean_path_lengths_go", group="cheap",
-             body=lambda ls, c, nj: mean_path_lengths_go(ls)),
+             body=lambda ls, c, nj: mean_path_length_to_global_optimum(ls)),
         dict(key="mean_dist_lo", group="cheap",
-             body=lambda ls, c, nj: mean_dist_lo(ls, c["lo0"])),
+             body=lambda ls, c, nj: mean_distance_to_local_optima(ls, c["lo0"])),
         dict(key="fitness_distance_corr", group="cheap", warm=["dist_to_go"],
-             body=lambda ls, c, nj: fitness_distance_corr(ls)),
+             body=lambda ls, c, nj: fdc(ls)),
         dict(key="basin_fit_corr", group="cheap", warm=["basins"],
-             body=lambda ls, c, nj: basin_fit_corr(ls)),
+             body=lambda ls, c, nj: basin_fitness_correlation(ls)),
         dict(key="neighbor_fit_corr", group="cheap", warm=["neighbor_fitness"],
-             body=lambda ls, c, nj: neighbor_fit_corr(ls)),
+             body=lambda ls, c, nj: neighbor_fitness_correlation(ls)),
         dict(key="evol_enhance_mutations", group="cheap", warm=["neighbor_fitness"],
-             body=lambda ls, c, nj: evol_enhance_mutations(ls)),
+             body=lambda ls, c, nj: evolvability_enhancing_mutations(ls)),
         dict(key="mean_dist_go", group="cheap", cold=["dist_to_go"],
-             body=lambda ls, c, nj: mean_dist_go(ls)),
+             body=lambda ls, c, nj: mean_distance_to_global_optimum(ls)),
         # ---- heavy lazy prerequisites (measured cold, every rep) ----
         dict(key="prereq_basins", group="prereq", cold=["basins"],
              body=lambda ls, c, nj: ls.basins),
@@ -406,7 +407,7 @@ def _make_funcs(max_cells):
         dict(key="higher_order_epistasis", group="mid", guard=_guard_order2(max_cells),
              body=lambda ls, c, nj: higher_order_epistasis(ls, order=2)),
         dict(key="walsh_hadamard_coefficient", group="mid", guard=_guard_order2(max_cells),
-             body=lambda ls, c, nj: walsh_hadamard_coefficient(ls, max_order=2)),
+             body=lambda ls, c, nj: walsh_hadamard(ls, max_order=2)),
         # ---- mutation-effects (joblib-parallel over pairs/positions) ----
         dict(key="single_mutation_effects", group="mid", parallel=True,
              body=lambda ls, c, nj: single_mutation_effects(ls, c["pos"], n_jobs=nj)),
@@ -417,11 +418,11 @@ def _make_funcs(max_cells):
              body=lambda ls, c, nj: classify_epistasis(
                  ls, approximate=True, sample_cut_prob=APPROX_CUT, seed=SEED)),
         dict(key="extradimensional_bypass", group="motif",
-             body=lambda ls, c, nj: extradimensional_bypass_analysis(
+             body=lambda ls, c, nj: extradimensional_bypass(
                  ls, approximate=True, sample_cut_prob=APPROX_CUT, seed=SEED)),
         # ---- the user-flagged multi-core epistasis metrics (sweep n_jobs) ----
         dict(key="gamma", group="epi", parallel=True,
-             body=lambda ls, c, nj: gamma_statistic(ls, n_jobs=nj)),
+             body=lambda ls, c, nj: gamma(ls, n_jobs=nj)),
         dict(key="gidi", group="epi", parallel=True,
              body=lambda ls, c, nj: global_idiosyncratic_index(ls, n_jobs=nj)),
     ]
