@@ -1,0 +1,6 @@
+Function / workload,Baseline runtime,Optimized runtime,Reduction
+"local_search, best-improvement @100k",0.929 s,0.140 s,6.6x
+"local_search, first-improvement @100k",0.100 s,0.096 s,1.04x
+"hill_climb, best-improvement @100k",1.739 s,0.328 s,5.3x
+"hill_climb, first-improvement @100k",0.752 s,0.604 s,1.24x
+random_walk @10k,2.152 s,1.693 s,1.27x

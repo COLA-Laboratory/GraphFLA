@@ -19,14 +19,14 @@ from scipy import stats as scipy_stats
 from graphfla.landscape import Landscape, BooleanLandscape, DNALandscape
 from graphfla._data import BooleanHandler
 from graphfla.distances import hamming_distance
-from graphfla.algorithms import random_walk, SearchCache
+from graphfla.algorithms import RandomWalk, SearchCache
 from graphfla.filters import LandscapeFilter
 from graphfla.sampling import latin_hypercube_sampling, sobol_sampling
 from graphfla.analysis import (
     autocorrelation,
     classify_epistasis,
     global_idiosyncratic_index,
-    mean_path_lengths_go,
+    mean_path_length_to_global_optimum,
 )
 
 from _landscapes import onemax, hoc_landscape, from_map, TWO_PEAK_3CUBE
@@ -44,11 +44,15 @@ def test_build_from_data_returns_self():
     assert ls.build_from_data(X, f, verbose=False) is ls
 
 
-def test_determine_methods_return_self():
+def test_compute_optima_methods_idempotent():
     ls = onemax(3)
-    # The optima determiners return self for chaining.
-    assert ls.determine_local_optima() is ls
-    assert ls.determine_global_optimum() is ls
+    n_lo, go = ls.n_lo, ls.go_index
+    # The optima steps are internal build-time recompute hooks now (the built
+    # landscape is treated as immutable); they return self and recompute the
+    # same result.
+    assert ls._compute_local_optima() is ls
+    assert ls._compute_global_optimum() is ls
+    assert ls.n_lo == n_lo and ls.go_index == go
 
 
 def test_cached_analysis_properties_compute_lazily():
@@ -102,9 +106,9 @@ def test_ordinal_default_strategy_and_hamming_warning():
 def test_random_walk_seed_reproducible():
     ls = onemax(5)
     cache = SearchCache(ls.graph)
-    w1 = random_walk(cache, 0, "fitness", 60, seed=42)
-    w2 = random_walk(cache, 0, "fitness", 60, seed=42)
-    w3 = random_walk(cache, 0, "fitness", 60, seed=7)
+    w1 = RandomWalk(cache, length=60, seed=42).run(0).path
+    w2 = RandomWalk(cache, length=60, seed=42).run(0).path
+    w3 = RandomWalk(cache, length=60, seed=7).run(0).path
     assert np.array_equal(w1, w2)        # same seed -> identical walk
     assert not np.array_equal(w1, w3)    # different seed -> different walk
 
@@ -118,9 +122,9 @@ def test_autocorrelation_seed_reproducible():
 
 def test_mean_path_lengths_go_seed_reproducible():
     ls = onemax(7)  # 128 nodes, so sampling actually subsets
-    m1 = mean_path_lengths_go(ls, n_samples=30, seed=5)
-    m2 = mean_path_lengths_go(ls, n_samples=30, seed=5)
-    m3 = mean_path_lengths_go(ls, n_samples=30, seed=99)
+    m1 = mean_path_length_to_global_optimum(ls, n_samples=30, seed=5)
+    m2 = mean_path_length_to_global_optimum(ls, n_samples=30, seed=5)
+    m3 = mean_path_length_to_global_optimum(ls, n_samples=30, seed=99)
     assert m1 == m2
     assert m1 != m3
 
@@ -145,8 +149,8 @@ def test_global_idiosyncratic_seed_reproducible():
 
 
 def test_register_handler_is_instance_isolated():
-    a = Landscape(type="default")
-    b = Landscape(type="default")
+    a = Landscape(kind="default")
+    b = Landscape(kind="default")
     a.register_input_handler("custom_xyz", BooleanHandler())
     assert "custom_xyz" in a._input_handlers
     assert "custom_xyz" not in b._input_handlers
@@ -168,8 +172,9 @@ def test_boolean_landscape_pickle_roundtrip():
 
 
 def test_sequence_landscape_pickle_roundtrip():
-    # SequenceLandscape keys its handler by id(alphabet); the handler must
-    # travel with the pickled instance (the registry is per-instance).
+    # SequenceLandscape registers its handler under the constant 'sequence'
+    # key; the handler must travel with the pickled instance (per-instance
+    # registry).
     seqs = ["".join(p) for p in product("ACGT", repeat=2)]
     f = [float(i) for i in range(len(seqs))]
     ls = DNALandscape()
@@ -177,8 +182,8 @@ def test_sequence_landscape_pickle_roundtrip():
     ls2 = pickle.loads(pickle.dumps(ls))
     assert ls2.n_configs == ls.n_configs
     assert ls2.graph.ecount() == ls.graph.ecount()
-    assert ls2.type in ls2._input_handlers
-    assert ls2.type in ls2._neighbor_generators
+    assert ls2._strategy_key in ls2._input_handlers
+    assert ls2._strategy_key in ls2._neighbor_generators
 
 
 # ----------------------------------------------------------------------
@@ -188,7 +193,7 @@ def test_sequence_landscape_pickle_roundtrip():
 
 def test_unknown_type_raises_valueerror():
     with pytest.raises(ValueError):
-        Landscape(type="banana")
+        Landscape(kind="banana")
 
 
 # ----------------------------------------------------------------------

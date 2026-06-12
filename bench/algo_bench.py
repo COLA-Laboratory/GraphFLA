@@ -62,7 +62,7 @@ from graphfla.landscape.protein import ProteinLandscape
 from graphfla.landscape.dna import DNALandscape
 from graphfla.landscape.boolean import BooleanLandscape
 from graphfla.landscape.ordinal import OrdinalLandscape
-from graphfla.algorithms import local_search, hill_climb, random_walk
+from graphfla.algorithms import HillClimb, RandomWalk
 
 try:  # present only after the optimisation lands; benchmark works either way
     from graphfla.algorithms import SearchCache
@@ -213,41 +213,19 @@ def make_prep(landscape, tier):
 # SearchCache (optimised API). When `fold` is a hash we are in the IDENTITY
 # pass (capture full trajectories); when None we are TIMING the hot path.
 
-def wl_local_search(obj, nodes, method, fold=None):
-    if fold is not None:
-        out = np.empty(len(nodes), dtype=np.int64)
-        if USE_CACHE:
-            for k in range(len(nodes)):
-                nxt = local_search(obj, int(nodes[k]), method)
-                out[k] = -1 if nxt is None else nxt
-        else:
-            for k in range(len(nodes)):
-                nxt = local_search(obj, int(nodes[k]), "delta_fit", method)
-                out[k] = -1 if nxt is None else nxt
-        fold.update(out.tobytes())
-    elif USE_CACHE:
-        for k in range(len(nodes)):
-            local_search(obj, int(nodes[k]), method)
-    else:
-        for k in range(len(nodes)):
-            local_search(obj, int(nodes[k]), "delta_fit", method)
-
-
 def wl_hill_climb(obj, nodes, method, fold=None):
+    # Phase-4 Walk API: hoist one HillClimb per batch (matches the perf-optimal
+    # usage in basin construction) and reuse it across the node loop. The old
+    # single-step `local_search` was folded into HillClimb, so that tier is gone.
+    climber = HillClimb(obj, strategy=method)
     if fold is not None:
         for k in range(len(nodes)):
-            if USE_CACHE:
-                lo, steps, trace = hill_climb(obj, int(nodes[k]), return_trace=True, search_method=method)
-            else:
-                lo, steps, trace = hill_climb(obj, int(nodes[k]), "delta_fit", return_trace=True, search_method=method)
-            fold.update(struct.pack("<qq", int(lo), int(steps)))
-            fold.update(np.asarray(trace, dtype=np.int64).tobytes())
-    elif USE_CACHE:
-        for k in range(len(nodes)):
-            hill_climb(obj, int(nodes[k]), search_method=method)
+            res = climber.run(int(nodes[k]))
+            fold.update(struct.pack("<qq", int(res.final), int(res.n_steps)))
+            fold.update(np.asarray(res.path, dtype=np.int64).tobytes())
     else:
         for k in range(len(nodes)):
-            hill_climb(obj, int(nodes[k]), "delta_fit", search_method=method)
+            climber.descend(int(nodes[k]))  # allocation-free hot path
 
 
 def wl_random_walk(obj, nodes, method, fold=None):
@@ -255,19 +233,17 @@ def wl_random_walk(obj, nodes, method, fold=None):
     if fold is not None:
         for k in range(len(nodes)):
             ws = master.getrandbits(32)
-            arr = random_walk(obj, int(nodes[k]), "fitness", WALK_LEN, seed=ws)
-            col = np.asarray(arr[:, 1], dtype=np.int64)
+            path = RandomWalk(obj, length=WALK_LEN, seed=ws).run(int(nodes[k])).path
+            col = np.asarray(path, dtype=np.int64)
             fold.update(struct.pack("<q", col.size))
             fold.update(col.tobytes())
     else:
         for k in range(len(nodes)):
             ws = master.getrandbits(32)
-            random_walk(obj, int(nodes[k]), "fitness", WALK_LEN, seed=ws)
+            RandomWalk(obj, length=WALK_LEN, seed=ws).run(int(nodes[k]))
 
 
 WORKLOADS = [
-    ("local_search_best", wl_local_search, "best-improvement", "climb"),
-    ("local_search_first", wl_local_search, "first-improvement", "climb"),
     ("hill_climb_best", wl_hill_climb, "best-improvement", "climb"),
     ("hill_climb_first", wl_hill_climb, "first-improvement", "climb"),
     ("random_walk", wl_random_walk, None, "walk"),

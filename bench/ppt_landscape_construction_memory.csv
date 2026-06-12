@@ -1,0 +1,14 @@
+Dataset,Baseline memory,Optimized memory,Reduction
+GB1 protein-L,683 MB,402 MB,1.7x
+TrpB3I protein-S,248 MB,14 MB,17.7x
+Papkou DNA-L,371 MB,85 MB,4.4x
+Westmann DNA-S,1505 MB,~0 MB,eliminated
+CR9114 boolean-L,80 MB,48 MB,1.7x
+CR6261 boolean-S,~0 MB,~0 MB,flat
+WReOs ordinal-S,~0 MB,~0 MB,flat
+HPO ordinal-L,370 MB,127 MB,2.9x
+UBE4B sparse-S,68 MB,~0 MB,eliminated
+D7PM05 sparse-M,2988 MB,4 MB,747x
+GFP sparse-L,433 MB,20 MB,21.7x
+PHOT sparse-L,649 MB,123 MB,5.3x
+HIS7 sparse-XL,3454 MB,1000 MB,3.5x

@@ -5,19 +5,10 @@ import warnings
 import numpy as np
 import pandas as pd
 
-from .epistasis import _pack_rows
+from ._utils import _pythonize, _pack_rows
+import logging
 
-
-def _pythonize(value):
-    if isinstance(value, dict):
-        return {key: _pythonize(val) for key, val in value.items()}
-    if isinstance(value, list):
-        return [_pythonize(item) for item in value]
-    if isinstance(value, tuple):
-        return tuple(_pythonize(item) for item in value)
-    if isinstance(value, np.generic):
-        return value.item()
-    return value
+logger = logging.getLogger(__name__)
 
 
 def _row_group_ids(M):
@@ -96,7 +87,7 @@ def _mutation_effects_for_position(X, f_arr, f_std, position, test_type):
     return results
 
 
-def evol_enhance_mutations(landscape, epsilon=0, auto_calculate=True):
+def evolvability_enhancing_mutations(landscape, epsilon=0, auto_calculate=True):
     """
     Calculates the proportion of edges where the higher-fitness node connects to
     a neighborhood with higher mean fitness than the lower-fitness node.
@@ -139,7 +130,7 @@ def evol_enhance_mutations(landscape, epsilon=0, auto_calculate=True):
     if "delta_mean_neighbor_fit" not in landscape.graph.es.attributes():
         if auto_calculate:
             if landscape.verbose:
-                print("Neighbor fitness metrics not found. Computing them...")
+                logger.info("Neighbor fitness metrics not found. Computing them...")
             landscape.neighbor_fitness  # lazily computes mean/delta neighbor fitness
         else:
             raise RuntimeError(
@@ -152,27 +143,14 @@ def evol_enhance_mutations(landscape, epsilon=0, auto_calculate=True):
     total_edges = landscape.graph.ecount()
 
     if total_edges == 0:
-        if landscape.verbose:
-            print("Warning: No edges found in the landscape graph.")
-        return 0.0
+        warnings.warn("No edges found in the landscape graph.", RuntimeWarning)
+        # Undefined with no edges (no mutations to evaluate).
+        return float("nan")
 
     ee_count = sum(1 for delta in delta_values if delta > epsilon)
     ee_proportion = ee_count / total_edges
 
     return _pythonize(ee_proportion)
-
-
-def calculate_evol_enhance(landscape, epsilon=0, auto_calculate=True):
-    """Deprecated alias for `evol_enhance_mutations`."""
-    warnings.warn(
-        "`calculate_evol_enhance` is deprecated and will be removed in a future "
-        "release. Use `evol_enhance_mutations` instead.",
-        FutureWarning,
-        stacklevel=2,
-    )
-    return evol_enhance_mutations(
-        landscape, epsilon=epsilon, auto_calculate=auto_calculate
-    )
 
 
 def neutrality(landscape, threshold: float = 0.01) -> float:
@@ -220,7 +198,8 @@ def neutrality(landscape, threshold: float = 0.01) -> float:
                 neutral_pairs += 1
             total_pairs += 1
 
-    neutrality_val = neutral_pairs / total_pairs if total_pairs > 0 else 0
+    # Undefined when there are no neighbour pairs at all.
+    neutrality_val = neutral_pairs / total_pairs if total_pairs > 0 else float("nan")
 
     return _pythonize(neutrality_val)
 

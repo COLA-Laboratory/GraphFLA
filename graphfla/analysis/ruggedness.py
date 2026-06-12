@@ -4,24 +4,15 @@ import pandas as pd
 import warnings
 import random
 
-from ..algorithms import random_walk, SearchCache
+from ..algorithms import RandomWalk, SearchCache
 from typing import Tuple
 from sklearn.linear_model import LinearRegression
 
 
-def _pythonize(value):
-    if isinstance(value, dict):
-        return {key: _pythonize(val) for key, val in value.items()}
-    if isinstance(value, list):
-        return [_pythonize(item) for item in value]
-    if isinstance(value, tuple):
-        return tuple(_pythonize(item) for item in value)
-    if isinstance(value, np.generic):
-        return value.item()
-    return value
+from ._utils import _pythonize
 
 
-def lo_ratio(landscape) -> float:
+def local_optima_ratio(landscape) -> float:
     """
     The most intuitive measure of landscape ruggedness. It is based on the ratio
     of the number of local optima to the total number of configurations in the landscape.
@@ -40,7 +31,8 @@ def lo_ratio(landscape) -> float:
     n_lo = landscape.n_lo
     n_configs = landscape.n_configs
     if n_configs == 0:
-        return 0.0
+        # Undefined on an empty landscape (no configurations to count).
+        return float("nan")
     ruggedness = n_lo / n_configs
 
     return _pythonize(ruggedness)
@@ -95,9 +87,9 @@ def autocorrelation(
     for _ in range(walk_times):
         random_node = rand.randrange(0, landscape.n_configs)
         walk_seed = rand.getrandbits(32) if seed is not None else None
-        logger = random_walk(cache, random_node, "fitness", walk_length, seed=walk_seed)
-        if logger.shape[0] > lag:
-            series.append(np.asarray(logger[:, 2], dtype=float))
+        result = RandomWalk(cache, length=walk_length, seed=walk_seed).run(random_node)
+        if len(result.path) > lag:
+            series.append(cache.fitness[result.path].astype(float))
 
     if not series:
         return _pythonize(np.nan)
@@ -132,14 +124,19 @@ def gradient_intensity(landscape) -> float:
     graph = landscape.graph
     total_edges = graph.ecount()
     if total_edges == 0:
-        return 0.0
+        # Undefined with no edges (no fitness gradients to average).
+        return float("nan")
 
     # delta_fit defaults to 0 when the attribute is missing on an edge
     delta_fits = [abs(edge.attributes().get("delta_fit", 0)) for edge in graph.es]
     total_delta_fit = sum(delta_fits)
     fitness = landscape.graph.vs["fitness"]
 
-    gradient = (total_delta_fit / total_edges) / pd.Series(fitness).mean()
+    mean_fitness = pd.Series(fitness).mean()
+    if mean_fitness == 0:
+        # Normalisation by mean fitness is undefined when the mean is zero.
+        return float("nan")
+    gradient = (total_delta_fit / total_edges) / mean_fitness
     return _pythonize(gradient)
 
 

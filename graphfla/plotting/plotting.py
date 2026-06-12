@@ -565,11 +565,12 @@ def draw_adaptive_walk(
     if walk_type not in ["best-improvement", "first-improvement"]:
         raise ValueError("walk_type must be 'best-improvement' or 'first-improvement'")
 
-    from ..algorithms import hill_climb, SearchCache
+    from ..algorithms import HillClimb, SearchCache
 
     starting_nodes = random.sample(range(total_nodes), n_walks)
     all_walks = []
     cache = SearchCache(landscape.graph)
+    climber = HillClimb(cache, strategy=walk_type)
 
     if verbose > 0:
         print(f"Performing {n_walks} adaptive walks...")
@@ -578,12 +579,7 @@ def draw_adaptive_walk(
         if verbose > 0 and (i + 1) % max(1, n_walks // 10) == 0:
             print(f"Completed {i + 1}/{n_walks} walks")
 
-        final_node, steps, trace = hill_climb(
-            cache,
-            start_node,
-            return_trace=True,
-            search_method=walk_type,
-        )
+        trace = climber.run(start_node).path
 
         walk_fitness = [landscape.graph.vs[node]["fitness"] for node in trace]
         walk_steps = list(range(1, len(trace) + 1))  # 1-based step index

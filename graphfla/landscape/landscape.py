@@ -1,4 +1,7 @@
+from __future__ import annotations
+
 import ast
+import inspect
 import pandas as pd
 import numpy as np
 import igraph as ig
@@ -7,8 +10,7 @@ import warnings
 from typing import Tuple, Dict, List, Union, Optional, Any
 
 from ..lon import get_lon
-from ..algorithms import basin, optima, plateaus
-from ..analysis import correlation, navigability
+from . import _basin, _optima, _plateaus, _compute
 from .._data import (
     DNA_ALPHABET,
     RNA_ALPHABET,
@@ -32,6 +34,8 @@ from ..utils import (
     timeit,
 )
 from ..distances import mixed_distance, hamming_distance
+from ..exceptions import InvalidParameterError, NotBuiltError
+from .._logging import enable_verbose_logging
 
 from .._neighbors import (
     NeighborGenerator,
@@ -41,8 +45,14 @@ from .._neighbors import (
     SequenceNeighborGenerator,
     build_edges,
 )
+from ._io import _IOMixin
+from ._build import _BuildMixin
+import logging
 
-class Landscape:
+logger = logging.getLogger(__name__)
+
+
+class Landscape(_IOMixin, _BuildMixin):
     """Class implementing the fitness landscape object.
 
     This class provides a foundational structure for fitness landscapes,
@@ -194,22 +204,12 @@ class Landscape:
     >>> X_data = pd.DataFrame({'var_0': [0, 0, 1, 1], 'var_1': [0, 1, 0, 1]})
     >>> f_data = pd.Series([1.0, 2.0, 3.0, 2.5])
 
-    >>> # landscape = Landscape(type="boolean").build_from_data(X_data, f_data)
-    >>> landscape.describe() 
-    --- Landscape Summary ---
-    Class: Landscape
-    Built: True
-    Variables (n_vars): 2
-    Configurations (n_configs): 4
-    Connections (n_edges): 4
-    Local Optima (n_lo): 1
-    Global Optimum Index: 2
-    Maximize Fitness: True
-    Basins Calculated: True
-    Paths Calculated: False
-    LON Calculated: False
-    ---
-    >>> print(f"Number of configurations: {landscape.n_configs}") 
+    >>> landscape = BooleanLandscape().build_from_data(X_data, f_data, verbose=False)
+    >>> landscape.describe()["n_lo"]
+    1
+    >>> repr(landscape)
+    'BooleanLandscape(maximize=True)'
+    >>> print(f"Number of configurations: {landscape.n_configs}")
     Number of configurations: 4
     >>> print(f"Global optimum fitness: {landscape.go['fitness']}")  
     Global optimum fitness: 3.0
@@ -242,10 +242,11 @@ class Landscape:
 
     def __init__(
         self,
-        type: str = "default",
+        kind: str = "default",
         maximize: bool = True,
         input_handler: Optional[InputHandler] = None,
         neighbor_generator: Optional[NeighborGenerator] = None,
+        strategy_key: Optional[str] = None,
     ):
         # Core attributes
         self.graph = None
@@ -269,20 +270,30 @@ class Landscape:
         self.go = None
         self.lon = None
         self.has_lon = False
-        self.type = type
+        # ``kind`` is the public semantic identity ('boolean'/'ordinal'/'dna'/
+        # 'rna'/'protein'/'default') that downstream code branches on (distance
+        # metric, Walsh-Hadamard encoding). ``_strategy_key`` is the internal
+        # key into the handler/generator registries; it equals ``kind`` except
+        # for sequence subclasses, which share a constant 'sequence' key (the
+        # per-instance registry isolates their alphabet-specific handlers).
+        self.kind = kind
+        self._strategy_key = strategy_key if strategy_key is not None else kind
 
         # Per-instance copies of the class-level registries so a custom
         # handler/generator never mutates global state or leaks across instances.
         self._input_handlers = dict(Landscape._input_handlers)
         self._neighbor_generators = dict(Landscape._neighbor_generators)
         if input_handler is not None:
-            self._input_handlers[type] = input_handler
+            self._input_handlers[self._strategy_key] = input_handler
         if neighbor_generator is not None:
-            self._neighbor_generators[type] = neighbor_generator
-        if type not in self._input_handlers or type not in self._neighbor_generators:
-            raise ValueError(
-                f"Unknown landscape type {type!r}. Registered types: "
-                f"{sorted(self._input_handlers)}. Register a custom type by passing "
+            self._neighbor_generators[self._strategy_key] = neighbor_generator
+        if (
+            self._strategy_key not in self._input_handlers
+            or self._strategy_key not in self._neighbor_generators
+        ):
+            raise InvalidParameterError(
+                f"Unknown landscape kind {kind!r}. Registered kinds: "
+                f"{sorted(self._input_handlers)}. Register a custom kind by passing "
                 f"input_handler= and neighbor_generator= to the constructor."
             )
 
@@ -381,7 +392,7 @@ class Landscape:
         """Per-node greedy basin size (``size_basin_greedy``), computed lazily."""
         self._check_built()
         if not self._basin_calculated:
-            basin.determine_basin_of_attraction(self)
+            _basin.determine_basin_of_attraction(self)
         return pd.Series(self.graph.vs["size_basin_greedy"], name="size_basin_greedy")
 
     @property
@@ -389,7 +400,7 @@ class Landscape:
         """Per-node accessible-basin size (``size_basin_accessible``), computed lazily."""
         self._check_built()
         if not self._path_calculated:
-            navigability.determine_accessible_paths(self)
+            _compute.determine_accessible_paths(self)
         return pd.Series(
             self.graph.vs["size_basin_accessible"], name="size_basin_accessible"
         )
@@ -400,7 +411,7 @@ class Landscape:
         (``dist_go``), computed lazily."""
         self._check_built()
         if not self._distance_calculated:
-            navigability.determine_dist_to_go(
+            _compute.determine_dist_to_go(
                 self, distance=self._get_default_distance_metric()
             )
         return pd.Series(self.graph.vs["dist_go"], name="dist_go")
@@ -410,7 +421,7 @@ class Landscape:
         """Per-node mean neighbour fitness (``mean_neighbor_fit``), computed lazily."""
         self._check_built()
         if not self._neighbor_fit_calculated:
-            correlation.determine_neighbor_fitness(self)
+            _compute.determine_neighbor_fitness(self)
         return pd.Series(self.graph.vs["mean_neighbor_fit"], name="mean_neighbor_fit")
 
     @property
@@ -459,24 +470,64 @@ class Landscape:
             raise KeyError(f"Index {index} not found among landscape configurations.")
 
     def __str__(self):
-        """Return a string summary of the landscape."""
+        """Human-readable one-line summary (sizes when built)."""
+        head = f"{self.__class__.__name__}(kind={self.kind!r})"
         if not self._is_built:
-            return f"{self.__class__.__name__} object (uninitialized)"
-
-        n_configs = self.graph.vcount() if self.graph is not None else "?"
-        n_edges = self.graph.ecount() if self.graph is not None else "?"
+            return f"{head} — not built"
         n_vars_str = str(self.n_vars) if self.n_vars is not None else "?"
         n_lo_str = str(self.n_lo) if self.n_lo is not None else "?"
-
         return (
-            f"{self.__class__.__name__} with {n_vars_str} variables, "
-            f"{n_configs} configurations, {n_edges} connections, "
-            f"and {n_lo_str} local optima."
+            f"{head}: {n_vars_str} variables, {self.n_configs} configurations, "
+            f"{self.n_edges} edges, {n_lo_str} local optima"
         )
 
     def __repr__(self):
-        """Return a concise string representation of the landscape."""
-        return self.__str__()
+        """Params-forward representation (scikit-learn style)."""
+        params = ", ".join(f"{k}={v!r}" for k, v in self.get_params().items())
+        return f"{self.__class__.__name__}({params})"
+
+    @classmethod
+    def _get_param_names(cls):
+        """Constructor parameter names for ``get_params`` (scikit-learn style).
+
+        Introspects this class's ``__init__`` and drops ``self`` plus the
+        internal strategy-wiring parameters (``input_handler`` /
+        ``neighbor_generator`` / ``strategy_key``), which are implementation
+        details rather than reportable configuration.
+        """
+        sig = inspect.signature(cls.__init__)
+        names = []
+        for name, p in sig.parameters.items():
+            if name == "self" or p.kind in (p.VAR_POSITIONAL, p.VAR_KEYWORD):
+                continue
+            if name in ("input_handler", "neighbor_generator", "strategy_key"):
+                continue
+            names.append(name)
+        return sorted(names)
+
+    def get_params(self, deep: bool = True) -> Dict[str, Any]:
+        """Return the constructor parameters as a dict (scikit-learn style).
+
+        Enables introspection and ``sklearn.base.clone``-style reconstruction
+        (``type(ls)(**ls.get_params())`` yields a fresh, unbuilt landscape).
+        """
+        return {name: getattr(self, name) for name in self._get_param_names()}
+
+    def set_params(self, **params) -> "Landscape":
+        """Set constructor parameters by name (scikit-learn style).
+
+        Intended for configuring an unbuilt landscape; unknown names raise
+        :class:`InvalidParameterError`.
+        """
+        valid = set(self._get_param_names())
+        for key, value in params.items():
+            if key not in valid:
+                raise InvalidParameterError(
+                    f"Invalid parameter {key!r} for {type(self).__name__}; "
+                    f"valid parameters are {sorted(valid)}."
+                )
+            setattr(self, key, value)
+        return self
 
     def __len__(self):
         """Return the number of configurations (nodes) in the landscape."""
@@ -564,7 +615,7 @@ class Landscape:
             Optional: the typed landscape subclasses (``BooleanLandscape``,
             ``OrdinalLandscape``, ``DNALandscape``/``RNALandscape``/
             ``ProteinLandscape``) auto-detect it. Supply it explicitly for a
-            generic ``Landscape(type="default")`` with heterogeneous (mixed)
+            generic ``Landscape(kind="default")`` with heterogeneous (mixed)
             columns.
         epsilon : float, default=0
             Neutrality threshold. Neighboring configurations whose absolute
@@ -667,15 +718,40 @@ class Landscape:
         """
         self._check_not_built()
 
+        # Validate the build parameters up front with clear messages, before any
+        # state is mutated, instead of failing deep in the pipeline.
+        if filter_mode not in ("any", "both"):
+            raise InvalidParameterError(
+                f"filter_mode must be 'any' or 'both', got {filter_mode!r}."
+            )
+        if neighborhood_strategy is not None and neighborhood_strategy not in (
+            "auto",
+            "active",
+            "pairwise",
+            "broadcast",
+        ):
+            raise InvalidParameterError(
+                "neighborhood_strategy must be one of None, 'auto', 'active', "
+                f"'pairwise', 'broadcast', got {neighborhood_strategy!r}."
+            )
+        if epsilon < 0:
+            raise InvalidParameterError(f"epsilon must be >= 0, got {epsilon!r}.")
+        if n_edit < 1:
+            raise InvalidParameterError(f"n_edit must be >= 1, got {n_edit!r}.")
+
         self.epsilon = float(epsilon)
-        self.verbose = verbose
+        # Coerce to a real bool so the documented bool attribute can't be poisoned
+        # by an explicit verbose=None.
+        self.verbose = bool(verbose)
+        if self.verbose:
+            enable_verbose_logging()
 
         # Fall back to the per-class default (e.g. "active" for ordinal).
         if neighborhood_strategy is None:
             neighborhood_strategy = self._default_neighborhood_strategy
 
         if verbose:
-            print("Building Landscape from data...")
+            logger.info("Building Landscape from data...")
 
         handler = self._resolve_strategies()
         processed_data = self._preprocess_data(
@@ -690,7 +766,7 @@ class Landscape:
 
         # Ordinal/mixed landscapes need ±1-step (Manhattan-1) neighbours, not
         # Hamming; data_types is only known after preprocessing, so adjust here.
-        has_ordinal = (self.type == "ordinal") or bool(
+        has_ordinal = (self.kind == "ordinal") or bool(
             self.data_types and "ordinal" in self.data_types.values()
         )
         if has_ordinal:
@@ -718,307 +794,13 @@ class Landscape:
             verbose=verbose,
         )
 
-        plateaus.build_plateaus(self, neutral_pairs)
+        _plateaus.build_plateaus(self, neutral_pairs)
 
         self._analyze()
 
         self._finalize_build()
 
         return self
-
-    @classmethod
-    def build_from_graph(
-        cls,
-        filepath: str,
-        *,
-        verbose: bool = True,
-    ) -> "Landscape":
-        """Construct a landscape from a saved graph file.
-
-        This class method creates a new landscape instance by loading a previously
-        saved graph, avoiding the need to reconstruct the landscape from original
-        configuration data. This is significantly faster than building from scratch.
-
-        Parameters
-        ----------
-        filepath : str
-            Path to the saved graph file (.graphml).
-        verbose : bool, default=True
-            Controls verbosity of output during loading and analysis.
-
-        Returns
-        -------
-        Landscape
-            A new instance populated with the graph and inferred properties.
-
-        Raises
-        ------
-        ValueError
-            If the file cannot be read or doesn't contain valid graph data.
-        FileNotFoundError
-            If the specified file doesn't exist.
-
-        Notes
-        -----
-        This method will:
-        1. Load the saved graph structure and attributes
-        2. Infer essential landscape properties from the graph
-        3. Recalculate local optima and global optimum from the graph structure
-
-        Previously computed attributes (basins, accessible paths, distances,
-        neighbor fitness) are preserved from the saved graph if present.
-
-        Some specialized attributes from subclasses (like sequence_length in
-        SequenceLandscape) will be inferred where possible.
-
-        Only load GraphML from trusted sources: embedded configuration metadata
-        is parsed with :func:`ast.literal_eval` (safe against arbitrary code
-        execution, but not a substitute for validating untrusted files).
-        """
-        instance = cls()
-        instance.verbose = verbose
-
-        if verbose:
-            print(f"Loading landscape from {filepath}...")
-
-        try:
-            graph = ig.Graph.Read_GraphML(filepath)
-        except FileNotFoundError:
-            raise FileNotFoundError(f"Graph file not found: {filepath}")
-        except Exception as e:
-            raise ValueError(f"Failed to load graph from {filepath}: {e}")
-
-        instance.graph = graph
-
-        if "maximize" in graph.attributes():
-            instance.maximize = bool(graph["maximize"])
-        else:
-            instance.maximize = True
-            if verbose:
-                print(
-                    "Warning: 'maximize' attribute not found in graph. Defaulting to True."
-                )
-
-        if "epsilon" in graph.attributes():
-            try:
-                epsilon_str = graph["epsilon"]
-                if epsilon_str == "auto":
-                    instance.epsilon = 0.0
-                else:
-                    instance.epsilon = float(epsilon_str)
-            except Exception:
-                instance.epsilon = 0.0
-                if verbose:
-                    print(
-                        "Warning: Could not parse 'epsilon' attribute. Defaulting to 0."
-                    )
-        else:
-            instance.epsilon = 0.0
-
-        if "landscape_type" in graph.attributes():
-            instance.type = graph["landscape_type"]
-
-        # --- data_types (parsed first; required to reconstruct configs) ---
-        if "data_types_data" in graph.attributes():
-            try:
-                instance.data_types = ast.literal_eval(graph["data_types_data"])
-            except Exception:
-                instance.data_types = None
-                if verbose:
-                    print("Warning: Could not parse data_types from graph attributes.")
-        else:
-            instance.data_types = None
-
-        # --- configs reconstruction ---
-        # Preferred path: re-encode from the feature-column vertex attributes
-        # _build_graph always writes, avoiding the huge configs_data string the
-        # old format produced for large landscapes.
-        instance.configs = None
-        instance._configs_array = None
-        instance.config_dict = None
-
-        if instance.data_types is not None:
-            try:
-                feature_cols = [
-                    c for c in instance.data_types.keys()
-                    if c in graph.vs.attributes()
-                ]
-                if feature_cols and "fitness" in graph.vs.attributes():
-                    X_rec = pd.DataFrame(
-                        {c: graph.vs[c] for c in feature_cols}
-                    )
-                    f_rec = pd.Series(graph.vs["fitness"], name="fitness")
-                    prepared = encode_data(
-                        X_rec, f_rec, instance.data_types, verbose=False
-                    )
-                    instance.configs = prepared.configs
-                    instance._configs_array = prepared.configs_array
-                    instance.config_dict = prepared.config_dict
-            except Exception as e:
-                if verbose:
-                    print(
-                        f"Warning: Could not reconstruct configs from vertex attributes: {e}"
-                    )
-                instance.configs = None
-                instance._configs_array = None
-                instance.config_dict = None
-
-        # Legacy fallback: parse the old single-string configs_data attribute
-        # (only present in GraphML files saved before this refactor).
-        if instance.configs is None and "configs_data" in graph.attributes():
-            try:
-                raw = ast.literal_eval(graph["configs_data"])
-                parsed: dict = {}
-                for idx_str, config_str in raw.items():
-                    try:
-                        parsed[int(idx_str)] = ast.literal_eval(config_str)
-                    except Exception:
-                        if verbose:
-                            print(
-                                f"Warning: Could not parse config entry: {idx_str}"
-                            )
-                instance.configs = pd.Series(parsed)
-            except Exception as e:
-                if verbose:
-                    print(f"Warning: Could not parse legacy configs_data: {e}")
-                instance.configs = None
-
-        if instance.configs is None and verbose:
-            print(
-                "Warning: No configs data found in graph. Some analyses may be limited."
-            )
-
-        # config_dict fallback from legacy attribute if reconstruction did not provide it
-        if instance.config_dict is None and "config_dict_data" in graph.attributes():
-            try:
-                instance.config_dict = ast.literal_eval(graph["config_dict_data"])
-            except Exception:
-                if verbose:
-                    print("Warning: Could not parse config_dict from graph attributes.")
-
-        # Infer basic properties (n_configs, n_edges, n_vars)
-        instance._n_configs, instance._n_edges, instance.n_vars = infer_graph_properties(
-            instance.graph,
-            data_types=instance.data_types,
-            configs=instance.configs,
-            verbose=instance.verbose,
-        )
-
-        # Restore subclass convenience attributes by landscape type.
-        restore_type = instance.type
-        if (
-            not isinstance(restore_type, str) or restore_type in ("", "default")
-        ) and "landscape_class" in graph.attributes():
-            # Legacy graphs predating landscape_type: infer from class name.
-            legacy_class = graph["landscape_class"]
-            if legacy_class in (
-                "SequenceLandscape",
-                "DNALandscape",
-                "RNALandscape",
-                "ProteinLandscape",
-            ):
-                restore_type = "sequence"
-            elif legacy_class == "BooleanLandscape":
-                restore_type = "boolean"
-
-        if instance.n_vars is not None and isinstance(restore_type, str):
-            if restore_type.startswith("sequence"):
-                instance.sequence_length = instance.n_vars
-            elif restore_type == "boolean":
-                instance.bit_length = instance.n_vars
-
-        # Reconstruct plateau data structures if saved in the graph
-        if "plateau_id" in graph.vs.attributes():
-            plateaus.restore_plateaus(instance)
-
-        # Determine local optima and global optimum from graph structure
-        if instance.graph.vcount() > 0:
-            instance.determine_local_optima()
-            instance.determine_global_optimum()
-
-        # Infer calculation status flags from saved graph attributes
-        if "basin_index" in graph.vs.attributes():
-            instance._basin_calculated = True
-        if "size_basin_accessible" in graph.vs.attributes():
-            instance._path_calculated = True
-        if "dist_go" in graph.vs.attributes():
-            instance._distance_calculated = True
-        if "mean_neighbor_fit" in graph.vs.attributes():
-            instance._neighbor_fit_calculated = True
-
-        instance._is_built = True
-
-        if verbose:
-            print(
-                f"Landscape successfully loaded. Graph has {instance.n_configs} nodes and {instance.n_edges} edges."
-            )
-            instance.describe()
-
-        return instance
-
-    def to_graph(self, filepath: str, include_configs: bool = True) -> None:
-        """Save the landscape graph and essential attributes to a file.
-
-        This method serializes the landscape's graph structure and relevant
-        attributes to a GraphML file, which can later be loaded using `build_from_graph`.
-        This allows efficient storage and sharing of landscapes without requiring
-        re-construction from scratch.
-
-        Parameters
-        ----------
-        filepath : str
-            The path where the graph file will be saved. If the file doesn't end
-            with '.graphml', this extension will be added automatically.
-        include_configs : bool, default=True
-            Whether to include the configurations mapping (self.configs) in the saved
-            graph. Set to False to reduce file size if this information isn't needed
-            or can be reconstructed later.
-
-        Raises
-        ------
-        RuntimeError
-            If the landscape has not been built.
-        ValueError
-            If the graph cannot be saved to the specified path.
-
-        Notes
-        -----
-        The GraphML format preserves the graph structure and all vertex/edge attributes.
-        In addition to the graph itself, essential landscape attributes like `maximize`
-        and `epsilon` are stored as graph attributes.
-        """
-        self._check_built()
-
-        if self.graph is None:
-            raise ValueError("Cannot save an empty graph.")
-
-        if not filepath.endswith(".graphml"):
-            filepath = f"{filepath}.graphml"
-
-        graph_copy = self.graph.copy()
-
-        # Essential landscape attributes saved as graph attributes
-        graph_copy["maximize"] = self.maximize
-        graph_copy["epsilon"] = str(self.epsilon)
-        graph_copy["landscape_class"] = self.__class__.__name__
-        graph_copy["landscape_type"] = self.type
-
-        # Configs are preserved implicitly via the feature-column vertex
-        # attributes _build_graph writes, so no separate configs_data attribute
-        # is needed. include_configs is kept for back-compat but has no effect.
-
-        if self.config_dict is not None:
-            graph_copy["config_dict_data"] = str(self.config_dict)
-
-        if self.data_types is not None:
-            graph_copy["data_types_data"] = str(self.data_types)
-
-        try:
-            graph_copy.write_graphml(filepath)
-            if self.verbose:
-                print(f"Landscape graph saved to {filepath}")
-        except Exception as e:
-            raise ValueError(f"Failed to save graph to {filepath}: {e}")
 
     def get_data(
         self, lo_only: bool = False, include_pagerank: bool = False
@@ -1236,7 +1018,7 @@ class Landscape:
             self.basins
 
         if self.verbose:
-            print("Constructing Local Optima Network (LON)...")
+            logger.info("Constructing Local Optima Network (LON)...")
 
         self.lon = get_lon(
             graph=self.graph,
@@ -1252,296 +1034,21 @@ class Landscape:
         self.has_lon = True
 
         if self.verbose:
-            print(
+            logger.info(
                 f"LON constructed with {self.lon.vcount()} nodes "
                 f"and {self.lon.ecount()} edges."
             )
         return self.lon
 
-    def _check_not_built(self) -> None:
-        """Raise an error if the landscape has already been built."""
-        if self._is_built:
-            raise RuntimeError(
-                "This Landscape instance has already been built. Create a new instance to rebuild."
-            )
-
-    @timeit
-    def _resolve_strategies(self) -> InputHandler:
-        """Resolve and cache the type-specific strategies for data builds."""
-        handler = self._input_handlers.get(self.type)
-        if handler is None:
-            raise ValueError(
-                f"No input handler for landscape type: {self.type}"
-            )
-
-        neighbor_generator = self._neighbor_generators.get(self.type)
-        if neighbor_generator is None:
-            raise ValueError(
-                f"No neighbor generator available for landscape type: {self.type}"
-            )
-
-        self._neighbor_generator = neighbor_generator
-        return handler
-
-    @timeit
-    def _preprocess_data(
-        self,
-        *,
-        handler: InputHandler,
-        X: Any,
-        f: Union[pd.Series, list, np.ndarray],
-        data_types: Optional[Dict[str, str]],
-        tau: Optional[float],
-        filter_mode: str,
-        verbose: Optional[bool],
-    ) -> pd.DataFrame:
-        """Run the preprocessing pipeline and cache encoded build metadata."""
-        X_filtered, f_filtered = filter_data(
-            X, f, self.maximize, tau, filter_mode, verbose
-        )
-
-        X_processed, f_processed, self.data_types, self.n_vars = prepare_data(
-            handler, X_filtered, f_filtered, data_types=data_types, verbose=verbose
-        )
-
-        X_final, f_final = clean_data(
-            X_processed,
-            f_processed,
-            verbose=verbose,
-        )
-
-        prepared = encode_data(X_final, f_final, self.data_types, verbose=verbose)
-        return self._cache_metadata(prepared)
-
-    def _cache_metadata(self, prepared: PreparedData) -> pd.DataFrame:
-        """Persist encoded build metadata on the landscape instance."""
-        self.data_types = prepared.data_types
-        self.n_vars = prepared.n_vars
-        # Store the numeric matrix (source of truth) and index; leave the tuple
-        # Series cache empty so ``configs`` builds it lazily only if read.
-        self._configs_array = prepared.configs_array
-        self._configs_index = prepared.configs_index
-        self._configs = None
-        self.config_dict = prepared.config_dict
-
-        processed_data = prepared.data_for_attributes
-        self._n_configs = len(processed_data)
-        return processed_data
-
-    @timeit
-    def _construct_graph(
-        self,
-        processed_data: pd.DataFrame,
-        *,
-        n_edit: int,
-        neighborhood_strategy: str,
-    ) -> List[Tuple[int, int]]:
-        """Construct the graph from preprocessed data and return neutral pairs."""
-        if self.verbose:
-            print("Constructing landscape graph...")
-
-        edges, delta_fits, neutral_pairs = self._build_edges(
-            processed_data, n_edit=n_edit, strategy=neighborhood_strategy
-        )
-        self.graph = self._build_graph(processed_data, edges, delta_fits)
-        return neutral_pairs
-
-    @timeit
-    def _postprocess_graph(
-        self,
-        *,
-        neutral_pairs: List[Tuple[int, int]],
-        tau: Optional[float],
-        filter_mode: str,
-        verbose: Optional[bool],
-    ) -> List[Tuple[int, int]]:
-        """Apply graph pruning and remap cached metadata when vertices are removed."""
-        self.graph, self._n_configs, self._n_edges, kept_indices = filter_graph(
-            self.graph, self.maximize, tau, filter_mode, verbose
-        )
-
-        # Protect plateau-interior nodes (linked only by neutral/tied edges)
-        # from isolation pruning, which runs before the plateau layer is built
-        # and would otherwise drop them as "isolated".
-        protected = None
-        if neutral_pairs:
-            if kept_indices is not None:
-                tau_map = {old: new for new, old in enumerate(kept_indices)}
-                protected = {
-                    tau_map[n]
-                    for pair in neutral_pairs
-                    for n in pair
-                    if n in tau_map
-                }
-            else:
-                protected = {n for pair in neutral_pairs for n in pair}
-
-        iso_result = remove_isolated_nodes(
-            self.graph, self.verbose, protected=protected
-        )
-        if iso_result is not None:
-            self.graph, self._n_configs, self._n_edges, iso_kept = iso_result
-            if kept_indices is not None:
-                kept_indices = [kept_indices[i] for i in iso_kept]
-            else:
-                kept_indices = iso_kept
-
-        return self._remap_metadata(kept_indices, neutral_pairs)
-
-    def _remap_metadata(
-        self,
-        kept_indices: Optional[List[int]],
-        neutral_pairs: List[Tuple[int, int]],
-    ) -> List[Tuple[int, int]]:
-        """Remap configs and neutral pairs after graph filtering changes indices."""
-        if kept_indices is None:
-            return neutral_pairs
-
-        kept_arr = np.asarray(kept_indices, dtype=np.int64)
-        n_kept = kept_arr.size
-
-        # Remap the numeric matrix and reset the index to a contiguous range.
-        # Don't touch the tuple Series unless already built (that would force an
-        # unnecessary materialisation); when empty, ``configs`` rebuilds it
-        # lazily from the remapped array with identical tuples/order.
-        if self._configs_array is not None:
-            self._configs_array = self._configs_array[kept_arr]
-        self._configs_index = range(n_kept)
-        if self._configs is not None:
-            remapped = self._configs.take(kept_indices)
-            remapped.index = range(n_kept)
-            self._configs = remapped
-
-        if not neutral_pairs:
-            return neutral_pairs
-
-        # Vectorised old->new remap of neutral pairs (the Python-dict +
-        # comprehension was the dominant cost on large sparse graphs). ``inv``
-        # maps each surviving old index to its new contiguous index, -1 for
-        # dropped; the mask drops pairs touching a removed vertex.
-        pairs = np.asarray(neutral_pairs, dtype=np.int64)
-        # ``inv`` must span every old index used to index it (kept vertices and
-        # pair endpoints); use ``.max()`` so sizing holds even if unsorted.
-        n_inv = int(max(int(kept_arr.max()), int(pairs.max()))) + 1
-        inv = np.full(n_inv, -1, dtype=np.int64)
-        inv[kept_arr] = np.arange(n_kept, dtype=np.int64)
-
-        u = inv[pairs[:, 0]]
-        v = inv[pairs[:, 1]]
-        keep = (u >= 0) & (v >= 0)
-        return list(zip(u[keep].tolist(), v[keep].tolist()))
-
-    @timeit
-    def _finalize_build(self) -> None:
-        """Mark the instance as built and emit the standard completion output."""
-        self._is_built = True
-        if self.verbose:
-            print("Landscape built successfully.\n")
-            self.describe()
-
-    def _check_built(self) -> None:
-        """Raise an error if the landscape hasn't been built yet."""
-        if not self._is_built:
-            raise RuntimeError(
-                "Landscape has not been built yet. Call build_from_data() or "
-                "build_from_graph() first."
-            )
-
-    def _build_edges(self, data, n_edit, strategy="auto"):
-        """Build improving edges and neutral pairs for the current dataset."""
-        if self._neighbor_generator is None:
-            raise RuntimeError("Neighbor generator not set before build.")
-
-        # Pass the cached ``self._configs`` (empty during a fresh build), not the
-        # ``configs`` property, so fast strategies use ``configs_array`` and the
-        # tuple Series is never materialised on the construction path;
-        # ``build_edges`` builds tuples on demand only for the generic fallback.
-        result = build_edges(
-            configs=self._configs,
-            config_dict=self.config_dict,
-            data=data,
-            n_configs=self.n_configs,
-            n_vars=self.n_vars,
-            n_edit=n_edit,
-            strategy=strategy,
-            epsilon=float(self.epsilon),
-            maximize=self.maximize,
-            verbose=self.verbose,
-            neighbor_generator=self._neighbor_generator.generate,
-            configs_array=self._configs_array,
-        )
-        return result.edges, result.delta_fits, result.neutral_pairs
-
-    @timeit
-    def _build_graph(self, data, edges, delta_fits):
-        """Build the igraph representation from nodes and improving edges.
-
-        ``edges`` is the directed ``(source, target)`` edge list and
-        ``delta_fits`` the aligned ``|Δfitness|`` weights, as produced by
-        :func:`graphfla._neighbors.build_edges`. Depending on the neighbourhood
-        strategy these are either numpy arrays (``active``: an ``(E, 2)`` int64
-        edge array + 1-D float64 weights) or Python lists of tuples/floats
-        (``pairwise`` / ``broadcast``).
-
-        Edge *list* ingest uses the ``(E, 2)`` int64 ndarray directly (igraph
-        0.11's fastest path; an array->list conversion is a net loss). The
-        per-edge ``delta_fit`` *attribute*, however, ingests ~2x faster when
-        igraph reads it through the buffer protocol than when it iterates a
-        float64 ndarray element-by-element: the ndarray path boxes each element
-        as a Python ``np.float64`` object, which a ``memoryview`` over the same
-        (zero-copy) buffer avoids. So a contiguous 1-D ``delta_fits`` array is
-        wrapped in a ``memoryview`` here (no data copy, unlike ``.tolist()``).
-        igraph then stores the values as plain Python ``float`` objects --
-        matching what the ``pairwise``/``broadcast`` producers already emit, and
-        identical in value (``float(x) == np.float64(x)``). Edge order is
-        preserved, keeping ``delta_fits[i]`` aligned with edge ``i``.
-        """
-        if self.verbose:
-            print(" - Constructing graph object...")
-
-        if self.verbose:
-            print(" - Adding node attributes (fitness, etc.)...")
-
-        n_edges = len(edges)
-        if n_edges:
-            # igraph reads the per-edge float attribute faster from a buffer than
-            # from a float64 ndarray (see docstring); zero-copy wrap, contiguous
-            # 1-D only, anything else passed through unchanged.
-            delta_attr = delta_fits
-            if (
-                isinstance(delta_fits, np.ndarray)
-                and delta_fits.ndim == 1
-                and delta_fits.flags["C_CONTIGUOUS"]
-            ):
-                delta_attr = memoryview(delta_fits)
-            edge_attrs = {"delta_fit": delta_attr}
-        else:
-            edge_attrs = {}
-
-        graph = ig.Graph(
-            n=len(data),
-            edges=edges if n_edges else None,
-            directed=True,
-            vertex_attrs={
-                str(column): data[column].to_numpy(copy=False)
-                for column in data.columns
-            },
-            edge_attrs=edge_attrs,
-        )
-
-        self._n_edges = graph.ecount()
-
-        return graph
-
     def _get_default_distance_metric(self):
-        """Get the appropriate distance metric based on landscape type."""
-        if self.type in ["boolean", "dna", "rna", "protein"]:
+        """Get the appropriate distance metric based on the landscape kind."""
+        if self.kind in ["boolean", "dna", "rna", "protein"]:
             return hamming_distance
         else:
             return mixed_distance
 
-    def determine_local_optima(self):
-        """Identify local optima with plateau-aware semantics.
+    def _compute_local_optima(self) -> "Landscape":
+        """Identify local optima with plateau-aware semantics (build-time step).
 
         A node is a local optimum if it has no way to improve fitness,
         taking neutral plateaus into account.  Results are stored at the
@@ -1551,104 +1058,61 @@ class Landscape:
         plateau-LO counted once) with ``_peak_index`` (one representative
         node per optimum, used by LON construction).
 
-        Returns the landscape instance (``self``) for method chaining.
+        Internal: the built landscape is treated as immutable, so this runs
+        during construction (and as an idempotent recompute hook); it is not a
+        public, user-facing operation. Returns ``self``.
         """
-        optima.determine_local_optima(self)
+        _optima.determine_local_optima(self)
         return self
 
-    def determine_global_optimum(self) -> "Landscape":
-        """Identifies the global optimum node in the landscape graph using igraph.
+    def _compute_global_optimum(self) -> "Landscape":
+        """Identify the global optimum node (build-time step).
 
-        Returns the landscape instance (``self``) for method chaining.
+        Internal recompute hook; see :meth:`_compute_local_optima`. Returns ``self``.
         """
-        navigability.determine_global_optimum(self)
+        _compute.determine_global_optimum(self)
         return self
 
-    def describe(self) -> None:
-        """Prints a summary description of the landscape properties.
+    def describe(self) -> Dict[str, Any]:
+        """Return a structured summary of the landscape as a dict.
 
-        Provides a quick overview of the landscape's size, complexity,
-        and analysis status.
+        Unlike a printed summary, the returned mapping is composable and
+        testable -- callers can log it, assert on it, or render it. For a quick
+        human-readable view use ``print(landscape)`` (see :meth:`__str__`).
+
+        Returns
+        -------
+        dict
+            ``class``, ``kind``, ``built``, ``maximize`` and ``epsilon`` are
+            always present. When built, size/optima fields (``n_vars``,
+            ``n_configs``, ``n_edges``, ``n_lo``, ``go_index``), the calculation
+            flags, and -- if a plateau layer exists -- the plateau counts are
+            added.
         """
-        _bold = "\033[1m"
-        _reset = "\033[0m"
-        print(f"{_bold}--- Landscape Summary ---{_reset}")
-        print(f"Class: {self.__class__.__name__}")
-        print(f"Built: {self._is_built}")
-        if self._is_built:
-            print(
-                f"Variables (n_vars): {self.n_vars if self.n_vars is not None else 'Unknown'}"
+        report: Dict[str, Any] = {
+            "class": self.__class__.__name__,
+            "kind": self.kind,
+            "built": self._is_built,
+            "maximize": self.maximize,
+            "epsilon": self.epsilon,
+        }
+        if not self._is_built:
+            return report
+        report.update(
+            n_vars=self.n_vars,
+            n_configs=self.n_configs,
+            n_edges=self.n_edges,
+            n_lo=self.n_lo,
+            go_index=self.go_index,
+            has_plateaus=self._has_plateaus,
+            basins_calculated=self._basin_calculated,
+            paths_calculated=self._path_calculated,
+            lon_calculated=self.has_lon,
+        )
+        if self._has_plateaus:
+            report.update(
+                n_lo_members=self.n_lo_members,
+                n_plateau=self.n_plateau,
+                n_plateau_lo=self.n_plateau_lo,
             )
-            print(
-                f"Configurations (n_configs): {self.n_configs if self.n_configs is not None else 'Unknown'}"
-            )
-            print(
-                f"Connections (n_edges): {self.n_edges if self.n_edges is not None else 'Unknown'}"
-            )
-            print(
-                f"Local Optima (n_lo): {self.n_lo if self.n_lo is not None else 'Not Calculated'}"
-            )
-            if self._has_plateaus:
-                if self.n_lo_members is not None:
-                    print(f"  LO member nodes (n_lo_members): {self.n_lo_members}")
-                print(f"Neutral Plateaus (n_plateau): {self.n_plateau}")
-                if self.n_plateau_lo is not None:
-                    print(f"Plateau-Level LOs (n_plateau_lo): {self.n_plateau_lo}")
-            go_idx_str = (
-                str(self.go_index)
-                if self.go_index is not None
-                else "Not Calculated/Found"
-            )
-            print(f"Global Optimum Index: {go_idx_str}")
-            print(f"Maximize Fitness: {self.maximize}")
-            print(f"Epsilon: {self.epsilon}")
-            print(f"Basins Calculated (Hill Climb): {self._basin_calculated}")
-            print(f"Accessible Paths Calculated: {self._path_calculated}")
-            print(f"LON Calculated: {self.has_lon}")
-        else:
-            print(" (Landscape not built yet)")
-        print("---")
-
-    @timeit
-    def _analyze(self) -> None:
-        """Run the mandatory analysis steps after the graph is constructed.
-
-        This computes network metrics, local optima and the global optimum.
-        The more expensive, optional analyses (basins, accessible paths,
-        distance-to-optimum, neighbour fitness) are computed lazily on first
-        access via the ``.basins`` / ``.accessible_paths`` / ``.dist_to_go`` /
-        ``.neighbor_fitness`` properties.
-        """
-        if self.graph is None:
-            raise RuntimeError("Graph is None, cannot analyze.")
-
-        if self.graph.vcount() == 0:
-            warnings.warn("Cannot analyze an empty graph.", RuntimeWarning)
-            self.n_lo = 0
-            self.n_lo_members = 0
-            self.lo_index = []
-            self._peak_index = []
-            self.plateau_lo_index = []
-            self.n_plateau_lo = 0
-            self.go_index = None
-            self.go = None
-            self.lon = None
-            self.has_lon = False
-            return
-
-        if self.verbose:
-            print("Calculating landscape properties...")
-
-        # In/out degree stay eager: cheap and needed for local-optimum
-        # detection. PageRank (70-90% of the old cost here, used by nothing on
-        # this path) is deferred to the lazy ``pagerank`` property.
-        if "out_degree" not in self.graph.vs.attributes():
-            if self.verbose:
-                print(" - Calculating network metrics (degrees)...")
-            self.graph.vs["in_degree"] = self.graph.indegree()
-            self.graph.vs["out_degree"] = self.graph.outdegree()
-
-        # Determine optima (basins / paths / distance / neighbour fitness are lazy).
-        self.determine_local_optima()
-        self.determine_global_optimum()
-
+        return report

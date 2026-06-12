@@ -1,22 +1,18 @@
 # graphfla/algorithms/__init__.py
-"""Methods for simulating evolution on fitness landscapes."""
+"""Trajectory simulation on fitness landscapes: the pure Walk classes.
+
+Basin / optima / plateau construction was moved into ``graphfla.landscape`` as
+build-internal steps; this package now holds only the search-cache and the
+seedable Walk hierarchy (``HillClimb`` / ``RandomWalk``).
+"""
 
 from ._search_cache import SearchCache
-from .adaptive_walk import local_search, hill_climb
-from .basin import find_plateau_exit, plateau_aware_climb, determine_basin_of_attraction
-from .optima import determine_local_optima
-from .plateaus import build_plateaus, restore_plateaus
-from .random_walk import random_walk
+from .walk import Walk, WalkResult, HillClimb, RandomWalk
 
 __all__ = [
     "SearchCache",
-    "local_search",
-    "hill_climb",
-    "find_plateau_exit",
-    "plateau_aware_climb",
-    "determine_local_optima",
-    "determine_basin_of_attraction",
-    "build_plateaus",
-    "restore_plateaus",
-    "random_walk",
+    "Walk",
+    "WalkResult",
+    "HillClimb",
+    "RandomWalk",
 ]
