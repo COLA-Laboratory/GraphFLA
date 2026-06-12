@@ -1566,6 +1566,20 @@ def _V_matrix(str_coef, num_states=2, invert=False):
     return V
 
 
+@dataclass(frozen=True)
+class ExtradimensionalBypass:
+    """Summary of extradimensional bypasses around reciprocal-sign-epistasis motifs.
+
+    ``bypass_proportion`` is ``motifs_with_bypass / total_motifs``;
+    ``average_bypass_length`` is NaN when no bypass exists.
+    """
+
+    bypass_proportion: float
+    average_bypass_length: float
+    total_motifs: int
+    motifs_with_bypass: int
+
+
 def extradimensional_bypass(landscape, approximate=False, sample_cut_prob=0.2, seed=None):
     """
     Analyzes extradimensional bypasses in reciprocal sign epistasis motifs.
@@ -1591,14 +1605,15 @@ def extradimensional_bypass(landscape, approximate=False, sample_cut_prob=0.2, s
 
     Returns
     -------
-    dict
-        A dictionary containing:
-        - "bypass_proportion": The proportion of reciprocal sign epistasis motifs
+    ExtradimensionalBypass
+        A dataclass with attributes:
+
+        - ``bypass_proportion`` : proportion of reciprocal-sign-epistasis motifs
           for which an extradimensional bypass exists (float between 0 and 1).
-        - "average_bypass_length": The average length of extradimensional bypasses
-          for motifs where such bypasses exist. Returns NaN if no bypasses exist.
-        - "total_motifs": Total number of type 19 motifs analyzed.
-        - "motifs_with_bypass": Number of motifs that have extradimensional bypasses.
+        - ``average_bypass_length`` : average length of extradimensional bypasses
+          for motifs where such bypasses exist; NaN if none exist.
+        - ``total_motifs`` : total number of type-19 motifs analyzed.
+        - ``motifs_with_bypass`` : number of motifs that have a bypass.
 
     Raises
     ------
@@ -1639,12 +1654,12 @@ def extradimensional_bypass(landscape, approximate=False, sample_cut_prob=0.2, s
         raise RuntimeError(f"Failed to find motif instances: {e}")
 
     if not motif_19_instances:
-        return _pythonize({
-            "bypass_proportion": 0.0,
-            "average_bypass_length": np.nan,
-            "total_motifs": 0,
-            "motifs_with_bypass": 0,
-        })
+        return ExtradimensionalBypass(
+            bypass_proportion=0.0,
+            average_bypass_length=float("nan"),
+            total_motifs=0,
+            motifs_with_bypass=0,
+        )
 
     # --- Analyze Each Motif for Extradimensional Bypasses ---
     total_motifs = len(motif_19_instances)
@@ -1690,12 +1705,12 @@ def extradimensional_bypass(landscape, approximate=False, sample_cut_prob=0.2, s
     bypass_proportion = motifs_with_bypass / total_motifs if total_motifs > 0 else 0.0
     average_bypass_length = np.mean(bypass_lengths) if bypass_lengths else np.nan
 
-    return _pythonize({
-        "bypass_proportion": bypass_proportion,
-        "average_bypass_length": average_bypass_length,
-        "total_motifs": total_motifs,
-        "motifs_with_bypass": motifs_with_bypass,
-    })
+    return ExtradimensionalBypass(
+        bypass_proportion=float(bypass_proportion),
+        average_bypass_length=float(average_bypass_length),
+        total_motifs=int(total_motifs),
+        motifs_with_bypass=int(motifs_with_bypass),
+    )
 
 
 def _get_motif_node_indices(

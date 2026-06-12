@@ -94,7 +94,14 @@ def extract(e, seed=0):
     if "dist_go" in g.vs.attributes():
         out["dist_to_go"] = list(g.vs["dist_go"])
     _try(out, "global_optima_accessibility", lambda: global_optima_accessibility(ls))
-    _try(out, "mean_path_lengths_go", lambda: mean_path_length_to_local_optima(ls, lo=ls.go_index))
+    def _mean_path_lengths_go():
+        # mean_path_length_to_local_optima now returns a one-row-per-LO DataFrame;
+        # translate the GO's row back to the frozen {"mean","variance"} labels.
+        df = mean_path_length_to_local_optima(ls, lo=ls.go_index)
+        row = df.iloc[0]
+        return {"mean": float(row["mean"]), "variance": float(row["variance"])}
+
+    _try(out, "mean_path_lengths_go", _mean_path_lengths_go)
     _try(out, "mean_dist_go", lambda: mean_distance_to_global_optimum(ls))
     # --- gamma ---
     _try(out, "gamma", lambda: gamma(ls, n_jobs=1))
@@ -113,7 +120,18 @@ def extract(e, seed=0):
         }
 
     _try(out, "classify", _classify)
-    _try(out, "bypass", lambda: extradimensional_bypass(ls))
+    def _bypass():
+        # extradimensional_bypass now returns an ExtradimensionalBypass dataclass;
+        # translate back to the frozen dict labels (values unchanged).
+        b = extradimensional_bypass(ls)
+        return {
+            "bypass_proportion": b.bypass_proportion,
+            "average_bypass_length": b.average_bypass_length,
+            "total_motifs": b.total_motifs,
+            "motifs_with_bypass": b.motifs_with_bypass,
+        }
+
+    _try(out, "bypass", _bypass)
     # --- higher-order / walsh ---
     ho = {}
     for o in (1, 2, 3):

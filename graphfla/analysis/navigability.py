@@ -2,6 +2,7 @@ import warnings
 import random
 from collections import defaultdict
 import numpy as np
+import pandas as pd
 
 from typing import Union, List, Optional, Callable
 from tqdm import tqdm
@@ -9,6 +10,41 @@ from ..distances import mixed_distance
 
 
 from ._utils import _pythonize
+
+
+def _as_lo_list(lo: Union[int, List[int]]) -> List[int]:
+    """Normalize the ``lo`` argument to a list of integer node indices.
+
+    Accepts a single int or a list of ints (preserving the original
+    ``isinstance(..., int)`` contract); raises ``TypeError`` otherwise.
+    """
+    if isinstance(lo, int):
+        return [lo]
+    if isinstance(lo, list) and all(isinstance(i, int) for i in lo):
+        return list(lo)
+    raise TypeError("Parameter 'lo' must be an integer or a list of integers.")
+
+
+def _validate_local_optima(landscape, lo_indices: List[int]) -> None:
+    """Raise if any index is out of range or is not a local optimum.
+
+    Uses the ``is_lo`` vertex attribute when present, else falls back to the
+    out-degree-0 definition (identical to the per-function checks it replaces).
+    """
+    vcount = landscape.graph.vcount()
+    has_is_lo_attr = "is_lo" in landscape.graph.vs.attributes()
+    for l_idx in lo_indices:
+        if not 0 <= l_idx < vcount:
+            raise ValueError(
+                f"Invalid node index: {l_idx}. Must be between 0 and {vcount - 1}."
+            )
+        if has_is_lo_attr:
+            if not landscape.graph.vs[l_idx]["is_lo"]:
+                raise ValueError(f"Node {l_idx} is not a local optimum.")
+        elif landscape.graph.outdegree(l_idx) != 0:
+            raise ValueError(
+                f"Node {l_idx} is not a local optimum (has outgoing edges)."
+            )
 
 
 def determine_global_optimum(self):
@@ -198,7 +234,7 @@ def determine_dist_to_go(self, distance=None):
 
 def local_optima_accessibility(
     landscape, lo: Union[int, List[int]]
-) -> Union[float, List[float]]:
+) -> pd.DataFrame:
     """
     Calculate the accessibility of one or more specified local optima (LOs).
 
@@ -221,11 +257,14 @@ def local_optima_accessibility(
 
     Returns
     -------
-    float or list[float]
-        If lo is a single integer: The fraction of configurations able to reach the
-        specified local optimum monotonically (value between 0.0 and 1.0).
-        If lo is a list: A list of fractions, each representing the accessibility of
-        the corresponding local optimum.
+    pandas.DataFrame
+        One row per requested local optimum, with columns:
+
+        - ``local_optimum`` : the local-optimum node index.
+        - ``accessibility`` : the fraction of configurations able to reach it
+          monotonically (between 0.0 and 1.0).
+
+        A single ``lo`` yields a one-row frame (no scalar-vs-list polymorphism).
 
     Raises
     ------
@@ -239,52 +278,30 @@ def local_optima_accessibility(
     if landscape.graph is None:
         raise RuntimeError("Graph not initialized. Cannot calculate accessibility.")
 
+    lo_indices = _as_lo_list(lo)
+
     if landscape.n_configs is None or landscape.n_configs == 0:
         warnings.warn(
             "Landscape has 0 configurations. Accessibility is 0.", RuntimeWarning
         )
-        return (
-            0.0
-            if isinstance(lo, int)
-            else [0.0] * (len(lo) if isinstance(lo, list) else 0)
+        return pd.DataFrame(
+            {"local_optimum": lo_indices, "accessibility": [0.0] * len(lo_indices)}
         )
 
-    single_input = isinstance(lo, int)
-    if single_input:
-        lo_indices = [lo]
-    elif isinstance(lo, list) and all(isinstance(i, int) for i in lo):
-        lo_indices = lo
-    else:
-        raise TypeError("Parameter 'lo' must be an integer or a list of integers.")
+    _validate_local_optima(landscape, lo_indices)
 
-    has_is_lo_attr = "is_lo" in landscape.graph.vs.attributes()
-    for l_idx in lo_indices:
-        if not 0 <= l_idx < landscape.graph.vcount():
-            raise ValueError(
-                f"Invalid node index: {l_idx}. Must be between 0 and {landscape.graph.vcount()-1}."
-            )
-
-        if has_is_lo_attr:
-            if not landscape.graph.vs[l_idx]["is_lo"]:
-                raise ValueError(f"Node {l_idx} is not a local optimum.")
-        else:
-            # Fall back to out-degree 0 when 'is_lo' is unavailable.
-            if landscape.graph.outdegree(l_idx) != 0:
-                raise ValueError(
-                    f"Node {l_idx} is not a local optimum (has outgoing edges)."
-                )
-
-    accessibilities = []
     try:
-        for l_idx in lo_indices:
-            # Ancestors = configs with a monotonic path to the LO.
-            ancestors_set = landscape.graph.subcomponent(l_idx, mode="in")
-            accessibility = len(ancestors_set) / landscape.n_configs
-            accessibilities.append(accessibility)
+        # Ancestors = configs with a monotonic path to the LO.
+        accessibilities = [
+            len(landscape.graph.subcomponent(l_idx, mode="in")) / landscape.n_configs
+            for l_idx in lo_indices
+        ]
     except Exception as e:
         raise RuntimeError(f"An error occurred during accessibility calculation: {e}")
 
-    return _pythonize(accessibilities[0] if single_input else accessibilities)
+    return pd.DataFrame(
+        {"local_optimum": lo_indices, "accessibility": accessibilities}
+    )
 
 
 def global_optima_accessibility(landscape) -> float:
@@ -323,7 +340,8 @@ def global_optima_accessibility(landscape) -> float:
                 "Global optimum could not be determined. Cannot calculate accessibility."
             )
 
-    return _pythonize(local_optima_accessibility(landscape, lo=landscape.go_index))
+    df = local_optima_accessibility(landscape, lo=landscape.go_index)
+    return float(df["accessibility"].iloc[0])
 
 
 def mean_path_length_to_local_optima(
@@ -332,7 +350,7 @@ def mean_path_length_to_local_optima(
     accessible: bool = True,
     n_samples: Optional[Union[int, float]] = None,
     seed: Optional[int] = None,
-) -> Union[dict, List[dict]]:
+) -> pd.DataFrame:
     """
     Calculate the mean and variance of the shortest path lengths from configurations to local optima.
 
@@ -361,10 +379,12 @@ def mean_path_length_to_local_optima(
 
     Returns
     -------
-    dict or list[dict]
-        If lo is a single integer or None: A dictionary containing the "mean" and "variance" of the shortest path lengths.
-        If lo is a list: A list of dictionaries, each containing "mean" and "variance" for the corresponding local optimum.
-        Infinite distances are excluded from the calculations.
+    pandas.DataFrame
+        One row per target local optimum, with columns ``local_optimum``,
+        ``mean`` and ``variance`` of the shortest path lengths to it. When
+        ``lo`` is None the single row is the global optimum. Infinite distances
+        are excluded from the calculations (a row whose targets are all
+        unreachable has ``mean``/``variance`` of NaN).
 
     Raises
     ------
@@ -391,34 +411,10 @@ def mean_path_length_to_local_optima(
                     "Global optimum could not be determined. Cannot calculate path lengths."
                 )
         target_indices = [landscape.go_index]
-        single_input = True
-    elif isinstance(lo, int):
-        target_indices = [lo]
-        single_input = True
-    elif isinstance(lo, list) and all(isinstance(i, int) for i in lo):
-        target_indices = lo
-        single_input = False
     else:
-        raise TypeError(
-            "Parameter 'lo' must be an integer, a list of integers, or None."
-        )
+        target_indices = _as_lo_list(lo)
 
-    has_is_lo_attr = "is_lo" in landscape.graph.vs.attributes()
-    for l_idx in target_indices:
-        if not 0 <= l_idx < landscape.graph.vcount():
-            raise ValueError(
-                f"Invalid node index: {l_idx}. Must be between 0 and {landscape.graph.vcount()-1}."
-            )
-
-        if has_is_lo_attr:
-            if not landscape.graph.vs[l_idx]["is_lo"]:
-                raise ValueError(f"Node {l_idx} is not a local optimum.")
-        else:
-            # Fall back to out-degree 0 when 'is_lo' is unavailable.
-            if landscape.graph.outdegree(l_idx) != 0:
-                raise ValueError(
-                    f"Node {l_idx} is not a local optimum (has outgoing edges)."
-                )
+    _validate_local_optima(landscape, target_indices)
 
     # OUT = monotonic fitness-improving paths only; ALL = any path.
     mode = "OUT" if accessible else "ALL"
@@ -459,7 +455,8 @@ def mean_path_length_to_local_optima(
     else:
         sampled_indices = range(n_configs)
 
-    results = []
+    means = []
+    variances = []
     try:
         for target_idx in target_indices:
             # Single traversal outward from the target over reversed edges;
@@ -473,13 +470,15 @@ def mean_path_length_to_local_optima(
             finite_distances = [d for d in flattened_distances if np.isfinite(d)]
 
             if len(finite_distances) == 0:
-                results.append({"mean": np.nan, "variance": np.nan})
+                means.append(np.nan)
+                variances.append(np.nan)
             else:
-                mean_distance = np.mean(finite_distances)
-                variance_distance = np.var(finite_distances)
-                results.append({"mean": mean_distance, "variance": variance_distance})
+                means.append(np.mean(finite_distances))
+                variances.append(np.var(finite_distances))
 
-        return _pythonize(results[0] if single_input else results)
+        return pd.DataFrame(
+            {"local_optimum": target_indices, "mean": means, "variance": variances}
+        )
 
     except Exception as e:
         raise RuntimeError(f"An error occurred during path length calculation: {e}")
@@ -538,19 +537,19 @@ def mean_path_length_to_global_optimum(
                 "Global optimum could not be determined. Cannot calculate path lengths."
             )
 
-    result = mean_path_length_to_local_optima(
+    df = mean_path_length_to_local_optima(
         landscape,
         lo=landscape.go_index,
         accessible=accessible,
         n_samples=n_samples,
         seed=seed,
     )
-    return _pythonize(result["mean"])
+    return float(df["mean"].iloc[0])
 
 
 def mean_distance_to_local_optima(
     landscape, lo: Union[int, List[int]], distance_func: Optional[Callable] = None
-) -> Union[float, List[float]]:
+) -> pd.DataFrame:
     """
     Calculate the mean distance from all configurations to one or more specified local optima.
 
@@ -567,11 +566,10 @@ def mean_distance_to_local_optima(
 
     Returns
     -------
-    float or list[float]
-        If lo is a single integer: The mean distance from all configurations to the
-        specified local optimum.
-        If lo is a list: A list of mean distances, each representing the mean distance
-        to the corresponding local optimum.
+    pandas.DataFrame
+        One row per requested local optimum, with columns ``local_optimum`` and
+        ``mean_distance`` (the mean distance from all configurations to it). A
+        single ``lo`` yields a one-row frame (no scalar-vs-list polymorphism).
 
     Raises
     ------
@@ -588,30 +586,8 @@ def mean_distance_to_local_optima(
     if landscape.configs is None or landscape.data_types is None:
         raise RuntimeError("Required attributes (configs, data_types) are missing.")
 
-    single_input = isinstance(lo, int)
-    if single_input:
-        lo_indices = [lo]
-    elif isinstance(lo, list) and all(isinstance(i, int) for i in lo):
-        lo_indices = lo
-    else:
-        raise TypeError("Parameter 'lo' must be an integer or a list of integers.")
-
-    has_is_lo_attr = "is_lo" in landscape.graph.vs.attributes()
-    for l_idx in lo_indices:
-        if not 0 <= l_idx < landscape.graph.vcount():
-            raise ValueError(
-                f"Invalid node index: {l_idx}. Must be between 0 and {landscape.graph.vcount()-1}."
-            )
-
-        if has_is_lo_attr:
-            if not landscape.graph.vs[l_idx]["is_lo"]:
-                raise ValueError(f"Node {l_idx} is not a local optimum.")
-        else:
-            # Fall back to out-degree 0 when 'is_lo' is unavailable.
-            if landscape.graph.outdegree(l_idx) != 0:
-                raise ValueError(
-                    f"Node {l_idx} is not a local optimum (has outgoing edges)."
-                )
+    lo_indices = _as_lo_list(lo)
+    _validate_local_optima(landscape, lo_indices)
 
     if distance_func is None:
         distance_func = getattr(
@@ -620,14 +596,14 @@ def mean_distance_to_local_optima(
 
     configs = np.vstack(landscape.configs.values)
 
-    mean_distances = []
-    for target_idx in lo_indices:
-        target_config = configs[target_idx]
-        distances = distance_func(configs, target_config, landscape.data_types)
-        mean_dist = np.mean(distances)
-        mean_distances.append(mean_dist)
+    mean_distances = [
+        np.mean(distance_func(configs, configs[target_idx], landscape.data_types))
+        for target_idx in lo_indices
+    ]
 
-    return _pythonize(mean_distances[0] if single_input else mean_distances)
+    return pd.DataFrame(
+        {"local_optimum": lo_indices, "mean_distance": mean_distances}
+    )
 
 
 def mean_distance_to_global_optimum(landscape, distance_func: Optional[Callable] = None) -> float:
