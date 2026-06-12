@@ -17,7 +17,7 @@ from collections import defaultdict
 from typing import TYPE_CHECKING
 
 import numpy as np
-from tqdm import tqdm
+from .._progress import track
 import logging
 
 logger = logging.getLogger(__name__)
@@ -96,10 +96,10 @@ def determine_accessible_paths(landscape):
 
     try:
         if landscape._has_plateaus and landscape._peak_index:
-            peak_iter = (
-                tqdm(landscape._peak_index, desc="   - Finding ancestors")
-                if landscape.verbose
-                else landscape._peak_index
+            peak_iter = track(
+                landscape._peak_index,
+                description="Finding ancestors",
+                verbose=landscape.verbose,
             )
 
             for rep in peak_iter:
@@ -116,10 +116,11 @@ def determine_accessible_paths(landscape):
                     ancestors_set = landscape.graph.subcomponent(rep, mode="in")
                     dict_size[rep] = len(ancestors_set)
         else:
-            los_iter = (
-                tqdm(landscape.lo_index, total=landscape.n_lo, desc="   - Finding ancestors")
-                if landscape.verbose
-                else landscape.lo_index
+            los_iter = track(
+                landscape.lo_index,
+                total=landscape.n_lo,
+                description="Finding ancestors",
+                verbose=landscape.verbose,
             )
             for lo in los_iter:
                 ancestors_set = landscape.graph.subcomponent(lo, mode="in")

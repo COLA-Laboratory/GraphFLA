@@ -3,7 +3,7 @@ import pandas as pd
 import igraph as ig
 from typing import List, Any, Dict, Tuple
 from itertools import combinations, product
-from tqdm import tqdm
+from ._progress import track
 from .utils import add_network_metrics
 
 
@@ -129,10 +129,11 @@ def batched_find_neighbors(
     """Finding the neighbors for a list of configurations"""
 
     neighbor_list = []
-    iterator = (
-        configs
-        if not verbose
-        else tqdm(configs, total=len(configs), desc="# Calculating neighborhoods")
+    iterator = track(
+        configs,
+        total=len(configs),
+        description="Calculating neighborhoods",
+        verbose=verbose,
     )
     for config in iterator:
         neighbor_list.append(generate_neighbors(config, config_dict, n_edit=n_edit))
@@ -206,12 +207,11 @@ def calculate_lon_adj(
     """
 
     lo_adj = np.zeros((n_lo, n_lo), dtype=np.int16)
-    iterator = (
-        enumerate(neighbors_list)
-        if not verbose
-        else tqdm(
-            enumerate(neighbors_list), total=n_lo, desc=" - Creating adjacency matrix"
-        )
+    iterator = track(
+        enumerate(neighbors_list),
+        total=n_lo,
+        description="Creating adjacency matrix",
+        verbose=verbose,
     )
     for i, lo_neighbors in iterator:
         for neighbor in lo_neighbors:
@@ -309,10 +309,11 @@ def calculate_escape_rate(
 
     column_sums = np.sum(lo_adj, axis=1) - np.diag(lo_adj)
     escape_difficulty_values = np.zeros(n_lo)
-    iterator = (
-        range(n_lo)
-        if not verbose
-        else tqdm(range(n_lo), total=n_lo, desc="# Calculating escape probability")
+    iterator = track(
+        range(n_lo),
+        total=n_lo,
+        description="Calculating escape probability",
+        verbose=verbose,
     )
     for i in iterator:
         if column_sums[i] != 0:
@@ -346,7 +347,12 @@ def calculate_improve_rate(
     if verbose:
         print("# Calculating improve rate...")
     improvement_measure = {}
-    iterator = lon.vs if not verbose else tqdm(lon.vs, total=lon.vcount())
+    iterator = track(
+        lon.vs,
+        total=lon.vcount(),
+        description="Calculating improve rate",
+        verbose=verbose,
+    )
 
     for vertex in iterator:
         node = vertex["name"]
@@ -393,14 +399,11 @@ def calculate_lo_accessibility(lon: ig.Graph, verbose: bool = True) -> Dict[Any,
     """
 
     access_lon = {}
-    iterator = (
-        lon.vs
-        if not verbose
-        else tqdm(
-            lon.vs,
-            total=lon.vcount(),
-            desc="# Calculating accessibility of LOs:",
-        )
+    iterator = track(
+        lon.vs,
+        total=lon.vcount(),
+        description="Calculating accessibility of LOs",
+        verbose=verbose,
     )
     for vertex in iterator:
         node = vertex["name"]

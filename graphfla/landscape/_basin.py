@@ -3,7 +3,7 @@ from __future__ import annotations
 import warnings
 
 import numpy as np
-from tqdm import tqdm
+from .._progress import track
 
 from ..algorithms.walk import HillClimb
 from ..algorithms._search_cache import SearchCache
@@ -201,10 +201,10 @@ def determine_basin_of_attraction(landscape, plateau_exit_mode="first-improvemen
     )
 
     batch_ranges = list(range(0, n_vertices, batch_size))
-    nodes_iter = (
-        tqdm(batch_ranges, desc="   - Hill climbing batches")
-        if self.verbose
-        else batch_ranges
+    nodes_iter = track(
+        batch_ranges,
+        description="Hill climbing batches",
+        verbose=self.verbose,
     )
 
     for batch_start in nodes_iter:
