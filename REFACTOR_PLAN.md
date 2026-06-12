@@ -38,8 +38,12 @@ future-annotations (partial rollout).
 - ✅ **Decomposition — `_neighbors.py`** (1780, user's first-named file) → `_neighbors/` package (name kept for path
   stability): _arrays/generators/_classify/_kernels/edges, strict acyclic layering. Call-graph mapped + adversarially
   verified by a workflow; completeness invariant gated the split. 1265 passed, build 55ms. (2b03e18)
-- **Decomposition — remaining (NEXT)**: `analysis/epistasis.py` (1771) → `analysis/epistasis/`; `_data.py` (1307) →
-  `_data/`. Re-export public symbols. (Both of the user's NAMED files — landscape.py, _neighbors.py — are now done.)
+- ✅ **Decomposition — `analysis/epistasis.py`** (1771) → package: motifs/idiosyncrasy/gamma/higher_order/
+  walsh_hadamard; `_pack_rows` → shared `_utils`. (44427b7)
+- ✅ **Decomposition — `_data.py`** (1307) → package: _validation/handlers/pipeline (acyclic; pipeline isinstance-
+  checks DefaultHandler). (5edd327)
+- ✅ **GRIPE #4 (file size) FULLY CLOSED** — all 4 god-files decomposed; landscape.py 1722→1111; perf nominal.
+  Gripe scorecard: #1 returns ✅ · #2 naming ✅ · #3 walk API ✅ · #4 file size ✅ · #5 errors ⚠ partial · #6 dedup ✅.
 - **Phase 6 (value-changing, E1/E2 — approved, regenerate affected goldens)**: non-finite-fitness build guard;
   NaN-normalize degenerate metric returns + divide guards; thread `rng` into first-improvement (HillClimb already has
   `seed=`; wire it through basin's plateau-exit path + any first-improvement caller).
