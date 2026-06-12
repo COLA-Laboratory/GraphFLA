@@ -36,7 +36,7 @@ import os
 import re
 import time
 import warnings
-from typing import Callable, Dict, List, Optional, Tuple
+from typing import Dict, List, Optional, Tuple
 
 import numpy as np
 import pandas as pd
@@ -45,83 +45,24 @@ PROTEIN_ALPHABET = set("ACDEFGHIKLMNPQRSTVWY")
 _MUT_RE = re.compile(r"^([A-Za-z])(\d+)([A-Za-z])$")
 
 # ---------------------------------------------------------------------------
-# Feature registry
+# Feature panel
 # ---------------------------------------------------------------------------
-# Each entry: name -> dict(fn, expand, multicore)
-#   fn       : callable(landscape, n_jobs) -> scalar or dict
-#   expand   : True if fn returns a dict whose keys become separate columns
-#   multicore: True if fn benefits from many CPU cores (uses n_jobs)
-
-
-def _build_feature_registry() -> "Dict[str, dict]":
-    import graphfla.analysis as A
-
-    def single(fn):
-        return lambda ls, n_jobs=1: fn(ls)
-
-    reg: Dict[str, dict] = {
-        # --- ruggedness ---
-        "lo_ratio": dict(fn=single(A.lo_ratio), expand=False, multicore=False),
-        "autocorrelation": dict(fn=single(A.autocorrelation), expand=False, multicore=False),
-        "r_s_ratio": dict(fn=single(A.r_s_ratio), expand=False, multicore=False),
-        "gradient_intensity": dict(fn=single(A.gradient_intensity), expand=False, multicore=False),
-        # --- correlation ---
-        "fitness_distance_corr": dict(fn=single(A.fitness_distance_corr), expand=False, multicore=False),
-        "fitness_flattening_index": dict(fn=single(A.fitness_flattening_index), expand=False, multicore=False),
-        "basin_fit_corr": dict(fn=single(A.basin_fit_corr), expand=False, multicore=False),
-        "neighbor_fit_corr": dict(fn=single(A.neighbor_fit_corr), expand=False, multicore=False),
-        # --- navigability ---
-        "global_optima_accessibility": dict(fn=single(A.global_optima_accessibility), expand=False, multicore=False),
-        "mean_path_lengths_go": dict(fn=single(A.mean_path_lengths_go), expand=False, multicore=False),
-        "mean_dist_go": dict(fn=single(A.mean_dist_go), expand=False, multicore=False),
-        # --- robustness ---
-        "neutrality": dict(fn=single(A.neutrality), expand=False, multicore=False),
-        "evol_enhance_mutations": dict(fn=single(A.evol_enhance_mutations), expand=False, multicore=False),
-        # --- fitness distribution (dict -> expanded) ---
-        "fitness_distribution": dict(fn=single(A.fitness_distribution), expand=True, multicore=False),
-        # --- epistasis: single-core (approximate where supported) ---
-        "diminishing_returns_index": dict(fn=single(A.diminishing_returns_index), expand=False, multicore=False),
-        "increasing_costs_index": dict(fn=single(A.increasing_costs_index), expand=False, multicore=False),
-        # Exact motif census: on these sparse Hamming-1 graphs it is fast
-        # (a few seconds even at ~50k variants) and ESU sampling noticeably
-        # distorts the motif counts, so approximation is not worth it.
-        "classify_epistasis": dict(
-            fn=lambda ls, n_jobs=1: A.classify_epistasis(ls, approximate=False),
-            expand=True, multicore=False,
-        ),
-        "extradimensional_bypass": dict(
-            fn=lambda ls, n_jobs=1: A.extradimensional_bypass_analysis(ls, approximate=False),
-            expand=True, multicore=False,
-        ),
-        # --- epistasis: multi-core (use n_jobs) ---
-        "higher_order_epistasis": dict(
-            fn=lambda ls, n_jobs=1: A.higher_order_epistasis(ls, order=2, n_jobs=n_jobs),
-            expand=False, multicore=True,
-        ),
-        "global_idiosyncratic_index": dict(
-            fn=lambda ls, n_jobs=1: A.global_idiosyncratic_index(ls, n_jobs=n_jobs),
-            expand=False, multicore=True,
-        ),
-        "gamma_statistic": dict(
-            fn=lambda ls, n_jobs=1: A.gamma_statistic(ls, n_jobs=n_jobs),
-            expand=False, multicore=True,
-        ),
-        "gamma_star": dict(
-            fn=lambda ls, n_jobs=1: A.gamma_star(ls, n_jobs=n_jobs),
-            expand=False, multicore=True,
-        ),
-    }
-    return reg
+# The whole landscape feature panel is produced by ``analysis.profile`` -- one
+# call runs every whole-landscape metric and forwards ``n_jobs`` to those that
+# accept it. ``feature_names`` reports the metric names, split by whether they
+# use multiple cores (which the large-scale runner uses to schedule work).
 
 
 def feature_names(which: str = "all") -> List[str]:
-    """Names of registered features ('single', 'multi', or 'all')."""
-    reg = _build_feature_registry()
-    if which == "single":
-        return [k for k, v in reg.items() if not v["multicore"]]
+    """Panel metric names ('single', 'multi', or 'all', by core usage)."""
+    import graphfla.analysis as A
+
+    lm = A.list_metrics()
     if which == "multi":
-        return [k for k, v in reg.items() if v["multicore"]]
-    return list(reg.keys())
+        lm = lm[lm["n_jobs"]]
+    elif which == "single":
+        lm = lm[~lm["n_jobs"]]
+    return list(lm.index)
 
 
 # ---------------------------------------------------------------------------
@@ -282,62 +223,38 @@ def compute_features(
     which: str = "all",
     n_jobs: int = 1,
     skip: Optional[set] = None,
-) -> Dict[str, dict]:
-    """Compute landscape features, each guarded independently.
+) -> Dict[str, float]:
+    """Compute the landscape feature panel via :func:`graphfla.analysis.profile`.
 
-    Returns name -> dict(value, status, error, seconds). For dict-valued
-    (expanded) features ``value`` is the dict; flatten with ``flatten_results``.
+    Returns a flat ``{column: value}`` mapping (structured metrics flatten to
+    dotted columns, e.g. ``epistasis.magnitude``). A single failing metric is
+    recorded as NaN, never aborting the panel. Exact motif census is forced
+    (``sample_cut_prob=0``): on these sparse Hamming-1 DMS graphs it is fast and
+    ESU sampling noticeably distorts the motif counts.
     """
-    reg = _build_feature_registry()
-    skip = skip or set()
-    results: Dict[str, dict] = {}
-    for name, spec in reg.items():
-        if which == "single" and spec["multicore"]:
-            continue
-        if which == "multi" and not spec["multicore"]:
-            continue
-        if name in skip:
-            continue
-        t0 = time.time()
-        try:
-            with warnings.catch_warnings():
-                warnings.simplefilter("ignore")
-                value = spec["fn"](ls, n_jobs)
-            status = "ok"
-            err = ""
-            if not spec["expand"]:
-                fv = float(value) if value is not None else float("nan")
-                if np.isnan(fv) or np.isinf(fv):
-                    status = "nan"
-                value = fv
-        except Exception as exc:  # noqa: BLE001 - record, never abort the batch
-            value = None
-            status = "error"
-            err = f"{type(exc).__name__}: {exc}"
-        results[name] = {
-            "value": value,
-            "status": status,
-            "error": err,
-            "seconds": round(time.time() - t0, 3),
-            "expand": spec["expand"],
-        }
-    return results
+    import graphfla.analysis as A
+
+    skip = set(skip or ())
+    if which != "all":  # split by core usage for the large-scale runner
+        lm = A.list_metrics()
+        wanted = lm[lm["n_jobs"]] if which == "multi" else lm[~lm["n_jobs"]]
+        skip |= set(lm.index) - set(wanted.index)
+    params = {
+        "classify_epistasis": {"sample_cut_prob": 0},
+        "extradimensional_bypass": {"sample_cut_prob": 0},
+    }
+    with warnings.catch_warnings():
+        warnings.simplefilter("ignore")
+        s = A.profile(
+            ls, n_jobs=n_jobs, params=params,
+            exclude=sorted(skip) or None, on_error="warn",
+        )
+    return {k: (float(v) if pd.notna(v) else float("nan")) for k, v in s.items()}
 
 
-def flatten_results(results: Dict[str, dict]) -> Dict[str, float]:
-    """Flatten the per-feature results into a flat {column: value} mapping."""
-    flat: Dict[str, float] = {}
-    for name, r in results.items():
-        if r.get("expand") and isinstance(r["value"], dict):
-            for k, v in r["value"].items():
-                try:
-                    flat[f"{name}.{k}"] = float(v)
-                except (TypeError, ValueError):
-                    flat[f"{name}.{k}"] = np.nan
-        else:
-            v = r["value"]
-            flat[name] = v if isinstance(v, float) else np.nan
-    return flat
+def flatten_results(results: Dict[str, float]) -> Dict[str, float]:
+    """Pass-through: :func:`compute_features` already returns a flat column map."""
+    return dict(results)
 
 
 # ---------------------------------------------------------------------------
@@ -493,8 +410,8 @@ def build_arg_parser() -> argparse.ArgumentParser:
     p.add_argument("--limit", type=int, default=0, help="Process at most this many datasets (0 = all).")
     p.add_argument(
         "--skip-features", default="",
-        help="Comma-separated feature names to skip (e.g. 'gamma_statistic,gamma_star' "
-        "which are the most expensive). See feature_names() for the full list.",
+        help="Comma-separated metric names to skip (e.g. 'gamma,gamma_star' "
+        "which are the most expensive). See feature_names() / analysis.list_metrics().",
     )
     p.add_argument("--force", action="store_true", help="Recompute even if cached.")
     return p

@@ -85,12 +85,10 @@ class Analysis:
         A.walsh_hadamard(self.ls, max_order=2)
 
     def time_classify_epistasis(self, dataset):
-        A.classify_epistasis(self.ls, approximate=True, sample_cut_prob=0.5, seed=SEED)
+        A.classify_epistasis(self.ls, sample_cut_prob=0.5, seed=SEED)
 
     def time_extradimensional_bypass(self, dataset):
-        A.extradimensional_bypass(
-            self.ls, approximate=True, sample_cut_prob=0.5, seed=SEED
-        )
+        A.extradimensional_bypass(self.ls, sample_cut_prob=0.5, seed=SEED)
 
     def time_global_idiosyncratic_index(self, dataset):
         A.global_idiosyncratic_index(self.ls, n_jobs=1)

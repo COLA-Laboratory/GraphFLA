@@ -45,6 +45,7 @@ from .epistasis import (
     extradimensional_bypass,
     ExtradimensionalBypass,
 )
+from .profile import profile, list_metrics
 
 __all__ = [
     "higher_order_epistasis",
@@ -79,4 +80,6 @@ __all__ = [
     "neutrality",
     "single_mutation_effects",
     "all_mutation_effects",
+    "profile",
+    "list_metrics",
 ]

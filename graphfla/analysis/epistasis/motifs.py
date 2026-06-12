@@ -6,6 +6,7 @@ reciprocal epistasis classification and reciprocal-sign bypass detection.
 
 import contextlib
 import random
+import warnings
 from collections import defaultdict
 from dataclasses import dataclass
 
@@ -35,6 +36,69 @@ def _seeded_igraph(seed):
         yield
     finally:
         ig.set_random_number_generator(None)
+
+
+# Auto sample_cut_prob ladder for the size-4 motif searches (classify_epistasis /
+# extradimensional_bypass). igraph's ESU motif cost scales ~linearly with
+# P = n_edges * mean_degree (= 2*n_edges**2 / n_configs) -- edge count alone is a
+# poor predictor because cost grows with local connectivity, which varies ~10x by
+# alphabet. Each (cut_prob, slope) is the worst-case (protein) seconds-per-P
+# measured across encodings, so slope * P estimates runtime. We pick the most
+# accurate (lowest cut_prob) grade whose estimate fits the budget. cut_prob 1.0 is
+# degenerate (prunes everything) and 0.9 is too noisy (~47% error vs exact), so
+# 0.75 is the accuracy floor.
+_CUT_PROB_LADDER = (
+    (0.0, 3.223e-6),   # exact (no pruning)
+    (0.1, 2.160e-6),
+    (0.25, 1.047e-6),
+    (0.5, 1.900e-7),
+    (0.75, 3.004e-8),
+)
+
+
+def _motif_cost(landscape):
+    """Runtime predictor P = n_edges * mean_degree for the size-4 motif search."""
+    g = landscape.graph
+    n = max(g.vcount(), 1)
+    e = g.ecount()
+    return 2.0 * e * e / n
+
+
+def _auto_cut_prob(landscape, time_budget):
+    """Most accurate motif-sampling grade whose estimated runtime fits *time_budget*."""
+    cost = _motif_cost(landscape)
+    for cut_prob, slope in _CUT_PROB_LADDER:
+        if slope * cost <= time_budget:
+            return cut_prob
+    warnings.warn(
+        f"Motif analysis: landscape too large (n_edges*degree={cost:.2e}) to fit the "
+        f"{time_budget:g}s budget at any reliable grade; using sample_cut_prob=0.75 "
+        f"(the least accurate usable grade). Pass an explicit sample_cut_prob to override.",
+        stacklevel=3,
+    )
+    return 0.75
+
+
+def _resolve_cut_prob(landscape, sample_cut_prob, time_budget):
+    """Resolve the public ``sample_cut_prob`` argument to a concrete pruning prob.
+
+    Returns ``None`` for exact enumeration, or a float in ``(0, 1]`` for sampling.
+    ``"auto"`` consults the runtime ladder; ``0`` / ``None`` means exact.
+    """
+    if isinstance(sample_cut_prob, str):
+        if sample_cut_prob != "auto":
+            raise ValueError(
+                "sample_cut_prob must be 'auto', 0/None (exact), or a float in (0, 1]."
+            )
+        cut_prob = _auto_cut_prob(landscape, time_budget)
+        return cut_prob if cut_prob > 0.0 else None
+    if sample_cut_prob is None or sample_cut_prob == 0:
+        return None
+    if not 0.0 < sample_cut_prob <= 1.0:
+        raise ValueError(
+            "sample_cut_prob must be 'auto', 0/None (exact), or a float in (0, 1]."
+        )
+    return float(sample_cut_prob)
 
 
 # Module-level workers for process-based parallelism (must be importable so
@@ -148,7 +212,7 @@ class EpistasisClassification:
     negative: float
 
 
-def classify_epistasis(landscape, approximate=False, sample_cut_prob=0.2, seed=None):
+def classify_epistasis(landscape, sample_cut_prob="auto", seed=None, time_budget=15.0):
     """
     Calculates proportions of five epistasis types using 4-node motifs in an igraph graph.
 
@@ -161,14 +225,16 @@ def classify_epistasis(landscape, approximate=False, sample_cut_prob=0.2, seed=N
     landscape : Landscape
         The fitness landscape object, containing landscape.graph as an igraph.Graph
         with a "fitness" vertex attribute.
-    approximate : bool, optional
-        If True, estimates motif counts and uses a sample of motif instances
-        for positive/negative epistasis calculation. Faster but less accurate.
-        Defaults to False (exact counts and all relevant instances).
-    sample_cut_prob : float, optional
-        The probability used for pruning the search tree at each level during
-        sampling when approximate=True. Higher values -> faster, less accurate.
-        Defaults to 0.2.
+    sample_cut_prob : {"auto"} or float, optional
+        Controls the 4-motif search. ``"auto"`` (default) picks a pruning
+        probability from a runtime ladder so the call fits ``time_budget`` even
+        on large landscapes (small ones resolve to exact). ``0`` or ``None``
+        forces exact enumeration; a float in ``(0, 1]`` sets the igraph pruning
+        probability directly (higher -> faster, less accurate).
+    seed : int, optional
+        Seed for the sampling RNG, making approximate results reproducible.
+    time_budget : float, optional
+        Target wall-clock seconds for ``sample_cut_prob="auto"``. Default 15.
 
     Returns
     -------
@@ -194,7 +260,7 @@ def classify_epistasis(landscape, approximate=False, sample_cut_prob=0.2, seed=N
     AttributeError
         If landscape.graph is not an igraph.Graph object or does not exist.
     ValueError
-        If sample_cut_prob is not between 0 and 1, or if fitness attribute missing.
+        If sample_cut_prob is invalid, or if the fitness attribute is missing.
     """
     motif_size = 4
     square_indices = {19, 52, 66}  # set for O(1) membership in callback
@@ -205,11 +271,12 @@ def classify_epistasis(landscape, approximate=False, sample_cut_prob=0.2, seed=N
         )
     if "fitness" not in landscape.graph.vs.attributes():
         raise ValueError("igraph.Graph must have a 'fitness' vertex attribute.")
-    if approximate and not 0.0 <= sample_cut_prob <= 1.0:
-        raise ValueError("sample_cut_prob must be between 0.0 and 1.0")
+
+    cut_prob = _resolve_cut_prob(landscape, sample_cut_prob, time_budget)
+    approximate = cut_prob is not None
 
     collected_square_instances = defaultdict(list)
-    cut_prob_vector = [sample_cut_prob] * motif_size if approximate else None
+    cut_prob_vector = [cut_prob] * motif_size if approximate else None
 
     if approximate:
         def motif_collector_callback_approx(graph, vertices, isoclass):
@@ -317,7 +384,7 @@ class ExtradimensionalBypass:
     motifs_with_bypass: int
 
 
-def extradimensional_bypass(landscape, approximate=False, sample_cut_prob=0.2, seed=None):
+def extradimensional_bypass(landscape, sample_cut_prob="auto", seed=None, time_budget=15.0):
     """
     Analyzes extradimensional bypasses in reciprocal sign epistasis motifs.
 
@@ -332,13 +399,16 @@ def extradimensional_bypass(landscape, approximate=False, sample_cut_prob=0.2, s
     landscape : Landscape
         The fitness landscape object, containing landscape.graph as an igraph.Graph
         with a "fitness" vertex attribute.
-    approximate : bool, optional
-        If True, uses sampling to find motif instances. Faster but less accurate.
-        Defaults to False (exact enumeration of all instances).
-    sample_cut_prob : float, optional
-        The probability used for pruning the search tree at each level during
-        sampling when approximate=True. Higher values -> faster, less accurate.
-        Defaults to 0.2.
+    sample_cut_prob : {"auto"} or float, optional
+        Controls the 4-motif search. ``"auto"`` (default) picks a pruning
+        probability from a runtime ladder so the call fits ``time_budget`` even
+        on large landscapes (small ones resolve to exact). ``0`` or ``None``
+        forces exact enumeration; a float in ``(0, 1]`` sets the igraph pruning
+        probability directly (higher -> faster, less accurate).
+    seed : int, optional
+        Seed for the sampling RNG, making approximate results reproducible.
+    time_budget : float, optional
+        Target wall-clock seconds for ``sample_cut_prob="auto"``. Default 15.
 
     Returns
     -------
@@ -374,8 +444,8 @@ def extradimensional_bypass(landscape, approximate=False, sample_cut_prob=0.2, s
         )
     if "fitness" not in landscape.graph.vs.attributes():
         raise ValueError("igraph.Graph must have a 'fitness' vertex attribute.")
-    if approximate and not 0.0 <= sample_cut_prob <= 1.0:
-        raise ValueError("sample_cut_prob must be between 0.0 and 1.0")
+
+    cut_prob = _resolve_cut_prob(landscape, sample_cut_prob, time_budget)
 
     # --- Find Type 19 Motifs (Reciprocal Sign Epistasis) ---
     try:
@@ -383,8 +453,8 @@ def extradimensional_bypass(landscape, approximate=False, sample_cut_prob=0.2, s
             landscape.graph,
             motif_size=4,
             target_motif_type=19,
-            approximate=approximate,
-            sample_cut_prob=sample_cut_prob,
+            approximate=cut_prob is not None,
+            sample_cut_prob=cut_prob if cut_prob is not None else 0.2,
             seed=seed,
         )
     except Exception as e:

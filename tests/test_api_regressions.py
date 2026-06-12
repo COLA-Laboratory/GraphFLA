@@ -130,8 +130,8 @@ def test_mean_path_lengths_go_seed_reproducible():
 
 def test_classify_epistasis_approximate_seed_reproducible():
     ls = onemax(5)
-    r1 = classify_epistasis(ls, approximate=True, seed=11)
-    r2 = classify_epistasis(ls, approximate=True, seed=11)
+    r1 = classify_epistasis(ls, sample_cut_prob=0.5, seed=11)
+    r2 = classify_epistasis(ls, sample_cut_prob=0.5, seed=11)
     assert r1 == r2
 
 
