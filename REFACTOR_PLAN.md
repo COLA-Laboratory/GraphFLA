@@ -29,8 +29,14 @@ future-annotations (partial rollout).
 
 ### Remaining (not yet delivered — for next session)
 - ✅ **Phase 5c** — DELIVERED (c8350c1). See progress log above.
-- **Structural decomposition (gripe #4 — NEXT)**: split the 5 god-files into subpackages, re-export public symbols so
-  import paths stay stable. Target layouts recorded under "Detailed design specs". landscape/ first (foundation).
+- ✅ **Decomposition — landscape subsystem** — DELIVERED:
+  - basin/optima/plateaus relocated algorithms/ → landscape/_{basin,optima,plateaus}.py; algorithms/ now Walk-only. (27046ef)
+  - 4 `determine_*` mutators moved analysis → landscape/_compute.py (D7); landscape.py no longer imports analysis. (b39cf93)
+  - GraphML I/O → landscape/_io.py (`_IOMixin`). (a3ff3e6)
+  - build pipeline internals → landscape/_build.py (`_BuildMixin`). (34ff16c)
+  - landscape.py 1722 → 1111 lines (−36%). Perf re-verified (build 53ms / basins 17ms on 16k). Mixins = verbatim bodies.
+- **Decomposition — remaining god-files (NEXT)**: `_neighbors.py` (1780) → `neighbors/` (user's first-named file);
+  `analysis/epistasis.py` (1771) → `analysis/epistasis/`; `_data.py` (1307) → `_data/`. Re-export public symbols.
 - **Phase 6 (value-changing, E1/E2 — approved, regenerate affected goldens)**: non-finite-fitness build guard;
   NaN-normalize degenerate metric returns + divide guards; thread `rng` into first-improvement (HillClimb already has
   `seed=`; wire it through basin's plateau-exit path + any first-improvement caller).
