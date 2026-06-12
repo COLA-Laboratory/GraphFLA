@@ -4,17 +4,6 @@ docs/site/
 # landscape-analysis verification (uncommitted)
 _verify/
 
-# construction performance campaign (uncommitted results/state)
-BENCH_RESULTS.md
-bench/__pycache__/
-bench/_localdata/
-
-# algorithms performance work (uncommitted results/state)
-bench/ALGO_BENCH_RESULTS.md
-
-# landscape-analysis performance work (uncommitted results/state)
-bench/ANALYSIS_BENCH_RESULTS.md
-
 # Byte-compiled / cached Python
 __pycache__/
 *.py[cod]
