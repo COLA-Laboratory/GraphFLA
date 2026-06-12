@@ -34,6 +34,7 @@ from .robustness import (
 from .epistasis import (
     higher_order_epistasis,
     classify_epistasis,
+    EpistasisClassification,
     idiosyncratic_index,
     global_idiosyncratic_index,
     diminishing_returns_index,
@@ -42,6 +43,7 @@ from .epistasis import (
     gamma_star,
     walsh_hadamard,
     extradimensional_bypass,
+    ExtradimensionalBypass,
 )
 
 __all__ = [
@@ -66,6 +68,8 @@ __all__ = [
     "gamma_star",
     "walsh_hadamard",
     "extradimensional_bypass",
+    "EpistasisClassification",
+    "ExtradimensionalBypass",
     "global_optima_accessibility",
     "local_optima_accessibility",
     "mean_distance_to_local_optima",
