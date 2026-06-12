@@ -1,8 +1,7 @@
 from __future__ import annotations
 
 from .sequence import SequenceLandscape
-
-RNA_ALPHABET = ["A", "C", "G", "U"]
+from .._data import RNA_ALPHABET
 
 
 class RNALandscape(SequenceLandscape):

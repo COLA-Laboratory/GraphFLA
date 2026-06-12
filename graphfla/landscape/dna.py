@@ -1,8 +1,7 @@
 from __future__ import annotations
 
 from .sequence import SequenceLandscape
-
-DNA_ALPHABET = ["A", "C", "G", "T"]
+from .._data import DNA_ALPHABET
 
 
 class DNALandscape(SequenceLandscape):
