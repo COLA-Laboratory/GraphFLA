@@ -10,8 +10,7 @@ import warnings
 from typing import Tuple, Dict, List, Union, Optional, Any
 
 from ..lon import get_lon
-from . import _basin, _optima, _plateaus
-from ..analysis import correlation, navigability
+from . import _basin, _optima, _plateaus, _compute
 from .._data import (
     DNA_ALPHABET,
     RNA_ALPHABET,
@@ -394,7 +393,7 @@ class Landscape:
         """Per-node accessible-basin size (``size_basin_accessible``), computed lazily."""
         self._check_built()
         if not self._path_calculated:
-            navigability.determine_accessible_paths(self)
+            _compute.determine_accessible_paths(self)
         return pd.Series(
             self.graph.vs["size_basin_accessible"], name="size_basin_accessible"
         )
@@ -405,7 +404,7 @@ class Landscape:
         (``dist_go``), computed lazily."""
         self._check_built()
         if not self._distance_calculated:
-            navigability.determine_dist_to_go(
+            _compute.determine_dist_to_go(
                 self, distance=self._get_default_distance_metric()
             )
         return pd.Series(self.graph.vs["dist_go"], name="dist_go")
@@ -415,7 +414,7 @@ class Landscape:
         """Per-node mean neighbour fitness (``mean_neighbor_fit``), computed lazily."""
         self._check_built()
         if not self._neighbor_fit_calculated:
-            correlation.determine_neighbor_fitness(self)
+            _compute.determine_neighbor_fitness(self)
         return pd.Series(self.graph.vs["mean_neighbor_fit"], name="mean_neighbor_fit")
 
     @property
@@ -1630,7 +1629,7 @@ class Landscape:
 
         Internal recompute hook; see :meth:`_compute_local_optima`. Returns ``self``.
         """
-        navigability.determine_global_optimum(self)
+        _compute.determine_global_optimum(self)
         return self
 
     def describe(self) -> Dict[str, Any]:
