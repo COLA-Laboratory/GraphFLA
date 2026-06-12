@@ -43,7 +43,11 @@ future-annotations (partial rollout).
 - ✅ **Decomposition — `_data.py`** (1307) → package: _validation/handlers/pipeline (acyclic; pipeline isinstance-
   checks DefaultHandler). (5edd327)
 - ✅ **GRIPE #4 (file size) FULLY CLOSED** — all 4 god-files decomposed; landscape.py 1722→1111; perf nominal.
-  Gripe scorecard: #1 returns ✅ · #2 naming ✅ · #3 walk API ✅ · #4 file size ✅ · #5 errors ⚠ partial · #6 dedup ✅.
+- ✅ **Phase 8 (logging) + Phase 9 (from-e)** — gripe #5 closure: `_logging.py` (NullHandler + lazy verbose handler);
+  ~104 prints → `logger.info` (verbose gates preserved, ast-targeted so docstrings untouched); 11 pseudo-warnings →
+  `warnings.warn`; 11 re-raises chained `from e`. (fb0aa33, 637186e)
+- ✅ **GRIPE SCORECARD — ALL SIX ADDRESSED**: #1 returns ✅ · #2 naming ✅ · #3 walk API ✅ · #4 file size ✅ ·
+  #5 errors/warnings ✅ · #6 dedup ✅. (Remaining "narrow which exceptions are caught" overlaps value-changing E1.)
 - **Phase 6 (value-changing, E1/E2 — approved, regenerate affected goldens)**: non-finite-fitness build guard;
   NaN-normalize degenerate metric returns + divide guards; thread `rng` into first-improvement (HillClimb already has
   `seed=`; wire it through basin's plateau-exit path + any first-improvement caller).
