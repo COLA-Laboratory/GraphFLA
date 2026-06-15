@@ -102,8 +102,14 @@ print(metrics["gamma"], metrics["fdc"], metrics["epistasis.magnitude"])
 # restrict to groups (or `include=[...]` specific metrics, `exclude=[...]` to drop some)
 analysis.profile(landscape, groups=["ruggedness", "epistasis"])
 
-# compare several landscapes side by side -> DataFrame, one row each
-analysis.profile([gb1, dhfr, cr9114], index=["GB1", "DHFR", "CR9114"])
+# compare several landscapes side by side -> DataFrame, one row each.
+# here, a panel of NK landscapes with increasing ruggedness (k):
+from graphfla.problems import NK
+from graphfla.landscape import BooleanLandscape
+
+panel = [BooleanLandscape().build_from_data(*NK(n=8, k=k, seed=0).get_data(), verbose=False)
+         for k in (0, 2, 4)]
+analysis.profile(panel, index=["NK k=0", "NK k=2", "NK k=4"])
 
 analysis.list_metrics()   # discover what's available
 ```
