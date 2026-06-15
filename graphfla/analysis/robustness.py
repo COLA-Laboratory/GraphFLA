@@ -205,7 +205,7 @@ def neutrality(landscape, threshold: float = 0.01) -> float:
 
 
 def single_mutation_effects(
-    landscape, position: str, test_type: str = "positive", n_jobs: int = 1
+    landscape, position: str, test_type: str = "positive"
 ) -> pd.DataFrame:
     """
     Assess the fitness effects of all possible mutations at a single position across all genetic backgrounds.
@@ -220,9 +220,6 @@ def single_mutation_effects(
 
     test_type : str, default='positive'
         The type of significance test to perform. Must be 'positive' or 'negative'.
-
-    n_jobs : int, default=1
-        The number of parallel jobs to run.
 
     Returns
     -------
@@ -246,7 +243,7 @@ def single_mutation_effects(
 
 
 def all_mutation_effects(
-    landscape, test_type: str = "positive", n_jobs: int = 1
+    landscape, test_type: str = "positive"
 ) -> pd.DataFrame:
     """
     Assess the fitness effects of all possible mutations across all positions in the landscape.
@@ -258,9 +255,6 @@ def all_mutation_effects(
 
     test_type : str, default='positive'
         The type of significance test to perform. Must be 'positive' or 'negative'.
-
-    n_jobs : int, default=1
-        The number of parallel jobs to run.
 
     Returns
     -------
