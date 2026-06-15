@@ -472,13 +472,13 @@ class Landscape(_IOMixin, _BuildMixin):
         )
 
     def __repr__(self):
-        """Params-forward representation (scikit-learn style)."""
+        """Readable representation listing the constructor parameters."""
         params = ", ".join(f"{k}={v!r}" for k, v in self.get_params().items())
         return f"{self.__class__.__name__}({params})"
 
     @classmethod
     def _get_param_names(cls):
-        """Constructor parameter names for ``get_params`` (scikit-learn style).
+        """Constructor parameter names backing ``get_params`` and ``__repr__``.
 
         Introspects this class's ``__init__`` and drops ``self`` plus the
         internal strategy-wiring parameters (``input_handler`` /
@@ -495,29 +495,13 @@ class Landscape(_IOMixin, _BuildMixin):
             names.append(name)
         return sorted(names)
 
-    def get_params(self, deep: bool = True) -> Dict[str, Any]:
-        """Return the constructor parameters as a dict (scikit-learn style).
+    def get_params(self) -> Dict[str, Any]:
+        """Return the constructor parameters as a dict.
 
-        Enables introspection and ``sklearn.base.clone``-style reconstruction
-        (``type(ls)(**ls.get_params())`` yields a fresh, unbuilt landscape).
+        Useful for introspection and reconstruction: ``type(ls)(**ls.get_params())``
+        yields a fresh, unbuilt landscape with the same configuration.
         """
         return {name: getattr(self, name) for name in self._get_param_names()}
-
-    def set_params(self, **params) -> "Landscape":
-        """Set constructor parameters by name (scikit-learn style).
-
-        Intended for configuring an unbuilt landscape; unknown names raise
-        :class:`InvalidParameterError`.
-        """
-        valid = set(self._get_param_names())
-        for key, value in params.items():
-            if key not in valid:
-                raise InvalidParameterError(
-                    f"Invalid parameter {key!r} for {type(self).__name__}; "
-                    f"valid parameters are {sorted(valid)}."
-                )
-            setattr(self, key, value)
-        return self
 
     def __len__(self):
         """Return the number of configurations (nodes) in the landscape."""

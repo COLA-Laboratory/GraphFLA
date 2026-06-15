@@ -72,7 +72,7 @@ class Analysis:
         A.evolvability_enhancing_mutations(self.ls)
 
     def time_all_mutation_effects(self, dataset):
-        A.all_mutation_effects(self.ls, n_jobs=1)
+        A.all_mutation_effects(self.ls)
 
     # --- epistasis ---
     def time_gamma(self, dataset):
