@@ -21,7 +21,7 @@
 </div>
 <br>
 
-**GraphFLA** (Graph-based Fitness Landscape Analysis) is a Python framework for constructing, analyzing, manipulating and visualizing **fitness landscapes** as graphs. It provides a broad collection of features rooted in evolutoinary biology to decipher the topography of complex fitness landscapes of diverse modalities.
+**GraphFLA** (Graph-based Fitness Landscape Analysis) is a Python framework for constructing, analyzing, manipulating and visualizing **fitness landscapes** as graphs. It provides a broad collection of features rooted in evolutionary biology to decipher the topography of complex fitness landscapes of diverse modalities.
 
 This is also the official code & data repository for the **NeurIPS 2025 (Spotlight)** paper "Augmenting Biological Fitness Prediction Benchmarks with Landscapes Features from GraphFLA". 
 
@@ -31,7 +31,7 @@ Feel free to explore examples in Google Colab!
 
 ## Key Features
 - **Versatility:** applicable to arbitrary discrete, combinatorial sequence-fitness data, ranging from biomolecules like DNA, RNA, and protein, to functional units like genes, to complex ecological communities.
-- **Comprehensiveness:** offers a holistic collection of 20+ features for characterizing 4 fundamental topographical aspects of fitness landscape, including ruggedness, navigability, epistassi and neutrality.
+- **Comprehensiveness:** offers a holistic collection of 20+ features for characterizing 4 fundamental topographical aspects of fitness landscape, including ruggedness, navigability, epistasis and neutrality.
 - **Interoperability:** works with the same data format (i.e., `X` and `f`) as in training machine learning (ML) models, thus being interoperable with established ML ecosystems in different disciplines.
 - **Scalability:** heavily optimized to be capable of handling landscapes with even millions of variants.
 - **Extensibility:** new landscape features can be easily added via an unified API.
@@ -74,7 +74,7 @@ f = data["fitness"]
 
 Creating a landscape object in `GraphFLA` is much like training an ML model: we first initialize a `Landscape` class, and then build it with our data. 
 
-Here, assume we are working with DNA sequences. `GraphFLA` provides registered methods for performance optimization for this type, which can be triggered by specifying `type="dna"`. Alternatively, you can directly use the `DNALandscape` class to get the same effect, which is natively built for DNA data.
+Here, assume we are working with DNA sequences. `GraphFLA` provides registered methods for performance optimization for this type, which can be triggered by specifying `kind="dna"`. Alternatively, you can directly use the `DNALandscape` class to get the same effect, which is natively built for DNA data.
 
 The `maximize` parameter specifies the direction of optimization, i.e., whether `f` is to be optimized or minimized.
 
@@ -118,9 +118,9 @@ classify_epistasis(landscape)      # sample_cut_prob="auto" by default
 neutrality(landscape)
 ```
 ### 5. Playing with arbitrary combinatorial data
-The `type` parameter of the `Landscape` class currently supports `"dna"`, `rna`, `"protein"`, and `"boolean"`. However, this does not mean that `GraphFLA` can only work with these types of data; instead, these registered values are only for convenience and performance optimization purpose. 
+The `kind` parameter of the `Landscape` class currently supports `"boolean"`, `"ordinal"`, `"dna"`, `"rna"`, and `"protein"`. However, this does not mean that `GraphFLA` can only work with these types of data; instead, these registered values are only for convenience and performance optimization purpose. 
 
-In fact, `GraphFLA` can handle arbitrary combinatorial search space as long as the values of each variable is discrete. To work with such data, we can initialize a general landscape, and then pass in a dictionary to specify the data type of each variable (options: `{"ordinal", "cateogrical", "boolean"}`).
+In fact, `GraphFLA` can handle arbitrary combinatorial search space as long as the values of each variable is discrete. To work with such data, we can initialize a general landscape, and then pass in a dictionary to specify the data type of each variable (options: `{"ordinal", "categorical", "boolean"}`).
 
 ```python
 import pandas as pd
@@ -132,7 +132,7 @@ f = complex_data["fitness"]
 # data serving as "X"
 complex_search_space = complex_data.drop(columns=["fitness"])
 
-# initialize a general fitness landscape without specifying `type`
+# initialize a general fitness landscape without specifying `kind`
 landscape = Landscape(maximize=True)
 
 # create a data type dictionary
@@ -144,65 +144,107 @@ data_types = {
 }
 
 # build the landscape with our data and specified data types
-landscape.build_from_data(X, f, data_types=data_types, verbose=True)
+landscape.build_from_data(complex_search_space, f, data_types=data_types, verbose=True)
 ```
 
 ## Landscape Analysis Features
 
-`GraphFLA` currently supports the following features for landscape analysis. Only landscape-level analysis tools are listed; mutation-specific (e.g., `distribution_fit_effects`, `idiosyncratic_index`) and position-specific (e.g., `single_mutation_effects`) tools are excluded.
+`GraphFLA` ships 20+ landscape-level metrics spanning the major aspects of landscape topography. Grab the whole portfolio in one call with `analysis.profile()`, restrict it with `profile(..., groups=[...])` (the group tokens are the section headers below), or call any function on its own. The collapsible tables below catalog every landscape-level metric — expand the aspect you care about.
 
-| **Class** | **Function** | **Feature** | **Range** | **Higher value indicates** |
-|--------------------------|----------------------------------|----------------------------------------|---------------|----------------------------------------|
-| **Ruggedness** | `lo_ratio`                       | Fraction of local optima               | [0, 1]        | ↑ more peaks                           |
-|                          | `r_s_ratio`                      | Roughness-slope ratio                  | [0, ∞)        | ↑ ruggedness                           |
-|                          | `autocorrelation`                | Autocorrelation                        | [-1, 1]       | ↓ ruggedness                           |
-|                          | `gradient_intensity`             | Gradient intensity                     | [0, ∞)        | ↑ average fitness change per edge      |
-|                          | `neighbor_fit_corr`              | Neighbor-fitness correlation           | [-1, 1]       | ↓ ruggedness                           |
-| **Epistasis** | `classify_epistasis`             | Magnitude epistasis                    | [0, 1)        | ↓ evolutionary constraints             |
-|                          | `classify_epistasis`             | Sign epistasis                         | [0, 1]        | ↑ evolutionary constraints             |
-|                          | `classify_epistasis`             | Reciprocal sign epistasis              | [0, 1]        | ↑ evolutionary constraints             |
-|                          | `classify_epistasis`             | Positive epistasis                     | [0, 1]        | ↑ synergistic effects                  |
-|                          | `classify_epistasis`             | Negative epistasis                     | [0, 1]        | ↑ antagonistic effects                 |
-|                          | `global_idiosyncratic_index`     | Global idiosyncratic index             | [0, 1]        | ↑ specific interactions                |
-|                          | `diminishing_returns_index`      | Diminishing return epistasis           | [-1, 1]       | ↓ flat peaks (higher = less diminishing returns) |
-|                          | `increasing_costs_index`         | Increasing cost epistasis              | [-1, 1]       | ↑ steep descents                      |
-|                          | `higher_order_epistasis`         | Higher-order epistasis (R²)            | [0, 1]        | ↑ higher-order interactions            |
-|                          | `gamma_statistic`                | Gamma statistic                        | [-1, 1]       | ↑ epistasis (magnitude)                |
-|                          | `gamma_star`                     | Gamma star statistic                   | [-1, 1]       | ↑ sign epistasis consistency           |
-|                          | `walsh_hadamard_coefficient`     | Pairwise and higher-order epistasis    | -             | -                                      |
-|                          | `extradimensional_bypass_analysis`| Extradimensional bypass proportion    | [0, 1]        | ↑ navigability                         |
-| **Navigability** | `fitness_distance_corr`          | Fitness-distance correlation           | [-1, 1]       | ↑ navigation                           |
-|                          | `fitness_flattening_index`       | Fitness flattening index               | [-1, 1]       | ↑ flatter around global optimum        |
-|                          | `global_optima_accessibility`    | Global optimum accessibility           | [0, 1]        | ↑ access to global peaks               |
-|                          | `local_optima_accessibility`    | Local optimum accessibility            | [0, 1]        | ↑ access to specified peak(s)          |
-|                          | `basin_fit_corr`                 | Basin-fitness corr. (accessible)       | [-1, 1]       | ↑ access to fitter peaks               |
-|                          | `basin_fit_corr`                 | Basin-fitness corr. (greedy)           | [-1, 1]       | ↑ access to fitter peaks               |
-|                          | `mean_path_lengths`              | Mean path length to LO(s)              | [0, ∞)        | ↑ distance to reach optima             |
-|                          | `mean_path_lengths_go`             | Mean path length to global optimum     | [0, ∞)        | ↑ distance to reach global optimum     |
-|                          | `mean_dist_lo`                   | Mean distance to LO(s)                 | [0, ∞)        | ↑ spatial distance to optima           |
-|                          | `evol_enhance_mutations`         | Evol-enhancing mutation proportion     | [0, 1]        | ↑ evolvability                         |
-| **Neutrality** | `neutrality`                     | Neutrality                             | [0, 1]        | ↑ neutrality                           |
-| **Fitness Distribution** | `fitness_distribution`           | Skewness                               | (-∞, ∞)       | ↑ asymmetry of fitness values          |
-|                          | `fitness_distribution`           | Kurtosis                               | (-∞, ∞)       | ↑ outlier/extreme value prevalence     |
-|                          | `fitness_distribution`           | Coefficient of variation (CV)          | [0, ∞)        | ↑ relative fitness variability         |
-|                          | `fitness_distribution`           | Quartile coefficient                   | [0, 1]        | ↑ interquartile dispersion             |
-|                          | `fitness_distribution`           | Median/Mean ratio                      | [0, ∞)        | ↑ deviation from symmetry              |
-|                          | `fitness_distribution`           | Relative range                         | [0, ∞)        | ↑ spread of fitness values             |
-|                          | `fitness_distribution`           | Cauchy location parameter              | (-∞, ∞)       | ↑ central tendency estimate            |
+> Mutation- and position-specific tools (`fitness_effect_distribution`, `idiosyncratic_index`, `single_mutation_effects`) characterize a single element rather than the whole landscape and are not listed here.
 
+<details>
+<summary><b>Ruggedness</b> · <code>groups="ruggedness"</code> — multimodality and local structure</summary>
+
+| Function | Measures | Range | Higher value → |
+|---|---|---|---|
+| `local_optima_ratio` | Fraction of configurations that are local optima | [0, 1] | more peaks |
+| `r_s_ratio` | Roughness-to-slope ratio | [0, ∞) | more rugged |
+| `autocorrelation` | Autocorrelation of fitness along random walks | [-1, 1] | less rugged |
+| `gradient_intensity` | Mean absolute fitness change per edge | [0, ∞) | steeper gradients |
+
+</details>
+
+<details>
+<summary><b>Epistasis</b> · <code>groups="epistasis"</code> — interactions between mutations</summary>
+
+| Function | Measures | Range | Higher value → |
+|---|---|---|---|
+| `gamma` | Gamma statistic — overall magnitude of epistasis | [-1, 1] | more epistasis |
+| `gamma_star` | Gamma-star — consistency of sign epistasis | [-1, 1] | more consistent sign epistasis |
+| `classify_epistasis` | Fraction of pairwise interactions of each type: magnitude, sign, reciprocal-sign, positive, negative | [0, 1] | — (composition) |
+| `higher_order_epistasis` | Variance fraction (R²) from interactions beyond pairwise | [0, 1] | more higher-order interactions |
+| `global_idiosyncratic_index` | How context-dependent (idiosyncratic) mutation effects are | [0, 1] | more idiosyncratic |
+| `diminishing_returns_index` | Diminishing-returns epistasis (background fitness vs. gains) | [-1, 1] | weaker diminishing returns |
+| `increasing_costs_index` | Increasing-costs epistasis (background fitness vs. costs) | [-1, 1] | stronger increasing costs |
+| `extradimensional_bypass` | Reciprocal-sign motifs bypassed via extra dimensions (proportion, avg. length) | [0, 1] | more bypasses → more navigable |
+| `walsh_hadamard` † | Walsh–Hadamard epistasis spectrum (pairwise and higher-order coefficients) | — | returns a table |
+
+</details>
+
+<details>
+<summary><b>Navigability</b> · <code>groups="navigability"</code> — reachability of optima</summary>
+
+| Function | Measures | Range | Higher value → |
+|---|---|---|---|
+| `global_optima_accessibility` | Fraction of configs on a fitness-monotone path to the global optimum | [0, 1] | more accessible |
+| `mean_path_length_to_global_optimum` | Mean shortest adaptive-walk length to the global optimum | [0, ∞) | farther to reach |
+| `mean_distance_to_global_optimum` | Mean Hamming distance to the global optimum | [0, ∞) | more spread out |
+| `local_optima_accessibility` † | Accessibility of one or more specified local optima | [0, 1] | more accessible |
+| `mean_path_length_to_local_optima` † | Mean adaptive-walk length to specified local optima | [0, ∞) | farther to reach |
+| `mean_distance_to_local_optima` † | Mean Hamming distance to specified local optima | [0, ∞) | more spread out |
+
+</details>
+
+<details>
+<summary><b>Correlation</b> · <code>groups="correlation"</code> — fitness–distance and basin structure</summary>
+
+| Function | Measures | Range | Higher value → |
+|---|---|---|---|
+| `fdc` | Fitness–distance correlation to the global optimum | [-1, 1] | more navigable |
+| `neighbor_fitness_correlation` | Correlation of a config's fitness with its neighbors' mean | [-1, 1] | less rugged |
+| `basin_fitness_correlation` | Correlation between basin size and local-optimum fitness | [-1, 1] | fitter peaks have larger basins |
+| `fitness_flattening_index` | Whether fitness flattens approaching the global optimum | [-1, 1] | flatter near the peak |
+
+</details>
+
+<details>
+<summary><b>Robustness</b> · <code>groups="robustness"</code> — neutrality and evolvability</summary>
+
+| Function | Measures | Range | Higher value → |
+|---|---|---|---|
+| `neutrality` | Fraction of neutral (equal-fitness) edges | [0, 1] | more neutral |
+| `evolvability_enhancing_mutations` | Fraction of mutations that open access to fitter regions | [0, 1] | more evolvable |
+
+</details>
+
+<details>
+<summary><b>Fitness distribution</b> · <code>groups="fitness"</code> — shape statistics</summary>
+
+| Function | Measures | Range |
+|---|---|---|
+| `fitness_distribution` | Unitless shape of the fitness distribution: skewness, kurtosis, coefficient of variation, quartile coefficient, median/mean ratio, relative range, Cauchy location | various |
+
+</details>
+
+<sub>† Not part of the default `profile()` portfolio — call directly. These require a focal optimum (`lo=...`) or return a variable-length table rather than a single value.</sub>
 
 ## Landscape Classes
 
-`GraphFLA` currently offers the following classes for landscape construction.
+<details>
+<summary><b>Seven landscape classes</b> — pick the one matching your data (all share the same <code>build_from_data</code> API)</summary>
 
-|**Classes**|**Supported search space**|**Description**|
-|--|--|--|
-|`Landscape`|All discrete, combinatorial spaces, where each variable can be either categorical, boolean, or ordinal|The base landscape class, most generalizable|
-|`SequenceLandscape`|Categorical data where each variable takes values from the same alphabet.|Class optimized for general sequence data|
-|`BooleanLandscape`|Boolean space|Class optimized for boolean data|
-|`DNALandscape`|DNA sequence space|Class optimized for DNA data|
-|`RNALandscape`|RNA sequence space|Class optimized for RNA data|
-|`ProteinLandscape`|Protein sequence space|Class optimized for protein data|
+| Class | Search space | Notes |
+|---|---|---|
+| `Landscape` | Any discrete combinatorial space — categorical, boolean, and/or ordinal columns (possibly mixed) | Base class, most general; pass `data_types=` for mixed columns |
+| `SequenceLandscape` | Categorical sequences over a shared alphabet | General sequence data |
+| `BooleanLandscape` | Boolean (binary) space | Optimized for bit-strings |
+| `OrdinalLandscape` | Ordinal variables (ordered levels) | Optimized for ordinal data |
+| `DNALandscape` | DNA sequences (A/C/G/T) | Optimized for DNA |
+| `RNALandscape` | RNA sequences (A/C/G/U) | Optimized for RNA |
+| `ProteinLandscape` | Protein sequences (20 amino acids) | Optimized for protein |
+
+</details>
 
 ## Synthetic Problem Generators
 
