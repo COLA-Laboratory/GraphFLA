@@ -12,7 +12,7 @@ import numpy as np
 import pandas as pd
 import pytest
 
-from graphfla.landscape import Landscape, OrdinalLandscape
+from graphfla.landscape import Landscape, OrdinalLandscape, SequenceLandscape
 from graphfla.problems import NK
 from graphfla._neighbors import (
     BooleanNeighborGenerator,
@@ -158,6 +158,29 @@ def test_ordinal_landscape_is_manhattan_not_hamming():
     assert ls.graph.ecount() == 2  # 0->1, 1->2 only
     # level 0 and level 2 are NOT neighbours (Manhattan distance 2)
     assert ls.graph.get_eid(0, 2, directed=False, error=False) == -1
+
+
+def test_sequence_landscape_infers_alphabet_when_omitted():
+    # Omitting `alphabet` infers it from the data; the result must equal an
+    # explicit-alphabet build (same symbols, configs, and edges).
+    seqs = pd.Series(["AAC", "AAG", "ACC", "AGC", "GAC", "GGC"])
+    fit = pd.Series([0.1, 0.5, 0.3, 0.7, 0.2, 0.9])
+    auto = SequenceLandscape()
+    auto.build_from_data(seqs, fit, verbose=False)
+    explicit = SequenceLandscape(alphabet=["A", "C", "G"])
+    explicit.build_from_data(seqs, fit, verbose=False)
+    assert auto.alphabet == ["A", "C", "G"]
+    assert auto.n_configs == explicit.n_configs
+    assert auto.graph.ecount() == explicit.graph.ecount()
+
+
+def test_sequence_landscape_infers_alphabet_from_columns():
+    # The per-position DataFrame form infers the union of column symbols.
+    df = pd.DataFrame({"p1": ["A", "A", "G"], "p2": ["C", "G", "C"]})
+    ls = SequenceLandscape()
+    ls.build_from_data(df, [0.0, 1.0, 2.0], verbose=False)
+    assert ls.alphabet == ["A", "C", "G"]
+    assert ls.n_configs == 3
 
 
 def test_categorical_connects_every_other_value():
