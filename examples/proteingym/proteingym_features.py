@@ -12,8 +12,9 @@ epistasis analysis:
 * Only the *mutated* positions are kept. Each genotype is the string of amino
   acids at the union of positions mutated anywhere in the assay; invariant
   positions are dropped.
-* Single-site saturation assays (average number of mutations == 1) are removed,
-  because epistasis cannot be derived from them.
+* Assays whose mean number of mutations is <= ``--min-avg-mutations`` (default
+  1.0 -- i.e. single-site saturation) are removed, because epistasis cannot be
+  derived from them.
 
 The same functions power both the public command-line interface here and the
 Modal-based large-scale runner; keep this file free of any Modal dependency.
@@ -36,7 +37,7 @@ import os
 import re
 import time
 import warnings
-from typing import Dict, List, Optional, Tuple
+from typing import Callable, Dict, List, Optional, Tuple
 
 import numpy as np
 import pandas as pd
@@ -78,6 +79,28 @@ def parse_mutations(mutant: str) -> List[Tuple[str, int, str]]:
             raise ValueError(f"unparseable mutation token: {token!r}")
         subs.append((m.group(1).upper(), int(m.group(2)), m.group(3).upper()))
     return subs
+
+
+def infer_target_seq(dms_df: pd.DataFrame) -> Optional[str]:
+    """Reconstruct the wild-type sequence without a reference file.
+
+    Takes the first row that carries a ``mutated_sequence`` and reverts that
+    row's own substitutions (the ``wt`` char of each ``wt{pos}mut`` token),
+    recovering the full-length wild-type -- positions not mutated in that row are
+    already wild-type. Returns ``None`` if no usable ``mutated_sequence`` exists,
+    in which case the caller falls back to mutated-position parsing only.
+    """
+    if "mutated_sequence" not in dms_df.columns:
+        return None
+    usable = dms_df.dropna(subset=["mutated_sequence"])
+    if usable.empty:
+        return None
+    row = usable.iloc[0]
+    seq = list(str(row["mutated_sequence"]))
+    for wt, pos, _mut in parse_mutations(row["mutant"]):
+        if 1 <= pos <= len(seq):
+            seq[pos - 1] = wt
+    return "".join(seq)
 
 
 def dataset_meta(dms_df: pd.DataFrame, target_seq: str) -> dict:
@@ -163,41 +186,32 @@ def reduce_to_mutated_positions(
 
 
 def build_landscape(reduced_seqs: List[str], scores: np.ndarray, maximize: bool = True):
-    """Build a fully-annotated ProteinLandscape over the reduced genotypes."""
+    """Build a ProteinLandscape over the reduced genotypes.
+
+    Basins, accessible paths, distances and neighbour-fitness are computed
+    lazily on first access by the analysis layer, so the build only constructs
+    the graph -- no explicit ``calculate_*`` flags are needed.
+    """
     from graphfla.landscape import ProteinLandscape
 
     ls = ProteinLandscape(maximize=maximize)
     with warnings.catch_warnings():
         warnings.simplefilter("ignore")
-        ls.build_from_data(
-            list(reduced_seqs),
-            list(scores),
-            verbose=False,
-            calculate_basins=True,
-            calculate_paths=True,
-            calculate_distance=True,
-            calculate_neighbor_fit=True,
-        )
+        ls.build_from_data(list(reduced_seqs), list(scores), verbose=False)
     return ls
 
 
 def reregister_sequence_type(ls) -> None:
-    """Re-register the dynamic protein sequence type after unpickling.
+    """No-op retained for backward compatibility (e.g. the Modal runner).
 
-    SequenceLandscape registers its handler/generator on the instance under a
-    type key derived from ``id(alphabet)``, which is process-specific. The
-    instance-level registries normally travel with the pickle, but restore the
-    entry defensively in case an older/partial pickle lacks it.
+    Earlier landscapes keyed their sequence handler/generator under a
+    process-specific type id that did not survive pickling, so callers had to
+    re-register it after unpickling. The current landscape stores input handlers
+    and neighbour generators as instance-level registries that pickle correctly
+    -- a built landscape round-trips through ``pickle`` intact -- so no
+    re-registration is needed. This shim keeps existing callers working.
     """
-    from graphfla._data import SequenceHandler
-    from graphfla._neighbors import SequenceNeighborGenerator
-
-    alphabet = list("ACDEFGHIKLMNPQRSTVWY")
-    if ls.type not in ls._input_handlers:
-        ls.register_input_handler(ls.type, SequenceHandler(alphabet))
-        ls.register_neighbor_generator(
-            ls.type, SequenceNeighborGenerator(len(alphabet))
-        )
+    return None
 
 
 def landscape_meta(ls) -> dict:
@@ -223,6 +237,7 @@ def compute_features(
     which: str = "all",
     n_jobs: int = 1,
     skip: Optional[set] = None,
+    report: Optional[Callable[[str], None]] = None,
 ) -> Dict[str, float]:
     """Compute the landscape feature panel via :func:`graphfla.analysis.profile`.
 
@@ -231,25 +246,48 @@ def compute_features(
     recorded as NaN, never aborting the panel. Exact motif census is forced
     (``sample_cut_prob=0``): on these sparse Hamming-1 DMS graphs it is fast and
     ESU sampling noticeably distorts the motif counts.
+
+    The cheap single-core metrics are computed in one batch; each expensive
+    multi-core metric (``gamma``, ``gamma_star``, ...) is then computed on its
+    own so ``report`` -- an optional ``callable(stage_message)`` -- can announce
+    the step currently in flight. Per-metric calls are free relative to the
+    metric cost and give live, per-step progress on large assays.
     """
     import graphfla.analysis as A
 
     skip = set(skip or ())
-    if which != "all":  # split by core usage for the large-scale runner
-        lm = A.list_metrics()
-        wanted = lm[lm["n_jobs"]] if which == "multi" else lm[~lm["n_jobs"]]
-        skip |= set(lm.index) - set(wanted.index)
+    lm = A.list_metrics()
+    is_multi = lm["n_jobs"]
+    names = [m for m in lm.index if m not in skip]
+    if which == "multi":
+        names = [m for m in names if is_multi[m]]
+    elif which == "single":
+        names = [m for m in names if not is_multi[m]]
+    single = [m for m in names if not is_multi[m]]
+    multi = [m for m in names if is_multi[m]]
+
     params = {
         "classify_epistasis": {"sample_cut_prob": 0},
         "extradimensional_bypass": {"sample_cut_prob": 0},
     }
-    with warnings.catch_warnings():
-        warnings.simplefilter("ignore")
-        s = A.profile(
-            ls, n_jobs=n_jobs, params=params,
-            exclude=sorted(skip) or None, on_error="warn",
-        )
-    return {k: (float(v) if pd.notna(v) else float("nan")) for k, v in s.items()}
+    out: Dict[str, float] = {}
+
+    def _run(include: List[str], stage: str) -> None:
+        if not include:
+            return
+        if report is not None:
+            report(stage)
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore")
+            s = A.profile(
+                ls, n_jobs=n_jobs, params=params, include=include, on_error="warn",
+            )
+        out.update({k: (float(v) if pd.notna(v) else float("nan")) for k, v in s.items()})
+
+    _run(single, f"computing {len(single)} core features")
+    for m in multi:
+        _run([m], f"computing {m} (slow)")
+    return out
 
 
 def flatten_results(results: Dict[str, float]) -> Dict[str, float]:
@@ -267,19 +305,28 @@ def process_dataset(
     n_jobs: int = 1,
     min_avg_mutations: float = 1.0,
     skip: Optional[set] = None,
+    report: Optional[Callable[[str], None]] = None,
 ) -> dict:
     """Build + annotate one DMS dataset; returns a record with meta + features.
 
-    The record's ``status`` is one of: 'ok', 'skipped_single_saturation',
-    'too_few_variants', 'build_failed'.
+    The record's ``status`` is one of: 'ok', 'skipped_too_sparse',
+    'too_few_variants', 'build_failed'. ``report`` -- an optional
+    ``callable(stage_message)`` -- is invoked at each stage (scan / reduce /
+    build / per-metric) so a caller can surface live progress.
     """
+    def _say(stage: str) -> None:
+        if report is not None:
+            report(stage)
+
+    _say("scanning variants")
     meta = dataset_meta(dms_df, target_seq)
     record = {"meta": meta}
 
     if meta["avg_n_mutations"] <= min_avg_mutations:
-        record["status"] = "skipped_single_saturation"
+        record["status"] = "skipped_too_sparse"
         return record
 
+    _say("reducing to mutated positions")
     seqs, scores, positions, info = reduce_to_mutated_positions(dms_df, target_seq)
     meta.update(info)
     if len(seqs) < 3:
@@ -287,6 +334,7 @@ def process_dataset(
         return record
 
     try:
+        _say(f"building landscape · {len(seqs)} configs")
         ls = build_landscape(seqs, scores)
     except Exception as exc:  # noqa: BLE001
         record["status"] = "build_failed"
@@ -294,7 +342,9 @@ def process_dataset(
         return record
 
     meta.update(landscape_meta(ls))
-    record["features"] = compute_features(ls, which=which, n_jobs=n_jobs, skip=skip)
+    record["features"] = compute_features(
+        ls, which=which, n_jobs=n_jobs, skip=skip, report=report
+    )
     record["status"] = "ok"
     return record
 
@@ -353,39 +403,152 @@ def _eligible_dms(dms_dir: str, reference: pd.DataFrame) -> List[str]:
     return sorted(files & set(reference.index.astype(str)))
 
 
+def _report_dataset(console, i: int, n: int, dms_id: str, rec: dict,
+                    dt: float, cached: bool) -> None:
+    """Print a compact, styled per-dataset summary (renders above the bar).
+
+    Three lines: a header (id, position in the queue, status, timing), the DMS
+    data summary, and -- when a landscape was built -- cheap build-time landscape
+    statistics. Uses parentheses (not brackets) around numeric ranges so the
+    values are never mistaken for rich markup tags.
+    """
+    meta = rec.get("meta", {})
+    status = rec.get("status", "?")
+    tag = {
+        "ok": "[green]✓ ok[/]",
+        "skipped_too_sparse": "[yellow]⊘ too sparse[/]",
+        "too_few_variants": "[yellow]⊘ too few variants[/]",
+        "build_failed": "[red]✗ build failed[/]",
+    }.get(status, status)
+    timing = "[dim](cached)[/]" if cached else f"[dim]{dt:.1f}s[/]"
+    console.print(
+        f"[bold cyan]{dms_id}[/] [dim]· {i}/{n} · {n - i} left[/]  {tag}  {timing}"
+    )
+
+    if meta:
+        dms = []
+        if pd.notna(meta.get("n_variants_raw")):
+            dms.append(f"{int(meta['n_variants_raw'])} variants")
+        if pd.notna(meta.get("avg_n_mutations")):
+            dms.append(f"⟨mut⟩={meta['avg_n_mutations']:.2f}")
+        if pd.notna(meta.get("max_n_mutations")):
+            dms.append(f"max={int(meta['max_n_mutations'])}")
+        if pd.notna(meta.get("n_mutated_positions")):
+            dms.append(f"{int(meta['n_mutated_positions'])} mut-pos")
+        if pd.notna(meta.get("seq_len")):
+            dms.append(f"len={int(meta['seq_len'])}")
+        if pd.notna(meta.get("fitness_min")) and pd.notna(meta.get("fitness_max")):
+            dms.append(f"fit∈({meta['fitness_min']:.2f}, {meta['fitness_max']:.2f})")
+        if dms:
+            console.print("    [dim]DMS      [/] " + " · ".join(dms))
+
+    if status == "ok" and pd.notna(meta.get("n_configs")):
+        ls = [f"{int(meta['n_configs'])} configs"]
+        if pd.notna(meta.get("n_edges")):
+            ls.append(f"{int(meta['n_edges'])} edges")
+        if pd.notna(meta.get("n_lo")):
+            ls.append(f"{int(meta['n_lo'])} optima")
+        if pd.notna(meta.get("n_plateau")):
+            ls.append(f"{int(meta['n_plateau'])} plateaus")
+        if pd.notna(meta.get("go_fitness")):
+            ls.append(f"GO={meta['go_fitness']:.3g}")
+        console.print("    [dim]landscape[/] " + " · ".join(ls))
+    elif status == "build_failed" and rec.get("error"):
+        console.print(f"    [red]{rec['error']}[/]")
+
+
 def run_cli(args: argparse.Namespace) -> None:
-    reference = load_reference(args.reference)
+    from rich.console import Console
+    from rich.progress import (
+        BarColumn, MofNCompleteColumn, Progress, SpinnerColumn, TextColumn,
+        TimeElapsedColumn,
+    )
+
+    console = Console()
+    reference = load_reference(args.reference) if args.reference else None
     os.makedirs(args.cache_dir, exist_ok=True)
-    dms_ids = _eligible_dms(args.dms_dir, reference)
+
+    if reference is not None:
+        dms_ids = _eligible_dms(args.dms_dir, reference)
+        source = f"reference {os.path.basename(args.reference)}"
+    else:
+        dms_ids = sorted(f[:-4] for f in os.listdir(args.dms_dir) if f.endswith(".csv"))
+        source = "all CSVs in --dms-dir (wild-type inferred; no --reference)"
     if args.limit:
         dms_ids = dms_ids[: args.limit]
-    print(f"Found {len(dms_ids)} DMS datasets with reference metadata.")
+    skip = {s.strip() for s in args.skip_features.split(",") if s.strip()}
+
+    console.rule("[bold]ProteinGym × GraphFLA — landscape feature annotation[/]")
+    console.print(
+        f"datasets : [bold]{len(dms_ids)}[/]   source: {source}\n"
+        f"cache    : [dim]{args.cache_dir}[/]   "
+        f"filter   : drop assays with mean #mutations ≤ [bold]{args.min_avg_mutations}[/]"
+        + (f"   skip: {sorted(skip)}" if skip else "")
+    )
 
     records: Dict[str, dict] = {}
-    for i, dms_id in enumerate(dms_ids, 1):
-        cache_path = os.path.join(args.cache_dir, f"{dms_id}.json")
-        if os.path.exists(cache_path) and not args.force:
-            with open(cache_path) as fh:
-                records[dms_id] = json.load(fh)
-            print(f"[{i}/{len(dms_ids)}] {dms_id}: cached ({records[dms_id].get('status')})")
-            continue
-        target_seq = reference.loc[dms_id, "target_seq"]
-        dms_df = pd.read_csv(os.path.join(args.dms_dir, f"{dms_id}.csv"))
-        t0 = time.time()
-        skip = {s.strip() for s in args.skip_features.split(",") if s.strip()}
-        rec = process_dataset(
-            dms_df, target_seq, which="all", n_jobs=args.n_jobs, skip=skip
-        )
-        with open(cache_path, "w") as fh:
-            json.dump(rec, fh, default=_json_default)
-        records[dms_id] = rec
-        print(f"[{i}/{len(dms_ids)}] {dms_id}: {rec.get('status')} ({time.time()-t0:.1f}s)")
+    tally: Dict[str, int] = {}
+    with Progress(
+        SpinnerColumn(),  # animates via the refresh thread -- stays "alive" during blocking work
+        TextColumn("[progress.description]{task.description}"),
+        BarColumn(bar_width=None),
+        MofNCompleteColumn(),
+        TextColumn("·"),
+        TimeElapsedColumn(),
+        console=console,
+        refresh_per_second=12,
+    ) as progress:
+        task = progress.add_task("[cyan]starting…[/]", total=len(dms_ids))
+        for i, dms_id in enumerate(dms_ids, 1):
+            short = dms_id if len(dms_id) <= 28 else dms_id[:27] + "…"
+
+            def report(stage: str, _s: str = short) -> None:
+                progress.update(task, description=f"[cyan]{_s}[/] [dim]·[/] {stage}")
+
+            report("queued")
+            cache_path = os.path.join(args.cache_dir, f"{dms_id}.json")
+            cached = os.path.exists(cache_path) and not args.force
+            t0 = time.time()
+            if cached:
+                with open(cache_path) as fh:
+                    rec = json.load(fh)
+            else:
+                report("reading CSV")
+                dms_df = pd.read_csv(os.path.join(args.dms_dir, f"{dms_id}.csv"))
+                target_seq = (
+                    reference.loc[dms_id, "target_seq"]
+                    if reference is not None else infer_target_seq(dms_df)
+                )
+                rec = process_dataset(
+                    dms_df, target_seq, which="all", n_jobs=args.n_jobs,
+                    min_avg_mutations=args.min_avg_mutations, skip=skip,
+                    report=report,
+                )
+                with open(cache_path, "w") as fh:
+                    json.dump(rec, fh, default=_json_default)
+            records[dms_id] = rec
+            status = rec.get("status", "build_failed")
+            tally[status] = tally.get(status, 0) + 1
+            _report_dataset(progress.console, i, len(dms_ids), dms_id, rec,
+                            time.time() - t0, cached)
+            progress.advance(task)
 
     zs = load_perf_table(args.zero_shot, "zs_") if args.zero_shot else None
     sup = load_perf_table(args.supervised, "sup_") if args.supervised else None
     table = assemble_table(records, zero_shot=zs, supervised=sup)
     table.to_csv(args.output, index=False)
-    print(f"Wrote {len(table)} rows x {table.shape[1]} cols -> {args.output}")
+
+    console.rule("[bold green]done[/]")
+    console.print("   ·   ".join([
+        f"[green]{tally.get('ok', 0)} ok[/]",
+        f"[yellow]{tally.get('skipped_too_sparse', 0)} too-sparse[/]",
+        f"[yellow]{tally.get('too_few_variants', 0)} too-few-variants[/]",
+        f"[red]{tally.get('build_failed', 0)} build-failed[/]",
+    ]))
+    console.print(
+        f"wrote [bold]{len(table)}[/] rows × [bold]{table.shape[1]}[/] columns "
+        f"→ [bold]{args.output}[/]"
+    )
 
 
 def _json_default(o):
@@ -401,10 +564,25 @@ def _json_default(o):
 def build_arg_parser() -> argparse.ArgumentParser:
     p = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     p.add_argument("--dms-dir", required=True, help="Folder of per-DMS substitution CSVs.")
-    p.add_argument("--reference", required=True, help="reference_files/DMS_substitutions.csv")
+    p.add_argument(
+        "--reference", default=None,
+        help="ProteinGym reference_files/DMS_substitutions.csv -- per-assay "
+        "METADATA supplying the wild-type 'target_seq' (and the canonical list "
+        "of assay ids). OPTIONAL: if omitted, the wild-type is reconstructed "
+        "from each CSV's 'mutated_sequence' column and every CSV in --dms-dir is "
+        "processed. This is NOT a model-performance file -- those are the "
+        "separate --zero-shot / --supervised tables.",
+    )
     p.add_argument("--zero-shot", default=None, help="Zero-shot DMS-level Spearman CSV.")
     p.add_argument("--supervised", default=None, help="Supervised DMS-level Spearman CSV.")
     p.add_argument("--output", default="proteingym_graphfla_table.csv", help="Merged output CSV.")
+    p.add_argument(
+        "--min-avg-mutations", type=float, default=1.0,
+        help="Drop DMS assays whose MEAN number of mutations per variant is "
+        "<= this value (too sparse to derive epistasis). Default 1.0 drops "
+        "single-mutant saturation assays; raise it (e.g. 2.0) to require more "
+        "multi-mutant coverage.",
+    )
     p.add_argument("--cache-dir", default="proteingym_graphfla_cache", help="Per-DMS JSON cache (resumable).")
     p.add_argument("--n-jobs", type=int, default=-1, help="CPU cores for multi-core features.")
     p.add_argument("--limit", type=int, default=0, help="Process at most this many datasets (0 = all).")
