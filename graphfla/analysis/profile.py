@@ -17,7 +17,11 @@ per-metric kwargs. Stochastic/parallel metrics receive shared ``seed`` / ``n_job
 from __future__ import annotations
 
 import inspect
+import logging
+import sys
+import time
 import warnings
+from contextlib import contextmanager
 from dataclasses import asdict, dataclass, is_dataclass
 from typing import Optional
 
@@ -170,6 +174,192 @@ def _select(groups, include, exclude):
     return base
 
 
+# --------------------------------------------------------------------------- #
+# progress reporting
+# --------------------------------------------------------------------------- #
+def _interactive_default():
+    """Auto-enable the display only in a REPL/notebook, never in plain scripts."""
+    if hasattr(sys, "ps1"):                       # standard interactive interpreter
+        return True
+    ipy = sys.modules.get("IPython")              # an already-running notebook/kernel
+    if ipy is None:
+        return False
+    try:
+        return ipy.get_ipython() is not None
+    except Exception:
+        return False
+
+
+def _resolve_show(progress):
+    return _interactive_default() if progress is None else bool(progress)
+
+
+def _fmt_secs(s):
+    if s < 60:
+        return f"{s:.1f}s"
+    m, rem = divmod(s, 60)
+    return f"{int(m)}m{rem:04.1f}s"
+
+
+def _replay_warnings(console, caught):
+    """Re-emit warnings captured during profiling, de-duplicated, as a tidy
+    footnote -- genuine warnings, but printed after the bar instead of through it."""
+    seen, uniq = set(), []
+    for w in caught:
+        key = (w.category, str(w.message))
+        if key not in seen:
+            seen.add(key)
+            uniq.append(w)
+    if not uniq:
+        return
+    if console is not None:
+        console.print(f"[yellow]![/] [dim]{len(uniq)} warning(s) during profiling:[/]")
+    for w in uniq:
+        warnings.warn_explicit(w.message, w.category, w.filename, w.lineno)
+
+
+@contextmanager
+def _muted_landscapes(landscapes, enabled):
+    """Mute several landscapes' own verbose logging/bars while an outer display
+    runs (multi-landscape branch); a no-op when *enabled* is false."""
+    if not enabled:
+        yield
+        return
+    saved = [(ls, getattr(ls, "verbose", None)) for ls in landscapes]
+    for ls, v in saved:
+        if v:
+            try:
+                ls.verbose = False
+            except Exception:
+                pass
+    glog = logging.getLogger("graphfla")
+    level = glog.level
+    if glog.level < logging.WARNING:
+        glog.setLevel(logging.WARNING)
+    wctx = warnings.catch_warnings(record=True)
+    caught = wctx.__enter__()
+    warnings.simplefilter("always")
+    warnings.filterwarnings("ignore", message=r".*ipywidgets.*")
+    try:
+        yield
+    finally:
+        for ls, v in saved:
+            if v:
+                try:
+                    ls.verbose = v
+                except Exception:
+                    pass
+        glog.setLevel(level)
+        wctx.__exit__(None, None, None)
+        _replay_warnings(None, list(caught))
+
+
+class _ProfileReporter:
+    """Pretty per-metric progress for :func:`profile` on a single landscape.
+
+    When enabled it renders one rich bar that names the metric in flight and
+    logs each finished metric with its wall-time, while (a) muting the
+    landscape's own verbose logging/bars for the duration -- ours replaces them
+    -- and (b) holding warnings back to a tidy footnote after the bar instead of
+    letting them slice through it. When disabled (the default in scripts and
+    tests) every method is a no-op, so profiling behaves exactly as before.
+    """
+
+    def __init__(self, landscape, total, *, enabled):
+        self.landscape = landscape
+        self.total = total
+        self.enabled = enabled
+        self._bar = self._task = self._console = None
+        self._t0 = self._t_start = None
+        self._saved_verbose = self._saved_level = None
+        self._wctx = self._caught = None
+
+    def __enter__(self):
+        if not self.enabled:
+            return self
+        try:
+            self._start_bar()
+        except Exception:
+            self.enabled = False                  # rich absent -> act like progress off
+            return self
+        self._saved_verbose = getattr(self.landscape, "verbose", None)
+        if self._saved_verbose:
+            try:
+                self.landscape.verbose = False
+            except Exception:
+                self._saved_verbose = None
+        glog = logging.getLogger("graphfla")
+        self._saved_level = glog.level
+        if glog.level < logging.WARNING:
+            glog.setLevel(logging.WARNING)
+        self._wctx = warnings.catch_warnings(record=True)
+        self._caught = self._wctx.__enter__()
+        warnings.simplefilter("always")
+        warnings.filterwarnings("ignore", message=r".*ipywidgets.*")
+        self._t_start = time.perf_counter()
+        return self
+
+    def _start_bar(self):
+        from rich.console import Console
+        from rich.progress import (
+            BarColumn,
+            MofNCompleteColumn,
+            Progress,
+            SpinnerColumn,
+            TextColumn,
+            TimeElapsedColumn,
+        )
+
+        self._console = Console(stderr=True, highlight=False)
+        self._bar = Progress(
+            SpinnerColumn(),
+            TextColumn("[bold cyan]profile[/] [dim]{task.fields[cur]}[/]"),
+            BarColumn(bar_width=24),
+            MofNCompleteColumn(),
+            TextColumn("·"),
+            TimeElapsedColumn(),
+            console=self._console,
+            transient=True,
+        )
+        self._bar.start()
+        self._task = self._bar.add_task("", total=self.total, cur="")
+
+    def start(self, name):
+        if not self.enabled:
+            return
+        self._t0 = time.perf_counter()
+        self._bar.update(self._task, cur=name)
+
+    def finish(self, name, ok=True):
+        if not self.enabled:
+            return
+        dt = time.perf_counter() - (self._t0 or time.perf_counter())
+        mark = "[green]✓[/]" if ok else "[red]✗[/]"
+        self._console.print(f"  {mark} {name:<36}[dim]{_fmt_secs(dt)}[/]")
+        self._bar.advance(self._task)
+
+    def __exit__(self, exc_type, exc, tb):
+        if not self.enabled:
+            return False
+        self._bar.stop()
+        if exc_type is None:
+            total = _fmt_secs(time.perf_counter() - self._t_start)
+            self._console.print(
+                f"[green]✓[/] profiled [bold]{self.total}[/] features in [bold]{total}[/]"
+            )
+        if self._saved_verbose:
+            try:
+                self.landscape.verbose = self._saved_verbose
+            except Exception:
+                pass
+        logging.getLogger("graphfla").setLevel(self._saved_level)
+        caught = list(self._caught or [])
+        self._wctx.__exit__(exc_type, exc, tb)
+        if exc_type is None:
+            _replay_warnings(self._console, caught)
+        return False
+
+
 def profile(
     landscape,
     *,
@@ -183,6 +373,7 @@ def profile(
     on_error="warn",
     include_structure=False,
     index=None,
+    progress=None,
 ):
     """Compute the whole-landscape metric profile.
 
@@ -212,6 +403,13 @@ def profile(
         ``structure.*`` columns.
     index : optional
         Index for the returned ``DataFrame`` when ``landscape`` is a sequence.
+    progress : bool, optional
+        Show a live progress display on stderr -- a bar with the current metric
+        and ``n/total``, one line per finished metric with its wall-time, and a
+        closing summary -- muting the landscape's own verbose chatter while it
+        runs and deferring warnings to a footnote afterwards. Default (``None``)
+        auto-enables it in an interactive session (REPL/notebook) and stays
+        silent in scripts; pass ``True``/``False`` to force it.
 
     Returns
     -------
@@ -223,14 +421,21 @@ def profile(
         raise ValueError("on_error must be 'warn', 'raise', or 'ignore'")
 
     if isinstance(landscape, (list, tuple)):
-        rows = [
-            profile(
-                ls, groups=groups, include=include, exclude=exclude, params=params,
-                n_jobs=n_jobs, seed=seed, time_budget=time_budget, on_error=on_error,
-                include_structure=include_structure,
-            )
-            for ls in landscape
-        ]
+        show = _resolve_show(progress)
+        seq = landscape
+        if show:
+            from .._progress import track  # top-level helper; imports no graphfla code
+            seq = track(landscape, description="profile landscapes",
+                        total=len(landscape), verbose=True)
+        with _muted_landscapes(landscape, show):
+            rows = [
+                profile(
+                    ls, groups=groups, include=include, exclude=exclude, params=params,
+                    n_jobs=n_jobs, seed=seed, time_budget=time_budget, on_error=on_error,
+                    include_structure=include_structure, progress=False,
+                )
+                for ls in seq
+            ]
         df = pd.DataFrame(rows)
         if index is not None:
             df.index = index
@@ -243,22 +448,26 @@ def profile(
         for k, v in landscape.describe().items():
             if not isinstance(v, bool) and isinstance(v, (int, float)):
                 out[f"structure.{k}"] = float(v)
-    for m in metrics:
-        kwargs = _shared_kwargs(m.fn, n_jobs=n_jobs, seed=seed, time_budget=time_budget)
-        kwargs.update(params.get(m.name, {}))
-        try:
-            value = m.fn(landscape, **kwargs)
-        except Exception as e:  # noqa: BLE001 -- one bad metric must not sink the profile
-            if on_error == "raise":
-                raise
-            if on_error == "warn":
-                warnings.warn(
-                    f"profile: metric {m.name!r} failed ({type(e).__name__}: {e}); "
-                    f"recording NaN.",
-                    stacklevel=2,
-                )
-            value = None
-        out.update(_flatten(m, value))
+    with _ProfileReporter(landscape, len(metrics), enabled=_resolve_show(progress)) as rep:
+        for m in metrics:
+            rep.start(m.name)
+            kwargs = _shared_kwargs(m.fn, n_jobs=n_jobs, seed=seed, time_budget=time_budget)
+            kwargs.update(params.get(m.name, {}))
+            ok = True
+            try:
+                value = m.fn(landscape, **kwargs)
+            except Exception as e:  # noqa: BLE001 -- one bad metric must not sink the profile
+                if on_error == "raise":
+                    raise
+                if on_error == "warn":
+                    warnings.warn(
+                        f"profile: metric {m.name!r} failed ({type(e).__name__}: {e}); "
+                        f"recording NaN.",
+                        stacklevel=2,
+                    )
+                value, ok = None, False
+            rep.finish(m.name, ok=ok)
+            out.update(_flatten(m, value))
     return pd.Series(out, dtype=float)
 
 
