@@ -772,6 +772,8 @@ class Landscape(_IOMixin, _BuildMixin):
             processed_data,
             n_edit=n_edit,
             neighborhood_strategy=neighborhood_strategy,
+            tau=tau,
+            filter_mode=filter_mode,
         )
         neutral_pairs = self._postprocess_graph(
             neutral_pairs=neutral_pairs,
