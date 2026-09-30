@@ -31,6 +31,11 @@ import logging
 
 logger = logging.getLogger(__name__)
 _ATTRIBUTE_BUFFER_BYTES = 16 * 1024**2
+_RESERVED_VERTEX_ATTRIBUTES = {
+    "fitness", "in_degree", "out_degree", "is_lo", "plateau_id", "plateau_size",
+    "basin_index", "size_basin_greedy", "radius_basin_greedy",
+    "size_basin_accessible", "dist_go", "mean_neighbor_fit", "pagerank",
+}
 
 
 class _BuildMixin:
@@ -81,6 +86,17 @@ class _BuildMixin:
         X_processed, f_processed, self.data_types, self.n_vars = prepare_data(
             handler, X_filtered, f_filtered, data_types=data_types, verbose=verbose
         )
+
+        columns = pd.Index(map(str, X_processed.columns))
+        if not columns.is_unique:
+            raise ValueError("Feature names must be unique after conversion to strings.")
+        reserved = set(columns) & _RESERVED_VERTEX_ATTRIBUTES
+        if reserved:
+            raise ValueError(f"Feature names are reserved for landscape attributes: {sorted(reserved)}")
+        if not X_processed.columns.equals(columns):
+            X_processed = X_processed.copy(deep=False)
+            X_processed.columns = columns
+            self.data_types = {str(column): kind for column, kind in self.data_types.items()}
 
         X_final, f_final = clean_data(
             X_processed,

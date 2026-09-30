@@ -16,6 +16,7 @@ from ._validation import (
     _drop_duplicates,
     _invariant_columns,
     _build_config_dict,
+    _coerce_boolean,
 )
 from .handlers import DefaultHandler
 import logging
@@ -173,21 +174,7 @@ def encode_data(
     for col, dtype in prepared_data_types.items():
         col_data = X_for_encoding[col]
         if dtype == "boolean":
-            num = pd.to_numeric(col_data, errors="coerce")
-            invalid = col_data.notna() & (num.isna() | ~((num == 0) | (num == 1)))
-            if invalid.any():
-                bad = col_data.loc[invalid].head(5).tolist()
-                raise ValueError(
-                    f"Column {col!r} is declared 'boolean' but contains values that "
-                    f"are not 0/1 (or True/False) after numeric coercion (examples: {bad}). "
-                    "Fix the column or choose a different data_types entry."
-                )
-            if num.isnull().any():
-                raise ValueError(
-                    f"Column {col!r} contains NaN. Impute, drop those rows, or remove "
-                    "the site before building the landscape."
-                )
-            encoded_columns[col] = num.astype(int)
+            encoded_columns[col] = _coerce_boolean(col_data).astype(int)
         elif dtype == "categorical":
             if isinstance(col_data.dtype, pd.CategoricalDtype):
                 encoded_columns[col] = col_data.array.codes

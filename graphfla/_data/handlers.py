@@ -9,7 +9,7 @@ from typing import Any, Dict, List, Tuple, Union, Protocol, runtime_checkable
 import numpy as np
 import pandas as pd
 
-from ._validation import ALLOWED_DATA_TYPES, _validate_bitstrings_fast
+from ._validation import ALLOWED_DATA_TYPES, _validate_bitstrings_fast, _coerce_boolean
 import logging
 
 logger = logging.getLogger(__name__)
@@ -328,6 +328,9 @@ class DefaultHandler:
             )
 
         data_types_validated = self._validate_data_types(X_df, data_types, verbose)
+        for column, kind in data_types_validated.items():
+            if kind == "boolean":
+                X_df[column] = _coerce_boolean(X_df[column])
 
         X_df.reset_index(drop=True, inplace=True)
         f_series.reset_index(drop=True, inplace=True)

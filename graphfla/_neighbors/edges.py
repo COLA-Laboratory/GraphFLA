@@ -6,7 +6,7 @@ public API of the neighbours subpackage.
 """
 
 from dataclasses import dataclass
-from typing import Dict, List, Tuple, Union, Callable
+from typing import List, Tuple, Union, Callable
 
 import numpy as np
 

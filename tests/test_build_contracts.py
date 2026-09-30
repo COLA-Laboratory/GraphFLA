@@ -296,3 +296,45 @@ def test_standalone_graph_filter_preserves_threshold_and_component_contract():
     assert (n, m, kept) == (3, 2, [1, 2, 3])
     assert filtered.get_edgelist() == [(0, 1), (1, 2)]
     assert filtered.vs["fitness"] == [-1.0, 1.0, 2.0]
+
+
+def test_mixed_boolean_aliases_share_one_variant():
+    X = pd.DataFrame({"enabled": ["0", 0, 1]})
+    ls = Landscape().build_from_data(
+        X, [0.0, 100.0, 1.0], data_types={"enabled": "boolean"}, verbose=False
+    )
+    assert ls.shape == (2, 1)
+    assert ls.graph.vs["fitness"] == [0.0, 1.0]
+    assert ls.graph.vs["enabled"] == [0, 1]
+
+
+def test_invalid_constant_boolean_is_not_discarded_as_background():
+    X = pd.DataFrame({"enabled": [2, 2, 2], "level": [0, 1, 2]})
+    with pytest.raises(ValueError, match="0/1"):
+        Landscape().build_from_data(
+            X,
+            [0.0, 1.0, 2.0],
+            data_types={"enabled": "boolean", "level": "ordinal"},
+            verbose=False,
+        )
+
+
+def test_integer_column_names_match_exported_feature_metadata():
+    X = pd.DataFrame([list(s) for s in ["AA", "AC", "CA", "CC"]])
+    ls = DNALandscape().build_from_data(X, [0.0, 1.0, 2.0, 3.0], verbose=False)
+    assert list(ls.data_types) == ["0", "1"]
+    assert ls.get_data()[list(ls.data_types)].values.tolist() == X.values.tolist()
+    assert list(X.columns) == [0, 1]
+
+
+@pytest.mark.parametrize("column", ["fitness", "out_degree", "is_lo", "basin_index"])
+def test_feature_names_cannot_overwrite_landscape_attributes(column):
+    X = pd.DataFrame({column: [0, 1], "other": [0, 0]})
+    with pytest.raises(ValueError, match="reserved"):
+        OrdinalLandscape().build_from_data(X, [0.0, 1.0], verbose=False)
+
+
+def test_stringified_feature_names_must_remain_unique():
+    X = pd.DataFrame([[0, 0], [1, 1]], columns=[0, "0"])
+    with pytest.raises(ValueError, match="unique"):
+        OrdinalLandscape().build_from_data(X, [0.0, 1.0], verbose=False)
