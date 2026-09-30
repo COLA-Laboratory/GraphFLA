@@ -17,3 +17,5 @@ htmlcov/
 .pytest_cache/
 .hypothesis/
 .ruff_cache/
+benchmarks/results/*.partial.json
+benchmarks/results/*.tmp

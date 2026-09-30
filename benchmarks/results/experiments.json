@@ -1,0 +1,114 @@
+{
+  "baseline_ref": "9f86def",
+  "final_source_ref": "01be0bf",
+  "final_source_sha256": "8aec83d5ef775f0d5bd2daf16d33bb8e06fdd72b97b06d9c949419672ceeefec",
+  "stopping_rule": {
+    "patience": 3,
+    "stagnant_experiments": [
+      10,
+      11,
+      12
+    ],
+    "reason": "No reliable practical gain in three consecutive tuning experiments; this is not a claim of a theoretical ceiling."
+  },
+  "experiments": [
+    {
+      "iteration": 0,
+      "label": "main",
+      "code_commit": "9f86def",
+      "decision": "baseline",
+      "hypothesis_and_outcome": "Original main implementation."
+    },
+    {
+      "iteration": 1,
+      "label": "filter",
+      "code_commit": "456bfd1",
+      "decision": "retained",
+      "hypothesis_and_outcome": "Filter lethal-lethal edges before allocating the graph."
+    },
+    {
+      "iteration": 2,
+      "label": "mixed",
+      "code_commit": "402cef4",
+      "decision": "retained",
+      "hypothesis_and_outcome": "Share exact mixed-radix lookup across mixed and ordinal variables."
+    },
+    {
+      "iteration": 3,
+      "label": "attributes",
+      "code_commit": "bb49dba",
+      "decision": "superseded",
+      "hypothesis_and_outcome": "Streaming reduces memory, but list-to-array weight conversion adds time."
+    },
+    {
+      "iteration": 4,
+      "label": "bounded",
+      "code_commit": "cb118bb",
+      "decision": "superseded",
+      "hypothesis_and_outcome": "Bound decoded attribute buffers; weight conversion still requires correction."
+    },
+    {
+      "iteration": 5,
+      "label": "pairs",
+      "code_commit": "6506ccc",
+      "decision": "retained",
+      "hypothesis_and_outcome": "Visit each substitution pair once; preserve list weights and bounded attribute buffers."
+    },
+    {
+      "iteration": 6,
+      "label": "codes",
+      "code_commit": "48fcd6c",
+      "decision": "retained",
+      "hypothesis_and_outcome": "Read categorical code arrays without creating intermediate Series."
+    },
+    {
+      "iteration": 7,
+      "label": "dispatch",
+      "code_commit": "ce50ff1",
+      "decision": "retained",
+      "hypothesis_and_outcome": "Choose supported neighborhood backends using actual geometry and key space."
+    },
+    {
+      "iteration": 8,
+      "label": "dedup",
+      "code_commit": "c7686ab",
+      "decision": "retained",
+      "hypothesis_and_outcome": "Avoid hashing invariant sites when deduplicating wide inputs."
+    },
+    {
+      "iteration": 9,
+      "label": "component",
+      "code_commit": "f97abcc",
+      "decision": "retained",
+      "hypothesis_and_outcome": "Reuse largest-component selection without repeating edge filtering."
+    },
+    {
+      "iteration": 10,
+      "label": "fingerprint",
+      "code_commit": "51d94b1",
+      "decision": "retained-for-simplicity",
+      "hypothesis_and_outcome": "Remove the fingerprint product buffer; runtime differences remain inconclusive."
+    },
+    {
+      "iteration": 11,
+      "label": "small-chunks",
+      "code_commit": "13347bd",
+      "decision": "rejected",
+      "hypothesis_and_outcome": "No reliable speed gain; higher peak RSS in large protein cases."
+    },
+    {
+      "iteration": 12,
+      "label": "narrow-index",
+      "code_commit": "3465b71",
+      "decision": "rejected",
+      "hypothesis_and_outcome": "No runtime gain beyond the noise gate; memory changes below the practical threshold."
+    }
+  ],
+  "final_measurement": "final-verified.json",
+  "control_measurement": "control-main-repeat.json",
+  "followup_correctness_fixes": [
+    "Canonicalize Boolean aliases before deduplication.",
+    "Protect feature names and keep graph IDs aligned after cleaning.",
+    "Normalize fitness to float64 to avoid narrow-integer overflow and Boolean subtraction."
+  ]
+}

@@ -9,7 +9,7 @@ Install with `python -m pip install -r requirements-dev.txt -e .`.
 
 | Module | Workloads |
 |---|---|
-| `construction.py` | All seven landscape classes; 21 datasets; full build time, peak RSS, output size and variable sites |
+| `construction.py` | All seven landscape classes; 21 datasets; neighborhood strategies and edit radii; full build time, peak RSS, output size and variable sites |
 | `analysis.py` | All 32 public analysis functions; Boolean, protein, RNA and mixed HPO inputs; fixed seeds, one analysis worker |
 | `landscape.py` | Cold and warm lazy properties, configuration materialization, data export, local optima network, GraphML read/write |
 | `algorithms.py` | Search cache, both hill-climb strategies, random walks; time and peak memory |
@@ -24,6 +24,9 @@ scientific interpretation of its result. Analysis implementations are unchanged.
 property cases invalidate the relevant cache on every invocation; their timing
 includes that small invalidation cost. Memory measurements include the process,
 imports and prepared input, not just allocations attributable to the operation.
+`LandscapeOperations` prepares basins and configuration tuples before measuring
+LON and serialization operations. Separate cases measure their construction.
+ASV fixes native thread counts and the hash seed in its environment matrix.
 
 ## Inputs
 
@@ -93,7 +96,9 @@ and three measured builds per process. Three additional processes each build onc
 for peak RSS. Garbage collection runs before each timing sample; object disposal
 is outside the timer. BLAS/OpenMP threads and `PYTHONHASHSEED` are fixed. Record
 wall and CPU time, raw samples, median, MAD, input/source digests and environment.
-Results are immutable: the runner refuses to overwrite a round.
+Results are immutable: the runner refuses to overwrite a round. Interrupted runs
+leave a `.partial.json` progress file. The iterative RSS runner targets macOS/Linux;
+ASV remains the portable benchmark entry point.
 
 Compare identical datasets, parameters, source inputs and environments. Keep the
 machine otherwise idle; do not run tests, profilers or other benchmarks alongside

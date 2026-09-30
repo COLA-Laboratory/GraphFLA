@@ -1,0 +1,15 @@
+# Python 3.13.11; measured macOS environment
+numpy==2.4.2
+pandas==2.3.3
+igraph==0.11.9
+scipy==1.17.1
+scikit-learn==1.8.0
+joblib==1.5.3
+rich==14.2.0
+asv==0.6.5
+asv_runner==0.2.1
+matplotlib==3.10.8
+pytest==9.0.2
+pytest-cov==7.1.0
+hypothesis==6.168.3
+seaborn==0.13.2

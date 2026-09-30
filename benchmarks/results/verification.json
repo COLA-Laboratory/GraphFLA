@@ -1,0 +1,49 @@
+{
+  "source_sha256": "8aec83d5ef775f0d5bd2daf16d33bb8e06fdd72b97b06d9c949419672ceeefec",
+  "pytest": {
+    "3.9": {
+      "passed": 1586,
+      "skipped": 0,
+      "environment": {
+        "python": "3.9.6",
+        "numpy": "2.0.2",
+        "pandas": "2.3.3",
+        "igraph": "1.0.0"
+      }
+    },
+    "3.11": {
+      "passed": 1586,
+      "skipped": 0,
+      "environment": {
+        "python": "3.11.16",
+        "numpy": "2.4.6",
+        "pandas": "3.0.6",
+        "igraph": "1.0.0"
+      }
+    },
+    "3.13": {
+      "passed": 1586,
+      "skipped": 0,
+      "environment": {
+        "python": "3.13.11",
+        "numpy": "2.4.2",
+        "pandas": "2.3.3",
+        "igraph": "0.11.9"
+      }
+    }
+  },
+  "papkou": {
+    "input_variants": 261333,
+    "vertices": 135178,
+    "directed_edges": 324044,
+    "node_identity_equal": true,
+    "directed_edge_identity_equal": true
+  },
+  "asv": {
+    "methods": 37,
+    "parameter_cases": 505,
+    "check": "passed",
+    "full_smoke": "passed"
+  },
+  "analysis_implementation_changed": false
+}
