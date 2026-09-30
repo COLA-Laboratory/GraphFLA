@@ -260,63 +260,20 @@ class _BuildMixin:
 
     @timeit
     def _build_graph(self, data, edges, delta_fits):
-        """Build the igraph representation from nodes and improving edges.
-
-        ``edges`` is the directed ``(source, target)`` edge list and
-        ``delta_fits`` the aligned ``|Δfitness|`` weights, as produced by
-        :func:`graphfla._neighbors.build_edges`. Depending on the neighbourhood
-        strategy these are either numpy arrays (``active``: an ``(E, 2)`` int64
-        edge array + 1-D float64 weights) or Python lists of tuples/floats
-        (``pairwise`` / ``broadcast``).
-
-        Edge *list* ingest uses the ``(E, 2)`` int64 ndarray directly (igraph
-        0.11's fastest path; an array->list conversion is a net loss). The
-        per-edge ``delta_fit`` *attribute*, however, ingests ~2x faster when
-        igraph reads it through the buffer protocol than when it iterates a
-        float64 ndarray element-by-element: the ndarray path boxes each element
-        as a Python ``np.float64`` object, which a ``memoryview`` over the same
-        (zero-copy) buffer avoids. So a contiguous 1-D ``delta_fits`` array is
-        wrapped in a ``memoryview`` here (no data copy, unlike ``.tolist()``).
-        igraph then stores the values as plain Python ``float`` objects --
-        matching what the ``pairwise``/``broadcast`` producers already emit, and
-        identical in value (``float(x) == np.float64(x)``). Edge order is
-        preserved, keeping ``delta_fits[i]`` aligned with edge ``i``.
-        """
+        """Build a directed graph and attach aligned fitness and variant data."""
         if self.verbose:
-            logger.info(" - Constructing graph object...")
+            logger.info(" - Constructing graph object and attributes...")
 
-        if self.verbose:
-            logger.info(" - Adding node attributes (fitness, etc.)...")
+        graph = ig.Graph(n=len(data), edges=edges if len(edges) else None, directed=True)
+        if len(edges):
+            values = np.asarray(delta_fits, dtype=np.float64)
+            graph.es["delta_fit"] = memoryview(np.ascontiguousarray(values))
 
-        n_edges = len(edges)
-        if n_edges:
-            # igraph reads the per-edge float attribute faster from a buffer than
-            # from a float64 ndarray (see docstring); zero-copy wrap, contiguous
-            # 1-D only, anything else passed through unchanged.
-            delta_attr = delta_fits
-            if (
-                isinstance(delta_fits, np.ndarray)
-                and delta_fits.ndim == 1
-                and delta_fits.flags["C_CONTIGUOUS"]
-            ):
-                delta_attr = memoryview(delta_fits)
-            edge_attrs = {"delta_fit": delta_attr}
-        else:
-            edge_attrs = {}
-
-        graph = ig.Graph(
-            n=len(data),
-            edges=edges if n_edges else None,
-            directed=True,
-            vertex_attrs={
-                str(column): data[column].to_numpy(copy=False)
-                for column in data.columns
-            },
-            edge_attrs=edge_attrs,
-        )
-
+        # Attach one column at a time to avoid retaining every decoded array.
+        for column in data.columns:
+            values = data[column].to_numpy(copy=False)
+            graph.vs[str(column)] = values
         self._n_edges = graph.ecount()
-
         return graph
 
     @timeit
