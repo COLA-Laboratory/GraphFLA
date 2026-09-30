@@ -197,7 +197,9 @@ def encode_data(
             "Impute, drop affected rows, or remove sites before building."
         )
 
-    f_values = np.asarray(f, dtype=float)
+    if np.iscomplexobj(f):
+        raise ValueError("Fitness must contain real values.")
+    f_values = np.asarray(f, dtype=np.float64)
     if not np.isfinite(f_values).all():
         n_nan = int(np.isnan(f_values).sum())
         n_inf = int(np.isinf(f_values).sum())
@@ -237,7 +239,7 @@ def encode_data(
     # the user-facing column order is independent of the internal encoding.
     X_display = X
     data_for_attributes = X_display.reset_index(drop=True)
-    data_for_attributes["fitness"] = f.to_numpy(copy=False)
+    data_for_attributes["fitness"] = f_values
 
     return PreparedData(
         data_for_attributes=data_for_attributes,

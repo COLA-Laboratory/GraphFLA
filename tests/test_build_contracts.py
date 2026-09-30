@@ -348,3 +348,28 @@ def test_boolean_row_input_retains_integer_feature_dtypes():
     )
     expected = pd.DataFrame({"bit_0": [0, 0], "bit_1": [0, 1]})
     pd.testing.assert_frame_equal(ls.get_data()[list(expected)], expected)
+
+
+@pytest.mark.parametrize(
+    "dtype,fitness",
+    [(np.uint8, [0, 255]), (np.int8, [-128, 127]), (np.bool_, [False, True])],
+)
+@pytest.mark.parametrize("maximize", [True, False])
+@pytest.mark.parametrize("strategy", ["active", "pairwise", "broadcast"])
+def test_fitness_arithmetic_is_independent_of_input_dtype(
+    dtype, fitness, maximize, strategy
+):
+    values = np.asarray(fitness, dtype=dtype)
+    ls = BooleanLandscape(maximize=maximize).build_from_data(
+        ["0", "1"],
+        values,
+        neighborhood_strategy=strategy,
+        verbose=False,
+    )
+    assert ls.graph.get_edgelist() == ([(0, 1)] if maximize else [(1, 0)])
+    assert ls.graph.es["delta_fit"] == [float(fitness[1]) - float(fitness[0])]
+
+
+def test_complex_fitness_is_rejected():
+    with pytest.raises(ValueError, match="real"):
+        BooleanLandscape().build_from_data(["0", "1"], [1 + 2j, 3 + 4j], verbose=False)
