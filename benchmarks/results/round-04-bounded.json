@@ -1,0 +1,2219 @@
+{
+  "schema_version": 1,
+  "label": "bounded",
+  "revision": "bb49dbab69ab093c2f5ecee81b42c4c326da9beb",
+  "source_root": "/Users/arwen/.codex/worktrees/construction-quality/GraphFLA",
+  "source_sha256": "15c5a3795a56fce4e93e800ba48334b407b474b9e3f16dcd4385c15f6058d105",
+  "source_ref": "working-tree",
+  "created_utc": "2026-09-30T20:29:54Z",
+  "environment": {
+    "python": "3.13.11 | packaged by Anaconda, Inc. | (main, Dec 10 2025, 21:21:08) [Clang 20.1.8 ]",
+    "platform": "macOS-26.3-arm64-arm-64bit-Mach-O",
+    "machine": "arm64",
+    "threads": {
+      "OMP_NUM_THREADS": "1",
+      "OPENBLAS_NUM_THREADS": "1",
+      "MKL_NUM_THREADS": "1",
+      "VECLIB_MAXIMUM_THREADS": "1",
+      "NUMEXPR_NUM_THREADS": "1"
+    },
+    "packages": {
+      "numpy": "2.4.2",
+      "pandas": "2.3.3",
+      "igraph": "0.11.9",
+      "scipy": "1.17.1",
+      "scikit-learn": "1.8.0",
+      "asv": "0.6.5"
+    }
+  },
+  "protocol": {
+    "processes": 3,
+    "repeat": 3,
+    "warmups_per_process": 1,
+    "timeout_seconds": 180,
+    "memory": "Fresh-process peak RSS including imports, input preparation and one build"
+  },
+  "datasets": {
+    "WReOs": {
+      "input_sha256": "e25f3023288b2362f8a2375eaf86ab0c3224e028cbe484a3c58067a43cf0ab48",
+      "shape": [
+        496,
+        768
+      ],
+      "variable_sites": 2,
+      "workers": [
+        {
+          "seconds": [
+            0.0014435418415814638,
+            0.0012516248971223831,
+            0.001554541988298297
+          ],
+          "cpu_seconds": [
+            0.001446999999999976,
+            0.0012559999999999794,
+            0.0015319999999999778
+          ],
+          "input_sha256": "e25f3023288b2362f8a2375eaf86ab0c3224e028cbe484a3c58067a43cf0ab48",
+          "shape": [
+            496,
+            768
+          ],
+          "variable_sites": 2,
+          "source_sha256": "15c5a3795a56fce4e93e800ba48334b407b474b9e3f16dcd4385c15f6058d105"
+        },
+        {
+          "seconds": [
+            0.0016207918524742126,
+            0.0015001250430941582,
+            0.0015462918672710657
+          ],
+          "cpu_seconds": [
+            0.0016240000000000143,
+            0.0015040000000000053,
+            0.0015419999999999878
+          ],
+          "input_sha256": "e25f3023288b2362f8a2375eaf86ab0c3224e028cbe484a3c58067a43cf0ab48",
+          "shape": [
+            496,
+            768
+          ],
+          "variable_sites": 2,
+          "source_sha256": "15c5a3795a56fce4e93e800ba48334b407b474b9e3f16dcd4385c15f6058d105"
+        },
+        {
+          "seconds": [
+            0.0015441661234945059,
+            0.001328249927610159,
+            0.0013569588772952557
+          ],
+          "cpu_seconds": [
+            0.0015459999999999918,
+            0.0013299999999999979,
+            0.0013600000000000279
+          ],
+          "input_sha256": "e25f3023288b2362f8a2375eaf86ab0c3224e028cbe484a3c58067a43cf0ab48",
+          "shape": [
+            496,
+            768
+          ],
+          "variable_sites": 2,
+          "source_sha256": "15c5a3795a56fce4e93e800ba48334b407b474b9e3f16dcd4385c15f6058d105"
+        },
+        {
+          "peak_rss_bytes": 148291584,
+          "setup_peak_rss_bytes": 147963904,
+          "input_sha256": "e25f3023288b2362f8a2375eaf86ab0c3224e028cbe484a3c58067a43cf0ab48",
+          "shape": [
+            496,
+            768
+          ],
+          "variable_sites": 2,
+          "source_sha256": "15c5a3795a56fce4e93e800ba48334b407b474b9e3f16dcd4385c15f6058d105"
+        },
+        {
+          "peak_rss_bytes": 148701184,
+          "setup_peak_rss_bytes": 147980288,
+          "input_sha256": "e25f3023288b2362f8a2375eaf86ab0c3224e028cbe484a3c58067a43cf0ab48",
+          "shape": [
+            496,
+            768
+          ],
+          "variable_sites": 2,
+          "source_sha256": "15c5a3795a56fce4e93e800ba48334b407b474b9e3f16dcd4385c15f6058d105"
+        },
+        {
+          "peak_rss_bytes": 150585344,
+          "setup_peak_rss_bytes": 149897216,
+          "input_sha256": "e25f3023288b2362f8a2375eaf86ab0c3224e028cbe484a3c58067a43cf0ab48",
+          "shape": [
+            496,
+            768
+          ],
+          "variable_sites": 2,
+          "source_sha256": "15c5a3795a56fce4e93e800ba48334b407b474b9e3f16dcd4385c15f6058d105"
+        }
+      ],
+      "median_seconds": 0.0015001250430941582,
+      "mad_seconds": 5.658320151269436e-05,
+      "median_peak_rss_bytes": 148701184
+    },
+    "CR6261": {
+      "input_sha256": "7664bca9c4eb92ff77865d2ac7ffd0ec6d968505ceda421e79ed213d035727b6",
+      "shape": [
+        1887,
+        9100
+      ],
+      "variable_sites": 11,
+      "workers": [
+        {
+          "seconds": [
+            0.006656249985098839,
+            0.006192584056407213,
+            0.00608362490311265
+          ],
+          "cpu_seconds": [
+            0.006641000000000008,
+            0.006191000000000002,
+            0.00608599999999998
+          ],
+          "input_sha256": "7664bca9c4eb92ff77865d2ac7ffd0ec6d968505ceda421e79ed213d035727b6",
+          "shape": [
+            1887,
+            9100
+          ],
+          "variable_sites": 11,
+          "source_sha256": "15c5a3795a56fce4e93e800ba48334b407b474b9e3f16dcd4385c15f6058d105"
+        },
+        {
+          "seconds": [
+            0.007346374914050102,
+            0.006818166933953762,
+            0.00653712498024106
+          ],
+          "cpu_seconds": [
+            0.00728899999999999,
+            0.006783999999999957,
+            0.006540999999999908
+          ],
+          "input_sha256": "7664bca9c4eb92ff77865d2ac7ffd0ec6d968505ceda421e79ed213d035727b6",
+          "shape": [
+            1887,
+            9100
+          ],
+          "variable_sites": 11,
+          "source_sha256": "15c5a3795a56fce4e93e800ba48334b407b474b9e3f16dcd4385c15f6058d105"
+        },
+        {
+          "seconds": [
+            0.006752124987542629,
+            0.006465583108365536,
+            0.006257332861423492
+          ],
+          "cpu_seconds": [
+            0.006755000000000011,
+            0.006437999999999999,
+            0.006256000000000039
+          ],
+          "input_sha256": "7664bca9c4eb92ff77865d2ac7ffd0ec6d968505ceda421e79ed213d035727b6",
+          "shape": [
+            1887,
+            9100
+          ],
+          "variable_sites": 11,
+          "source_sha256": "15c5a3795a56fce4e93e800ba48334b407b474b9e3f16dcd4385c15f6058d105"
+        },
+        {
+          "peak_rss_bytes": 152682496,
+          "setup_peak_rss_bytes": 147832832,
+          "input_sha256": "7664bca9c4eb92ff77865d2ac7ffd0ec6d968505ceda421e79ed213d035727b6",
+          "shape": [
+            1887,
+            9100
+          ],
+          "variable_sites": 11,
+          "source_sha256": "15c5a3795a56fce4e93e800ba48334b407b474b9e3f16dcd4385c15f6058d105"
+        },
+        {
+          "peak_rss_bytes": 152371200,
+          "setup_peak_rss_bytes": 148422656,
+          "input_sha256": "7664bca9c4eb92ff77865d2ac7ffd0ec6d968505ceda421e79ed213d035727b6",
+          "shape": [
+            1887,
+            9100
+          ],
+          "variable_sites": 11,
+          "source_sha256": "15c5a3795a56fce4e93e800ba48334b407b474b9e3f16dcd4385c15f6058d105"
+        },
+        {
+          "peak_rss_bytes": 151863296,
+          "setup_peak_rss_bytes": 147718144,
+          "input_sha256": "7664bca9c4eb92ff77865d2ac7ffd0ec6d968505ceda421e79ed213d035727b6",
+          "shape": [
+            1887,
+            9100
+          ],
+          "variable_sites": 11,
+          "source_sha256": "15c5a3795a56fce4e93e800ba48334b407b474b9e3f16dcd4385c15f6058d105"
+        }
+      ],
+      "median_seconds": 0.00653712498024106,
+      "mad_seconds": 0.0002797921188175678,
+      "median_peak_rss_bytes": 152371200
+    },
+    "TrpB3I": {
+      "input_sha256": "a2a1be8dbb005b4e233148aa64829634eb97265893da19a8bb5c96305b43124a",
+      "shape": [
+        7784,
+        216498
+      ],
+      "variable_sites": 3,
+      "workers": [
+        {
+          "seconds": [
+            0.042382583022117615,
+            0.041793459095060825,
+            0.041256041964516044
+          ],
+          "cpu_seconds": [
+            0.04235,
+            0.041749999999999954,
+            0.04124099999999997
+          ],
+          "input_sha256": "a2a1be8dbb005b4e233148aa64829634eb97265893da19a8bb5c96305b43124a",
+          "shape": [
+            7784,
+            216498
+          ],
+          "variable_sites": 3,
+          "source_sha256": "15c5a3795a56fce4e93e800ba48334b407b474b9e3f16dcd4385c15f6058d105"
+        },
+        {
+          "seconds": [
+            0.04359762487001717,
+            0.041800959035754204,
+            0.04200645815581083
+          ],
+          "cpu_seconds": [
+            0.04357600000000006,
+            0.041789999999999994,
+            0.04199900000000001
+          ],
+          "input_sha256": "a2a1be8dbb005b4e233148aa64829634eb97265893da19a8bb5c96305b43124a",
+          "shape": [
+            7784,
+            216498
+          ],
+          "variable_sites": 3,
+          "source_sha256": "15c5a3795a56fce4e93e800ba48334b407b474b9e3f16dcd4385c15f6058d105"
+        },
+        {
+          "seconds": [
+            0.04230820806697011,
+            0.04158279183320701,
+            0.0430244579911232
+          ],
+          "cpu_seconds": [
+            0.04226400000000008,
+            0.04151899999999997,
+            0.04297400000000007
+          ],
+          "input_sha256": "a2a1be8dbb005b4e233148aa64829634eb97265893da19a8bb5c96305b43124a",
+          "shape": [
+            7784,
+            216498
+          ],
+          "variable_sites": 3,
+          "source_sha256": "15c5a3795a56fce4e93e800ba48334b407b474b9e3f16dcd4385c15f6058d105"
+        },
+        {
+          "peak_rss_bytes": 228999168,
+          "setup_peak_rss_bytes": 149651456,
+          "input_sha256": "a2a1be8dbb005b4e233148aa64829634eb97265893da19a8bb5c96305b43124a",
+          "shape": [
+            7784,
+            216498
+          ],
+          "variable_sites": 3,
+          "source_sha256": "15c5a3795a56fce4e93e800ba48334b407b474b9e3f16dcd4385c15f6058d105"
+        },
+        {
+          "peak_rss_bytes": 226557952,
+          "setup_peak_rss_bytes": 148799488,
+          "input_sha256": "a2a1be8dbb005b4e233148aa64829634eb97265893da19a8bb5c96305b43124a",
+          "shape": [
+            7784,
+            216498
+          ],
+          "variable_sites": 3,
+          "source_sha256": "15c5a3795a56fce4e93e800ba48334b407b474b9e3f16dcd4385c15f6058d105"
+        },
+        {
+          "peak_rss_bytes": 224428032,
+          "setup_peak_rss_bytes": 150011904,
+          "input_sha256": "a2a1be8dbb005b4e233148aa64829634eb97265893da19a8bb5c96305b43124a",
+          "shape": [
+            7784,
+            216498
+          ],
+          "variable_sites": 3,
+          "source_sha256": "15c5a3795a56fce4e93e800ba48334b407b474b9e3f16dcd4385c15f6058d105"
+        }
+      ],
+      "median_seconds": 0.04200645815581083,
+      "mad_seconds": 0.00037612486630678177,
+      "median_peak_rss_bytes": 226557952
+    },
+    "Westmann": {
+      "input_sha256": "ed475aa579112b04fcf70d98a44cd531aab3e0c17d8acef3b41b55c8b9b29d6b",
+      "shape": [
+        17765,
+        74830
+      ],
+      "variable_sites": 8,
+      "workers": [
+        {
+          "seconds": [
+            0.027718333061784506,
+            0.02745612501166761,
+            0.027128125075250864
+          ],
+          "cpu_seconds": [
+            0.02770200000000006,
+            0.02743400000000007,
+            0.027120000000000033
+          ],
+          "input_sha256": "ed475aa579112b04fcf70d98a44cd531aab3e0c17d8acef3b41b55c8b9b29d6b",
+          "shape": [
+            17765,
+            74830
+          ],
+          "variable_sites": 8,
+          "source_sha256": "15c5a3795a56fce4e93e800ba48334b407b474b9e3f16dcd4385c15f6058d105"
+        },
+        {
+          "seconds": [
+            0.02893770788796246,
+            0.0282855830155313,
+            0.027274707797914743
+          ],
+          "cpu_seconds": [
+            0.028903999999999985,
+            0.028251999999999944,
+            0.027264999999999984
+          ],
+          "input_sha256": "ed475aa579112b04fcf70d98a44cd531aab3e0c17d8acef3b41b55c8b9b29d6b",
+          "shape": [
+            17765,
+            74830
+          ],
+          "variable_sites": 8,
+          "source_sha256": "15c5a3795a56fce4e93e800ba48334b407b474b9e3f16dcd4385c15f6058d105"
+        },
+        {
+          "seconds": [
+            0.02807512483559549,
+            0.028147791046649218,
+            0.02773249987512827
+          ],
+          "cpu_seconds": [
+            0.02806200000000003,
+            0.02810299999999999,
+            0.027700000000000058
+          ],
+          "input_sha256": "ed475aa579112b04fcf70d98a44cd531aab3e0c17d8acef3b41b55c8b9b29d6b",
+          "shape": [
+            17765,
+            74830
+          ],
+          "variable_sites": 8,
+          "source_sha256": "15c5a3795a56fce4e93e800ba48334b407b474b9e3f16dcd4385c15f6058d105"
+        },
+        {
+          "peak_rss_bytes": 184680448,
+          "setup_peak_rss_bytes": 157188096,
+          "input_sha256": "ed475aa579112b04fcf70d98a44cd531aab3e0c17d8acef3b41b55c8b9b29d6b",
+          "shape": [
+            17765,
+            74830
+          ],
+          "variable_sites": 8,
+          "source_sha256": "15c5a3795a56fce4e93e800ba48334b407b474b9e3f16dcd4385c15f6058d105"
+        },
+        {
+          "peak_rss_bytes": 183271424,
+          "setup_peak_rss_bytes": 156057600,
+          "input_sha256": "ed475aa579112b04fcf70d98a44cd531aab3e0c17d8acef3b41b55c8b9b29d6b",
+          "shape": [
+            17765,
+            74830
+          ],
+          "variable_sites": 8,
+          "source_sha256": "15c5a3795a56fce4e93e800ba48334b407b474b9e3f16dcd4385c15f6058d105"
+        },
+        {
+          "peak_rss_bytes": 179732480,
+          "setup_peak_rss_bytes": 156237824,
+          "input_sha256": "ed475aa579112b04fcf70d98a44cd531aab3e0c17d8acef3b41b55c8b9b29d6b",
+          "shape": [
+            17765,
+            74830
+          ],
+          "variable_sites": 8,
+          "source_sha256": "15c5a3795a56fce4e93e800ba48334b407b474b9e3f16dcd4385c15f6058d105"
+        }
+      ],
+      "median_seconds": 0.02773249987512827,
+      "mad_seconds": 0.0004152911715209484,
+      "median_peak_rss_bytes": 183271424
+    },
+    "CR9114": {
+      "input_sha256": "831e9e064319ea12368017ba685806523c67535386c473f9ba1a40179506142b",
+      "shape": [
+        65094,
+        511840
+      ],
+      "variable_sites": 16,
+      "workers": [
+        {
+          "seconds": [
+            0.12176783313043416,
+            0.12104458408430219,
+            0.1216210420243442
+          ],
+          "cpu_seconds": [
+            0.12169400000000008,
+            0.12096300000000004,
+            0.12151800000000013
+          ],
+          "input_sha256": "831e9e064319ea12368017ba685806523c67535386c473f9ba1a40179506142b",
+          "shape": [
+            65094,
+            511840
+          ],
+          "variable_sites": 16,
+          "source_sha256": "15c5a3795a56fce4e93e800ba48334b407b474b9e3f16dcd4385c15f6058d105"
+        },
+        {
+          "seconds": [
+            0.12245266698300838,
+            0.12199991685338318,
+            0.1268086249474436
+          ],
+          "cpu_seconds": [
+            0.12239299999999997,
+            0.121838,
+            0.12660000000000005
+          ],
+          "input_sha256": "831e9e064319ea12368017ba685806523c67535386c473f9ba1a40179506142b",
+          "shape": [
+            65094,
+            511840
+          ],
+          "variable_sites": 16,
+          "source_sha256": "15c5a3795a56fce4e93e800ba48334b407b474b9e3f16dcd4385c15f6058d105"
+        },
+        {
+          "seconds": [
+            0.1219844170846045,
+            0.12304075015708804,
+            0.12385812494903803
+          ],
+          "cpu_seconds": [
+            0.12188900000000003,
+            0.12287000000000003,
+            0.12373400000000001
+          ],
+          "input_sha256": "831e9e064319ea12368017ba685806523c67535386c473f9ba1a40179506142b",
+          "shape": [
+            65094,
+            511840
+          ],
+          "variable_sites": 16,
+          "source_sha256": "15c5a3795a56fce4e93e800ba48334b407b474b9e3f16dcd4385c15f6058d105"
+        },
+        {
+          "peak_rss_bytes": 339329024,
+          "setup_peak_rss_bytes": 218218496,
+          "input_sha256": "831e9e064319ea12368017ba685806523c67535386c473f9ba1a40179506142b",
+          "shape": [
+            65094,
+            511840
+          ],
+          "variable_sites": 16,
+          "source_sha256": "15c5a3795a56fce4e93e800ba48334b407b474b9e3f16dcd4385c15f6058d105"
+        },
+        {
+          "peak_rss_bytes": 347602944,
+          "setup_peak_rss_bytes": 221708288,
+          "input_sha256": "831e9e064319ea12368017ba685806523c67535386c473f9ba1a40179506142b",
+          "shape": [
+            65094,
+            511840
+          ],
+          "variable_sites": 16,
+          "source_sha256": "15c5a3795a56fce4e93e800ba48334b407b474b9e3f16dcd4385c15f6058d105"
+        },
+        {
+          "peak_rss_bytes": 353812480,
+          "setup_peak_rss_bytes": 220282880,
+          "input_sha256": "831e9e064319ea12368017ba685806523c67535386c473f9ba1a40179506142b",
+          "shape": [
+            65094,
+            511840
+          ],
+          "variable_sites": 16,
+          "source_sha256": "15c5a3795a56fce4e93e800ba48334b407b474b9e3f16dcd4385c15f6058d105"
+        }
+      ],
+      "median_seconds": 0.12199991685338318,
+      "mad_seconds": 0.0004527501296252012,
+      "median_peak_rss_bytes": 347602944
+    },
+    "GB1": {
+      "input_sha256": "b38adf34f67d62d5b6dc870d43f2b4bd8f69e7fae3d06b6311b339c1b53cc53e",
+      "shape": [
+        149361,
+        5074326
+      ],
+      "variable_sites": 4,
+      "workers": [
+        {
+          "seconds": [
+            0.9359774580225348,
+            0.931842542020604,
+            0.9388998749200255
+          ],
+          "cpu_seconds": [
+            0.9352129999999998,
+            0.931063,
+            0.938053
+          ],
+          "input_sha256": "b38adf34f67d62d5b6dc870d43f2b4bd8f69e7fae3d06b6311b339c1b53cc53e",
+          "shape": [
+            149361,
+            5074326
+          ],
+          "variable_sites": 4,
+          "source_sha256": "15c5a3795a56fce4e93e800ba48334b407b474b9e3f16dcd4385c15f6058d105"
+        },
+        {
+          "seconds": [
+            0.9419969168957323,
+            0.9518792920280248,
+            0.9473522079642862
+          ],
+          "cpu_seconds": [
+            0.94123,
+            0.9495710000000002,
+            0.9463299999999997
+          ],
+          "input_sha256": "b38adf34f67d62d5b6dc870d43f2b4bd8f69e7fae3d06b6311b339c1b53cc53e",
+          "shape": [
+            149361,
+            5074326
+          ],
+          "variable_sites": 4,
+          "source_sha256": "15c5a3795a56fce4e93e800ba48334b407b474b9e3f16dcd4385c15f6058d105"
+        },
+        {
+          "seconds": [
+            0.9407622499857098,
+            0.9368681248743087,
+            0.9443360408768058
+          ],
+          "cpu_seconds": [
+            0.9400759999999999,
+            0.9359759999999997,
+            0.9433190000000002
+          ],
+          "input_sha256": "b38adf34f67d62d5b6dc870d43f2b4bd8f69e7fae3d06b6311b339c1b53cc53e",
+          "shape": [
+            149361,
+            5074326
+          ],
+          "variable_sites": 4,
+          "source_sha256": "15c5a3795a56fce4e93e800ba48334b407b474b9e3f16dcd4385c15f6058d105"
+        },
+        {
+          "peak_rss_bytes": 1840480256,
+          "setup_peak_rss_bytes": 222101504,
+          "input_sha256": "b38adf34f67d62d5b6dc870d43f2b4bd8f69e7fae3d06b6311b339c1b53cc53e",
+          "shape": [
+            149361,
+            5074326
+          ],
+          "variable_sites": 4,
+          "source_sha256": "15c5a3795a56fce4e93e800ba48334b407b474b9e3f16dcd4385c15f6058d105"
+        },
+        {
+          "peak_rss_bytes": 1828765696,
+          "setup_peak_rss_bytes": 221478912,
+          "input_sha256": "b38adf34f67d62d5b6dc870d43f2b4bd8f69e7fae3d06b6311b339c1b53cc53e",
+          "shape": [
+            149361,
+            5074326
+          ],
+          "variable_sites": 4,
+          "source_sha256": "15c5a3795a56fce4e93e800ba48334b407b474b9e3f16dcd4385c15f6058d105"
+        },
+        {
+          "peak_rss_bytes": 1815740416,
+          "setup_peak_rss_bytes": 215482368,
+          "input_sha256": "b38adf34f67d62d5b6dc870d43f2b4bd8f69e7fae3d06b6311b339c1b53cc53e",
+          "shape": [
+            149361,
+            5074326
+          ],
+          "variable_sites": 4,
+          "source_sha256": "15c5a3795a56fce4e93e800ba48334b407b474b9e3f16dcd4385c15f6058d105"
+        }
+      ],
+      "median_seconds": 0.9407622499857098,
+      "mad_seconds": 0.003894125111401081,
+      "median_peak_rss_bytes": 1828765696
+    },
+    "Papkou": {
+      "input_sha256": "bd3df7264b38f065c959d7b82e27ed1a68dc22c0e5f9ef19d473dab86b5d7817",
+      "shape": [
+        261333,
+        3518696
+      ],
+      "variable_sites": 9,
+      "workers": [
+        {
+          "seconds": [
+            0.6029375421348959,
+            0.609251125017181,
+            0.6060334169305861
+          ],
+          "cpu_seconds": [
+            0.602176,
+            0.6083829999999999,
+            0.6051030000000002
+          ],
+          "input_sha256": "bd3df7264b38f065c959d7b82e27ed1a68dc22c0e5f9ef19d473dab86b5d7817",
+          "shape": [
+            261333,
+            3518696
+          ],
+          "variable_sites": 9,
+          "source_sha256": "15c5a3795a56fce4e93e800ba48334b407b474b9e3f16dcd4385c15f6058d105"
+        },
+        {
+          "seconds": [
+            0.5999955420847982,
+            0.6072434168308973,
+            0.6115970409009606
+          ],
+          "cpu_seconds": [
+            0.5995050000000002,
+            0.6065780000000003,
+            0.610242
+          ],
+          "input_sha256": "bd3df7264b38f065c959d7b82e27ed1a68dc22c0e5f9ef19d473dab86b5d7817",
+          "shape": [
+            261333,
+            3518696
+          ],
+          "variable_sites": 9,
+          "source_sha256": "15c5a3795a56fce4e93e800ba48334b407b474b9e3f16dcd4385c15f6058d105"
+        },
+        {
+          "seconds": [
+            0.6081724590621889,
+            0.6019318329636008,
+            0.6050085830502212
+          ],
+          "cpu_seconds": [
+            0.6077709999999998,
+            0.6015129999999997,
+            0.6045659999999997
+          ],
+          "input_sha256": "bd3df7264b38f065c959d7b82e27ed1a68dc22c0e5f9ef19d473dab86b5d7817",
+          "shape": [
+            261333,
+            3518696
+          ],
+          "variable_sites": 9,
+          "source_sha256": "15c5a3795a56fce4e93e800ba48334b407b474b9e3f16dcd4385c15f6058d105"
+        },
+        {
+          "peak_rss_bytes": 1238892544,
+          "setup_peak_rss_bytes": 245530624,
+          "input_sha256": "bd3df7264b38f065c959d7b82e27ed1a68dc22c0e5f9ef19d473dab86b5d7817",
+          "shape": [
+            261333,
+            3518696
+          ],
+          "variable_sites": 9,
+          "source_sha256": "15c5a3795a56fce4e93e800ba48334b407b474b9e3f16dcd4385c15f6058d105"
+        },
+        {
+          "peak_rss_bytes": 1255063552,
+          "setup_peak_rss_bytes": 234668032,
+          "input_sha256": "bd3df7264b38f065c959d7b82e27ed1a68dc22c0e5f9ef19d473dab86b5d7817",
+          "shape": [
+            261333,
+            3518696
+          ],
+          "variable_sites": 9,
+          "source_sha256": "15c5a3795a56fce4e93e800ba48334b407b474b9e3f16dcd4385c15f6058d105"
+        },
+        {
+          "peak_rss_bytes": 1253490688,
+          "setup_peak_rss_bytes": 244416512,
+          "input_sha256": "bd3df7264b38f065c959d7b82e27ed1a68dc22c0e5f9ef19d473dab86b5d7817",
+          "shape": [
+            261333,
+            3518696
+          ],
+          "variable_sites": 9,
+          "source_sha256": "15c5a3795a56fce4e93e800ba48334b407b474b9e3f16dcd4385c15f6058d105"
+        }
+      ],
+      "median_seconds": 0.6060334169305861,
+      "mad_seconds": 0.003095874795690179,
+      "median_peak_rss_bytes": 1253490688
+    },
+    "Papkou-filtered": {
+      "input_sha256": "b9e2e4fb357dd4c5cf03def900774124bbe59530fdb9d593c10050dbbecd31ae",
+      "shape": [
+        135178,
+        324044
+      ],
+      "variable_sites": 9,
+      "workers": [
+        {
+          "seconds": [
+            0.39935187506489456,
+            0.39096691692247987,
+            0.39084591693244874
+          ],
+          "cpu_seconds": [
+            0.39881600000000006,
+            0.39053800000000005,
+            0.39034999999999975
+          ],
+          "input_sha256": "b9e2e4fb357dd4c5cf03def900774124bbe59530fdb9d593c10050dbbecd31ae",
+          "shape": [
+            135178,
+            324044
+          ],
+          "variable_sites": 9,
+          "source_sha256": "15c5a3795a56fce4e93e800ba48334b407b474b9e3f16dcd4385c15f6058d105"
+        },
+        {
+          "seconds": [
+            0.39038158394396305,
+            0.3914842908270657,
+            0.39286558306775987
+          ],
+          "cpu_seconds": [
+            0.390123,
+            0.391135,
+            0.3925470000000002
+          ],
+          "input_sha256": "b9e2e4fb357dd4c5cf03def900774124bbe59530fdb9d593c10050dbbecd31ae",
+          "shape": [
+            135178,
+            324044
+          ],
+          "variable_sites": 9,
+          "source_sha256": "15c5a3795a56fce4e93e800ba48334b407b474b9e3f16dcd4385c15f6058d105"
+        },
+        {
+          "seconds": [
+            0.39265970909036696,
+            0.39487574994564056,
+            0.39399758307263255
+          ],
+          "cpu_seconds": [
+            0.3921239999999999,
+            0.3945399999999999,
+            0.39325299999999985
+          ],
+          "input_sha256": "b9e2e4fb357dd4c5cf03def900774124bbe59530fdb9d593c10050dbbecd31ae",
+          "shape": [
+            135178,
+            324044
+          ],
+          "variable_sites": 9,
+          "source_sha256": "15c5a3795a56fce4e93e800ba48334b407b474b9e3f16dcd4385c15f6058d105"
+        },
+        {
+          "peak_rss_bytes": 876249088,
+          "setup_peak_rss_bytes": 235487232,
+          "input_sha256": "b9e2e4fb357dd4c5cf03def900774124bbe59530fdb9d593c10050dbbecd31ae",
+          "shape": [
+            135178,
+            324044
+          ],
+          "variable_sites": 9,
+          "source_sha256": "15c5a3795a56fce4e93e800ba48334b407b474b9e3f16dcd4385c15f6058d105"
+        },
+        {
+          "peak_rss_bytes": 865533952,
+          "setup_peak_rss_bytes": 229277696,
+          "input_sha256": "b9e2e4fb357dd4c5cf03def900774124bbe59530fdb9d593c10050dbbecd31ae",
+          "shape": [
+            135178,
+            324044
+          ],
+          "variable_sites": 9,
+          "source_sha256": "15c5a3795a56fce4e93e800ba48334b407b474b9e3f16dcd4385c15f6058d105"
+        },
+        {
+          "peak_rss_bytes": 879820800,
+          "setup_peak_rss_bytes": 238927872,
+          "input_sha256": "b9e2e4fb357dd4c5cf03def900774124bbe59530fdb9d593c10050dbbecd31ae",
+          "shape": [
+            135178,
+            324044
+          ],
+          "variable_sites": 9,
+          "source_sha256": "15c5a3795a56fce4e93e800ba48334b407b474b9e3f16dcd4385c15f6058d105"
+        }
+      ],
+      "median_seconds": 0.39265970909036696,
+      "mad_seconds": 0.0016927921678870916,
+      "median_peak_rss_bytes": 876249088
+    },
+    "PG-GB1": {
+      "input_sha256": "afd05c75e185c784ad641383c256e05f2ad4a9e8a9c4299ca9bd08ce4d1f89c6",
+      "shape": [
+        149360,
+        5074250
+      ],
+      "variable_sites": 4,
+      "workers": [
+        {
+          "seconds": [
+            2.030086750164628,
+            2.0340401250869036,
+            2.1380540831014514
+          ],
+          "cpu_seconds": [
+            2.028062,
+            2.032209,
+            2.1308549999999995
+          ],
+          "input_sha256": "afd05c75e185c784ad641383c256e05f2ad4a9e8a9c4299ca9bd08ce4d1f89c6",
+          "shape": [
+            149360,
+            5074250
+          ],
+          "variable_sites": 4,
+          "source_sha256": "15c5a3795a56fce4e93e800ba48334b407b474b9e3f16dcd4385c15f6058d105"
+        },
+        {
+          "seconds": [
+            2.184143125079572,
+            2.1968734168913215,
+            2.2092963750474155
+          ],
+          "cpu_seconds": [
+            2.171883,
+            2.1814680000000006,
+            2.1973840000000013
+          ],
+          "input_sha256": "afd05c75e185c784ad641383c256e05f2ad4a9e8a9c4299ca9bd08ce4d1f89c6",
+          "shape": [
+            149360,
+            5074250
+          ],
+          "variable_sites": 4,
+          "source_sha256": "15c5a3795a56fce4e93e800ba48334b407b474b9e3f16dcd4385c15f6058d105"
+        },
+        {
+          "seconds": [
+            2.212739791953936,
+            2.2186459170188755,
+            2.1953815000597388
+          ],
+          "cpu_seconds": [
+            2.2015260000000003,
+            2.205622,
+            2.1850880000000004
+          ],
+          "input_sha256": "afd05c75e185c784ad641383c256e05f2ad4a9e8a9c4299ca9bd08ce4d1f89c6",
+          "shape": [
+            149360,
+            5074250
+          ],
+          "variable_sites": 4,
+          "source_sha256": "15c5a3795a56fce4e93e800ba48334b407b474b9e3f16dcd4385c15f6058d105"
+        },
+        {
+          "peak_rss_bytes": 2473787392,
+          "setup_peak_rss_bytes": 358170624,
+          "input_sha256": "afd05c75e185c784ad641383c256e05f2ad4a9e8a9c4299ca9bd08ce4d1f89c6",
+          "shape": [
+            149360,
+            5074250
+          ],
+          "variable_sites": 4,
+          "source_sha256": "15c5a3795a56fce4e93e800ba48334b407b474b9e3f16dcd4385c15f6058d105"
+        },
+        {
+          "peak_rss_bytes": 2428190720,
+          "setup_peak_rss_bytes": 373178368,
+          "input_sha256": "afd05c75e185c784ad641383c256e05f2ad4a9e8a9c4299ca9bd08ce4d1f89c6",
+          "shape": [
+            149360,
+            5074250
+          ],
+          "variable_sites": 4,
+          "source_sha256": "15c5a3795a56fce4e93e800ba48334b407b474b9e3f16dcd4385c15f6058d105"
+        },
+        {
+          "peak_rss_bytes": 2458796032,
+          "setup_peak_rss_bytes": 383451136,
+          "input_sha256": "afd05c75e185c784ad641383c256e05f2ad4a9e8a9c4299ca9bd08ce4d1f89c6",
+          "shape": [
+            149360,
+            5074250
+          ],
+          "variable_sites": 4,
+          "source_sha256": "15c5a3795a56fce4e93e800ba48334b407b474b9e3f16dcd4385c15f6058d105"
+        }
+      ],
+      "median_seconds": 2.1953815000597388,
+      "mad_seconds": 0.017358291894197464,
+      "median_peak_rss_bytes": 2458796032
+    },
+    "PG-BRCA2": {
+      "input_sha256": "1683b10141335f9e136cef2feee00311e6d0144a9346f969e49f0b208baa9890",
+      "shape": [
+        264,
+        586
+      ],
+      "variable_sites": 53,
+      "workers": [
+        {
+          "seconds": [
+            0.2298979579936713,
+            0.23575166589580476,
+            0.24071924993768334
+          ],
+          "cpu_seconds": [
+            0.2297340000000001,
+            0.2354900000000001,
+            0.24008999999999991
+          ],
+          "input_sha256": "1683b10141335f9e136cef2feee00311e6d0144a9346f969e49f0b208baa9890",
+          "shape": [
+            264,
+            586
+          ],
+          "variable_sites": 53,
+          "source_sha256": "15c5a3795a56fce4e93e800ba48334b407b474b9e3f16dcd4385c15f6058d105",
+          "diagnostics": "/Users/arwen/.codex/worktrees/construction-quality/GraphFLA/graphfla/utils.py:183: UserWarning: 1 isolated configuration(s) with no neighbors detected and removed from the landscape graph. These nodes had no mutational neighbors in the dataset under the current neighborhood definition.\n  warnings.warn(\n/Users/arwen/.codex/worktrees/construction-quality/GraphFLA/graphfla/utils.py:183: UserWarning: 1 isolated configuration(s) with no neighbors detected and removed from the landscape graph. These nodes had no mutational neighbors in the dataset under the current neighborhood definition.\n  warnings.warn(\n/Users/arwen/.codex/worktrees/construction-quality/GraphFLA/graphfla/utils.py:183: UserWarning: 1 isolated configuration(s) with no neighbors detected and removed from the landscape graph. These nodes had no mutational neighbors in the dataset under the current neighborhood definition.\n  warnings.warn(\n/Users/arwen/.codex/worktrees/construction-quality/GraphFLA/graphfla/utils.py:183: UserWarning: 1 isolated configuration(s) with no neighbors detected and removed from the landscape graph. These nodes had no mutational neighbors in the dataset under the current neighborhood definition.\n  warnings.warn("
+        },
+        {
+          "seconds": [
+            0.23741079191677272,
+            0.23296979209408164,
+            0.2351467909757048
+          ],
+          "cpu_seconds": [
+            0.23716000000000004,
+            0.23269499999999987,
+            0.23486000000000007
+          ],
+          "input_sha256": "1683b10141335f9e136cef2feee00311e6d0144a9346f969e49f0b208baa9890",
+          "shape": [
+            264,
+            586
+          ],
+          "variable_sites": 53,
+          "source_sha256": "15c5a3795a56fce4e93e800ba48334b407b474b9e3f16dcd4385c15f6058d105",
+          "diagnostics": "/Users/arwen/.codex/worktrees/construction-quality/GraphFLA/graphfla/utils.py:183: UserWarning: 1 isolated configuration(s) with no neighbors detected and removed from the landscape graph. These nodes had no mutational neighbors in the dataset under the current neighborhood definition.\n  warnings.warn(\n/Users/arwen/.codex/worktrees/construction-quality/GraphFLA/graphfla/utils.py:183: UserWarning: 1 isolated configuration(s) with no neighbors detected and removed from the landscape graph. These nodes had no mutational neighbors in the dataset under the current neighborhood definition.\n  warnings.warn(\n/Users/arwen/.codex/worktrees/construction-quality/GraphFLA/graphfla/utils.py:183: UserWarning: 1 isolated configuration(s) with no neighbors detected and removed from the landscape graph. These nodes had no mutational neighbors in the dataset under the current neighborhood definition.\n  warnings.warn(\n/Users/arwen/.codex/worktrees/construction-quality/GraphFLA/graphfla/utils.py:183: UserWarning: 1 isolated configuration(s) with no neighbors detected and removed from the landscape graph. These nodes had no mutational neighbors in the dataset under the current neighborhood definition.\n  warnings.warn("
+        },
+        {
+          "seconds": [
+            0.23243174981325865,
+            0.23188170813955367,
+            0.2302895828615874
+          ],
+          "cpu_seconds": [
+            0.23229599999999995,
+            0.23165799999999992,
+            0.230105
+          ],
+          "input_sha256": "1683b10141335f9e136cef2feee00311e6d0144a9346f969e49f0b208baa9890",
+          "shape": [
+            264,
+            586
+          ],
+          "variable_sites": 53,
+          "source_sha256": "15c5a3795a56fce4e93e800ba48334b407b474b9e3f16dcd4385c15f6058d105",
+          "diagnostics": "/Users/arwen/.codex/worktrees/construction-quality/GraphFLA/graphfla/utils.py:183: UserWarning: 1 isolated configuration(s) with no neighbors detected and removed from the landscape graph. These nodes had no mutational neighbors in the dataset under the current neighborhood definition.\n  warnings.warn(\n/Users/arwen/.codex/worktrees/construction-quality/GraphFLA/graphfla/utils.py:183: UserWarning: 1 isolated configuration(s) with no neighbors detected and removed from the landscape graph. These nodes had no mutational neighbors in the dataset under the current neighborhood definition.\n  warnings.warn(\n/Users/arwen/.codex/worktrees/construction-quality/GraphFLA/graphfla/utils.py:183: UserWarning: 1 isolated configuration(s) with no neighbors detected and removed from the landscape graph. These nodes had no mutational neighbors in the dataset under the current neighborhood definition.\n  warnings.warn(\n/Users/arwen/.codex/worktrees/construction-quality/GraphFLA/graphfla/utils.py:183: UserWarning: 1 isolated configuration(s) with no neighbors detected and removed from the landscape graph. These nodes had no mutational neighbors in the dataset under the current neighborhood definition.\n  warnings.warn("
+        },
+        {
+          "peak_rss_bytes": 200704000,
+          "setup_peak_rss_bytes": 151715840,
+          "input_sha256": "1683b10141335f9e136cef2feee00311e6d0144a9346f969e49f0b208baa9890",
+          "shape": [
+            264,
+            586
+          ],
+          "variable_sites": 53,
+          "source_sha256": "15c5a3795a56fce4e93e800ba48334b407b474b9e3f16dcd4385c15f6058d105",
+          "diagnostics": "/Users/arwen/.codex/worktrees/construction-quality/GraphFLA/graphfla/utils.py:183: UserWarning: 1 isolated configuration(s) with no neighbors detected and removed from the landscape graph. These nodes had no mutational neighbors in the dataset under the current neighborhood definition.\n  warnings.warn("
+        },
+        {
+          "peak_rss_bytes": 201211904,
+          "setup_peak_rss_bytes": 152502272,
+          "input_sha256": "1683b10141335f9e136cef2feee00311e6d0144a9346f969e49f0b208baa9890",
+          "shape": [
+            264,
+            586
+          ],
+          "variable_sites": 53,
+          "source_sha256": "15c5a3795a56fce4e93e800ba48334b407b474b9e3f16dcd4385c15f6058d105",
+          "diagnostics": "/Users/arwen/.codex/worktrees/construction-quality/GraphFLA/graphfla/utils.py:183: UserWarning: 1 isolated configuration(s) with no neighbors detected and removed from the landscape graph. These nodes had no mutational neighbors in the dataset under the current neighborhood definition.\n  warnings.warn("
+        },
+        {
+          "peak_rss_bytes": 199557120,
+          "setup_peak_rss_bytes": 151650304,
+          "input_sha256": "1683b10141335f9e136cef2feee00311e6d0144a9346f969e49f0b208baa9890",
+          "shape": [
+            264,
+            586
+          ],
+          "variable_sites": 53,
+          "source_sha256": "15c5a3795a56fce4e93e800ba48334b407b474b9e3f16dcd4385c15f6058d105",
+          "diagnostics": "/Users/arwen/.codex/worktrees/construction-quality/GraphFLA/graphfla/utils.py:183: UserWarning: 1 isolated configuration(s) with no neighbors detected and removed from the landscape graph. These nodes had no mutational neighbors in the dataset under the current neighborhood definition.\n  warnings.warn("
+        }
+      ],
+      "median_seconds": 0.23296979209408164,
+      "mad_seconds": 0.002680209232494235,
+      "median_peak_rss_bytes": 200704000
+    },
+    "PG-POLG": {
+      "input_sha256": "5acd0d9a6840eea0b1946720d208a11d082e6e408e270620249976ef689d4bd4",
+      "shape": [
+        15711,
+        137334
+      ],
+      "variable_sites": 851,
+      "workers": [
+        {
+          "seconds": [
+            1.0214223749935627,
+            1.040405749808997,
+            1.0514523331075907
+          ],
+          "cpu_seconds": [
+            1.0187,
+            1.038361,
+            1.0504069999999999
+          ],
+          "input_sha256": "5acd0d9a6840eea0b1946720d208a11d082e6e408e270620249976ef689d4bd4",
+          "shape": [
+            15711,
+            137334
+          ],
+          "variable_sites": 851,
+          "source_sha256": "15c5a3795a56fce4e93e800ba48334b407b474b9e3f16dcd4385c15f6058d105"
+        },
+        {
+          "seconds": [
+            1.0136503749527037,
+            1.0395955408457667,
+            1.0530716250650585
+          ],
+          "cpu_seconds": [
+            1.0124739999999999,
+            1.0384229999999999,
+            1.0520800000000001
+          ],
+          "input_sha256": "5acd0d9a6840eea0b1946720d208a11d082e6e408e270620249976ef689d4bd4",
+          "shape": [
+            15711,
+            137334
+          ],
+          "variable_sites": 851,
+          "source_sha256": "15c5a3795a56fce4e93e800ba48334b407b474b9e3f16dcd4385c15f6058d105"
+        },
+        {
+          "seconds": [
+            0.9799536669161171,
+            1.018757333047688,
+            1.0280677918344736
+          ],
+          "cpu_seconds": [
+            0.9792160000000001,
+            1.0177749999999999,
+            1.026958
+          ],
+          "input_sha256": "5acd0d9a6840eea0b1946720d208a11d082e6e408e270620249976ef689d4bd4",
+          "shape": [
+            15711,
+            137334
+          ],
+          "variable_sites": 851,
+          "source_sha256": "15c5a3795a56fce4e93e800ba48334b407b474b9e3f16dcd4385c15f6058d105"
+        },
+        {
+          "peak_rss_bytes": 847413248,
+          "setup_peak_rss_bytes": 281329664,
+          "input_sha256": "5acd0d9a6840eea0b1946720d208a11d082e6e408e270620249976ef689d4bd4",
+          "shape": [
+            15711,
+            137334
+          ],
+          "variable_sites": 851,
+          "source_sha256": "15c5a3795a56fce4e93e800ba48334b407b474b9e3f16dcd4385c15f6058d105"
+        },
+        {
+          "peak_rss_bytes": 918241280,
+          "setup_peak_rss_bytes": 270155776,
+          "input_sha256": "5acd0d9a6840eea0b1946720d208a11d082e6e408e270620249976ef689d4bd4",
+          "shape": [
+            15711,
+            137334
+          ],
+          "variable_sites": 851,
+          "source_sha256": "15c5a3795a56fce4e93e800ba48334b407b474b9e3f16dcd4385c15f6058d105"
+        },
+        {
+          "peak_rss_bytes": 890241024,
+          "setup_peak_rss_bytes": 250281984,
+          "input_sha256": "5acd0d9a6840eea0b1946720d208a11d082e6e408e270620249976ef689d4bd4",
+          "shape": [
+            15711,
+            137334
+          ],
+          "variable_sites": 851,
+          "source_sha256": "15c5a3795a56fce4e93e800ba48334b407b474b9e3f16dcd4385c15f6058d105"
+        }
+      ],
+      "median_seconds": 1.0280677918344736,
+      "mad_seconds": 0.012337957974523306,
+      "median_peak_rss_bytes": 890241024
+    },
+    "RG-BRCA1": {
+      "input_sha256": "5820a0b053d908edb0ce58429b5e286c585079925895e5e29fd042d4d09f20e5",
+      "shape": [
+        778,
+        680
+      ],
+      "variable_sites": 400,
+      "workers": [
+        {
+          "seconds": [
+            0.5179551660548896,
+            0.527594625018537,
+            0.524152124999091
+          ],
+          "cpu_seconds": [
+            0.517406,
+            0.5267299999999999,
+            0.5237150000000002
+          ],
+          "input_sha256": "5820a0b053d908edb0ce58429b5e286c585079925895e5e29fd042d4d09f20e5",
+          "shape": [
+            778,
+            680
+          ],
+          "variable_sites": 400,
+          "source_sha256": "15c5a3795a56fce4e93e800ba48334b407b474b9e3f16dcd4385c15f6058d105",
+          "diagnostics": "/Users/arwen/.codex/worktrees/construction-quality/GraphFLA/graphfla/utils.py:183: UserWarning: 108 isolated configuration(s) with no neighbors detected and removed from the landscape graph. These nodes had no mutational neighbors in the dataset under the current neighborhood definition.\n  warnings.warn(\n/Users/arwen/.codex/worktrees/construction-quality/GraphFLA/graphfla/utils.py:183: UserWarning: 108 isolated configuration(s) with no neighbors detected and removed from the landscape graph. These nodes had no mutational neighbors in the dataset under the current neighborhood definition.\n  warnings.warn(\n/Users/arwen/.codex/worktrees/construction-quality/GraphFLA/graphfla/utils.py:183: UserWarning: 108 isolated configuration(s) with no neighbors detected and removed from the landscape graph. These nodes had no mutational neighbors in the dataset under the current neighborhood definition.\n  warnings.warn(\n/Users/arwen/.codex/worktrees/construction-quality/GraphFLA/graphfla/utils.py:183: UserWarning: 108 isolated configuration(s) with no neighbors detected and removed from the landscape graph. These nodes had no mutational neighbors in the dataset under the current neighborhood definition.\n  warnings.warn("
+        },
+        {
+          "seconds": [
+            0.5166877498850226,
+            0.5185906251426786,
+            0.5178628750145435
+          ],
+          "cpu_seconds": [
+            0.5163899999999999,
+            0.518216,
+            0.5174129999999999
+          ],
+          "input_sha256": "5820a0b053d908edb0ce58429b5e286c585079925895e5e29fd042d4d09f20e5",
+          "shape": [
+            778,
+            680
+          ],
+          "variable_sites": 400,
+          "source_sha256": "15c5a3795a56fce4e93e800ba48334b407b474b9e3f16dcd4385c15f6058d105",
+          "diagnostics": "/Users/arwen/.codex/worktrees/construction-quality/GraphFLA/graphfla/utils.py:183: UserWarning: 108 isolated configuration(s) with no neighbors detected and removed from the landscape graph. These nodes had no mutational neighbors in the dataset under the current neighborhood definition.\n  warnings.warn(\n/Users/arwen/.codex/worktrees/construction-quality/GraphFLA/graphfla/utils.py:183: UserWarning: 108 isolated configuration(s) with no neighbors detected and removed from the landscape graph. These nodes had no mutational neighbors in the dataset under the current neighborhood definition.\n  warnings.warn(\n/Users/arwen/.codex/worktrees/construction-quality/GraphFLA/graphfla/utils.py:183: UserWarning: 108 isolated configuration(s) with no neighbors detected and removed from the landscape graph. These nodes had no mutational neighbors in the dataset under the current neighborhood definition.\n  warnings.warn(\n/Users/arwen/.codex/worktrees/construction-quality/GraphFLA/graphfla/utils.py:183: UserWarning: 108 isolated configuration(s) with no neighbors detected and removed from the landscape graph. These nodes had no mutational neighbors in the dataset under the current neighborhood definition.\n  warnings.warn("
+        },
+        {
+          "seconds": [
+            0.5251395420636982,
+            0.5512474169954658,
+            0.5191042919177562
+          ],
+          "cpu_seconds": [
+            0.52464,
+            0.545941,
+            0.5186519999999999
+          ],
+          "input_sha256": "5820a0b053d908edb0ce58429b5e286c585079925895e5e29fd042d4d09f20e5",
+          "shape": [
+            778,
+            680
+          ],
+          "variable_sites": 400,
+          "source_sha256": "15c5a3795a56fce4e93e800ba48334b407b474b9e3f16dcd4385c15f6058d105",
+          "diagnostics": "/Users/arwen/.codex/worktrees/construction-quality/GraphFLA/graphfla/utils.py:183: UserWarning: 108 isolated configuration(s) with no neighbors detected and removed from the landscape graph. These nodes had no mutational neighbors in the dataset under the current neighborhood definition.\n  warnings.warn(\n/Users/arwen/.codex/worktrees/construction-quality/GraphFLA/graphfla/utils.py:183: UserWarning: 108 isolated configuration(s) with no neighbors detected and removed from the landscape graph. These nodes had no mutational neighbors in the dataset under the current neighborhood definition.\n  warnings.warn(\n/Users/arwen/.codex/worktrees/construction-quality/GraphFLA/graphfla/utils.py:183: UserWarning: 108 isolated configuration(s) with no neighbors detected and removed from the landscape graph. These nodes had no mutational neighbors in the dataset under the current neighborhood definition.\n  warnings.warn(\n/Users/arwen/.codex/worktrees/construction-quality/GraphFLA/graphfla/utils.py:183: UserWarning: 108 isolated configuration(s) with no neighbors detected and removed from the landscape graph. These nodes had no mutational neighbors in the dataset under the current neighborhood definition.\n  warnings.warn("
+        },
+        {
+          "peak_rss_bytes": 316702720,
+          "setup_peak_rss_bytes": 177897472,
+          "input_sha256": "5820a0b053d908edb0ce58429b5e286c585079925895e5e29fd042d4d09f20e5",
+          "shape": [
+            778,
+            680
+          ],
+          "variable_sites": 400,
+          "source_sha256": "15c5a3795a56fce4e93e800ba48334b407b474b9e3f16dcd4385c15f6058d105",
+          "diagnostics": "/Users/arwen/.codex/worktrees/construction-quality/GraphFLA/graphfla/utils.py:183: UserWarning: 108 isolated configuration(s) with no neighbors detected and removed from the landscape graph. These nodes had no mutational neighbors in the dataset under the current neighborhood definition.\n  warnings.warn("
+        },
+        {
+          "peak_rss_bytes": 311246848,
+          "setup_peak_rss_bytes": 175308800,
+          "input_sha256": "5820a0b053d908edb0ce58429b5e286c585079925895e5e29fd042d4d09f20e5",
+          "shape": [
+            778,
+            680
+          ],
+          "variable_sites": 400,
+          "source_sha256": "15c5a3795a56fce4e93e800ba48334b407b474b9e3f16dcd4385c15f6058d105",
+          "diagnostics": "/Users/arwen/.codex/worktrees/construction-quality/GraphFLA/graphfla/utils.py:183: UserWarning: 108 isolated configuration(s) with no neighbors detected and removed from the landscape graph. These nodes had no mutational neighbors in the dataset under the current neighborhood definition.\n  warnings.warn("
+        },
+        {
+          "peak_rss_bytes": 306528256,
+          "setup_peak_rss_bytes": 175489024,
+          "input_sha256": "5820a0b053d908edb0ce58429b5e286c585079925895e5e29fd042d4d09f20e5",
+          "shape": [
+            778,
+            680
+          ],
+          "variable_sites": 400,
+          "source_sha256": "15c5a3795a56fce4e93e800ba48334b407b474b9e3f16dcd4385c15f6058d105",
+          "diagnostics": "/Users/arwen/.codex/worktrees/construction-quality/GraphFLA/graphfla/utils.py:183: UserWarning: 108 isolated configuration(s) with no neighbors detected and removed from the landscape graph. These nodes had no mutational neighbors in the dataset under the current neighborhood definition.\n  warnings.warn("
+        }
+      ],
+      "median_seconds": 0.5191042919177562,
+      "mad_seconds": 0.0024165420327335596,
+      "median_peak_rss_bytes": 311246848
+    },
+    "RG-tRNA": {
+      "input_sha256": "f58cff34dac2fa3408319e03874f38acda5b56f6d637bd0874f21d8c30931389",
+      "shape": [
+        4175,
+        26322
+      ],
+      "variable_sites": 10,
+      "workers": [
+        {
+          "seconds": [
+            0.016094249906018376,
+            0.01612437516450882,
+            0.015946957981213927
+          ],
+          "cpu_seconds": [
+            0.016097999999999946,
+            0.01611600000000002,
+            0.015940999999999983
+          ],
+          "input_sha256": "f58cff34dac2fa3408319e03874f38acda5b56f6d637bd0874f21d8c30931389",
+          "shape": [
+            4175,
+            26322
+          ],
+          "variable_sites": 10,
+          "source_sha256": "15c5a3795a56fce4e93e800ba48334b407b474b9e3f16dcd4385c15f6058d105"
+        },
+        {
+          "seconds": [
+            0.016428207978606224,
+            0.016969334101304412,
+            0.01722633303143084
+          ],
+          "cpu_seconds": [
+            0.01642899999999997,
+            0.01696299999999995,
+            0.017087000000000074
+          ],
+          "input_sha256": "f58cff34dac2fa3408319e03874f38acda5b56f6d637bd0874f21d8c30931389",
+          "shape": [
+            4175,
+            26322
+          ],
+          "variable_sites": 10,
+          "source_sha256": "15c5a3795a56fce4e93e800ba48334b407b474b9e3f16dcd4385c15f6058d105"
+        },
+        {
+          "seconds": [
+            0.01628324994817376,
+            0.01575204194523394,
+            0.015614166855812073
+          ],
+          "cpu_seconds": [
+            0.01626500000000003,
+            0.015747999999999984,
+            0.015614000000000017
+          ],
+          "input_sha256": "f58cff34dac2fa3408319e03874f38acda5b56f6d637bd0874f21d8c30931389",
+          "shape": [
+            4175,
+            26322
+          ],
+          "variable_sites": 10,
+          "source_sha256": "15c5a3795a56fce4e93e800ba48334b407b474b9e3f16dcd4385c15f6058d105"
+        },
+        {
+          "peak_rss_bytes": 170311680,
+          "setup_peak_rss_bytes": 151109632,
+          "input_sha256": "f58cff34dac2fa3408319e03874f38acda5b56f6d637bd0874f21d8c30931389",
+          "shape": [
+            4175,
+            26322
+          ],
+          "variable_sites": 10,
+          "source_sha256": "15c5a3795a56fce4e93e800ba48334b407b474b9e3f16dcd4385c15f6058d105"
+        },
+        {
+          "peak_rss_bytes": 173178880,
+          "setup_peak_rss_bytes": 152993792,
+          "input_sha256": "f58cff34dac2fa3408319e03874f38acda5b56f6d637bd0874f21d8c30931389",
+          "shape": [
+            4175,
+            26322
+          ],
+          "variable_sites": 10,
+          "source_sha256": "15c5a3795a56fce4e93e800ba48334b407b474b9e3f16dcd4385c15f6058d105"
+        },
+        {
+          "peak_rss_bytes": 171638784,
+          "setup_peak_rss_bytes": 150896640,
+          "input_sha256": "f58cff34dac2fa3408319e03874f38acda5b56f6d637bd0874f21d8c30931389",
+          "shape": [
+            4175,
+            26322
+          ],
+          "variable_sites": 10,
+          "source_sha256": "15c5a3795a56fce4e93e800ba48334b407b474b9e3f16dcd4385c15f6058d105"
+        }
+      ],
+      "median_seconds": 0.01612437516450882,
+      "mad_seconds": 0.0003038328140974045,
+      "median_peak_rss_bytes": 171638784
+    },
+    "RG-ribozyme": {
+      "input_sha256": "8847ccfcb3f808381b97ff7182df3cceac9fa815f9f52632d0d37b8d77c13aca",
+      "shape": [
+        255,
+        1524
+      ],
+      "variable_sites": 4,
+      "workers": [
+        {
+          "seconds": [
+            0.015206000069156289,
+            0.015039291931316257,
+            0.014914667000994086
+          ],
+          "cpu_seconds": [
+            0.015190000000000037,
+            0.015042,
+            0.014909999999999979
+          ],
+          "input_sha256": "8847ccfcb3f808381b97ff7182df3cceac9fa815f9f52632d0d37b8d77c13aca",
+          "shape": [
+            255,
+            1524
+          ],
+          "variable_sites": 4,
+          "source_sha256": "15c5a3795a56fce4e93e800ba48334b407b474b9e3f16dcd4385c15f6058d105"
+        },
+        {
+          "seconds": [
+            0.014925416093319654,
+            0.015001457883045077,
+            0.015370707958936691
+          ],
+          "cpu_seconds": [
+            0.014925999999999995,
+            0.014964000000000088,
+            0.015353999999999979
+          ],
+          "input_sha256": "8847ccfcb3f808381b97ff7182df3cceac9fa815f9f52632d0d37b8d77c13aca",
+          "shape": [
+            255,
+            1524
+          ],
+          "variable_sites": 4,
+          "source_sha256": "15c5a3795a56fce4e93e800ba48334b407b474b9e3f16dcd4385c15f6058d105"
+        },
+        {
+          "seconds": [
+            0.015279249986633658,
+            0.014780208002775908,
+            0.014938832959160209
+          ],
+          "cpu_seconds": [
+            0.015281999999999962,
+            0.01478400000000002,
+            0.01493599999999995
+          ],
+          "input_sha256": "8847ccfcb3f808381b97ff7182df3cceac9fa815f9f52632d0d37b8d77c13aca",
+          "shape": [
+            255,
+            1524
+          ],
+          "variable_sites": 4,
+          "source_sha256": "15c5a3795a56fce4e93e800ba48334b407b474b9e3f16dcd4385c15f6058d105"
+        },
+        {
+          "peak_rss_bytes": 150585344,
+          "setup_peak_rss_bytes": 147849216,
+          "input_sha256": "8847ccfcb3f808381b97ff7182df3cceac9fa815f9f52632d0d37b8d77c13aca",
+          "shape": [
+            255,
+            1524
+          ],
+          "variable_sites": 4,
+          "source_sha256": "15c5a3795a56fce4e93e800ba48334b407b474b9e3f16dcd4385c15f6058d105"
+        },
+        {
+          "peak_rss_bytes": 152272896,
+          "setup_peak_rss_bytes": 148881408,
+          "input_sha256": "8847ccfcb3f808381b97ff7182df3cceac9fa815f9f52632d0d37b8d77c13aca",
+          "shape": [
+            255,
+            1524
+          ],
+          "variable_sites": 4,
+          "source_sha256": "15c5a3795a56fce4e93e800ba48334b407b474b9e3f16dcd4385c15f6058d105"
+        },
+        {
+          "peak_rss_bytes": 151044096,
+          "setup_peak_rss_bytes": 147832832,
+          "input_sha256": "8847ccfcb3f808381b97ff7182df3cceac9fa815f9f52632d0d37b8d77c13aca",
+          "shape": [
+            255,
+            1524
+          ],
+          "variable_sites": 4,
+          "source_sha256": "15c5a3795a56fce4e93e800ba48334b407b474b9e3f16dcd4385c15f6058d105"
+        }
+      ],
+      "median_seconds": 0.015001457883045077,
+      "mad_seconds": 8.679088205099106e-05,
+      "median_peak_rss_bytes": 151044096
+    },
+    "RG-LINE1": {
+      "input_sha256": "cbe1853f8346a7febcc88e069918bfc35cf34190b399067eac8a7d927c577b3d",
+      "shape": [
+        47138,
+        112977
+      ],
+      "variable_sites": 146,
+      "workers": [
+        {
+          "seconds": [
+            0.4958460000343621,
+            0.4803085420280695,
+            0.4873214168474078
+          ],
+          "cpu_seconds": [
+            0.49529899999999993,
+            0.479932,
+            0.48543100000000017
+          ],
+          "input_sha256": "cbe1853f8346a7febcc88e069918bfc35cf34190b399067eac8a7d927c577b3d",
+          "shape": [
+            47138,
+            112977
+          ],
+          "variable_sites": 146,
+          "source_sha256": "15c5a3795a56fce4e93e800ba48334b407b474b9e3f16dcd4385c15f6058d105",
+          "diagnostics": "/Users/arwen/.codex/worktrees/construction-quality/GraphFLA/graphfla/utils.py:183: UserWarning: 22445 isolated configuration(s) with no neighbors detected and removed from the landscape graph. These nodes had no mutational neighbors in the dataset under the current neighborhood definition.\n  warnings.warn(\n/Users/arwen/.codex/worktrees/construction-quality/GraphFLA/graphfla/utils.py:183: UserWarning: 22445 isolated configuration(s) with no neighbors detected and removed from the landscape graph. These nodes had no mutational neighbors in the dataset under the current neighborhood definition.\n  warnings.warn(\n/Users/arwen/.codex/worktrees/construction-quality/GraphFLA/graphfla/utils.py:183: UserWarning: 22445 isolated configuration(s) with no neighbors detected and removed from the landscape graph. These nodes had no mutational neighbors in the dataset under the current neighborhood definition.\n  warnings.warn(\n/Users/arwen/.codex/worktrees/construction-quality/GraphFLA/graphfla/utils.py:183: UserWarning: 22445 isolated configuration(s) with no neighbors detected and removed from the landscape graph. These nodes had no mutational neighbors in the dataset under the current neighborhood definition.\n  warnings.warn("
+        },
+        {
+          "seconds": [
+            0.49160595797002316,
+            0.49754250003024936,
+            0.49800050002522767
+          ],
+          "cpu_seconds": [
+            0.49094899999999986,
+            0.49714899999999984,
+            0.49751900000000004
+          ],
+          "input_sha256": "cbe1853f8346a7febcc88e069918bfc35cf34190b399067eac8a7d927c577b3d",
+          "shape": [
+            47138,
+            112977
+          ],
+          "variable_sites": 146,
+          "source_sha256": "15c5a3795a56fce4e93e800ba48334b407b474b9e3f16dcd4385c15f6058d105",
+          "diagnostics": "/Users/arwen/.codex/worktrees/construction-quality/GraphFLA/graphfla/utils.py:183: UserWarning: 22445 isolated configuration(s) with no neighbors detected and removed from the landscape graph. These nodes had no mutational neighbors in the dataset under the current neighborhood definition.\n  warnings.warn(\n/Users/arwen/.codex/worktrees/construction-quality/GraphFLA/graphfla/utils.py:183: UserWarning: 22445 isolated configuration(s) with no neighbors detected and removed from the landscape graph. These nodes had no mutational neighbors in the dataset under the current neighborhood definition.\n  warnings.warn(\n/Users/arwen/.codex/worktrees/construction-quality/GraphFLA/graphfla/utils.py:183: UserWarning: 22445 isolated configuration(s) with no neighbors detected and removed from the landscape graph. These nodes had no mutational neighbors in the dataset under the current neighborhood definition.\n  warnings.warn(\n/Users/arwen/.codex/worktrees/construction-quality/GraphFLA/graphfla/utils.py:183: UserWarning: 22445 isolated configuration(s) with no neighbors detected and removed from the landscape graph. These nodes had no mutational neighbors in the dataset under the current neighborhood definition.\n  warnings.warn("
+        },
+        {
+          "seconds": [
+            0.4814456249587238,
+            0.5599537920206785,
+            0.5382268750108778
+          ],
+          "cpu_seconds": [
+            0.48106099999999996,
+            0.5361359999999997,
+            0.5327890000000002
+          ],
+          "input_sha256": "cbe1853f8346a7febcc88e069918bfc35cf34190b399067eac8a7d927c577b3d",
+          "shape": [
+            47138,
+            112977
+          ],
+          "variable_sites": 146,
+          "source_sha256": "15c5a3795a56fce4e93e800ba48334b407b474b9e3f16dcd4385c15f6058d105",
+          "diagnostics": "/Users/arwen/.codex/worktrees/construction-quality/GraphFLA/graphfla/utils.py:183: UserWarning: 22445 isolated configuration(s) with no neighbors detected and removed from the landscape graph. These nodes had no mutational neighbors in the dataset under the current neighborhood definition.\n  warnings.warn(\n/Users/arwen/.codex/worktrees/construction-quality/GraphFLA/graphfla/utils.py:183: UserWarning: 22445 isolated configuration(s) with no neighbors detected and removed from the landscape graph. These nodes had no mutational neighbors in the dataset under the current neighborhood definition.\n  warnings.warn(\n/Users/arwen/.codex/worktrees/construction-quality/GraphFLA/graphfla/utils.py:183: UserWarning: 22445 isolated configuration(s) with no neighbors detected and removed from the landscape graph. These nodes had no mutational neighbors in the dataset under the current neighborhood definition.\n  warnings.warn(\n/Users/arwen/.codex/worktrees/construction-quality/GraphFLA/graphfla/utils.py:183: UserWarning: 22445 isolated configuration(s) with no neighbors detected and removed from the landscape graph. These nodes had no mutational neighbors in the dataset under the current neighborhood definition.\n  warnings.warn("
+        },
+        {
+          "peak_rss_bytes": 445939712,
+          "setup_peak_rss_bytes": 228573184,
+          "input_sha256": "cbe1853f8346a7febcc88e069918bfc35cf34190b399067eac8a7d927c577b3d",
+          "shape": [
+            47138,
+            112977
+          ],
+          "variable_sites": 146,
+          "source_sha256": "15c5a3795a56fce4e93e800ba48334b407b474b9e3f16dcd4385c15f6058d105",
+          "diagnostics": "/Users/arwen/.codex/worktrees/construction-quality/GraphFLA/graphfla/utils.py:183: UserWarning: 22445 isolated configuration(s) with no neighbors detected and removed from the landscape graph. These nodes had no mutational neighbors in the dataset under the current neighborhood definition.\n  warnings.warn("
+        },
+        {
+          "peak_rss_bytes": 427474944,
+          "setup_peak_rss_bytes": 233586688,
+          "input_sha256": "cbe1853f8346a7febcc88e069918bfc35cf34190b399067eac8a7d927c577b3d",
+          "shape": [
+            47138,
+            112977
+          ],
+          "variable_sites": 146,
+          "source_sha256": "15c5a3795a56fce4e93e800ba48334b407b474b9e3f16dcd4385c15f6058d105",
+          "diagnostics": "/Users/arwen/.codex/worktrees/construction-quality/GraphFLA/graphfla/utils.py:183: UserWarning: 22445 isolated configuration(s) with no neighbors detected and removed from the landscape graph. These nodes had no mutational neighbors in the dataset under the current neighborhood definition.\n  warnings.warn("
+        },
+        {
+          "peak_rss_bytes": 482050048,
+          "setup_peak_rss_bytes": 229212160,
+          "input_sha256": "cbe1853f8346a7febcc88e069918bfc35cf34190b399067eac8a7d927c577b3d",
+          "shape": [
+            47138,
+            112977
+          ],
+          "variable_sites": 146,
+          "source_sha256": "15c5a3795a56fce4e93e800ba48334b407b474b9e3f16dcd4385c15f6058d105",
+          "diagnostics": "/Users/arwen/.codex/worktrees/construction-quality/GraphFLA/graphfla/utils.py:183: UserWarning: 22445 isolated configuration(s) with no neighbors detected and removed from the landscape graph. These nodes had no mutational neighbors in the dataset under the current neighborhood definition.\n  warnings.warn("
+        }
+      ],
+      "median_seconds": 0.4958460000343621,
+      "mad_seconds": 0.00852458318695426,
+      "median_peak_rss_bytes": 445939712
+    },
+    "synthetic-boolean": {
+      "input_sha256": "51f7ce1316be622575f35137f3835c02e5051dfbe3de81174c06c88dbfad46e4",
+      "shape": [
+        4096,
+        24576
+      ],
+      "variable_sites": 12,
+      "workers": [
+        {
+          "seconds": [
+            0.010017124935984612,
+            0.009609000058844686,
+            0.009746999945491552
+          ],
+          "cpu_seconds": [
+            0.010010999999999992,
+            0.009612000000000065,
+            0.00974699999999995
+          ],
+          "input_sha256": "51f7ce1316be622575f35137f3835c02e5051dfbe3de81174c06c88dbfad46e4",
+          "shape": [
+            4096,
+            24576
+          ],
+          "variable_sites": 12,
+          "source_sha256": "15c5a3795a56fce4e93e800ba48334b407b474b9e3f16dcd4385c15f6058d105"
+        },
+        {
+          "seconds": [
+            0.010116707999259233,
+            0.009713790845125914,
+            0.009756000014021993
+          ],
+          "cpu_seconds": [
+            0.01009600000000005,
+            0.009695999999999927,
+            0.009738000000000024
+          ],
+          "input_sha256": "51f7ce1316be622575f35137f3835c02e5051dfbe3de81174c06c88dbfad46e4",
+          "shape": [
+            4096,
+            24576
+          ],
+          "variable_sites": 12,
+          "source_sha256": "15c5a3795a56fce4e93e800ba48334b407b474b9e3f16dcd4385c15f6058d105"
+        },
+        {
+          "seconds": [
+            0.00982229202054441,
+            0.009547792142257094,
+            0.009685541968792677
+          ],
+          "cpu_seconds": [
+            0.009813000000000016,
+            0.009546999999999972,
+            0.00966800000000001
+          ],
+          "input_sha256": "51f7ce1316be622575f35137f3835c02e5051dfbe3de81174c06c88dbfad46e4",
+          "shape": [
+            4096,
+            24576
+          ],
+          "variable_sites": 12,
+          "source_sha256": "15c5a3795a56fce4e93e800ba48334b407b474b9e3f16dcd4385c15f6058d105"
+        },
+        {
+          "peak_rss_bytes": 157433856,
+          "setup_peak_rss_bytes": 148062208,
+          "input_sha256": "51f7ce1316be622575f35137f3835c02e5051dfbe3de81174c06c88dbfad46e4",
+          "shape": [
+            4096,
+            24576
+          ],
+          "variable_sites": 12,
+          "source_sha256": "15c5a3795a56fce4e93e800ba48334b407b474b9e3f16dcd4385c15f6058d105"
+        },
+        {
+          "peak_rss_bytes": 157892608,
+          "setup_peak_rss_bytes": 147783680,
+          "input_sha256": "51f7ce1316be622575f35137f3835c02e5051dfbe3de81174c06c88dbfad46e4",
+          "shape": [
+            4096,
+            24576
+          ],
+          "variable_sites": 12,
+          "source_sha256": "15c5a3795a56fce4e93e800ba48334b407b474b9e3f16dcd4385c15f6058d105"
+        },
+        {
+          "peak_rss_bytes": 158040064,
+          "setup_peak_rss_bytes": 147685376,
+          "input_sha256": "51f7ce1316be622575f35137f3835c02e5051dfbe3de81174c06c88dbfad46e4",
+          "shape": [
+            4096,
+            24576
+          ],
+          "variable_sites": 12,
+          "source_sha256": "15c5a3795a56fce4e93e800ba48334b407b474b9e3f16dcd4385c15f6058d105"
+        }
+      ],
+      "median_seconds": 0.009746999945491552,
+      "mad_seconds": 7.52920750528574e-05,
+      "median_peak_rss_bytes": 157892608
+    },
+    "synthetic-ordinal": {
+      "input_sha256": "3a219514e4824b1f00b9beb2922b5041b05cc80dda155ea7a5730daaf2100487",
+      "shape": [
+        216,
+        540
+      ],
+      "variable_sites": 3,
+      "workers": [
+        {
+          "seconds": [
+            0.0012452499940991402,
+            0.0012197911273688078,
+            0.001158999977633357
+          ],
+          "cpu_seconds": [
+            0.0012479999999999714,
+            0.0012220000000000009,
+            0.0011619999999999964
+          ],
+          "input_sha256": "3a219514e4824b1f00b9beb2922b5041b05cc80dda155ea7a5730daaf2100487",
+          "shape": [
+            216,
+            540
+          ],
+          "variable_sites": 3,
+          "source_sha256": "15c5a3795a56fce4e93e800ba48334b407b474b9e3f16dcd4385c15f6058d105"
+        },
+        {
+          "seconds": [
+            0.001257208175957203,
+            0.0010197919327765703,
+            0.0012066247873008251
+          ],
+          "cpu_seconds": [
+            0.0012599999999999834,
+            0.0010229999999999961,
+            0.0012099999999999334
+          ],
+          "input_sha256": "3a219514e4824b1f00b9beb2922b5041b05cc80dda155ea7a5730daaf2100487",
+          "shape": [
+            216,
+            540
+          ],
+          "variable_sites": 3,
+          "source_sha256": "15c5a3795a56fce4e93e800ba48334b407b474b9e3f16dcd4385c15f6058d105"
+        },
+        {
+          "seconds": [
+            0.0014443749096244574,
+            0.0010114589240401983,
+            0.001133916899561882
+          ],
+          "cpu_seconds": [
+            0.0013880000000000003,
+            0.0010140000000000149,
+            0.0011369999999999436
+          ],
+          "input_sha256": "3a219514e4824b1f00b9beb2922b5041b05cc80dda155ea7a5730daaf2100487",
+          "shape": [
+            216,
+            540
+          ],
+          "variable_sites": 3,
+          "source_sha256": "15c5a3795a56fce4e93e800ba48334b407b474b9e3f16dcd4385c15f6058d105"
+        },
+        {
+          "peak_rss_bytes": 147488768,
+          "setup_peak_rss_bytes": 147341312,
+          "input_sha256": "3a219514e4824b1f00b9beb2922b5041b05cc80dda155ea7a5730daaf2100487",
+          "shape": [
+            216,
+            540
+          ],
+          "variable_sites": 3,
+          "source_sha256": "15c5a3795a56fce4e93e800ba48334b407b474b9e3f16dcd4385c15f6058d105"
+        },
+        {
+          "peak_rss_bytes": 148750336,
+          "setup_peak_rss_bytes": 148504576,
+          "input_sha256": "3a219514e4824b1f00b9beb2922b5041b05cc80dda155ea7a5730daaf2100487",
+          "shape": [
+            216,
+            540
+          ],
+          "variable_sites": 3,
+          "source_sha256": "15c5a3795a56fce4e93e800ba48334b407b474b9e3f16dcd4385c15f6058d105"
+        },
+        {
+          "peak_rss_bytes": 146784256,
+          "setup_peak_rss_bytes": 146538496,
+          "input_sha256": "3a219514e4824b1f00b9beb2922b5041b05cc80dda155ea7a5730daaf2100487",
+          "shape": [
+            216,
+            540
+          ],
+          "variable_sites": 3,
+          "source_sha256": "15c5a3795a56fce4e93e800ba48334b407b474b9e3f16dcd4385c15f6058d105"
+        }
+      ],
+      "median_seconds": 0.0012066247873008251,
+      "mad_seconds": 5.058338865637779e-05,
+      "median_peak_rss_bytes": 147488768
+    },
+    "synthetic-dna": {
+      "input_sha256": "235f33a21d5818b7956eb400875ff11762586640ee620caefdede2f5e9f64b4b",
+      "shape": [
+        4096,
+        36864
+      ],
+      "variable_sites": 6,
+      "workers": [
+        {
+          "seconds": [
+            0.009405833901837468,
+            0.009161333087831736,
+            0.009095042012631893
+          ],
+          "cpu_seconds": [
+            0.009401999999999966,
+            0.00916100000000003,
+            0.009094000000000046
+          ],
+          "input_sha256": "235f33a21d5818b7956eb400875ff11762586640ee620caefdede2f5e9f64b4b",
+          "shape": [
+            4096,
+            36864
+          ],
+          "variable_sites": 6,
+          "source_sha256": "15c5a3795a56fce4e93e800ba48334b407b474b9e3f16dcd4385c15f6058d105"
+        },
+        {
+          "seconds": [
+            0.00946904206648469,
+            0.009233582997694612,
+            0.009019500110298395
+          ],
+          "cpu_seconds": [
+            0.009469000000000005,
+            0.00923400000000002,
+            0.008992
+          ],
+          "input_sha256": "235f33a21d5818b7956eb400875ff11762586640ee620caefdede2f5e9f64b4b",
+          "shape": [
+            4096,
+            36864
+          ],
+          "variable_sites": 6,
+          "source_sha256": "15c5a3795a56fce4e93e800ba48334b407b474b9e3f16dcd4385c15f6058d105"
+        },
+        {
+          "seconds": [
+            0.009316999930888414,
+            0.009107208112254739,
+            0.008978707948699594
+          ],
+          "cpu_seconds": [
+            0.009319999999999995,
+            0.009103000000000028,
+            0.008978000000000042
+          ],
+          "input_sha256": "235f33a21d5818b7956eb400875ff11762586640ee620caefdede2f5e9f64b4b",
+          "shape": [
+            4096,
+            36864
+          ],
+          "variable_sites": 6,
+          "source_sha256": "15c5a3795a56fce4e93e800ba48334b407b474b9e3f16dcd4385c15f6058d105"
+        },
+        {
+          "peak_rss_bytes": 160071680,
+          "setup_peak_rss_bytes": 147521536,
+          "input_sha256": "235f33a21d5818b7956eb400875ff11762586640ee620caefdede2f5e9f64b4b",
+          "shape": [
+            4096,
+            36864
+          ],
+          "variable_sites": 6,
+          "source_sha256": "15c5a3795a56fce4e93e800ba48334b407b474b9e3f16dcd4385c15f6058d105"
+        },
+        {
+          "peak_rss_bytes": 162775040,
+          "setup_peak_rss_bytes": 147308544,
+          "input_sha256": "235f33a21d5818b7956eb400875ff11762586640ee620caefdede2f5e9f64b4b",
+          "shape": [
+            4096,
+            36864
+          ],
+          "variable_sites": 6,
+          "source_sha256": "15c5a3795a56fce4e93e800ba48334b407b474b9e3f16dcd4385c15f6058d105"
+        },
+        {
+          "peak_rss_bytes": 160235520,
+          "setup_peak_rss_bytes": 147832832,
+          "input_sha256": "235f33a21d5818b7956eb400875ff11762586640ee620caefdede2f5e9f64b4b",
+          "shape": [
+            4096,
+            36864
+          ],
+          "variable_sites": 6,
+          "source_sha256": "15c5a3795a56fce4e93e800ba48334b407b474b9e3f16dcd4385c15f6058d105"
+        }
+      ],
+      "median_seconds": 0.009161333087831736,
+      "mad_seconds": 0.00014183297753334045,
+      "median_peak_rss_bytes": 160235520
+    },
+    "synthetic-rna": {
+      "input_sha256": "a7714f9ab18a3d1a91ca3bd65c34a556226489ff3873ee7da62eea9e0d3ecc4e",
+      "shape": [
+        256,
+        1536
+      ],
+      "variable_sites": 4,
+      "workers": [
+        {
+          "seconds": [
+            0.0018788750749081373,
+            0.0016484998632222414,
+            0.0017669580411165953
+          ],
+          "cpu_seconds": [
+            0.0018780000000000463,
+            0.0016510000000000136,
+            0.0017700000000000493
+          ],
+          "input_sha256": "a7714f9ab18a3d1a91ca3bd65c34a556226489ff3873ee7da62eea9e0d3ecc4e",
+          "shape": [
+            256,
+            1536
+          ],
+          "variable_sites": 4,
+          "source_sha256": "15c5a3795a56fce4e93e800ba48334b407b474b9e3f16dcd4385c15f6058d105"
+        },
+        {
+          "seconds": [
+            0.0017477921210229397,
+            0.0019847918301820755,
+            0.001912540988996625
+          ],
+          "cpu_seconds": [
+            0.0017510000000000026,
+            0.0019879999999999898,
+            0.001912999999999998
+          ],
+          "input_sha256": "a7714f9ab18a3d1a91ca3bd65c34a556226489ff3873ee7da62eea9e0d3ecc4e",
+          "shape": [
+            256,
+            1536
+          ],
+          "variable_sites": 4,
+          "source_sha256": "15c5a3795a56fce4e93e800ba48334b407b474b9e3f16dcd4385c15f6058d105"
+        },
+        {
+          "seconds": [
+            0.0019838339649140835,
+            0.001752000069245696,
+            0.0018015829846262932
+          ],
+          "cpu_seconds": [
+            0.0019839999999999858,
+            0.0017559999999999798,
+            0.0018039999999999723
+          ],
+          "input_sha256": "a7714f9ab18a3d1a91ca3bd65c34a556226489ff3873ee7da62eea9e0d3ecc4e",
+          "shape": [
+            256,
+            1536
+          ],
+          "variable_sites": 4,
+          "source_sha256": "15c5a3795a56fce4e93e800ba48334b407b474b9e3f16dcd4385c15f6058d105"
+        },
+        {
+          "peak_rss_bytes": 147816448,
+          "setup_peak_rss_bytes": 147177472,
+          "input_sha256": "a7714f9ab18a3d1a91ca3bd65c34a556226489ff3873ee7da62eea9e0d3ecc4e",
+          "shape": [
+            256,
+            1536
+          ],
+          "variable_sites": 4,
+          "source_sha256": "15c5a3795a56fce4e93e800ba48334b407b474b9e3f16dcd4385c15f6058d105"
+        },
+        {
+          "peak_rss_bytes": 148766720,
+          "setup_peak_rss_bytes": 148176896,
+          "input_sha256": "a7714f9ab18a3d1a91ca3bd65c34a556226489ff3873ee7da62eea9e0d3ecc4e",
+          "shape": [
+            256,
+            1536
+          ],
+          "variable_sites": 4,
+          "source_sha256": "15c5a3795a56fce4e93e800ba48334b407b474b9e3f16dcd4385c15f6058d105"
+        },
+        {
+          "peak_rss_bytes": 148094976,
+          "setup_peak_rss_bytes": 147439616,
+          "input_sha256": "a7714f9ab18a3d1a91ca3bd65c34a556226489ff3873ee7da62eea9e0d3ecc4e",
+          "shape": [
+            256,
+            1536
+          ],
+          "variable_sites": 4,
+          "source_sha256": "15c5a3795a56fce4e93e800ba48334b407b474b9e3f16dcd4385c15f6058d105"
+        }
+      ],
+      "median_seconds": 0.0018015829846262932,
+      "mad_seconds": 7.729209028184414e-05,
+      "median_peak_rss_bytes": 148094976
+    },
+    "synthetic-sequence": {
+      "input_sha256": "05f6c010e5f999cc4142ce84edfcf769e8281400f9d2eb1cf82f58918fe16e55",
+      "shape": [
+        243,
+        1215
+      ],
+      "variable_sites": 5,
+      "workers": [
+        {
+          "seconds": [
+            0.001967834075912833,
+            0.002005290938541293,
+            0.001994958845898509
+          ],
+          "cpu_seconds": [
+            0.0019719999999999738,
+            0.002006999999999981,
+            0.0019939999999999958
+          ],
+          "input_sha256": "05f6c010e5f999cc4142ce84edfcf769e8281400f9d2eb1cf82f58918fe16e55",
+          "shape": [
+            243,
+            1215
+          ],
+          "variable_sites": 5,
+          "source_sha256": "15c5a3795a56fce4e93e800ba48334b407b474b9e3f16dcd4385c15f6058d105"
+        },
+        {
+          "seconds": [
+            0.0022040419280529022,
+            0.001899374881759286,
+            0.0017872918397188187
+          ],
+          "cpu_seconds": [
+            0.0022079999999999878,
+            0.0019079999999999653,
+            0.0017900000000000138
+          ],
+          "input_sha256": "05f6c010e5f999cc4142ce84edfcf769e8281400f9d2eb1cf82f58918fe16e55",
+          "shape": [
+            243,
+            1215
+          ],
+          "variable_sites": 5,
+          "source_sha256": "15c5a3795a56fce4e93e800ba48334b407b474b9e3f16dcd4385c15f6058d105"
+        },
+        {
+          "seconds": [
+            0.001780959079042077,
+            0.0019577499479055405,
+            0.0019447091035544872
+          ],
+          "cpu_seconds": [
+            0.0017850000000000366,
+            0.0019600000000000173,
+            0.0019509999999999805
+          ],
+          "input_sha256": "05f6c010e5f999cc4142ce84edfcf769e8281400f9d2eb1cf82f58918fe16e55",
+          "shape": [
+            243,
+            1215
+          ],
+          "variable_sites": 5,
+          "source_sha256": "15c5a3795a56fce4e93e800ba48334b407b474b9e3f16dcd4385c15f6058d105"
+        },
+        {
+          "peak_rss_bytes": 147685376,
+          "setup_peak_rss_bytes": 147062784,
+          "input_sha256": "05f6c010e5f999cc4142ce84edfcf769e8281400f9d2eb1cf82f58918fe16e55",
+          "shape": [
+            243,
+            1215
+          ],
+          "variable_sites": 5,
+          "source_sha256": "15c5a3795a56fce4e93e800ba48334b407b474b9e3f16dcd4385c15f6058d105"
+        },
+        {
+          "peak_rss_bytes": 147406848,
+          "setup_peak_rss_bytes": 146817024,
+          "input_sha256": "05f6c010e5f999cc4142ce84edfcf769e8281400f9d2eb1cf82f58918fe16e55",
+          "shape": [
+            243,
+            1215
+          ],
+          "variable_sites": 5,
+          "source_sha256": "15c5a3795a56fce4e93e800ba48334b407b474b9e3f16dcd4385c15f6058d105"
+        },
+        {
+          "peak_rss_bytes": 147177472,
+          "setup_peak_rss_bytes": 146538496,
+          "input_sha256": "05f6c010e5f999cc4142ce84edfcf769e8281400f9d2eb1cf82f58918fe16e55",
+          "shape": [
+            243,
+            1215
+          ],
+          "variable_sites": 5,
+          "source_sha256": "15c5a3795a56fce4e93e800ba48334b407b474b9e3f16dcd4385c15f6058d105"
+        }
+      ],
+      "median_seconds": 0.0019577499479055405,
+      "mad_seconds": 4.754099063575268e-05,
+      "median_peak_rss_bytes": 147406848
+    },
+    "synthetic-hpo": {
+      "input_sha256": "5279e263c60682213cd7abe399f4043e2a7370a77967c8d455462db6e95842c8",
+      "shape": [
+        384,
+        1248
+      ],
+      "variable_sites": 4,
+      "workers": [
+        {
+          "seconds": [
+            0.0016799999866634607,
+            0.001487666042521596,
+            0.0017266659997403622
+          ],
+          "cpu_seconds": [
+            0.001666999999999974,
+            0.0014919999999999933,
+            0.0017260000000000053
+          ],
+          "input_sha256": "5279e263c60682213cd7abe399f4043e2a7370a77967c8d455462db6e95842c8",
+          "shape": [
+            384,
+            1248
+          ],
+          "variable_sites": 4,
+          "source_sha256": "15c5a3795a56fce4e93e800ba48334b407b474b9e3f16dcd4385c15f6058d105"
+        },
+        {
+          "seconds": [
+            0.0017255828715860844,
+            0.0015775421634316444,
+            0.0014762079808861017
+          ],
+          "cpu_seconds": [
+            0.0017280000000000073,
+            0.0015799999999999703,
+            0.0014809999999999546
+          ],
+          "input_sha256": "5279e263c60682213cd7abe399f4043e2a7370a77967c8d455462db6e95842c8",
+          "shape": [
+            384,
+            1248
+          ],
+          "variable_sites": 4,
+          "source_sha256": "15c5a3795a56fce4e93e800ba48334b407b474b9e3f16dcd4385c15f6058d105"
+        },
+        {
+          "seconds": [
+            0.001651708036661148,
+            0.001682500122115016,
+            0.00143529218621552
+          ],
+          "cpu_seconds": [
+            0.0016550000000000176,
+            0.0016859999999999653,
+            0.0014379999999999948
+          ],
+          "input_sha256": "5279e263c60682213cd7abe399f4043e2a7370a77967c8d455462db6e95842c8",
+          "shape": [
+            384,
+            1248
+          ],
+          "variable_sites": 4,
+          "source_sha256": "15c5a3795a56fce4e93e800ba48334b407b474b9e3f16dcd4385c15f6058d105"
+        },
+        {
+          "peak_rss_bytes": 147570688,
+          "setup_peak_rss_bytes": 146997248,
+          "input_sha256": "5279e263c60682213cd7abe399f4043e2a7370a77967c8d455462db6e95842c8",
+          "shape": [
+            384,
+            1248
+          ],
+          "variable_sites": 4,
+          "source_sha256": "15c5a3795a56fce4e93e800ba48334b407b474b9e3f16dcd4385c15f6058d105"
+        },
+        {
+          "peak_rss_bytes": 147079168,
+          "setup_peak_rss_bytes": 146423808,
+          "input_sha256": "5279e263c60682213cd7abe399f4043e2a7370a77967c8d455462db6e95842c8",
+          "shape": [
+            384,
+            1248
+          ],
+          "variable_sites": 4,
+          "source_sha256": "15c5a3795a56fce4e93e800ba48334b407b474b9e3f16dcd4385c15f6058d105"
+        },
+        {
+          "peak_rss_bytes": 147980288,
+          "setup_peak_rss_bytes": 147390464,
+          "input_sha256": "5279e263c60682213cd7abe399f4043e2a7370a77967c8d455462db6e95842c8",
+          "shape": [
+            384,
+            1248
+          ],
+          "variable_sites": 4,
+          "source_sha256": "15c5a3795a56fce4e93e800ba48334b407b474b9e3f16dcd4385c15f6058d105"
+        }
+      ],
+      "median_seconds": 0.001651708036661148,
+      "mad_seconds": 7.416587322950363e-05,
+      "median_peak_rss_bytes": 147570688
+    }
+  }
+}
