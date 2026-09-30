@@ -99,30 +99,7 @@ def filter_graph(graph, maximize, tau, filter_mode, verbose):
                 if verbose:
                     logger.info("   - No edges removed (all connect functional configs)")
 
-            # Keep only the largest weakly connected component
-            initial_nodes = graph.vcount()
-            components = graph.connected_components(mode="weak")
-            membership = np.asarray(components.membership, dtype=np.int32)
-
-            if membership.size > 0:
-                component_sizes = np.bincount(membership)
-                giant_component = int(component_sizes.argmax())
-                kept_mask = membership == giant_component
-
-                if not np.all(kept_mask):
-                    kept_vertex_indices = np.flatnonzero(kept_mask).tolist()
-                    graph = graph.induced_subgraph(kept_vertex_indices)
-
-            if verbose:
-                removed_nodes = initial_nodes - graph.vcount()
-                if removed_nodes > 0:
-                    logger.info(
-                        f"   - Kept largest connected component: "
-                        f"{graph.vcount()} nodes "
-                        f"({removed_nodes} isolated/minor-component nodes removed)"
-                    )
-                else:
-                    logger.info("   - Graph remains fully connected")
+            graph, kept_vertex_indices = _largest_weak_component(graph, verbose)
 
     n_configs = graph.vcount()
     n_edges = graph.ecount()
@@ -133,6 +110,22 @@ def filter_graph(graph, maximize, tau, filter_mode, verbose):
         )
 
     return graph, n_configs, n_edges, kept_vertex_indices
+
+
+def _largest_weak_component(graph, verbose=False):
+    """Return the largest weak component and its original vertex indices."""
+    initial_nodes = graph.vcount()
+    membership = np.asarray(graph.connected_components(mode="weak").membership)
+    kept = None
+    if membership.size:
+        largest = int(np.bincount(membership).argmax())
+        mask = membership == largest
+        if not np.all(mask):
+            kept = np.flatnonzero(mask).tolist()
+            graph = graph.induced_subgraph(kept)
+    if verbose:
+        logger.info(" - Largest weak component: %d/%d variants", graph.vcount(), initial_nodes)
+    return graph, kept
 
 
 def remove_isolated_nodes(graph, verbose=False, protected=None):
