@@ -74,8 +74,7 @@ def _build_active(
         and np.issubdtype(configs_array.dtype, np.integer)
     )
     can_use_bytemap = (
-        numeric_configs_array
-        and int(np.max(configs_array)) <= np.iinfo(np.uint8).max
+        numeric_configs_array and int(np.max(configs_array)) <= np.iinfo(np.uint8).max
     )
 
     edges = delta_fits = None  # set by whichever path runs
@@ -83,18 +82,34 @@ def _build_active(
     # Subclasses may override adjacency; fast paths implement built-ins only.
     if can_use_bytemap and type(generator_obj) is BooleanNeighborGenerator:
         edges, delta_fits = _active_boolean_bytemap(
-            configs_array, fitness, epsilon, maximize, verbose, neutral_pairs,
+            configs_array,
+            fitness,
+            epsilon,
+            maximize,
+            verbose,
+            neutral_pairs,
         )
     elif can_use_bytemap and type(generator_obj) is SequenceNeighborGenerator:
         edges, delta_fits = _active_sequence_bytemap(
-            configs_array, fitness, epsilon, maximize, verbose,
-            generator_obj.alphabet_size, neutral_pairs,
+            configs_array,
+            fitness,
+            epsilon,
+            maximize,
+            verbose,
+            generator_obj.alphabet_size,
+            neutral_pairs,
         )
     elif numeric_configs_array and type(generator_obj) in (
-        OrdinalNeighborGenerator, DefaultNeighborGenerator
+        OrdinalNeighborGenerator,
+        DefaultNeighborGenerator,
     ):
         result = _active_discrete(
-            configs_array, config_dict, fitness, epsilon, maximize, neutral_pairs,
+            configs_array,
+            config_dict,
+            fitness,
+            epsilon,
+            maximize,
+            neutral_pairs,
             ordinal_only=type(generator_obj) is OrdinalNeighborGenerator,
         )
         if result is not None:  # None => mixed-radix overflow, fall back
@@ -111,8 +126,17 @@ def _build_active(
         edge_list: List[Tuple[int, int]] = []
         delta_list: List[float] = []
         _active_generic(
-            generic_configs, config_dict, fitness, n_edit, epsilon, maximize,
-            verbose, neighbor_generator, edge_list, delta_list, neutral_pairs,
+            generic_configs,
+            config_dict,
+            fitness,
+            n_edit,
+            epsilon,
+            maximize,
+            verbose,
+            neighbor_generator,
+            edge_list,
+            delta_list,
+            neutral_pairs,
         )
         edges, delta_fits = _edge_arrays_from_lists(edge_list, delta_list)
 
@@ -217,14 +241,14 @@ def _build_pairwise(
                 bf = float(b)
                 k = local.astype(np.float64)
                 ri = (
-                    bf - 2 - np.floor(
+                    bf
+                    - 2
+                    - np.floor(
                         np.sqrt(-8.0 * k + 4.0 * bf * (bf - 1) - 7.0) / 2.0 - 0.5
                     )
                 ).astype(np.intp)
                 rj = (
-                    k + ri + 1
-                    - bf * (bf - 1) / 2
-                    + (bf - ri) * ((bf - ri) - 1) / 2
+                    k + ri + 1 - bf * (bf - 1) / 2 + (bf - ri) * ((bf - ri) - 1) / 2
                 ).astype(np.intp)
                 i_parts.append(ri + i0)
                 j_parts.append(rj + i0)
@@ -238,7 +262,8 @@ def _build_pairwise(
                 j_end = min(j_start + col_chunk, n)
                 n_cols = j_end - j_start
                 d = cdist(
-                    configs_array[i0:i1], configs_array[j_start:j_end],
+                    configs_array[i0:i1],
+                    configs_array[j_start:j_end],
                     metric="hamming",
                 )
                 flat = np.flatnonzero(((d > 0) & (d <= frac_threshold)).ravel())
@@ -260,8 +285,7 @@ def _build_pairwise(
 
     if verbose:
         logger.info(
-            f" - Found {len(j_arr)} neighbor pairs "
-            f"within edit distance {n_edit}."
+            f" - Found {len(j_arr)} neighbor pairs within edit distance {n_edit}."
         )
 
     return _classify_pairs(i_arr, j_arr, fitness, epsilon, maximize, verbose)
@@ -380,6 +404,7 @@ _MASKED_GROUPING_SEED = 0x9E3779B97F4A7C15
 # verification. Bounds the transient row buffers so peak memory stays flat.
 _MASKED_VERIFY_CHUNK = 1_000_000
 
+
 def _within_run_pairs(group_id, n):
     """All within-group index pairs (a < b) for elements sharing a group id.
 
@@ -429,14 +454,11 @@ def _within_run_pairs(group_id, n):
     cf = counts[pair_grp].astype(np.float64)
     off = pair_off.astype(np.float64)
     a = (
-        cf - 2
-        - np.floor(np.sqrt(-8.0 * off + 4.0 * cf * (cf - 1) - 7.0) / 2.0 - 0.5)
+        cf - 2 - np.floor(np.sqrt(-8.0 * off + 4.0 * cf * (cf - 1) - 7.0) / 2.0 - 0.5)
     ).astype(np.int64)
-    b = (
-        off + a + 1
-        - cf * (cf - 1) // 2
-        + (cf - a) * ((cf - a) - 1) // 2
-    ).astype(np.int64)
+    b = (off + a + 1 - cf * (cf - 1) // 2 + (cf - a) * ((cf - a) - 1) // 2).astype(
+        np.int64
+    )
 
     base = starts[pair_grp].astype(np.int64)
     return (base + a).astype(np.intp), (base + b).astype(np.intp)
@@ -485,9 +507,7 @@ def _verify_hamming1(rows, cand_i, cand_j):
     chunk = _MASKED_VERIFY_CHUNK
     for s in range(0, m, chunk):
         e = s + chunk if s + chunk < m else m
-        hdist = np.count_nonzero(
-            rows[cand_i[s:e]] != rows[cand_j[s:e]], axis=1
-        )
+        hdist = np.count_nonzero(rows[cand_i[s:e]] != rows[cand_j[s:e]], axis=1)
         np.equal(hdist, 1, out=keep[s:e])
     return keep
 
@@ -659,15 +679,18 @@ def _build_masked_grouping(
         return [], [], []
 
     if verbose:
-        logger.info(
-            f" - Found {len(j_arr)} neighbor pairs within edit distance 1."
-        )
+        logger.info(f" - Found {len(j_arr)} neighbor pairs within edit distance 1.")
 
     return _classify_pairs(i_arr, j_arr, fitness, epsilon, maximize, verbose)
 
 
 def _active_masked_grouping(
-    rows, fitness, neutral_eps, maximize, verbose, neutral_pairs,
+    rows,
+    fitness,
+    neutral_eps,
+    maximize,
+    verbose,
+    neutral_pairs,
 ):
     """Active-path Hamming-1 finder via masked-position grouping (ndarrays).
 
@@ -697,7 +720,12 @@ def _active_masked_grouping(
         return _empty_edges(), _empty_deltas()
 
     return _classify_pairs_to_arrays(
-        i_arr, j_arr, fitness, neutral_eps, maximize, neutral_pairs,
+        i_arr,
+        j_arr,
+        fitness,
+        neutral_eps,
+        maximize,
+        neutral_pairs,
     )
 
 
@@ -723,12 +751,10 @@ def _mixed_radix_keys(configs_array, base):
     """
     n_vars = configs_array.shape[1]
     # Overflow guard: max key is base**n_vars - 1; refuse if it exceeds int64.
-    if n_vars >= 64 or base ** n_vars > (1 << 63):
+    if n_vars >= 64 or base**n_vars > (1 << 63):
         return None, None
 
-    place_values = np.array(
-        [base ** j for j in range(n_vars)], dtype=np.int64
-    )
+    place_values = np.array([base**j for j in range(n_vars)], dtype=np.int64)
     keys = configs_array.astype(np.int64) @ place_values
     return keys, place_values
 
@@ -745,8 +771,14 @@ _BYTEMAP_CHUNK_CANDIDATES = 4_000_000
 
 
 def _bytemap_lut_block(
-    keys, lut, a_row, codes_block, place_block, row_offset,
-    src_list, nbr_list,
+    keys,
+    lut,
+    a_row,
+    codes_block,
+    place_block,
+    row_offset,
+    src_list,
+    nbr_list,
 ):
     """Append unique unordered neighbor pairs from one bounded lookup block."""
     rb, pb = codes_block.shape
@@ -755,12 +787,12 @@ def _bytemap_lut_block(
     # Neighbour key for (row r, position pl, alt a): key[r] + (v - code) * place
     # with v = a + (a >= code), so vdelta = a - code + (a >= code). Keys stay in
     # [0, base**n_vars), so the LUT gather is always in range.
-    cb = codes_block[:, :, None]                       # (rb, pb, 1)
-    a3 = a_row[None, None, :]                           # (1, 1, n_alt)
-    vdelta = (a3 - cb) + (a3 >= cb)                     # (rb, pb, n_alt)
+    cb = codes_block[:, :, None]  # (rb, pb, 1)
+    a3 = a_row[None, None, :]  # (1, 1, n_alt)
+    vdelta = (a3 - cb) + (a3 >= cb)  # (rb, pb, n_alt)
     del cb
     nbr_keys = (
-        keys[row_offset:row_offset + rb][:, None, None]
+        keys[row_offset : row_offset + rb][:, None, None]
         + vdelta * place_block[None, :, None]
     ).reshape(-1)
     del vdelta
@@ -780,13 +812,12 @@ def _bytemap_lut_block(
 
 def _bytemap_lut_adjacency(keys, place_values, codes, n, n_vars, n_alt, base):
     """Find unordered neighbor pairs with a dense index, or return None if too large."""
-    key_space = base ** n_vars
+    key_space = base**n_vars
     if key_space > _LUT_MAX_CELLS:
         return None
 
     # key -> row table; -1 marks an absent configuration.
-    index_dtype = np.int32 if n <= np.iinfo(np.int32).max else np.int64
-    lut = np.full(key_space, -1, dtype=index_dtype)
+    lut = np.full(key_space, -1, dtype=np.int64)
     lut[keys] = np.arange(n)
 
     a_row = np.arange(n_alt, dtype=np.int64)
@@ -803,9 +834,14 @@ def _bytemap_lut_adjacency(keys, place_values, codes, n, n_vars, n_alt, base):
             while r0 < n:
                 r1 = min(r0 + row_block, n)
                 _bytemap_lut_block(
-                    keys, lut, a_row,
-                    codes[r0:r1, p:p + 1], place_values[p:p + 1],
-                    r0, src_list, nbr_list,
+                    keys,
+                    lut,
+                    a_row,
+                    codes[r0:r1, p : p + 1],
+                    place_values[p : p + 1],
+                    r0,
+                    src_list,
+                    nbr_list,
                 )
                 r0 = r1
             p += 1
@@ -815,16 +851,22 @@ def _bytemap_lut_adjacency(keys, place_values, codes, n, n_vars, n_alt, base):
         max_group = max(1, _BYTEMAP_CHUNK_CANDIDATES // rows_per_pos)
         p_end = min(p + max_group, n_vars)
         _bytemap_lut_block(
-            keys, lut, a_row,
-            codes[:, p:p_end], place_values[p:p_end],
-            0, src_list, nbr_list,
+            keys,
+            lut,
+            a_row,
+            codes[:, p:p_end],
+            place_values[p:p_end],
+            0,
+            src_list,
+            nbr_list,
         )
         p = p_end
 
     del lut
     if not src_list:
         return (
-            np.empty(0, dtype=np.intp), np.empty(0, dtype=np.intp),
+            np.empty(0, dtype=np.intp),
+            np.empty(0, dtype=np.intp),
         )
     return np.concatenate(src_list), np.concatenate(nbr_list)
 
@@ -867,13 +909,19 @@ def _bytemap_searchsorted_adjacency(keys, place_values, configs_array, n, n_vars
 
     if not src_list:
         return (
-            np.empty(0, dtype=np.intp), np.empty(0, dtype=np.intp),
+            np.empty(0, dtype=np.intp),
+            np.empty(0, dtype=np.intp),
         )
     return np.concatenate(src_list), np.concatenate(nbr_list)
 
 
 def _active_bytemap_vectorized(
-    configs_array, fitness, neutral_eps, maximize, base, neutral_pairs,
+    configs_array,
+    fitness,
+    neutral_eps,
+    maximize,
+    base,
+    neutral_pairs,
 ):
     """Find and classify each single-substitution neighbor pair once.
 
@@ -892,11 +940,22 @@ def _active_bytemap_vectorized(
     codes = configs_array.astype(np.int64, copy=False)
 
     result = _bytemap_lut_adjacency(
-        keys, place_values, codes, n, n_vars, n_alt, base,
+        keys,
+        place_values,
+        codes,
+        n,
+        n_vars,
+        n_alt,
+        base,
     )
     if result is None:  # key space too large for a direct-index table
         result = _bytemap_searchsorted_adjacency(
-            keys, place_values, configs_array, n, n_vars, base,
+            keys,
+            place_values,
+            configs_array,
+            n,
+            n_vars,
+            base,
         )
     src, nbr = result
 
@@ -904,12 +963,22 @@ def _active_bytemap_vectorized(
         return _empty_edges(), _empty_deltas()
 
     return _classify_pairs_to_arrays(
-        src, nbr, fitness, neutral_eps, maximize, neutral_pairs,
+        src,
+        nbr,
+        fitness,
+        neutral_eps,
+        maximize,
+        neutral_pairs,
     )
 
 
 def _active_boolean_bytemap(
-    configs_array, fitness, epsilon, maximize, verbose, neutral_pairs,
+    configs_array,
+    fitness,
+    epsilon,
+    maximize,
+    verbose,
+    neutral_pairs,
 ):
     """Byte-map lookup specialised for single bit flips.
 
@@ -919,7 +988,12 @@ def _active_boolean_bytemap(
     neutral_eps = _neutral_abs_threshold(epsilon)
     rows = np.ascontiguousarray(configs_array, dtype=np.uint8)
     result = _active_bytemap_vectorized(
-        rows, fitness, neutral_eps, maximize, 2, neutral_pairs,
+        rows,
+        fitness,
+        neutral_eps,
+        maximize,
+        2,
+        neutral_pairs,
     )
     if result is not None:
         return result
@@ -927,12 +1001,22 @@ def _active_boolean_bytemap(
     # Mixed-radix key overflowed int64 (high-dim sparse): masked-position
     # grouping gives the identical result far faster than the per-cell loop.
     return _active_masked_grouping(
-        rows, fitness, neutral_eps, maximize, verbose, neutral_pairs,
+        rows,
+        fitness,
+        neutral_eps,
+        maximize,
+        verbose,
+        neutral_pairs,
     )
 
 
 def _active_sequence_bytemap(
-    configs_array, fitness, epsilon, maximize, verbose, alphabet_size,
+    configs_array,
+    fitness,
+    epsilon,
+    maximize,
+    verbose,
+    alphabet_size,
     neutral_pairs,
 ):
     """Byte-map lookup specialised for single-position substitutions.
@@ -943,7 +1027,12 @@ def _active_sequence_bytemap(
     neutral_eps = _neutral_abs_threshold(epsilon)
     rows = np.ascontiguousarray(configs_array, dtype=np.uint8)
     result = _active_bytemap_vectorized(
-        rows, fitness, neutral_eps, maximize, alphabet_size, neutral_pairs,
+        rows,
+        fitness,
+        neutral_eps,
+        maximize,
+        alphabet_size,
+        neutral_pairs,
     )
     if result is not None:
         return result
@@ -951,13 +1040,27 @@ def _active_sequence_bytemap(
     # Mixed-radix key overflowed int64 (high-dim sparse): masked-position
     # grouping gives the identical result far faster than the per-cell loop.
     return _active_masked_grouping(
-        rows, fitness, neutral_eps, maximize, verbose, neutral_pairs,
+        rows,
+        fitness,
+        neutral_eps,
+        maximize,
+        verbose,
+        neutral_pairs,
     )
 
 
 def _active_generic(
-    configs, config_dict, fitness, n_edit, epsilon, maximize, verbose,
-    neighbor_generator, edges, delta_fits, neutral_pairs,
+    configs,
+    config_dict,
+    fitness,
+    n_edit,
+    epsilon,
+    maximize,
+    verbose,
+    neighbor_generator,
+    edges,
+    delta_fits,
+    neutral_pairs,
 ):
     """Generic tuple-based lookup for arbitrary neighbor generators."""
     if hasattr(configs, "to_numpy"):

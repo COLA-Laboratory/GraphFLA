@@ -92,14 +92,17 @@ def _classify_pairs(i_arr, j_arr, fitness, epsilon, maximize, verbose):
     if verbose:
         logger.info(f" - Identified {len(edges)} improving connections.")
         if neutral_pairs:
-            logger.info(
-                f" - Identified {len(neutral_pairs)} neutral neighbor pairs."
-            )
+            logger.info(f" - Identified {len(neutral_pairs)} neutral neighbor pairs.")
     return edges, delta_fits, neutral_pairs
 
 
 def _classify_pairs_to_arrays(
-    i_arr, j_arr, fitness, neutral_eps, maximize, neutral_pairs,
+    i_arr,
+    j_arr,
+    fitness,
+    neutral_eps,
+    maximize,
+    neutral_pairs,
 ):
     """Array-returning twin of :func:`_classify_pairs` for the active path.
 

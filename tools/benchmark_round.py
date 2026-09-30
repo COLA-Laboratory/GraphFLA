@@ -156,6 +156,8 @@ def run(args):
                 if proc.returncode:
                     raise RuntimeError(f"{dataset} {mode}: {proc.stderr}")
                 value = json.loads(proc.stdout)
+                if proc.stderr:
+                    value["diagnostics"] = proc.stderr.strip()
                 if value["source_sha256"] != source_hash:
                     raise RuntimeError("Source changed during the benchmark round")
                 results.append(value)
@@ -178,10 +180,14 @@ def run(args):
             ),
         }
         print(f"{dataset}: {median:.4f} s; {results[0]['shape']}", flush=True)
+        args.output.parent.mkdir(parents=True, exist_ok=True)
+        partial = args.output.with_suffix(".partial.json")
+        partial.write_text(json.dumps(output, indent=2, allow_nan=False) + "\n")
     args.output.parent.mkdir(parents=True, exist_ok=True)
     temporary = args.output.with_suffix(".tmp")
     temporary.write_text(json.dumps(output, indent=2, allow_nan=False) + "\n")
     temporary.replace(args.output)
+    args.output.with_suffix(".partial.json").unlink(missing_ok=True)
 
 
 def main():

@@ -218,12 +218,11 @@ def _drop_duplicates(
     if len(subset) > 16:
         invariant = set(_invariant_columns(X_in))
         # Missing entries still distinguish rows, even in otherwise constant sites.
-        subset = [
-            col for col in subset if col not in invariant or X_in[col].hasnans
-        ]
+        subset = [col for col in subset if col not in invariant or X_in[col].hasnans]
     mask_duplicates = (
         X_in.duplicated(subset=subset, keep="first")
-        if subset else pd.Series(np.arange(len(X_in)) > 0, index=X_in.index)
+        if subset
+        else pd.Series(np.arange(len(X_in)) > 0, index=X_in.index)
     )
     num_removed = mask_duplicates.sum()
 

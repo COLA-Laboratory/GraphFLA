@@ -34,13 +34,12 @@ def filter_data(X, f, maximize, tau, filter_mode, verbose):
     if tau is not None:
         if filter_mode == "any":
             if verbose:
-                logger.info(
-                    f" - Applying functional threshold filter "
-                    f"(tau={tau})..."
-                )
+                logger.info(f" - Applying functional threshold filter (tau={tau})...")
 
             initial_count = len(f)
-            fitness_values = f.to_numpy(copy=False) if isinstance(f, pd.Series) else np.asarray(f)
+            fitness_values = (
+                f.to_numpy(copy=False) if isinstance(f, pd.Series) else np.asarray(f)
+            )
 
             if maximize:
                 mask = fitness_values >= tau

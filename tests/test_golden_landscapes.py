@@ -1,16 +1,7 @@
-"""Golden test bed: graphfla vs hand-verified, graphfla-blind ground truth.
+"""Numerical regression references for the small landscape catalog.
 
-For each of 30 small, diverse landscapes (tests/_golden_catalog.py), the
-ground-truth feature values were computed INDEPENDENTLY of graphfla by blind
-solver agents and adjudicated by hand (tests/_golden_references.py). This test
-builds each landscape in graphfla and asserts every computed feature against
-that independent reference — so a passing run means the calculations are
-*correct*, not merely that they run.
-
-Adjudication during construction fixed two real graphfla discrepancies (FDC now
-uses the nearest of tied global optima; DRI/ICI now handle minimisation) and
-corrected a handful of reference values; see _golden_references.py.
-"""
+Construction also has independent pair oracles and an author-graph comparison.
+These regressions do not replace literature validation of analysis methods."""
 import math
 import pytest
 

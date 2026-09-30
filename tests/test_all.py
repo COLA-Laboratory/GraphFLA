@@ -1,12 +1,4 @@
-"""Build / input-format, deprecation-alias, and plateau-regression tests.
-
-The original per-feature smoke tests (assert isinstance(result, float) /
-assert "key" in result) were removed: they checked only return type, never
-correctness, and are superseded by the value-pinned suites in test_metrics.py,
-test_construction.py, and test_golden_landscapes.py. What remains exercises
-input-format handling (list / DataFrame int+str cols / generic type=), the
-deprecation aliases (FutureWarning), and the plateau-aware local-optima logic.
-"""
+"""Input formats and plateau regressions for specialized landscapes."""
 
 import pytest
 

@@ -128,8 +128,6 @@ def test_ordinal_neighbor_generator_pm1_only():
     cd = {0: {"max": 2}, 1: {"max": 2}, 2: {"max": 2}}
     nb = OrdinalNeighborGenerator().generate((0, 1, 2), cd, n_edit=1)
     assert set(nb) == {(1, 1, 2), (0, 0, 2), (0, 2, 2), (0, 1, 1)}
-    assert (0, 2, 2) not in {(0, 1, 2)}  # sanity: 0->2 on locus 0 absent
-    assert all(abs(np.array(n)[0] - 0) <= 1 for n in nb)
 
 
 def test_default_neighbor_generator_mixed_types():
