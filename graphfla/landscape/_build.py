@@ -267,8 +267,10 @@ class _BuildMixin:
 
         edge_attrs = {}
         if len(edges):
-            values = np.asarray(delta_fits, dtype=np.float64)
-            edge_attrs["delta_fit"] = memoryview(np.ascontiguousarray(values))
+            values = delta_fits
+            if isinstance(values, np.ndarray) and values.flags.c_contiguous:
+                values = memoryview(values)
+            edge_attrs["delta_fit"] = values
 
         stream = data.size * np.dtype(object).itemsize > _ATTRIBUTE_BUFFER_BYTES
         vertex_attrs = {} if stream else {
