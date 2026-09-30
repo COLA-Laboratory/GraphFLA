@@ -741,7 +741,7 @@ _LUT_MAX_CELLS = 16_000_000
 
 # Max candidate neighbour keys materialised per block on the LUT path. Bounds the
 # transient key + gathered-row buffers to ~the all-at-once key array.
-_BYTEMAP_CHUNK_CANDIDATES = 4_000_000
+_BYTEMAP_CHUNK_CANDIDATES = 1_000_000
 
 
 def _bytemap_lut_block(
