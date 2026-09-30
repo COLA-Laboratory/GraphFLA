@@ -582,7 +582,8 @@ class Landscape(_IOMixin, _BuildMixin):
             'out_degree' and 'is_lo', are reserved.
         f : pandas.Series, list, or numpy.ndarray
             The fitness values corresponding to each configuration in `X`. Must
-            have the same length as `X`.
+            have the same length as `X`. Values are normalized to float64 before
+            fitness arithmetic.
         data_types : dict[str, str], optional
             A dictionary specifying the type of each variable (column in `X` if
             DataFrame, or inferred column index if ndarray). Keys must match
