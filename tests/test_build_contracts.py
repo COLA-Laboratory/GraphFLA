@@ -246,3 +246,16 @@ def test_streaming_and_batched_attributes_match(monkeypatch):
     assert first.graph.get_edgelist() == second.graph.get_edgelist()
     assert first.graph.es["delta_fit"] == second.graph.es["delta_fit"]
     pd.testing.assert_frame_equal(first.get_data(), second.get_data())
+
+
+def test_auto_strategy_honors_registered_neighbor_generator():
+    from graphfla._neighbors.generators import BooleanNeighborGenerator
+
+    class FirstBitOnly(BooleanNeighborGenerator):
+        def generate(self, config, config_dict, n_edit=1):
+            return [(1 - config[0], *config[1:])]
+
+    ls = BooleanLandscape()
+    ls.register_neighbor_generator("boolean", FirstBitOnly())
+    ls.build_from_data(["00", "01", "10", "11"], [0.0, 1.0, 2.0, 3.0], verbose=False)
+    assert set(ls.graph.get_edgelist()) == {(0, 2), (1, 3)}

@@ -276,3 +276,13 @@ def test_ordinal_sparse_lookup_and_overflow(dimensions, monkeypatch):
         result.neutral_pairs,
         enumerate_pairs(rows, fitness, ordinal=tuple(range(dimensions))),
     )
+
+
+@pytest.mark.parametrize(
+    "generator", [BooleanNeighborGenerator(), SequenceNeighborGenerator(4)]
+)
+def test_auto_multi_edit_selects_supported_backend(generator):
+    from graphfla._neighbors.edges import _select_strategy
+
+    metadata = {j: {"type": "categorical", "max": 3} for j in range(17)}
+    assert _select_strategy(100000, 17, metadata, 2, generator.generate) == "pairwise"
