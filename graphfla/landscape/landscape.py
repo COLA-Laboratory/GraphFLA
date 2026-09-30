@@ -577,6 +577,9 @@ class Landscape(_IOMixin, _BuildMixin):
         X : pandas.DataFrame or numpy.ndarray or a list of strings 
             The configuration data, where each row represents a genotype or
             configuration, and columns represent variables or sites.
+            Column names are converted to strings and must remain unique.
+            Names used for landscape attributes, such as 'fitness',
+            'out_degree' and 'is_lo', are reserved.
         f : pandas.Series, list, or numpy.ndarray
             The fitness values corresponding to each configuration in `X`. Must
             have the same length as `X`.

@@ -85,6 +85,28 @@ class PreparedData:
 # ===================================================================
 
 
+def _coerce_boolean(col_data):
+    """Validate Boolean aliases and return their canonical numeric values."""
+    if isinstance(col_data.dtype, np.dtype) and col_data.dtype.kind == "b":
+        return col_data
+    col = col_data.name
+    num = pd.to_numeric(col_data, errors="coerce")
+    invalid = col_data.notna() & (num.isna() | ~((num == 0) | (num == 1)))
+    if invalid.any():
+        bad = col_data.loc[invalid].head(5).tolist()
+        raise ValueError(
+            f"Column {col!r} is declared 'boolean' but contains values that "
+            f"are not 0/1 (or True/False) after numeric coercion (examples: {bad}). "
+            "Fix the column or choose a different data_types entry."
+        )
+    if num.isnull().any():
+        raise ValueError(
+            f"Column {col!r} contains NaN. Impute, drop those rows, or remove "
+            "the site before building the landscape."
+        )
+    return num
+
+
 def _apply_mask(values, mask):
     """Apply a boolean mask while preserving the input container type."""
     mask = np.asarray(mask, dtype=bool)
