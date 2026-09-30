@@ -1,0 +1,33 @@
+{
+  "doi": "10.1073/pnas.2400439121",
+  "authors": "Johnston KE, Almhjell PJ, Watkins-Dulaney EJ, Liu G, Porter NJ, Yang J, Arnold FH",
+  "data_doi": "10.22002/h5rah-5z170",
+  "license": "CC0-1.0 (data archive)",
+  "source_url": "https://data.caltech.edu/api/records/h5rah-5z170/files/data.zip/content",
+  "target_locator": "Results: Epistasis Constrains Navigation of Sequence-Fitness Landscapes; SI Fig. S29, p. 39",
+  "measured_rows": 159129,
+  "imputed_rows": 871,
+  "peak_candidates": "active=True and imputed=False; neighbors include ALL 160,000 rows",
+  "active_flag": "Author-provided activity classification; both normalized replicates must exceed their stop-codon thresholds. This fixture does not recompute that upstream classification.",
+  "fixture": "landscape.csv.gz",
+  "fixture_sha256": "c45a07006ebba7c8d75b8c3d7b0691ade26757f8dcb225d1573e9df348766292",
+  "rows": 160000,
+  "columns": [
+    "sequence",
+    "fitness",
+    "active",
+    "imputed"
+  ],
+  "source_files": [
+    {
+      "relative_research_path": "papers/Johnston2024_PNAS/sources/caltechdata_extracted/data/figure_data/4-site_merged_replicates/20230827/four-site_simplified_AA_data.csv",
+      "sha256": "d7e3ab4bcb721819ddf79ac0c9d322046dcdc4ce7d0df7d5ccd423fee771cb76"
+    },
+    {
+      "relative_research_path": "papers/Johnston2024_PNAS/sources/caltechdata_extracted/data/figure_data/4-site_imputed/20230828_KNN_imputed_TrpB.csv",
+      "sha256": "83b4db9f82fe8d09c4bf7006f3cc730d511eee12147e8fe2e9198281960f34c4"
+    }
+  ],
+  "curation": "Select named columns; concatenate measured and imputed rows; sort by sequence; serialize IEEE float64 with 17 significant digits; deterministic gzip. No fitness values changed.",
+  "retrieved": "2026-09-30"
+}

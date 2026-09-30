@@ -1,0 +1,304 @@
+{
+  "study_key": "PhillipsMBDSD23",
+  "dossier": "papers/Phillips2023",
+  "recorded_at": "2026-09-30T20:13:59Z",
+  "agent": "codex",
+  "paper": {
+    "title": "Hierarchical sequence-affinity landscapes shape the evolution of breadth in an anti-influenza receptor binding site antibody",
+    "doi": "10.7554/eLife.83628",
+    "year": 2023,
+    "bibliography_verified_against": "publisher_page",
+    "supplied_bibliography_errors": "The supplied title, year, journal, and six-author list match the publisher record; selected_references.bib omits the DOI."
+  },
+  "sources": [
+    {
+      "url": "https://cdn.elifesciences.org/articles/83628/elife-83628-v3.pdf",
+      "http_status": 200,
+      "sha256": "4d2c2613def0d12b73858e4df2c9223d1c52a6cb02642d28bc1a7b1d3aa388d6",
+      "saved_path": "papers/Phillips2023/sources/elife-83628-v3_codex.pdf",
+      "what": "Version of Record main text"
+    },
+    {
+      "url": "https://cdn.elifesciences.org/articles/83628/elife-83628-fig1-data1-v2.xlsx",
+      "http_status": 200,
+      "sha256": "f25dc119488fe1675a2ac8d69234512fd800054e9453d4271a6f3fe32d60b094",
+      "saved_path": "papers/Phillips2023/sources/elife-83628-fig1-data1-v2_codex.xlsx",
+      "what": "Publisher Figure 1 source data: CH65 library expression and affinity means"
+    },
+    {
+      "url": "https://cdn.elifesciences.org/articles/83628/elife-83628-fig3-data1-v3.xlsx",
+      "http_status": 200,
+      "sha256": "a5cc9fad456acb50bf25058441ee4076e872cc3e36179fea6e932353cb79b163",
+      "saved_path": "papers/Phillips2023/sources/elife-83628-fig3-data1-v3_codex.xlsx",
+      "what": "Publisher Figure 3 source data: interaction-model coefficients and Performance values"
+    },
+    {
+      "url": "https://github.com/amphilli/CH65-comblib/archive/refs/heads/main.zip",
+      "http_status": 200,
+      "sha256": "c742b0a6f9cc4decc7e5c0cd90251227171b791aecceef71ae31ad1bc645c655",
+      "saved_path": "papers/Phillips2023/sources/CH65-comblib_main_codex.zip",
+      "what": "Author code and processed data snapshot; commit cea336dfd05fa31d675f79038428bf7f0d177e78"
+    }
+  ],
+  "overlaps": [
+    {
+      "metric": "n_configs",
+      "paper_value": 65536,
+      "locator": "Introduction, p.4",
+      "quote": "We generate a combinatorially complete antibody library containing all possible evolutionary intermediates between the UCA and the mature somatic sequence (N = 2^16 = 65,536).",
+      "printed_or_plotted": "printed",
+      "definition_match": "no",
+      "definition_quote": "We generate a combinatorially complete antibody library containing all possible evolutionary intermediates between the UCA and the mature somatic sequence (N = 2^16 = 65,536).",
+      "definition_divergence": "This is the theoretical library design size. GraphFLA n_configs counts numeric landscape nodes retained from measured data; poor-fit or missing measurements do not have a justified fitness value for a complete 65,536-node build.",
+      "input": {
+        "path": "/Users/arwen/Documents/GitHub/GraphFLA/data/BioSequence/Phillips2023_MA90.csv",
+        "sha256": "9ae2e2d08945b00d7ad691c22efd87f87aa9583216a7d77c80e890394d40e81b",
+        "n_rows": 65536,
+        "preprocessing": "Raw supplied browser CSV has missing fitness values; no values were imputed for this theoretical-size comparison."
+      },
+      "graphfla_call": "Not run for the theoretical design size; measured, QC-filtered n_configs targets are run below.",
+      "graphfla_value": null,
+      "outcome": "definition_incompatible",
+      "reason": "The theoretical genotype count is not the number of measured, QC-retained numeric configurations."
+    },
+    {
+      "metric": "n_configs",
+      "paper_value": 62926,
+      "locator": "Figure 1 caption, p.5",
+      "quote": "N = 62,926 after filtering poor KD measurements from the Tite-Seq data (see 'Materials and methods').",
+      "printed_or_plotted": "printed",
+      "definition_match": "yes",
+      "definition_quote": "N = 62,926 after filtering poor KD measurements from the Tite-Seq data (see 'Materials and methods').",
+      "definition_divergence": "",
+      "input": {
+        "path": "papers/Phillips2023/sources/CH65-comblib_main_codex.zip#CH65-comblib-main/Kd_Inference/results_CH65/Kd_processed/20221008_CH65_QCfilt_REPfilt.csv",
+        "sha256": "d526633e53a0c84f6739109d123438db6cc25f1e1e277012082f23156607811f",
+        "n_rows": 65535,
+        "preprocessing": "Keep only genotypes with nonmissing MA90_mean, G189E_mean, and SI06_mean; build the MA90 landscape on this shared QC-retained intersection."
+      },
+      "graphfla_call": "BooleanLandscape(maximize=True).build_from_data(X, MA90_mean, epsilon=0, verbose=False); ls.n_configs",
+      "graphfla_value": 62926,
+      "outcome": "reproduced_exact"
+    },
+    {
+      "metric": "n_configs",
+      "paper_value": 65530,
+      "locator": "Materials and Methods, Data quality and filtering, p.20",
+      "quote": "This filtering retained 65,530, 63,840, and 64,619 genotypes for the MA90, G189E, and SI06 Tite-Seq experiments, respectively (Figure 1—source data 1).",
+      "printed_or_plotted": "printed",
+      "definition_match": "yes",
+      "definition_quote": "This filtering retained 65,530, 63,840, and 64,619 genotypes for the MA90, G189E, and SI06 Tite-Seq experiments, respectively (Figure 1—source data 1).",
+      "definition_divergence": "",
+      "input": {
+        "path": "papers/Phillips2023/sources/CH65-comblib_main_codex.zip#CH65-comblib-main/Kd_Inference/results_CH65/Kd_processed/20221008_CH65_QCfilt_REPfilt.csv",
+        "sha256": "d526633e53a0c84f6739109d123438db6cc25f1e1e277012082f23156607811f",
+        "n_rows": 65535,
+        "preprocessing": "Keep rows with nonmissing MA90_mean from the author's QC and replicate-filtered processed table; use pos1–pos16 as 16 binary variables."
+      },
+      "graphfla_call": "BooleanLandscape(maximize=True).build_from_data(X, MA90_mean, epsilon=0, verbose=False); ls.n_configs",
+      "graphfla_value": 65530,
+      "outcome": "reproduced_exact"
+    },
+    {
+      "metric": "n_configs",
+      "paper_value": 63840,
+      "locator": "Materials and Methods, Data quality and filtering, p.20",
+      "quote": "This filtering retained 65,530, 63,840, and 64,619 genotypes for the MA90, G189E, and SI06 Tite-Seq experiments, respectively (Figure 1—source data 1).",
+      "printed_or_plotted": "printed",
+      "definition_match": "yes",
+      "definition_quote": "This filtering retained 65,530, 63,840, and 64,619 genotypes for the MA90, G189E, and SI06 Tite-Seq experiments, respectively (Figure 1—source data 1).",
+      "definition_divergence": "",
+      "input": {
+        "path": "papers/Phillips2023/sources/CH65-comblib_main_codex.zip#CH65-comblib-main/Kd_Inference/results_CH65/Kd_processed/20221008_CH65_QCfilt_REPfilt.csv",
+        "sha256": "d526633e53a0c84f6739109d123438db6cc25f1e1e277012082f23156607811f",
+        "n_rows": 65535,
+        "preprocessing": "Keep rows with nonmissing G189E_mean from the author's QC and replicate-filtered processed table; use pos1–pos16 as 16 binary variables."
+      },
+      "graphfla_call": "BooleanLandscape(maximize=True).build_from_data(X, G189E_mean, epsilon=0, verbose=False); ls.n_configs",
+      "graphfla_value": 63840,
+      "outcome": "reproduced_exact"
+    },
+    {
+      "metric": "n_configs",
+      "paper_value": 64619,
+      "locator": "Materials and Methods, Data quality and filtering, p.20",
+      "quote": "This filtering retained 65,530, 63,840, and 64,619 genotypes for the MA90, G189E, and SI06 Tite-Seq experiments, respectively (Figure 1—source data 1).",
+      "printed_or_plotted": "printed",
+      "definition_match": "yes",
+      "definition_quote": "This filtering retained 65,530, 63,840, and 64,619 genotypes for the MA90, G189E, and SI06 Tite-Seq experiments, respectively (Figure 1—source data 1).",
+      "definition_divergence": "",
+      "input": {
+        "path": "papers/Phillips2023/sources/CH65-comblib_main_codex.zip#CH65-comblib-main/Kd_Inference/results_CH65/Kd_processed/20221008_CH65_QCfilt_REPfilt.csv",
+        "sha256": "d526633e53a0c84f6739109d123438db6cc25f1e1e277012082f23156607811f",
+        "n_rows": 65535,
+        "preprocessing": "Keep rows with nonmissing SI06_mean from the author's QC and replicate-filtered processed table; use pos1–pos16 as 16 binary variables."
+      },
+      "graphfla_call": "BooleanLandscape(maximize=True).build_from_data(X, SI06_mean, epsilon=0, verbose=False); ls.n_configs",
+      "graphfla_value": 64619,
+      "outcome": "reproduced_exact"
+    },
+    {
+      "metric": "higher_order_epistasis",
+      "paper_value": 0.986822098380123,
+      "locator": "Figure 3—source data 1, MA90 worksheet, cells A2:B2",
+      "quote": "Performance: 0.986822098380123",
+      "printed_or_plotted": "printed",
+      "definition_match": "yes",
+      "definition_quote": "We then average performance across the eight folds, select the order that maximizes the prediction performance, and retrain the entire dataset on a model truncated at this optimal order, this time by ordinary least-squares regression.",
+      "definition_divergence": "",
+      "input": {
+        "path": "papers/Phillips2023/sources/CH65-comblib_main_codex.zip#CH65-comblib-main/Kd_Inference/results_CH65/Kd_processed/20221008_CH65_QCfilt_REPfilt.csv",
+        "sha256": "d526633e53a0c84f6739109d123438db6cc25f1e1e277012082f23156607811f",
+        "n_rows": 65535,
+        "preprocessing": "Use nonmissing MA90_mean values and all 16 binary variables; phenotype is the paper's -log10(KD); fit the paper-selected fourth-order model."
+      },
+      "graphfla_call": "BooleanLandscape(maximize=True).build_from_data(X, MA90_mean, epsilon=0, verbose=False); A.higher_order_epistasis(ls, order=4, n_jobs=1)",
+      "graphfla_value": 0.9868220983801239,
+      "outcome": "mismatch",
+      "reason": "The publisher workbook cell is 0.986822098380123, while GraphFLA gives 0.9868220983801239 (difference 9e-16). The author repository's coefficient output records Performance: 0.9868220983801239 (MA90 biochemical order-4 file, lines 1–2), exactly matching GraphFLA; the discrepancy is the final stored digit in the publisher workbook."
+    },
+    {
+      "metric": "higher_order_epistasis",
+      "paper_value": 0.98188082017006,
+      "locator": "Figure 3—source data 1, G189E worksheet, cells A2:B2",
+      "quote": "Performance: 0.98188082017006",
+      "printed_or_plotted": "printed",
+      "definition_match": "yes",
+      "definition_quote": "We then average performance across the eight folds, select the order that maximizes the prediction performance, and retrain the entire dataset on a model truncated at this optimal order, this time by ordinary least-squares regression.",
+      "definition_divergence": "",
+      "input": {
+        "path": "papers/Phillips2023/sources/CH65-comblib_main_codex.zip#CH65-comblib-main/Kd_Inference/results_CH65/Kd_processed/20221008_CH65_QCfilt_REPfilt.csv",
+        "sha256": "d526633e53a0c84f6739109d123438db6cc25f1e1e277012082f23156607811f",
+        "n_rows": 65535,
+        "preprocessing": "Use nonmissing G189E_mean values and all 16 binary variables; phenotype is the paper's -log10(KD); fit the paper-selected fifth-order model."
+      },
+      "graphfla_call": "BooleanLandscape(maximize=True).build_from_data(X, G189E_mean, epsilon=0, verbose=False); A.higher_order_epistasis(ls, order=5, n_jobs=1)",
+      "graphfla_value": 0.9818808201700604,
+      "outcome": "reproduced_with_precision"
+    },
+    {
+      "metric": "higher_order_epistasis",
+      "paper_value": 0.965915764698917,
+      "locator": "Figure 3—source data 1, SI06 worksheet, cells A2:B2",
+      "quote": "Performance: 0.965915764698917",
+      "printed_or_plotted": "printed",
+      "definition_match": "yes",
+      "definition_quote": "For the SI06 data, we exclude N52H from the epistasis inference and perform the analysis on the remaining 15 mutations.",
+      "definition_divergence": "",
+      "input": {
+        "path": "papers/Phillips2023/sources/CH65-comblib_main_codex.zip#CH65-comblib-main/Kd_Inference/results_CH65/Kd_processed/20221008_CH65_QCfilt_REPfilt.csv",
+        "sha256": "d526633e53a0c84f6739109d123438db6cc25f1e1e277012082f23156607811f",
+        "n_rows": 65535,
+        "preprocessing": "Keep nonmissing SI06_mean rows with pos11 (N52H) = 1, then omit pos11 and fit the remaining 15 binary variables; phenotype is the paper's -log10(KD)."
+      },
+      "graphfla_call": "BooleanLandscape(maximize=True).build_from_data(X[:, pos11=1 and pos11 omitted], SI06_mean, epsilon=0, verbose=False); A.higher_order_epistasis(ls, order=5, n_jobs=1)",
+      "graphfla_value": 0.9659157646989173,
+      "outcome": "reproduced_with_precision"
+    },
+    {
+      "metric": "higher_order_epistasis",
+      "paper_value": 0.24,
+      "locator": "Results, Structural and biophysical basis of epistasis in CH65, p.7",
+      "quote": "These mutations interact epistatically for each of the three antigens, though the magnitude of epistasis is higher for SI06 (explaining ~34% of the variance in KD, relative to ~24% for MA90, and ~25% for MA90-G189E, see Figure 3—figure supplement 6).",
+      "printed_or_plotted": "printed",
+      "definition_match": "yes",
+      "definition_quote": "In the statistical epistasis inference, the coefficients at different orders are statistically independent and so we partition the variance explained by the model for each interaction order (Figure 3—figure supplement 6).",
+      "definition_divergence": "The author variance-partition code normalizes each cumulative order R² by the maximum-order R²; GraphFLA cumulative higher_order_epistasis outputs can be contrasted using the same ratio.",
+      "input": {
+        "path": "papers/Phillips2023/sources/CH65-comblib_main_codex.zip#CH65-comblib-main/Kd_Inference/results_CH65/Kd_processed/20221008_CH65_QCfilt_REPfilt.csv",
+        "sha256": "d526633e53a0c84f6739109d123438db6cc25f1e1e277012082f23156607811f",
+        "n_rows": 65535,
+        "preprocessing": "Use nonmissing MA90_mean values and all 16 binary variables; compare order 1 with the author statistical model's order 5."
+      },
+      "graphfla_call": "1 - A.higher_order_epistasis(ls, order=1, n_jobs=1) / A.higher_order_epistasis(ls, order=5, n_jobs=1)",
+      "graphfla_value": 0.23729826637624107,
+      "outcome": "reproduced_with_precision"
+    },
+    {
+      "metric": "higher_order_epistasis",
+      "paper_value": 0.25,
+      "locator": "Results, Structural and biophysical basis of epistasis in CH65, p.7",
+      "quote": "These mutations interact epistatically for each of the three antigens, though the magnitude of epistasis is higher for SI06 (explaining ~34% of the variance in KD, relative to ~24% for MA90, and ~25% for MA90-G189E, see Figure 3—figure supplement 6).",
+      "printed_or_plotted": "printed",
+      "definition_match": "yes",
+      "definition_quote": "In the statistical epistasis inference, the coefficients at different orders are statistically independent and so we partition the variance explained by the model for each interaction order (Figure 3—figure supplement 6).",
+      "definition_divergence": "The paper's variance partition is based on the sixth-order G189E statistical model in the author repository; only a fifth-order GraphFLA sensitivity result was run.",
+      "input": {
+        "path": "papers/Phillips2023/sources/CH65-comblib_main_codex.zip#CH65-comblib-main/Kd_Inference/results_CH65/Kd_processed/20221008_CH65_QCfilt_REPfilt.csv",
+        "sha256": "d526633e53a0c84f6739109d123438db6cc25f1e1e277012082f23156607811f",
+        "n_rows": 65535,
+        "preprocessing": "Use nonmissing G189E_mean values and all 16 binary variables; paper variance-partition code uses statistical interaction order 6."
+      },
+      "graphfla_call": "A.higher_order_epistasis(ls, order=1) and order=6; contrast 1 - R2(order=1)/R2(order=6). The order-5 main-text model was run as a separate sensitivity.",
+      "graphfla_value": null,
+      "outcome": "not_attempted",
+      "reason": "The author source script states “order_G189E = 6” (CH65-comblib-main/Figures/Epistasis_figures/frac_order_plots.py, line 45). The full order-6 dense GraphFLA feature matrix was estimated at about 7.6 GB before solver workspace, versus about 8.2 GB available, so the exact run was deferred to avoid an out-of-memory failure. The executed order-5 sensitivity was 1 - 0.7371294775748005/0.9818808201700604 = 0.24926787199374079, but it is not substituted for the paper’s order-6 target."
+    },
+    {
+      "metric": "higher_order_epistasis",
+      "paper_value": 0.34,
+      "locator": "Results, Structural and biophysical basis of epistasis in CH65, p.7",
+      "quote": "These mutations interact epistatically for each of the three antigens, though the magnitude of epistasis is higher for SI06 (explaining ~34% of the variance in KD, relative to ~24% for MA90, and ~25% for MA90-G189E, see Figure 3—figure supplement 6).",
+      "printed_or_plotted": "printed",
+      "definition_match": "yes",
+      "definition_quote": "For the SI06 data, we exclude N52H from the epistasis inference and perform the analysis on the remaining 15 mutations. In the statistical epistasis inference, the coefficients at different orders are statistically independent and so we partition the variance explained by the model for each interaction order (Figure 3—figure supplement 6).",
+      "definition_divergence": "",
+      "input": {
+        "path": "papers/Phillips2023/sources/CH65-comblib_main_codex.zip#CH65-comblib-main/Kd_Inference/results_CH65/Kd_processed/20221008_CH65_QCfilt_REPfilt.csv",
+        "sha256": "d526633e53a0c84f6739109d123438db6cc25f1e1e277012082f23156607811f",
+        "n_rows": 65535,
+        "preprocessing": "Keep nonmissing SI06_mean rows with pos11 (N52H) = 1, then omit pos11 and fit the remaining 15 binary variables; compare statistical orders 1 and 5."
+      },
+      "graphfla_call": "1 - A.higher_order_epistasis(ls, order=1, n_jobs=1) / A.higher_order_epistasis(ls, order=5, n_jobs=1)",
+      "graphfla_value": 0.34164691915912815,
+      "outcome": "reproduced_with_precision"
+    },
+    {
+      "metric": "none",
+      "paper_value": {
+        "MA90": "all variants",
+        "MA90-G189E": 0.83,
+        "SI06": 0.51
+      },
+      "locator": "Results, CH65 sequence-affinity landscape, p.6",
+      "quote": "While the entire library binds MA90, ~83% of variants bind MA90-G189E and ~51% of variants bind SI06 (Figure 1C).",
+      "printed_or_plotted": "printed",
+      "definition_match": "no",
+      "definition_quote": "Following the KD,s inference, non-binding sequences with KD,s<6 or As - Bs <1 were pinned to the titration boundary with -logKD,s = 6.",
+      "definition_divergence": "These are thresholded antigen-binding proportions. GraphFLA has no direct binder-fraction metric; fitness_distribution does not itself apply the paper's binder cutoff.",
+      "input": {
+        "path": "papers/Phillips2023/sources/CH65-comblib_main_codex.zip#CH65-comblib-main/Kd_Inference/results_CH65/Kd_processed/20221008_CH65_QCfilt_REPfilt.csv",
+        "sha256": "d526633e53a0c84f6739109d123438db6cc25f1e1e277012082f23156607811f",
+        "n_rows": 65535,
+        "preprocessing": "No GraphFLA value calculated; the paper reports thresholded binder proportions."
+      },
+      "graphfla_call": "No direct GraphFLA metric; not run.",
+      "graphfla_value": null,
+      "outcome": "definition_incompatible",
+      "reason": "A binder fraction requires applying the paper's binding threshold; none of the listed GraphFLA metrics directly reports that quantity."
+    },
+    {
+      "metric": "global_optima_accessibility",
+      "paper_value": "NOT STATED IN PAPER",
+      "locator": "Figure 5 caption, p.11",
+      "quote": "Total log probability (in arbitrary units) of all mutational paths from the unmutated common ancestor (UCA) to CH65 (left) or paths from the UCA to CH65 that pass through I-2 (right), assuming specific antigen selection scenarios are shown.",
+      "printed_or_plotted": "plotted",
+      "definition_match": "no",
+      "definition_quote": "The probability of any mutational step is higher if -logKD increases and lower if -logKD decreases.",
+      "definition_divergence": "Figure 5 plots scenario-weighted log probabilities for paths with fixed endpoints UCA to CH65. GraphFLA defines global_optima_accessibility as the fraction of landscape configurations that can reach the global optimum by any monotonic fitness-improving path.",
+      "input": {
+        "path": "papers/Phillips2023/sources/CH65-comblib_main_codex.zip#CH65-comblib-main/Kd_Inference/results_CH65/Kd_processed/20221008_CH65_QCfilt_REPfilt.csv",
+        "sha256": "d526633e53a0c84f6739109d123438db6cc25f1e1e277012082f23156607811f",
+        "n_rows": 65535,
+        "preprocessing": "No path values were read from Figure 5; no compatible printed numeric target was available."
+      },
+      "graphfla_call": "Not run: Figure 5 provides plotted scenario likelihoods, not a printed accessible-path fraction.",
+      "graphfla_value": null,
+      "outcome": "definition_incompatible",
+      "reason": "The plotted model likelihood is not the fraction of configurations with a monotonic path to the global optimum; no plot point was read."
+    }
+  ],
+  "blockers": [],
+  "verdict": "targets_found",
+  "verdict_reason": "Using the author QC-processed table, GraphFLA reproduced the paper’s printed sample-size targets and model-fit values at their stated precision. It matched the printed epistatic variance shares for MA90 and SI06; the author’s G189E variance partition uses a higher-order statistical model that was not run because of memory headroom, and a lower-order result is reported only as a sensitivity. The supplied local CSVs agree on shared accepted values after sign correction but omit some accepted measurements, so the author table was used. The article gives no peak count and plots pathway likelihoods under a different definition from GraphFLA global-optimum accessibility."
+}

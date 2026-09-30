@@ -1,0 +1,331 @@
+{
+  "study_key": "MoulanaDPCRGSBD23",
+  "dossier": "papers/Moulana2023",
+  "recorded_at": "2026-09-30T19:28:12Z",
+  "agent": "claude-opus-5",
+  "paper": {
+    "title": "The landscape of antibody binding affinity in SARS-CoV-2 Omicron BA.1 evolution",
+    "doi": "10.7554/eLife.83442",
+    "year": 2023,
+    "bibliography_verified_against": "crossref",
+    "supplied_bibliography_errors": "None found. Crossref returns the identical title, eLife, volume 12, article e83442, 2023, and the identical nine-author list (Alief Moulana; Thomas Dupic; Angela M Phillips; Jeffrey Chang; Anne A Roffler; Allison J Greaney; Tyler N Starr; Jesse D Bloom; Michael M Desai). Crossref normalises the DOI to lower case (10.7554/elife.83442)."
+  },
+  "input_provenance": {
+    "local_files": [
+      "data/BioSequence/Moulana2023_CB6.csv",
+      "data/BioSequence/Moulana2023_CoV555.csv",
+      "data/BioSequence/Moulana2023_REGN10987.csv",
+      "data/BioSequence/Moulana2023_S309.csv"
+    ],
+    "antibody_name_map": {
+      "CB6": "LY-CoV016 (etesevimab)",
+      "CoV555": "LY-CoV555 (bamlanivimab)",
+      "REGN10987": "REGN10987 (imdevimab)",
+      "S309": "S309 (sotrovimab precursor)"
+    },
+    "fitness_column_is": "-log10(K_D,app) for binding to the named monoclonal antibody, the same quantity the paper plots as -logK_D,app. Larger = tighter antibody binding, i.e. LESS escape. Verified bit-for-bit equal to the authors' published column log10Kd in cleaned_Kds_RBD_<ab>_proper.csv (16,511 / 19,867 / 23,686 / 32,768 exact matches, zero discrepancies).",
+    "non_binder_handling": "THIS IS THE DOMINANT PREPROCESSING CHOICE FOR THIS STUDY. Complete escapers (K_D,app above the 1 uM limit of detection) are NaN in the input and are therefore DROPPED, not censored and not imputed at the detection limit. The authors' own analyses instead retain them via a Tobit left-censored model. Consequence: the GraphFLA landscapes cover only 50.4% / 60.6% / 72.3% / 100.0% of the 32,768 genotypes for CB6 / CoV555 / REGN10987 / S309, they are NOT combinatorially complete, and any peak count or accessibility statistic computed on them is a statistic about the binder sub-landscape on a punctured hypercube. Omicron BA.1 itself is absent from three of the four landscapes.",
+    "unused_alternative": "The authors' tables also carry log10Kd_pinned, which is identical to log10Kd for every row in all four antibodies, so it offers no censored-value alternative; a detection-limit imputation would have to be constructed from scratch (e.g. assigning -log10 K_D,app = 6 to non-binders)."
+  },
+  "sources": [
+    {
+      "url": "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC9949795/fullTextXML",
+      "http_status": 200,
+      "sha256": "e9b2fb8ec0d5c84042f69da874e4d307403984f16d4afe0865f927c8813b0cde",
+      "saved_path": "papers/Moulana2023/sources/fulltext.xml",
+      "what": "main text + Methods (JATS XML). Reused from the prior session, not re-downloaded."
+    },
+    {
+      "url": "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC9949795/supplementaryFiles",
+      "http_status": 200,
+      "sha256": "76afd5ce63212f17a816ed2bcafb30b08e57727e5fbb6505abd7b34814f645c5",
+      "saved_path": "(bundle not copied; member below)",
+      "what": "eLife supplementary bundle"
+    },
+    {
+      "url": "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC9949795/supplementaryFiles#elife-83442-supp1.docx",
+      "http_status": 200,
+      "sha256": "5340f3a51f5a671705dd38a94c3de94ae292b6b760486dc9bb133cc882737a06",
+      "saved_path": "papers/Moulana2023/sources/elife-83442-supp1_claude.docx",
+      "what": "Supplementary file 1: isogenic vs Tite-seq -log K_D,app for Wuhan Hu-1 and BA.1 against all four mAbs"
+    },
+    {
+      "url": "https://raw.githubusercontent.com/desai-lab/omicron_ab_landscape/main/data/cleaned_Kds_RBD_CB6_proper.csv",
+      "http_status": 200,
+      "sha256": "614f1571409244206e740d9134b6e9d6ee74842f59e5451e94cd6576f5dca0da",
+      "saved_path": "papers/Moulana2023/sources/cleaned_Kds_RBD_CB6_proper_subset_claude.csv.gz",
+      "what": "authors' LY-CoV016 K_D table (source of the GraphFLA input); dossier holds a gzipped column subset"
+    },
+    {
+      "url": "https://raw.githubusercontent.com/desai-lab/omicron_ab_landscape/main/data/cleaned_Kds_RBD_CoV555_proper.csv",
+      "http_status": 200,
+      "sha256": "986180de77d6b4919381e503235aa6f5f25f6ceb3b9dd246c6943c211c9fc8b5",
+      "saved_path": "papers/Moulana2023/sources/cleaned_Kds_RBD_CoV555_proper_subset_claude.csv.gz",
+      "what": "authors' LY-CoV555 K_D table"
+    },
+    {
+      "url": "https://raw.githubusercontent.com/desai-lab/omicron_ab_landscape/main/data/cleaned_Kds_RBD_REGN10987_proper.csv",
+      "http_status": 200,
+      "sha256": "1c2169cd081402c270fd84f717fd97b2f4f6892b910fddd8d805d34dc3183e1a",
+      "saved_path": "papers/Moulana2023/sources/cleaned_Kds_RBD_REGN10987_proper_subset_claude.csv.gz",
+      "what": "authors' REGN10987 K_D table"
+    },
+    {
+      "url": "https://raw.githubusercontent.com/desai-lab/omicron_ab_landscape/main/data/cleaned_Kds_RBD_S309_proper.csv",
+      "http_status": 200,
+      "sha256": "653af0f654ec39feec092eb478d1b9b50dacab3e492d44247be6e2513c6f3737",
+      "saved_path": "papers/Moulana2023/sources/cleaned_Kds_RBD_S309_proper_subset_claude.csv.gz",
+      "what": "authors' S309 K_D table"
+    },
+    {
+      "url": "https://raw.githubusercontent.com/desai-lab/omicron_ab_landscape/main/data/CV_rsquared.csv",
+      "http_status": 200,
+      "sha256": "a09a5b8f7dfb638c84c807532fb03016c3851aecea4587406ad75a971a66b06a",
+      "saved_path": "papers/Moulana2023/sources/CV_rsquared_claude.csv",
+      "what": "authors' cross-validated R2 per epistatic order per antibody (numeric backing for the plotted Figure 3A)"
+    },
+    {
+      "url": "https://api.crossref.org/works/10.7554/eLife.83442",
+      "http_status": 200,
+      "sha256": null,
+      "saved_path": "(not copied)",
+      "what": "bibliography verification"
+    }
+  ],
+  "overlaps": [
+    {
+      "metric": "n_configs",
+      "paper_value": 32603,
+      "locator": "Results, second paragraph (eLife 12:e83442, PMC9949795)",
+      "quote": "Of the 32,768 variants in our library, we obtain KD, app for at least ~30,000 variants to each of the mAbs (32,603 for LY-CoV016, 31479 for REGN10987, 27485 for LY-CoV555, and 32650 for S309) after removing variants with poor titration curves (r2<0.8 or \u03c3>1; see Methods).",
+      "printed_or_plotted": "printed",
+      "definition_match": "no",
+      "definition_quote": "Paper (Methods, 'Sequence data processing'): \"We then averaged the inferred KD,s values across the two replicates for each antibody after removing values with poor fit (r2<0.8 or SE>1).\" plus the non-binder rule: \"Variants were defined as non-binders if the difference between the maximum and the minimum of their estimated log-fluorescence over all concentrations was lower than 1 (in log-fluorescence units). This value was set by measuring the distribution for known non-binders (see Figure 1\u2014figure supplement 1).\" GraphFLA: ls.n_configs is the number of genotypes carrying a numeric fitness that survive graph construction.",
+      "definition_divergence": "The printed count includes variants whose K_D,app is ABOVE the limit of detection, i.e. complete escapers - the paper counts them as 'obtained K_D,app' because their titration is informative even though no finite K_D is fitted. In the authors' published table those genotypes carry log10Kd = NaN, so they cannot enter a GraphFLA landscape at all: a censored non-binder has no position on a -log10 K_D axis. The GraphFLA landscape therefore holds only the BINDERS.",
+      "input": {
+        "path": "data/BioSequence/Moulana2023_CB6.csv",
+        "sha256": "d79dedd13cd96859e0a74869e2d2496cf8cd8eae44e88f3b2d6e493bcd7994a7",
+        "n_rows": 32768,
+        "preprocessing": "fitness column used as-is after dropping 16257 NaN rows -> 16511 rows fed to GraphFLA (16511 configurations after GraphFLA drops isolated nodes). Established exactly: the fitness column equals the authors' published column log10Kd in cleaned_Kds_RBD_CB6_proper.csv, bit-for-bit on all 16511 non-NaN genotypes, with NaN wherever the authors have NaN. "
+      },
+      "graphfla_call": "ls = BooleanLandscape().build_from_data(X, fitness, epsilon=0, verbose=False); ls.n_configs",
+      "graphfla_value": 16511,
+      "outcome": "mismatch",
+      "reason": "Printed 32603 vs GraphFLA 16511. The gap is the censored non-binders (and, for CB6, 0 genotype(s) that GraphFLA drops as isolated once the non-binders are removed). Separately, none of the candidate reconstructions of the printed count reproduce it from the authors' own published table: (is_clean | is_non_binder) gives 32,112 / 29,892 / 30,479 / 32,602 for CB6 / CoV555 / REGN10987 / S309 against the printed 32,603 / 27,485 / 31,479 / 32,650, and 'at least one replicate with r2>=0.8 and sigma<=1, or flagged non-binder' gives 32,717 / 32,038 / 32,333 / 32,768. The printed counts appear to come from an earlier processing pass than the deposited *_proper.csv tables; the paper does not state the exact rule used to arrive at them beyond the sentence quoted."
+    },
+    {
+      "metric": "n_configs",
+      "paper_value": 27485,
+      "locator": "Results, second paragraph (eLife 12:e83442, PMC9949795)",
+      "quote": "Of the 32,768 variants in our library, we obtain KD, app for at least ~30,000 variants to each of the mAbs (32,603 for LY-CoV016, 31479 for REGN10987, 27485 for LY-CoV555, and 32650 for S309) after removing variants with poor titration curves (r2<0.8 or \u03c3>1; see Methods).",
+      "printed_or_plotted": "printed",
+      "definition_match": "no",
+      "definition_quote": "Paper (Methods, 'Sequence data processing'): \"We then averaged the inferred KD,s values across the two replicates for each antibody after removing values with poor fit (r2<0.8 or SE>1).\" plus the non-binder rule: \"Variants were defined as non-binders if the difference between the maximum and the minimum of their estimated log-fluorescence over all concentrations was lower than 1 (in log-fluorescence units). This value was set by measuring the distribution for known non-binders (see Figure 1\u2014figure supplement 1).\" GraphFLA: ls.n_configs is the number of genotypes carrying a numeric fitness that survive graph construction.",
+      "definition_divergence": "The printed count includes variants whose K_D,app is ABOVE the limit of detection, i.e. complete escapers - the paper counts them as 'obtained K_D,app' because their titration is informative even though no finite K_D is fitted. In the authors' published table those genotypes carry log10Kd = NaN, so they cannot enter a GraphFLA landscape at all: a censored non-binder has no position on a -log10 K_D axis. The GraphFLA landscape therefore holds only the BINDERS.",
+      "input": {
+        "path": "data/BioSequence/Moulana2023_CoV555.csv",
+        "sha256": "a71798523c135b3815fc8ff145a6d2028cbf5092414882f4005d2dd13c5cce44",
+        "n_rows": 32768,
+        "preprocessing": "fitness column used as-is after dropping 12901 NaN rows -> 19867 rows fed to GraphFLA (19865 configurations after GraphFLA drops isolated nodes). Established exactly: the fitness column equals the authors' published column log10Kd in cleaned_Kds_RBD_CoV555_proper.csv, bit-for-bit on all 19867 non-NaN genotypes, with NaN wherever the authors have NaN. "
+      },
+      "graphfla_call": "ls = BooleanLandscape().build_from_data(X, fitness, epsilon=0, verbose=False); ls.n_configs",
+      "graphfla_value": 19865,
+      "outcome": "mismatch",
+      "reason": "Printed 27485 vs GraphFLA 19865. The gap is the censored non-binders (and, for CoV555, 2 genotype(s) that GraphFLA drops as isolated once the non-binders are removed). Separately, none of the candidate reconstructions of the printed count reproduce it from the authors' own published table: (is_clean | is_non_binder) gives 32,112 / 29,892 / 30,479 / 32,602 for CB6 / CoV555 / REGN10987 / S309 against the printed 32,603 / 27,485 / 31,479 / 32,650, and 'at least one replicate with r2>=0.8 and sigma<=1, or flagged non-binder' gives 32,717 / 32,038 / 32,333 / 32,768. The printed counts appear to come from an earlier processing pass than the deposited *_proper.csv tables; the paper does not state the exact rule used to arrive at them beyond the sentence quoted."
+    },
+    {
+      "metric": "n_configs",
+      "paper_value": 31479,
+      "locator": "Results, second paragraph (eLife 12:e83442, PMC9949795)",
+      "quote": "Of the 32,768 variants in our library, we obtain KD, app for at least ~30,000 variants to each of the mAbs (32,603 for LY-CoV016, 31479 for REGN10987, 27485 for LY-CoV555, and 32650 for S309) after removing variants with poor titration curves (r2<0.8 or \u03c3>1; see Methods).",
+      "printed_or_plotted": "printed",
+      "definition_match": "no",
+      "definition_quote": "Paper (Methods, 'Sequence data processing'): \"We then averaged the inferred KD,s values across the two replicates for each antibody after removing values with poor fit (r2<0.8 or SE>1).\" plus the non-binder rule: \"Variants were defined as non-binders if the difference between the maximum and the minimum of their estimated log-fluorescence over all concentrations was lower than 1 (in log-fluorescence units). This value was set by measuring the distribution for known non-binders (see Figure 1\u2014figure supplement 1).\" GraphFLA: ls.n_configs is the number of genotypes carrying a numeric fitness that survive graph construction.",
+      "definition_divergence": "The printed count includes variants whose K_D,app is ABOVE the limit of detection, i.e. complete escapers - the paper counts them as 'obtained K_D,app' because their titration is informative even though no finite K_D is fitted. In the authors' published table those genotypes carry log10Kd = NaN, so they cannot enter a GraphFLA landscape at all: a censored non-binder has no position on a -log10 K_D axis. The GraphFLA landscape therefore holds only the BINDERS.",
+      "input": {
+        "path": "data/BioSequence/Moulana2023_REGN10987.csv",
+        "sha256": "6c49d88ba72ef39477a63dba06664bfd4635d355a313a73cd9eb915c4ba96fd7",
+        "n_rows": 32768,
+        "preprocessing": "fitness column used as-is after dropping 9082 NaN rows -> 23686 rows fed to GraphFLA (23686 configurations after GraphFLA drops isolated nodes). Established exactly: the fitness column equals the authors' published column log10Kd in cleaned_Kds_RBD_REGN10987_proper.csv, bit-for-bit on all 23686 non-NaN genotypes, with NaN wherever the authors have NaN. "
+      },
+      "graphfla_call": "ls = BooleanLandscape().build_from_data(X, fitness, epsilon=0, verbose=False); ls.n_configs",
+      "graphfla_value": 23686,
+      "outcome": "mismatch",
+      "reason": "Printed 31479 vs GraphFLA 23686. The gap is the censored non-binders (and, for REGN10987, 0 genotype(s) that GraphFLA drops as isolated once the non-binders are removed). Separately, none of the candidate reconstructions of the printed count reproduce it from the authors' own published table: (is_clean | is_non_binder) gives 32,112 / 29,892 / 30,479 / 32,602 for CB6 / CoV555 / REGN10987 / S309 against the printed 32,603 / 27,485 / 31,479 / 32,650, and 'at least one replicate with r2>=0.8 and sigma<=1, or flagged non-binder' gives 32,717 / 32,038 / 32,333 / 32,768. The printed counts appear to come from an earlier processing pass than the deposited *_proper.csv tables; the paper does not state the exact rule used to arrive at them beyond the sentence quoted."
+    },
+    {
+      "metric": "n_configs",
+      "paper_value": 32650,
+      "locator": "Results, second paragraph (eLife 12:e83442, PMC9949795)",
+      "quote": "Of the 32,768 variants in our library, we obtain KD, app for at least ~30,000 variants to each of the mAbs (32,603 for LY-CoV016, 31479 for REGN10987, 27485 for LY-CoV555, and 32650 for S309) after removing variants with poor titration curves (r2<0.8 or \u03c3>1; see Methods).",
+      "printed_or_plotted": "printed",
+      "definition_match": "no",
+      "definition_quote": "Paper (Methods, 'Sequence data processing'): \"We then averaged the inferred KD,s values across the two replicates for each antibody after removing values with poor fit (r2<0.8 or SE>1).\" plus the non-binder rule: \"Variants were defined as non-binders if the difference between the maximum and the minimum of their estimated log-fluorescence over all concentrations was lower than 1 (in log-fluorescence units). This value was set by measuring the distribution for known non-binders (see Figure 1\u2014figure supplement 1).\" GraphFLA: ls.n_configs is the number of genotypes carrying a numeric fitness that survive graph construction.",
+      "definition_divergence": "The printed count includes variants whose K_D,app is ABOVE the limit of detection, i.e. complete escapers - the paper counts them as 'obtained K_D,app' because their titration is informative even though no finite K_D is fitted. In the authors' published table those genotypes carry log10Kd = NaN, so they cannot enter a GraphFLA landscape at all: a censored non-binder has no position on a -log10 K_D axis. The GraphFLA landscape therefore holds only the BINDERS.",
+      "input": {
+        "path": "data/BioSequence/Moulana2023_S309.csv",
+        "sha256": "16f19ec64bbd2e8229cb33857a0b2987081e1ebd2b1ae47a2a33d0c86c998cab",
+        "n_rows": 32768,
+        "preprocessing": "fitness column used as-is after dropping 0 NaN rows -> 32768 rows fed to GraphFLA (32768 configurations after GraphFLA drops isolated nodes). Established exactly: the fitness column equals the authors' published column log10Kd in cleaned_Kds_RBD_S309_proper.csv, bit-for-bit on all 32768 non-NaN genotypes, with NaN wherever the authors have NaN. "
+      },
+      "graphfla_call": "ls = BooleanLandscape().build_from_data(X, fitness, epsilon=0, verbose=False); ls.n_configs",
+      "graphfla_value": 32768,
+      "outcome": "mismatch",
+      "reason": "Printed 32650 vs GraphFLA 32768. The gap is the censored non-binders (and, for S309, 0 genotype(s) that GraphFLA drops as isolated once the non-binders are removed). Separately, none of the candidate reconstructions of the printed count reproduce it from the authors' own published table: (is_clean | is_non_binder) gives 32,112 / 29,892 / 30,479 / 32,602 for CB6 / CoV555 / REGN10987 / S309 against the printed 32,603 / 27,485 / 31,479 / 32,650, and 'at least one replicate with r2>=0.8 and sigma<=1, or flagged non-binder' gives 32,717 / 32,038 / 32,333 / 32,768. The printed counts appear to come from an earlier processing pass than the deposited *_proper.csv tables; the paper does not state the exact rule used to arrive at them beyond the sentence quoted."
+    },
+    {
+      "metric": "none",
+      "paper_value": 0.51,
+      "locator": "Results, second paragraph",
+      "quote": "These KD,app range from 0.1 nM to 1 \u03bcM (which is our limit of detection and likely corresponds to non-specific binding), with 51% of the variants fully escaping LY-CoV016 (defined as having KD,app above the limit of detection), 65% fully escaping LY-CoV555, 36% fully escaping REGN10897, and no variants fully escaping S309 (Figure 1A)",
+      "printed_or_plotted": "printed",
+      "definition_match": "yes",
+      "definition_quote": "Paper: escape is \"defined as having KD,app above the limit of detection\"; the operational rule is: \"Variants were defined as non-binders if the difference between the maximum and the minimum of their estimated log-fluorescence over all concentrations was lower than 1 (in log-fluorescence units). This value was set by measuring the distribution for known non-binders (see Figure 1\u2014figure supplement 1).\"",
+      "definition_divergence": "Not a GraphFLA metric - GraphFLA has no notion of a censored phenotype. Recorded because this fraction is exactly the part of the landscape that the GraphFLA input silently discards, and because a reader might wrongly equate it with the CSV's NaN fraction.",
+      "input": {
+        "path": "data/BioSequence/Moulana2023_CB6.csv",
+        "sha256": "d79dedd13cd96859e0a74869e2d2496cf8cd8eae44e88f3b2d6e493bcd7994a7",
+        "n_rows": 32768,
+        "preprocessing": "fitness column used as-is after dropping 16257 NaN rows -> 16511 rows fed to GraphFLA (16511 configurations after GraphFLA drops isolated nodes). Established exactly: the fitness column equals the authors' published column log10Kd in cleaned_Kds_RBD_CB6_proper.csv, bit-for-bit on all 16511 non-NaN genotypes, with NaN wherever the authors have NaN. "
+      },
+      "graphfla_call": null,
+      "graphfla_value": 0.51288,
+      "outcome": "reproduced_with_precision",
+      "reason": "Recomputed from the authors' flags as is_non_binder / (is_clean OR is_non_binder) = 16470 / 32112 = 0.5129 against the printed 51%. NOTE the NaN fraction of the GraphFLA input is NOT this quantity (16257 / 32768 = 0.4961); anyone reading escape fractions off the CSV's missingness will get the wrong answer, because NaN also covers QC failures and because 261 flagged non-binders still carry a fitted log10Kd."
+    },
+    {
+      "metric": "none",
+      "paper_value": 0.65,
+      "locator": "Results, second paragraph",
+      "quote": "These KD,app range from 0.1 nM to 1 \u03bcM (which is our limit of detection and likely corresponds to non-specific binding), with 51% of the variants fully escaping LY-CoV016 (defined as having KD,app above the limit of detection), 65% fully escaping LY-CoV555, 36% fully escaping REGN10897, and no variants fully escaping S309 (Figure 1A)",
+      "printed_or_plotted": "printed",
+      "definition_match": "yes",
+      "definition_quote": "Paper: escape is \"defined as having KD,app above the limit of detection\"; the operational rule is: \"Variants were defined as non-binders if the difference between the maximum and the minimum of their estimated log-fluorescence over all concentrations was lower than 1 (in log-fluorescence units). This value was set by measuring the distribution for known non-binders (see Figure 1\u2014figure supplement 1).\"",
+      "definition_divergence": "Not a GraphFLA metric - GraphFLA has no notion of a censored phenotype. Recorded because this fraction is exactly the part of the landscape that the GraphFLA input silently discards, and because a reader might wrongly equate it with the CSV's NaN fraction.",
+      "input": {
+        "path": "data/BioSequence/Moulana2023_CoV555.csv",
+        "sha256": "a71798523c135b3815fc8ff145a6d2028cbf5092414882f4005d2dd13c5cce44",
+        "n_rows": 32768,
+        "preprocessing": "fitness column used as-is after dropping 12901 NaN rows -> 19867 rows fed to GraphFLA (19865 configurations after GraphFLA drops isolated nodes). Established exactly: the fitness column equals the authors' published column log10Kd in cleaned_Kds_RBD_CoV555_proper.csv, bit-for-bit on all 19867 non-NaN genotypes, with NaN wherever the authors have NaN. "
+      },
+      "graphfla_call": null,
+      "graphfla_value": 0.59876,
+      "outcome": "mismatch",
+      "reason": "Printed 65%; recomputed from the authors' flags as is_non_binder / (is_clean OR is_non_binder) = 17,898 / 29,892 = 59.88%, and as is_non_binder / 32,768 = 54.62%. The NaN fraction of the GraphFLA input is 12,901 / 32,768 = 39.37%. None of these is 65%. LY-CoV555 is also the antibody whose printed measured-variant count (27,485) is furthest from anything reconstructible from the deposited table, so the two discrepancies are probably the same processing-version discrepancy. Not a GraphFLA metric either way."
+    },
+    {
+      "metric": "none",
+      "paper_value": 0.36,
+      "locator": "Results, second paragraph",
+      "quote": "These KD,app range from 0.1 nM to 1 \u03bcM (which is our limit of detection and likely corresponds to non-specific binding), with 51% of the variants fully escaping LY-CoV016 (defined as having KD,app above the limit of detection), 65% fully escaping LY-CoV555, 36% fully escaping REGN10897, and no variants fully escaping S309 (Figure 1A)",
+      "printed_or_plotted": "printed",
+      "definition_match": "yes",
+      "definition_quote": "Paper: escape is \"defined as having KD,app above the limit of detection\"; the operational rule is: \"Variants were defined as non-binders if the difference between the maximum and the minimum of their estimated log-fluorescence over all concentrations was lower than 1 (in log-fluorescence units). This value was set by measuring the distribution for known non-binders (see Figure 1\u2014figure supplement 1).\"",
+      "definition_divergence": "Not a GraphFLA metric - GraphFLA has no notion of a censored phenotype. Recorded because this fraction is exactly the part of the landscape that the GraphFLA input silently discards, and because a reader might wrongly equate it with the CSV's NaN fraction.",
+      "input": {
+        "path": "data/BioSequence/Moulana2023_REGN10987.csv",
+        "sha256": "6c49d88ba72ef39477a63dba06664bfd4635d355a313a73cd9eb915c4ba96fd7",
+        "n_rows": 32768,
+        "preprocessing": "fitness column used as-is after dropping 9082 NaN rows -> 23686 rows fed to GraphFLA (23686 configurations after GraphFLA drops isolated nodes). Established exactly: the fitness column equals the authors' published column log10Kd in cleaned_Kds_RBD_REGN10987_proper.csv, bit-for-bit on all 23686 non-NaN genotypes, with NaN wherever the authors have NaN. "
+      },
+      "graphfla_call": null,
+      "graphfla_value": 0.35556,
+      "outcome": "reproduced_with_precision",
+      "reason": "Recomputed from the authors' flags as is_non_binder / (is_clean OR is_non_binder) = 10837 / 30479 = 0.3556 against the printed 36%. NOTE the NaN fraction of the GraphFLA input is NOT this quantity (9082 / 32768 = 0.2772); anyone reading escape fractions off the CSV's missingness will get the wrong answer, because NaN also covers QC failures and because 2173 flagged non-binders still carry a fitted log10Kd."
+    },
+    {
+      "metric": "none",
+      "paper_value": 0.0,
+      "locator": "Results, second paragraph",
+      "quote": "These KD,app range from 0.1 nM to 1 \u03bcM (which is our limit of detection and likely corresponds to non-specific binding), with 51% of the variants fully escaping LY-CoV016 (defined as having KD,app above the limit of detection), 65% fully escaping LY-CoV555, 36% fully escaping REGN10897, and no variants fully escaping S309 (Figure 1A)",
+      "printed_or_plotted": "printed",
+      "definition_match": "yes",
+      "definition_quote": "Paper: escape is \"defined as having KD,app above the limit of detection\"; the operational rule is: \"Variants were defined as non-binders if the difference between the maximum and the minimum of their estimated log-fluorescence over all concentrations was lower than 1 (in log-fluorescence units). This value was set by measuring the distribution for known non-binders (see Figure 1\u2014figure supplement 1).\"",
+      "definition_divergence": "Not a GraphFLA metric - GraphFLA has no notion of a censored phenotype. Recorded because this fraction is exactly the part of the landscape that the GraphFLA input silently discards, and because a reader might wrongly equate it with the CSV's NaN fraction.",
+      "input": {
+        "path": "data/BioSequence/Moulana2023_S309.csv",
+        "sha256": "16f19ec64bbd2e8229cb33857a0b2987081e1ebd2b1ae47a2a33d0c86c998cab",
+        "n_rows": 32768,
+        "preprocessing": "fitness column used as-is after dropping 0 NaN rows -> 32768 rows fed to GraphFLA (32768 configurations after GraphFLA drops isolated nodes). Established exactly: the fitness column equals the authors' published column log10Kd in cleaned_Kds_RBD_S309_proper.csv, bit-for-bit on all 32768 non-NaN genotypes, with NaN wherever the authors have NaN. "
+      },
+      "graphfla_call": null,
+      "graphfla_value": 0.0,
+      "outcome": "reproduced_exact",
+      "reason": "The paper says no variant fully escapes S309. The authors' table flags 0 non-binders for S309 and the GraphFLA input has 0 NaN in 32,768 rows, so every genotype has a finite -log10 K_D,app. Exact categorical agreement."
+    },
+    {
+      "metric": "none",
+      "paper_value": "BA.1 = NB for LY-CoV016, LY-CoV555, REGN10987; BA.1 = 8.62 for S309",
+      "locator": "Supplementary file 1 (elife-83442-supp1.docx), column 'TiteSeq -log KD,app'",
+      "quote": "Strain | Antibody | Isogenic -log KD,app | TiteSeq -log KD,app  ::  Omicron BA.1 | LY-CoV016 | NB | NB  ::  Omicron BA.1 | LY-CoV555 | NB | NB  ::  Omicron BA.1 | REGN10987 | NB | NB  ::  Omicron BA.1 | S309 | 8.81 | 8.62 \u00b1 0.18  ::  Wuhan Hu-1 | LY-CoV016 | 10.52 \u00b1 0.24 | 10.27 \u00b1 0.07  ::  Wuhan Hu-1 | LY-CoV555 | 10.01 \u00b1 0.33 | 10.35 \u00b1 0.02  ::  Wuhan Hu-1 | REGN10987 | 10.42 \u00b1 0.49 | 10.52 \u00b1 0.18  ::  Wuhan Hu-1 | S309 | 9.33 \u00b1 0.27 | 9.00 \u00b1 0.08   (transcribed from elife-83442-supp1.docx; the \u00b1 glyph is not preserved by the docx text extraction, the numeric pairs are)",
+      "printed_or_plotted": "printed",
+      "definition_match": "yes",
+      "definition_quote": "'NB denotes non-binding (escape)' (Figure 1 caption).",
+      "definition_divergence": "Categorical per-genotype phenotype, not a landscape statistic.",
+      "input": {
+        "path": "data/BioSequence/Moulana2023_{CB6,CoV555,REGN10987,S309}.csv",
+        "sha256": "see per-antibody entries",
+        "n_rows": 32768,
+        "preprocessing": "fitness column as-is; genotype 111111111111111"
+      },
+      "graphfla_call": "df.loc[df.sequences == '1'*15, 'fitness']",
+      "graphfla_value": "NaN for CB6, CoV555, REGN10987; 8.586621 for S309",
+      "outcome": "mismatch",
+      "reason": "LEAD CORRECTION: 8.586621 rounds to 8.59, not the printed 8.62, so this is not a reproduction at printed precision. The categorical part of this comparison (BA.1 is a binder for S309 and a non-binder for the other three) does reproduce exactly and is a separate, valid comparison; it must be split out before promotion. Falling within an experimental standard error is a third, different claim. The categorical half is exact: BA.1 is absent (NaN) from the CB6, CoV555 and REGN10987 inputs and present in S309, matching NB / NB / NB / binding. The numeric half is only close: the input gives -log10 K_D,app = 8.5866 for BA.1 against S309, printed 8.62 \u00b1 0.18 - within the printed standard error but not equal. Note the same table's Wuhan Hu-1 Tite-seq values disagree with the input by more: printed 10.27 / 10.35 / 10.52 / 9.00 for LY-CoV016 / LY-CoV555 / REGN10987 / S309 against input 9.8054 / 10.1940 / 9.9593 / 9.3432. The paper does not state whether the Supplementary file 1 Tite-seq column comes from the library genotype 000000000000000 or from the separately spiked-in clonal Wuhan Hu-1 strain: NOT STATED IN PAPER. Do not use Supplementary file 1 as a per-genotype oracle.",
+      "original_agent_claim": {
+        "outcome": "reproduced_with_precision",
+        "note": "The categorical half is exact: BA.1 is absent (NaN) from the CB6, CoV555 and REGN10987 inputs and present in S309, matching NB / NB / NB / binding. The numeric half is only close: the input gives -log10 K_D,app = 8.5866 for BA.1 against S309, printed 8.62 \u00b1 0.18 - within the printed standard error but not equal. Note the same table's Wuhan Hu-1 Tite-seq values disagree with the input by more: prin"
+      }
+    },
+    {
+      "metric": "none",
+      "paper_value": 0.17,
+      "locator": "Results, paragraph beginning 'The picture is more complex for S309'",
+      "quote": "The picture is more complex for S309, where BA.1 has reduced affinity relative to Wuhan Hu-1, but ~17% of variants have lower affinity than BA.1.",
+      "printed_or_plotted": "printed",
+      "definition_match": "yes",
+      "definition_quote": "'lower affinity than BA.1' = -log10 K_D,app below that of genotype 111111111111111.",
+      "definition_divergence": "Not a GraphFLA metric; a plain fraction over the fitness column. Recorded as a direct printed check on the S309 input, which is the one complete (0 NaN) landscape in this study.",
+      "input": {
+        "path": "data/BioSequence/Moulana2023_S309.csv",
+        "sha256": "16f19ec64bbd2e8229cb33857a0b2987081e1ebd2b1ae47a2a33d0c86c998cab",
+        "n_rows": 32768,
+        "preprocessing": "fitness column used as-is after dropping 0 NaN rows -> 32768 rows fed to GraphFLA (32768 configurations after GraphFLA drops isolated nodes). Established exactly: the fitness column equals the authors' published column log10Kd in cleaned_Kds_RBD_S309_proper.csv, bit-for-bit on all 32768 non-NaN genotypes, with NaN wherever the authors have NaN. "
+      },
+      "graphfla_call": "(numpy) (fitness < fitness['111111111111111']).mean() over all 32,768 genotypes",
+      "graphfla_value": 0.19327,
+      "outcome": "mismatch",
+      "reason": "Computed 6,333 / 32,768 = 19.33% against the printed ~17%. Variants tried, all reported: using the authors' is_clean subset only, 6,318 / 32,602 = 19.38%; using <= instead of <, 19.33%; using the Supplementary file 1 printed Tite-seq BA.1 value 8.62 as the threshold instead of the library genotype's 8.5866, 21.68%; using the isogenic value 8.81, 39.50%. The threshold that would give exactly 17% is 8.5556. No variant the paper's own stated method justifies lands on 17%; the paper's stated method (compare to BA.1's affinity) is the first one, which gives 19.3%. Recorded as a mismatch rather than tuned to fit."
+    },
+    {
+      "metric": "higher_order_epistasis",
+      "paper_value": "optimal order: 2 (REGN10987), 3 (LY-CoV555), >=4 (LY-CoV016, S309, ACE2)",
+      "locator": "Results, 'Inference of epistatic affinity landscapes'",
+      "quote": "We find that adding epistatic interactions improves the predictive power of the model for all four antibodies as well as for binding to ACE2, though the optimal order varies (Figure 3A). This indicates that epistasis does play a significant role in all cases (up to second order for REGN10987, to third order for LY-CoV555, and to fourth or higher order for LY-CoV016, S309, and ACE2).",
+      "printed_or_plotted": "printed",
+      "definition_match": "no",
+      "definition_quote": "Paper, Methods 'Epistasis analysis': \"we used a 10-fold cross-validation strategy by training each model on 90% of the dataset and examining its performance on the remaining 10%\" and, for the censored measurements, \"we augmented our linear model with a lower boundary, following a Tobit left-censored model (Tobin, 1958)\". GraphFLA, graphfla/analysis/epistasis/higher_order.py: \"Calculates the fraction of variance in fitness that can be explained by interactions between variables up to the specified order using polynomial regression\", returning \"The R\u00b2 score representing the fraction of variance explained by polynomial terms up to the specified order\".",
+      "definition_divergence": "Three independent divergences: (i) the paper's number is an argmax over orders under HELD-OUT cross-validated R2, GraphFLA's is an IN-SAMPLE R2 at a fixed order (monotone in order, so it cannot select an interior optimum); (ii) the paper fits an L2-regularised Tobit left-censored likelihood that explicitly models the non-binders, GraphFLA fits unregularised OLS on the binders only; (iii) the non-binders that the Tobit model uses are exactly the rows the GraphFLA input drops. No run was made.",
+      "input": {
+        "path": "data/BioSequence/Moulana2023_*.csv",
+        "sha256": "see per-antibody entries",
+        "n_rows": 32768,
+        "preprocessing": "n/a - not attempted"
+      },
+      "graphfla_call": null,
+      "graphfla_value": null,
+      "outcome": "definition_incompatible",
+      "reason": "The per-order R2 curve backing this sentence is plotted (Figure 3A), not printed. Its numeric backing was located in the authors' repository at desai-lab/omicron_ab_landscape data/CV_rsquared.csv and does confirm the printed ordering (mean CV R2 peaks at order 2 for REGN10987 = 0.8635, order 3 for LY-CoV555 = 0.9408, order 4 for LY-CoV016 = 0.9919 and S309 = 0.9347, order 5 for ACE2 = 0.9916), but those values are not comparable to GraphFLA's statistic for the reasons above."
+    }
+  ],
+  "blockers": [],
+  "verdict": "no_overlap",
+  "verdict_reason": "This paper prints no landscape-topography statistic that GraphFLA computes. An exhaustive keyword sweep of the full text and Methods returns ZERO occurrences of 'peak', 'local maximum', 'local optimum', 'ruggedness', 'sign epistasis', 'reciprocal sign', 'accessible path', 'mutational path' or 'fraction of paths'; the word 'optima' appears only as 'optimum epistasis model'. The analytical vocabulary is enrichment of escape mutations, rpart decision trees, and a Tobit-censored truncated epistasis model - none of which has a GraphFLA counterpart. The single named GraphFLA metric that comes close, higher_order_epistasis, is definition-incompatible: the paper's optimal-order statement is an argmax over 10-fold cross-validated R2 of a regularised Tobit model that explicitly uses the censored non-binders, while GraphFLA returns an in-sample OLS R2 on the binders alone. What this study DOES yield is input provenance, which was the higher-value deliverable: the four local CSVs' fitness columns are bit-for-bit identical to the authors' published -log10 K_D,app (log10Kd) columns, and the decisive preprocessing fact is that complete escapers are DROPPED rather than censored, so three of the four landscapes are punctured hypercubes covering 50-72% of the genotype space and do not even contain Omicron BA.1. Any peak count taken from them (GraphFLA gives n_lo = 100 / 391 / 174 / 210 for CB6 / CoV555 / REGN10987 / S309) is a statistic about the binder sub-landscape and has no counterpart in the paper - it must not be promoted as a literature-anchored benchmark. Two printed counts (measured-variant counts and escape fractions) could not be reconstructed exactly from the deposited tables and are recorded as mismatches with all variants tried.",
+  "lead_correction": {
+    "lead_correction_2026_09_30": "Corrected by the lead after external review. The original agent claim is preserved in original_agent_claim. Records are machine-consumed, so the operative field is corrected rather than only annotated.",
+    "population_description": "The retained population is the FINITE-FITNESS subset, not a binder-only sub-landscape. The author tables keep 261 / 5,426 / 2,173 flagged non-binders with finite fitness for CB6 / CoV555 / REGN10987, so any statement in this record calling the population binder-only is wrong and must not guide preprocessing. Complete escapers above the 1 uM detection limit are NaN and therefore dropped; the authors instead retain them through a Tobit left-censored model.",
+    "corrected_outcomes": [
+      "S309 8.586621 vs 8.62"
+    ]
+  }
+}

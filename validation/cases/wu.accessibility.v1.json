@@ -1,0 +1,35 @@
+{
+  "schema_version": 1,
+  "kind": "case",
+  "id": "wu.accessibility.v1",
+  "revision": 1,
+  "study_id": "WuDOLS16",
+  "metric_ids": [
+    "accessibility"
+  ],
+  "evidence_tier": "published_numeric",
+  "definition_match": "yes",
+  "scope": "Fraction reaching all15 above-WT peaks",
+  "preprocessing": "Intersect15 uphill ancestor sets; denominator160000; source complete/imputed surface; graph composition, not per-target API output.",
+  "sources": [
+    {
+      "url": "https://doi.org/10.7554/eLife.16965",
+      "locator": "Results p.11; Fig4—figure supplement2C"
+    }
+  ],
+  "expected": 0.93,
+  "comparison": {
+    "kind": "absolute",
+    "tolerance": 0.005,
+    "justification": "Tolerance is floating-point regression/quotient precision, except Wu accessibility where 0.005 is half the printed whole-percent unit."
+  },
+  "inputs": [
+    {
+      "root": "repo",
+      "path": "tests/fixtures/literature/wu2016/landscape.csv.gz",
+      "sha256": "8fd9fa77f92bf4a2b1892223525423f668a9e55b5babaf4140ae2c621cf03336"
+    }
+  ],
+  "pytest_node": "tests/test_literature.py::test_wu_completed_landscape_peaks_and_accessibility",
+  "history_note": "Imported from reviewed 2026-09-30 research. Original frozen evidence and trial artifacts remain in the external dossiers; this import does not claim targets were newly frozen before historical runs."
+}

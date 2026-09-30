@@ -1,0 +1,35 @@
+{
+  "schema_version": 1,
+  "kind": "case",
+  "id": "bank.reia_peaks.v1",
+  "revision": 1,
+  "study_id": "BankMHJ16",
+  "metric_ids": [
+    "construction"
+  ],
+  "evidence_tier": "published_numeric",
+  "definition_match": "yes",
+  "scope": "Bank Hsp90 as archived by Reia and Campos",
+  "preprocessing": "Exclude sole stop-codon control; use archived fitness unchanged. Original posterior not available; classification unresolved.",
+  "sources": [
+    {
+      "url": "https://doi.org/10.1098/rsos.192118",
+      "locator": "Figure1; downstream Dryad10.5061/dryad.41ns1rn9r"
+    }
+  ],
+  "expected": 6,
+  "comparison": {
+    "kind": "exact",
+    "tolerance": 0,
+    "justification": "Exact integer or sequence identity reported independently."
+  },
+  "inputs": [
+    {
+      "root": "repo",
+      "path": "tests/fixtures/literature/bank2016_reia2020/HSP90_fitness_landscape.tsv",
+      "sha256": "06a4e14f7486540149ca7f82fe206d1d17650595515201bdd8282cd11bba6988"
+    }
+  ],
+  "pytest_node": "tests/test_literature.py::test_bank_archived_landscape_reproduces_reia_peak_identities",
+  "history_note": "Imported from reviewed 2026-09-30 research. Original frozen evidence and trial artifacts remain in the external dossiers; this import does not claim targets were newly frozen before historical runs."
+}

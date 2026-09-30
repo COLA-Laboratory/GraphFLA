@@ -172,9 +172,15 @@ def fitness_effect_distribution(landscape, mutation):
     # genetic background = all positions except the mutated one
     background_cols = [col for col in X.columns if col != pos]
 
-    # index by background so A and B can be aligned via intersection
-    df_A.set_index(background_cols, inplace=True)
-    df_B.set_index(background_cols, inplace=True)
+    # index by background so A and B can be aligned via intersection. A
+    # single-position landscape has no background columns; every genotype then
+    # shares one trivial background, represented by a constant index.
+    if background_cols:
+        df_A = df_A.set_index(background_cols)
+        df_B = df_B.set_index(background_cols)
+    else:
+        df_A = df_A.set_index(np.zeros(len(df_A), dtype=np.int8))
+        df_B = df_B.set_index(np.zeros(len(df_B), dtype=np.int8))
     common_backgrounds = df_A.index.intersection(df_B.index)
 
     if len(common_backgrounds) == 0:

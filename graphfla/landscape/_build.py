@@ -123,6 +123,25 @@ class _BuildMixin:
         self.graph = self._build_graph(processed_data, edges, delta_fits)
         return neutral_pairs
 
+    def _filter_neutral_pairs(
+        self,
+        neutral_pairs: List[Tuple[int, int]],
+        tau: Optional[float],
+        filter_mode: str,
+    ) -> List[Tuple[int, int]]:
+        """Drop neutral pairs that the functional filter severs, mirroring the
+        rule ``filter_graph`` applies to directed edges."""
+        if tau is None or filter_mode != "both" or not neutral_pairs:
+            return neutral_pairs
+
+        # Keep the stored dtype: ``filter_graph`` compares directed edges in it,
+        # and casting to float64 would round large integer fitness differently.
+        fitness = np.asarray(self.graph.vs["fitness"])
+        pairs = np.asarray(neutral_pairs, dtype=np.int64)
+        src, tgt = fitness[pairs[:, 0]], fitness[pairs[:, 1]]
+        both_below = (src < tau) & (tgt < tau) if self.maximize else (src > tau) & (tgt > tau)
+        return [tuple(p) for p in pairs[~both_below]]
+
     @timeit
     def _postprocess_graph(
         self,
@@ -133,13 +152,21 @@ class _BuildMixin:
         verbose: Optional[bool],
     ) -> List[Tuple[int, int]]:
         """Apply graph pruning and remap cached metadata when vertices are removed."""
+        # A neutral pair is an undirected counterpart of a directed edge, so the
+        # functional filter has to sever it on the same rule; otherwise a
+        # below-threshold plateau stays connected and can win largest-component
+        # selection over the functional region it was meant to isolate.
+        neutral_pairs = self._filter_neutral_pairs(neutral_pairs, tau, filter_mode)
+
         self.graph, self._n_configs, self._n_edges, kept_indices = filter_graph(
-            self.graph, self.maximize, tau, filter_mode, verbose
+            self.graph, self.maximize, tau, filter_mode, verbose, neutral_pairs
         )
 
         # Protect plateau-interior nodes (linked only by neutral/tied edges)
         # from isolation pruning, which runs before the plateau layer is built
-        # and would otherwise drop them as "isolated".
+        # and would otherwise drop them as "isolated". Only pairs that survived
+        # filtering intact count: a node whose partner was removed no longer has
+        # a neutral neighbour and is genuinely isolated.
         protected = None
         if neutral_pairs:
             if kept_indices is not None:
@@ -147,8 +174,8 @@ class _BuildMixin:
                 protected = {
                     tau_map[n]
                     for pair in neutral_pairs
+                    if all(n in tau_map for n in pair)
                     for n in pair
-                    if n in tau_map
                 }
             else:
                 protected = {n for pair in neutral_pairs for n in pair}
