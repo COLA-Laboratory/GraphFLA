@@ -284,3 +284,15 @@ def test_all_constant_wide_rows_keep_first_occurrence():
     actual_X, actual_f = _drop_duplicates(X, fitness)
     pd.testing.assert_frame_equal(actual_X, X.iloc[:1])
     pd.testing.assert_series_equal(actual_f, fitness.iloc[:1])
+
+
+def test_standalone_graph_filter_preserves_threshold_and_component_contract():
+    import igraph as ig
+    from graphfla.utils import filter_graph
+
+    graph = ig.Graph(n=4, edges=[(0, 1), (1, 2), (2, 3)], directed=True)
+    graph.vs["fitness"] = [-2.0, -1.0, 1.0, 2.0]
+    filtered, n, m, kept = filter_graph(graph, True, 0, "both", False)
+    assert (n, m, kept) == (3, 2, [1, 2, 3])
+    assert filtered.get_edgelist() == [(0, 1), (1, 2)]
+    assert filtered.vs["fitness"] == [-1.0, 1.0, 2.0]

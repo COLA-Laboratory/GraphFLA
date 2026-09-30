@@ -25,7 +25,7 @@ from .._data import (
     encode_data,
 )
 from .._neighbors import build_edges
-from ..utils import filter_graph, remove_isolated_nodes, timeit
+from ..utils import _largest_weak_component, remove_isolated_nodes, timeit
 from ..exceptions import InvalidParameterError, NotBuiltError
 import logging
 
@@ -143,9 +143,10 @@ class _BuildMixin:
         verbose: Optional[bool],
     ) -> List[Tuple[int, int]]:
         """Apply graph pruning and remap cached metadata when vertices are removed."""
-        self.graph, self._n_configs, self._n_edges, kept_indices = filter_graph(
-            self.graph, self.maximize, tau, filter_mode, verbose
-        )
+        kept_indices = None
+        if tau is not None and filter_mode == "both":
+            self.graph, kept_indices = _largest_weak_component(self.graph, verbose)
+        self._n_configs, self._n_edges = self.graph.vcount(), self.graph.ecount()
 
         # Protect plateau-interior nodes (linked only by neutral/tied edges)
         # from isolation pruning, which runs before the plateau layer is built
