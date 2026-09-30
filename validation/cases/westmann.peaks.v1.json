@@ -1,0 +1,40 @@
+{
+  "schema_version": 1,
+  "kind": "case",
+  "id": "westmann.peaks.v1",
+  "revision": 1,
+  "study_id": "WestmannGW24",
+  "metric_ids": [
+    "construction"
+  ],
+  "evidence_tier": "published_numeric",
+  "definition_match": "yes",
+  "scope": "TetR measured network",
+  "preprocessing": "epsilon=0; original normalized repression; WT=1.",
+  "sources": [
+    {
+      "url": "https://doi.org/10.1038/s41467-024-54723-y",
+      "locator": "SI TableS1 p.3 and source-data workbook"
+    }
+  ],
+  "expected": {
+    "vertices": 17765,
+    "peaks": 2092,
+    "above_wt": 58,
+    "below_wt": 2034
+  },
+  "comparison": {
+    "kind": "exact",
+    "tolerance": 0,
+    "justification": "Exact integer or sequence identity reported independently."
+  },
+  "inputs": [
+    {
+      "root": "repo",
+      "path": "data/BioSequence/Westmann2024.csv",
+      "sha256": "893ea92b471ae295a0a2f4488a55403652d03b9c5ad37af9323b3d55f33dc1db"
+    }
+  ],
+  "pytest_node": "tests/test_literature.py::test_westmann_published_peak_count",
+  "history_note": "Imported from reviewed 2026-09-30 research. Original frozen evidence and trial artifacts remain in the external dossiers; this import does not claim targets were newly frozen before historical runs."
+}

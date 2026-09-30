@@ -1,0 +1,40 @@
+{
+  "schema_version": 1,
+  "kind": "case",
+  "id": "papkou.topology.v1",
+  "revision": 1,
+  "study_id": "PapkouRM23",
+  "metric_ids": [
+    "construction"
+  ],
+  "evidence_tier": "published_numeric",
+  "definition_match": "yes",
+  "scope": "Largest functional-neighbor component",
+  "preprocessing": "Decode A/C/G/T to A/G/T/C; tau=-0.507774, filter_mode=both, epsilon=0.",
+  "sources": [
+    {
+      "url": "https://doi.org/10.1126/science.adh3860",
+      "locator": "Main article; SI network methods pp.14–15"
+    }
+  ],
+  "expected": {
+    "vertices": 135178,
+    "edges": 324044,
+    "peaks": 514,
+    "functional": 18019
+  },
+  "comparison": {
+    "kind": "exact",
+    "tolerance": 0,
+    "justification": "Exact integer or sequence identity reported independently."
+  },
+  "inputs": [
+    {
+      "root": "repo",
+      "path": "data/BioSequence/Papkou2023_DHFR.csv",
+      "sha256": "fca2fb47cad417a049698f43b20f90b320a4927418d502e527ad112ea46c82da"
+    }
+  ],
+  "pytest_node": "tests/test_literature.py::test_papkou_published_network_and_peaks",
+  "history_note": "Imported from reviewed 2026-09-30 research. Original frozen evidence and trial artifacts remain in the external dossiers; this import does not claim targets were newly frozen before historical runs."
+}

@@ -39,8 +39,40 @@ def timeit(method):
     return timed
 
 
-def filter_graph(graph, maximize, tau, filter_mode, verbose):
+def _merge_neutral_components(membership, neutral_pairs):
+    """Merge weak components that a neutral pair joins.
+
+    Neutral (tied / within-epsilon) pairs are neighbours but carry no directed
+    edge, so igraph's connectivity does not see them. Without this merge a
+    plateau is split across components and a fully neutral landscape looks like
+    a set of singletons, of which largest-component filtering would keep one.
+    """
+    n_components = int(membership.max()) + 1
+    parent = np.arange(n_components)
+
+    def find(x):
+        while parent[x] != x:
+            parent[x] = parent[parent[x]]  # path halving
+            x = parent[x]
+        return x
+
+    for u, v in neutral_pairs:
+        root_u, root_v = find(membership[u]), find(membership[v])
+        if root_u != root_v:
+            parent[root_u] = root_v
+
+    roots = np.fromiter((find(c) for c in range(n_components)), dtype=np.int32)
+    return roots[membership]
+
+
+def filter_graph(graph, maximize, tau, filter_mode, verbose, neutral_pairs=None):
     """Apply post-construction filtering to the landscape graph.
+
+    Parameters
+    ----------
+    neutral_pairs : list[tuple[int, int]] or None, default=None
+        Neutral neighbour pairs in the graph's current index space. They count
+        toward connectivity when the largest component is selected.
 
     Returns
     -------
@@ -105,6 +137,8 @@ def filter_graph(graph, maximize, tau, filter_mode, verbose):
             membership = np.asarray(components.membership, dtype=np.int32)
 
             if membership.size > 0:
+                if neutral_pairs:
+                    membership = _merge_neutral_components(membership, neutral_pairs)
                 component_sizes = np.bincount(membership)
                 giant_component = int(component_sizes.argmax())
                 kept_mask = membership == giant_component
@@ -160,9 +194,13 @@ def remove_isolated_nodes(graph, verbose=False, protected=None):
     Raises
     ------
     ValueError
-        If the graph contains no edges at all (fully disconnected).
+        If the graph contains no edges at all and no vertex is protected, i.e.
+        no neighbouring configurations of any kind were detected.
     """
-    if graph.ecount() == 0:
+    # A fully neutral landscape has no directed edges but does have neighbours:
+    # every such pair is protected, so only an unprotected edgeless graph means
+    # the neighbourhood definition failed to match the data.
+    if graph.ecount() == 0 and not protected:
         raise ValueError(
             "Landscape graph has no edges. No neighboring configurations "
             "were detected in the dataset. This usually means the "

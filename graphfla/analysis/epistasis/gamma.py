@@ -174,9 +174,11 @@ def gamma(landscape, n_jobs=-1):
     Returns
     -------
     float
-        The traditional gamma statistic value. Values close to -1 or 1 indicate
-        strong epistatic interactions in magnitude, while values close to 0 indicate
-        weak or no epistasis.
+        The traditional gamma statistic value. gamma = 1 means a mutation has
+        the same effect in both backgrounds of every *observed* square, values
+        near 0 mean uncorrelated effects (House of Cards), and negative values
+        mean systematically reversed effects. On sparse data gamma = 1 shows
+        additivity over the squares that are present, not global additivity.
 
     Notes
     -----
@@ -216,10 +218,16 @@ def gamma_star(landscape, n_jobs=-1):
     Returns
     -------
     float
-        The gamma-star statistic that only considers sign consistency.
-        Values close to 1 indicate consistent sign epistasis across
-        backgrounds, values close to -1 indicate opposing sign patterns,
-        and values close to 0 indicate random sign patterns.
+        The gamma-star statistic, which considers only the sign of fitness
+        effects. Values close to 1 indicate that a mutation keeps the same
+        sign across backgrounds (little sign epistasis), values close to -1
+        indicate systematically reversed signs (pervasive sign epistasis), and
+        values close to 0 indicate signs that are uncorrelated in aggregate.
+
+    References
+    ----------
+    .. [1] L. Ferretti et al., "Measuring epistasis in fitness landscapes: The
+       correlation of fitness effects of mutations", J. Theor. Biol. 396, 132-143 (2016).
     """
     stats = _gamma_statistics(landscape, n_jobs=n_jobs)
     return _pythonize(stats["gamma_star"])

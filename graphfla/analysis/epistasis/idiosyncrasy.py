@@ -312,6 +312,18 @@ def diminishing_returns_index(
     fitness = np.asarray(landscape.graph.vs["fitness"], dtype=float)
     node_fitnesses = fitness
     outdeg = np.asarray(landscape.graph.outdegree(), dtype=float)
+    nodes_with_successors = int(np.count_nonzero(outdeg > 0))
+
+    # Checked before the improvements are computed: with fewer than two such
+    # nodes the correlation is undefined anyway, and the sparse-adjacency
+    # fallback below cannot be built on an edgeless graph (fully neutral input).
+    if nodes_with_successors < 2:
+        warnings.warn(
+            "Not enough nodes with successors to calculate correlation for diminishing returns.",
+            UserWarning,
+        )
+        return np.nan
+
     if "delta_fit" in landscape.graph.es.attributes():
         per_node = np.asarray(
             landscape.graph.strength(mode="out", weights="delta_fit"), dtype=float
@@ -326,14 +338,6 @@ def diminishing_returns_index(
             mean_succ_fit - fitness if landscape.maximize
             else fitness - mean_succ_fit
         )
-    nodes_with_successors = int(np.count_nonzero(outdeg > 0))
-
-    if nodes_with_successors < 2:
-        warnings.warn(
-            "Not enough nodes with successors to calculate correlation for diminishing returns.",
-            UserWarning,
-        )
-        return np.nan
 
     node_fitnesses_series = pd.Series(node_fitnesses)
     avg_improvement_series = pd.Series(avg_successor_improvement)
@@ -445,6 +449,17 @@ def increasing_costs_index(
     fitness = np.asarray(landscape.graph.vs["fitness"], dtype=float)
     node_fitnesses = fitness
     indeg = np.asarray(landscape.graph.indegree(), dtype=float)
+    nodes_with_predecessors = int(np.count_nonzero(indeg > 0))
+
+    # Checked before the costs are computed, for the same reason as in
+    # ``diminishing_returns_index``.
+    if nodes_with_predecessors < 2:
+        warnings.warn(
+            "Not enough nodes with predecessors to calculate correlation for increasing cost.",
+            UserWarning,
+        )
+        return np.nan
+
     if "delta_fit" in landscape.graph.es.attributes():
         per_node = np.asarray(
             landscape.graph.strength(mode="in", weights="delta_fit"), dtype=float
@@ -459,14 +474,6 @@ def increasing_costs_index(
             fitness - mean_pred_fit if landscape.maximize
             else mean_pred_fit - fitness
         )
-    nodes_with_predecessors = int(np.count_nonzero(indeg > 0))
-
-    if nodes_with_predecessors < 2:
-        warnings.warn(
-            "Not enough nodes with predecessors to calculate correlation for increasing cost.",
-            UserWarning,
-        )
-        return np.nan
 
     node_fitnesses_series = pd.Series(node_fitnesses)
     avg_cost_series = pd.Series(avg_predecessor_cost)

@@ -289,7 +289,8 @@ from graphfla.analysis import single_mutation_effects, all_mutation_effects
 
 def _ref_mutation_effects(landscape, position, test_type="positive"):
     """Independent reference: group genotypes by their background tuple (all other
-    positions) and pair alleles, mirroring the original semantics directly."""
+    positions) and pair alleles. The effect of ``A -> B`` is f_B - f_A, matching
+    the label carried by mutation_from / mutation_to."""
     data = landscape.get_data()
     X = data[list(landscape.data_types.keys())]
     f = data["fitness"]
@@ -306,7 +307,7 @@ def _ref_mutation_effects(landscape, position, test_type="positive"):
                 bg_a[bg] = f.loc[idx]
             elif v == B and bg not in bg_b:
                 bg_b[bg] = f.loc[idx]
-        diff = np.array([bg_a[k] - bg_b[k] for k in bg_a if k in bg_b], dtype=float)
+        diff = np.array([bg_b[k] - bg_a[k] for k in bg_a if k in bg_b], dtype=float)
         n = diff.size
         if n == 0:
             rows.append((A, B, np.nan, np.nan, np.nan, False))

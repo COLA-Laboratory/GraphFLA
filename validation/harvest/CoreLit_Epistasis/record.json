@@ -1,0 +1,627 @@
+{
+  "study_key": "CoreLit_Epistasis",
+  "dossier": "papers/_core_lit_epistasis",
+  "recorded_at": "2026-09-30T22:01:01Z",
+  "agent": "codex-gpt-6",
+  "paper": {
+    "title": "Augmenting Biological Fitness Prediction Benchmarks with Landscapes Features from GraphFLA",
+    "doi": "10.52202/085713-1180",
+    "year": 2025,
+    "bibliography_verified_against": "publisher_page",
+    "supplied_bibliography_errors": "The author lists and titles of the named starting-point papers were checked by title/DOI against publisher or PubMed metadata; no author-list mismatch was found among those entries. Full verified citations are in notes.md."
+  },
+  "sources": [
+    {
+      "url": "https://eprints.soton.ac.uk/261612/1/Weinreich-05a-Evolution.pdf",
+      "http_status": 200,
+      "sha256": "56a84243a3c72250b1dfee443677f6e1624de0da5ebf7919649ce0bff56bb688",
+      "saved_path": "papers/_core_lit_epistasis/sources/weinreich_watson_chao_2005_codex.pdf",
+      "what": "author repository full text"
+    },
+    {
+      "url": "https://www.nature.com/articles/nature05451.pdf",
+      "http_status": 200,
+      "sha256": "32ed63159c77e21ee19ca1b9aa3213ccf0218eb59539560b132a8e68ef0e18ea",
+      "saved_path": "papers/_core_lit_epistasis/sources/poelwijk_et_al_2007_codex.pdf",
+      "what": "invalid publisher endpoint response; HTML, not a PDF or usable local paper copy"
+    },
+    {
+      "url": "https://gwern.net/doc/genetics/heritable/2013-weinrich.pdf",
+      "http_status": 200,
+      "sha256": "afc4e14b949d34cefa30425ed16a47df9201c58ed223961b29f7db331c53ee0b",
+      "saved_path": "papers/_core_lit_epistasis/sources/weinreich_et_al_2013_codex.pdf",
+      "what": "full text copy"
+    },
+    {
+      "url": "https://journals.plos.org/ploscompbiol/article/file?id=10.1371/journal.pcbi.1004771&type=printable",
+      "http_status": 200,
+      "sha256": "2ba19bd2845ee95cd8e79cd008083fec2d11da1040f12249e24a0b8f2072b9fa",
+      "saved_path": "papers/_core_lit_epistasis/sources/poelwijk_krishna_ranganathan_2016_codex.pdf",
+      "what": "publisher PDF"
+    },
+    {
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC5340324/pdf/GENETICS_205_3_1079.pdf",
+      "http_status": 200,
+      "sha256": "986fa51a841014e54fef595878ce4785192219d56ea9db81a9d335f315a906d8",
+      "saved_path": "papers/_core_lit_epistasis/sources/sailer_harms_2017_codex.pdf",
+      "what": "invalid PMC endpoint response; HTML/challenge page, not a PDF"
+    },
+    {
+      "url": "https://journals.plos.org/ploscompbiol/article/file?id=10.1371/journal.pcbi.1005541&type=printable",
+      "http_status": 200,
+      "sha256": "1d26d36598971e02c8a3e4168434bbc47febd345c36ecf8e3e58a95ceeeff612",
+      "saved_path": "papers/_core_lit_epistasis/sources/sailer_harms_2017_trajectories_codex.pdf",
+      "what": "publisher PDF, second Sailer and Harms 2017 high-order-epistasis paper"
+    },
+    {
+      "url": "https://arxiv.org/pdf/1202.4378",
+      "http_status": 200,
+      "sha256": "df8dc2484f4a1e591a92ec9e9d7fe64ab57c003ae89eda0f3d59e331a4f66227",
+      "saved_path": "papers/_core_lit_epistasis/sources/szendro_et_al_2013_codex.pdf",
+      "what": "author preprint"
+    },
+    {
+      "url": "https://papers.neurips.cc/paper_files/paper/2025/file/323fcf83a0f26c7c04eae0d91125d518-Paper-Datasets_and_Benchmarks_Track.pdf",
+      "http_status": 200,
+      "sha256": "0ab8f8721645718db810f49d639fe080db38225b73cbb7ad2fb036c985a7d11b",
+      "saved_path": "papers/_core_lit_epistasis/sources/huang_zhou_li_2025_codex.pdf",
+      "what": "NeurIPS proceedings PDF"
+    },
+    {
+      "url": "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC5340324/fullTextXML",
+      "http_status": 200,
+      "sha256": "162141b0894654528e269807e8978ed0cec07d54f1691d366353b233a1b86b2d",
+      "saved_path": "papers/_core_lit_epistasis/sources/sailer_harms_2017_codex_fulltext.xml",
+      "what": "Europe PMC full text XML; usable article text"
+    },
+    {
+      "url": "https://journals.plos.org/ploscompbiol/article/file?id=10.1371/journal.pcbi.1004771.s004&type=supplementary",
+      "http_status": 200,
+      "sha256": "2437aab695c4151544ba039e79ca3b6950b36bb54281e2170e1bd9dde24905e4",
+      "saved_path": "papers/_core_lit_epistasis/sources/poelwijk_2016_s4_genotype_coding_codex.pdf",
+      "what": "publisher supplement on Fourier and Taylor decompositions"
+    },
+    {
+      "url": "https://marks.hms.harvard.edu/proteingym/ProteinGym_v1.3/DMS_ProteinGym_substitutions.zip",
+      "http_status": 200,
+      "sha256": "3a83766254ac9ac9984ec25cb73c6e010ea4418f5e35f143933e6b6e6473b921",
+      "saved_path": "papers/_core_lit_epistasis/sources/ProteinGym_v1.3_DMS_substitutions_codex.zip",
+      "what": "ProteinGym v1.3 DMS substitution source data archive"
+    },
+    {
+      "url": "https://marks.hms.harvard.edu/proteingym/ProteinGym_v1.3/DMS_ProteinGym_substitutions.zip#DMS_ProteinGym_substitutions/RCD1_ARATH_Tsuboyama_2023_5OAO.csv",
+      "http_status": 200,
+      "sha256": "d06d09413321d0c45661dcbd7a22fb7e8e28226fdeffb8fd60e2ecf82adf5286",
+      "saved_path": "papers/_core_lit_epistasis/sources/RCD1_ARATH_Tsuboyama_2023_5OAO_codex.csv",
+      "what": "per-assay CSV member extracted from the downloaded ProteinGym archive"
+    },
+    {
+      "url": "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC5340324/fullTextXML",
+      "http_status": 200,
+      "sha256": "162141b0894654528e269807e8978ed0cec07d54f1691d366353b233a1b86b2d",
+      "saved_path": "papers/_core_lit_epistasis/sources/sailer_harms_2017_fulltext_codex.xml",
+      "what": "byte-identical _codex-suffix duplicate of the Europe PMC full text XML"
+    },
+    {
+      "url": "https://www.imsc.res.in/~sitabhra/teaching/sb17/deVisser_Krug_NatureRevGenetics_2014_Empirical_fitness_landscapes_and_the_predictability_of_evolution.pdf",
+      "http_status": 200,
+      "sha256": "6cd9a2ebcd8ad42b4a812a291cf01a70ca00bfce7f75702911e5fb0e1605f375",
+      "saved_path": "papers/_core_lit_epistasis/sources/de_visser_krug_2014_codex.pdf",
+      "what": "author-hosted full text PDF"
+    },
+    {
+      "url": "https://ptacts.uspto.gov/ptacts/public-informations/petitions/1557959/download-documents?artifactId=EUIQmtQHGdxj6-koVqX0t_L7P-REwRKNeVuBGRZzNbntEv_k8QMN4LA",
+      "http_status": 403,
+      "sha256": "1c018b192c20443fccfefc32c83bb8e0b4ca7b7cf20c6b03b14bf19c11b0a753",
+      "saved_path": "papers/_core_lit_epistasis/sources/poelwijk_et_al_2007_uspto_attempt_codex.html",
+      "what": "alternate article-copy attempt; saved response is a 919-byte HTML challenge page"
+    }
+  ],
+  "overlaps": [
+    {
+      "metric": "higher_order_epistasis",
+      "paper_value": 0.547,
+      "locator": "Huang et al. 2025, Table A2, printed p.47, reference [50] column",
+      "quote": "0.547",
+      "printed_or_plotted": "printed",
+      "definition_match": "yes",
+      "definition_quote": "R\u00b2 score (Appendix C.3.4, printed p.37)",
+      "input": {
+        "path": "/Users/arwen/Documents/GitHub/GraphFLA/data/BioSequence/Skwara2023_Kehe_data.csv",
+        "sha256": "69122636b491193f4f69a9fa3eb051dc67aa25ca61ce292a88abbc2a924997cf",
+        "n_rows": 21198,
+        "n_unique_variants": 4239,
+        "n_configs": 4125,
+        "n_edges": 15454,
+        "preprocessing": "pos1..pos14 and fitness as stored; BooleanLandscape; epsilon=0; package build deduplicated configurations and removed 114 isolated configurations"
+      },
+      "graphfla_call": "A.higher_order_epistasis(ls, order=2)",
+      "graphfla_value": 0.7338618916800133,
+      "outcome": "mismatch",
+      "reason": "The API uses the same nominal order-2 polynomial-regression R\u00b2 definition, but its value differs from the printed 0.547. An independent order-2 OLS fit to all raw rows gave 0.7272275782751516, also a mismatch. Table A2's replicate/duplicate weighting procedure is NOT STATED IN PAPER.",
+      "circularity_warning": "Target comes from Huang et al. 2025, whose landscape statistics were COMPUTED BY GraphFLA. This is a regression snapshot, not independent scientific evidence. Do not promote as a literature reproduction."
+    },
+    {
+      "metric": "higher_order_epistasis",
+      "paper_value": 0.675,
+      "locator": "Huang et al. 2025, Table A2, printed p.47, reference [111] column",
+      "quote": "0.675",
+      "printed_or_plotted": "printed",
+      "definition_match": "yes",
+      "definition_quote": "R\u00b2 score (Appendix C.3.4, printed p.37)",
+      "input": {
+        "path": "/Users/arwen/Documents/GitHub/GraphFLA/data/BioSequence/Skwara2023_Butyrate.csv",
+        "sha256": "ad7f455940b5a2979d8e24921a2e725342e4e7a88295b339b16128cc049c7937",
+        "n_rows": 1561,
+        "n_unique_variants": 577,
+        "n_configs": 336,
+        "n_edges": 505,
+        "preprocessing": "pos1..pos25 and fitness as stored; BooleanLandscape; epsilon=0; package build deduplicated configurations and removed 241 isolated configurations; fewer than 1,024 unique variants remain"
+      },
+      "graphfla_call": "A.higher_order_epistasis(ls, order=2)",
+      "graphfla_value": 0.9362648042140009,
+      "outcome": "mismatch",
+      "reason": "The value differs from the printed 0.675. An independent order-2 OLS fit to all 1,561 raw rows gave 0.8709446775182368, also a mismatch. This is exploratory because only 577 unique sequence strings are present and GraphFLA retained 336 connected configurations.",
+      "circularity_warning": "Target comes from Huang et al. 2025, whose landscape statistics were COMPUTED BY GraphFLA. This is a regression snapshot, not independent scientific evidence. Do not promote as a literature reproduction."
+    },
+    {
+      "metric": "classify_epistasis",
+      "paper_value": {
+        "magnitude": 0.404,
+        "sign": 0.395,
+        "reciprocal_sign": 0.201,
+        "positive": 0.841,
+        "negative": 0.159
+      },
+      "locator": "Huang et al. 2025, Table A2, printed p.47, reference [50] column",
+      "quote": "0.404, 0.395, 0.201, 0.841, 0.159",
+      "printed_or_plotted": "printed",
+      "definition_match": "yes",
+      "definition_quote": "Eq. A24: None if \u03b5ij=0; Magnitude if \u03b5ij\u22600 and both sign products are nonnegative; Reciprocal Sign if both are negative; Sign otherwise (printed pp.34\u201335).",
+      "input": {
+        "path": "/Users/arwen/Documents/GitHub/GraphFLA/data/BioSequence/Skwara2023_Kehe_data.csv",
+        "sha256": "69122636b491193f4f69a9fa3eb051dc67aa25ca61ce292a88abbc2a924997cf",
+        "n_rows": 21198,
+        "n_unique_variants": 4239,
+        "n_configs": 4125,
+        "n_edges": 15454,
+        "preprocessing": "pos1..pos14 and fitness as stored; BooleanLandscape; epsilon=0; package build deduplicated configurations and removed 114 isolated configurations"
+      },
+      "graphfla_call": "A.classify_epistasis(ls, sample_cut_prob=0)",
+      "graphfla_value": {
+        "magnitude": 0.4041644637846191,
+        "sign": 0.39464801333929805,
+        "reciprocal_sign": 0.2011875228760828,
+        "positive": 0.840660457928342,
+        "negative": 0.159339542071658
+      },
+      "outcome": "regression_snapshot",
+      "circularity_warning": "Target comes from Huang et al. 2025, whose landscape statistics were COMPUTED BY GraphFLA. This is a regression snapshot, not independent scientific evidence. Do not promote as a literature reproduction.",
+      "original_agent_claim": {
+        "outcome": "reproduced_with_precision",
+        "reason": ""
+      },
+      "reason": "LEAD CORRECTION: the target is a number GraphFLA itself produced (Huang et al. 2025), so this is a regression check, not a reproduction. Valid for detecting drift; not scientific evidence. "
+    },
+    {
+      "metric": "classify_epistasis",
+      "paper_value": {
+        "magnitude": 0.457,
+        "sign": 0.354,
+        "reciprocal_sign": 0.189,
+        "positive": 0.774,
+        "negative": 0.226
+      },
+      "locator": "Huang et al. 2025, Table A2, printed p.47, reference [111] column",
+      "quote": "0.457, 0.354, 0.189, 0.774, 0.226",
+      "printed_or_plotted": "printed",
+      "definition_match": "yes",
+      "definition_quote": "Eq. A24: None if \u03b5ij=0; Magnitude if \u03b5ij\u22600 and both sign products are nonnegative; Reciprocal Sign if both are negative; Sign otherwise (printed pp.34\u201335).",
+      "input": {
+        "path": "/Users/arwen/Documents/GitHub/GraphFLA/data/BioSequence/Skwara2023_Butyrate.csv",
+        "sha256": "ad7f455940b5a2979d8e24921a2e725342e4e7a88295b339b16128cc049c7937",
+        "n_rows": 1561,
+        "n_unique_variants": 577,
+        "n_configs": 336,
+        "n_edges": 505,
+        "preprocessing": "pos1..pos25 and fitness as stored; BooleanLandscape; epsilon=0; package build deduplicated configurations and removed 241 isolated configurations; fewer than 1,024 unique variants remain"
+      },
+      "graphfla_call": "A.classify_epistasis(ls, sample_cut_prob=0)",
+      "graphfla_value": {
+        "magnitude": 0.4573170731707317,
+        "sign": 0.35365853658536583,
+        "reciprocal_sign": 0.18902439024390244,
+        "positive": 0.774390243902439,
+        "negative": 0.22560975609756095
+      },
+      "outcome": "regression_snapshot",
+      "reason": "LEAD CORRECTION: the target is a number GraphFLA itself produced (Huang et al. 2025), so this is a regression check, not a reproduction. Valid for detecting drift; not scientific evidence. All five printed proportions match to three decimals, but this input has only 577 unique sequences and 336 connected GraphFLA configurations; it is not a qualifying >1,024-unique-variant case.",
+      "circularity_warning": "Target comes from Huang et al. 2025, whose landscape statistics were COMPUTED BY GraphFLA. This is a regression snapshot, not independent scientific evidence. Do not promote as a literature reproduction.",
+      "original_agent_claim": {
+        "outcome": "reproduced_with_precision",
+        "reason": "All five printed proportions match to three decimals, but this input has only 577 unique sequences and 336 connected GraphFLA configurations; it is not a qualifying >1,024-unique-variant case."
+      }
+    },
+    {
+      "metric": "classify_epistasis",
+      "paper_value": {
+        "reciprocal_sign": 0.206
+      },
+      "locator": "Huang et al. 2025, Table A3, printed p.48, Kuo2020 row",
+      "quote": "0.206",
+      "printed_or_plotted": "printed",
+      "definition_match": "yes",
+      "definition_quote": "Eq. A24: None if \u03b5ij=0; Magnitude if \u03b5ij\u22600 and both sign products are nonnegative; Reciprocal Sign if both are negative; Sign otherwise (printed pp.34\u201335).",
+      "input": {
+        "path": "/Users/arwen/Documents/GitHub/GraphFLA/data/BioSequence/Kuo2020.csv",
+        "sha256": "69a86caf1ccbfc94a519f5917624d6862a0dfede0082abae79300eda0bb959c0",
+        "n_rows": 197890,
+        "n_unique_variants": 197890,
+        "n_configs": 197890,
+        "n_edges": 2180702,
+        "preprocessing": "sequences and fitness as stored; no row filtering or score transformation; first DNALandscape attempt failed because input contains U; rerun used RNALandscape with A/C/G/U alphabet"
+      },
+      "graphfla_call": "A.classify_epistasis(ls, seed=0, time_budget=15.0) using GraphFLA auto sampling",
+      "graphfla_value": {
+        "reciprocal_sign": 0.20672091584908864,
+        "sample_cut_prob": 0.5
+      },
+      "outcome": "mismatch",
+      "reason": "The sampled GraphFLA estimate rounds to 0.207 rather than the printed 0.206. Exact motif enumeration was not attempted at this graph size; report this as a sampled comparison, not an exact reproduction.",
+      "circularity_warning": "Target comes from Huang et al. 2025, whose landscape statistics were COMPUTED BY GraphFLA. This is a regression snapshot, not independent scientific evidence. Do not promote as a literature reproduction."
+    },
+    {
+      "metric": "classify_epistasis",
+      "paper_value": {
+        "reciprocal_sign": 0.182
+      },
+      "locator": "Huang et al. 2025, Table A4, printed p.52, RCD1_ARATH_Tsuboyama_2023_5OAO row",
+      "quote": "0.182",
+      "printed_or_plotted": "printed",
+      "definition_match": "yes",
+      "definition_quote": "Eq. A24: None if \u03b5ij=0; Magnitude if \u03b5ij\u22600 and both sign products are nonnegative; Reciprocal Sign if both are negative; Sign otherwise (printed pp.34\u201335).",
+      "input": {
+        "path": "papers/_core_lit_epistasis/sources/RCD1_ARATH_Tsuboyama_2023_5OAO_codex.csv",
+        "sha256": "d06d09413321d0c45661dcbd7a22fb7e8e28226fdeffb8fd60e2ecf82adf5286",
+        "n_rows": 1261,
+        "n_unique_variants": 1261,
+        "n_configs": 1261,
+        "n_edges": 11776,
+        "preprocessing": "ProteinGym v1.3 assay CSV; inferred target sequence and reduced to mutated positions with repository helpers; all rows retained; DMS_score as stored; ProteinLandscape defaults"
+      },
+      "graphfla_call": "A.classify_epistasis(ls, sample_cut_prob=0)",
+      "graphfla_value": {
+        "reciprocal_sign": 0.18208338397957943
+      },
+      "outcome": "regression_snapshot",
+      "circularity_warning": "Target comes from Huang et al. 2025, whose landscape statistics were COMPUTED BY GraphFLA. This is a regression snapshot, not independent scientific evidence. Do not promote as a literature reproduction.",
+      "original_agent_claim": {
+        "outcome": "reproduced_with_precision",
+        "reason": ""
+      },
+      "reason": "LEAD CORRECTION: the target is a number GraphFLA itself produced (Huang et al. 2025), so this is a regression check, not a reproduction. Valid for detecting drift; not scientific evidence. "
+    },
+    {
+      "metric": "neighbor_fitness_correlation",
+      "paper_value": 0.79,
+      "locator": "Huang et al. 2025, Table A2, printed p.47, reference [50] column",
+      "quote": "0.790",
+      "printed_or_plotted": "printed",
+      "definition_match": "yes",
+      "definition_quote": "NFC = Cor[f(g), \u27e8f\u27e9N(g)] (Eq. A2); \u27e8f\u27e9N(g)=1/|N(g)| \u03a3g\u2032\u2208N(g) f(g\u2032) (Eq. A3), printed p.28.",
+      "input": {
+        "path": "/Users/arwen/Documents/GitHub/GraphFLA/data/BioSequence/Skwara2023_Kehe_data.csv",
+        "sha256": "69122636b491193f4f69a9fa3eb051dc67aa25ca61ce292a88abbc2a924997cf",
+        "n_rows": 21198,
+        "n_unique_variants": 4239,
+        "n_configs": 4125,
+        "n_edges": 15454,
+        "preprocessing": "pos1..pos14 and fitness as stored; BooleanLandscape; epsilon=0; package build deduplicated configurations and removed 114 isolated configurations"
+      },
+      "graphfla_call": "A.neighbor_fitness_correlation(ls, method=\"pearson\")",
+      "graphfla_value": 0.7902638839797081,
+      "outcome": "regression_snapshot",
+      "circularity_warning": "Target comes from Huang et al. 2025, whose landscape statistics were COMPUTED BY GraphFLA. This is a regression snapshot, not independent scientific evidence. Do not promote as a literature reproduction.",
+      "original_agent_claim": {
+        "outcome": "reproduced_with_precision",
+        "reason": ""
+      },
+      "reason": "LEAD CORRECTION: the target is a number GraphFLA itself produced (Huang et al. 2025), so this is a regression check, not a reproduction. Valid for detecting drift; not scientific evidence. "
+    },
+    {
+      "metric": "neighbor_fitness_correlation",
+      "paper_value": 0.635,
+      "locator": "Huang et al. 2025, Table A2, printed p.47, reference [111] column",
+      "quote": "0.635",
+      "printed_or_plotted": "printed",
+      "definition_match": "yes",
+      "definition_quote": "NFC = Cor[f(g), \u27e8f\u27e9N(g)] (Eq. A2); \u27e8f\u27e9N(g)=1/|N(g)| \u03a3g\u2032\u2208N(g) f(g\u2032) (Eq. A3), printed p.28.",
+      "input": {
+        "path": "/Users/arwen/Documents/GitHub/GraphFLA/data/BioSequence/Skwara2023_Butyrate.csv",
+        "sha256": "ad7f455940b5a2979d8e24921a2e725342e4e7a88295b339b16128cc049c7937",
+        "n_rows": 1561,
+        "n_unique_variants": 577,
+        "n_configs": 336,
+        "n_edges": 505,
+        "preprocessing": "pos1..pos25 and fitness as stored; BooleanLandscape; epsilon=0; package build deduplicated configurations and removed 241 isolated configurations; fewer than 1,024 unique variants remain"
+      },
+      "graphfla_call": "A.neighbor_fitness_correlation(ls, method=\"pearson\")",
+      "graphfla_value": 0.7096302330925068,
+      "outcome": "mismatch",
+      "reason": "The API result differs from the printed 0.635. The paper table counts 1,561 records, but the input has 577 unique sequences and GraphFLA retained 336 connected configurations; no alternative weighting was tuned.",
+      "circularity_warning": "Target comes from Huang et al. 2025, whose landscape statistics were COMPUTED BY GraphFLA. This is a regression snapshot, not independent scientific evidence. Do not promote as a literature reproduction."
+    },
+    {
+      "metric": "neighbor_fitness_correlation",
+      "paper_value": 0.917,
+      "locator": "Huang et al. 2025, Table A3, printed p.48, Kuo2020 row",
+      "quote": "0.917",
+      "printed_or_plotted": "printed",
+      "definition_match": "yes",
+      "definition_quote": "NFC = Cor[f(g), \u27e8f\u27e9N(g)] (Eq. A2); \u27e8f\u27e9N(g)=1/|N(g)| \u03a3g\u2032\u2208N(g) f(g\u2032) (Eq. A3), printed p.28.",
+      "input": {
+        "path": "/Users/arwen/Documents/GitHub/GraphFLA/data/BioSequence/Kuo2020.csv",
+        "sha256": "69a86caf1ccbfc94a519f5917624d6862a0dfede0082abae79300eda0bb959c0",
+        "n_rows": 197890,
+        "n_unique_variants": 197890,
+        "n_configs": 197890,
+        "n_edges": 2180702,
+        "preprocessing": "sequences and fitness as stored; no row filtering or score transformation; RNALandscape after documented DNA-alphabet failure"
+      },
+      "graphfla_call": "A.neighbor_fitness_correlation(ls, method=\"pearson\")",
+      "graphfla_value": 0.9175256999014063,
+      "outcome": "mismatch",
+      "reason": "The GraphFLA result rounds to 0.918 at the table's precision, not the printed 0.917. No preprocessing variant was tuned.",
+      "circularity_warning": "Target comes from Huang et al. 2025, whose landscape statistics were COMPUTED BY GraphFLA. This is a regression snapshot, not independent scientific evidence. Do not promote as a literature reproduction."
+    },
+    {
+      "metric": "neighbor_fitness_correlation",
+      "paper_value": 0.696,
+      "locator": "Huang et al. 2025, Table A4, printed p.52, RCD1_ARATH_Tsuboyama_2023_5OAO row",
+      "quote": "0.696",
+      "printed_or_plotted": "printed",
+      "definition_match": "yes",
+      "definition_quote": "NFC = Cor[f(g), \u27e8f\u27e9N(g)] (Eq. A2); \u27e8f\u27e9N(g)=1/|N(g)| \u03a3g\u2032\u2208N(g) f(g\u2032) (Eq. A3), printed p.28.",
+      "input": {
+        "path": "papers/_core_lit_epistasis/sources/RCD1_ARATH_Tsuboyama_2023_5OAO_codex.csv",
+        "sha256": "d06d09413321d0c45661dcbd7a22fb7e8e28226fdeffb8fd60e2ecf82adf5286",
+        "n_rows": 1261,
+        "n_unique_variants": 1261,
+        "n_configs": 1261,
+        "n_edges": 11776,
+        "preprocessing": "ProteinGym v1.3 assay CSV; inferred target sequence and reduced to mutated positions with repository helpers; all rows retained; DMS_score as stored; ProteinLandscape defaults"
+      },
+      "graphfla_call": "A.neighbor_fitness_correlation(ls, method=\"pearson\")",
+      "graphfla_value": 0.695989839482224,
+      "outcome": "regression_snapshot",
+      "circularity_warning": "Target comes from Huang et al. 2025, whose landscape statistics were COMPUTED BY GraphFLA. This is a regression snapshot, not independent scientific evidence. Do not promote as a literature reproduction.",
+      "original_agent_claim": {
+        "outcome": "reproduced_with_precision",
+        "reason": ""
+      },
+      "reason": "LEAD CORRECTION: the target is a number GraphFLA itself produced (Huang et al. 2025), so this is a regression check, not a reproduction. Valid for detecting drift; not scientific evidence. "
+    },
+    {
+      "metric": "diminishing_returns_index",
+      "paper_value": 0.043,
+      "locator": "Huang et al. 2025, Table A2, printed p.47, reference [50] column",
+      "quote": "0.043",
+      "printed_or_plotted": "printed",
+      "definition_match": "no",
+      "definition_quote": "See notes.md, \u00a73, Appendix C.3.2, printed p.36.",
+      "definition_divergence": "The paper pools individual beneficial mutation transitions and correlates each transition's background fitness with that transition's effect. GraphFLA correlates node fitness with the mean improving effect over each node's outgoing edges.",
+      "input": {
+        "path": "/Users/arwen/Documents/GitHub/GraphFLA/data/BioSequence/Skwara2023_Kehe_data.csv",
+        "sha256": "69122636b491193f4f69a9fa3eb051dc67aa25ca61ce292a88abbc2a924997cf",
+        "n_rows": 21198,
+        "n_unique_variants": 4239,
+        "n_configs": 4125,
+        "n_edges": 15454,
+        "preprocessing": "pos1..pos14 and fitness as stored; BooleanLandscape; epsilon=0; package build deduplicated configurations and removed 114 isolated configurations"
+      },
+      "graphfla_call": "A.diminishing_returns_index(ls, method=\"pearson\")",
+      "graphfla_value": 0.042677024072165656,
+      "outcome": "regression_snapshot",
+      "reason": "LEAD CORRECTION: the target is a number GraphFLA itself produced (Huang et al. 2025), so this is a regression check, not a reproduction. Valid for detecting drift; not scientific evidence. The API value rounds to 0.043, but this is only a numerical match: applying the paper's stated edgewise Pearson definition to the same improving transitions gives 0.025367253804902564.",
+      "circularity_warning": "Target comes from Huang et al. 2025, whose landscape statistics were COMPUTED BY GraphFLA. This is a regression snapshot, not independent scientific evidence. Do not promote as a literature reproduction.",
+      "original_agent_claim": {
+        "outcome": "reproduced_with_precision",
+        "reason": "The API value rounds to 0.043, but this is only a numerical match: applying the paper's stated edgewise Pearson definition to the same improving transitions gives 0.025367253804902564."
+      }
+    },
+    {
+      "metric": "diminishing_returns_index",
+      "paper_value": -0.319,
+      "locator": "Huang et al. 2025, Table A2, printed p.47, reference [111] column",
+      "quote": "-0.319",
+      "printed_or_plotted": "printed",
+      "definition_match": "no",
+      "definition_quote": "See notes.md, \u00a73, Appendix C.3.2, printed p.36.",
+      "definition_divergence": "The paper defines a Pearson correlation over individual beneficial transitions; GraphFLA correlates node fitness with mean improving outgoing effect per node.",
+      "input": {
+        "path": "/Users/arwen/Documents/GitHub/GraphFLA/data/BioSequence/Skwara2023_Butyrate.csv",
+        "sha256": "ad7f455940b5a2979d8e24921a2e725342e4e7a88295b339b16128cc049c7937",
+        "n_rows": 1561,
+        "n_unique_variants": 577,
+        "n_configs": 336,
+        "n_edges": 505,
+        "preprocessing": "pos1..pos25 and fitness as stored; BooleanLandscape; epsilon=0; package build deduplicated configurations and removed 241 isolated configurations; fewer than 1,024 unique variants remain"
+      },
+      "graphfla_call": "A.diminishing_returns_index(ls, method=\"pearson\")",
+      "graphfla_value": -0.3191680067443399,
+      "outcome": "regression_snapshot",
+      "reason": "LEAD CORRECTION: the target is a number GraphFLA itself produced (Huang et al. 2025), so this is a regression check, not a reproduction. Valid for detecting drift; not scientific evidence. The API value rounds to -0.319, but this is only a numerical match: the paper's edgewise formula on the same graph gives -0.2918116366582096. This is not a qualifying >1,024-unique-variant landscape.",
+      "circularity_warning": "Target comes from Huang et al. 2025, whose landscape statistics were COMPUTED BY GraphFLA. This is a regression snapshot, not independent scientific evidence. Do not promote as a literature reproduction.",
+      "original_agent_claim": {
+        "outcome": "reproduced_with_precision",
+        "reason": "The API value rounds to -0.319, but this is only a numerical match: the paper's edgewise formula on the same graph gives -0.2918116366582096. This is not a qualifying >1,024-unique-variant landscape."
+      }
+    },
+    {
+      "metric": "diminishing_returns_index",
+      "paper_value": 0.391,
+      "locator": "Huang et al. 2025, Table A3, printed p.48, Kuo2020 row",
+      "quote": "0.391",
+      "printed_or_plotted": "printed",
+      "definition_match": "no",
+      "definition_quote": "See notes.md, \u00a73, Appendix C.3.2, printed p.36.",
+      "definition_divergence": "The paper pools individual beneficial mutation transitions for Pearson correlation; GraphFLA correlates node fitness with the mean improving effect over each node's outgoing edges.",
+      "input": {
+        "path": "/Users/arwen/Documents/GitHub/GraphFLA/data/BioSequence/Kuo2020.csv",
+        "sha256": "69a86caf1ccbfc94a519f5917624d6862a0dfede0082abae79300eda0bb959c0",
+        "n_rows": 197890,
+        "n_unique_variants": 197890,
+        "n_configs": 197890,
+        "n_edges": 2180702,
+        "preprocessing": "sequences and fitness as stored; no row filtering or score transformation; RNALandscape after documented DNA-alphabet failure"
+      },
+      "graphfla_call": "A.diminishing_returns_index(ls, method=\"pearson\")",
+      "graphfla_value": 0.3914520026855216,
+      "outcome": "regression_snapshot",
+      "reason": "LEAD CORRECTION: the target is a number GraphFLA itself produced (Huang et al. 2025), so this is a regression check, not a reproduction. Valid for detecting drift; not scientific evidence. The API value rounds to 0.391, but this is only a numerical match: applying the paper's stated edgewise Pearson formula to the same improving transitions gives 0.2383588216304964.",
+      "circularity_warning": "Target comes from Huang et al. 2025, whose landscape statistics were COMPUTED BY GraphFLA. This is a regression snapshot, not independent scientific evidence. Do not promote as a literature reproduction.",
+      "original_agent_claim": {
+        "outcome": "reproduced_with_precision",
+        "reason": "The API value rounds to 0.391, but this is only a numerical match: applying the paper's stated edgewise Pearson formula to the same improving transitions gives 0.2383588216304964."
+      }
+    },
+    {
+      "metric": "increasing_costs_index",
+      "paper_value": 0.816,
+      "locator": "Huang et al. 2025, Table A2, printed p.47, reference [50] column",
+      "quote": "0.816",
+      "printed_or_plotted": "printed",
+      "definition_match": "no",
+      "definition_quote": "See notes.md, \u00a73, Appendix C.3.2, printed p.36.",
+      "definition_divergence": "The paper pools individual deleterious mutation transitions and correlates background fitness with absolute effect. GraphFLA correlates node fitness with the mean incoming cost from improving predecessors.",
+      "input": {
+        "path": "/Users/arwen/Documents/GitHub/GraphFLA/data/BioSequence/Skwara2023_Kehe_data.csv",
+        "sha256": "69122636b491193f4f69a9fa3eb051dc67aa25ca61ce292a88abbc2a924997cf",
+        "n_rows": 21198,
+        "n_unique_variants": 4239,
+        "n_configs": 4125,
+        "n_edges": 15454,
+        "preprocessing": "pos1..pos14 and fitness as stored; BooleanLandscape; epsilon=0; package build deduplicated configurations and removed 114 isolated configurations"
+      },
+      "graphfla_call": "A.increasing_costs_index(ls, method=\"pearson\")",
+      "graphfla_value": 0.8164256501037122,
+      "outcome": "regression_snapshot",
+      "reason": "LEAD CORRECTION: the target is a number GraphFLA itself produced (Huang et al. 2025), so this is a regression check, not a reproduction. Valid for detecting drift; not scientific evidence. The API value rounds to 0.816, but this is only a numerical match: applying the paper's edgewise Pearson definition to the same transitions gives 0.6697016597268368.",
+      "circularity_warning": "Target comes from Huang et al. 2025, whose landscape statistics were COMPUTED BY GraphFLA. This is a regression snapshot, not independent scientific evidence. Do not promote as a literature reproduction.",
+      "original_agent_claim": {
+        "outcome": "reproduced_with_precision",
+        "reason": "The API value rounds to 0.816, but this is only a numerical match: applying the paper's edgewise Pearson definition to the same transitions gives 0.6697016597268368."
+      }
+    },
+    {
+      "metric": "increasing_costs_index",
+      "paper_value": 0.583,
+      "locator": "Huang et al. 2025, Table A2, printed p.47, reference [111] column",
+      "quote": "0.583",
+      "printed_or_plotted": "printed",
+      "definition_match": "no",
+      "definition_quote": "See notes.md, \u00a73, Appendix C.3.2, printed p.36.",
+      "definition_divergence": "The paper pools individual deleterious mutation transitions and correlates background fitness with absolute effect. GraphFLA correlates node fitness with the mean incoming cost from improving predecessors.",
+      "input": {
+        "path": "/Users/arwen/Documents/GitHub/GraphFLA/data/BioSequence/Skwara2023_Butyrate.csv",
+        "sha256": "ad7f455940b5a2979d8e24921a2e725342e4e7a88295b339b16128cc049c7937",
+        "n_rows": 1561,
+        "n_unique_variants": 577,
+        "n_configs": 336,
+        "n_edges": 505,
+        "preprocessing": "pos1..pos25 and fitness as stored; BooleanLandscape; epsilon=0; package build deduplicated configurations and removed 241 isolated configurations; fewer than 1,024 unique variants remain"
+      },
+      "graphfla_call": "A.increasing_costs_index(ls, method=\"pearson\")",
+      "graphfla_value": 0.583491658165495,
+      "outcome": "regression_snapshot",
+      "reason": "LEAD CORRECTION: the target is a number GraphFLA itself produced (Huang et al. 2025), so this is a regression check, not a reproduction. Valid for detecting drift; not scientific evidence. The API value rounds to 0.583, but this is only a numerical match: the paper's edgewise Pearson formula on the same graph gives 0.5006600172126364. This is not a qualifying >1,024-unique-variant landscape.",
+      "circularity_warning": "Target comes from Huang et al. 2025, whose landscape statistics were COMPUTED BY GraphFLA. This is a regression snapshot, not independent scientific evidence. Do not promote as a literature reproduction.",
+      "original_agent_claim": {
+        "outcome": "reproduced_with_precision",
+        "reason": "The API value rounds to 0.583, but this is only a numerical match: the paper's edgewise Pearson formula on the same graph gives 0.5006600172126364. This is not a qualifying >1,024-unique-variant landscape."
+      }
+    },
+    {
+      "metric": "walsh_hadamard",
+      "paper_value": null,
+      "locator": "Classic-source equations listed in notes.md, \u00a72; no printed coefficient target for a >1,024-variant landscape",
+      "quote": "NOT STATED IN PAPER",
+      "printed_or_plotted": null,
+      "definition_match": "unknown",
+      "definition_quote": "See notes.md, \u00a72.3\u2013\u00a72.7 for verbatim Walsh/Fourier equations, normalizations and coding.",
+      "definition_divergence": "The classic papers provide coefficient transforms and order spectra, but do not print a comparable coefficient result on a >1,024-variant landscape with obtainable data. Coefficient normalizations and genotype codings differ across papers.",
+      "graphfla_call": null,
+      "graphfla_value": null,
+      "outcome": "not_attempted",
+      "reason": "No printed, reproducible >1,024-variant coefficient target was found. Plot-only coefficient profiles were not read as targets."
+    },
+    {
+      "metric": "higher_order_epistasis",
+      "paper_value": null,
+      "locator": "Sailer & Harms 2017, High-order epistasis shapes evolutionary trajectories, Eq. 7, Methods; six five-mutation maps in Table 1",
+      "quote": "NOT STATED IN PAPER",
+      "printed_or_plotted": null,
+      "definition_match": "no",
+      "definition_quote": "\u03d5 = \u03c1_i\u00b2 \u2212 \u03c1_(i\u22121)\u00b2 (Eq. 7, Methods, printed p.11; see notes.md \u00a72.5).",
+      "definition_divergence": "Sailer & Harms' \u03d5_i is an increment between truncated-model fit correlations; GraphFLA higher_order_epistasis(order=k) is a cumulative polynomial-regression R\u00b2 through order k.",
+      "graphfla_call": null,
+      "graphfla_value": null,
+      "outcome": "not_attempted",
+      "reason": "Each source map contains 32 genotypes (five binary mutations), below the >1,024-variant criterion; the paper's order-specific figure values are plotted and were not used."
+    },
+    {
+      "metric": "classify_epistasis",
+      "paper_value": null,
+      "locator": "Weinreich et al. 2005, Fig. 2 caption, printed p.1169; Poelwijk et al. 2007, Box 1, printed p.383",
+      "quote": "NOT STATED IN PAPER",
+      "printed_or_plotted": null,
+      "definition_match": "yes",
+      "definition_quote": "See notes.md \u00a7\u00a72.1\u20132.2 for verbatim sign- and magnitude-epistasis definitions.",
+      "graphfla_call": null,
+      "graphfla_value": null,
+      "outcome": "not_attempted",
+      "reason": "These core papers define square-level sign/magnitude categories but print no numeric class-fraction target on a >1,024-variant landscape."
+    },
+    {
+      "metric": "gradient_intensity",
+      "paper_value": null,
+      "locator": "Search scope and terms in notes.md, \u00a74; no exact published definition located",
+      "quote": "NOT STATED IN PAPER",
+      "printed_or_plotted": null,
+      "definition_match": "unknown",
+      "definition_quote": "NOT STATED IN PAPER",
+      "definition_divergence": "NO published origin found; searched: exact phrase, mean absolute fitness difference across mutation edges, normalized gradient magnitude, and the core fitness-landscape reviews and GraphFLA paper. Search details are in notes.md, \u00a74.",
+      "graphfla_call": null,
+      "graphfla_value": null,
+      "outcome": "not_attempted",
+      "reason": "No published target or exact literature origin was found."
+    },
+    {
+      "metric": "fitness_flattening_index",
+      "paper_value": null,
+      "locator": "Search scope and terms in notes.md, \u00a74; no exact published definition located",
+      "quote": "NOT STATED IN PAPER",
+      "printed_or_plotted": null,
+      "definition_match": "unknown",
+      "definition_quote": "NOT STATED IN PAPER",
+      "definition_divergence": "NO published origin found; searched: exact phrase, flattening index of fitness landscapes, adaptive-path slope/correlation measures, and the core fitness-landscape reviews and GraphFLA paper. Search details are in notes.md, \u00a74.",
+      "graphfla_call": null,
+      "graphfla_value": null,
+      "outcome": "not_attempted",
+      "reason": "Qualitative uses of landscape flattening were found, but no paper defining this exact scalar was located."
+    }
+  ],
+  "blockers": [
+    {
+      "what": "Poelwijk et al. 2007 full text local PDF",
+      "url": "https://www.nature.com/articles/nature05451.pdf",
+      "why": "The Nature endpoint returned HTML with HTTP 200; an author-hosted PDF URL returned 404; alternate USPTO responses returned HTTP 403 challenge pages. The accessible article metadata and Box 1 text were checked through publisher/PubMed pages and a surfaced author copy.",
+      "needed_for": "Local full-text source artifact; no >1,024-variant numeric reproduction target was found in this paper."
+    }
+  ],
+  "verdict": "targets_found",
+  "verdict_reason": "Huang et al. 2025 prints comparable >1,024-variant targets. Exact GraphFLA runs reproduce RCD1 NFC and reciprocal-sign prevalence, and the Kehe landscape NFC and all five square-class proportions. Higher-order R\u00b2 mismatches on Kehe and Butyrate. DRI/ICI API values round to the table values but use different node-aggregated definitions than the paper's edgewise Pearson measures; the Kuo NFC and sampled reciprocal-sign outputs also miss table precision.",
+  "lead_review": "15 of 20 overlaps compare GraphFLA against Huang et al. 2025, the GraphFLA paper itself, and are therefore circular. They remain useful as regression snapshots. The independent entries all reported no printed number. Net independent scientific evidence from this record: none.",
+  "scope_limitation": "The negative search conclusions in this record were reached under a >1,024-variant restriction. That cutoff scopes the SUPPLIED CORPUS only and does not apply to core literature, so a defining paper with a small landscape may have been skipped. Re-run these searches without the size restriction before concluding that a metric family has no published origin.",
+  "lead_correction": "Operative outcomes corrected after external review: 10 circular comparisons relabelled regression_snapshot and 0 definition-mismatched numerical agreements relabelled definition_incompatible. Original claims preserved in each entry's original_agent_claim. A consumer filtering on reproduced_* now receives no rows from this record, which is correct: this record produced no independent scientific evidence."
+}

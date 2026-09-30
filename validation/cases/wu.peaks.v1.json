@@ -1,0 +1,38 @@
+{
+  "schema_version": 1,
+  "kind": "case",
+  "id": "wu.peaks.v1",
+  "revision": 1,
+  "study_id": "WuDOLS16",
+  "metric_ids": [
+    "construction"
+  ],
+  "evidence_tier": "published_numeric",
+  "definition_match": "yes",
+  "scope": "Completed 160000 variants",
+  "preprocessing": "Include10639 author-imputed values; epsilon=0; WT=VDGV fitness1.",
+  "sources": [
+    {
+      "url": "https://doi.org/10.7554/eLife.16965",
+      "locator": "Results p.9; Fig4A; Methods pp.20–22"
+    }
+  ],
+  "expected": {
+    "peaks": 30,
+    "above_wt": 15
+  },
+  "comparison": {
+    "kind": "exact",
+    "tolerance": 0,
+    "justification": "Exact integer or sequence identity reported independently."
+  },
+  "inputs": [
+    {
+      "root": "repo",
+      "path": "tests/fixtures/literature/wu2016/landscape.csv.gz",
+      "sha256": "8fd9fa77f92bf4a2b1892223525423f668a9e55b5babaf4140ae2c621cf03336"
+    }
+  ],
+  "pytest_node": "tests/test_literature.py::test_wu_completed_landscape_peaks_and_accessibility",
+  "history_note": "Imported from reviewed 2026-09-30 research. Original frozen evidence and trial artifacts remain in the external dossiers; this import does not claim targets were newly frozen before historical runs."
+}

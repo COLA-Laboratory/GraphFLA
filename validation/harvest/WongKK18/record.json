@@ -1,0 +1,274 @@
+{
+  "study_key": "WongKK18",
+  "dossier": "papers/Wong2018",
+  "recorded_at": "2026-09-30T21:15:55Z",
+  "agent": "codex-gpt6",
+  "paper": {
+    "title": "Quantitative Activity Profile and Context Dependence of All Human 5′ Splice Sites",
+    "doi": "10.1016/j.molcel.2018.07.033",
+    "year": 2018,
+    "bibliography_verified_against": "crossref",
+    "supplied_bibliography_errors": "The registry author list matches Crossref: Mandy S. Wong, Justin B. Kinney, and Adrian R. Krainer. The supplied title is lowercased, braces the initial Q, and uses ASCII 5' rather than the publisher’s 5′; no substantive title or author-list error is present."
+  },
+  "sources": [
+    {
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC6179149/",
+      "http_status": null,
+      "sha256": "a64ac890cd240c3d8547209c9ac0c1d16407aee7dc5ca21708f91bfc3008090a",
+      "saved_path": "papers/Wong2018/sources/fullTextXML.xml",
+      "what": "pre-existing full-text XML reused from the dossier; original acquisition status was not recorded"
+    },
+    {
+      "url": "https://api.crossref.org/works/10.1016/j.molcel.2018.07.033",
+      "http_status": 200,
+      "sha256": "cf7fad3f371827322bfbce18439f89a7fed042374aa687120022e1be8ed13930",
+      "saved_path": "papers/Wong2018/sources/WongKK18_crossref_codex.json",
+      "what": "Crossref bibliographic metadata"
+    },
+    {
+      "url": "https://raw.githubusercontent.com/jbkinney/15_splicing/master/local/output/psi_9nt.txt",
+      "http_status": 200,
+      "sha256": "c86059ef2d89179f04a604b5a730751c3f55fbb7e918c33593427245350f3984",
+      "saved_path": "papers/Wong2018/sources/Wong2018_psi_9nt_codex.txt",
+      "what": "authors’ processed 9-nt PSI table used as the measured fitness source"
+    }
+  ],
+  "overlaps": [
+    {
+      "metric": "n_configs",
+      "paper_value": 32768,
+      "locator": "Abstract; Results → High-throughput analysis of the activity of all 5′ss sequences (P14)",
+      "quote": "“32,768”",
+      "printed_or_plotted": "printed",
+      "definition_match": "yes",
+      "definition_quote": "NOT STATED IN PAPER",
+      "definition_divergence": "The paper reports the complete designed sequence space; GraphFLA n_configs is the node count retained in a built graph. The count concepts match, but missing measurements make the built graph smaller.",
+      "input": {
+        "path": "papers/Wong2018/sources/Wong2018_psi_9nt_codex.txt",
+        "sha256": "c86059ef2d89179f04a604b5a730751c3f55fbb7e918c33593427245350f3984",
+        "n_rows": 32768,
+        "preprocessing": "Use BRCA2 author-reported PSI column; retain finite values only; 295 missing rows omitted, with no imputation."
+      },
+      "graphfla_call": "RNALandscape().build_from_data(ss[isfinite(PSI)], PSI[isfinite], epsilon=0, verbose=False); ls.n_configs",
+      "graphfla_value": 32473,
+      "outcome": "mismatch",
+      "reason": "The author table and local CSV both enumerate 32,768 unique sequences, but BRCA2 has 295 missing context PSI values. GraphFLA rejects NaNs; the finite-only graph contains 32473 nodes. No missing value was imputed, so the full design-space node count was not reproduced."
+    },
+    {
+      "metric": "n_configs",
+      "paper_value": 32768,
+      "locator": "Abstract; Results → High-throughput analysis of the activity of all 5′ss sequences (P14)",
+      "quote": "“32,768”",
+      "printed_or_plotted": "printed",
+      "definition_match": "yes",
+      "definition_quote": "NOT STATED IN PAPER",
+      "definition_divergence": "The paper reports the complete designed sequence space; GraphFLA n_configs is the node count retained in a built graph. The count concepts match, but missing measurements make the built graph smaller.",
+      "input": {
+        "path": "papers/Wong2018/sources/Wong2018_psi_9nt_codex.txt",
+        "sha256": "c86059ef2d89179f04a604b5a730751c3f55fbb7e918c33593427245350f3984",
+        "n_rows": 32768,
+        "preprocessing": "Use IKBKAP author-reported PSI column; retain finite values only; 678 missing rows omitted, with no imputation."
+      },
+      "graphfla_call": "RNALandscape().build_from_data(ss[isfinite(PSI)], PSI[isfinite], epsilon=0, verbose=False); ls.n_configs",
+      "graphfla_value": 32090,
+      "outcome": "mismatch",
+      "reason": "The author table and local CSV both enumerate 32,768 unique sequences, but IKBKAP has 678 missing context PSI values. GraphFLA rejects NaNs; the finite-only graph contains 32090 nodes. No missing value was imputed, so the full design-space node count was not reproduced."
+    },
+    {
+      "metric": "n_configs",
+      "paper_value": 32768,
+      "locator": "Abstract; Results → High-throughput analysis of the activity of all 5′ss sequences (P14)",
+      "quote": "“32,768”",
+      "printed_or_plotted": "printed",
+      "definition_match": "yes",
+      "definition_quote": "NOT STATED IN PAPER",
+      "definition_divergence": "The paper reports the complete designed sequence space; GraphFLA n_configs is the node count retained in a built graph. The count concepts match, but missing measurements make the built graph smaller.",
+      "input": {
+        "path": "papers/Wong2018/sources/Wong2018_psi_9nt_codex.txt",
+        "sha256": "c86059ef2d89179f04a604b5a730751c3f55fbb7e918c33593427245350f3984",
+        "n_rows": 32768,
+        "preprocessing": "Use SMN1 author-reported PSI column; retain finite values only; 2036 missing rows omitted, with no imputation."
+      },
+      "graphfla_call": "RNALandscape().build_from_data(ss[isfinite(PSI)], PSI[isfinite], epsilon=0, verbose=False); ls.n_configs",
+      "graphfla_value": 30732,
+      "outcome": "mismatch",
+      "reason": "The author table and local CSV both enumerate 32,768 unique sequences, but SMN1 has 2036 missing context PSI values. GraphFLA rejects NaNs; the finite-only graph contains 30732 nodes. No missing value was imputed, so the full design-space node count was not reproduced."
+    },
+    {
+      "metric": "n_configs",
+      "paper_value": 1279,
+      "locator": "Results → 5′ss usage follows general trends, modulated by context-dependent effects (P20)",
+      "quote": "“1279”",
+      "printed_or_plotted": "printed",
+      "definition_match": "yes",
+      "definition_quote": "“≥20”",
+      "definition_divergence": "The thresholded configuration-count definition matches; GraphFLA’s post-build isolate pruning can reduce the node count.",
+      "input": {
+        "path": "papers/Wong2018/sources/Wong2018_psi_9nt_codex.txt",
+        "sha256": "c86059ef2d89179f04a604b5a730751c3f55fbb7e918c33593427245350f3984",
+        "n_rows": 32768,
+        "preprocessing": "Use BRCA2 author-reported PSI; finite values only; tau=20, filter_mode=any, epsilon=0."
+      },
+      "graphfla_call": "RNALandscape().build_from_data(ss, PSI, epsilon=0, tau=20, filter_mode=\"any\", verbose=False); ls.n_configs",
+      "graphfla_value": 1267,
+      "outcome": "mismatch",
+      "reason": "GraphFLA selected 1279 finite configurations at PSI ≥20, then removed 12 isolated nodes during graph construction, leaving 1267 versus the printed 1279."
+    },
+    {
+      "metric": "n_configs",
+      "paper_value": 2892,
+      "locator": "Results → 5′ss usage follows general trends, modulated by context-dependent effects (P20)",
+      "quote": "“2892”",
+      "printed_or_plotted": "printed",
+      "definition_match": "yes",
+      "definition_quote": "NOT STATED IN PAPER",
+      "definition_divergence": "The thresholded configuration-count definition matches; GraphFLA’s post-build isolate pruning can reduce the node count.",
+      "input": {
+        "path": "papers/Wong2018/sources/Wong2018_psi_9nt_codex.txt",
+        "sha256": "c86059ef2d89179f04a604b5a730751c3f55fbb7e918c33593427245350f3984",
+        "n_rows": 32768,
+        "preprocessing": "Use SMN1 author-reported PSI; finite values only; tau=20, filter_mode=any, epsilon=0."
+      },
+      "graphfla_call": "RNALandscape().build_from_data(ss, PSI, epsilon=0, tau=20, filter_mode=\"any\", verbose=False); ls.n_configs",
+      "graphfla_value": 2876,
+      "outcome": "mismatch",
+      "reason": "GraphFLA selected 2892 finite configurations at PSI ≥20, then removed 16 isolated nodes during graph construction, leaving 2876 versus the printed 2892."
+    },
+    {
+      "metric": "n_configs",
+      "paper_value": 250,
+      "locator": "Results → 5′ss usage follows general trends, modulated by context-dependent effects (P20)",
+      "quote": "“250”",
+      "printed_or_plotted": "printed",
+      "definition_match": "yes",
+      "definition_quote": "NOT STATED IN PAPER",
+      "definition_divergence": "The thresholded configuration-count definition matches; GraphFLA’s post-build isolate pruning can reduce the node count.",
+      "input": {
+        "path": "papers/Wong2018/sources/Wong2018_psi_9nt_codex.txt",
+        "sha256": "c86059ef2d89179f04a604b5a730751c3f55fbb7e918c33593427245350f3984",
+        "n_rows": 32768,
+        "preprocessing": "Use IKBKAP author-reported PSI; finite values only; tau=20, filter_mode=any, epsilon=0."
+      },
+      "graphfla_call": "RNALandscape().build_from_data(ss, PSI, epsilon=0, tau=20, filter_mode=\"any\", verbose=False); ls.n_configs",
+      "graphfla_value": 250,
+      "outcome": "reproduced_exact",
+      "reason": "GraphFLA selected 250 finite configurations at PSI ≥20 and retained all 250; this equals the printed IKBKAP count exactly."
+    },
+    {
+      "metric": "higher_order_epistasis",
+      "paper_value": {
+        "matrix_model_R2_percent": {
+          "BRCA2": 35,
+          "SMN1": 48
+        },
+        "matrix_plus_pairwise_model_R2_percent": {
+          "BRCA2": 69,
+          "SMN1": 63
+        }
+      },
+      "locator": "Results → Pairwise nucleotide association influences 5′ss strength (P29; Figure 4A–B); STAR Methods → Pairwise dependency (P61)",
+      "quote": "“35%”; “48%”; “69%”; “63%”",
+      "printed_or_plotted": "printed",
+      "definition_match": "no",
+      "definition_quote": "“≥20%”; “ridge regression”; “residuals”; “only for GU splice sites”",
+      "definition_divergence": "Both are R² values for models with nucleotide effects, but GraphFLA higher_order_epistasis uses ordinary least-squares polynomial regression on retained graph nodes. The paper fits the matrix model by ridge regression on its selected PSI data, then fits pairwise terms to residuals with the same ridge procedure; it specifies GU-only pairwise modeling. The estimators and fitting sets are not identical.",
+      "input": {
+        "path": "papers/Wong2018/sources/Wong2018_psi_9nt_codex.txt",
+        "sha256": "c86059ef2d89179f04a604b5a730751c3f55fbb7e918c33593427245350f3984",
+        "n_rows": 32768,
+        "preprocessing": "Ran on all finite author PSI values, then on the paper-filtered GU-only subset with PSI ≥20. GraphFLA removed isolated nodes in the filtered subset; see graphfla_value."
+      },
+      "graphfla_call": "RNALandscape().build_from_data(...); higher_order_epistasis(ls, order=1) and higher_order_epistasis(ls, order=2)",
+      "graphfla_value": {
+        "all_finite_PSI": {
+          "BRCA2": {
+            "n_configs": 32473,
+            "order_1_R2": 0.17798168594158537,
+            "order_2_R2": 0.5185863812416962
+          },
+          "SMN1": {
+            "n_configs": 30732,
+            "order_1_R2": 0.15519861140074676,
+            "order_2_R2": 0.49231784929910016
+          }
+        },
+        "GU_and_PSI_ge_20": {
+          "BRCA2": {
+            "selected_input_rows": 1185,
+            "n_configs_after_isolate_removal": 1178,
+            "order_1_R2": 0.3540927559764585,
+            "order_2_R2": 0.7314938442060654
+          },
+          "SMN1": {
+            "selected_input_rows": 1862,
+            "n_configs_after_isolate_removal": 1854,
+            "order_1_R2": 0.48159808145605654,
+            "order_2_R2": 0.6445275755605355
+          }
+        },
+        "PSI_ge_20_all_splice_sites_order_1": {
+          "BRCA2": {
+            "n_configs": 1267,
+            "order_1_R2": 0.28785131891034965
+          },
+          "SMN1": {
+            "n_configs": 2876,
+            "order_1_R2": 0.4788694276739538
+          }
+        }
+      },
+      "outcome": "mismatch",
+      "reason": "All variants are reported. On the paper-filtered GU/PSI≥20 data, GraphFLA order-1 values round to the paper’s 35% and 48%, but the underlying fits differ and GraphFLA order-2 gives 73.15% and 64.45% rather than 69% and 63%. The unfiltered and threshold-only variants also differ. This is a useful near-match, not a confirmed reproduction of the paper’s ridge-regression/residual-fit procedure."
+    },
+    {
+      "metric": "classify_epistasis",
+      "paper_value": "NOT STATED IN PAPER",
+      "locator": "Figure 4A–B and Results → Pairwise nucleotide association influences 5′ss strength (P32)",
+      "quote": "NOT STATED IN PAPER",
+      "printed_or_plotted": "plotted",
+      "definition_match": "no",
+      "definition_quote": "NOT STATED IN PAPER",
+      "definition_divergence": "The paper describes signs of fitted pairwise regression coefficients and shows a heat map; it does not give GraphFLA four-node motif class fractions. The heat-map values were not read.",
+      "input": {
+        "path": "papers/Wong2018/sources/Wong2018_psi_9nt_codex.txt",
+        "sha256": "c86059ef2d89179f04a604b5a730751c3f55fbb7e918c33593427245350f3984",
+        "n_rows": 32768,
+        "preprocessing": "Not run; no printed class-fraction target."
+      },
+      "graphfla_call": "not run; no printed fraction to compare",
+      "graphfla_value": null,
+      "outcome": "definition_incompatible",
+      "reason": "Positive/negative interaction examples are not printed as sign, magnitude, reciprocal-sign, or other GraphFLA epistasis-class fractions."
+    },
+    {
+      "metric": "fitness_distribution",
+      "paper_value": "NOT STATED IN PAPER",
+      "locator": "Figure 3A",
+      "quote": "NOT STATED IN PAPER",
+      "printed_or_plotted": "plotted",
+      "definition_match": "no",
+      "definition_quote": "NOT STATED IN PAPER",
+      "definition_divergence": "Figure 3A shows PSI histograms, but the paper does not print GraphFLA-style skewness, kurtosis, CV, or other distribution moments. No histogram values were read.",
+      "input": {
+        "path": "papers/Wong2018/sources/Wong2018_psi_9nt_codex.txt",
+        "sha256": "c86059ef2d89179f04a604b5a730751c3f55fbb7e918c33593427245350f3984",
+        "n_rows": 32768,
+        "preprocessing": "Not run; no printed scalar moment target."
+      },
+      "graphfla_call": "not run; no printed distribution-moment target",
+      "graphfla_value": null,
+      "outcome": "definition_incompatible",
+      "reason": "The paper’s histograms are plot-only for the scalar moments available in GraphFLA."
+    }
+  ],
+  "blockers": [
+    {
+      "what": "Supplementary file bundle",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC6179149/bin/NIHMS986179-supplement-1.pdf",
+      "why": "The direct PMC supplement URL returned HTTP 404. The pre-existing file named Wong2018_supplementaryFiles.zip is a 296-byte XML error payload rather than a ZIP archive.",
+      "needed_for": "Auditing supplementary-only numbers or tables; no plotted values were read."
+    }
+  ],
+  "verdict": "targets_found",
+  "verdict_reason": "The paper provides a directly comparable n_configs target: the IKBKAP PSI≥20 count reproduces exactly, while the BRCA2 and SMN1 thresholded counts lose isolated nodes and the full 32,768 design count is reduced by missing PSI values. The pairwise R² values are a close but definition-divergent higher_order_epistasis comparison. Peak counts and epistasis class fractions are NOT STATED IN PAPER."
+}
