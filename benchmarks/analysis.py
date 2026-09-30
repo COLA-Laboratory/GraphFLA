@@ -1,100 +1,92 @@
-"""asv benchmarks: landscape-analysis metrics.
+"""Public analysis functions on fixed inputs with prepared landscape caches."""
 
-Run on real empirical landscapes of two encodings (a boolean antibody landscape
-and a protein landscape), each kept moderate so the heavy metrics stay tractable.
-The landscape is built and its lazy caches warmed in ``setup`` (excluded from the
-timing) so each ``time_*`` measures only that metric's own work.
-"""
+from functools import partial
 
 from graphfla import analysis as A
 
-from . import _datasets
+from ._datasets import build_dataset
 
-SEED = 0
+# Every exported function is represented; result dataclasses are not workloads.
+METHODS = [
+    name
+    for name in A.__all__
+    if name
+    not in {
+        "EpistasisClassification",
+        "ExtradimensionalBypass",
+    }
+]
+
+
+def prepare_call(landscape, method):
+    """Bind bounded, deterministic parameters outside the timed region."""
+    if method == "list_metrics":
+        return A.list_metrics
+    kwargs = {}
+    if method in {
+        "gamma",
+        "gamma_star",
+        "higher_order_epistasis",
+        "global_idiosyncratic_index",
+        "profile",
+    }:
+        kwargs["n_jobs"] = 1
+    if method in {
+        "autocorrelation",
+        "global_idiosyncratic_index",
+        "classify_epistasis",
+        "extradimensional_bypass",
+        "mean_path_length_to_global_optimum",
+        "mean_path_length_to_local_optima",
+        "profile",
+    }:
+        kwargs["seed"] = 0
+    if method in {"classify_epistasis", "extradimensional_bypass"}:
+        kwargs["sample_cut_prob"] = 0.5
+    if method in {
+        "local_optima_accessibility",
+        "mean_distance_to_local_optima",
+        "mean_path_length_to_local_optima",
+    }:
+        kwargs["lo"] = landscape.lo_index[:4]
+    if method in {
+        "mean_path_length_to_local_optima",
+        "mean_path_length_to_global_optimum",
+    }:
+        kwargs["n_samples"] = 64
+    if method in {
+        "fitness_effect_distribution",
+        "idiosyncratic_index",
+        "single_mutation_effects",
+    }:
+        position = next(iter(landscape.data_types))
+        alleles = sorted(set(landscape.graph.vs[position]))
+        if method == "single_mutation_effects":
+            kwargs["position"] = position
+        else:
+            kwargs["mutation"] = (alleles[0], position, alleles[1])
+    if method == "profile":
+        kwargs.update(
+            include=["local_optima_ratio", "gradient_intensity", "fdc"],
+            on_error="raise",
+        )
+    return partial(getattr(A, method), landscape, **kwargs)
 
 
 class Analysis:
-    # Moderate real landscapes: CR6261 (~1.9k boolean), TrpB3I (~7.8k protein).
-    params = ["CR6261", "TrpB3I"]
-    param_names = ["dataset"]
+    params = (["CR6261", "TrpB3I", "synthetic-rna", "synthetic-hpo"], METHODS)
+    param_names = ["dataset", "method"]
+    timeout = 120
+    repeat = 5
 
-    def setup(self, dataset):
-        cls, X, f = _datasets.load_real(dataset)  # skipped if data absent
-        landscape = cls(maximize=True)
-        landscape.build_from_data(X, f, verbose=False)
-        landscape.basins
-        landscape.dist_to_go
-        landscape.neighbor_fitness
-        landscape.accessible_paths
-        self.ls = landscape
+    def setup(self, dataset, method):
+        landscape = build_dataset(dataset)
+        for name in ("basins", "dist_to_go", "neighbor_fitness", "accessible_paths"):
+            getattr(landscape, name)
+        self.call = prepare_call(landscape, method)
 
-    # --- ruggedness / structure ---
-    def time_local_optima_ratio(self, dataset):
-        A.local_optima_ratio(self.ls)
+    def time_method(self, dataset, method):
+        self.call()
 
-    def time_gradient_intensity(self, dataset):
-        A.gradient_intensity(self.ls)
-
-    def time_autocorrelation(self, dataset):
-        A.autocorrelation(self.ls, seed=SEED)
-
-    def time_r_s_ratio(self, dataset):
-        A.r_s_ratio(self.ls)
-
-    def time_neutrality(self, dataset):
-        A.neutrality(self.ls)
-
-    # --- correlations ---
-    def time_fdc(self, dataset):
-        A.fdc(self.ls)
-
-    def time_basin_fitness_correlation(self, dataset):
-        A.basin_fitness_correlation(self.ls)
-
-    def time_neighbor_fitness_correlation(self, dataset):
-        A.neighbor_fitness_correlation(self.ls)
-
-    def time_fitness_flattening_index(self, dataset):
-        A.fitness_flattening_index(self.ls)
-
-    # --- navigability ---
-    def time_global_optima_accessibility(self, dataset):
-        A.global_optima_accessibility(self.ls)
-
-    def time_mean_path_length_to_global_optimum(self, dataset):
-        A.mean_path_length_to_global_optimum(self.ls)
-
-    def time_mean_distance_to_global_optimum(self, dataset):
-        A.mean_distance_to_global_optimum(self.ls)
-
-    # --- robustness ---
-    def time_evolvability_enhancing_mutations(self, dataset):
-        A.evolvability_enhancing_mutations(self.ls)
-
-    def time_all_mutation_effects(self, dataset):
-        A.all_mutation_effects(self.ls)
-
-    # --- epistasis ---
-    def time_gamma(self, dataset):
-        A.gamma(self.ls, n_jobs=1)
-
-    def time_higher_order_epistasis(self, dataset):
-        A.higher_order_epistasis(self.ls, order=2)
-
-    def time_walsh_hadamard(self, dataset):
-        A.walsh_hadamard(self.ls, max_order=2)
-
-    def time_classify_epistasis(self, dataset):
-        A.classify_epistasis(self.ls, sample_cut_prob=0.5, seed=SEED)
-
-    def time_extradimensional_bypass(self, dataset):
-        A.extradimensional_bypass(self.ls, sample_cut_prob=0.5, seed=SEED)
-
-    def time_global_idiosyncratic_index(self, dataset):
-        A.global_idiosyncratic_index(self.ls, n_jobs=1)
-
-    def time_diminishing_returns_index(self, dataset):
-        A.diminishing_returns_index(self.ls)
-
-    def time_increasing_costs_index(self, dataset):
-        A.increasing_costs_index(self.ls)
+    def peakmem_method(self, dataset, method):
+        self.call()

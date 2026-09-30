@@ -12,7 +12,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        python-version: ["3.9", "3.10", "3.11"]
+        python-version: ["3.9", "3.11", "3.13"]
 
     steps:
     - name: Checkout repository
@@ -26,8 +26,7 @@ jobs:
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
-        pip install flake8 pytest pytest-cov
-        if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+        pip install flake8 -r requirements-dev.txt
 
     - name: Install your package
       run: pip install -e .
@@ -41,4 +40,14 @@ jobs:
 
     - name: Run tests with pytest
       run: |
-        pytest tests/ --cov=graphfla --cov-report=xml
+        python -m pytest --cov=graphfla --cov-branch --cov-report=xml --cov-report=term
+
+    - name: Check benchmark discovery
+      if: matrix.python-version == '3.13'
+      run: python -m asv check --python=same
+
+    - name: Save coverage
+      uses: actions/upload-artifact@v4
+      with:
+        name: coverage-python-${{ matrix.python-version }}
+        path: coverage.xml

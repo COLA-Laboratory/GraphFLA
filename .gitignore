@@ -10,3 +10,10 @@ __pycache__/
 
 # asv benchmark results / envs
 .asv/
+.venv/
+.coverage
+coverage.xml
+htmlcov/
+.pytest_cache/
+.hypothesis/
+.ruff_cache/

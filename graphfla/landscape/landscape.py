@@ -708,10 +708,22 @@ class Landscape(_IOMixin, _BuildMixin):
                 "neighborhood_strategy must be one of None, 'auto', 'active', "
                 f"'pairwise', 'broadcast', got {neighborhood_strategy!r}."
             )
-        if epsilon < 0:
-            raise InvalidParameterError(f"epsilon must be >= 0, got {epsilon!r}.")
-        if n_edit < 1:
-            raise InvalidParameterError(f"n_edit must be >= 1, got {n_edit!r}.")
+        if not np.isfinite(epsilon) or epsilon < 0:
+            raise InvalidParameterError(
+                f"epsilon must be finite and >= 0, got {epsilon!r}."
+            )
+        if (
+            not isinstance(n_edit, (int, np.integer))
+            or isinstance(n_edit, bool)
+            or n_edit < 1
+        ):
+            raise InvalidParameterError(
+                f"n_edit must be an integer >= 1, got {n_edit!r}."
+            )
+        if tau is not None and not np.isfinite(tau):
+            raise InvalidParameterError(f"tau must be finite, got {tau!r}.")
+        if len(X) != len(f):
+            raise ValueError("X and f must contain the same number of rows.")
 
         self.epsilon = float(epsilon)
         # Coerce to a real bool so the documented bool attribute can't be poisoned

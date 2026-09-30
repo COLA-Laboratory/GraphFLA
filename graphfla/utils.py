@@ -160,9 +160,9 @@ def remove_isolated_nodes(graph, verbose=False, protected=None):
     Raises
     ------
     ValueError
-        If the graph contains no edges at all (fully disconnected).
+        If the graph has neither improving edges nor protected neutral nodes.
     """
-    if graph.ecount() == 0:
+    if graph.ecount() == 0 and not protected:
         raise ValueError(
             "Landscape graph has no edges. No neighboring configurations "
             "were detected in the dataset. This usually means the "

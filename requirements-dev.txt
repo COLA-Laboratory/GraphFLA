@@ -1,0 +1,7 @@
+-r requirements.txt
+pytest>=7
+pytest-cov>=4
+hypothesis>=6
+asv>=0.6
+ruff>=0.9
+matplotlib>=3.5
