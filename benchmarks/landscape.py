@@ -51,6 +51,8 @@ class LandscapeOperations:
 
     def setup(self, dataset):
         self.landscape = build_dataset(dataset)
+        self.landscape.basins
+        self.landscape.configs
         self.directory = tempfile.TemporaryDirectory()
         self.path = str(Path(self.directory.name) / "landscape.graphml")
         self.landscape.to_graph(self.path)

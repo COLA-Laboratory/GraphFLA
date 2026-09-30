@@ -328,3 +328,7 @@ You may cite GraphFLA via the following references:
 ---
 
 **Happy analyzing!** If you have any questions or suggestions, feel free to open an issue or start a discussion.
+
+## Development checks
+
+Install `requirements-dev.txt` and run `python -m pytest`. See the [test contracts](tests/README.md), [performance benchmarks](benchmarks/README.md), and [recorded construction optimization](benchmarks/RESULTS.md).

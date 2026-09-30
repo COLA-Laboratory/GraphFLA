@@ -1,0 +1,44 @@
+{
+  "baseline": {
+    "overall": {
+      "covered_lines": 3447,
+      "num_statements": 5396,
+      "percent_covered": 59.13410770855332,
+      "percent_covered_display": "59",
+      "missing_lines": 1949,
+      "excluded_lines": 12,
+      "percent_statements_covered": 63.88065233506301,
+      "percent_statements_covered_display": "64",
+      "num_branches": 2180,
+      "num_partial_branches": 487,
+      "covered_branches": 1033,
+      "missing_branches": 1147,
+      "percent_branches_covered": 47.38532110091743,
+      "percent_branches_covered_display": "47"
+    },
+    "construction_core_percent": 57.70883054892602,
+    "construction_core_line_percent": 62.89089645587213,
+    "construction_core_branch_percent": 46.34146341463415
+  },
+  "final": {
+    "overall": {
+      "covered_lines": 3964,
+      "num_statements": 5407,
+      "percent_covered": 69.1720415953666,
+      "percent_covered_display": "69",
+      "missing_lines": 1443,
+      "excluded_lines": 12,
+      "percent_statements_covered": 73.31237285000925,
+      "percent_statements_covered_display": "73",
+      "num_branches": 2190,
+      "num_partial_branches": 519,
+      "covered_branches": 1291,
+      "missing_branches": 899,
+      "percent_branches_covered": 58.949771689497716,
+      "percent_branches_covered_display": "59"
+    },
+    "construction_core_percent": 75.84083372809096,
+    "construction_core_line_percent": 80.37318590186592,
+    "construction_core_branch_percent": 65.96385542168674
+  }
+}

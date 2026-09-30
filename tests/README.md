@@ -7,7 +7,7 @@ network access. Use `-m 'not integration'` for small development checks.
 | Tests | Contract |
 |---|---|
 | `test_construction_oracles.py` | Independent all-pairs distance oracle across classes, directions, epsilon, sparsity and strategies; forced lookup, search, overflow, chunking and hash-collision paths |
-| `test_build_contracts.py` | Input types, non-default indices, invalid values, duplicate handling, thresholds, neutral graphs, custom alphabets, genetic-background trimming and GraphML |
+| `test_build_contracts.py` | Input types, numeric fitness overflow, Boolean aliases, field-name collisions, indices, thresholds, neutral graphs, genetic-background trimming and GraphML |
 | `test_papkou_construction.py` | Full author input to exact author node/edge identities; original fitness and directed weights |
 | `test_utilities_contracts.py` | Distances, rule combinations, Cartesian sampling and graph walks |
 | `test_benchmark_contracts.py` | Complete public analysis inventory, callable benchmark parameters, pinned DMS checksums and input dimensions |
