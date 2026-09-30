@@ -32,9 +32,19 @@ import logging
 logger = logging.getLogger(__name__)
 _ATTRIBUTE_BUFFER_BYTES = 16 * 1024**2
 _RESERVED_VERTEX_ATTRIBUTES = {
-    "fitness", "in_degree", "out_degree", "is_lo", "plateau_id", "plateau_size",
-    "basin_index", "size_basin_greedy", "radius_basin_greedy",
-    "size_basin_accessible", "dist_go", "mean_neighbor_fit", "pagerank",
+    "fitness",
+    "in_degree",
+    "out_degree",
+    "is_lo",
+    "plateau_id",
+    "plateau_size",
+    "basin_index",
+    "size_basin_greedy",
+    "radius_basin_greedy",
+    "size_basin_accessible",
+    "dist_go",
+    "mean_neighbor_fit",
+    "pagerank",
 }
 
 
@@ -89,14 +99,20 @@ class _BuildMixin:
 
         columns = pd.Index(map(str, X_processed.columns))
         if not X_processed.columns.is_unique or not columns.is_unique:
-            raise ValueError("Feature names must be unique after conversion to strings.")
+            raise ValueError(
+                "Feature names must be unique after conversion to strings."
+            )
         reserved = set(columns) & _RESERVED_VERTEX_ATTRIBUTES
         if reserved:
-            raise ValueError(f"Feature names are reserved for landscape attributes: {sorted(reserved)}")
+            raise ValueError(
+                f"Feature names are reserved for landscape attributes: {sorted(reserved)}"
+            )
         if not X_processed.columns.equals(columns):
             X_processed = X_processed.copy(deep=False)
             X_processed.columns = columns
-            self.data_types = {str(column): kind for column, kind in self.data_types.items()}
+            self.data_types = {
+                str(column): kind for column, kind in self.data_types.items()
+            }
 
         X_final, f_final = clean_data(
             X_processed,
@@ -172,10 +188,7 @@ class _BuildMixin:
             if kept_indices is not None:
                 tau_map = {old: new for new, old in enumerate(kept_indices)}
                 protected = {
-                    tau_map[n]
-                    for pair in neutral_pairs
-                    for n in pair
-                    if n in tau_map
+                    tau_map[n] for pair in neutral_pairs for n in pair if n in tau_map
                 }
             else:
                 protected = {n for pair in neutral_pairs for n in pair}
@@ -290,12 +303,20 @@ class _BuildMixin:
             edge_attrs["delta_fit"] = values
 
         stream = data.size * np.dtype(object).itemsize > _ATTRIBUTE_BUFFER_BYTES
-        vertex_attrs = {} if stream else {
-            str(column): data[column].to_numpy(copy=False) for column in data.columns
-        }
+        vertex_attrs = (
+            {}
+            if stream
+            else {
+                str(column): data[column].to_numpy(copy=False)
+                for column in data.columns
+            }
+        )
         graph = ig.Graph(
-            n=len(data), edges=edges if len(edges) else None, directed=True,
-            vertex_attrs=vertex_attrs, edge_attrs=edge_attrs,
+            n=len(data),
+            edges=edges if len(edges) else None,
+            directed=True,
+            vertex_attrs=vertex_attrs,
+            edge_attrs=edge_attrs,
         )
         # Bound temporary decoded arrays for long genetic backgrounds.
         if stream:

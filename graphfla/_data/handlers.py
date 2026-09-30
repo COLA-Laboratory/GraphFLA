@@ -239,9 +239,7 @@ class OrdinalHandler:
         verbose: bool = True,
     ) -> Tuple[pd.DataFrame, pd.Series, Dict[str, str], int]:
         """Prepare ordinal data."""
-        X_df, ord_data_types, n_vars = _parse_ordinal_input(
-            X_input=X, verbose=verbose
-        )
+        X_df, ord_data_types, n_vars = _parse_ordinal_input(X_input=X, verbose=verbose)
 
         if isinstance(f, (list, np.ndarray)):
             f_series = pd.Series(f, name="fitness")
@@ -301,8 +299,10 @@ class DefaultHandler:
                 )
             # Remap integer data_types keys (e.g. {0: 'boolean'}) to the var_i
             # names so callers needn't know the internal column naming.
-            if isinstance(data_types, dict) and data_types and all(
-                isinstance(k, (int, np.integer)) for k in data_types.keys()
+            if (
+                isinstance(data_types, dict)
+                and data_types
+                and all(isinstance(k, (int, np.integer)) for k in data_types.keys())
             ):
                 data_types = {f"var_{k}": v for k, v in data_types.items()}
         elif isinstance(X, pd.DataFrame):
@@ -471,7 +471,9 @@ def _parse_boolean_input(
         try:
             processed_sequences = [list(seq) for seq in sequences]
         except (ValueError, TypeError) as e:
-            raise ValueError(f"Could not convert inner sequences to integers: {e}") from e
+            raise ValueError(
+                f"Could not convert inner sequences to integers: {e}"
+            ) from e
 
         bit_length = len(processed_sequences[0])
         if bit_length == 0:
@@ -501,7 +503,9 @@ def _parse_boolean_input(
             try:
                 X_df = pd.DataFrame(X_input)
             except Exception as e:
-                raise TypeError(f"Could not convert NumPy array to DataFrame: {e}") from e
+                raise TypeError(
+                    f"Could not convert NumPy array to DataFrame: {e}"
+                ) from e
         else:
             X_df = X_input.copy()
 
@@ -547,7 +551,9 @@ def _parse_boolean_input(
     data_types = {col: "boolean" for col in X_df.columns}
 
     if verbose:
-        logger.info(f"Boolean input preparation complete. Detected bit length: {bit_length}.")
+        logger.info(
+            f"Boolean input preparation complete. Detected bit length: {bit_length}."
+        )
     return X_df, data_types, bit_length
 
 

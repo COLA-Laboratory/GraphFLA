@@ -3,7 +3,9 @@
     "project": "graphfla",
     "project_url": "https://github.com/COLA-Laboratory/GraphFLA",
     "repo": ".",
-    "branches": ["main"],
+    "branches": [
+        "main"
+    ],
     "environment_type": "virtualenv",
     "install_timeout": 600,
     "show_commit_url": "https://github.com/COLA-Laboratory/GraphFLA/commit/",
@@ -11,5 +13,14 @@
     "env_dir": ".asv/env",
     "results_dir": ".asv/results",
     "html_dir": ".asv/html",
-    "matrix": {}
+    "matrix": {
+        "env_nobuild": {
+            "OMP_NUM_THREADS": "1",
+            "OPENBLAS_NUM_THREADS": "1",
+            "MKL_NUM_THREADS": "1",
+            "VECLIB_MAXIMUM_THREADS": "1",
+            "NUMEXPR_NUM_THREADS": "1",
+            "PYTHONHASHSEED": "0"
+        }
+    }
 }

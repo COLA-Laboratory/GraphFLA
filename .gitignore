@@ -10,7 +10,7 @@ __pycache__/
 
 # asv benchmark results / envs
 .asv/
-.venv/
+.venv*/
 .coverage
 coverage.xml
 htmlcov/

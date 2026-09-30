@@ -1,12 +1,4 @@
-"""Regression guards for public API behaviour and previously-untested modules.
-
-Covers the builder pattern (methods return ``self``), seeded-RNG
-reproducibility, instance-level strategy registries, pickling (the Modal /
-ProteinGym pipeline depends on it), input validation, the ``LandscapeFilter``
-``contains`` guard, the LON module (zero prior coverage), and the sampling
-seed contract. These would have caught the API regressions introduced this
-cycle; today they are the only coverage for several whole files.
-"""
+"""Public API regressions for builders, caching, serialization and seeded sampling."""
 
 import pickle
 from itertools import product
