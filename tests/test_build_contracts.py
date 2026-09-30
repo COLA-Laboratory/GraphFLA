@@ -338,3 +338,13 @@ def test_stringified_feature_names_must_remain_unique():
     X = pd.DataFrame([[0, 0], [1, 1]], columns=[0, "0"])
     with pytest.raises(ValueError, match="unique"):
         OrdinalLandscape().build_from_data(X, [0.0, 1.0], verbose=False)
+
+
+def test_boolean_row_input_retains_integer_feature_dtypes():
+    ls = BooleanLandscape().build_from_data(
+        [[False, False], [False, True]],
+        [0.0, 1.0],
+        verbose=False,
+    )
+    expected = pd.DataFrame({"bit_0": [0, 0], "bit_1": [0, 1]})
+    pd.testing.assert_frame_equal(ls.get_data()[list(expected)], expected)

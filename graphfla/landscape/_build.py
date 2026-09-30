@@ -88,7 +88,7 @@ class _BuildMixin:
         )
 
         columns = pd.Index(map(str, X_processed.columns))
-        if not columns.is_unique:
+        if not X_processed.columns.is_unique or not columns.is_unique:
             raise ValueError("Feature names must be unique after conversion to strings.")
         reserved = set(columns) & _RESERVED_VERTEX_ATTRIBUTES
         if reserved:

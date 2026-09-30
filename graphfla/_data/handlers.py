@@ -488,7 +488,7 @@ def _parse_boolean_input(
                 raise ValueError(
                     f"Sequence {i} contains invalid values: {invalid_vals}. Only 0 or 1 allowed."
                 )
-            data.append(seq)
+            data.append([int(value) for value in seq])
 
         X_df = pd.DataFrame(data)
 
