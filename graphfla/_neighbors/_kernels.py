@@ -29,6 +29,7 @@ from .generators import (
     BooleanNeighborGenerator,
     SequenceNeighborGenerator,
     OrdinalNeighborGenerator,
+    DefaultNeighborGenerator,
 )
 import logging
 
@@ -53,7 +54,7 @@ def _build_active(
 
     1. Byte-map lookup for boolean generators (single bit flips).
     2. Byte-map lookup for sequence generators (single substitutions).
-    3. Mixed-radix vectorised lookup for ordinal generators (±1 steps).
+    3. Mixed-radix lookup for ordinal and mixed-type generators.
     4. Generic tuple-based lookup for arbitrary generators.
 
     Returns ``(edges, delta_fits, neutral_pairs)`` where ``edges`` is an
@@ -88,10 +89,12 @@ def _build_active(
             configs_array, fitness, epsilon, maximize, verbose,
             generator_obj.alphabet_size, neutral_pairs,
         )
-    elif numeric_configs_array and type(generator_obj) is OrdinalNeighborGenerator:
-        result = _active_ordinal_vectorized(
-            configs_array, config_dict, fitness, epsilon, maximize, verbose,
-            neutral_pairs,
+    elif numeric_configs_array and type(generator_obj) in (
+        OrdinalNeighborGenerator, DefaultNeighborGenerator
+    ):
+        result = _active_discrete(
+            configs_array, config_dict, fitness, epsilon, maximize, neutral_pairs,
+            ordinal_only=type(generator_obj) is OrdinalNeighborGenerator,
         )
         if result is not None:  # None => mixed-radix overflow, fall back
             edges, delta_fits = result
@@ -1076,145 +1079,61 @@ def _active_generic(
                     append_delta(abs_delta)
 
 
-def _active_ordinal_vectorized(
-    configs_array, config_dict, fitness, epsilon, maximize, verbose,
-    neutral_pairs,
+def _active_discrete(
+    configs_array, config_dict, fitness, epsilon, maximize, neutral_pairs,
+    *, ordinal_only=False,
 ):
-    """Vectorised ±1-step (Manhattan-1) lookup for ordinal generators.
-
-    Equivalent to :func:`_active_generic` driven by
-    :class:`OrdinalNeighborGenerator` with ``n_edit == 1``, but replaces the
-    per-configuration Python loop with a mixed-radix integer encoding and a bulk
-    neighbour lookup.
-
-    Each configuration is mapped to a single integer key over the per-variable
-    cardinalities ``card_j = config_dict[j]["max"] + 1``. For every variable
-    *j* and direction *d* in ``(+1, -1)`` the neighbour key is ``key +
-    d * radix_j`` (computed only for rows whose code stays in ``[0, card_j-1]``),
-    and the neighbour row is recovered either by a direct gather through a dense
-    inverse-key index (when the key space is small enough to address) or, for
-    large sparse key spaces, by an exact ``searchsorted`` match. Both branches
-    enumerate exactly the directed ``(source, neighbour)`` lookups that succeed
-    in the generic path, so the classification rules below reproduce its edge
-    set, neutral-pair set, and edge/Δf correspondence identically.
-
-    Neutral pairs are appended to the ``neutral_pairs`` list in place.
-
-    Returns
-    -------
-    tuple[np.ndarray, np.ndarray] | None
-        ``(edges, delta_fits)`` where ``edges`` is an ``(E, 2)`` int64 ndarray
-        and ``delta_fits`` the aligned 1-D float64 ndarray, when the fast-path
-        ran; ``None`` if it bailed out *before appending anything* (e.g.
-        mixed-radix overflow), so the caller can fall back to
-        :func:`_active_generic`.
-    """
-    n_vars = configs_array.shape[1]
-
-    # Per-variable cardinalities from config_dict[j]["max"] (same source as
-    # OrdinalNeighborGenerator).
-    cards = np.empty(n_vars, dtype=np.int64)
+    """Find single-site neighbors in mixed categorical, Boolean and ordinal data."""
+    n, n_vars = configs_array.shape
     try:
-        for j in range(n_vars):
-            cards[j] = int(config_dict[j]["max"]) + 1
+        cards = [int(config_dict[j]["max"]) + 1 for j in range(n_vars)]
+        kinds = ["ordinal" if ordinal_only else config_dict[j]["type"] for j in range(n_vars)]
     except (KeyError, TypeError, ValueError):
-        return None  # malformed config_dict -> let the generic path handle it
-    if np.any(cards <= 0):
+        return None
+    if any(card <= 0 for card in cards) or any(kind not in {"ordinal", "categorical", "boolean"} for kind in kinds):
         return None
 
-    # Mixed-radix place values radix_j = prod(card_0..card_{j-1}); guard against
-    # int64 overflow when the full key space prod(card) > 2**63.
-    radices = np.empty(n_vars, dtype=np.int64)
-    acc = 1  # Python int: exact, no overflow during the product itself
-    for j in range(n_vars):
-        radices[j] = acc
-        acc *= int(cards[j])
-        if acc > (1 << 63) - 1:
-            return None  # key space exceeds int64 -> fall back to generic
-
-    # Committed to the fast-path. ``acc`` is the exact key space prod(card)
-    # (== max key + 1); every key is in [0, acc) and distinct (rows are unique).
-    keyspace = acc
+    radices, keyspace = [], 1
+    for card in cards:
+        radices.append(keyspace)
+        keyspace *= card
+        if keyspace > np.iinfo(np.int64).max:
+            return None
     codes = configs_array.astype(np.int64, copy=False)
-    n = codes.shape[0]
-    keys = codes @ radices  # (n_rows,) int64 mixed-radix key per configuration
-
-    neutral_eps = _neutral_abs_threshold(epsilon)
-
-    if verbose:
-        logger.info(" - Constructing neighborhoods (ordinal vectorised)...")
-
-    # Collect every directed (source, neighbour) adjacency, then classify at once.
-    # The ±1 neighbour lookup uses a dense inverse index (O(1) gather) when the
-    # key space is small, else a sorted-key searchsorted; both enumerate the same
-    # adjacencies. The inverse index (keyspace * 8 bytes) is built only when below
-    # both a 64 MiB floor and 4*n entries, tying its footprint to the dataset so
-    # peak memory can't blow up on a sparse, high-cardinality lattice.
-    use_dense_inverse = keyspace <= max(1 << 23, 4 * n)
-
-    src_parts, nbr_parts = [], []
-    if use_dense_inverse:
-        # inv[k] = row id whose key is k, or -1 if absent. Every key < keyspace.
-        inv = np.full(keyspace, -1, dtype=np.int64)
-        inv[keys] = np.arange(n)
-        for j in range(n_vars):
-            col = codes[:, j]
-            radix_j = int(radices[j])
-            card_j = int(cards[j])
-            for d in (1, -1):
-                # Valid sources: +1 needs code < card-1, -1 needs code > 0, so
-                # the neighbour key stays in [0, keyspace) (inv lookup in bounds).
-                valid = col != (card_j - 1) if d == 1 else col != 0
-                if not np.any(valid):
-                    continue
-                src_rows = np.nonzero(valid)[0]
-                nbr_rows = inv[keys[src_rows] + d * radix_j]
-                hit = nbr_rows >= 0
-                if not np.any(hit):
-                    continue
-                src_parts.append(src_rows[hit])
-                nbr_parts.append(nbr_rows[hit])
-        del inv
+    keys = codes @ np.asarray(radices, dtype=np.int64)
+    dense = keyspace <= min(_LUT_MAX_CELLS, max(65536, 8 * n))
+    if dense:
+        inverse = np.full(keyspace, -1, dtype=np.int64)
+        inverse[keys] = np.arange(n)
     else:
         order = np.argsort(keys, kind="stable")
-        skeys = keys[order]
-        for j in range(n_vars):
-            col = codes[:, j]
-            radix_j = int(radices[j])
-            card_j = int(cards[j])
-            for d in (1, -1):
-                valid = col != (card_j - 1) if d == 1 else col != 0
-                if not np.any(valid):
-                    continue
-                src_rows = np.nonzero(valid)[0]
-                nbr_keys = keys[src_rows] + d * radix_j
-                pos = np.searchsorted(skeys, nbr_keys)
-                in_range = pos < skeys.shape[0]
-                if not np.any(in_range):
-                    continue
-                pos = pos[in_range]
-                src_rows = src_rows[in_range]
-                match = skeys[pos] == nbr_keys[in_range]
-                if not np.any(match):
-                    continue
-                src_parts.append(src_rows[match])
-                nbr_parts.append(order[pos[match]])
+        sorted_keys = keys[order]
 
-    if not src_parts:
-        if verbose:
-            logger.info(" - Identified 0 improving connections.")
+    sources, neighbors = [], []
+    for j, (card, radix, kind) in enumerate(zip(cards, radices, kinds)):
+        column = codes[:, j]
+        ordinal = kind == "ordinal"
+        # Increasing the allele code visits each undirected pair exactly once.
+        for target in (None,) if ordinal else range(1, card):
+            source = np.flatnonzero(column < (card - 1 if ordinal else target))
+            if not source.size:
+                continue
+            delta = 1 if ordinal else target - column[source]
+            query = keys[source] + delta * radix
+            if dense:
+                neighbor = inverse[query]
+                hit = neighbor >= 0
+            else:
+                position = np.searchsorted(sorted_keys, query)
+                bounded = np.minimum(position, n - 1)
+                hit = (position < n) & (sorted_keys[bounded] == query)
+                neighbor = order[bounded]
+            sources.append(source[hit])
+            neighbors.append(neighbor[hit])
+    if not sources:
         return _empty_edges(), _empty_deltas()
-
-    src = np.concatenate(src_parts)
-    nbr = np.concatenate(nbr_parts)
-
-    edges, delta_fits = _classify_directed_adjacency(
-        src, nbr, fitness, neutral_eps, maximize, neutral_pairs,
+    source, neighbor = np.concatenate(sources), np.concatenate(neighbors)
+    return _classify_pairs_to_arrays(
+        np.minimum(source, neighbor), np.maximum(source, neighbor), fitness,
+        _neutral_abs_threshold(epsilon), maximize, neutral_pairs,
     )
-
-    if verbose:
-        logger.info(f" - Identified {len(edges)} improving connections.")
-        if neutral_pairs:
-            logger.info(f" - Identified {len(neutral_pairs)} neutral neighbor pairs.")
-
-    return edges, delta_fits
