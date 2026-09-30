@@ -112,6 +112,8 @@ class _BuildMixin:
         *,
         n_edit: int,
         neighborhood_strategy: str,
+        tau: Optional[float] = None,
+        filter_mode: str = "any",
     ) -> List[Tuple[int, int]]:
         """Construct the graph from preprocessed data and return neutral pairs."""
         if self.verbose:
@@ -120,6 +122,13 @@ class _BuildMixin:
         edges, delta_fits, neutral_pairs = self._build_edges(
             processed_data, n_edit=n_edit, strategy=neighborhood_strategy
         )
+        if tau is not None and filter_mode == "both" and len(edges):
+            edges = np.asarray(edges, dtype=np.int64)
+            # The target is the fitter endpoint of every improving edge.
+            target_fitness = processed_data["fitness"].to_numpy()[edges[:, 1]]
+            keep = target_fitness >= tau if self.maximize else target_fitness <= tau
+            edges = edges[keep]
+            delta_fits = np.asarray(delta_fits)[keep]
         self.graph = self._build_graph(processed_data, edges, delta_fits)
         return neutral_pairs
 
@@ -352,4 +361,3 @@ class _BuildMixin:
         # Determine optima (basins / paths / distance / neighbour fitness are lazy).
         self._compute_local_optima()
         self._compute_global_optimum()
-
