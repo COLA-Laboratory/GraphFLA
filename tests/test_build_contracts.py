@@ -259,3 +259,28 @@ def test_auto_strategy_honors_registered_neighbor_generator():
     ls.register_neighbor_generator("boolean", FirstBitOnly())
     ls.build_from_data(["00", "01", "10", "11"], [0.0, 1.0, 2.0, 3.0], verbose=False)
     assert set(ls.graph.get_edgelist()) == {(0, 2), (1, 3)}
+
+
+@pytest.mark.parametrize("missing", [False, True])
+def test_wide_duplicate_detection_preserves_full_row_identity(missing):
+    from graphfla._data._validation import _drop_duplicates
+
+    X = pd.DataFrame({f"fixed_{j}": [1, 1, 1, 1] for j in range(24)})
+    X["variable"] = [0, 0, 0, 1]
+    if missing:
+        X["fixed_0"] = [np.nan, 1, np.nan, 1]
+    fitness = pd.Series([1.0, 2.0, 3.0, 4.0])
+    expected = [0, 1, 3] if missing else [0, 3]
+    actual_X, actual_f = _drop_duplicates(X, fitness)
+    pd.testing.assert_frame_equal(actual_X, X.iloc[expected])
+    pd.testing.assert_series_equal(actual_f, fitness.iloc[expected])
+
+
+def test_all_constant_wide_rows_keep_first_occurrence():
+    from graphfla._data._validation import _drop_duplicates
+
+    X = pd.DataFrame(np.ones((4, 20)))
+    fitness = pd.Series([1.0, 2.0, 3.0, 4.0])
+    actual_X, actual_f = _drop_duplicates(X, fitness)
+    pd.testing.assert_frame_equal(actual_X, X.iloc[:1])
+    pd.testing.assert_series_equal(actual_f, fitness.iloc[:1])
