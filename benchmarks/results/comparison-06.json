@@ -1,0 +1,191 @@
+[
+  {
+    "dataset": "WReOs",
+    "baseline_seconds": 0.0015406671445816755,
+    "candidate_seconds": 0.0014674169942736626,
+    "speedup": 1.0499177470302299,
+    "noise_gate": 0.19244821950351476,
+    "status": "inconclusive",
+    "peak_rss_ratio": 1.0045020314044142
+  },
+  {
+    "dataset": "CR6261",
+    "baseline_seconds": 0.0067392499186098576,
+    "candidate_seconds": 0.0063876251224428415,
+    "speedup": 1.055047813455988,
+    "noise_gate": 0.08439405714134096,
+    "status": "inconclusive",
+    "peak_rss_ratio": 0.9957242116515232
+  },
+  {
+    "dataset": "TrpB3I",
+    "baseline_seconds": 0.03986462508328259,
+    "candidate_seconds": 0.03886712505482137,
+    "speedup": 1.025664363573438,
+    "noise_gate": 0.11579817294238809,
+    "status": "inconclusive",
+    "peak_rss_ratio": 1.0058758721997796
+  },
+  {
+    "dataset": "Westmann",
+    "baseline_seconds": 0.02672874997369945,
+    "candidate_seconds": 0.025899041909724474,
+    "speedup": 1.032036245466804,
+    "noise_gate": 0.0785251143112115,
+    "status": "inconclusive",
+    "peak_rss_ratio": 0.9615986099044309
+  },
+  {
+    "dataset": "CR9114",
+    "baseline_seconds": 0.12141887494362891,
+    "candidate_seconds": 0.11881079198792577,
+    "speedup": 1.0219515661167227,
+    "noise_gate": 0.09886741530971009,
+    "status": "inconclusive",
+    "peak_rss_ratio": 0.9722821863396943
+  },
+  {
+    "dataset": "GB1",
+    "baseline_seconds": 0.8972265420015901,
+    "candidate_seconds": 0.8826592080295086,
+    "speedup": 1.0165039166187393,
+    "noise_gate": 0.05084724784084025,
+    "status": "inconclusive",
+    "peak_rss_ratio": 0.9998484190102772
+  },
+  {
+    "dataset": "Papkou",
+    "baseline_seconds": 0.5838907500728965,
+    "candidate_seconds": 0.5749569998588413,
+    "speedup": 1.0155381188788875,
+    "noise_gate": 0.05,
+    "status": "inconclusive",
+    "peak_rss_ratio": 0.99192493526601
+  },
+  {
+    "dataset": "Papkou-filtered",
+    "baseline_seconds": 0.36248174984939396,
+    "candidate_seconds": 0.3580500001553446,
+    "speedup": 1.0123774603885676,
+    "noise_gate": 0.06874690965589848,
+    "status": "inconclusive",
+    "peak_rss_ratio": 1.0419572060405626
+  },
+  {
+    "dataset": "PG-GB1",
+    "baseline_seconds": 1.9902677081990987,
+    "candidate_seconds": 2.0291531670372933,
+    "speedup": 0.980836607374016,
+    "noise_gate": 0.06016929155048552,
+    "status": "inconclusive",
+    "peak_rss_ratio": 0.9908405821759998
+  },
+  {
+    "dataset": "PG-BRCA2",
+    "baseline_seconds": 0.23374337493442,
+    "candidate_seconds": 0.20933183399029076,
+    "speedup": 1.1166164767144853,
+    "noise_gate": 0.05,
+    "status": "faster",
+    "peak_rss_ratio": 0.9811760920279945
+  },
+  {
+    "dataset": "PG-POLG",
+    "baseline_seconds": 1.0335664588492364,
+    "candidate_seconds": 0.9843848329037428,
+    "speedup": 1.049961787607411,
+    "noise_gate": 0.07872510585560388,
+    "status": "inconclusive",
+    "peak_rss_ratio": 0.9766057230791778
+  },
+  {
+    "dataset": "RG-BRCA1",
+    "baseline_seconds": 0.5239311668556184,
+    "candidate_seconds": 0.47700795787386596,
+    "speedup": 1.0983698661777046,
+    "noise_gate": 0.05,
+    "status": "faster",
+    "peak_rss_ratio": 1.0483287434526702
+  },
+  {
+    "dataset": "RG-tRNA",
+    "baseline_seconds": 0.015926541993394494,
+    "candidate_seconds": 0.015461124945431948,
+    "speedup": 1.030102405200474,
+    "noise_gate": 0.06888652102786363,
+    "status": "inconclusive",
+    "peak_rss_ratio": 1.0065538491636505
+  },
+  {
+    "dataset": "RG-ribozyme",
+    "baseline_seconds": 0.015140916919335723,
+    "candidate_seconds": 0.013350666966289282,
+    "speedup": 1.1340944207182204,
+    "noise_gate": 0.07712549317625321,
+    "status": "faster",
+    "peak_rss_ratio": 0.9936538668387652
+  },
+  {
+    "dataset": "RG-LINE1",
+    "baseline_seconds": 0.49482745910063386,
+    "candidate_seconds": 0.4947730409912765,
+    "speedup": 1.000109986003377,
+    "noise_gate": 0.06512699199406383,
+    "status": "inconclusive",
+    "peak_rss_ratio": 1.0038859658172565
+  },
+  {
+    "dataset": "synthetic-boolean",
+    "baseline_seconds": 0.009209875017404556,
+    "candidate_seconds": 0.00920729199424386,
+    "speedup": 1.0002805410279494,
+    "noise_gate": 0.11945033930533921,
+    "status": "inconclusive",
+    "peak_rss_ratio": 0.9966680549770929
+  },
+  {
+    "dataset": "synthetic-ordinal",
+    "baseline_seconds": 0.0011366249527782202,
+    "candidate_seconds": 0.0011668330989778042,
+    "speedup": 0.974110996486089,
+    "noise_gate": 0.36159591393853907,
+    "status": "inconclusive",
+    "peak_rss_ratio": 0.9988891357476116
+  },
+  {
+    "dataset": "synthetic-dna",
+    "baseline_seconds": 0.008597959065809846,
+    "candidate_seconds": 0.008342040935531259,
+    "speedup": 1.0306781196899377,
+    "noise_gate": 0.08249051876772048,
+    "status": "inconclusive",
+    "peak_rss_ratio": 0.9812538414259373
+  },
+  {
+    "dataset": "synthetic-rna",
+    "baseline_seconds": 0.0018317499198019505,
+    "candidate_seconds": 0.001798165962100029,
+    "speedup": 1.0186767842400373,
+    "noise_gate": 0.19202952065166906,
+    "status": "inconclusive",
+    "peak_rss_ratio": 0.997125165855816
+  },
+  {
+    "dataset": "synthetic-sequence",
+    "baseline_seconds": 0.0019202500116080046,
+    "candidate_seconds": 0.0018059578724205494,
+    "speedup": 1.0632861601772958,
+    "noise_gate": 0.2710585176366256,
+    "status": "inconclusive",
+    "peak_rss_ratio": 0.9973348139922266
+  },
+  {
+    "dataset": "synthetic-hpo",
+    "baseline_seconds": 0.0015081248711794615,
+    "candidate_seconds": 0.0015076668933033943,
+    "speedup": 1.0003037659565925,
+    "noise_gate": 0.43290547812244734,
+    "status": "inconclusive",
+    "peak_rss_ratio": 0.9986693280106453
+  }
+]

@@ -233,7 +233,7 @@ def _invariant_columns(X: pd.DataFrame) -> List[str]:
     for col in X.columns:
         series = X[col]
         if isinstance(series.dtype, pd.CategoricalDtype):
-            codes = series.cat.codes.to_numpy()
+            codes = series.array.codes
             if codes.size == 0:
                 invariant.append(col)
                 continue
