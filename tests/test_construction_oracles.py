@@ -243,3 +243,36 @@ def test_epsilon_accepts_one_ulp_roundoff_only(strategy):
     )
     assert set(map(tuple, result.edges)) == {(0, 2)}
     assert set(result.neutral_pairs) == {(0, 1), (1, 2)}
+
+
+@pytest.mark.parametrize("strategy", ["pairwise", "broadcast"])
+def test_multi_edit_pairs_cross_memory_blocks(strategy, monkeypatch):
+    monkeypatch.setattr(_kernels, "_PAIRWISE_BLOCK_BYTES", 32)
+    monkeypatch.setattr(_kernels, "_BROADCAST_CHUNK_BYTES", 6)
+    rows = np.array(list(product(range(3), repeat=3)), dtype=np.uint8)
+    fitness = np.arange(len(rows), dtype=float) % 4
+    result = kernel_result(
+        rows, fitness, SequenceNeighborGenerator(3), strategy, radius=2
+    )
+    assert_pairs(
+        result.edges,
+        result.delta_fits,
+        result.neutral_pairs,
+        enumerate_pairs(rows, fitness, radius=2),
+    )
+
+
+@pytest.mark.parametrize("dimensions", [4, 70])
+def test_ordinal_sparse_lookup_and_overflow(dimensions, monkeypatch):
+    monkeypatch.setattr(_kernels, "_LUT_MAX_CELLS", 0)
+    rows = np.concatenate(
+        [np.zeros((1, dimensions), dtype=int), np.eye(dimensions, dtype=int)]
+    )
+    fitness = np.arange(len(rows), dtype=float) % 3
+    result = kernel_result(rows, fitness, OrdinalNeighborGenerator())
+    assert_pairs(
+        result.edges,
+        result.delta_fits,
+        result.neutral_pairs,
+        enumerate_pairs(rows, fitness, ordinal=tuple(range(dimensions))),
+    )

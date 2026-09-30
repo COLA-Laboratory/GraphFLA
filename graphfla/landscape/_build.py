@@ -30,6 +30,7 @@ from ..exceptions import InvalidParameterError, NotBuiltError
 import logging
 
 logger = logging.getLogger(__name__)
+_ATTRIBUTE_BUFFER_BYTES = 16 * 1024**2
 
 
 class _BuildMixin:
@@ -264,15 +265,23 @@ class _BuildMixin:
         if self.verbose:
             logger.info(" - Constructing graph object and attributes...")
 
-        graph = ig.Graph(n=len(data), edges=edges if len(edges) else None, directed=True)
+        edge_attrs = {}
         if len(edges):
             values = np.asarray(delta_fits, dtype=np.float64)
-            graph.es["delta_fit"] = memoryview(np.ascontiguousarray(values))
+            edge_attrs["delta_fit"] = memoryview(np.ascontiguousarray(values))
 
-        # Attach one column at a time to avoid retaining every decoded array.
-        for column in data.columns:
-            values = data[column].to_numpy(copy=False)
-            graph.vs[str(column)] = values
+        stream = data.size * np.dtype(object).itemsize > _ATTRIBUTE_BUFFER_BYTES
+        vertex_attrs = {} if stream else {
+            str(column): data[column].to_numpy(copy=False) for column in data.columns
+        }
+        graph = ig.Graph(
+            n=len(data), edges=edges if len(edges) else None, directed=True,
+            vertex_attrs=vertex_attrs, edge_attrs=edge_attrs,
+        )
+        # Bound temporary decoded arrays for long genetic backgrounds.
+        if stream:
+            for column in data.columns:
+                graph.vs[str(column)] = data[column].to_numpy(copy=False)
         self._n_edges = graph.ecount()
         return graph
 

@@ -34,6 +34,8 @@ from .generators import (
 import logging
 
 logger = logging.getLogger(__name__)
+_PAIRWISE_BLOCK_BYTES = 64 * 1024**2
+_BROADCAST_CHUNK_BYTES = 128 * 1024**2
 
 
 def _build_active(
@@ -196,7 +198,7 @@ def _build_pairwise(
     # the diagonal ~b^2/2*8 fits; tail columns chunked so b*cols*8 fits). Keeps
     # peak memory in the tens of MB vs pdist's full n^2/2*8 array; small n falls
     # to a single block with no chunking, matching the plain pdist path.
-    budget_bytes = 64 * 1024**2
+    budget_bytes = _PAIRWISE_BLOCK_BYTES
     budget_cells = max(1, budget_bytes // 8)
     block_rows = max(2, int(budget_cells**0.5))
 
@@ -303,7 +305,7 @@ def _build_broadcast(
     configs_array = _as_config_matrix(configs, configs_array)
     n_vars = configs_array.shape[1]
     # Avoid allocating (n-i) x n_vars boolean arrays per row; chunk along j.
-    max_chunk_bytes = 128 * 1024**2
+    max_chunk_bytes = _BROADCAST_CHUNK_BYTES
     chunk_rows = max(1, max_chunk_bytes // max(n_vars, 1))
 
     edges, delta_fits, neutral = [], [], []
@@ -1080,17 +1082,27 @@ def _active_generic(
 
 
 def _active_discrete(
-    configs_array, config_dict, fitness, epsilon, maximize, neutral_pairs,
-    *, ordinal_only=False,
+    configs_array,
+    config_dict,
+    fitness,
+    epsilon,
+    maximize,
+    neutral_pairs,
+    *,
+    ordinal_only=False,
 ):
     """Find single-site neighbors in mixed categorical, Boolean and ordinal data."""
     n, n_vars = configs_array.shape
     try:
         cards = [int(config_dict[j]["max"]) + 1 for j in range(n_vars)]
-        kinds = ["ordinal" if ordinal_only else config_dict[j]["type"] for j in range(n_vars)]
+        kinds = [
+            "ordinal" if ordinal_only else config_dict[j]["type"] for j in range(n_vars)
+        ]
     except (KeyError, TypeError, ValueError):
         return None
-    if any(card <= 0 for card in cards) or any(kind not in {"ordinal", "categorical", "boolean"} for kind in kinds):
+    if any(card <= 0 for card in cards) or any(
+        kind not in {"ordinal", "categorical", "boolean"} for kind in kinds
+    ):
         return None
 
     radices, keyspace = [], 1
@@ -1134,6 +1146,10 @@ def _active_discrete(
         return _empty_edges(), _empty_deltas()
     source, neighbor = np.concatenate(sources), np.concatenate(neighbors)
     return _classify_pairs_to_arrays(
-        np.minimum(source, neighbor), np.maximum(source, neighbor), fitness,
-        _neutral_abs_threshold(epsilon), maximize, neutral_pairs,
+        np.minimum(source, neighbor),
+        np.maximum(source, neighbor),
+        fitness,
+        _neutral_abs_threshold(epsilon),
+        maximize,
+        neutral_pairs,
     )
