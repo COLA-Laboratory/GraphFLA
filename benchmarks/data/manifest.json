@@ -1,0 +1,126 @@
+{
+  "archives": {
+    "proteingym": {
+      "url": "https://zenodo.org/records/15293562/files/DMS_ProteinGym_substitutions.zip?download=1",
+      "sha256": "3a83766254ac9ac9984ec25cb73c6e010ea4418f5e35f143933e6b6e6473b921"
+    },
+    "rnagym": {
+      "url": "https://marks.hms.harvard.edu/rnagym/fitness_prediction/fitness_processed_assays.zip",
+      "sha256": "56a91b52bfd9537abb4b5e8f5f9bbb663fd712e95e404e26338e4aa3090e2279"
+    }
+  },
+  "datasets": {
+    "PG-GB1": {
+      "collection": "proteingym",
+      "assay": "SPG1_STRSG_Wu_2016",
+      "member": "DMS_ProteinGym_substitutions/SPG1_STRSG_Wu_2016.csv",
+      "member_sha256": "d8faee338a3a53ba89b9ddc4be8dbdc244d3d2c84ddbc1ccc00ff4418ae71fcc",
+      "file": "PG-GB1.csv.gz",
+      "sha256": "7b00201d68d7871b56789e005b90abc8afc5c21ab5882b09c1aa49f9958329af",
+      "kind": "protein",
+      "sequence_column": "mutated_sequence",
+      "fitness_column": "DMS_score",
+      "n_variants": 149360,
+      "sequence_length": 448,
+      "variable_sites": 4,
+      "log10_observed_space_occupancy": -0.029885677714903025,
+      "preprocessing": "preserve full background"
+    },
+    "PG-BRCA2": {
+      "collection": "proteingym",
+      "assay": "BRCA2_HUMAN_Erwood_2022_HEK293T",
+      "member": "DMS_ProteinGym_substitutions/BRCA2_HUMAN_Erwood_2022_HEK293T.csv",
+      "member_sha256": "4fc00cf38e89679c11266fa651644c61297a3ac5eb36320fba3a715d5b64f8f2",
+      "file": "PG-BRCA2.csv.gz",
+      "sha256": "975262b31b92267032d7b3cacfa97330fcbbd02e8003426e39799fb0e03efaa7",
+      "kind": "protein",
+      "sequence_column": "mutated_sequence",
+      "fitness_column": "DMS_score",
+      "n_variants": 265,
+      "sequence_length": 3418,
+      "variable_sites": 53,
+      "log10_observed_space_occupancy": -37.94096092145875,
+      "preprocessing": "preserve full background"
+    },
+    "PG-POLG": {
+      "collection": "proteingym",
+      "assay": "POLG_CXB3N_Mattenberger_2021",
+      "member": "DMS_ProteinGym_substitutions/POLG_CXB3N_Mattenberger_2021.csv",
+      "member_sha256": "05393919f45280d340c5295ee1cdea8c6dcd84df01cb9be2d16ccf0e01ebf4b3",
+      "file": "PG-POLG.csv.gz",
+      "sha256": "72d8685c71ea33c53fca73bf54967220110bb4c412d5bd6185c7270c0218feb6",
+      "kind": "protein",
+      "sequence_column": "mutated_sequence",
+      "fitness_column": "DMS_score",
+      "n_variants": 15711,
+      "sequence_length": 2185,
+      "variable_sites": 851,
+      "log10_observed_space_occupancy": -1092.7078256582001,
+      "preprocessing": "preserve full background"
+    },
+    "RG-BRCA1": {
+      "collection": "rnagym",
+      "assay": "BRCA1_HUMAN_Findlay_2018",
+      "member": "assays/BRCA1_HUMAN_Findlay_2018.csv",
+      "member_sha256": "b245055d2f105a118f7a6f33bbbe0fa0b3f97f6cff3846658ff6370948e2ad9b",
+      "file": "RG-BRCA1.csv.gz",
+      "sha256": "26a6896b14ff3a6175bb0c263b0d878a3a1126968b1129e31ce540a25b2106b2",
+      "kind": "rna",
+      "sequence_column": "sequence",
+      "fitness_column": "DMS_score",
+      "n_variants": 886,
+      "sequence_length": 5592,
+      "variable_sites": 400,
+      "log10_observed_space_occupancy": -193.12132708997456,
+      "preprocessing": "T to U; preserve full background"
+    },
+    "RG-tRNA": {
+      "collection": "rnagym",
+      "assay": "Domingo_2018_tRNA",
+      "member": "assays/Domingo_2018_tRNA.csv",
+      "member_sha256": "0fc24f07d0539f81b10a5a3902bd25afa5c5fec32054e3eac8aec5dbe7ce951c",
+      "file": "RG-tRNA.csv.gz",
+      "sha256": "3548e17f8a3c46232615e43532605bc6289b184d405a23a61846e1ca4c508d50",
+      "kind": "rna",
+      "sequence_column": "sequence",
+      "fitness_column": "DMS_score",
+      "n_variants": 4175,
+      "sequence_length": 72,
+      "variable_sites": 10,
+      "log10_observed_space_occupancy": -0.09400851304291669,
+      "preprocessing": "T to U; preserve full background"
+    },
+    "RG-ribozyme": {
+      "collection": "rnagym",
+      "assay": "Kobori_2015_ribozyme_j12",
+      "member": "assays/Kobori_2015_ribozyme_j12.csv",
+      "member_sha256": "9f45ffa7c4fd1ad9e3d96ce692a745ce744dd18ff89e1b415c3642677f6b85ed",
+      "file": "RG-ribozyme.csv.gz",
+      "sha256": "3849815a2052e5045ee8b169666c6b5715587b7bb31f25a044af6c7f7539faf0",
+      "kind": "rna",
+      "sequence_column": "sequence",
+      "fitness_column": "DMS_score",
+      "n_variants": 255,
+      "sequence_length": 230,
+      "variable_sites": 4,
+      "log10_observed_space_occupancy": -0.0016997848778945723,
+      "preprocessing": "T to U; preserve full background"
+    },
+    "RG-LINE1": {
+      "collection": "rnagym",
+      "assay": "Zhang_2024_line1_full_ribozyme",
+      "member": "assays/Zhang_2024_line1_full_ribozyme.csv",
+      "member_sha256": "636a22b979b66ceffe61804a087e7bf5e092478ea325f96181ae883f8bed290d",
+      "file": "RG-LINE1.csv.gz",
+      "sha256": "9ce0d3be07c91a4f9386e8effa539895ebe7f8c3cc9718cf9c0d9658a505f61b",
+      "kind": "rna",
+      "sequence_column": "sequence",
+      "fitness_column": "DMS_score",
+      "n_variants": 69583,
+      "sequence_length": 146,
+      "variable_sites": 146,
+      "log10_observed_space_occupancy": -83.05825558490413,
+      "preprocessing": "T to U; preserve full background"
+    }
+  }
+}

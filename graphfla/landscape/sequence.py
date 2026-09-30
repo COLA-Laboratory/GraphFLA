@@ -106,11 +106,11 @@ class SequenceLandscape(Landscape):
 
         def _add_value(v):
             if not pd.isna(v):
-                syms.add(str(v))
+                syms.add(str(v).upper())
 
         def _add_chars(v):
             if not pd.isna(v):
-                syms.update(str(v))
+                syms.update(str(v).upper())
 
         if isinstance(X, pd.DataFrame):
             for col in X.columns:

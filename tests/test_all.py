@@ -23,9 +23,6 @@ from itertools import product
 import numpy as np
 
 
-from graphfla.analysis import *
-
-
 from graphfla.landscape import (
     BooleanLandscape,
     DNALandscape,
@@ -44,14 +41,15 @@ def generate_sequences(n, alphabets):
 
 
 def generate_random_fitness(num_sequences):
-    return [random.uniform(0, 100) for _ in range(num_sequences)]
+    rng = random.Random(42)
+    return [rng.uniform(0, 100) for _ in range(num_sequences)]
 
 
 @pytest.fixture(scope="module")
 def boolean_landscape_data():
     n = 4
     k = 2
-    problem = NK(n, k)
+    problem = NK(n, k, seed=42)
     X, fitness = problem.get_data()
     return X, fitness
 
@@ -384,5 +382,3 @@ def test_plateau_regression_no_zero_local_optima():
     assert landscape.n_lo > 0
     assert landscape.graph.vs["is_lo"][8]
     assert 8 in landscape.lo_index
-
-

@@ -1,0 +1,12 @@
+{
+  "doi": "10.5281/zenodo.8228920",
+  "license": "CC-BY-4.0",
+  "sources": {
+    "in_data/fitness_data_wt.rds": "fe7289c2bee25a1fb659cdda53264c0953124d9ddaeb1ac1eb893b1b2209ff08",
+    "computation_find_reciprocal_epistasis/graph_largest_component.ncol": "7d4448eaec8a9357c5af2c4a3025a263a2fa4ece5db7f766fe3cd8b0e13ee174"
+  },
+  "fixtures": {
+    "fitness.csv.gz": "d822597860e8a12182789c431cb5489021fb057dcf103210318febf563e93a97",
+    "edges.ncol.gz": "fe1e632b9f0ad901060dd4e590fd03140b23b954cbce830ef45cba1e057cea2e"
+  }
+}

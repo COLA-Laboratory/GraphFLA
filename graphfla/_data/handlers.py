@@ -404,11 +404,12 @@ def _parse_boolean_input(
     is_sequence_of_strings = False
     is_sequence_of_sequences = False
     try:
-        first_element = (
-            X_input[X_input.columns[0]]
-            if isinstance(X_input, pd.DataFrame)
-            else X_input[0]
-        )
+        if isinstance(X_input, pd.DataFrame):
+            first_element = X_input.iloc[:, 0]
+        elif isinstance(X_input, pd.Series):
+            first_element = X_input.iloc[0]
+        else:
+            first_element = X_input[0]
         if isinstance(first_element, str):
             is_sequence_of_strings = True
         elif isinstance(first_element, (list, tuple, np.ndarray)):
@@ -465,7 +466,7 @@ def _parse_boolean_input(
             raise ValueError("Input sequence is empty.")
 
         try:
-            processed_sequences = [[int(val) for val in seq] for seq in sequences]
+            processed_sequences = [list(seq) for seq in sequences]
         except (ValueError, TypeError) as e:
             raise ValueError(f"Could not convert inner sequences to integers: {e}") from e
 
@@ -510,7 +511,7 @@ def _parse_boolean_input(
 
         try:
             X_df = X_df.replace({True: 1, False: 0})
-            X_df = X_df.astype(int)
+            X_df = X_df.apply(pd.to_numeric, errors="raise")
         except (ValueError, TypeError) as e:
             raise ValueError(
                 f"Could not convert DataFrame content to integer 0/1: {e}. Ensure input contains only boolean-like values (0, 1, True, False)."
@@ -526,6 +527,7 @@ def _parse_boolean_input(
             raise ValueError(
                 f"Input data contains values other than 0 or 1 (or True/False). Found: {problem_val}"
             )
+        X_df = X_df.astype(int)
 
     else:
         raise TypeError(
@@ -668,7 +670,9 @@ def _parse_sequence_input(
     is_sequence_format = False
     if isinstance(X_input, (list, tuple, pd.Series, np.ndarray)):
         try:
-            first_element = X_input[0]
+            first_element = (
+                X_input.iloc[0] if isinstance(X_input, pd.Series) else X_input[0]
+            )
             if isinstance(first_element, str):
                 is_sequence_format = True
             elif isinstance(X_input, np.ndarray) and X_input.dtype.kind in ("U", "S"):
@@ -725,6 +729,13 @@ def _parse_sequence_input(
         # check below). LUT is sized to the final code dtype (int8 covers
         # DNA/RNA/protein) to avoid a wide int64 intermediate; one transpose to
         # contiguous gives each from_codes an already-contiguous row.
+        if not joined_upper.isascii() or not all(char.isascii() for char in alphabet):
+            symbols = np.array(list(joined_upper)).reshape(n_seq, seq_len)
+            X_df = pd.DataFrame(symbols, columns=[f"pos_{i}" for i in range(seq_len)])
+            cat_dtype = pd.CategoricalDtype(categories=alphabet, ordered=False)
+            X_df = X_df.astype(cat_dtype)
+            data_types = {col: "categorical" for col in X_df.columns}
+            return X_df, data_types, seq_len
         byte_array = np.frombuffer(
             joined_upper.encode("ascii"), dtype=np.uint8
         ).reshape(n_seq, seq_len)

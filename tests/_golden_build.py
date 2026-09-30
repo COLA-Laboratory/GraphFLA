@@ -2,10 +2,8 @@
 value, in the same shape as the frozen references (tests/_golden_references.py).
 Used only by tests/test_golden_landscapes.py."""
 import io, contextlib
-import warnings
 import pandas as pd
 
-warnings.simplefilter("ignore")
 
 from graphfla.landscape import (
     BooleanLandscape, OrdinalLandscape, Landscape,

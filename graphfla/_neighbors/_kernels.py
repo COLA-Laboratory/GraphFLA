@@ -78,18 +78,17 @@ def _build_active(
 
     edges = delta_fits = None  # set by whichever path runs
 
-    if can_use_bytemap and isinstance(generator_obj, BooleanNeighborGenerator):
+    # Subclasses may override adjacency; fast paths implement built-ins only.
+    if can_use_bytemap and type(generator_obj) is BooleanNeighborGenerator:
         edges, delta_fits = _active_boolean_bytemap(
             configs_array, fitness, epsilon, maximize, verbose, neutral_pairs,
         )
-    elif can_use_bytemap and isinstance(generator_obj, SequenceNeighborGenerator):
+    elif can_use_bytemap and type(generator_obj) is SequenceNeighborGenerator:
         edges, delta_fits = _active_sequence_bytemap(
             configs_array, fitness, epsilon, maximize, verbose,
             generator_obj.alphabet_size, neutral_pairs,
         )
-    elif numeric_configs_array and isinstance(
-        generator_obj, OrdinalNeighborGenerator
-    ):
+    elif numeric_configs_array and type(generator_obj) is OrdinalNeighborGenerator:
         result = _active_ordinal_vectorized(
             configs_array, config_dict, fitness, epsilon, maximize, verbose,
             neutral_pairs,
@@ -606,6 +605,7 @@ def _masked_grouping_pairs(configs_array):
         # Collision safety: keep only candidates that are truly Hamming-1, so the
         # result is exact regardless of fingerprint collisions.
         keep = _verify_hamming1(averify, cand_i, cand_j)
+        keep &= averify[cand_i, p] != averify[cand_j, p]
         if not keep.any():
             continue
 

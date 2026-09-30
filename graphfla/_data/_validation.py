@@ -121,7 +121,7 @@ def _validate_bitstrings_fast(bitstrings, bit_length):
     """
     joined = "".join(bitstrings)
     # Length mismatch makes the flat join un-reshapeable; defer to the slow loop.
-    if len(joined) != bit_length * len(bitstrings):
+    if any(len(value) != bit_length for value in bitstrings):
         return None
     try:
         byte_codes = np.frombuffer(joined.encode("ascii"), dtype=np.uint8)

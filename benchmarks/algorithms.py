@@ -28,7 +28,8 @@ class Trajectories:
         cls, X, f = _datasets.load_real(dataset)  # skipped if data absent
         landscape = cls(maximize=True)
         landscape.build_from_data(X, f, verbose=False)
-        self.cache = SearchCache(landscape.graph)
+        self.graph = landscape.graph
+        self.cache = SearchCache(self.graph)
         rng = np.random.default_rng(123)
         self.starts = rng.integers(
             0, landscape.n_configs, size=N_STARTS, dtype=np.int64
@@ -47,4 +48,21 @@ class Trajectories:
     def time_randomwalk(self, dataset):
         master = random.Random(SEED)
         for s in self.starts:
-            RandomWalk(self.cache, length=WALK_LENGTH, seed=master.getrandbits(32)).run(s)
+            RandomWalk(self.cache, length=WALK_LENGTH, seed=master.getrandbits(32)).run(
+                s
+            )
+
+    def time_search_cache(self, dataset):
+        SearchCache(self.graph)
+
+    def peakmem_search_cache(self, dataset):
+        SearchCache(self.graph)
+
+    def peakmem_hillclimb_best(self, dataset):
+        self.time_hillclimb_best(dataset)
+
+    def peakmem_hillclimb_first(self, dataset):
+        self.time_hillclimb_first(dataset)
+
+    def peakmem_randomwalk(self, dataset):
+        self.time_randomwalk(dataset)
