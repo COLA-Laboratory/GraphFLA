@@ -6,12 +6,18 @@ public API of the neighbours subpackage.
 """
 
 from dataclasses import dataclass
-from math import comb
 from typing import Dict, List, Tuple, Union, Callable
 
 import numpy as np
 
 from ._arrays import _empty_edges, _empty_deltas
+from . import _kernels
+from .generators import (
+    BooleanNeighborGenerator,
+    SequenceNeighborGenerator,
+    OrdinalNeighborGenerator,
+    DefaultNeighborGenerator,
+)
 from ._kernels import _build_active, _build_pairwise, _build_broadcast
 import logging
 
@@ -101,13 +107,14 @@ def build_edges(
     valid_strategies = {"auto", "active", "pairwise", "broadcast"}
     if strategy not in valid_strategies:
         raise ValueError(
-            f"Unknown strategy '{strategy}'. "
-            f"Choose from {sorted(valid_strategies)}."
+            f"Unknown strategy '{strategy}'. Choose from {sorted(valid_strategies)}."
         )
 
     resolved = strategy
     if resolved == "auto":
-        resolved = _select_strategy(n_configs, n_vars, config_dict, n_edit)
+        resolved = _select_strategy(
+            n_configs, n_vars, config_dict, n_edit, neighbor_generator
+        )
         if verbose:
             logger.info(f" - Auto-selected '{resolved}' neighborhood strategy.")
 
@@ -164,37 +171,30 @@ def _normalize_edge_output(edges, delta_fits):
 # ===================================================================
 
 
-def _select_strategy(
-    n_configs: int, n_vars: int, config_dict: Dict, n_edit: int
-) -> str:
-    """Choose the fastest strategy for the dataset dimensions.
-
-    1. ``'pairwise'`` if the condensed distance matrix fits in ~4 GiB.
-    2. Otherwise compare estimated cost of ``'broadcast'`` (vectorised
-       per-row Hamming) vs. ``'active'`` (candidate enumeration + hash
-       lookup) and pick the cheaper one.
-    """
-    n = n_configs
-    n_vars = n_vars or 1
-
-    pairwise_bytes = n * (n - 1) // 2 * 8  # float64 condensed form
-    if pairwise_bytes <= 4 * 1024 ** 3:
+def _select_strategy(n_configs, n_vars, config_dict, n_edit, neighbor_generator):
+    """Choose a supported backend using the generator and encoded key space."""
+    generator = getattr(neighbor_generator, "__self__", None)
+    generator_type = type(generator)
+    builtins = (
+        BooleanNeighborGenerator,
+        SequenceNeighborGenerator,
+        OrdinalNeighborGenerator,
+        DefaultNeighborGenerator,
+    )
+    if generator_type not in builtins:
+        return "active"
+    if n_edit > 1:
         return "pairwise"
+    if generator_type is OrdinalNeighborGenerator:
+        return "active"
+    if generator_type is DefaultNeighborGenerator:
+        has_ordinal = any(info["type"] == "ordinal" for info in config_dict.values())
+        return "active" if has_ordinal else "pairwise"
 
-    k_max = (
-        max(cd["max"] + 1 for cd in config_dict.values()) if config_dict else 2
-    )
-    candidates_per_config = sum(
-        comb(n_vars, e) * (k_max - 1) ** e for e in range(1, n_edit + 1)
-    )
-    active_cost = n * candidates_per_config
-
-    vectorisation_factor = 40
-    broadcast_cost = n * n / vectorisation_factor
-
-    return "broadcast" if broadcast_cost < active_cost else "active"
-
-
-# ===================================================================
-# Strategy implementations (private)
-# ===================================================================
+    base = 2 if generator_type is BooleanNeighborGenerator else generator.alphabet_size
+    if base > 256:
+        return "pairwise"
+    if n_vars >= 64 or base**n_vars > (1 << 63):
+        return "active"  # The active overflow path uses exact masked grouping.
+    affordable = min(_kernels._LUT_MAX_CELLS, max(1 << 20, 8 * n_configs))
+    return "active" if base**n_vars <= affordable else "pairwise"
