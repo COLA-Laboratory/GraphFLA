@@ -741,7 +741,7 @@ _LUT_MAX_CELLS = 16_000_000
 
 # Max candidate neighbour keys materialised per block on the LUT path. Bounds the
 # transient key + gathered-row buffers to ~the all-at-once key array.
-_BYTEMAP_CHUNK_CANDIDATES = 1_000_000
+_BYTEMAP_CHUNK_CANDIDATES = 4_000_000
 
 
 def _bytemap_lut_block(
@@ -785,7 +785,8 @@ def _bytemap_lut_adjacency(keys, place_values, codes, n, n_vars, n_alt, base):
         return None
 
     # key -> row table; -1 marks an absent configuration.
-    lut = np.full(key_space, -1, dtype=np.int64)
+    index_dtype = np.int32 if n <= np.iinfo(np.int32).max else np.int64
+    lut = np.full(key_space, -1, dtype=index_dtype)
     lut[keys] = np.arange(n)
 
     a_row = np.arange(n_alt, dtype=np.int64)

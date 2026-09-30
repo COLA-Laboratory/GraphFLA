@@ -1,0 +1,38 @@
+[
+  {
+    "dataset": "CR9114",
+    "baseline_seconds": 0.1163854580372572,
+    "candidate_seconds": 0.11715283314697444,
+    "speedup": 0.9934497946903722,
+    "noise_gate": 0.08664099784189438,
+    "status": "inconclusive",
+    "peak_rss_ratio": 0.9705720319529887
+  },
+  {
+    "dataset": "GB1",
+    "baseline_seconds": 0.8753745828289539,
+    "candidate_seconds": 0.8647696659900248,
+    "speedup": 1.0122632849601496,
+    "noise_gate": 0.05,
+    "status": "inconclusive",
+    "peak_rss_ratio": 0.9710814338789036
+  },
+  {
+    "dataset": "Papkou",
+    "baseline_seconds": 0.5714817910920829,
+    "candidate_seconds": 0.5682395829353482,
+    "speedup": 1.0057057062797112,
+    "noise_gate": 0.060866983757232665,
+    "status": "inconclusive",
+    "peak_rss_ratio": 0.9560118872319349
+  },
+  {
+    "dataset": "PG-GB1",
+    "baseline_seconds": 1.764296832960099,
+    "candidate_seconds": 1.7480440000072122,
+    "speedup": 1.0092977253163078,
+    "noise_gate": 0.05,
+    "status": "inconclusive",
+    "peak_rss_ratio": 1.0021927543768416
+  }
+]
