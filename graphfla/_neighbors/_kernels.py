@@ -380,11 +380,6 @@ _MASKED_GROUPING_SEED = 0x9E3779B97F4A7C15
 # verification. Bounds the transient row buffers so peak memory stays flat.
 _MASKED_VERIFY_CHUNK = 1_000_000
 
-# Columns folded into the int64 fingerprint per block. Bounds the transient
-# column*weight product to n * block cells, avoiding a full n x n_vars int64.
-_MASKED_FINGERPRINT_BLOCK = 32
-
-
 def _within_run_pairs(group_id, n):
     """All within-group index pairs (a < b) for elements sharing a group id.
 
@@ -564,18 +559,8 @@ def _masked_grouping_pairs(configs_array):
         info.min, info.max, size=n_vars, endpoint=True, dtype=np.int64
     )
 
-    # Full fingerprint h = configs @ weights, int64 wraparound intended. Summed
-    # in column blocks to bound the transient column*weight product; modular
-    # addition is associative, so this is bit-identical to a full-width reduction.
-    h = np.zeros(n, dtype=np.int64)
-    blk = _MASKED_FINGERPRINT_BLOCK
-    for p0 in range(0, n_vars, blk):
-        p1 = p0 + blk if p0 + blk < n_vars else n_vars
-        with np.errstate(over="ignore"):
-            h += (
-                averify[:, p0:p1].astype(np.int64)
-                * weights[np.newaxis, p0:p1]
-            ).sum(axis=1)
+    # Contract directly into one vector, without an n-by-position product buffer.
+    h = np.einsum("ij,j->i", averify, weights, dtype=np.int64)
 
     i_parts: List[np.ndarray] = []
     j_parts: List[np.ndarray] = []
