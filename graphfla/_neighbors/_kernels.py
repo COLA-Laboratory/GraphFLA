@@ -23,7 +23,6 @@ from ._arrays import (
 from ._classify import (
     _classify_pairs,
     _classify_pairs_to_arrays,
-    _classify_directed_adjacency,
 )
 from .generators import (
     BooleanNeighborGenerator,
@@ -764,30 +763,7 @@ def _bytemap_lut_block(
     keys, lut, a_row, codes_block, place_block, row_offset,
     src_list, nbr_list,
 ):
-    """Resolve one batched block of single-substitution candidates via a LUT.
-
-    For the row range starting at ``row_offset`` and the positions in
-    ``codes_block`` / ``place_block``, build every ``(row, position,
-    alternative-value)`` neighbour key, look each up in the direct-index table
-    ``lut`` (``lut[key]`` is the neighbour row, or ``-1`` when absent), and
-    append the hit source/neighbour row indices to ``src_list`` / ``nbr_list``.
-
-    Parameters
-    ----------
-    keys : np.ndarray
-        Mixed-radix key per row (int64).
-    lut : np.ndarray
-        Direct-index table of length ``base ** n_vars`` with ``lut[keys[r]] = r``
-        and ``-1`` elsewhere.
-    a_row : np.ndarray
-        ``arange(base - 1)`` reused across blocks (alternative-value index).
-    codes_block : np.ndarray, shape ``(rb, pb)``
-        int64 per-position codes for the ``rb`` rows and ``pb`` positions.
-    place_block : np.ndarray, shape ``(pb,)``
-        Mixed-radix place values for the block's positions.
-    row_offset : int
-        Index of the first row in the block (added back to recover global ids).
-    """
+    """Append unique unordered neighbor pairs from one bounded lookup block."""
     rb, pb = codes_block.shape
     n_alt = a_row.shape[0]
 
@@ -810,19 +786,15 @@ def _bytemap_lut_block(
     if hit.size == 0:
         return
     # Source row from the row-major (rb, pb, n_alt) flat index: row stride pb*n_alt.
-    src_list.append(row_offset + hit // (pb * n_alt))
-    nbr_list.append(nbr_rows[hit])
+    source = row_offset + hit // (pb * n_alt)
+    neighbor = nbr_rows[hit]
+    keep = source < neighbor
+    src_list.append(source[keep])
+    nbr_list.append(neighbor[keep])
 
 
 def _bytemap_lut_adjacency(keys, place_values, codes, n, n_vars, n_alt, base):
-    """Enumerate all directed single-substitution adjacencies via a LUT.
-
-    Builds the direct-index table once, then generates candidate neighbour keys
-    in memory-bounded blocks (grouping whole positions up to the candidate
-    budget, splitting a single over-budget position over row chunks) and gathers
-    the matches. Returns ``(src, nbr)`` concatenated hit arrays, or ``None`` if
-    the key space exceeds :data:`_LUT_MAX_CELLS` (caller uses ``searchsorted``).
-    """
+    """Find unordered neighbor pairs with a dense index, or return None if too large."""
     key_space = base ** n_vars
     if key_space > _LUT_MAX_CELLS:
         return None
@@ -872,13 +844,7 @@ def _bytemap_lut_adjacency(keys, place_values, codes, n, n_vars, n_alt, base):
 
 
 def _bytemap_searchsorted_adjacency(keys, place_values, configs_array, n, n_vars, base):
-    """Enumerate all directed single-substitution adjacencies via ``searchsorted``.
-
-    Sparse fallback used when the key space is too large for a direct-index
-    table. For each ``(position, value)`` the source rows (whose code differs
-    from ``value``) are resolved in one binary search over the sorted keys.
-    Returns ``(src, nbr)`` concatenated hit arrays.
-    """
+    """Find unordered neighbor pairs by binary search in a sparse key space."""
     order = np.argsort(keys, kind="stable")
     skeys = keys[order]
     row_idx = np.arange(n)
@@ -907,8 +873,11 @@ def _bytemap_searchsorted_adjacency(keys, place_values, configs_array, n, n_vars
             if not exact.any():
                 continue
 
-            src_list.append(src_rows[valid][exact])
-            nbr_list.append(order[pos_valid[exact]])
+            source = src_rows[valid][exact]
+            neighbor = order[pos_valid[exact]]
+            keep = source < neighbor
+            src_list.append(source[keep])
+            nbr_list.append(neighbor[keep])
 
     if not src_list:
         return (
@@ -920,46 +889,9 @@ def _bytemap_searchsorted_adjacency(keys, place_values, configs_array, n, n_vars
 def _active_bytemap_vectorized(
     configs_array, fitness, neutral_eps, maximize, base, neutral_pairs,
 ):
-    """Vectorised single-substitution neighbour finder via mixed-radix keys.
+    """Find and classify each single-substitution neighbor pair once.
 
-    Enumerates exactly the same ``(source_row -> neighbour_row)`` adjacencies
-    that the per-cell Python loop would (every row, every position ``p``, every
-    alternative value ``v != current_code[p]``) and classifies them identically,
-    but resolves the lookups in bulk. Two interchangeable enumeration backends
-    produce the *same* adjacency set:
-
-    * **direct-index table** (default for combinatorially dense key spaces):
-      a ``key -> row`` table turns every neighbour lookup into an O(1) gather,
-      avoiding both the argsort and the ``searchsorted`` that dominate the cost.
-      Candidates for each ``(row, p)`` are generated directly via the index remap
-      ``v = a + (a >= code)`` (``a in 0..base-2``), so no self-pair is ever
-      materialised, in memory-bounded blocks;
-    * **binary search** (sparse fallback, when ``base ** n_vars`` would make the
-      table too large): one ``searchsorted`` per ``(position, value)``.
-
-    The classification of each adjacency is identical to the baseline:
-
-    * ``delta = fitness[source] - fitness[neighbour]``;
-    * ``abs(delta) <= neutral_eps`` -> neutral pair, recorded as ``(src, nbr)``
-      only when ``src < nbr`` (so each undirected neutral pair is kept once);
-    * otherwise, if the source is the worse endpoint
-      (``(maximize and delta < 0) or (not maximize and delta > 0)``), a directed
-      edge ``src -> nbr`` is emitted with ``delta_fit = abs(delta)``.
-
-    Because every neighbour differs in exactly one position, each ordered
-    adjacent ``(src, nbr)`` pair is produced exactly once regardless of backend
-    or iteration order, so the resulting edge set, neutral set, and the edge/Δf
-    correspondence match the per-cell loop exactly. Neutral pairs are appended to
-    the ``neutral_pairs`` list in place.
-
-    Returns
-    -------
-    tuple[np.ndarray, np.ndarray] | None
-        ``(edges, delta_fits)`` where ``edges`` is an ``(E, 2)`` int64 ndarray
-        and ``delta_fits`` the aligned 1-D float64 ndarray, when vectorisation
-        ran; ``None`` if the mixed-radix key would overflow and the caller must
-        use the exact Python fallback instead.
-    """
+    Return None on key overflow so the caller can use exact masked grouping."""
     keys, place_values = _mixed_radix_keys(configs_array, base)
     if keys is None:
         return None
@@ -985,7 +917,7 @@ def _active_bytemap_vectorized(
     if src.size == 0:
         return _empty_edges(), _empty_deltas()
 
-    return _classify_directed_adjacency(
+    return _classify_pairs_to_arrays(
         src, nbr, fitness, neutral_eps, maximize, neutral_pairs,
     )
 
