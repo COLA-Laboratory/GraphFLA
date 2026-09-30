@@ -190,12 +190,12 @@ def encode_data(
             encoded_columns[col] = num.astype(int)
         elif dtype == "categorical":
             if isinstance(col_data.dtype, pd.CategoricalDtype):
-                encoded_columns[col] = col_data.cat.codes
+                encoded_columns[col] = col_data.array.codes
             else:
                 encoded_columns[col] = pd.factorize(col_data)[0]
         elif dtype == "ordinal":
             if isinstance(col_data.dtype, pd.CategoricalDtype) and col_data.cat.ordered:
-                encoded_columns[col] = col_data.cat.codes
+                encoded_columns[col] = col_data.array.codes
             else:
                 encoded_columns[col] = pd.Categorical(col_data, ordered=True).codes
         else:
