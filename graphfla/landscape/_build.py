@@ -97,7 +97,7 @@ class _BuildMixin:
         # Store the numeric matrix (source of truth) and index; leave the tuple
         # Series cache empty so ``configs`` builds it lazily only if read.
         self._configs_array = prepared.configs_array
-        self._configs_index = prepared.configs_index
+        self._configs_index = range(len(prepared.data_for_attributes))
         self._configs = None
         self.config_dict = prepared.config_dict
 

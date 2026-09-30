@@ -166,6 +166,7 @@ def test_duplicate_rows_keep_first_fitness_without_mutating_input():
     assert ls.n_configs == 3 and ls.n_vars == 1
     assert ls.graph.vs["fitness"] == [0.0, 1.0, 2.0]
     assert ls.graph.vs["fixed"] == [7] * 3
+    assert list(ls.configs.index) == [0, 1, 2]
     pd.testing.assert_frame_equal(X, before_X)
     pd.testing.assert_series_equal(f, before_f)
 
