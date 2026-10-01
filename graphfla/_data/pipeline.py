@@ -19,6 +19,7 @@ from ._validation import (
     _coerce_boolean,
 )
 from .handlers import DefaultHandler
+from .attributes import FrameAttributes
 import logging
 
 logger = logging.getLogger(__name__)
@@ -237,12 +238,9 @@ def encode_data(
     # get_data(). Internal encoding above already dropped invariant columns;
     # downstream feature access selects columns by name (data_types.keys()), so
     # the user-facing column order is independent of the internal encoding.
-    X_display = X
-    data_for_attributes = X_display.reset_index(drop=True)
-    data_for_attributes["fitness"] = f_values
-
     return PreparedData(
-        data_for_attributes=data_for_attributes,
+        attributes=FrameAttributes(X),
+        fitness=f_values,
         data_types=prepared_data_types,
         n_vars=len(prepared_data_types),
         config_dict=config_dict,

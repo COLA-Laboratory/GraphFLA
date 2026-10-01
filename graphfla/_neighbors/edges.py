@@ -53,7 +53,7 @@ def build_edges(
     *,
     configs,
     config_dict,
-    data,
+    fitness,
     n_configs: int,
     n_vars: int,
     n_edit: int,
@@ -76,8 +76,8 @@ def build_edges(
         Mapping from node index to configuration tuple.
     config_dict : dict
         Encoding metadata keyed by variable index.
-    data : pandas.DataFrame
-        Must contain a ``'fitness'`` column.
+    fitness : numpy.ndarray
+        Validated fitness values aligned with the configuration rows.
     n_configs, n_vars, n_edit : int
         Dataset dimensions and edit-distance threshold.
     strategy : str
@@ -121,7 +121,7 @@ def build_edges(
     kwargs = dict(
         configs=configs,
         config_dict=config_dict,
-        data=data,
+        fitness=fitness,
         n_edit=n_edit,
         epsilon=epsilon,
         maximize=maximize,

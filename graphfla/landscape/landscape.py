@@ -753,6 +753,7 @@ class Landscape(_IOMixin, _BuildMixin):
             filter_mode=filter_mode,
             verbose=verbose,
         )
+        self._cache_metadata(processed_data)
 
         # Ordinal/mixed landscapes need ±1-step (Manhattan-1) neighbours, not
         # Hamming; data_types is only known after preprocessing, so adjust here.
@@ -779,12 +780,13 @@ class Landscape(_IOMixin, _BuildMixin):
             tau=tau,
             filter_mode=filter_mode,
         )
-        neutral_pairs = self._postprocess_graph(
+        neutral_pairs, kept_indices = self._postprocess_graph(
             neutral_pairs=neutral_pairs,
             tau=tau,
             filter_mode=filter_mode,
             verbose=verbose,
         )
+        self._attach_attributes(processed_data, kept_indices)
 
         _plateaus.build_plateaus(self, neutral_pairs)
 

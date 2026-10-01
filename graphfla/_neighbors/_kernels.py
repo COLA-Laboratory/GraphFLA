@@ -41,7 +41,7 @@ def _build_active(
     *,
     configs,
     config_dict,
-    data,
+    fitness,
     n_edit,
     epsilon,
     maximize,
@@ -62,7 +62,6 @@ def _build_active(
     ``(E, 2)`` int64 ndarray and ``delta_fits`` the aligned 1-D float64 ndarray.
     ``neutral_pairs`` stays a Python list of ``(int, int)`` tuples.
     """
-    fitness = data["fitness"].to_numpy(copy=False)
     neutral_pairs: List[Tuple[int, int]] = []
 
     generator_obj = getattr(neighbor_generator, "__self__", None)
@@ -149,7 +148,7 @@ def _build_active(
 
 def _build_pairwise(
     *,
-    data,
+    fitness,
     n_edit,
     configs,
     epsilon,
@@ -190,7 +189,7 @@ def _build_pairwise(
         return _build_masked_grouping(
             configs=configs,
             config_dict=config_dict,
-            data=data,
+            fitness=fitness,
             n_edit=n_edit,
             epsilon=epsilon,
             maximize=maximize,
@@ -201,8 +200,7 @@ def _build_pairwise(
 
     from scipy.spatial.distance import pdist, cdist
 
-    n = len(data)
-    fitness = data["fitness"].values
+    n = len(fitness)
     configs_array = _as_config_matrix(configs, configs_array)
     n_vars = configs_array.shape[1]
 
@@ -293,7 +291,7 @@ def _build_pairwise(
 
 def _build_broadcast(
     *,
-    data,
+    fitness,
     n_edit,
     configs,
     epsilon,
@@ -314,7 +312,7 @@ def _build_broadcast(
         return _build_masked_grouping(
             configs=configs,
             config_dict=config_dict,
-            data=data,
+            fitness=fitness,
             n_edit=n_edit,
             epsilon=epsilon,
             maximize=maximize,
@@ -323,8 +321,7 @@ def _build_broadcast(
             configs_array=configs_array,
         )
 
-    n = len(data)
-    fitness = data["fitness"].values
+    n = len(fitness)
     configs_array = _as_config_matrix(configs, configs_array)
     n_vars = configs_array.shape[1]
     # Avoid allocating (n-i) x n_vars boolean arrays per row; chunk along j.
@@ -637,7 +634,7 @@ def _build_masked_grouping(
     *,
     configs,
     config_dict,
-    data,
+    fitness,
     n_edit,
     epsilon,
     maximize,
@@ -658,7 +655,6 @@ def _build_masked_grouping(
     Returns ``(edges, delta_fits, neutral_pairs)`` in the same Python-list
     container the ``pairwise``/``broadcast`` producers use.
     """
-    fitness = data["fitness"].to_numpy(copy=False)
     matrix = _as_config_matrix(configs, configs_array)
     n = matrix.shape[0]
 

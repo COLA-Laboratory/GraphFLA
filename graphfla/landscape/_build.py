@@ -25,12 +25,12 @@ from .._data import (
     encode_data,
 )
 from .._neighbors import build_edges
+from .._data.sequences import prepare_sequences
 from ..utils import _largest_weak_component, remove_isolated_nodes, timeit
 from ..exceptions import InvalidParameterError, NotBuiltError
 import logging
 
 logger = logging.getLogger(__name__)
-_ATTRIBUTE_BUFFER_BYTES = 16 * 1024**2
 _RESERVED_VERTEX_ATTRIBUTES = {
     "fitness",
     "in_degree",
@@ -87,11 +87,15 @@ class _BuildMixin:
         tau: Optional[float],
         filter_mode: str,
         verbose: Optional[bool],
-    ) -> pd.DataFrame:
+    ) -> PreparedData:
         """Run the preprocessing pipeline and cache encoded build metadata."""
         X_filtered, f_filtered = filter_data(
             X, f, self.maximize, tau, filter_mode, verbose
         )
+
+        prepared = prepare_sequences(handler, X_filtered, f_filtered)
+        if prepared is not None:
+            return prepared
 
         X_processed, f_processed, self.data_types, self.n_vars = prepare_data(
             handler, X_filtered, f_filtered, data_types=data_types, verbose=verbose
@@ -120,28 +124,25 @@ class _BuildMixin:
             verbose=verbose,
         )
 
-        prepared = encode_data(X_final, f_final, self.data_types, verbose=verbose)
-        return self._cache_metadata(prepared)
+        return encode_data(X_final, f_final, self.data_types, verbose=verbose)
 
-    def _cache_metadata(self, prepared: PreparedData) -> pd.DataFrame:
+    def _cache_metadata(self, prepared: PreparedData) -> None:
         """Persist encoded build metadata on the landscape instance."""
         self.data_types = prepared.data_types
         self.n_vars = prepared.n_vars
         # Store the numeric matrix (source of truth) and index; leave the tuple
         # Series cache empty so ``configs`` builds it lazily only if read.
         self._configs_array = prepared.configs_array
-        self._configs_index = range(len(prepared.data_for_attributes))
+        self._configs_index = range(len(prepared.fitness))
         self._configs = None
         self.config_dict = prepared.config_dict
 
-        processed_data = prepared.data_for_attributes
-        self._n_configs = len(processed_data)
-        return processed_data
+        self._n_configs = len(prepared.fitness)
 
     @timeit
     def _construct_graph(
         self,
-        processed_data: pd.DataFrame,
+        prepared: PreparedData,
         *,
         n_edit: int,
         neighborhood_strategy: str,
@@ -153,16 +154,16 @@ class _BuildMixin:
             logger.info("Constructing landscape graph...")
 
         edges, delta_fits, neutral_pairs = self._build_edges(
-            processed_data, n_edit=n_edit, strategy=neighborhood_strategy
+            prepared.fitness, n_edit=n_edit, strategy=neighborhood_strategy
         )
         if tau is not None and filter_mode == "both" and len(edges):
             edges = np.asarray(edges, dtype=np.int64)
             # The target is the fitter endpoint of every improving edge.
-            target_fitness = processed_data["fitness"].to_numpy()[edges[:, 1]]
+            target_fitness = prepared.fitness[edges[:, 1]]
             keep = target_fitness >= tau if self.maximize else target_fitness <= tau
             edges = edges[keep]
             delta_fits = np.asarray(delta_fits)[keep]
-        self.graph = self._build_graph(processed_data, edges, delta_fits)
+        self.graph = self._build_graph(len(prepared.fitness), edges, delta_fits)
         return neutral_pairs
 
     @timeit
@@ -173,7 +174,7 @@ class _BuildMixin:
         tau: Optional[float],
         filter_mode: str,
         verbose: Optional[bool],
-    ) -> List[Tuple[int, int]]:
+    ) -> Tuple[List[Tuple[int, int]], Optional[List[int]]]:
         """Apply graph pruning and remap cached metadata when vertices are removed."""
         kept_indices = None
         if tau is not None and filter_mode == "both":
@@ -203,7 +204,7 @@ class _BuildMixin:
             else:
                 kept_indices = iso_kept
 
-        return self._remap_metadata(kept_indices, neutral_pairs)
+        return self._remap_metadata(kept_indices, neutral_pairs), kept_indices
 
     def _remap_metadata(
         self,
@@ -264,7 +265,7 @@ class _BuildMixin:
                 "build_from_graph() first."
             )
 
-    def _build_edges(self, data, n_edit, strategy="auto"):
+    def _build_edges(self, fitness, n_edit, strategy="auto"):
         """Build improving edges and neutral pairs for the current dataset."""
         if self._neighbor_generator is None:
             raise RuntimeError("Neighbor generator not set before build.")
@@ -276,7 +277,7 @@ class _BuildMixin:
         result = build_edges(
             configs=self._configs,
             config_dict=self.config_dict,
-            data=data,
+            fitness=fitness,
             n_configs=self.n_configs,
             n_vars=self.n_vars,
             n_edit=n_edit,
@@ -290,8 +291,8 @@ class _BuildMixin:
         return result.edges, result.delta_fits, result.neutral_pairs
 
     @timeit
-    def _build_graph(self, data, edges, delta_fits):
-        """Build a directed graph and attach aligned fitness and variant data."""
+    def _build_graph(self, n_vertices, edges, delta_fits):
+        """Build topology before decoding vertex attributes."""
         if self.verbose:
             logger.info(" - Constructing graph object and attributes...")
 
@@ -302,28 +303,21 @@ class _BuildMixin:
                 values = memoryview(values)
             edge_attrs["delta_fit"] = values
 
-        stream = data.size * np.dtype(object).itemsize > _ATTRIBUTE_BUFFER_BYTES
-        vertex_attrs = (
-            {}
-            if stream
-            else {
-                str(column): data[column].to_numpy(copy=False)
-                for column in data.columns
-            }
-        )
         graph = ig.Graph(
-            n=len(data),
+            n=n_vertices,
             edges=edges if len(edges) else None,
             directed=True,
-            vertex_attrs=vertex_attrs,
             edge_attrs=edge_attrs,
         )
-        # Bound temporary decoded arrays for long genetic backgrounds.
-        if stream:
-            for column in data.columns:
-                graph.vs[str(column)] = data[column].to_numpy(copy=False)
         self._n_edges = graph.ecount()
         return graph
+
+    def _attach_attributes(self, prepared, indices):
+        """Decode attributes only for surviving nodes, in original column order."""
+        for column, values in prepared.attributes.items(indices):
+            self.graph.vs[column] = values
+        fitness = prepared.fitness if indices is None else prepared.fitness[indices]
+        self.graph.vs["fitness"] = fitness
 
     @timeit
     def _analyze(self) -> None:

@@ -232,20 +232,15 @@ def test_input_permutation_preserves_labeled_graph():
     assert edges([0, 1, 2, 3]) == edges([3, 1, 0, 2])
 
 
-def test_streaming_and_batched_attributes_match(monkeypatch):
-    from graphfla.landscape import _build
-
-    X = pd.DataFrame({"level": [0, 1, 2], "constant": [9, 9, 9]})
-    landscapes = []
-    for budget in (0, 1024**2):
-        monkeypatch.setattr(_build, "_ATTRIBUTE_BUFFER_BYTES", budget)
-        landscapes.append(
-            OrdinalLandscape().build_from_data(X, [0.0, 1.0, 2.0], verbose=False)
-        )
-    first, second = landscapes
-    assert first.graph.get_edgelist() == second.graph.get_edgelist()
-    assert first.graph.es["delta_fit"] == second.graph.es["delta_fit"]
-    pd.testing.assert_frame_equal(first.get_data(), second.get_data())
+def test_frame_attributes_remain_aligned_after_pruning():
+    X = pd.DataFrame({"level": [2, 0, 0, 1], "constant": [9, 9, 9, 9]})
+    landscape = OrdinalLandscape().build_from_data(
+        X, [2.0, -2.0, 100.0, -1.0], tau=0, filter_mode="both", verbose=False
+    )
+    assert landscape.graph.vs["level"] == [2, 1]
+    assert landscape.graph.vs["constant"] == [9, 9]
+    assert landscape.graph.vs["fitness"] == [2.0, -1.0]
+    assert list(landscape.configs) == [(2,), (1,)]
 
 
 def test_auto_strategy_honors_registered_neighbor_generator():
