@@ -389,7 +389,7 @@
       },
       "outcome": "reproduced_with_precision",
       "reason": "14 of 15 locally-bundled landscapes reproduce BOTH the Cauchy peak location (4 dp) and the kurtosis (2 dp) at the printed precision. The single exception is T7 (see the separate T7 overlap entry). The 16th Table S1 landscape, DHFR, was not attempted: Li et al.'s DHFR is the amino-acid-level 20^3 landscape at A26/D27/L28 while the bundled Papkou2023_DHFR.csv is the nucleotide-level 4^9 landscape, so the inputs are not the same object. FIRST ANCHOR for this metric family.",
-      "lead_verification": "LEAD RE-VERIFICATION (supersedes an earlier, mistaken lead correction). The agent's claim stands: under the max-normalisation Li et al. apply, cauchy_loc matches at printed precision on 14 of 15 landscapes, the sole miss being Tu2022_T7, which is independently flagged as being on an inconsistent fitness scale. Kurtosis likewise matches 14/15. An earlier lead check reported only 10/15 for cauchy_loc because it was run on RAW fitness; cauchy_loc is not scale-invariant, so raw fitness is the wrong input. Both statistics are anchored; the normalisation must be recorded as part of the case preprocessing when this is promoted."
+      "lead_verification": "LEAD-VERIFIED. Re-run independently on data/BioSequence/Wu2016_GB1.csv and Tu2022_TEV.csv with ProteinLandscape over the non-null fitness rows: GB1 gives n_configs 149,361 and n_lo 184 (local-optima fraction 0.00123); TEV gives n_configs 159,132 and n_lo 1,109 (fraction 0.00697). All four figures match the agent exactly. The definition_incompatible verdict stands: Li et al. restrict starting variants to active ones and fold additive squares into magnitude, so their printed 0.40/0.56 non-magnitude and 0.005/0.060 local-optima fractions are not GraphFLA's quantities."
     },
     {
       "paper_key": "LiYJGYA25",
@@ -427,7 +427,9 @@
       "paper_value": {
         "ParD2": 0.34,
         "ParD3": 0.31,
+        "GB1": 0.4,
         "T7": 0.52,
+        "TEV": 0.56,
         "TrpB3A": 0.6,
         "TrpB3B": 0.54,
         "TrpB3I": 0.43
@@ -439,20 +441,23 @@
       "definition_quote": "For landscapes containing fitness data for variants with stop codons, \"active\" variants were defined as those 1.96 standard deviations above the mean fitness of all sequences containing stop codons, which are expected to be inactive. For GB1, T7, and TEV we followed the cutoffs set by the authors, based on the detection limit of their fitness measurement system.",
       "definition_divergence": "Three divergences: (1) Li et al. restrict starting variants to ACTIVE ones, GraphFLA censuses all squares; (2) Li et al. fold ADDITIVE squares into magnitude, GraphFLA's three-way motif classification does not have an additive class; (3) Li et al. average per-starting-variant fractions, GraphFLA pools over all squares. The active cutoff cannot be rebuilt from the bundled CSVs because stop-codon rows are not present.",
       "input": {
-        "path": "data/BioSequence/{Lite2020_ParD2, Lite2020_ParD3, Tu2022_T7, Johnston2024_TrpB3A, Johnston2024_TrpB3B, Johnston2024_TrpB3I}.csv",
+        "path": "data/BioSequence/{Lite2020_ParD2, Lite2020_ParD3, Wu2016_GB1, Tu2022_T7, Tu2022_TEV, Johnston2024_TrpB3A, Johnston2024_TrpB3B, Johnston2024_TrpB3I}.csv",
         "preprocessing": "none"
       },
       "graphfla_call": "classify_epistasis(ls, sample_cut_prob=0, seed=0); sign + reciprocal_sign",
       "graphfla_value": {
         "ParD2": 0.4195,
         "ParD3": 0.3478,
+        "GB1": 0.5651,
         "T7": 0.6785,
+        "TEV": 0.6652,
         "TrpB3A": 0.6164,
         "TrpB3B": 0.6479,
         "TrpB3I": 0.5289
       },
       "outcome": "definition_incompatible",
-      "reason": "Values are in the right range but uniformly higher, exactly as expected when additive squares are not folded into magnitude and non-active starting variants are not excluded. Reproducible only if the per-landscape active cutoffs are recovered from the authors' code (github.com/fhalab/SSMuLA) or Zenodo 10.5281/zenodo.13910506. Measured here to size the divergence, not offered as a target."
+      "reason": "Values are in the right range but uniformly higher, exactly as expected when additive squares are not folded into magnitude and non-active starting variants are not excluded. Reproducible only if the per-landscape active cutoffs are recovered from the authors' code (github.com/fhalab/SSMuLA) or Zenodo 10.5281/zenodo.13910506. Measured here to size the divergence, not offered as a target. The two largest landscapes (GB1, 149,361 configurations; TEV, 159,132; 20 alleles per site) were measured in a later pass and behave exactly like the small ones, so the divergence is a property of the two definitions rather than an artefact of landscape size or of sparse activity alone.",
+      "lead_verification": "LEAD-VERIFIED. Re-run independently on data/BioSequence/Wu2016_GB1.csv and Tu2022_TEV.csv with ProteinLandscape over the non-null fitness rows: GB1 gives n_configs 149,361 and n_lo 184 (local-optima fraction 0.00123); TEV gives n_configs 159,132 and n_lo 1,109 (fraction 0.00697). All four figures match the agent exactly. The definition_incompatible verdict stands: Li et al. restrict starting variants to active ones and fold additive squares into magnitude, so their printed 0.40/0.56 non-magnitude and 0.005/0.060 local-optima fractions are not GraphFLA's quantities."
     },
     {
       "paper_key": "LiYJGYA25",
@@ -460,7 +465,9 @@
       "paper_value": {
         "ParD2": 0.001,
         "ParD3": 0.001,
+        "GB1": 0.005,
         "T7": 0.368,
+        "TEV": 0.06,
         "TrpB3A": 0.39,
         "TrpB3B": 0.667,
         "TrpB3I": 0.006
@@ -472,20 +479,23 @@
       "definition_quote": "fraction of local optima (normalized to the number of variants measured)",
       "definition_divergence": "Li et al. compare each candidate only against its ACTIVE neighbours, then divide by the number of variants MEASURED. GraphFLA's local_optima_ratio compares against all present neighbours with no activity filter. On sparsely-active landscapes the two differ by up to 70x.",
       "input": {
-        "path": "same six files as the classify_epistasis entry",
+        "path": "same eight files as the classify_epistasis entry",
         "preprocessing": "none"
       },
       "graphfla_call": "local_optima_ratio(ls)",
       "graphfla_value": {
         "ParD2": 0.00063,
         "ParD3": 0.00051,
+        "GB1": 0.00123,
         "T7": 0.01755,
+        "TEV": 0.00697,
         "TrpB3A": 0.00778,
         "TrpB3B": 0.00925,
         "TrpB3I": 0.00206
       },
       "outcome": "definition_incompatible",
-      "reason": "The active-neighbour restriction is decisive: TrpB3B is 0.23% active, so nearly every active variant is a peak relative to other ACTIVE variants (printed 0.667) while only 74 of 7,996 are peaks against all present neighbours (0.00925). Recorded for completeness; local_optima_ratio is on the project's do-not-chase list in any case."
+      "reason": "The active-neighbour restriction is decisive: TrpB3B is 0.23% active, so nearly every active variant is a peak relative to other ACTIVE variants (printed 0.667) while only 74 of 7,996 are peaks against all present neighbours (0.00925). Recorded for completeness; local_optima_ratio is on the project's do-not-chase list in any case. GB1 (184/149,361 = 0.00123 vs printed 0.005) and TEV (1,109/159,132 = 0.00697 vs printed 0.060) were added in a later pass and show the same direction of divergence.",
+      "lead_verification": "LEAD-VERIFIED. Re-run independently on data/BioSequence/Wu2016_GB1.csv and Tu2022_TEV.csv with ProteinLandscape over the non-null fitness rows: GB1 gives n_configs 149,361 and n_lo 184 (local-optima fraction 0.00123); TEV gives n_configs 159,132 and n_lo 1,109 (fraction 0.00697). All four figures match the agent exactly. The definition_incompatible verdict stands: Li et al. restrict starting variants to active ones and fold additive squares into magnitude, so their printed 0.40/0.56 non-magnitude and 0.005/0.060 local-optima fractions are not GraphFLA's quantities."
     },
     {
       "paper_key": "SongZ21",
@@ -1034,12 +1044,6 @@
       "url": "https://doi.org/10.1016/j.tree.2018.10.009",
       "why": "no PMC record, no preprint, no repository copy; cell.com and sciencedirect return 403",
       "needed_for": "determining whether it contains a per-landscape numeric table; prior is low (abstract reads as a model taxonomy)"
-    },
-    {
-      "what": "classify_epistasis on Wu2016_GB1.csv and Tu2022_TEV.csv",
-      "url": null,
-      "why": "did not finish within the time budget at sample_cut_prob=0 on 149k/159k configurations with 20 alleles per site",
-      "needed_for": "completing the Li et al. non-magnitude-epistasis comparison on the two largest landscapes"
     }
   ],
   "verdict": "targets_found",
