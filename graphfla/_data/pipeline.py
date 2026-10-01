@@ -233,11 +233,7 @@ def encode_data(
 
     config_dict = _build_config_dict(prepared_data_types, X_encoded)
 
-    # Display frame keeps the FULL original X in its ORIGINAL column order, so
-    # invariant columns stay both visible AND in their input positions via
-    # get_data(). Internal encoding above already dropped invariant columns;
-    # downstream feature access selects columns by name (data_types.keys()), so
-    # the user-facing column order is independent of the internal encoding.
+    # Preserve the full column order for graph attributes and get_data().
     return PreparedData(
         attributes=FrameAttributes(X),
         fitness=f_values,
