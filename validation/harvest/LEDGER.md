@@ -208,7 +208,7 @@ lead; two agent claims did not survive that check and are corrected in place.
 | --- | --- | --- |
 | `r_s_ratio` | Szendro et al. 2013, J Stat Mech P01005, Table 2, on Chou2011 | r/s 0.121797 vs printed 0.122; `n_lo` 1 vs 1; order-1 Fourier 0.989489 vs 0.989; order-2 increment 0.009206 vs 0.009 |
 | `r_s_ratio` | Song & Zhang 2021, Evolution 75:2658, Table 1, on Kuo2020 | 4.0628980 vs printed 4.063 — **only under the paper's reference-allele coding**, see defect 1 |
-| `fitness_distribution` (kurtosis only) | Li et al. 2025, Cell Systems 16:101387, Table S1 | kurtosis matches at printed precision on **14 of 15** bundled landscapes |
+| `fitness_distribution` | Li et al. 2025, Cell Systems 16:101387, Table S1 | kurtosis AND max-normalised Cauchy location both match at printed precision on **14 of 15** bundled landscapes; the sole miss is `Tu2022_T7`, independently flagged as being on an inconsistent scale. Record the max-normalisation as case preprocessing: `cauchy_loc` is not scale-invariant |
 | `global_idiosyncratic_index` | Lyons et al. 2020 | target 0.612 reproduced by an independent implementation; GraphFLA differs, gap decomposed below |
 | `n_lo`, `classify_epistasis` | Crona et al. 2013, J Theor Biol 317:1 | two-locus Example 1 reproduced exactly |
 
@@ -295,3 +295,21 @@ for r/s. The MAGELLAN landscape library is unreachable (timeout): a blocker, not
 Santa Fe Institute WP 1995-02-022). Note GraphFLA defaults to Spearman where the origin uses
 Pearson. The four remaining `fitness_distribution` descriptors — cv, quartile coefficient,
 median/mean ratio and relative range — have **no published origin**: a settled negative.
+
+
+### Follow-up closed after the third wave (lead-verified)
+
+Li et al. 2025 also prints a non-magnitude-epistasis fraction and a local-optima fraction per
+landscape. These were completed on the two largest landscapes and remain
+`definition_incompatible` on all eight tested:
+
+| landscape | n_configs | n_lo | lo fraction | printed | non-magnitude epistasis vs printed |
+| --- | --- | --- | --- | --- | --- |
+| GB1 | 149,361 | 184 | 0.00123 | 0.005 | 0.5651 vs 0.40 |
+| TEV | 159,132 | 1,109 | 0.00697 | 0.060 | 0.6652 vs 0.56 |
+
+All four structural figures were re-run by the lead and match exactly. The divergence is a
+property of the definitions, not of landscape size or sparse activity: Li et al. restrict
+starting variants to active ones and fold additive squares into magnitude. Reopen only with
+the active cutoffs from the authors' code. The Cauchy-location and kurtosis columns are
+unaffected and remain the anchor.

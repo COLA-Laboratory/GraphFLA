@@ -212,7 +212,9 @@ anyway, to size the divergence:
 | --- | --- | --- | --- | --- |
 | ParD2 | 0.34 | 0.4195 | 0.001 | 0.00063 (5/7882) |
 | ParD3 | 0.31 | 0.3478 | 0.001 | 0.00051 (4/7882) |
+| GB1 | 0.40 | 0.5651 | 0.005 | 0.00123 (184/149361) |
 | T7 | 0.52 | 0.6785 | 0.368 | 0.01755 (118/6725) |
+| TEV | 0.56 | 0.6652 | 0.060 | 0.00697 (1109/159132) |
 | TrpB3A | 0.60 | 0.6164 | 0.390 | 0.00778 (62/7971) |
 | TrpB3B | 0.54 | 0.6479 | 0.667 | 0.00925 (74/7996) |
 | TrpB3I | 0.43 | 0.5289 | 0.006 | 0.00206 (16/7784) |
@@ -224,6 +226,12 @@ sparsely-active landscapes (TrpB3B: 0.23 % active, so nearly every active varian
 is a peak relative to other *active* variants). Both are
 **`definition_incompatible` as printed**; both would become reproducible if the
 active cutoffs were recovered from the authors' code.
+
+The two large landscapes — GB1 (149,361 configurations) and TEV (159,132), both
+with 20 alleles per site — behave exactly like the small ones: non-magnitude
+epistasis uniformly high, local-optima fraction uniformly low. The divergence is
+therefore a property of the two definitions, not an artefact of landscape size or
+of sparse activity alone.
 
 ### Inputs, for promotion
 
@@ -1006,10 +1014,11 @@ above (input file, build call, metric call, transform, and coding convention).
 
 # Incomplete at hand-off
 
-- `classify_epistasis` on `Wu2016_GB1.csv` and `Tu2022_TEV.csv` (149k and 159k
-  configurations, 20 alleles per site) did not finish inside the time budget with
-  `sample_cut_prob=0`. The small-landscape results above are sufficient to
-  establish the definitional divergence, but the two large ones are unmeasured.
 - The 14 remaining Weinreich et al. 2018 Table 1 peak counts, and all of its
   Table 3 order-wise profiles, are unattempted. This is the highest-value cheap
   work left.
+
+(Closed since first writing: `classify_epistasis` on `Wu2016_GB1.csv` and
+`Tu2022_TEV.csv` at `sample_cut_prob=0` had not finished inside the first time
+budget; it has since completed and both rows are folded into the Li et al. table
+above. The conclusion is unchanged.)
