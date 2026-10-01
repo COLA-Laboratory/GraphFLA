@@ -6,12 +6,14 @@ pipeline, and the encoded-dataset container.
 """
 
 from dataclasses import dataclass
-from typing import Any, Dict, List, Tuple
+from typing import Any, Dict, List, Tuple, Union
 import warnings
 
 import numpy as np
 import pandas as pd
 import logging
+
+from .attributes import FrameAttributes, SequenceAttributes
 
 logger = logging.getLogger(__name__)
 
@@ -67,7 +69,8 @@ class PreparedData:
     ``configs_array`` is what graph construction actually consumes.
     """
 
-    data_for_attributes: pd.DataFrame
+    attributes: Union[FrameAttributes, SequenceAttributes]
+    fitness: np.ndarray
     data_types: Dict[str, str]
     n_vars: int
     config_dict: Dict[int, Dict[str, int]]

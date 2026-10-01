@@ -128,7 +128,7 @@ def kernel_result(rows, fitness, generator, strategy="active", **kwargs):
         configs=None,
         configs_array=rows,
         config_dict=info,
-        data=pd.DataFrame({"fitness": fitness}),
+        fitness=np.asarray(fitness, dtype=float),
         n_configs=len(rows),
         n_vars=rows.shape[1],
         n_edit=kwargs.pop("radius", 1),
