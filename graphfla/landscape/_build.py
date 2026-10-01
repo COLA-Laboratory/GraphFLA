@@ -88,7 +88,7 @@ class _BuildMixin:
         filter_mode: str,
         verbose: Optional[bool],
     ) -> PreparedData:
-        """Run the preprocessing pipeline and cache encoded build metadata."""
+        """Prepare encoded configurations and attribute sources without caching."""
         X_filtered, f_filtered = filter_data(
             X, f, self.maximize, tau, filter_mode, verbose
         )
@@ -97,7 +97,7 @@ class _BuildMixin:
         if prepared is not None:
             return prepared
 
-        X_processed, f_processed, self.data_types, self.n_vars = prepare_data(
+        X_processed, f_processed, prepared_types, _ = prepare_data(
             handler, X_filtered, f_filtered, data_types=data_types, verbose=verbose
         )
 
@@ -114,8 +114,8 @@ class _BuildMixin:
         if not X_processed.columns.equals(columns):
             X_processed = X_processed.copy(deep=False)
             X_processed.columns = columns
-            self.data_types = {
-                str(column): kind for column, kind in self.data_types.items()
+            prepared_types = {
+                str(column): kind for column, kind in prepared_types.items()
             }
 
         X_final, f_final = clean_data(
@@ -124,7 +124,7 @@ class _BuildMixin:
             verbose=verbose,
         )
 
-        return encode_data(X_final, f_final, self.data_types, verbose=verbose)
+        return encode_data(X_final, f_final, prepared_types, verbose=verbose)
 
     def _cache_metadata(self, prepared: PreparedData) -> None:
         """Persist encoded build metadata on the landscape instance."""

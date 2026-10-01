@@ -744,7 +744,7 @@ class Landscape(_IOMixin, _BuildMixin):
             logger.info("Building Landscape from data...")
 
         handler = self._resolve_strategies()
-        processed_data = self._preprocess_data(
+        prepared = self._preprocess_data(
             handler=handler,
             X=X,
             f=f,
@@ -753,7 +753,7 @@ class Landscape(_IOMixin, _BuildMixin):
             filter_mode=filter_mode,
             verbose=verbose,
         )
-        self._cache_metadata(processed_data)
+        self._cache_metadata(prepared)
 
         # Ordinal/mixed landscapes need ±1-step (Manhattan-1) neighbours, not
         # Hamming; data_types is only known after preprocessing, so adjust here.
@@ -774,7 +774,7 @@ class Landscape(_IOMixin, _BuildMixin):
                 neighborhood_strategy = "active"
 
         neutral_pairs = self._construct_graph(
-            processed_data,
+            prepared,
             n_edit=n_edit,
             neighborhood_strategy=neighborhood_strategy,
             tau=tau,
@@ -786,7 +786,7 @@ class Landscape(_IOMixin, _BuildMixin):
             filter_mode=filter_mode,
             verbose=verbose,
         )
-        self._attach_attributes(processed_data, kept_indices)
+        self._attach_attributes(prepared, kept_indices)
 
         _plateaus.build_plateaus(self, neutral_pairs)
 
