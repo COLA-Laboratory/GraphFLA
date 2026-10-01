@@ -62,15 +62,16 @@ def main():
         rejected = [
             i for i, label in enumerate(labels) if label in {"attributes", "bounded"}
         ]
-        axis.scatter(
-            x[rejected],
-            (times / times[0])[rejected],
-            marker="x",
-            color="black",
-            s=35,
-            zorder=3,
-            label="Superseded trial",
-        )
+        if rejected:
+            axis.scatter(
+                x[rejected],
+                (times / times[0])[rejected],
+                marker="x",
+                color="black",
+                s=35,
+                zorder=3,
+                label="Superseded trial",
+            )
         axis.axhline(1, color="0.6", linewidth=0.7)
         axis.set_title(
             f"{dataset}\n{times[0] * 1000:.1f} → {times[-1] * 1000:.1f} ms", loc="left"

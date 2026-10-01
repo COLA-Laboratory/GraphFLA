@@ -1,5 +1,8 @@
 # Performance benchmarks
 
+Results: [initial optimization](RESULTS.md) ·
+[compact construction experiment](ARCHITECTURE_EXPERIMENT.md).
+
 [ASV](https://asv.readthedocs.io/en/stable/writing_benchmarks.html) measures
 runtime and process peak memory. Data loading is excluded from runtime.
 All inputs are local, deterministic and pinned; missing data fails explicitly.

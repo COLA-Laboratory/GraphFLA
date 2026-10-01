@@ -1,0 +1,258 @@
+{
+  "before_source_sha256": "8aec83d5ef775f0d5bd2daf16d33bb8e06fdd72b97b06d9c949419672ceeefec",
+  "after_source_sha256": "b0b21db5eae0f09e94be0b944e00143b9ada4de57de1abd822349535328efac1",
+  "datasets": {
+    "WReOs": {
+      "shape": [
+        496,
+        768
+      ],
+      "variable_sites": 2,
+      "edges_sha256": "0d2c365547935c6316dc5838e65e37005e6a1d1f8f20eb9ccaaccdb2dacf210d",
+      "vertex_attributes_sha256": "208a7797ac65df350bf0264cfa9fc2989505953a190a907af6cd377bf0b8051d",
+      "edge_attributes_sha256": "9305957751e58dd6d39e87e2c11521996d9c853f5885373b2e04d2a1009938e5",
+      "configs_sha256": "e9a7c657effbd636de02f9abd77cd8eca657631360656f6ea6416e0bc50acb75",
+      "metadata_sha256": "fb69e5d7e6c173a199bbce93e8e510a1ac473d3d3382e1df99ac2feb5f7c29b4"
+    },
+    "CR6261": {
+      "shape": [
+        1887,
+        9100
+      ],
+      "variable_sites": 11,
+      "edges_sha256": "cec1dd52b43529826adf0a4ad4e6ab2a6f4a48fd38b178c4b36a27d2e88303bc",
+      "vertex_attributes_sha256": "d9e0d2ed009aa0519510082f09fb8fb10326f9c2371990b3252e89f41011d903",
+      "edge_attributes_sha256": "6958cc4aafdadb39a63468677499dbbeb0d696518b465407eadec1e0b62b0937",
+      "configs_sha256": "1b3da6cf21779511464302884ba2225dae6bbd491ff60f51fd6e243f37af8daf",
+      "metadata_sha256": "1a89917ddc05fcbd362f341242ddb92a72793ee35cb4dda2478d88582d20ee46"
+    },
+    "TrpB3I": {
+      "shape": [
+        7784,
+        216498
+      ],
+      "variable_sites": 3,
+      "edges_sha256": "930df5a1688a0497e2e414a47a31abeaf95ad820e5eb0698dee8388fe3faaec2",
+      "vertex_attributes_sha256": "f5d8b003e3973d68c9ab57d7f05c8cf5f1f874d3eb1bf0c08319dd06d06bd8f0",
+      "edge_attributes_sha256": "7fde093b89f0b3dbdc0d791bc9e28f77c1ef5074acccfd79fdd7f284955804c8",
+      "configs_sha256": "e638a6e9101eb9b9d2f769681b52e5db5b2422949a34bd65d603571b10b035a4",
+      "metadata_sha256": "2e7fd10bff6d31f6a4194b0371b45b34bc2fa8d33e9a264da056f17393dc1d9e"
+    },
+    "Westmann": {
+      "shape": [
+        17765,
+        74830
+      ],
+      "variable_sites": 8,
+      "edges_sha256": "2a27a76b2590c630c292739aec6dd06f492df05df1ea1767dd5986dbdc68add9",
+      "vertex_attributes_sha256": "5ff6fe47fa914b9bfeac7fcb03471b52a59bb13600175b334d4d0632d20df85c",
+      "edge_attributes_sha256": "e7562c7656b5b7472fc7e6cd4e0870a9f653d1b5f9d8b0a4fd67d82313f37fbd",
+      "configs_sha256": "7f95e06388de8ee9c4b1a3bf950ff579165d0d40bf8d4d5b11f4179d34149d0a",
+      "metadata_sha256": "f060b98f3327382ac4497cc6ea311906b023b92536e545218662936aa754d7b5"
+    },
+    "CR9114": {
+      "shape": [
+        65094,
+        511840
+      ],
+      "variable_sites": 16,
+      "edges_sha256": "4a1819ddf1f4ecc8ceb6d9d4780b8c8e1f845e579048a81d191ec77cbefc9658",
+      "vertex_attributes_sha256": "519d32845dc70d7e3d602a1450924eceba4fa90268505b9577292f8c8dfdad85",
+      "edge_attributes_sha256": "d494198ba99291ac5c15345df1b033d730007e8f3a6aee2d522428b17322ebcc",
+      "configs_sha256": "12e76f83b181cd759cebfc3e42eeacceab10608ccbca342fd66afe05636b5b62",
+      "metadata_sha256": "ac8871ffbbc541dfe6352c305c8590274776f01e2b8e88346c1c8302a1fd0660"
+    },
+    "GB1": {
+      "shape": [
+        149361,
+        5074326
+      ],
+      "variable_sites": 4,
+      "edges_sha256": "e383fe33d8276cc5f35638026210a7eae361257d15a868a682e1ee26fcf9ccd3",
+      "vertex_attributes_sha256": "ba18695e00b85cb1ca9f8e7439d091c1e90a48dae6fba64c48b7540de614b394",
+      "edge_attributes_sha256": "bd99fbf0af8e190fc1cafa32f70efbe15dbaad4ca1b92f168cc99f2caf032bcd",
+      "configs_sha256": "eabdae872509464a1a6707d11d256ee2188d9f868fa4ac973b40a03e31386710",
+      "metadata_sha256": "0c310f851c3a804654e96f3ff0e3802eb3d77b14bb27acc40aa3e32f08e681c9"
+    },
+    "Papkou": {
+      "shape": [
+        261333,
+        3518696
+      ],
+      "variable_sites": 9,
+      "edges_sha256": "ddb6b356c1460deccfec372aa0af385a37198ec23b9c7dbf488a36c5f8455218",
+      "vertex_attributes_sha256": "4a61583f5c66bcb73a3bb6b8bde9c9999a728c3fda2c5e144850e846e9a0144f",
+      "edge_attributes_sha256": "2efd7b8e4590f569663dd1d82adae834eebc0b33c0d2f9a06327c59b0a74f47d",
+      "configs_sha256": "8c069932c441cc0944acbb9691652d57074b7e9e74650ce1fa210c9d75feb3a1",
+      "metadata_sha256": "fc01b1d4a94c0a384a5fc8a7e60f221d8ca03e0bd8e4b03ce256bf535cedb0f1"
+    },
+    "Papkou-filtered": {
+      "shape": [
+        135178,
+        324044
+      ],
+      "variable_sites": 9,
+      "edges_sha256": "5a3509cdcf452ae91527da798c1306d2ce5e467d2bafc55b0679efdff8bb8bf6",
+      "vertex_attributes_sha256": "ee2ecd7979de651d06c8541c315469b4268d9a96b318a5622d321b5a2f0a710b",
+      "edge_attributes_sha256": "d7f3d9317a115c23144e6726823129040aaf59fa3605e5b41b17ffd8ba18e42e",
+      "configs_sha256": "4df63d9dd6fcfdb4508e8c5c9eb0a207ba2ee4bca9dd37b260b076d6223307e7",
+      "metadata_sha256": "3dd39bf0ca0386c5b6898a8e7933607de0cd1de38de24f851f0e1d392455adfc"
+    },
+    "PG-GB1": {
+      "shape": [
+        149360,
+        5074250
+      ],
+      "variable_sites": 4,
+      "edges_sha256": "80be7f37476a37d31d634144302bf4c6eb1f3e81389324f751fd9b72b3fc6a0b",
+      "vertex_attributes_sha256": "e2eb5d73c55031fba7a396e2910dfe222a3295305d48c2cd048f5f5b00989e58",
+      "edge_attributes_sha256": "0bcbf0c53a4b4476ded142279bb6df2fcb0751c28419f122bbc7aeb904a3ae3b",
+      "configs_sha256": "bf744b8e9b63df5a41b39b3760014c44ed95aa136b0715ec1a11f1310d00f195",
+      "metadata_sha256": "c21b776749c98790c478f14d95ad84ac69a60b945fe4d1659a0ee905ce540910"
+    },
+    "PG-BRCA2": {
+      "shape": [
+        264,
+        586
+      ],
+      "variable_sites": 53,
+      "edges_sha256": "9409e45ccfe73814aab575b6640ab7e57d79876ba8e04c9d01a9682959f68811",
+      "vertex_attributes_sha256": "f98cd53b96da080a3fd3fda3bbe0b9a7af9336059a14c7d592de1a2121b009bd",
+      "edge_attributes_sha256": "8d8a74e6d1bf447169149a31193068e74281c393981794c26b258f35cf623492",
+      "configs_sha256": "613a76dc175d1ad73a6c99dba948b3e412f940e62cab47e9b7326826b38d1609",
+      "metadata_sha256": "0c7ea3088ba5585eebb75c8a149ccd77893f1bdd75e5bb65c7aba951aff5f0d5"
+    },
+    "PG-POLG": {
+      "shape": [
+        15711,
+        137334
+      ],
+      "variable_sites": 851,
+      "edges_sha256": "547b0633be081e6e8a2cee20deab0f612fd68813eb7fb54255b19c31b8835107",
+      "vertex_attributes_sha256": "9a017065065181f041a35c84ff6aaae9e751611bdf6da606f6f8ec7151757a61",
+      "edge_attributes_sha256": "0720f75d88f749512f5eb85cba327f7b1483c1110f4f2babf2d149af8d922808",
+      "configs_sha256": "99fbd26d4719fecaecbbc431b9166181c9e992eef8df1d6d192161bae019b012",
+      "metadata_sha256": "c0af94fdb49a40bfc2069448dca882855f49efd87a7fb14723b2d3b23ff95c5e"
+    },
+    "RG-BRCA1": {
+      "shape": [
+        778,
+        680
+      ],
+      "variable_sites": 400,
+      "edges_sha256": "c06f44a80759fd2955200f12b6aa368b453be7c5af00800a115bc9ac1a5a2fe0",
+      "vertex_attributes_sha256": "92e35d4fc101f4ac612ee7a7abaa1fd734afca29ab662362926e904fba1961dc",
+      "edge_attributes_sha256": "fe3f47bf8c57df04d4b5944cdc292f954748b20ed4c9fa440fd6c2d03007767c",
+      "configs_sha256": "0080c4c1f6130cf2a615486011268254e7aec63795ac22a79abb26ba24977288",
+      "metadata_sha256": "32355261e83a96f357cb901ba7961e9206ff9841fc31ef3788b91bd3a740e942"
+    },
+    "RG-tRNA": {
+      "shape": [
+        4175,
+        26322
+      ],
+      "variable_sites": 10,
+      "edges_sha256": "16d62259d127f0c7f15e4d62191f83f95c7daecb7d8d5d4f99b5decddf82ceee",
+      "vertex_attributes_sha256": "3fbc91f6ba57a52e6d78d03019d5f6cdc52d2b80801440827b387f3386d8d19e",
+      "edge_attributes_sha256": "6bdc9912b48010cf30c5c5275bf2c3a29ee16131fc2db2bde19d92b2e0689fd9",
+      "configs_sha256": "35ece444634fee118b12674e7847d91a6f489bf2a1626cbe39835d20969ec1f4",
+      "metadata_sha256": "baa75a5e24d31c824e366d46561a877b10608e00c7003eb1c0eea8a7b1d9309f"
+    },
+    "RG-ribozyme": {
+      "shape": [
+        255,
+        1524
+      ],
+      "variable_sites": 4,
+      "edges_sha256": "0da843bb35bc4f486f569a9a3189c05b71b7554fadbec2f88fe9ed0778bd1c5f",
+      "vertex_attributes_sha256": "a444ff22967ee697e2a5bbd3a580d108d72848e69cbfeb615667decb26027872",
+      "edge_attributes_sha256": "850846242a9a270cac23279d5f3c1c5140a713a2c5d1e644178f316444d32809",
+      "configs_sha256": "e68c26602b7871c280136a7c6da1395382a56ece528ec0f953ef7df696fcd995",
+      "metadata_sha256": "6b48195eb6fcfd84806b6e0c67b2f901108713c975a9a7ede2b4f93edf60623f"
+    },
+    "RG-LINE1": {
+      "shape": [
+        47138,
+        112977
+      ],
+      "variable_sites": 146,
+      "edges_sha256": "c233a959081d7f0d402a0fec9e8581772048dcf0e839267c3c57f40488dd008a",
+      "vertex_attributes_sha256": "680f045a21c6d63c05039dba06dd8109972307aa249ed4dd3ae333f7e22d6ebe",
+      "edge_attributes_sha256": "fe1f3b0b81e0cb1461e3910a4f8a1c0e9d3d094d2459ca271467fa34da9aa17f",
+      "configs_sha256": "8dc644f07a11d35d0e053f56a10dd06defd0995bf10e8fffedb8b994bbd5d8d9",
+      "metadata_sha256": "13ff37bc89a3649804d7d3365db9aa69fca60e255150724f0f258ad182192e89"
+    },
+    "synthetic-boolean": {
+      "shape": [
+        4096,
+        24576
+      ],
+      "variable_sites": 12,
+      "edges_sha256": "27d3a6c489f784c79b6dd75e00ca0ad1158468fbc9fc8e0559ecf2cbcc474a46",
+      "vertex_attributes_sha256": "1625c98896afe6ecf670cd63494c29a6e4d338689603a8a875f3ff4b3f3a0a4c",
+      "edge_attributes_sha256": "554a4cd6be14250e32453cb96f0ba633cfc255ae6b705ede9c9b01f21837fe39",
+      "configs_sha256": "60c7b77cf130b18f25d81c397d55270e50faaf4a6193c2d4480ad14a00035909",
+      "metadata_sha256": "a5ca1c7dbb76bf94bbdd45fc792667d429455fb64db5971acb62eebe3fbf5945"
+    },
+    "synthetic-ordinal": {
+      "shape": [
+        216,
+        540
+      ],
+      "variable_sites": 3,
+      "edges_sha256": "89aff16bc845dcd81a3ec3f2e0f94b66f93fb141c20fba2817e4caff511495c6",
+      "vertex_attributes_sha256": "b6da0e07561230f96c057756d17a19dd22fd1f023919574961598629ac4895a9",
+      "edge_attributes_sha256": "6963cfdbe368a79909fd25c4616eaaec0df8a9108682a9e89e6cf88e98991bf6",
+      "configs_sha256": "897c73169f1faf9bb4ceb75606599297b8cbd0d946cb45accc144ee5f278e2fa",
+      "metadata_sha256": "4dc12eb088068e7f04edd170cf0cf9eefef8ebde7ca76850f3b2f0e4ae7b9a3d"
+    },
+    "synthetic-dna": {
+      "shape": [
+        4096,
+        36864
+      ],
+      "variable_sites": 6,
+      "edges_sha256": "fcd25bb7322907561bad7cf179f06e5a8fb764dc2a6c76fd095fc844573651ed",
+      "vertex_attributes_sha256": "893c2c70af53ca92d4dbcb125ff395ff47aa89035b52de8e3a37e544aa918e0a",
+      "edge_attributes_sha256": "df86443219952401f0f358084be1c975750668801cb5c2825109c202a40e4021",
+      "configs_sha256": "66b31f960ebc5e176e6e4e00e6fe4374d9d325ce8eecaf128b44ef4fcb53d430",
+      "metadata_sha256": "8785ecc8d3a7e3ad7cb27f9b0977539891c3950e7f99e620b54e1d897ac67538"
+    },
+    "synthetic-rna": {
+      "shape": [
+        256,
+        1536
+      ],
+      "variable_sites": 4,
+      "edges_sha256": "86f50a4073bdc034888206582a5398e9774f72ef4f04a9a37b32fe317bd3201a",
+      "vertex_attributes_sha256": "e3887162d69032b9ee3e1e0bf8587e96babf5f251a6b20edf4f85a439f3b5fd3",
+      "edge_attributes_sha256": "8696fd4cd667230f3226f4760183127a42a87ad61a7d9a8082ed23701bc789e0",
+      "configs_sha256": "f9497165b53280974aff4376028b9a9e8bb316c354143478dd78528271355609",
+      "metadata_sha256": "b24dfa7fd750ef0bb2d307a5cebb21c667905f833b247701817c951685124e29"
+    },
+    "synthetic-sequence": {
+      "shape": [
+        243,
+        1215
+      ],
+      "variable_sites": 5,
+      "edges_sha256": "8010f2177e5b807f7b524a1cb00235ba0db4e25c9a131231c81ec01c99749371",
+      "vertex_attributes_sha256": "e2726d50d83e91191e14c1fee3d84e974e499ebbfdacfac72ca85aaeea59284e",
+      "edge_attributes_sha256": "1d85ed7c4717989a151be36697ad5c3e7ffa09200fdf1adced640b450c409130",
+      "configs_sha256": "3d4763cc1c79831f53e837c5ba4c184e2e3b0ffdfba9736065243362d1a9e1a8",
+      "metadata_sha256": "aeeec4bb773a3c35fd957a07a80153f3e26f4ae0dce69cbf41a4adc5b0452216"
+    },
+    "synthetic-hpo": {
+      "shape": [
+        384,
+        1248
+      ],
+      "variable_sites": 4,
+      "edges_sha256": "05c20e128454b041686a2be7886ec274715b3ec261bf50ebc11a1149a9a1fd18",
+      "vertex_attributes_sha256": "77bac4c0097e45f306c4508cea404d692d3a3dfe0fc82b02eaef04948c7e74fa",
+      "edge_attributes_sha256": "338e043c01e9eeff335c7312a3459cd1d2640f0fecc8c745fe36e0d2379bf56a",
+      "configs_sha256": "303e72e0b2f17bd087d143b4dd8df6e4041a69500d797ef6350276a75031499b",
+      "metadata_sha256": "7354518dbbfe62c9eef815b801237c5bf996ace575043a162591cb37d7cc0704"
+    }
+  }
+}

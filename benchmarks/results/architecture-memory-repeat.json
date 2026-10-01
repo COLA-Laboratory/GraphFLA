@@ -1,0 +1,148 @@
+{
+  "dataset": "CR9114",
+  "protocol": "Five interleaved pairs of fresh-process memory workers; alternate source order; same worker and fixed thread/hash settings as full rounds.",
+  "workers": [
+    {
+      "peak_rss_bytes": 364838912,
+      "setup_peak_rss_bytes": 219217920,
+      "input_sha256": "831e9e064319ea12368017ba685806523c67535386c473f9ba1a40179506142b",
+      "shape": [
+        65094,
+        511840
+      ],
+      "variable_sites": 16,
+      "source_sha256": "8aec83d5ef775f0d5bd2daf16d33bb8e06fdd72b97b06d9c949419672ceeefec",
+      "pair": 0,
+      "label": "baseline"
+    },
+    {
+      "peak_rss_bytes": 355123200,
+      "setup_peak_rss_bytes": 228032512,
+      "input_sha256": "831e9e064319ea12368017ba685806523c67535386c473f9ba1a40179506142b",
+      "shape": [
+        65094,
+        511840
+      ],
+      "variable_sites": 16,
+      "source_sha256": "b0b21db5eae0f09e94be0b944e00143b9ada4de57de1abd822349535328efac1",
+      "pair": 0,
+      "label": "candidate"
+    },
+    {
+      "peak_rss_bytes": 366329856,
+      "setup_peak_rss_bytes": 225574912,
+      "input_sha256": "831e9e064319ea12368017ba685806523c67535386c473f9ba1a40179506142b",
+      "shape": [
+        65094,
+        511840
+      ],
+      "variable_sites": 16,
+      "source_sha256": "b0b21db5eae0f09e94be0b944e00143b9ada4de57de1abd822349535328efac1",
+      "pair": 1,
+      "label": "candidate"
+    },
+    {
+      "peak_rss_bytes": 391544832,
+      "setup_peak_rss_bytes": 230047744,
+      "input_sha256": "831e9e064319ea12368017ba685806523c67535386c473f9ba1a40179506142b",
+      "shape": [
+        65094,
+        511840
+      ],
+      "variable_sites": 16,
+      "source_sha256": "8aec83d5ef775f0d5bd2daf16d33bb8e06fdd72b97b06d9c949419672ceeefec",
+      "pair": 1,
+      "label": "baseline"
+    },
+    {
+      "peak_rss_bytes": 340017152,
+      "setup_peak_rss_bytes": 219103232,
+      "input_sha256": "831e9e064319ea12368017ba685806523c67535386c473f9ba1a40179506142b",
+      "shape": [
+        65094,
+        511840
+      ],
+      "variable_sites": 16,
+      "source_sha256": "8aec83d5ef775f0d5bd2daf16d33bb8e06fdd72b97b06d9c949419672ceeefec",
+      "pair": 2,
+      "label": "baseline"
+    },
+    {
+      "peak_rss_bytes": 371589120,
+      "setup_peak_rss_bytes": 219594752,
+      "input_sha256": "831e9e064319ea12368017ba685806523c67535386c473f9ba1a40179506142b",
+      "shape": [
+        65094,
+        511840
+      ],
+      "variable_sites": 16,
+      "source_sha256": "b0b21db5eae0f09e94be0b944e00143b9ada4de57de1abd822349535328efac1",
+      "pair": 2,
+      "label": "candidate"
+    },
+    {
+      "peak_rss_bytes": 409583616,
+      "setup_peak_rss_bytes": 221347840,
+      "input_sha256": "831e9e064319ea12368017ba685806523c67535386c473f9ba1a40179506142b",
+      "shape": [
+        65094,
+        511840
+      ],
+      "variable_sites": 16,
+      "source_sha256": "b0b21db5eae0f09e94be0b944e00143b9ada4de57de1abd822349535328efac1",
+      "pair": 3,
+      "label": "candidate"
+    },
+    {
+      "peak_rss_bytes": 413237248,
+      "setup_peak_rss_bytes": 219856896,
+      "input_sha256": "831e9e064319ea12368017ba685806523c67535386c473f9ba1a40179506142b",
+      "shape": [
+        65094,
+        511840
+      ],
+      "variable_sites": 16,
+      "source_sha256": "8aec83d5ef775f0d5bd2daf16d33bb8e06fdd72b97b06d9c949419672ceeefec",
+      "pair": 3,
+      "label": "baseline"
+    },
+    {
+      "peak_rss_bytes": 382550016,
+      "setup_peak_rss_bytes": 234979328,
+      "input_sha256": "831e9e064319ea12368017ba685806523c67535386c473f9ba1a40179506142b",
+      "shape": [
+        65094,
+        511840
+      ],
+      "variable_sites": 16,
+      "source_sha256": "8aec83d5ef775f0d5bd2daf16d33bb8e06fdd72b97b06d9c949419672ceeefec",
+      "pair": 4,
+      "label": "baseline"
+    },
+    {
+      "peak_rss_bytes": 371458048,
+      "setup_peak_rss_bytes": 226574336,
+      "input_sha256": "831e9e064319ea12368017ba685806523c67535386c473f9ba1a40179506142b",
+      "shape": [
+        65094,
+        511840
+      ],
+      "variable_sites": 16,
+      "source_sha256": "b0b21db5eae0f09e94be0b944e00143b9ada4de57de1abd822349535328efac1",
+      "pair": 4,
+      "label": "candidate"
+    }
+  ],
+  "summary": {
+    "baseline": {
+      "median_peak_rss_bytes": 382550016,
+      "min_peak_rss_bytes": 340017152,
+      "max_peak_rss_bytes": 413237248
+    },
+    "candidate": {
+      "median_peak_rss_bytes": 371458048,
+      "min_peak_rss_bytes": 355123200,
+      "max_peak_rss_bytes": 409583616
+    }
+  }
+}
