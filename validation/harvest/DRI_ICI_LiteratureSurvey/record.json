@@ -1,0 +1,666 @@
+{
+  "study_key": "DRI_ICI_LiteratureSurvey",
+  "dossier": "papers/_dri_ici",
+  "recorded_at": "2026-10-01T08:46:36Z",
+  "agent": "codex-gpt-6",
+  "paper": {
+    "title": "Augmenting Biological Fitness Prediction Benchmarks with Landscapes Features from GraphFLA",
+    "doi": "10.52202/085713-1180",
+    "year": 2025,
+    "bibliography_verified_against": "crossref",
+    "supplied_bibliography_errors": "The workspace corpus_registry.json's PapkouRM23 provided_author field says Andrei Papkou and Aviv Regev and Joanna Masel; Crossref for 10.1126/science.adh3860 gives Andrei Papkou, Lucia Garcia-Pastor, José Antonio Escudero, and Andreas Wagner. The assignment's Johnson description is imprecise: the verified title is Higher-fitness yeast genotypes are less robust to deleterious mutations."
+  },
+  "scope_note": "This is a multi-paper literature survey, not a reproduction. The top-level paper is the direct scalar-definition source; each overlap records its own verified title and DOI. No GraphFLA metric was run.",
+  "related_references": [
+    {
+      "title": "Diminishing Returns Epistasis Among Beneficial Mutations Decelerates Adaptation",
+      "authors": [
+        "Hsin-Hung Chou",
+        "Hsuan-Chao Chiu",
+        "Nigel F. Delaney",
+        "Daniel Segrè",
+        "Christopher J. Marx"
+      ],
+      "venue_year": "Science 332(6034):1190–1192 (2011)",
+      "doi": "10.1126/science.1203799",
+      "verification": "Crossref by DOI; PubMed/author-hosted article"
+    },
+    {
+      "title": "Negative Epistasis Between Beneficial Mutations in an Evolving Bacterial Population",
+      "authors": [
+        "Aisha I. Khan",
+        "Duy M. Dinh",
+        "Dominique Schneider",
+        "Richard E. Lenski",
+        "Tim F. Cooper"
+      ],
+      "venue_year": "Science 332(6034):1193–1196 (2011)",
+      "doi": "10.1126/science.1203801",
+      "verification": "Crossref by DOI; PubMed and author-uploaded full-text page"
+    },
+    {
+      "title": "Global epistasis makes adaptation predictable despite sequence-level stochasticity",
+      "authors": [
+        "Sergey Kryazhimskiy",
+        "Daniel P. Rice",
+        "Elizabeth R. Jerison",
+        "Michael M. Desai"
+      ],
+      "venue_year": "Science 344(6191):1519–1522 (2014)",
+      "doi": "10.1126/science.1250939",
+      "verification": "Crossref by DOI; PubMed/publisher record"
+    },
+    {
+      "title": "Long-Term Dynamics of Adaptation in Asexual Populations",
+      "authors": [
+        "Michael J. Wiser",
+        "Noah Ribeck",
+        "Richard E. Lenski"
+      ],
+      "venue_year": "Science 342(6164):1364–1367 (2013)",
+      "doi": "10.1126/science.1243357",
+      "verification": "Crossref by DOI; PubMed/publisher record"
+    },
+    {
+      "title": "Higher-fitness yeast genotypes are less robust to deleterious mutations",
+      "authors": [
+        "Milo S. Johnson",
+        "Alena Martsul",
+        "Sergey Kryazhimskiy",
+        "Michael M. Desai"
+      ],
+      "venue_year": "Science 366(6464):490–493 (2019)",
+      "doi": "10.1126/science.aay4199",
+      "verification": "Crossref by DOI; PubMed/publisher record"
+    },
+    {
+      "title": "Global epistasis emerges from a generic model of a complex trait",
+      "authors": [
+        "Gautam Reddy",
+        "Michael M. Desai"
+      ],
+      "venue_year": "eLife 10:e64740 (2021)",
+      "doi": "10.7554/eLife.64740",
+      "verification": "Crossref by DOI; eLife publisher page"
+    },
+    {
+      "title": "Idiosyncratic epistasis leads to global fitness–correlated trends",
+      "authors": [
+        "Christopher W. Bakerlee",
+        "Alex N. Nguyen Ba",
+        "Yekaterina Shulgina",
+        "Jose I. Rojas Echenique",
+        "Michael M. Desai"
+      ],
+      "venue_year": "Science 376(6593):630–635 (2022)",
+      "doi": "10.1126/science.abm4774",
+      "verification": "Crossref by DOI; author-hosted article/publisher metadata"
+    },
+    {
+      "title": "A rugged yet easily navigable fitness landscape",
+      "authors": [
+        "Andrei Papkou",
+        "Lucia Garcia-Pastor",
+        "José Antonio Escudero",
+        "Andreas Wagner"
+      ],
+      "venue_year": "Science 382(6673), article eadh3860 (2023)",
+      "doi": "10.1126/science.adh3860",
+      "verification": "Crossref by DOI; existing reviewed Papkou dossier reused"
+    },
+    {
+      "title": "Idiosyncratic epistasis creates universals in mutational effects and evolutionary trajectories",
+      "authors": [
+        "Daniel M. Lyons",
+        "Zhengting Zou",
+        "Haiqing Xu",
+        "Jianzhi Zhang"
+      ],
+      "venue_year": "Nature Ecology & Evolution 4(12):1685–1693 (2020)",
+      "doi": "10.1038/s41559-020-01286-y",
+      "verification": "Crossref by DOI; existing Lyons definition audit and Europe PMC accepted manuscript reused"
+    },
+    {
+      "title": "Augmenting Biological Fitness Prediction Benchmarks with Landscapes Features from GraphFLA",
+      "authors": [
+        "Mingyu Huang",
+        "Shasha Zhou",
+        "Ke Li"
+      ],
+      "venue_year": "Advances in Neural Information Processing Systems 38, 39477–39532 (2025)",
+      "doi": "10.52202/085713-1180",
+      "verification": "Crossref by DOI; NeurIPS proceedings"
+    }
+  ],
+  "sources": [
+    {
+      "url": "https://prelude.bu.edu/publications/Chou_Chiu_etal_Science_2011_diminishing_return_epistasis.pdf",
+      "http_status": 200,
+      "sha256": "14464a1807ffe73de19461cf42e6c266ad52f3ff846d9b55b63a23e597b7d468",
+      "saved_path": "papers/_dri_ici/sources/chou_2011_main_codex.pdf",
+      "what": "author-hosted main article"
+    },
+    {
+      "url": "https://www.researchgate.net/publication/profile/Richard-Lenski/publication/51187210_Negative_Epistasis_Between_Beneficial_Mutations_in_an_Evolving_Bacterial_Population/links/09e41511445fe5a88d000000/Negative-Epistasis-Between-Beneficial-Mutations-in-an-Evolving-Bacterial-Population.pdf",
+      "http_status": 403,
+      "sha256": "03d15911b78bc594081608790891e7e36f8e783dcec9b5efd2e09029822da5ef",
+      "saved_path": "papers/_dri_ici/sources/khan_2011_main_attempt_codex.html",
+      "what": "invalid response saved; not a usable PDF"
+    },
+    {
+      "url": "https://doi.org/10.1126/science.1203801/SUPPL_FILE/1203801.KHAN.SOM.PDF",
+      "http_status": 404,
+      "sha256": "ce20294ecb260414f7c017ea10d36721cadd66cd8348a84266f13090d0cea332",
+      "saved_path": "papers/_dri_ici/sources/khan_2011_supplement_attempt_codex.html",
+      "what": "invalid response saved; not supplementary PDF"
+    },
+    {
+      "url": "https://public.websites.umich.edu/~zhanglab/clubPaper/07_10_2014.pdf",
+      "http_status": 200,
+      "sha256": "f07584960eca311c4301e7fda1f1130104620d16f7562461c581f37d279b0cfd",
+      "saved_path": "papers/_dri_ici/sources/kryazhimskiy_2014_main_codex.pdf",
+      "what": "public university copy of main article"
+    },
+    {
+      "url": "https://doi.org/10.1126/science.1250939/SUPPL_FILE/KRYAZHIMSKIY.SM.PDF",
+      "http_status": 404,
+      "sha256": "1f522cb1cfa5d640245847714068f60e3a68ca158459d52c41c8117eaa76fb94",
+      "saved_path": "papers/_dri_ici/sources/kryazhimskiy_2014_supplement_attempt_codex.html",
+      "what": "invalid response saved; not supplementary PDF"
+    },
+    {
+      "url": "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC4314286/fullTextXML",
+      "http_status": 500,
+      "sha256": "f14c2d849ab4c825bcae11833941e1cf827ca8e371173dc13092fd26b875889c",
+      "saved_path": "papers/_dri_ici/sources/kryazhimskiy_2014_fulltext_attempt_codex.html",
+      "what": "invalid error response saved; not full-text XML"
+    },
+    {
+      "url": "https://slunik.slu.se/kursfiler/bi1031/20051.1314/bi1031_wiser_et_al_2013%2C_long-term_dynamics_of_adaptation_in_asexual_populations%2C_science_online.pdf",
+      "http_status": 200,
+      "sha256": "9c9d6b12a5d1b65b2fafeda32b677943a0ec7cc5de8ed4fa4985b080a5220b65",
+      "saved_path": "papers/_dri_ici/sources/wiser_2013_main_codex.pdf",
+      "what": "full article copy"
+    },
+    {
+      "url": "https://websites.umich.edu/~zhanglab/clubPaper/11_15_2019.pdf",
+      "http_status": 200,
+      "sha256": "11872259c846d7286048df9bbfa69e817c27acf0ee2c7001c6c1b213f8c4fd89",
+      "saved_path": "papers/_dri_ici/sources/johnson_2019_main_codex.pdf",
+      "what": "public university copy of main article"
+    },
+    {
+      "url": "https://www.science.org/doi/suppl/10.1126/science.aay4199/suppl_file/science.aay4199_sm.pdf",
+      "http_status": 403,
+      "sha256": "6d9e416615fc140837ffa2054b59e0b6ea11099c1114f1631b15d58b657af105",
+      "saved_path": "papers/_dri_ici/sources/johnson_2019_supplement_attempt_codex.html",
+      "what": "invalid response saved; not supplementary PDF"
+    },
+    {
+      "url": "https://www.desai-lab.com/publications/PDFs/reddydesai21.pdf",
+      "http_status": 200,
+      "sha256": "2a455523e3d3250e23619699647bc2f527c2e2dbb20c3bd8069a3d0b3658241b",
+      "saved_path": "papers/_dri_ici/sources/reddy_desai_2021_main_retry_codex.pdf",
+      "what": "author-hosted full article; successful identity-encoding retry"
+    },
+    {
+      "url": "https://annb-lab.github.io/assets/publications/Bakerlee_Nguyen_science.abm4774.pdf",
+      "http_status": 200,
+      "sha256": "080f99f476821cd088ddb7018cc90e069267d9966128979a2592294aa491f230",
+      "saved_path": "papers/_dri_ici/sources/bakerlee_2022_main_codex.pdf",
+      "what": "author-hosted main article"
+    },
+    {
+      "url": "https://www.science.org/doi/suppl/10.1126/science.abm4774/suppl_file/science.abm4774_sm.pdf",
+      "http_status": 403,
+      "sha256": "a13266e285be5070e6826be3ab3ed865d871adaf0c968a8e40300152ca63b234",
+      "saved_path": "papers/_dri_ici/sources/bakerlee_2022_supplement_attempt_codex.html",
+      "what": "invalid response saved; not supplementary PDF"
+    },
+    {
+      "url": "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC7710555/fullTextXML",
+      "http_status": 200,
+      "sha256": "da216813fee6c2da29fe4d1381a5c95d6028d410374d7222175e6c203ecdb45a",
+      "saved_path": "papers/_dri_ici/sources/lyons_2020_fulltext_codex.xml",
+      "what": "Europe PMC accepted manuscript; contrast paper"
+    },
+    {
+      "url": "https://public.websites.umich.edu/~zhanglab/clubPaper/04_19_2024.pdf",
+      "http_status": 200,
+      "sha256": "3296d3f4e8bb2f0aeabc5ede2b435699524b58df16bfa617d9e6acdd47f12edf",
+      "saved_path": "papers/_dri_ici/sources/papkou_2023_main_reused_codex.pdf",
+      "what": "copied from existing papers/Papkou2023 dossier; not re-downloaded"
+    },
+    {
+      "url": "local:/Users/arwen/Documents/GitHub/GraphFLA/_verify/papers/papkou_science_SM.txt",
+      "http_status": null,
+      "sha256": "abd424ad6fee922b61e34ccb961490e28f820cdc17a4057dc123dc783b293072",
+      "saved_path": "papers/_dri_ici/sources/papkou_2023_supplement_text_reused_codex.txt",
+      "what": "copied, not downloaded, pre-existing extracted Supplementary Materials text; publisher PDF attempt returned 403 and is logged separately"
+    },
+    {
+      "url": "https://papers.neurips.cc/paper_files/paper/2025/file/323fcf83a0f26c7c04eae0d91125d518-Paper-Datasets_and_Benchmarks_Track.pdf",
+      "http_status": 200,
+      "sha256": "0ab8f8721645718db810f49d639fe080db38225b73cbb7ad2fb036c985a7d11b",
+      "saved_path": "papers/_dri_ici/sources/huang_zhou_li_2025_reused_codex.pdf",
+      "what": "copied from existing papers/_core_lit_epistasis dossier; original download logged there"
+    },
+    {
+      "url": "https://www.science.org/doi/suppl/10.1126/science.adh3860/suppl_file/science.adh3860_sm.pdf",
+      "http_status": 403,
+      "sha256": "e2fc8037075fa3148ad3381dec2696817b92e9099bc501548be132da39bee1c6",
+      "saved_path": "papers/_dri_ici/sources/papkou_2023_supplement_attempt_codex.html",
+      "what": "saved invalid HTML response from publisher SI PDF route; not a usable PDF"
+    }
+  ],
+  "overlaps": [
+    {
+      "metric": "diminishing_returns_index",
+      "paper_title": "Diminishing Returns Epistasis Among Beneficial Mutations Decelerates Adaptation",
+      "paper_doi": "10.1126/science.1203799",
+      "paper_value": "Per-allele relative-effect trend; no printed DRI/ICI scalar or coefficient",
+      "locator": "Fig. 1 caption, printed p.1190; Results, printed p.1191",
+      "quote": "“normalized from EM = 0 to maximum = 1”",
+      "printed_or_plotted": "plotted",
+      "definition_match": "no",
+      "definition_quote": "“Variation in relative selective effect (normalized to maximum s_i) of each allele as a function of the fitness of the background it was introduced into”",
+      "definition_divergence": "The paper presents a relative effect-versus-background relationship for each evolved allele. GraphFLA computes one Pearson correlation across node fitness and node-mean improving-edge gains.",
+      "input": {
+        "path": null,
+        "sha256": null,
+        "n_rows": null,
+        "preprocessing": "Not applicable; literature survey only."
+      },
+      "graphfla_call": "Not run; read-only implementation review",
+      "graphfla_value": null,
+      "outcome": "definition_incompatible",
+      "reason": "No reproduction was attempted. The paper reports allele-specific relative effects/trends, not the GraphFLA node-averaged landscape correlation."
+    },
+    {
+      "metric": "diminishing_returns_index",
+      "paper_title": "Negative Epistasis Between Beneficial Mutations in an Evolving Bacterial Population",
+      "paper_doi": "10.1126/science.1203801",
+      "paper_value": {
+        "per_mutation_pearson_r": {
+          "rbs": -0.256,
+          "topA": -0.586,
+          "spoT": -0.502,
+          "glmUS": -0.499,
+          "pykF": 0.652
+        },
+        "per_mutation_p": {
+          "rbs": 0.339,
+          "topA": 0.017,
+          "spoT": 0.048,
+          "glmUS": 0.049,
+          "pykF": 0.006
+        }
+      },
+      "locator": "Fig. 4, printed p.1195; Results, printed pp.1194–1195",
+      "quote": "Fig. 4 labels: rbs r = −0.256, P = 0.339; topA r = −0.586, P = 0.017; spoT r = −0.502, P = 0.048; glmUS r = −0.499, P = 0.049; pykF r = 0.652, P = 0.006.",
+      "printed_or_plotted": "printed",
+      "definition_match": "no",
+      "definition_quote": "“Each panel includes the Pearson correlation coefficient and its significance.”",
+      "definition_divergence": "Khan et al. report one Pearson r per focal mutation over its mutation-specific background pairs. GraphFLA correlates node fitness with each node’s average over improving mutations.",
+      "input": {
+        "path": null,
+        "sha256": null,
+        "n_rows": null,
+        "preprocessing": "Not applicable; literature survey only."
+      },
+      "graphfla_call": "Not run; read-only implementation review",
+      "graphfla_value": null,
+      "outcome": "definition_incompatible",
+      "reason": "The paper's coefficients are per mutation; they are not one landscape-wide Pearson coefficient across node means.",
+      "other_printed_statistic": {
+        "description": "Correlation between expected genotype fitness and epistatic deviation; different response from Fig. 4 mutation effect versus background fitness.",
+        "absolute_epistasis_r": -0.578,
+        "relative_epistasis_r": -0.586,
+        "locator": "Results, printed p.1194",
+        "quote": "“absolute epistasis: correlation coefficient (r)=−0.578; relative epistasis: r=−0.586”"
+      }
+    },
+    {
+      "metric": "diminishing_returns_index",
+      "paper_title": "Global epistasis makes adaptation predictable despite sequence-level stochasticity",
+      "paper_doi": "10.1126/science.1250939",
+      "paper_value": "Negative trend for three targeted knockouts; no printed coefficient",
+      "locator": "Fig. 3, printed p.1521; Results, printed p.1521",
+      "quote": "“negative correlation”",
+      "printed_or_plotted": "plotted",
+      "definition_match": "no",
+      "definition_quote": "“The fitness effect of knocking out genes gat2, whi2, and sfl1 declines with the fitness of the background strain.”",
+      "definition_divergence": "The direct analysis is three selected knockouts measured across a set of yeast backgrounds. No correlation type or numerical slope is reported; GraphFLA pools all improving mutations by node.",
+      "input": {
+        "path": null,
+        "sha256": null,
+        "n_rows": null,
+        "preprocessing": "Not applicable; literature survey only."
+      },
+      "graphfla_call": "Not run; read-only implementation review",
+      "graphfla_value": null,
+      "outcome": "definition_incompatible",
+      "reason": "The paper describes selected mutation-specific trends; it does not supply a scalar target matching GraphFLA's node-mean summary."
+    },
+    {
+      "metric": "diminishing_returns_index",
+      "paper_title": "Long-Term Dynamics of Adaptation in Asexual Populations",
+      "paper_doi": "10.1126/science.1243357",
+      "paper_value": {
+        "model_parameter_g": 6.0,
+        "95_percent_CI": [
+          5.3,
+          6.9
+        ]
+      },
+      "locator": "Results/model description, printed p.1365",
+      "quote": "g = 6.0; 95% CI 5.3–6.9",
+      "printed_or_plotted": "printed",
+      "definition_match": "no",
+      "definition_quote": "“The value of g estimated for the six populations that retained the low ancestral mutation rate throughout 50,000 generations is 6.0 (95% confidence interval 5.3–6.9).”",
+      "definition_divergence": "Wiser et al. fit a population-level adaptation model with parameter g. They do not correlate observed mutation gains with background genotypes or report a local landscape index.",
+      "input": {
+        "path": null,
+        "sha256": null,
+        "n_rows": null,
+        "preprocessing": "Not applicable; literature survey only."
+      },
+      "graphfla_call": "Not run; read-only implementation review",
+      "graphfla_value": null,
+      "outcome": "definition_incompatible",
+      "reason": "The printed scalar g is a trajectory-model parameter, not a correlation or slope over GraphFLA mutation edges.",
+      "other_printed_statistic": {
+        "description": "Correlations between grand-mean observed fitness and fitted model trajectories; not local mutation-effect/background correlations.",
+        "hyperbolic_model_r": 0.969,
+        "power_law_model_r": 0.986,
+        "locator": "Abstract, printed p.1364",
+        "quote": "“the correlation coefficients for the grand means and model trajectories are 0.969 and 0.986 for the hyperbolic and power-law models, respectively”"
+      }
+    },
+    {
+      "metric": "increasing_costs_index",
+      "paper_title": "Higher-fitness yeast genotypes are less robust to deleterious mutations",
+      "paper_doi": "10.1126/science.aay4199",
+      "paper_value": {
+        "increasing_cost_cases": 48,
+        "opposite_direction_mutations": 6,
+        "printed_DFE_p_values": [
+          0.03,
+          4.13e-31,
+          7.83e-14,
+          4.08e-12
+        ]
+      },
+      "locator": "Fig. 2 caption, printed p.491–492; Fig. 4 caption, printed p.493; Results, printed p.492",
+      "quote": "Fig. 2: “P = 0.03, two-sided t test”; “P = 4.13 × 10−31, P = 7.83 × 10−14, P = 4.08 × 10−12, respectively, two-sided t test.” Results: “the most frequent pattern (48 cases)”; “This negative correlation is not universal; six mutations exhibit the opposite pattern.”",
+      "printed_or_plotted": "printed",
+      "definition_match": "no",
+      "definition_quote": "“Histogram of regression slopes between fitness effect and background fitness for each mutation.”",
+      "definition_divergence": "Johnson et al. report per-insertion slopes and DFE shifts across segregants. GraphFLA does not return the per-mutation slopes or the DFE statistics; it correlates node fitness with mean reverse-edge gains.",
+      "input": {
+        "path": null,
+        "sha256": null,
+        "n_rows": null,
+        "preprocessing": "Not applicable; literature survey only."
+      },
+      "graphfla_call": "Not run; read-only implementation review",
+      "graphfla_value": null,
+      "outcome": "definition_incompatible",
+      "reason": "The paper reports per-mutation regressions and DFE statistics, not one node-aggregated landscape coefficient."
+    },
+    {
+      "metric": "diminishing_returns_index",
+      "paper_title": "Global epistasis emerges from a generic model of a complex trait",
+      "paper_doi": "10.7554/eLife.64740",
+      "paper_value": "Per-mutation/locus slope coefficient c_i; no printed pooled DRI value",
+      "locator": "Eq. 1 and accompanying text, printed p.2; Fig. 1 caption, printed p.2",
+      "quote": "“c_i quantifies the magnitude of global epistasis for locus i”; Fig. 1 caption: “the mean over 91 mutations (in red) and 5 of the 91 mutations.”",
+      "printed_or_plotted": "plotted",
+      "definition_match": "no",
+      "definition_quote": "“s_i = s_additive,i + s_genotype,i − c_i y.”",
+      "definition_divergence": "Reddy & Desai define a per-locus linear slope, while GraphFLA's default is a Pearson correlation of node fitness with node-mean improving-edge gain.",
+      "input": {
+        "path": null,
+        "sha256": null,
+        "n_rows": null,
+        "preprocessing": "Not applicable; literature survey only."
+      },
+      "graphfla_call": "Not run; read-only implementation review",
+      "graphfla_value": null,
+      "outcome": "definition_incompatible",
+      "reason": "The paper's c_i is mutation/locus-specific and is not one landscape-level GraphFLA-style scalar."
+    },
+    {
+      "metric": "increasing_costs_index",
+      "paper_title": "Global epistasis emerges from a generic model of a complex trait",
+      "paper_doi": "10.7554/eLife.64740",
+      "paper_value": "Per-mutation/locus slope coefficient c_i; no printed pooled ICI value",
+      "locator": "Eq. 1 and accompanying text, printed p.2; Fig. 1 caption, printed p.2",
+      "quote": "“c_i quantifies the magnitude of global epistasis for locus i”; Fig. 1 caption: “the mean over 91 mutations (in red) and 5 of the 91 mutations.”",
+      "printed_or_plotted": "plotted",
+      "definition_match": "no",
+      "definition_quote": "“applies independently of whether its additive effect is deleterious (increasing-costs) or beneficial (diminishing-returns).”",
+      "definition_divergence": "Theoretical increasing-cost behavior is represented by mutation-specific slopes and residuals. GraphFLA returns a node-level correlation after averaging incoming edge costs.",
+      "input": {
+        "path": null,
+        "sha256": null,
+        "n_rows": null,
+        "preprocessing": "Not applicable; literature survey only."
+      },
+      "graphfla_call": "Not run; read-only implementation review",
+      "graphfla_value": null,
+      "outcome": "definition_incompatible",
+      "reason": "No single landscape-wide increasing-cost index is defined in the article."
+    },
+    {
+      "metric": "diminishing_returns_index",
+      "paper_title": "Idiosyncratic epistasis leads to global fitness–correlated trends",
+      "paper_doi": "10.1126/science.abm4774",
+      "paper_value": {
+        "examples": {
+          "RHO5_G10S_b": 0.76,
+          "AKL1_S176P_b": 1.29
+        },
+        "fraction_slopes_deviating_from_1_about": 0.44
+      },
+      "locator": "Fig. 3 caption and Results, printed p.633",
+      "quote": "“~44% of regression slopes deviated substantially from 1”; “b = 0.76”; “b = 1.29.”",
+      "printed_or_plotted": "printed",
+      "definition_match": "no",
+      "definition_quote": "“A regression slope (b) different from 1 in these plots signifies an FCT.”",
+      "definition_divergence": "Bakerlee et al. estimate per-locus FCT slopes from paired genotype fitnesses and do not split all effects into beneficial-only transitions. GraphFLA pools node-mean gains.",
+      "input": {
+        "path": null,
+        "sha256": null,
+        "n_rows": null,
+        "preprocessing": "Not applicable; literature survey only."
+      },
+      "graphfla_call": "Not run; read-only implementation review",
+      "graphfla_value": null,
+      "outcome": "definition_incompatible",
+      "reason": "Per-locus, environment- and ploidy-specific regression slopes are not a single node-aggregated DRI value."
+    },
+    {
+      "metric": "increasing_costs_index",
+      "paper_title": "Idiosyncratic epistasis leads to global fitness–correlated trends",
+      "paper_doi": "10.1126/science.abm4774",
+      "paper_value": {
+        "example_slope_b": 1.29,
+        "definition": "FCT slopes are not classified by beneficial/deleterious mutation sets"
+      },
+      "locator": "Fig. 3 caption and Discussion, printed pp.633, 635",
+      "quote": "“~44% of regression slopes deviated substantially from 1”; “b = 1.29.”",
+      "printed_or_plotted": "printed",
+      "definition_match": "no",
+      "definition_quote": "“Because the landscapes that we studied here have no natural polarization (i.e., neither allele is the assumed WT).”",
+      "definition_divergence": "The paper analyzes unpolarized fitness-correlated trends rather than an edge pool restricted to deleterious mutation effects. GraphFLA ICI is a directed cost-magnitude summary grouped by target node.",
+      "input": {
+        "path": null,
+        "sha256": null,
+        "n_rows": null,
+        "preprocessing": "Not applicable; literature survey only."
+      },
+      "graphfla_call": "Not run; read-only implementation review",
+      "graphfla_value": null,
+      "outcome": "definition_incompatible",
+      "reason": "Bakerlee et al.'s unpolarized FCT slopes are not a per-deleterious-transition ICI."
+    },
+    {
+      "metric": "diminishing_returns_index",
+      "paper_title": "A rugged yet easily navigable fitness landscape",
+      "paper_doi": "10.1126/science.adh3860",
+      "paper_value": {
+        "beneficial_mutation_transitions": 324044,
+        "numeric_slope": "NOT STATED IN PAPER"
+      },
+      "locator": "Supplementary Fig. S22, printed p.42",
+      "quote": "N = 324,044 mutations",
+      "printed_or_plotted": "plotted",
+      "definition_match": "no",
+      "definition_quote": "“The fitness gain of beneficial mutations (vertical axis) decreases in genetic backgrounds with higher fitness (horizontal axis).”",
+      "definition_divergence": "Papkou et al. pool individual beneficial mutation transitions in a linear regression. GraphFLA averages each genotype's gains before correlating nodes.",
+      "input": {
+        "path": null,
+        "sha256": null,
+        "n_rows": null,
+        "preprocessing": "Not applicable; literature survey only."
+      },
+      "graphfla_call": "Not run; read-only implementation review",
+      "graphfla_value": null,
+      "outcome": "definition_incompatible",
+      "reason": "The reported trend is an edge-pooled linear regression, not the node-mean correlation returned by GraphFLA."
+    },
+    {
+      "metric": "diminishing_returns_index",
+      "paper_title": "Idiosyncratic epistasis creates universals in mutational effects and evolutionary trajectories",
+      "paper_doi": "10.1038/s41559-020-01286-y",
+      "paper_value": {
+        "tRNA_fraction_mutations_with_negative_r": 0.878,
+        "single_mutation_r_values": "distribution; empirical per-mutation coefficients are not tabulated"
+      },
+      "locator": "Methods, ‘Examining correlation between background fitness and mutational effect’; Results, Fig. 2b",
+      "quote": "“87.8% of mutations from the yeast tRNA fitness landscape show a negative correlation between fitness effect and background fitness.”",
+      "printed_or_plotted": "printed",
+      "definition_match": "no",
+      "definition_quote": "“Pearson’s correlation coefficient was calculated between mutational effect on a particular trait and background trait value for each single mutation.”",
+      "definition_divergence": "Lyons et al. report per-mutation correlation distributions plus pooled r, not a Pearson correlation over node-level mean gains.",
+      "input": {
+        "path": null,
+        "sha256": null,
+        "n_rows": null,
+        "preprocessing": "Not applicable; contrast-only survey entry."
+      },
+      "graphfla_call": "Not run; read-only implementation review",
+      "graphfla_value": null,
+      "outcome": "definition_incompatible",
+      "reason": "The paper's DRI/ICI evidence is distributions of per-mutation Pearson coefficients; it defines no DRI/ICI index."
+    },
+    {
+      "metric": "increasing_costs_index",
+      "paper_title": "Idiosyncratic epistasis creates universals in mutational effects and evolutionary trajectories",
+      "paper_doi": "10.1038/s41559-020-01286-y",
+      "paper_value": "Per-mutation Pearson correlation distributions are reported for beneficial and detrimental mutation classes; no ICI-specific scalar or printed numeric coefficient is reported.",
+      "locator": "Methods, ‘Examining correlation between background fitness and mutational effect’; Results, Fig. 2b",
+      "quote": "“mutations were deemed beneficial or detrimental depending on their effect on the wild-type genotype in GFP and tRNA”",
+      "printed_or_plotted": "plotted",
+      "definition_match": "no",
+      "definition_quote": "“Pearson’s correlation coefficient was also calculated between all mutational effects and background trait values for each landscape.”",
+      "definition_divergence": "Lyons et al. report deleterious-mutation correlation distributions and pooled r, not GraphFLA's node-averaged reverse-edge cost correlation.",
+      "input": {
+        "path": null,
+        "sha256": null,
+        "n_rows": null,
+        "preprocessing": "Not applicable; contrast-only survey entry."
+      },
+      "graphfla_call": "Not run; read-only implementation review",
+      "graphfla_value": null,
+      "outcome": "definition_incompatible",
+      "reason": "No DRI/ICI scalar is defined; the published analysis is per-mutation Pearson-r distributions and a pooled r."
+    },
+    {
+      "metric": "diminishing_returns_index",
+      "paper_title": "Augmenting Biological Fitness Prediction Benchmarks with Landscapes Features from GraphFLA",
+      "paper_doi": "10.52202/085713-1180",
+      "paper_value": {
+        "table_A2_kehe": 0.043,
+        "table_A2_butyrate": -0.319,
+        "table_A3_kuo2020": 0.391
+      },
+      "locator": "Appendix C.3.2, printed p.36; Tables A2–A3, printed pp.47–48",
+      "quote": "Table A2 ϵDR: 0.043, −0.319; Table A3 ϵDR: 0.391",
+      "printed_or_plotted": "printed",
+      "definition_match": "no",
+      "definition_quote": "“Diminishing returns is then measured by calculating the Pearson correlation coefficient between the fitness of the background genotype, f(g), and the corresponding positive selection coefficient, s(g → g′), across all such beneficial mutations.”",
+      "definition_divergence": "Huang et al. define an edge-pooled Pearson coefficient. GraphFLA instead takes one mean effect per source node and correlates across nodes. Table values are from the GraphFLA feature computations and are not independent validation.",
+      "input": {
+        "path": null,
+        "sha256": null,
+        "n_rows": null,
+        "preprocessing": "Not applicable; literature survey only; no feature recomputation."
+      },
+      "graphfla_call": "Not run; read-only implementation review",
+      "graphfla_value": null,
+      "outcome": "definition_incompatible",
+      "reason": "The published scalar precedent is edge-pooled; GraphFLA's implementation is node-averaged. No reproduction was attempted."
+    },
+    {
+      "metric": "increasing_costs_index",
+      "paper_title": "Augmenting Biological Fitness Prediction Benchmarks with Landscapes Features from GraphFLA",
+      "paper_doi": "10.52202/085713-1180",
+      "paper_value": {
+        "table_A2_kehe": 0.816,
+        "table_A2_butyrate": 0.583
+      },
+      "locator": "Appendix C.3.2, printed p.36; Table A2, printed p.47",
+      "quote": "Table A2 ϵIC: 0.816, 0.583",
+      "printed_or_plotted": "printed",
+      "definition_match": "no",
+      "definition_quote": "“Increasing costs epistasis is measured by calculating the Pearson correlation coefficient between the fitness of the background genotype, f(g), and the magnitude (absolute value) of the corresponding negative selection coefficient, |s(g → g′)|, across all such deleterious mutations.”",
+      "definition_divergence": "GraphFLA's reverse-edge costs have the corresponding background and sign, but they are averaged by target genotype before correlation. This changes edge weighting and the estimand.",
+      "input": {
+        "path": null,
+        "sha256": null,
+        "n_rows": null,
+        "preprocessing": "Not applicable; literature survey only; no feature recomputation."
+      },
+      "graphfla_call": "Not run; read-only implementation review",
+      "graphfla_value": null,
+      "outcome": "definition_incompatible",
+      "reason": "The paper defines an edge-pooled scalar; GraphFLA's current implementation correlates node-level mean costs."
+    }
+  ],
+  "blockers": [
+    {
+      "what": "Khan et al. 2011 main PDF and supporting material",
+      "url": "ResearchGate PDF route and DOI supplementary-material route",
+      "why": "PDF route returned 403 and supplementary DOI route returned 404; the article's full-text ResearchGate page was browser-readable and exposed Figure 4 labels",
+      "needed_for": "re-check of exact supplementary methods and transformation details"
+    },
+    {
+      "what": "Kryazhimskiy et al. 2014 supporting material/full-text XML",
+      "url": "Science supplementary DOI route; Europe PMC fullTextXML",
+      "why": "supplement route returned 404 and Europe PMC endpoint returned HTTP 500; main article PDF was obtained",
+      "needed_for": "additional method detail beyond the main Figure 3 analysis"
+    },
+    {
+      "what": "Johnson et al. 2019 Supplementary Materials",
+      "url": "https://www.science.org/doi/suppl/10.1126/science.aay4199/suppl_file/science.aay4199_sm.pdf",
+      "why": "HTTP 403 security response; main text PDF was obtained",
+      "needed_for": "full confirmation of fitness-effect transformation and detailed model methods"
+    },
+    {
+      "what": "Bakerlee et al. 2022 Supplementary Materials",
+      "url": "https://www.science.org/doi/suppl/10.1126/science.abm4774/suppl_file/science.abm4774_sm.pdf",
+      "why": "HTTP 403 security response; author-hosted main article PDF was obtained",
+      "needed_for": "expanded regression weighting/analysis details"
+    },
+    {
+      "what": "Papkou et al. 2023 publisher SI PDF",
+      "url": "https://www.science.org/doi/suppl/10.1126/science.adh3860/suppl_file/science.adh3860_sm.pdf",
+      "why": "HTTP 403 security response; reused the existing extracted SI text from prior validation",
+      "needed_for": "no remaining claim; copied SI text contains Fig. S22 caption"
+    }
+  ],
+  "verdict": "definition_incompatible",
+  "verdict_reason": "The literature mostly reports per-mutation correlations/slopes or qualitative background-fitness trends, with a few distinct scalar/model precedents. GraphFLA's functions correlate node fitness against node-averaged improving-edge gains/costs. This is a defensible non-standard landscape summary, but it is not the per-mutation convention or Huang et al.'s published edge-pooled Pearson coefficient."
+}

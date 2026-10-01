@@ -1,0 +1,206 @@
+{
+  "study_key": "PapkouRM23",
+  "harvest_key": "Papkou_FigS12",
+  "dossier": "papers/Papkou2023",
+  "recorded_at": "2026-10-01T08:47:12Z",
+  "agent": "codex",
+  "paper": {
+    "title": "A rugged yet easily navigable fitness landscape",
+    "doi": "10.1126/science.adh3860",
+    "year": 2023,
+    "journal": "Science",
+    "volume": 382,
+    "issue": 6673,
+    "article": "eadh3860",
+    "authors": [
+      "Andrei Papkou",
+      "Lucia Garcia-Pastor",
+      "Jos\u00e9 Antonio Escudero",
+      "Andreas Wagner"
+    ],
+    "bibliography_verified_against": "crossref",
+    "supplied_bibliography_errors": "selected_references.bib lists Andrei Papkou, Aviv Regev, Joanna Masel; the Crossref DOI record lists Andrei Papkou, Lucia Garcia-Pastor, Jos\u00e9 Antonio Escudero, Andreas Wagner."
+  },
+  "sources": [
+    {
+      "url": "https://public.websites.umich.edu/~zhanglab/clubPaper/04_19_2024.pdf",
+      "http_status": null,
+      "sha256": "3296d3f4e8bb2f0aeabc5ede2b435699524b58df16bfa617d9e6acdd47f12edf",
+      "saved_path": "papers/Papkou2023/sources/Papkou2023_main_umich.pdf",
+      "what": "Existing local main article PDF listed in the dossier source index; HTTP status from its original retrieval was not recorded."
+    },
+    {
+      "url": "https://api.crossref.org/works/10.1126%2Fscience.adh3860",
+      "http_status": 200,
+      "sha256": "cd77423598066009dc40253518933e8285ce9be1a0364f77bef7b097b93c78dd",
+      "saved_path": "papers/Papkou2023/sources/crossref_adh3860_codex.json",
+      "what": "Crossref DOI metadata used to verify the title, authors, year, volume, and issue."
+    },
+    {
+      "url": "https://www.science.org/doi/suppl/10.1126/science.adh3860/suppl_file/science.adh3860_sm.pdf",
+      "http_status": 403,
+      "sha256": "a8dcb3644f15a0204540d77f056853a6b6915f1d6e8acde7fe8ada2a02bdbe50",
+      "saved_path": "papers/Papkou2023/sources/Papkou2023_science_adh3860_supplement_attempt_codex.html",
+      "what": "HTML Cloudflare/security-verification response, not the supplementary PDF."
+    },
+    {
+      "url": "file:///Users/arwen/Documents/GitHub/GraphFLA/_verify/papers/papkou_science_SM.txt",
+      "http_status": null,
+      "sha256": "abd424ad6fee922b61e34ccb961490e28f820cdc17a4057dc123dc783b293072",
+      "saved_path": "papers/Papkou2023/sources/Papkou2023_science_adh3860_SM_codex.txt",
+      "what": "Existing extracted SI text copied into the dossier for this task; it was not downloaded over HTTP."
+    }
+  ],
+  "overlaps": [
+    {
+      "metric": "basin_fitness_correlation",
+      "group": "Asp",
+      "paper_value": {
+        "rho": 0.53,
+        "p": "5.29e-4",
+        "N": 40
+      },
+      "locator": "Supplementary Fig. S12, Asp annotation, printed p.32.",
+      "quote": "\u03c1= 0.53, p=5.29\u00d710-4, N=40",
+      "printed_or_plotted": "printed",
+      "definition_match": "yes",
+      "definition_quote": "sets of all variants with evolutionarily accessible paths to a given peak",
+      "definition_divergence": "The grouped primary comparison uses landscape.accessible_paths, which matches the paper's all-accessible-path basin definition. The named basin_fitness_correlation function instead uses greedy basin sizes; those diagnostic results are recorded separately.",
+      "input": {
+        "path": "data/BioSequence/Papkou2023_DHFR.csv",
+        "sha256": "fca2fb47cad417a049698f43b20f90b320a4927418d502e527ad112ea46c82da",
+        "n_rows": 135178,
+        "preprocessing": "Reused the existing papkou fixture: reverse the processed nucleotide relabeling (A:A, C:G, G:T, T:C), then build with tau=-0.507774, filter_mode=both, epsilon=0, verbose=False."
+      },
+      "graphfla_call": "DNALandscape().build_from_data(...); landscape.accessible_paths; scipy.stats.spearmanr(accessible basin sizes for Asp peaks, peak fitness). See papers/Papkou2023/reproduction_fig_s12_codex.py.",
+      "graphfla_value": {
+        "rho": 0.5298311444652909,
+        "p": 0.0004381400260439684,
+        "N": 40
+      },
+      "outcome": "mismatch",
+      "reason": "The coefficient rounds to the printed 0.53 and N matches, but SciPy's default p-value differs from the printed 5.29e-4. The composite printed annotation is therefore a mismatch; the rho component reproduces to precision."
+    },
+    {
+      "metric": "basin_fitness_correlation",
+      "group": "Glu",
+      "paper_value": {
+        "rho": 0.92,
+        "p": "<1e-16",
+        "N": 34
+      },
+      "locator": "Supplementary Fig. S12, Glu annotation, printed p.32.",
+      "quote": "\u03c1= 0.92, p<10-16, N=34",
+      "printed_or_plotted": "printed",
+      "definition_match": "yes",
+      "definition_quote": "See the shared full definition quote in the Asp overlap.",
+      "definition_divergence": "See the shared basin definition in the Asp overlap. The grouped primary comparison uses landscape.accessible_paths. The named basin_fitness_correlation function instead uses greedy basin sizes; those diagnostic results are recorded separately.",
+      "input": {
+        "path": "data/BioSequence/Papkou2023_DHFR.csv",
+        "sha256": "fca2fb47cad417a049698f43b20f90b320a4927418d502e527ad112ea46c82da",
+        "n_rows": 135178,
+        "preprocessing": "Reused the existing papkou fixture: reverse the processed nucleotide relabeling (A:A, C:G, G:T, T:C), then build with tau=-0.507774, filter_mode=both, epsilon=0, verbose=False."
+      },
+      "graphfla_call": "DNALandscape().build_from_data(...); landscape.accessible_paths; scipy.stats.spearmanr(accessible basin sizes for Glu peaks, peak fitness). See papers/Papkou2023/reproduction_fig_s12_codex.py.",
+      "graphfla_value": {
+        "rho": 0.9208556149732621,
+        "p": 1.2307107132704155e-14,
+        "N": 34
+      },
+      "outcome": "mismatch",
+      "reason": "The coefficient rounds to the printed 0.92 and N matches, but SciPy's default p-value is 1.23e-14 and does not meet the printed p<1e-16. The composite printed annotation is therefore a mismatch; the rho component reproduces to precision."
+    },
+    {
+      "metric": "basin_fitness_correlation",
+      "group": "Cys",
+      "paper_value": {
+        "rho": 0.92,
+        "p": "<1e-16",
+        "N": 43
+      },
+      "locator": "Supplementary Fig. S12, Cys annotation, printed p.32.",
+      "quote": "\u03c1 = 0.92, p<10-16, N=43",
+      "printed_or_plotted": "printed",
+      "definition_match": "yes",
+      "definition_quote": "See the shared full definition quote in the Asp overlap.",
+      "definition_divergence": "See the shared basin definition in the Asp overlap. The grouped primary comparison uses landscape.accessible_paths. The named basin_fitness_correlation function instead uses greedy basin sizes; those diagnostic results are recorded separately.",
+      "input": {
+        "path": "data/BioSequence/Papkou2023_DHFR.csv",
+        "sha256": "fca2fb47cad417a049698f43b20f90b320a4927418d502e527ad112ea46c82da",
+        "n_rows": 135178,
+        "preprocessing": "Reused the existing papkou fixture: reverse the processed nucleotide relabeling (A:A, C:G, G:T, T:C), then build with tau=-0.507774, filter_mode=both, epsilon=0, verbose=False."
+      },
+      "graphfla_call": "DNALandscape().build_from_data(...); landscape.accessible_paths; scipy.stats.spearmanr(accessible basin sizes for Cys peaks, peak fitness). See papers/Papkou2023/reproduction_fig_s12_codex.py.",
+      "graphfla_value": {
+        "rho": 0.9238900634249472,
+        "p": 1.0490748603188246e-18,
+        "N": 43
+      },
+      "outcome": "reproduced_with_precision",
+      "reason": "The coefficient rounds to the printed 0.92, N matches, and the computed p-value satisfies the printed p<1e-16."
+    },
+    {
+      "metric": "basin_fitness_correlation",
+      "group": "other",
+      "paper_value": {
+        "rho": 0.28,
+        "p": "9.02e-9",
+        "N": 397
+      },
+      "locator": "Supplementary Fig. S12, other-peaks annotation, printed p.32.",
+      "quote": "\u03c1= 0.28, p=9.02\u00d710-9, N=397",
+      "printed_or_plotted": "printed",
+      "definition_match": "yes",
+      "definition_quote": "See the shared full definition quote in the Asp overlap.",
+      "definition_divergence": "See the shared basin definition in the Asp overlap. The grouped primary comparison uses landscape.accessible_paths. The named basin_fitness_correlation function instead uses greedy basin sizes; those diagnostic results are recorded separately.",
+      "input": {
+        "path": "data/BioSequence/Papkou2023_DHFR.csv",
+        "sha256": "fca2fb47cad417a049698f43b20f90b320a4927418d502e527ad112ea46c82da",
+        "n_rows": 135178,
+        "preprocessing": "Reused the existing papkou fixture: reverse the processed nucleotide relabeling (A:A, C:G, G:T, T:C), then build with tau=-0.507774, filter_mode=both, epsilon=0, verbose=False."
+      },
+      "graphfla_call": "DNALandscape().build_from_data(...); landscape.accessible_paths; scipy.stats.spearmanr(accessible basin sizes for other peaks, peak fitness). See papers/Papkou2023/reproduction_fig_s12_codex.py.",
+      "graphfla_value": {
+        "rho": 0.28344322388161236,
+        "p": 9.027244603090036e-09,
+        "N": 397
+      },
+      "outcome": "mismatch",
+      "reason": "The coefficient rounds to the printed 0.28 and N matches, but SciPy's p-value rounds to 9.03e-9 rather than the printed 9.02e-9. The composite printed annotation is therefore a mismatch; the rho component reproduces to precision."
+    }
+  ],
+  "partition_check": {
+    "confirmed_before_correlations": true,
+    "graphfla_n_lo": 514,
+    "group_counts": {
+      "Asp": 40,
+      "Glu": 34,
+      "Cys": 43,
+      "other": 397
+    },
+    "sum": 514,
+    "stdout_locator": "papers/Papkou2023/reproduction_fig_s12_output_codex.txt:3"
+  },
+  "named_api_diagnostic": {
+    "call": "graphfla.analysis.basin_fitness_correlation(landscape, method='spearman')",
+    "definition_match": "no",
+    "overall_rho": 0.671902220094999,
+    "grouped_greedy_correlations": {
+      "Asp": {"rho": 0.6103189493433397, "p": 2.89527693971379e-05, "N": 40},
+      "Glu": {"rho": 0.7842627960275019, "p": 4.0735905890624235e-08, "N": 34},
+      "Cys": {"rho": 0.9048736508481469, "p": 8.443594337979817e-17, "N": 43},
+      "other": {"rho": 0.43348007411044637, "p": 1.2857133423589328e-19, "N": 397}
+    },
+    "reason": "The named function reads size_basin_greedy from landscape.basins, so each node is assigned to one hill-climb endpoint. This is not the paper's overlapping all-accessible-path basin definition."
+  },
+  "blockers": [
+    {
+      "what": "Publisher supplementary PDF science.adh3860_sm.pdf",
+      "url": "https://www.science.org/doi/suppl/10.1126/science.adh3860/suppl_file/science.adh3860_sm.pdf",
+      "why": "HTTP 403 returned an HTML security-verification page instead of the PDF; the response is preserved in the dossier sources directory.",
+      "needed_for": "Publisher-format archival copy only; existing extracted SI text was reused for the quotations and locator checks."
+    }
+  ],
+  "verdict": "targets_found",
+  "verdict_reason": "All four published Spearman rho coefficients are reproduced to their printed two-decimal precision using GraphFLA's accessible_paths basin sizes, after confirming the exact 40/34/43/397 partition of all 514 peaks. The full printed annotations are mismatches for Asp, Glu, and other because SciPy's default p-values do not match at the caption's precision; Cys matches its printed p inequality. The named basin_fitness_correlation API itself is greedy and definition-incompatible, with its different grouped results recorded separately."
+}

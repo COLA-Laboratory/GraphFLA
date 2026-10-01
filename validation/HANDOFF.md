@@ -25,6 +25,19 @@ The external store is the source of truth for provenance: it holds the
 downloaded artifacts, their SHA-256 hashes, and the append-only event log. The
 repository holds the distilled records. Do not duplicate the 1.7 GB into git.
 
+**Sync direction matters, and getting it wrong silently destroys review work.**
+Agents write raw records into the external store; the lead then corrects those
+records in the repository. A later `cp -R <store>/harvest/. validation/harvest/`
+therefore overwrites the corrections with the uncorrected originals, with no
+error and no visible failure. This happened once in this session and was caught
+only because `git diff --cached` showed deletions in records that should only
+have gained content. **The repository copy is authoritative once the lead has
+annotated it.** Copy store -> repo only for studies the lead has not yet
+reviewed, and copy repo -> store afterwards so both sides carry the corrections.
+Before any commit, check that every `lead_correction`, `lead_verification`,
+`lead_review`, `scope_limitation`, `circularity_warning` and `original_agent_claim`
+still present: a drop in that count means a sync clobbered them.
+
 ## 2. The contract — how to add a validation without redoing work
 
 ### Before touching anything
@@ -116,6 +129,13 @@ repository, or Python writes `__pycache__` into it.
   counting undirected mutation pairs has roughly twice the edge count.
 - **A cited DOI can be fabricated.** One docstring cited a Nature Reviews
   Genetics DOI that returns 404 and is unknown to Crossref. Verify citations.
+- **Re-running a claim under the wrong preprocessing looks exactly like a refuted
+  claim.** The lead twice "overturned" a correct agent result this way: once by
+  computing `cauchy_loc` on raw fitness where the paper max-normalises, and once by
+  running a whole five-locus landscape where the procedure averages its ten
+  four-locus faces. Both overturns were themselves wrong and had to be reverted.
+  Before downgrading an agent's reproduction, re-read the preprocessing it
+  recorded and reproduce *that*, not your own default.
 
 ## 4. State at handoff
 
@@ -171,10 +191,12 @@ A consumer filtering on `reproduced_*` now receives only defensible reproduction
 
 Still outstanding:
 
-- **Absolute paths.** Many `input.path` values are absolute
+- **Absolute paths.** 27 `input.path` values across 5 records are absolute
   (`/Users/arwen/Documents/GitHub/GraphFLA/...`) and will not resolve in another
-  checkout. `harvest/README.md` now requires repository-relative paths; existing
-  records predate that rule.
+  checkout: CoreLit_Epistasis 13, Papkou_FigS21 5, BaezaCenturionMSVL19 4,
+  CoreLit_Navigability 4, PhillipsMBDSD23 1. `harvest/README.md` requires
+  repository-relative paths; these records predate or ignore that rule. Rewriting
+  them is mechanical and safe.
 - **Hash semantics.** Several `sources[]` entries pair the hash of the
   *downloaded* file with the path of a *transformed* file (a column subset or a
   re-encoding), so byte verification fails. All four such entries in
