@@ -1,0 +1,56 @@
+{
+  "source_ref": "53c8f62",
+  "source_sha256": "b0b21db5eae0f09e94be0b944e00143b9ada4de57de1abd822349535328efac1",
+  "pytest": {
+    "3.9": {
+      "passed": 1635,
+      "skipped": 0,
+      "environment": {
+        "python": "3.9.6",
+        "numpy": "2.0.2",
+        "pandas": "2.3.3",
+        "igraph": "1.0.0"
+      }
+    },
+    "3.11": {
+      "passed": 1635,
+      "skipped": 0,
+      "environment": {
+        "python": "3.11.16",
+        "numpy": "2.4.6",
+        "pandas": "3.0.6",
+        "igraph": "1.0.0"
+      }
+    },
+    "3.13": {
+      "passed": 1635,
+      "skipped": 0,
+      "environment": {
+        "python": "3.13.11",
+        "numpy": "2.4.2",
+        "pandas": "2.3.3",
+        "igraph": "0.11.9"
+      }
+    }
+  },
+  "papkou": {
+    "input_variants": 261333,
+    "vertices": 135178,
+    "directed_edges": 324044,
+    "node_identity_equal": true,
+    "directed_edge_identity_equal": true
+  },
+  "complete_output_equivalence": {
+    "datasets": 21,
+    "status": "passed",
+    "record": "architecture-equivalence.json"
+  },
+  "asv": {
+    "check": "passed",
+    "smoke_methods": 14,
+    "smoke_parameter_cases": 123,
+    "smoke_filter": "Construction|LandscapeOperations",
+    "status": "passed"
+  },
+  "analysis_implementation_changed": false
+}

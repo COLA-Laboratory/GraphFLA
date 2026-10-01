@@ -1,5 +1,8 @@
 # Construction optimization results
 
+The subsequent [compact construction experiment](ARCHITECTURE_EXPERIMENT.md)
+compares a structural change against the final implementation measured here.
+
 Local measurements on an Apple M4 Pro (24 GiB), macOS 26.3, Python 3.13.11. The branch starts at `main` commit `9f86def`; the final measured construction source is `01be0bf`.
 
 The final comparison uses the repeated main control, with three independent timing processes and nine measured builds per dataset. Memory uses three separate fresh processes. Input hashes, graph dimensions and variable-site counts match throughout.
