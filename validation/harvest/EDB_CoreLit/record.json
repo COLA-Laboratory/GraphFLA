@@ -1,0 +1,70 @@
+{
+  "study_key": "Papkou2023_EDB",
+  "dossier": "papers/Papkou2023",
+  "recorded_at": "2026-10-01T08:51:22Z",
+  "agent": "codex",
+  "paper": {
+    "title": "A rugged yet easily navigable fitness landscape",
+    "doi": "10.1126/science.adh3860",
+    "year": 2023,
+    "bibliography_verified_against": "crossref",
+    "supplied_bibliography_errors": "NOT STATED"
+  },
+  "sources": [
+    {
+      "url": "https://www.science.org/doi/suppl/10.1126/science.adh3860/suppl_file/science.adh3860_sm.pdf",
+      "http_status": null,
+      "sha256": "abd424ad6fee922b61e34ccb961490e28f820cdc17a4057dc123dc783b293072",
+      "saved_path": "papers/Papkou2023/sources/papkou_science_SM_sol.txt",
+      "what": "Supplementary Materials text; copied unchanged from the existing GraphFLA _verify extraction; PDF retrieval status for this audit NOT STATED"
+    },
+    {
+      "url": "https://public.websites.umich.edu/~zhanglab/clubPaper/04_19_2024.pdf",
+      "http_status": null,
+      "sha256": "3296d3f4e8bb2f0aeabc5ede2b435699524b58df16bfa617d9e6acdd47f12edf",
+      "saved_path": "papers/Papkou2023/sources/Papkou2023_main_umich.pdf",
+      "what": "Main article; reused existing dossier copy"
+    },
+    {
+      "url": "https://cdn.elifesciences.org/articles/16965/elife-16965-v2.pdf",
+      "http_status": null,
+      "sha256": "79cd1ebf8cef9c092020dec56b3686c480f03e3e7860f60178db1824c390e86f",
+      "saved_path": "papers/Wu2016/sources/elife-16965-v2.pdf",
+      "what": "Wu et al. 2016; conversion and detour definitions; reused existing dossier copy"
+    },
+    {
+      "url": "https://dynamics.org/Altenberg/LIBRARY/REPRINTS/Conrad_BioSystems.1990.pdf",
+      "http_status": 200,
+      "sha256": "4054930f5c82a144f5a06e43bcbeeb8f37332b063f82aae1a040455ccdeae940",
+      "saved_path": "papers/_core_lit_navigability/sources/conrad_1990_geometry_of_evolution_codex.pdf",
+      "what": "Conrad 1990 term origin; reused existing dossier copy; HTTP status from the prior dossier acquisition log"
+    }
+  ],
+  "overlaps": [
+    {
+      "metric": "extradimensional_bypass.bypass_proportion",
+      "paper_value": "23%",
+      "locator": "Papkou et al., Supplementary text S3, printed p. 20",
+      "quote": "In our landscape, such paths do exist, but they can overcome only 23% of local fitness reductions caused by reciprocal sign epistasis (fig. S20D).",
+      "printed_or_plotted": "printed",
+      "definition_match": "yes",
+      "definition_quote": "Search for the shortest accessible path, i.e., a path along which fitness increases in each step, from variant ab (rank 2) to variant AB (rank 1) within the whole network, using the distance function from the igraph library with the argument “mode=out”.",
+      "definition_divergence": "For Papkou's scalar prevalence result, no substantive divergence found: both enumerate reciprocal-sign squares and test directed reachability from the second-highest to highest-fitness corner in the full network. GraphFLA also returns a mean shortest-path length, for which Papkou prints no mean.",
+      "input": {
+        "path": "data/BioSequence/Papkou2023_DHFR.csv",
+        "sha256": "fca2fb47cad417a049698f43b20f90b320a4927418d502e527ad112ea46c82da",
+        "n_rows": 135178,
+        "preprocessing": "DNALandscape.build_from_data(sequences, fitness, epsilon=0, tau=-0.507774, filter_mode='both'); exact motif enumeration (sample_cut_prob=0). Paper SI Materials and Methods pp. 14–15 says to exclude pairs where both variants are nonfunctional and analyze the largest weakly connected component."
+      },
+      "graphfla_call": "DNALandscape().build_from_data(data.sequences, data.fitness, epsilon=0, tau=-0.507774, filter_mode='both', verbose=False); extradimensional_bypass(landscape, sample_cut_prob=0)",
+      "graphfla_value": 0.22742156966304003,
+      "graphfla_total_motifs": 85203,
+      "graphfla_motifs_with_bypass": 19377,
+      "graphfla_average_bypass_length": 4.353769933426227,
+      "outcome": "reproduced_with_precision"
+    }
+  ],
+  "blockers": [],
+  "verdict": "targets_found",
+  "verdict_reason": "Papkou's Supplementary text S3 prints a 23% reciprocal-sign-square bypass prevalence and its Methods specify the same full-network directed shortest-path reachability test implemented by GraphFLA. Exact enumeration on the previously validated DHFR component gives 19,377/85,203 = 0.22742156966304003, which rounds to the printed whole-percent value. The exact bypass count and mean length are NOT STATED IN PAPER. Wu et al.'s separate conversion and detour success rates use narrower mechanisms and a random sample, so they are not targets for this aggregate output."
+}

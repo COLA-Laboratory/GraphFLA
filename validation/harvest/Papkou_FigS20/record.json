@@ -1,0 +1,219 @@
+{
+  "study_key": "PapkouRM23",
+  "dossier": "papers/Papkou2023",
+  "recorded_at": "2026-10-01T09:03:41Z",
+  "agent": "codex-gpt-6",
+  "paper": {
+    "title": "A rugged yet easily navigable fitness landscape",
+    "doi": "10.1126/science.adh3860",
+    "year": 2023,
+    "bibliography_verified_against": "crossref",
+    "supplied_bibliography_errors": "selected_references.bib lists Andrei Papkou, Aviv Regev, and Joanna Masel. The DOI-bound Crossref record lists Andrei Papkou, Lucia Garcia-Pastor, José Antonio Escudero, and Andreas Wagner."
+  },
+  "sources": [
+    {
+      "url": "https://api.crossref.org/works/10.1126%2Fscience.adh3860",
+      "http_status": 200,
+      "sha256": "cd77423598066009dc40253518933e8285ce9be1a0364f77bef7b097b93c78dd",
+      "saved_path": "papers/Papkou2023/sources/crossref_adh3860_codex.json",
+      "what": "Crossref DOI metadata used to verify title and author list"
+    },
+    {
+      "url": "https://www.science.org/doi/suppl/10.1126/science.adh3860/suppl_file/science.adh3860_sm.pdf",
+      "http_status": 403,
+      "sha256": "a8dcb3644f15a0204540d77f056853a6b6915f1d6e8acde7fe8ada2a02bdbe50",
+      "saved_path": "papers/Papkou2023/sources/Papkou2023_science_adh3860_supplement_attempt_codex.html",
+      "what": "Publisher returned an HTML verification page, not the SI PDF"
+    },
+    {
+      "url": "file:///Users/arwen/Documents/GitHub/GraphFLA/_verify/papers/papkou_science_SM.txt",
+      "http_status": null,
+      "sha256": "abd424ad6fee922b61e34ccb961490e28f820cdc17a4057dc123dc783b293072",
+      "saved_path": "papers/Papkou2023/sources/Papkou2023_science_adh3860_SM_codex.txt",
+      "what": "Byte-for-byte copy of the pre-existing extracted SI text used for quotations"
+    },
+    {
+      "url": "https://zenodo.org/api/records/8228920/files/code_analyses_figures.zip/content",
+      "http_status": 206,
+      "sha256": "943b8672fb7322f55bc9cf40a40a53f5622b712d7f95eccc44c18ae9d828de6f",
+      "saved_path": "papers/Papkou2023/sources/zenodo_8228920/14.reciprocal_sign_epistasis/01.count_different_types_of_epistasis.ipynb",
+      "what": "Existing author notebook with exact Fig. S20B counts and frequencies"
+    },
+    {
+      "url": "https://zenodo.org/api/records/8228920/files/code_analyses_figures.zip/content",
+      "http_status": 206,
+      "sha256": "7add5bbd22fd52d9e3480481eb232e9c0fd269cee172f0295b487a7dfc79c01f",
+      "saved_path": "papers/Papkou2023/sources/zenodo_8228920/14.reciprocal_sign_epistasis/02.extradimentional_bypass_codex.ipynb",
+      "what": "Author notebook with Fig. S20D bypass procedure, stored outputs, and curve construction"
+    },
+    {
+      "url": "https://zenodo.org/api/records/8228920/files/code_analyses_figures.zip/content",
+      "http_status": 206,
+      "sha256": "c0b9b212932216f52c572fdaff5dfea8e5b216863263404e0a1e93b50c965382",
+      "saved_path": "papers/Papkou2023/sources/zenodo_8228920/14.reciprocal_sign_epistasis/bypass_squares_rec_epi_codex.rds",
+      "what": "Author data object containing reciprocal-sign motif shortest bypass lengths used to construct Fig. S20D"
+    }
+  ],
+  "overlaps": [
+    {
+      "metric": "classify_epistasis",
+      "paper_value": {
+        "magnitude_and_additive_accessible_paths": 2,
+        "single_sign_accessible_paths": 1,
+        "reciprocal_sign_accessible_paths": 0
+      },
+      "locator": "Supplementary Fig. S20A caption and schematic, printed p. 40",
+      "quote": "accessible paths",
+      "printed_or_plotted": "plotted",
+      "definition_match": "yes",
+      "definition_quote": "NOT STATED IN PAPER",
+      "definition_divergence": "The caption states that the classes differ by the number of accessible paths; it does not state the exact 2/1/0 mapping in text: NOT STATED IN PAPER. The schematic encodes that mapping. GraphFLA's controlled-square class fixtures align with it: magnitude (including additive), sign, and reciprocal sign.",
+      "input": {
+        "path": "data/BioSequence/Papkou2023_DHFR.csv",
+        "sha256": "fca2fb47cad417a049698f43b20f90b320a4927418d502e527ad112ea46c82da",
+        "n_rows": 135178,
+        "preprocessing": "Reused dossier preprocessing: decode A/C/G/T to A/G/T/C; tau=-0.507774; filter_mode='both'; epsilon=0. No variants were tried."
+      },
+      "graphfla_call": "DNALandscape().build_from_data(decoded_sequences, fitness, tau=-0.507774, filter_mode='both', epsilon=0); A.classify_epistasis(ls, sample_cut_prob=0, seed=0)",
+      "graphfla_value": {
+        "directed_square_class_mapping": {
+          "magnitude_including_additive": 2,
+          "sign": 1,
+          "reciprocal_sign": 0
+        },
+        "observed_counts": {
+          "magnitude": 408065,
+          "sign": 246943,
+          "reciprocal_sign": 85203
+        }
+      },
+      "outcome": "reproduced_exact",
+      "reason": "The path-count definition agrees with GraphFLA's directed four-node motif taxonomy; the actual data run independently reproduces the three author class counts exactly. The path-count mapping is a schematic cross-check, not a digitized plot value."
+    },
+    {
+      "metric": "classify_epistasis",
+      "paper_value": {
+        "author_notebook_count": 408065,
+        "author_notebook_fraction": 0.551282,
+        "paper_representation": "plotted bar"
+      },
+      "locator": "Zenodo 8228920, 14.reciprocal_sign_epistasis/01.count_different_types_of_epistasis.ipynb, cell 6 output; Fig. S20B, printed p. 40",
+      "quote": "408065 magnitude\\n& additive 0.5512820",
+      "printed_or_plotted": "plotted",
+      "definition_match": "yes",
+      "definition_quote": "N=740,211",
+      "definition_divergence": "The exact class count and fraction are not printed in the paper text: NOT STATED IN PAPER. The author notebook groups additive with magnitude, matching GraphFLA's magnitude class.",
+      "input": {
+        "path": "data/BioSequence/Papkou2023_DHFR.csv",
+        "sha256": "fca2fb47cad417a049698f43b20f90b320a4927418d502e527ad112ea46c82da",
+        "n_rows": 135178,
+        "preprocessing": "Reused dossier preprocessing: decode A/C/G/T to A/G/T/C; tau=-0.507774; filter_mode='both'; epsilon=0. No variants were tried."
+      },
+      "graphfla_call": "A.classify_epistasis(ls, sample_cut_prob=0, seed=0); round(class_fraction * 740211)",
+      "graphfla_value": {
+        "count": 408065,
+        "fraction": 0.551281999321815,
+        "derived_percent": 55.1282
+      },
+      "outcome": "reproduced_exact",
+      "reason": "The exact author count and stored frequency match GraphFLA. Cell 7 plots Freq from cell 6; no bar height was digitized."
+    },
+    {
+      "metric": "classify_epistasis",
+      "paper_value": {
+        "author_notebook_count": 246943,
+        "author_notebook_fraction": 0.3336116,
+        "paper_representation": "plotted bar"
+      },
+      "locator": "Zenodo 8228920, 14.reciprocal_sign_epistasis/01.count_different_types_of_epistasis.ipynb, cell 6 output; Fig. S20B, printed p. 40",
+      "quote": "246943 single\\nsign 0.3336116",
+      "printed_or_plotted": "plotted",
+      "definition_match": "yes",
+      "definition_quote": "single\\nsign",
+      "definition_divergence": "The exact class count and fraction are not printed in the paper text: NOT STATED IN PAPER. The author notebook's single-sign bin matches GraphFLA's sign class.",
+      "input": {
+        "path": "data/BioSequence/Papkou2023_DHFR.csv",
+        "sha256": "fca2fb47cad417a049698f43b20f90b320a4927418d502e527ad112ea46c82da",
+        "n_rows": 135178,
+        "preprocessing": "Reused dossier preprocessing: decode A/C/G/T to A/G/T/C; tau=-0.507774; filter_mode='both'; epsilon=0. No variants were tried."
+      },
+      "graphfla_call": "A.classify_epistasis(ls, sample_cut_prob=0, seed=0); round(class_fraction * 740211)",
+      "graphfla_value": {
+        "count": 246943,
+        "fraction": 0.33361163235888147,
+        "derived_percent": 33.3612
+      },
+      "outcome": "reproduced_exact",
+      "reason": "The exact author count and stored frequency match GraphFLA. Cell 7 plots Freq from cell 6; no bar height was digitized."
+    },
+    {
+      "metric": "classify_epistasis",
+      "paper_value": {
+        "author_notebook_count": 85203,
+        "author_notebook_fraction": 0.1151064,
+        "paper_representation": "plotted bar"
+      },
+      "locator": "Zenodo 8228920, 14.reciprocal_sign_epistasis/01.count_different_types_of_epistasis.ipynb, cell 6 output; Fig. S20B, printed p. 40",
+      "quote": "85203 reciprocal\\nsign 0.1151064",
+      "printed_or_plotted": "plotted",
+      "definition_match": "yes",
+      "definition_quote": "reciprocal\\nsign",
+      "definition_divergence": "The exact class count and fraction are not printed in the paper text: NOT STATED IN PAPER. The author notebook's reciprocal-sign bin matches GraphFLA's reciprocal_sign class.",
+      "input": {
+        "path": "data/BioSequence/Papkou2023_DHFR.csv",
+        "sha256": "fca2fb47cad417a049698f43b20f90b320a4927418d502e527ad112ea46c82da",
+        "n_rows": 135178,
+        "preprocessing": "Reused dossier preprocessing: decode A/C/G/T to A/G/T/C; tau=-0.507774; filter_mode='both'; epsilon=0. No variants were tried."
+      },
+      "graphfla_call": "A.classify_epistasis(ls, sample_cut_prob=0, seed=0); round(class_fraction * 740211)",
+      "graphfla_value": {
+        "count": 85203,
+        "fraction": 0.11510636831930356,
+        "derived_percent": 11.5106
+      },
+      "outcome": "reproduced_exact",
+      "reason": "The exact author count and stored frequency match GraphFLA. Cell 7 plots Freq from cell 6; no bar height was digitized."
+    },
+    {
+      "metric": "extradimensional_bypass",
+      "paper_value": {
+        "printed_plateau_percent": 23,
+        "author_notebook_full_curve_plateau_fraction": 0.2274216,
+        "author_notebook_max_finite_shortest_bypass_length": 29,
+        "reciprocal_sign_square_denominator": 85203
+      },
+      "locator": "Supplementary Text S3, printed p. 20; Fig. S20D caption, printed p. 40; author bypass notebook cell 12 output",
+      "quote": "only 23%",
+      "printed_or_plotted": "printed",
+      "definition_match": "yes",
+      "definition_quote": "85,203",
+      "definition_divergence": "GraphFLA returns the all-length bypass proportion and mean shortest bypass length, not the full cumulative-by-maximum-length series. The proportion is comparable to the curve's plateau at L=29, where all finite author shortest bypass lengths have been included.",
+      "input": {
+        "path": "data/BioSequence/Papkou2023_DHFR.csv",
+        "sha256": "fca2fb47cad417a049698f43b20f90b320a4927418d502e527ad112ea46c82da",
+        "n_rows": 135178,
+        "preprocessing": "Reused dossier preprocessing: decode A/C/G/T to A/G/T/C; tau=-0.507774; filter_mode='both'; epsilon=0. No variants were tried."
+      },
+      "graphfla_call": "A.extradimensional_bypass(ls, sample_cut_prob=0, seed=0)",
+      "graphfla_value": {
+        "bypass_proportion": 0.22742156966304003,
+        "motifs_with_bypass": 19377,
+        "total_motifs": 85203,
+        "average_bypass_length": 4.353769933426227,
+        "first_cumulative_cutoff_matching_all_length_proportion": 29
+      },
+      "outcome": "reproduced_with_precision",
+      "reason": "GraphFLA's 0.2274215697 matches the author notebook's 0.2274216 to stored precision and rounds to the paper's printed 23%. It equals the author cumulative curve at maximum length L=29. The cumulative curve itself was not digitized or fully returned by GraphFLA."
+    }
+  ],
+  "blockers": [
+    {
+      "what": "Publisher supplementary-materials PDF",
+      "url": "https://www.science.org/doi/suppl/10.1126/science.adh3860/suppl_file/science.adh3860_sm.pdf",
+      "why": "HTTP 403 returned an HTML security page. A pre-existing SI text derivative was reused for textual quotations; the native figure artwork was not independently inspected.",
+      "needed_for": "Native-figure visual confirmation only. Class counts and bypass lengths came from archived author notebook outputs and the author RDS data object."
+    }
+  ],
+  "verdict": "targets_found",
+  "verdict_reason": "The three Fig. S20B class counts reproduce exactly from the dossier input and agree with the author notebook frequencies. For Fig. S20D, GraphFLA's all-length bypass proportion matches the author source-data cumulative endpoint at L=29 and rounds to the printed 23%; GraphFLA does not return the full length-resolved curve. Fig. S20A's accessible-path framing agrees with GraphFLA's directed square classes. The publisher SI PDF itself returned HTTP 403, so the native artwork was not independently inspected."
+}

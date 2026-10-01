@@ -1,0 +1,592 @@
+{
+  "study_key": "Pokusaeva2019",
+  "dossier": "papers/_prominent_dms",
+  "recorded_at": "2026-10-01T10:11:29Z",
+  "agent": "codex-gpt6",
+  "paper": {
+    "title": "An experimental assay of the interactions of amino acids from orthologous sequences shaping a complex fitness landscape",
+    "doi": "10.1371/journal.pgen.1008079",
+    "year": 2019,
+    "bibliography_verified_against": "crossref",
+    "supplied_bibliography_errors": "The assignment’s abbreviated author string (Pokusaeva, Usmanova, Putintseva, … Kondrashov) matches the Crossref author order. Crossref author order: Victoria O. Pokusaeva; Dinara R. Usmanova; Ekaterina V. Putintseva; Lorena Espinar; Karen S. Sarkisyan; Alexander S. Mishin; Natalya S. Bogatyreva; Dmitry N. Ivankov; Arseniy V. Akopyan; Sergey Ya. Avvakumov; Inna S. Povolotskaya; Guillaume J. Filion; Lucas B. Carey; Fyodor A. Kondrashov. The supplied title and DOI match the publisher record; no substantive bibliography error was found."
+  },
+  "sources": [
+    {
+      "url": "https://api.crossref.org/works/10.1371/journal.pgen.1008079",
+      "http_status": 200,
+      "sha256": "76157d6a7c4fc068d91811021b91bcf1a6e4e5a078086d4235a08bee8bee57cf",
+      "saved_path": "papers/_prominent_dms/sources/Pokusaeva2019_crossref_codex.json",
+      "what": "Crossref bibliographic metadata used to verify title, DOI, year, and author list"
+    },
+    {
+      "url": "https://journals.plos.org/plosgenetics/article/file?id=10.1371/journal.pgen.1008079&type=printable",
+      "http_status": 200,
+      "sha256": "4775326f1afd173e7ebcbae109fa4dc39f8075376637efbd1dfb60b2e7a801e5",
+      "saved_path": "papers/_prominent_dms/sources/Pokusaeva2019_main_codex.pdf",
+      "what": "Publisher main article PDF"
+    },
+    {
+      "url": "https://journals.plos.org/plosgenetics/article/file?id=10.1371/journal.pgen.1008079.s010&type=supplementary",
+      "http_status": 200,
+      "sha256": "95964e6451e439234ffcf68f546e69e76ab64e887a0d1f3e8cc561d38744edea",
+      "saved_path": "papers/_prominent_dms/sources/Pokusaeva2019_S1_alignment_codex.fas",
+      "what": "Supporting Information S1, multiple alignment of His3 orthologues"
+    },
+    {
+      "url": "https://journals.plos.org/plosgenetics/article/file?id=10.1371/journal.pgen.1008079.s011&type=supplementary",
+      "http_status": 200,
+      "sha256": "efb9fedb38fd6ff6cb7d39a6ccdd95312b8204e8285b55899b11b5d2506b3535",
+      "saved_path": "papers/_prominent_dms/sources/Pokusaeva2019_S2_library_summary_codex.xlsx",
+      "what": "Supporting Information S2, statistical summary of segment libraries and sequencing"
+    },
+    {
+      "url": "https://journals.plos.org/plosgenetics/article/file?id=10.1371/journal.pgen.1008079.s012&type=supplementary",
+      "http_status": 200,
+      "sha256": "c473c218ae2f445ee84ac1f19894492865deb9c783f996931e336b534074c3a9",
+      "saved_path": "papers/_prominent_dms/sources/Pokusaeva2019_S3_epistasis_visual_codex.gif",
+      "what": "Supporting Information S3, fitness-potential visualization; no plot values read"
+    },
+    {
+      "url": "https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE99990&targ=self&form=text&view=full",
+      "http_status": 200,
+      "sha256": "0c9301056c9274e1b446b5f730fb2aa959f35c786c898fd846fd47e970ce4437",
+      "saved_path": "papers/_prominent_dms/sources/Pokusaeva2019_GSE99990_metadata_codex.txt",
+      "what": "GEO series metadata and processed-file inventory"
+    },
+    {
+      "url": "https://ftp.ncbi.nlm.nih.gov/geo/series/GSE99nnn/GSE99990/suppl/GSE99990_S01_fitness.txt.gz",
+      "http_status": 200,
+      "sha256": "5f5c676ea7e99c62886e73839aa06c84c11666d8719ab7acca0f512d0dd1d8b3",
+      "saved_path": "papers/_prominent_dms/sources/Pokusaeva2019_GSE99990_S01_fitness.txt_codex.txt.gz",
+      "what": "GEO processed genotype-fitness table for segment 1"
+    },
+    {
+      "url": "https://ftp.ncbi.nlm.nih.gov/geo/series/GSE99nnn/GSE99990/suppl/GSE99990_S02_fitness.txt.gz",
+      "http_status": 200,
+      "sha256": "94849b15e76e66384ae0fb6f188941149ff833228a2501cf6b44326e6979ebae",
+      "saved_path": "papers/_prominent_dms/sources/Pokusaeva2019_GSE99990_S02_fitness.txt_codex.txt.gz",
+      "what": "GEO processed genotype-fitness table for segment 2"
+    },
+    {
+      "url": "https://ftp.ncbi.nlm.nih.gov/geo/series/GSE99nnn/GSE99990/suppl/GSE99990_S03_fitness.txt.gz",
+      "http_status": 200,
+      "sha256": "f48c02d812c30d443933e6ec6bd093cc7436c048806f67350cb4bec25a63de6f",
+      "saved_path": "papers/_prominent_dms/sources/Pokusaeva2019_GSE99990_S03_fitness.txt_codex.txt.gz",
+      "what": "GEO processed genotype-fitness table for segment 3"
+    },
+    {
+      "url": "https://ftp.ncbi.nlm.nih.gov/geo/series/GSE99nnn/GSE99990/suppl/GSE99990_S04_fitness.txt.gz",
+      "http_status": 200,
+      "sha256": "20374adbce1cbb2845bfd9e37aee1169a0d8ac3bac00fbc0943c3eeaa2b8eb1a",
+      "saved_path": "papers/_prominent_dms/sources/Pokusaeva2019_GSE99990_S04_fitness.txt_codex.txt.gz",
+      "what": "GEO processed genotype-fitness table for segment 4"
+    },
+    {
+      "url": "https://ftp.ncbi.nlm.nih.gov/geo/series/GSE99nnn/GSE99990/suppl/GSE99990_S05_fitness.txt.gz",
+      "http_status": 200,
+      "sha256": "cf2c018d43d0a335667b5053eb9c7042f8cb05434db4bec9580f344de6fbfb1f",
+      "saved_path": "papers/_prominent_dms/sources/Pokusaeva2019_GSE99990_S05_fitness.txt_codex.txt.gz",
+      "what": "GEO processed genotype-fitness table for segment 5"
+    },
+    {
+      "url": "https://ftp.ncbi.nlm.nih.gov/geo/series/GSE99nnn/GSE99990/suppl/GSE99990_S06_fitness.txt.gz",
+      "http_status": 200,
+      "sha256": "e3059ef20a2249656db03264de23f3d6125def9b9be6b529fbb4c95300ac2f0e",
+      "saved_path": "papers/_prominent_dms/sources/Pokusaeva2019_GSE99990_S06_fitness.txt_codex.txt.gz",
+      "what": "GEO processed genotype-fitness table for segment 6"
+    },
+    {
+      "url": "https://ftp.ncbi.nlm.nih.gov/geo/series/GSE99nnn/GSE99990/suppl/GSE99990_S07_fitness.txt.gz",
+      "http_status": 200,
+      "sha256": "a55e79543d18f1bc45669096c53e149c9abaa8a2e0e5600134c234126aec2a09",
+      "saved_path": "papers/_prominent_dms/sources/Pokusaeva2019_GSE99990_S07_fitness.txt_codex.txt.gz",
+      "what": "GEO processed genotype-fitness table for segment 7"
+    },
+    {
+      "url": "https://ftp.ncbi.nlm.nih.gov/geo/series/GSE99nnn/GSE99990/suppl/GSE99990_S08_fitness.txt.gz",
+      "http_status": 200,
+      "sha256": "7b6e88e3d1a136e10a6ba70ca939513e75d0e5d954054630104a6e497289a72c",
+      "saved_path": "papers/_prominent_dms/sources/Pokusaeva2019_GSE99990_S08_fitness.txt_codex.txt.gz",
+      "what": "GEO processed genotype-fitness table for segment 8"
+    },
+    {
+      "url": "https://ftp.ncbi.nlm.nih.gov/geo/series/GSE99nnn/GSE99990/suppl/GSE99990_S09_fitness.txt.gz",
+      "http_status": 200,
+      "sha256": "31d37fc60b398e44f16d3d3c7295590a1539207b5267beeb52f92e00b3e14cc7",
+      "saved_path": "papers/_prominent_dms/sources/Pokusaeva2019_GSE99990_S09_fitness.txt_codex.txt.gz",
+      "what": "GEO processed genotype-fitness table for segment 9"
+    },
+    {
+      "url": "https://ftp.ncbi.nlm.nih.gov/geo/series/GSE99nnn/GSE99990/suppl/GSE99990_S10_fitness.txt.gz",
+      "http_status": 200,
+      "sha256": "3989175481be71f2a740d49225b876f690137a6fd4c6b6632771290b5550d803",
+      "saved_path": "papers/_prominent_dms/sources/Pokusaeva2019_GSE99990_S10_fitness.txt_codex.txt.gz",
+      "what": "GEO processed genotype-fitness table for segment 10"
+    },
+    {
+      "url": "https://ftp.ncbi.nlm.nih.gov/geo/series/GSE99nnn/GSE99990/suppl/GSE99990_S11_fitness.txt.gz",
+      "http_status": 200,
+      "sha256": "a5e283475608847cf30a6d02deb930f9ef2cffc89437f832bff5fb7acc9b51aa",
+      "saved_path": "papers/_prominent_dms/sources/Pokusaeva2019_GSE99990_S11_fitness.txt_codex.txt.gz",
+      "what": "GEO processed genotype-fitness table for segment 11"
+    },
+    {
+      "url": "https://ftp.ncbi.nlm.nih.gov/geo/series/GSE99nnn/GSE99990/suppl/GSE99990_S12_fitness.txt.gz",
+      "http_status": 200,
+      "sha256": "43bd3390422c6557ccef213391985d98e43223e40ba843390efeede6247b75ac",
+      "saved_path": "papers/_prominent_dms/sources/Pokusaeva2019_GSE99990_S12_fitness.txt_codex.txt.gz",
+      "what": "GEO processed genotype-fitness table for segment 12"
+    },
+    {
+      "url": "https://journals.plos.org/plosgenetics/article/file?id=10.1371/journal.pgen.1008079.s001&type=supplementary",
+      "http_status": 200,
+      "sha256": "eccfe4ae350138e875c06a45cdebe060616fa5e160e391245464f15e955cca2f",
+      "saved_path": "papers/_prominent_dms/sources/Pokusaeva2019_Figure_S1_codex.tif",
+      "what": "Publisher supplementary Figure S1 TIFF; acquired but no plotted values read"
+    },
+    {
+      "url": "https://journals.plos.org/plosgenetics/article/file?id=10.1371/journal.pgen.1008079.s002&type=supplementary",
+      "http_status": 200,
+      "sha256": "a29d456b4b0822222bc3ff9414a2fd2dfcff6bd4ee099fef923fe663ca44289e",
+      "saved_path": "papers/_prominent_dms/sources/Pokusaeva2019_Figure_S2_codex.tif",
+      "what": "Publisher supplementary Figure S2 TIFF; acquired but no plotted values read"
+    },
+    {
+      "url": "https://journals.plos.org/plosgenetics/article/file?id=10.1371/journal.pgen.1008079.s003&type=supplementary",
+      "http_status": 200,
+      "sha256": "64b0e271f46252eca386d67cf4f4f6acf77e5012de5ec158ba8edaeb31c58648",
+      "saved_path": "papers/_prominent_dms/sources/Pokusaeva2019_Figure_S3_codex.tif",
+      "what": "Publisher supplementary Figure S3 TIFF; acquired but no plotted values read"
+    },
+    {
+      "url": "https://journals.plos.org/plosgenetics/article/file?id=10.1371/journal.pgen.1008079.s004&type=supplementary",
+      "http_status": 200,
+      "sha256": "bb1736eb298126c38f20a09558dde52ade72205310e829cd6f59042c676f1c90",
+      "saved_path": "papers/_prominent_dms/sources/Pokusaeva2019_Figure_S4_codex.tif",
+      "what": "Publisher supplementary Figure S4 TIFF; acquired but no plotted values read"
+    },
+    {
+      "url": "https://journals.plos.org/plosgenetics/article/file?id=10.1371/journal.pgen.1008079.s005&type=supplementary",
+      "http_status": 200,
+      "sha256": "238fd5952f87f6de9866cae04003c102c5c91e100648db036da20cb1e37fa610",
+      "saved_path": "papers/_prominent_dms/sources/Pokusaeva2019_Figure_S5_codex.tif",
+      "what": "Publisher supplementary Figure S5 TIFF; acquired but no plotted values read"
+    },
+    {
+      "url": "https://journals.plos.org/plosgenetics/article/file?id=10.1371/journal.pgen.1008079.s006&type=supplementary",
+      "http_status": 200,
+      "sha256": "2418d907d99a175849606e00ceac9120e3c435f18d7204c3bbca9bb28333323a",
+      "saved_path": "papers/_prominent_dms/sources/Pokusaeva2019_Figure_S6_codex.tif",
+      "what": "Publisher supplementary Figure S6 TIFF; acquired but no plotted values read"
+    },
+    {
+      "url": "https://journals.plos.org/plosgenetics/article/file?id=10.1371/journal.pgen.1008079.s007&type=supplementary",
+      "http_status": 200,
+      "sha256": "33155491c74d0be2cf57ea677be9dbddf70bcb264055236248315edf1f8a8dcf",
+      "saved_path": "papers/_prominent_dms/sources/Pokusaeva2019_Figure_S7_codex.tif",
+      "what": "Publisher supplementary Figure S7 TIFF; acquired but no plotted values read"
+    },
+    {
+      "url": "https://journals.plos.org/plosgenetics/article/file?id=10.1371/journal.pgen.1008079.s008&type=supplementary",
+      "http_status": 200,
+      "sha256": "07b8fadcba73bcc7d5400c1fc48c16867239302914f00057e4273f1c5bfbe6ef",
+      "saved_path": "papers/_prominent_dms/sources/Pokusaeva2019_Figure_S8_codex.tif",
+      "what": "Publisher supplementary Figure S8 TIFF; acquired but no plotted values read"
+    },
+    {
+      "url": "https://journals.plos.org/plosgenetics/article/file?id=10.1371/journal.pgen.1008079.s009&type=supplementary",
+      "http_status": 200,
+      "sha256": "fcc17d96f230ebd264bfbaa9a4f533a80b3981d07063d3d0be6e0aad11aa34ae",
+      "saved_path": "papers/_prominent_dms/sources/Pokusaeva2019_Figure_S9_codex.tif",
+      "what": "Publisher supplementary Figure S9 TIFF; acquired but no plotted values read"
+    }
+  ],
+  "overlaps": [
+    {
+      "metric": "n_configs",
+      "paper_value": {
+        "unique_amino_acid_sequences_by_segment": {
+          "1": 125915,
+          "2": 122167,
+          "3": 94031,
+          "4": 69050,
+          "5": 99891,
+          "6": 83625,
+          "7": 26364,
+          "8": 73781,
+          "9": 81497,
+          "10": 79905,
+          "11": 37167,
+          "12": 63255
+        },
+        "total_unique_amino_acid_sequences_all_12_segments": 956648,
+        "total_unique_amino_acid_sequences_without_segment_9": 875151,
+        "extant_amino_acid_combinations_by_segment": {
+          "1": 58066,
+          "2": 45657,
+          "3": 48198,
+          "4": 44255,
+          "5": 51122,
+          "6": 45280,
+          "7": 4313,
+          "8": 46307,
+          "9": 29992,
+          "10": 29837,
+          "11": 16763,
+          "12": 32919
+        },
+        "total_extant_amino_acid_combinations_all_12_segments": 452709,
+        "total_extant_amino_acid_combinations_without_segment_9": 422717,
+        "segment_3_full_yeast_combinatorial_set": 55296,
+        "segment_3_measured_extant_combinations": 48198,
+        "segment_3_measured_fraction": 0.87
+      },
+      "locator": "Results → “Estimating fitness of evolutionary-relevant genotypes,” printed article pp. 3–5; Supplementary Information S2 → “Table1 property of segments”",
+      "quote": "“Across 11 experiments, we measured fitness for a total of 4,018,105 genotypes (875,151 unique amino acid sequences) with high accuracy. Of these, 422,717 consist solely of combinations of extant amino acid states from His3 orthologues”; “55,296 genotypes out of which we determined the fitness for 48,198, or 87%”; Table1 column “Number of unique amino acid sequences with measured fitness” cells “125915”; “122167”; “94031”; “69050”; “99891”; “83625”; “26364”; “73781”; “81497”; “79905”; “37167”; “63255”; “956648”; “875151”; Table1 column “Number of unique amino acid sequences containing only extant amino acids” cells “58066”; “45657”; “48198”; “44255”; “51122”; “45280”; “4313”; “46307”; “29992”; “29837”; “16763”; “32919”; “452709”; “422717”.",
+      "printed_or_plotted": "printed",
+      "definition_match": "no",
+      "definition_quote": "“For each segment we measured fitness for 60% - 99.8% of all possible genotypes from the combinatorial set of selected extant amino acid states found in 21 yeast species”; “For segment 3 … we determined the fitness for 48,198, or 87% of the possible yeast extant states combinations in our library.”",
+      "definition_divergence": "The paper reports unique measured sequences and a separate extant-state subset from an incomplete combinatorial sample. GraphFLA n_configs is the count of vertices retained after graph construction and isolate pruning. In addition, the raw GEO AAseq strings are variable length; a direct SequenceLandscape build cannot construct the graph without an alignment/encoding step not applied here.",
+      "input": {
+        "path": "papers/_prominent_dms/sources/Pokusaeva2019_GSE99990_S03_fitness.txt_codex.txt.gz",
+        "sha256": "f48c02d812c30d443933e6ec6bd093cc7436c048806f67350cb4bec25a63de6f",
+        "n_rows": 94031,
+        "preprocessing": "Attempted the archived S03 AAseq and s columns as supplied; no padding, alignment, row filtering, or fitness transformation.",
+        "files": [
+          {
+            "path": "papers/_prominent_dms/sources/Pokusaeva2019_GSE99990_S01_fitness.txt_codex.txt.gz",
+            "sha256": "5f5c676ea7e99c62886e73839aa06c84c11666d8719ab7acca0f512d0dd1d8b3"
+          },
+          {
+            "path": "papers/_prominent_dms/sources/Pokusaeva2019_GSE99990_S02_fitness.txt_codex.txt.gz",
+            "sha256": "94849b15e76e66384ae0fb6f188941149ff833228a2501cf6b44326e6979ebae"
+          },
+          {
+            "path": "papers/_prominent_dms/sources/Pokusaeva2019_GSE99990_S03_fitness.txt_codex.txt.gz",
+            "sha256": "f48c02d812c30d443933e6ec6bd093cc7436c048806f67350cb4bec25a63de6f"
+          },
+          {
+            "path": "papers/_prominent_dms/sources/Pokusaeva2019_GSE99990_S04_fitness.txt_codex.txt.gz",
+            "sha256": "20374adbce1cbb2845bfd9e37aee1169a0d8ac3bac00fbc0943c3eeaa2b8eb1a"
+          },
+          {
+            "path": "papers/_prominent_dms/sources/Pokusaeva2019_GSE99990_S05_fitness.txt_codex.txt.gz",
+            "sha256": "cf2c018d43d0a335667b5053eb9c7042f8cb05434db4bec9580f344de6fbfb1f"
+          },
+          {
+            "path": "papers/_prominent_dms/sources/Pokusaeva2019_GSE99990_S06_fitness.txt_codex.txt.gz",
+            "sha256": "e3059ef20a2249656db03264de23f3d6125def9b9be6b529fbb4c95300ac2f0e"
+          },
+          {
+            "path": "papers/_prominent_dms/sources/Pokusaeva2019_GSE99990_S07_fitness.txt_codex.txt.gz",
+            "sha256": "a55e79543d18f1bc45669096c53e149c9abaa8a2e0e5600134c234126aec2a09"
+          },
+          {
+            "path": "papers/_prominent_dms/sources/Pokusaeva2019_GSE99990_S08_fitness.txt_codex.txt.gz",
+            "sha256": "7b6e88e3d1a136e10a6ba70ca939513e75d0e5d954054630104a6e497289a72c"
+          },
+          {
+            "path": "papers/_prominent_dms/sources/Pokusaeva2019_GSE99990_S09_fitness.txt_codex.txt.gz",
+            "sha256": "31d37fc60b398e44f16d3d3c7295590a1539207b5267beeb52f92e00b3e14cc7"
+          },
+          {
+            "path": "papers/_prominent_dms/sources/Pokusaeva2019_GSE99990_S10_fitness.txt_codex.txt.gz",
+            "sha256": "3989175481be71f2a740d49225b876f690137a6fd4c6b6632771290b5550d803"
+          },
+          {
+            "path": "papers/_prominent_dms/sources/Pokusaeva2019_GSE99990_S11_fitness.txt_codex.txt.gz",
+            "sha256": "a5e283475608847cf30a6d02deb930f9ef2cffc89437f832bff5fb7acc9b51aa"
+          },
+          {
+            "path": "papers/_prominent_dms/sources/Pokusaeva2019_GSE99990_S12_fitness.txt_codex.txt.gz",
+            "sha256": "43bd3390422c6557ccef213391985d98e43223e40ba843390efeede6247b75ac"
+          }
+        ]
+      },
+      "graphfla_call": "SequenceLandscape().build_from_data(AAseq, s, epsilon=0, verbose=False); ls.n_configs",
+      "graphfla_value": null,
+      "outcome": "input_unavailable",
+      "reason": "The direct S03 build failed before graph construction with ValueError: All sequences must have the same length (expected 25, got 27 for sequence 3). Because a segment graph could not be built from the unaltered processed sequences, no n_configs value is reported."
+    },
+    {
+      "metric": "n_configs",
+      "paper_value": {
+        "unique_nucleotide_sequences_by_segment": {
+          "1": 511950,
+          "2": 403885,
+          "3": 646447,
+          "4": 460731,
+          "5": 683161,
+          "6": 253242,
+          "7": 176879,
+          "8": 198306,
+          "9": 152398,
+          "10": 259360,
+          "11": 162789,
+          "12": 261355
+        },
+        "total_unique_nucleotide_sequences_all_12_segments": 4170503,
+        "total_unique_nucleotide_sequences_without_segment_9": 4018105
+      },
+      "locator": "Supplementary Information S2 → “Table1 property of segments”; Results → “Estimating fitness of evolutionary-relevant genotypes,” printed article p. 3",
+      "quote": "Table1 column “Number of unique nucleotide sequences with measured fitness” cells “511950”; “403885”; “646447”; “460731”; “683161”; “253242”; “176879”; “198306”; “152398”; “259360”; “162789”; “261355”; “4170503”; “4018105”.",
+      "printed_or_plotted": "printed",
+      "definition_match": "no",
+      "definition_quote": "“We merged nucleotide genotypes that correspond to the same amino acid sequence and summed their frequencies and variances.”",
+      "definition_divergence": "These are nucleotide-level unique sequence counts from the supplementary table. The paper’s principal landscapes and GraphFLA protein-class comparison operate on amino-acid genotypes; the processed GEO files preserve AAseq and s rather than the per-nucleotide genotype strings needed for DNALandscape.",
+      "input": {
+        "path": null,
+        "sha256": null,
+        "n_rows": null,
+        "preprocessing": "No nucleotide-level genotype-fitness table was reconstructed from the available processed AAseq tables."
+      },
+      "graphfla_call": "DNALandscape().build_from_data(nucleotide_sequences, fitness, epsilon=0, verbose=False); ls.n_configs",
+      "graphfla_value": null,
+      "outcome": "input_unavailable",
+      "reason": "The publisher S2 workbook supplies counts but not nucleotide genotype rows; the downloaded GEO processed tables are amino-acid sequence data. The DNA landscape cannot be rebuilt from those tables."
+    },
+    {
+      "metric": "classify_epistasis",
+      "paper_value": {
+        "sites_with_sign_epistasis": {
+          "count": "86/128",
+          "fraction": 0.67
+        },
+        "sites_with_reciprocal_sign_epistasis": {
+          "count": "59/128",
+          "fraction": 0.46
+        },
+        "site_pairs_with_sign_epistasis": {
+          "count": "968/11597",
+          "fraction": 0.08
+        }
+      },
+      "locator": "Results → “Ruggedness and multidimensional epistasis of the His3 fitness landscape,” printed article p. 10; Methods → “Quantifying sign epistasis,” pp. 23–24",
+      "quote": "“We found that 86 out of 128 (67%) sites in our library exhibit sign epistasis and 46% (59/128) exhibit reciprocal sign epistasis with 8% (968/11597) of all pairs of sites exhibiting sign epistasis.”",
+      "printed_or_plotted": "printed",
+      "definition_match": "no",
+      "definition_quote": "“For each amino acid replacement … we considered only those that exhibit a large fitness effect (abs. difference > 0.4)”; “we identified secondary amino acid replacements that significantly alter the ratio of large increases to large decreases in fitness (Fisher’s exact test, Bonferroni corrected p-value < 0.05)”; “We only consider a site to be under sign epistasis if there is a second site that alters the frequency of sign epistasis in a statistically significant manner.”",
+      "definition_divergence": "The paper classifies amino-acid sites and site pairs using fitness effects across genetic backgrounds, a >0.4 threshold, and a multiple-tested Fisher test. GraphFLA classify_epistasis returns motif-class proportions over four-node graph motifs. Units, filtering rule, and denominators differ.",
+      "input": {
+        "path": "papers/_prominent_dms/sources/Pokusaeva2019_S2_library_summary_codex.xlsx",
+        "sha256": "efb9fedb38fd6ff6cb7d39a6ccdd95312b8204e8285b55899b11b5d2506b3535",
+        "n_rows": 12132,
+        "preprocessing": "Table 5 supplies the sign-epistasis pair summary; no graph-based motif analysis was run."
+      },
+      "graphfla_call": "not run; motif fractions and paper site-level classifications are definition-incompatible",
+      "graphfla_value": null,
+      "outcome": "definition_incompatible",
+      "reason": "The article’s percentages are not proportions among GraphFLA four-node motifs."
+    },
+    {
+      "metric": "higher_order_epistasis",
+      "paper_value": {
+        "segment_7_r2": 0.97,
+        "segment_5_r2": 0.44
+      },
+      "locator": "Results → “Unidimensional epistasis of the His3 fitness landscape,” printed article p. 7; Methods → “Predicting fitness using deep learning,” pp. 22–23",
+      "quote": "“The ability of the cliff-like threshold fitness function to predict fitness from genotype varied between the His3 segments from near perfect (r² = 0.97) in segment 7, to relatively poor (r² = 0.44) in segment 5.”",
+      "printed_or_plotted": "printed",
+      "definition_match": "no",
+      "definition_quote": "“The single neuron of the first layer computes the fitness potential, which is then mapped to a fitness value obtained from f(p), the function of the fitness potential which is found by the three layers of the neural network architecture.”",
+      "definition_divergence": "The paper reports prediction R² from a deep neural network with a nonlinear sigmoid/threshold function of a latent fitness potential. GraphFLA higher_order_epistasis is polynomial regression by interaction order.",
+      "input": {
+        "path": "papers/_prominent_dms/sources/Pokusaeva2019_GSE99990_S07_fitness.txt_codex.txt.gz",
+        "sha256": "a55e79543d18f1bc45669096c53e149c9abaa8a2e0e5600134c234126aec2a09",
+        "n_rows": 26364,
+        "preprocessing": "Paper R² values refer to segments 7 and 5; both processed inputs were acquired. No graph build or alternative regression was run.",
+        "files": [
+          {
+            "path": "papers/_prominent_dms/sources/Pokusaeva2019_GSE99990_S07_fitness.txt_codex.txt.gz",
+            "sha256": "a55e79543d18f1bc45669096c53e149c9abaa8a2e0e5600134c234126aec2a09"
+          },
+          {
+            "path": "papers/_prominent_dms/sources/Pokusaeva2019_GSE99990_S05_fitness.txt_codex.txt.gz",
+            "sha256": "cf2c018d43d0a335667b5053eb9c7042f8cb05434db4bec9580f344de6fbfb1f"
+          }
+        ]
+      },
+      "graphfla_call": "not run; estimator definition-incompatible",
+      "graphfla_value": null,
+      "outcome": "definition_incompatible",
+      "reason": "The R² values describe a different fitted model and cannot be reproduced by GraphFLA higher_order_epistasis without changing the target definition."
+    },
+    {
+      "metric": "evolvability_enhancing_mutations",
+      "paper_value": {
+        "background_dependent_replacements": "85% (330/389)"
+      },
+      "locator": "Results → “Estimating fitness of evolutionary-relevant genotypes,” printed article p. 6",
+      "quote": "“Remarkably, 85% (330/389) of replacements between extant amino acid states had substantially different effects on fitness in different backgrounds.”",
+      "printed_or_plotted": "printed",
+      "definition_match": "unknown",
+      "definition_quote": "“Among them we counted those with strong fitness effects, including deleterious mutations when the fitness effect was < -0.4 and beneficial when the fitness effect was > 0.4. We concluded that a particular amino acid replacement exhibits a strong deleterious or beneficial effect in some background if the fraction of such backgrounds exceeded the false discovery rate.”",
+      "definition_divergence": "The paper’s quantity is background dependence of amino-acid replacement effects under its neutral/strong-effect procedure. GraphFLA evolvability_enhancing_mutations is under review, so definition equivalence is unknown.",
+      "input": {
+        "path": "papers/_prominent_dms/sources/Pokusaeva2019_GSE99990_S01_fitness.txt_codex.txt.gz",
+        "sha256": "5f5c676ea7e99c62886e73839aa06c84c11666d8719ab7acca0f512d0dd1d8b3",
+        "n_rows": null,
+        "preprocessing": "Paper cumulative analysis excludes segment 9; all eleven remaining processed segment files are available. No GraphFLA run because the metric is under review.",
+        "files": [
+          {
+            "path": "papers/_prominent_dms/sources/Pokusaeva2019_GSE99990_S01_fitness.txt_codex.txt.gz",
+            "sha256": "5f5c676ea7e99c62886e73839aa06c84c11666d8719ab7acca0f512d0dd1d8b3"
+          },
+          {
+            "path": "papers/_prominent_dms/sources/Pokusaeva2019_GSE99990_S02_fitness.txt_codex.txt.gz",
+            "sha256": "94849b15e76e66384ae0fb6f188941149ff833228a2501cf6b44326e6979ebae"
+          },
+          {
+            "path": "papers/_prominent_dms/sources/Pokusaeva2019_GSE99990_S03_fitness.txt_codex.txt.gz",
+            "sha256": "f48c02d812c30d443933e6ec6bd093cc7436c048806f67350cb4bec25a63de6f"
+          },
+          {
+            "path": "papers/_prominent_dms/sources/Pokusaeva2019_GSE99990_S04_fitness.txt_codex.txt.gz",
+            "sha256": "20374adbce1cbb2845bfd9e37aee1169a0d8ac3bac00fbc0943c3eeaa2b8eb1a"
+          },
+          {
+            "path": "papers/_prominent_dms/sources/Pokusaeva2019_GSE99990_S05_fitness.txt_codex.txt.gz",
+            "sha256": "cf2c018d43d0a335667b5053eb9c7042f8cb05434db4bec9580f344de6fbfb1f"
+          },
+          {
+            "path": "papers/_prominent_dms/sources/Pokusaeva2019_GSE99990_S06_fitness.txt_codex.txt.gz",
+            "sha256": "e3059ef20a2249656db03264de23f3d6125def9b9be6b529fbb4c95300ac2f0e"
+          },
+          {
+            "path": "papers/_prominent_dms/sources/Pokusaeva2019_GSE99990_S07_fitness.txt_codex.txt.gz",
+            "sha256": "a55e79543d18f1bc45669096c53e149c9abaa8a2e0e5600134c234126aec2a09"
+          },
+          {
+            "path": "papers/_prominent_dms/sources/Pokusaeva2019_GSE99990_S08_fitness.txt_codex.txt.gz",
+            "sha256": "7b6e88e3d1a136e10a6ba70ca939513e75d0e5d954054630104a6e497289a72c"
+          },
+          {
+            "path": "papers/_prominent_dms/sources/Pokusaeva2019_GSE99990_S10_fitness.txt_codex.txt.gz",
+            "sha256": "3989175481be71f2a740d49225b876f690137a6fd4c6b6632771290b5550d803"
+          },
+          {
+            "path": "papers/_prominent_dms/sources/Pokusaeva2019_GSE99990_S11_fitness.txt_codex.txt.gz",
+            "sha256": "a5e283475608847cf30a6d02deb930f9ef2cffc89437f832bff5fb7acc9b51aa"
+          },
+          {
+            "path": "papers/_prominent_dms/sources/Pokusaeva2019_GSE99990_S12_fitness.txt_codex.txt.gz",
+            "sha256": "43bd3390422c6557ccef213391985d98e43223e40ba843390efeede6247b75ac"
+          }
+        ]
+      },
+      "graphfla_call": "not run; metric under review",
+      "graphfla_value": null,
+      "outcome": "not_attempted",
+      "reason": "The metric is under review and no definition-compatible result is asserted."
+    },
+    {
+      "metric": "fitness_distribution",
+      "paper_value": {
+        "nonsense_genotypes_fitness_gt_0_4": 0.9963,
+        "extant_combinations_fitness_lt_0_6": 0.2346
+      },
+      "locator": "Supporting Information → S2 Fig caption, “Sequencing strategy and accuracy analysis of His3 segment libraries”",
+      "quote": "“99.63% of nonsense genotypes have a fitness > 0.4 while 23.46% of extant amino acid combinations have fitness < 0.6.”",
+      "printed_or_plotted": "printed",
+      "definition_match": "no",
+      "definition_quote": "“99.63% of nonsense genotypes have a fitness > 0.4 while 23.46% of extant amino acid combinations have fitness < 0.6.”",
+      "definition_divergence": "These are thresholded fractions of two genotype categories, while GraphFLA fitness_distribution returns unitless shape statistics such as skewness, kurtosis, and CV.",
+      "input": {
+        "path": "papers/_prominent_dms/sources/Pokusaeva2019_GSE99990_S01_fitness.txt_codex.txt.gz",
+        "sha256": "5f5c676ea7e99c62886e73839aa06c84c11666d8719ab7acca0f512d0dd1d8b3",
+        "n_rows": 956648,
+        "preprocessing": "Publisher S2 figure reports aggregate threshold fractions; all twelve processed segment files are available. No GraphFLA threshold-fraction calculation was run.",
+        "files": [
+          {
+            "path": "papers/_prominent_dms/sources/Pokusaeva2019_GSE99990_S01_fitness.txt_codex.txt.gz",
+            "sha256": "5f5c676ea7e99c62886e73839aa06c84c11666d8719ab7acca0f512d0dd1d8b3"
+          },
+          {
+            "path": "papers/_prominent_dms/sources/Pokusaeva2019_GSE99990_S02_fitness.txt_codex.txt.gz",
+            "sha256": "94849b15e76e66384ae0fb6f188941149ff833228a2501cf6b44326e6979ebae"
+          },
+          {
+            "path": "papers/_prominent_dms/sources/Pokusaeva2019_GSE99990_S03_fitness.txt_codex.txt.gz",
+            "sha256": "f48c02d812c30d443933e6ec6bd093cc7436c048806f67350cb4bec25a63de6f"
+          },
+          {
+            "path": "papers/_prominent_dms/sources/Pokusaeva2019_GSE99990_S04_fitness.txt_codex.txt.gz",
+            "sha256": "20374adbce1cbb2845bfd9e37aee1169a0d8ac3bac00fbc0943c3eeaa2b8eb1a"
+          },
+          {
+            "path": "papers/_prominent_dms/sources/Pokusaeva2019_GSE99990_S05_fitness.txt_codex.txt.gz",
+            "sha256": "cf2c018d43d0a335667b5053eb9c7042f8cb05434db4bec9580f344de6fbfb1f"
+          },
+          {
+            "path": "papers/_prominent_dms/sources/Pokusaeva2019_GSE99990_S06_fitness.txt_codex.txt.gz",
+            "sha256": "e3059ef20a2249656db03264de23f3d6125def9b9be6b529fbb4c95300ac2f0e"
+          },
+          {
+            "path": "papers/_prominent_dms/sources/Pokusaeva2019_GSE99990_S07_fitness.txt_codex.txt.gz",
+            "sha256": "a55e79543d18f1bc45669096c53e149c9abaa8a2e0e5600134c234126aec2a09"
+          },
+          {
+            "path": "papers/_prominent_dms/sources/Pokusaeva2019_GSE99990_S08_fitness.txt_codex.txt.gz",
+            "sha256": "7b6e88e3d1a136e10a6ba70ca939513e75d0e5d954054630104a6e497289a72c"
+          },
+          {
+            "path": "papers/_prominent_dms/sources/Pokusaeva2019_GSE99990_S09_fitness.txt_codex.txt.gz",
+            "sha256": "31d37fc60b398e44f16d3d3c7295590a1539207b5267beeb52f92e00b3e14cc7"
+          },
+          {
+            "path": "papers/_prominent_dms/sources/Pokusaeva2019_GSE99990_S10_fitness.txt_codex.txt.gz",
+            "sha256": "3989175481be71f2a740d49225b876f690137a6fd4c6b6632771290b5550d803"
+          },
+          {
+            "path": "papers/_prominent_dms/sources/Pokusaeva2019_GSE99990_S11_fitness.txt_codex.txt.gz",
+            "sha256": "a5e283475608847cf30a6d02deb930f9ef2cffc89437f832bff5fb7acc9b51aa"
+          },
+          {
+            "path": "papers/_prominent_dms/sources/Pokusaeva2019_GSE99990_S12_fitness.txt_codex.txt.gz",
+            "sha256": "43bd3390422c6557ccef213391985d98e43223e40ba843390efeede6247b75ac"
+          }
+        ]
+      },
+      "graphfla_call": "not run; no matching threshold-fraction output",
+      "graphfla_value": null,
+      "outcome": "definition_incompatible",
+      "reason": "No GraphFLA distribution statistic directly corresponds to these paper thresholds."
+    },
+    {
+      "metric": "global_optima_accessibility",
+      "paper_value": "NOT STATED IN PAPER",
+      "locator": "Figure 7 caption, panel d; Materials and Methods → “Paths between pairs of fit genotypes,” pp. 22–23",
+      "quote": "“Accessible paths are those that incorporate only fit genotypes.”; “The fraction of accessible shortest paths between two fit genotypes from data (orange) shows a modest decline as a function of Hamming distance.”",
+      "printed_or_plotted": "plotted",
+      "definition_match": "no",
+      "definition_quote": "“All genotypes one amino acid replacement apart are connected by an unweighted edge.”; “We next remove all vertices (genotypes) that are unfit, and recompute the number of shortest between the two parental genotypes.”",
+      "definition_divergence": "The figure plots accessible shortest paths between fit endpoint pairs. The paper provides no printed numeric fraction, and GraphFLA global_optima_accessibility measures access to a global optimum on directed improving edges.",
+      "input": {
+        "path": "papers/_prominent_dms/sources/Pokusaeva2019_GSE99990_S07_fitness.txt_codex.txt.gz",
+        "sha256": "a55e79543d18f1bc45669096c53e149c9abaa8a2e0e5600134c234126aec2a09",
+        "n_rows": 26364,
+        "preprocessing": "Figure 7 uses shortest paths between fit genotypes; no plot values were read and no GraphFLA path run was made."
+      },
+      "graphfla_call": "not run; plot-only target and endpoint/path definition differ",
+      "graphfla_value": null,
+      "outcome": "definition_incompatible",
+      "reason": "The exact Figure 7 values are plot-only and were not read; the paper does not print an accessible-path fraction to reproduce."
+    }
+  ],
+  "blockers": [
+    {
+      "what": "Uniform-length segment genotype input for GraphFLA sequence landscape",
+      "url": "https://ftp.ncbi.nlm.nih.gov/geo/series/GSE99nnn/GSE99990/suppl/GSE99990_S03_fitness.txt.gz",
+      "why": "The processed AAseq values have variable lengths; GraphFLA rejects the direct segment input before graph construction. No alignment, padding, or genotype filtering was applied.",
+      "needed_for": "GraphFLA n_configs and any graph-derived metric on His3 segment 3"
+    },
+    {
+      "what": "Nucleotide sequence-level genotype-fitness rows",
+      "url": "https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE99990",
+      "why": "The downloaded processed tables contain amino-acid AAseq and fitness s; the supplementary workbook reports counts but the row-level nucleotide genotype-fitness table was not rebuilt or acquired.",
+      "needed_for": "DNALandscape n_configs comparison to the printed nucleotide sequence counts"
+    }
+  ],
+  "verdict": "targets_found",
+  "verdict_reason": "The paper prints unique nucleotide and amino-acid genotype counts, site-level sign-epistasis fractions, model-fit R² values, and thresholded distribution fractions. A direct GraphFLA His3 build failed on variable-length AAseq input; the remaining candidates are definition-incompatible or, for evolvability_enhancing_mutations, unknown while the GraphFLA metric is under review. No local-optimum count is printed and no plot values were read."
+}

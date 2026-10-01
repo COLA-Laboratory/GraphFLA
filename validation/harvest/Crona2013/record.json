@@ -1,0 +1,182 @@
+{
+  "study_key": "Crona2013",
+  "dossier": "papers/_navigability_lit",
+  "recorded_at": "2026-10-01T10:10:11Z",
+  "agent": "codex",
+  "paper": {
+    "title": "The peaks and geometry of fitness landscapes",
+    "doi": "10.1016/j.jtbi.2012.09.028",
+    "year": 2013,
+    "bibliography_verified_against": "crossref",
+    "supplied_bibliography_errors": "Crossref confirms Kristina Crona, Devin Greene, and Miriam Barlow, matching the task citation. The related TEM papers were verified separately by DOI and their publisher pages."
+  },
+  "related_references": [
+    {
+      "title": "Designing Antibiotic Cycling Strategies by Determining and Understanding Local Adaptive Landscapes",
+      "doi": "10.1371/journal.pone.0056040",
+      "year": 2013,
+      "authors": ["Christiane P. Goulart", "Mentar Mahmudi", "Kristina A. Crona", "Stephen D. Jacobs", "Marcelo Kallmann", "Barry G. Hall", "Devin C. Greene", "Miriam Barlow"],
+      "bibliography_verified_against": "crossref and PLOS publisher page"
+    },
+    {
+      "title": "Rational Design of Antibiotic Treatment Plans: A Treatment Strategy for Managing Evolution and Reversing Resistance",
+      "doi": "10.1371/journal.pone.0122283",
+      "year": 2015,
+      "authors": ["Portia M. Mira", "Kristina Crona", "Devin Greene", "Juan C. Meza", "Bernd Sturmfels", "Miriam Barlow"],
+      "bibliography_verified_against": "PLOS publisher page"
+    }
+  ],
+  "sources": [
+    {
+      "url": "https://www.ncbi.nlm.nih.gov/research/bionlp/RESTful/pmcoa.cgi/BioC_json/PMC3529755/unicode",
+      "http_status": 200,
+      "sha256": "d273c8509c3421fc1d4db9cae3e1f7f1a065e182de4cde170e1339281f4f9a3f",
+      "saved_path": "papers/_navigability_lit/sources/crona_greene_barlow_2013_bioc_codex.json",
+      "what": "PMC author-manuscript full-text BioC JSON"
+    },
+    {
+      "url": "https://journals.plos.org/plosone/article/file?id=10.1371/journal.pone.0056040&type=printable",
+      "http_status": 200,
+      "sha256": "03bb97f435b2336f10e2cb9a4c0377932c77a83092d41c9ae27564c9f517f765",
+      "saved_path": "papers/_navigability_lit/sources/goulart_crona_tem_2013_main_codex.pdf",
+      "what": "PLOS version-of-record main article; TEM-50/TEM-85 companion analysis"
+    },
+    {
+      "url": "https://journals.plos.org/plosone/article/file?id=10.1371/journal.pone.0122283&type=printable",
+      "http_status": 200,
+      "sha256": "af70acce51b3ec9da6df85648dfbfbdde7183a8e0257c007ec1ccdc92f69cb20",
+      "saved_path": "papers/_navigability_lit/sources/mira_crona_tem_2015_main_codex.pdf",
+      "what": "PLOS version-of-record main article; later TEM-50 treatment-plan analysis"
+    }
+  ],
+  "overlaps": [
+    {
+      "metric": "n_lo",
+      "paper_title": "The peaks and geometry of fitness landscapes",
+      "paper_doi": "10.1016/j.jtbi.2012.09.028",
+      "paper_value": 2,
+      "locator": "§2, Example 1",
+      "quote": "The fitness landscape has exactly two peaks, at the 1-string and the string 001 ... 1.",
+      "printed_or_plotted": "printed",
+      "definition_match": "yes",
+      "definition_quote": "w̃(11s)=4+Σs_i; w̃(10s)=1+Σs_i; w̃(01s)=2+Σs_i; w̃(00s)=3+Σs_i",
+      "definition_locator": "§2, Example 1, displayed equation",
+      "definition_divergence": "For the two-locus specialization, all four genotype values are distinct, so each peak is a single vertex and the fitness-graph sink definition matches GraphFLA n_lo.",
+      "input": {
+        "path": "papers/_navigability_lit/reproduce_codex.py (four genotypes constructed from Example 1)",
+        "sha256": "0264bd05822cf7d7ba5ebe76e063f6ee637e46f54621c45d24dc62468a0e3a18",
+        "n_rows": 4,
+        "preprocessing": "Set L=2 so s is empty; no transformation was applied.",
+        "source_quote": "w̃(11s)=4+Σs_i; w̃(10s)=1+Σs_i; w̃(01s)=2+Σs_i; w̃(00s)=3+Σs_i",
+        "source_locator": "§2, Example 1, displayed equation"
+      },
+      "graphfla_call": "BooleanLandscape().build_from_data(X, fitness, epsilon=0, verbose=False); landscape.n_lo",
+      "graphfla_value": 2,
+      "outcome": "reproduced_exact"
+    },
+    {
+      "metric": "classify_epistasis",
+      "paper_title": "The peaks and geometry of fitness landscapes",
+      "paper_doi": "10.1016/j.jtbi.2012.09.028",
+      "paper_value": {
+        "type2_systems": "2^(L-2)",
+        "type1_systems": 0
+      },
+      "locator": "§2, Example 1; type mapping in §2, Discussion",
+      "quote": "2^(L-2) type 2 systems and no type 1 systems",
+      "printed_or_plotted": "printed",
+      "definition_match": "yes",
+      "definition_quote": "a type 2 system corresponds to reciprocal sign epistasis",
+      "definition_locator": "§2, Discussion",
+      "definition_divergence": "For L=2 the formula gives one type-2 square and no type-1 square. GraphFLA reports proportions across complete two-locus squares; with one square, the type-2 share is the reciprocal-sign proportion.",
+      "input": {
+        "path": "papers/_navigability_lit/reproduce_codex.py (same four-genotype Example 1 specialization)",
+        "sha256": "0264bd05822cf7d7ba5ebe76e063f6ee637e46f54621c45d24dc62468a0e3a18",
+        "n_rows": 4,
+        "preprocessing": "Same L=2 equation specialization as the n_lo reproduction."
+      },
+      "graphfla_call": "graphfla.analysis.classify_epistasis(landscape).reciprocal_sign",
+      "graphfla_value": 1.0,
+      "outcome": "reproduced_exact"
+    },
+    {
+      "metric": "n_lo",
+      "paper_title": "Designing Antibiotic Cycling Strategies by Determining and Understanding Local Adaptive Landscapes",
+      "paper_doi": "10.1371/journal.pone.0056040",
+      "paper_value": 2,
+      "paper_landscape": "TEM-85 under cefotaxime",
+      "locator": "Results, ‘TEM-85 landscapes’, printed p. 4",
+      "quote": "The cefotaxime landscape has 2 peaks",
+      "printed_or_plotted": "printed",
+      "definition_match": "no",
+      "definition_quote": "directed edges ... are determined by the statistical analysis of the resistance differences among alleles",
+      "definition_locator": "Methods, ‘Identifying Paths and Cycles’",
+      "definition_divergence": "The paper assigns directions and equivalence using ANOVA-based statistical comparisons. GraphFLA builds improving edges from raw fitness values and does not reproduce the paper's significance-tested edge decisions from the available input.",
+      "input": {
+        "path": null,
+        "sha256": null,
+        "n_rows": null,
+        "preprocessing": "No TEM-85 genotype-level fitness table was acquired. The local Mira2015_TEM files are associated with the later TEM-50 study, not these TEM-85 targets."
+      },
+      "graphfla_call": null,
+      "graphfla_value": null,
+      "outcome": "definition_incompatible",
+      "reason": "No run was made: the reported peak count uses significance-based edge/equivalence decisions, and the corresponding TEM-85 input was not available locally."
+    },
+    {
+      "metric": "n_lo",
+      "paper_title": "Designing Antibiotic Cycling Strategies by Determining and Understanding Local Adaptive Landscapes",
+      "paper_doi": "10.1371/journal.pone.0056040",
+      "paper_value": 4,
+      "paper_landscape": "TEM-85 under ceftazidime",
+      "locator": "Results, ‘TEM-85 landscapes’, printed p. 4",
+      "quote": "the ceftazidime landscape has 4 peaks",
+      "printed_or_plotted": "printed",
+      "definition_match": "no",
+      "definition_quote": "absence of a line indicates that the adjacent nodes are phenotypically equivalent",
+      "definition_locator": "Results, TEM-85 landscapes; Figure 1 caption",
+      "definition_divergence": "The publication treats statistically unresolved adjacent genotypes as phenotypically equivalent; GraphFLA's strict raw-fitness peak count does not use those ANOVA decisions.",
+      "input": {
+        "path": null,
+        "sha256": null,
+        "n_rows": null,
+        "preprocessing": "No TEM-85 genotype-level fitness table was acquired. The local Mira2015_TEM files are associated with the later TEM-50 study, not these TEM-85 targets."
+      },
+      "graphfla_call": null,
+      "graphfla_value": null,
+      "outcome": "definition_incompatible",
+      "reason": "No run was made: the reported peak count uses significance-based edge/equivalence decisions, and the corresponding TEM-85 input was not available locally."
+    },
+    {
+      "metric": "global_optima_accessibility",
+      "paper_title": "Designing Antibiotic Cycling Strategies by Determining and Understanding Local Adaptive Landscapes",
+      "paper_doi": "10.1371/journal.pone.0056040",
+      "paper_value": {
+        "TEM85_fixation_probability_cefotaxime_percent": 75,
+        "TEM85_fixation_probability_ceftazidime_percent": 12.5
+      },
+      "locator": "Results, ‘TEM-85 landscapes’, printed p. 4",
+      "quote": "probability for fixation at TEM 85 was 75%, and for ceftazidime 12.5%",
+      "printed_or_plotted": "printed",
+      "definition_match": "no",
+      "definition_quote": "assumes that available beneficial mutations are equally likely to occur and go to fixation",
+      "definition_locator": "Results, ‘TEM-85 landscapes’, printed p. 4",
+      "definition_divergence": "These are population fixation probabilities under an equal-beneficial-mutation transition assumption, not a graph-level fraction of configurations or paths. The user excluded global_optima_accessibility from literature validation.",
+      "input": null,
+      "graphfla_call": null,
+      "graphfla_value": null,
+      "outcome": "definition_incompatible",
+      "reason": "The printed values are stochastic fixation probabilities under a specified transition rule; no GraphFLA accessibility calculation was requested or made."
+    }
+  ],
+  "blockers": [
+    {
+      "what": "TEM-85 quantitative genotype-fitness inputs for cefotaxime and ceftazidime",
+      "url": "https://doi.org/10.1371/journal.pone.0056040",
+      "why": "The acquired source set and existing local GraphFLA files did not provide a tabular TEM-85 fitness input. The local Mira2015_TEM files are from a later TEM-50 growth-rate analysis. The Goulart peak targets also depend on ANOVA-based edge/equivalence calls.",
+      "needed_for": "A separate comparison of the printed TEM-85 peak counts using a method that matches the paper's significance-based fitness graph."
+    }
+  ],
+  "verdict": "targets_found",
+  "verdict_reason": "Crona et al.'s printed two-locus Example 1 target was reproduced exactly for n_lo and reciprocal-sign classification. The linked TEM-85 article prints two further peak counts and fixation probabilities, but its significance-based graph definitions are incompatible with a direct raw-ranking n_lo run; those limits are recorded."
+}
