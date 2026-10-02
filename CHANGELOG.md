@@ -7,6 +7,16 @@ returned statistic are marked, because downstream analyses depend on them.
 
 ### Changed — affects returned values
 
+- `evolvability_enhancing_mutations` now excludes the focal site, tests
+  `delta_mean > max(0, delta_fitness)` with two-sided t tests and BH FDR 0.01,
+  and counts both mutation directions over represented ordered neighbor pairs.
+  Additive landscapes now return zero. The t-test variance uses both
+  endpoints, correcting a duplicated-target term in the cited author's code.
+  The scalar combines beneficial, deleterious and neutral EE mutations; it is
+  not the paper's beneficial-only fraction. Insufficient neighborhoods return
+  NaN when no pair is testable. Existing results need recalculation. See
+  `validation/EE_MUTATIONS_REVIEW.md` for exact author replay, RNA measurement
+  error limitations, and pending API decisions. Construction is unchanged.
 - `single_mutation_effects` and `all_mutation_effects` now report `mean_effect`
   as `mutation_to` minus `mutation_from`, matching the row's own label and the
   convention already used by `fitness_effect_distribution`. Up to and including

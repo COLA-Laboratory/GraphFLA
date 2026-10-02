@@ -223,14 +223,9 @@ def determine_neighbor_fitness(landscape) -> "Landscape":
     mean neighbor fitness along the improving (lower-fitness → higher-fitness)
     direction, i.e. mean_neighbor_fit(target) - mean_neighbor_fit(source).
 
-    This can be useful for identifying evolvability-enhancing (EE) mutations as
-    introduced in Wagner (2023).
-
-    References
-    ----------
-    .. [Wagner 2023] Wagner, A. The role of evolvability in the evolution of
-       complex traits. Nat Rev Genet 24, 1-16 (2023).
-       https://doi.org/10.1038/s41576-023-00559-0
+    These unrestricted means describe local fitness context. EE mutation
+    analysis requires separate neighborhoods that exclude the mutated site;
+    see :func:`graphfla.analysis.evolvability_enhancing_mutations`.
 
     Returns
     -------

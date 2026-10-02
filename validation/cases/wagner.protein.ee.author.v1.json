@@ -1,0 +1,47 @@
+{
+  "schema_version": 1,
+  "kind": "case",
+  "id": "wagner.protein.ee.author.v1",
+  "revision": 1,
+  "study_id": "Wagner2023",
+  "metric_ids": [
+    "ee"
+  ],
+  "evidence_tier": "published_numeric",
+  "definition_match": "no",
+  "scope": "Historical author-procedure replay for protein; the corrected production variance intentionally differs. All signed test flags checked against author outputs; four-decimal effect classification reproduces printed counts. This is not a claim that the public estimator yields the paper counts.",
+  "preprocessing": "Keep all sequences and W_ParE3 fitness without rescaling; restrict neighbors to one-nucleotide-accessible amino-acid replacements. Replay author duplicated-target variance, n=min(k_u,k_v), df=n-1, two-sided tests, separate all-pair BH families at FDR .01; classify effects after four-decimal formatting.",
+  "sources": [
+    {
+      "url": "https://doi.org/10.1038/s41467-023-39321-8",
+      "locator": "Results: EE mutations are rare in the protein adaptive landscape; Supplementary Fig. S1."
+    },
+    {
+      "url": "https://github.com/andreas-wagner-uzh/EE_mutations/blob/7b3071ea1dec1b91818bea69cdf6ccf219f47877/protein_EEmutations_out.txt",
+      "locator": "delfit, del_neigh_fit_del_fit_0 and del_neigh_fit_0_0 columns; companion adaptive_walks notebook classification cell."
+    }
+  ],
+  "expected": {
+    "ordered_pairs": 175552,
+    "beneficial": 681,
+    "deleterious": 221
+  },
+  "comparison": {
+    "kind": "exact",
+    "tolerance": 0,
+    "justification": "Printed integer counts; every signed statistical decision must also match. Two RNA rounded numeric effects differ at the last digit without changing sign or decisions and are separately disclosed."
+  },
+  "inputs": [
+    {
+      "root": "repo",
+      "path": "tests/fixtures/literature/wagner2023/protein.csv.gz",
+      "sha256": "0a50a66c7509d2dc0a838c8ecc1d29f5a4d92f3fd0a34217d0e497e219dbedbe"
+    },
+    {
+      "root": "repo",
+      "path": "tests/fixtures/literature/wagner2023/protein_author.npz",
+      "sha256": "8a8b677a3d6ff00f0998fce64f000113704b39f2cd70671b158771a01a0b5c95"
+    }
+  ],
+  "pytest_node": "tests/test_ee_literature.py::test_wagner_author_replay_and_corrected_kernel[protein]"
+}

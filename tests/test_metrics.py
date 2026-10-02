@@ -12,7 +12,7 @@ Anchor key (additive == OneMax unless noted):
   idiosyncratic additive=0 / HoC~1, autocorr=exact regular-graph rho,
   r/s additive=0, FDC OneMax=-1, neighbor_fit_corr additive=+1,
   higher-order additive order-1 R^2=1, Walsh additive order>=2 = 0,
-  evol_enhance additive=1, GO-accessibility=1, mean path length OneMax(6)=3.
+  evol_enhance additive=0, GO-accessibility=1, mean path length OneMax(6)=3.
 """
 
 import numpy as np
@@ -240,9 +240,9 @@ def test_neutrality_detects_ties():
 # ----------------------------------------------------------------------
 
 
-def test_evol_enhance_additive_is_one():
-    # Additive: every improving edge also increases mean neighbour fitness.
-    assert evolvability_enhancing_mutations(onemax(4)) == pytest.approx(1.0)
+def test_evol_enhance_additive_is_zero():
+    # Position-excluded neighborhood gain equals the focal benefit exactly.
+    assert evolvability_enhancing_mutations(onemax(4)) == 0.0
 
 
 # ----------------------------------------------------------------------

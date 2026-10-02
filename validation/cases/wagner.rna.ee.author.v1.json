@@ -1,0 +1,47 @@
+{
+  "schema_version": 1,
+  "kind": "case",
+  "id": "wagner.rna.ee.author.v1",
+  "revision": 1,
+  "study_id": "Wagner2023",
+  "metric_ids": [
+    "ee"
+  ],
+  "evidence_tier": "published_numeric",
+  "definition_match": "no",
+  "scope": "Historical author-procedure replay for rna; the corrected production variance intentionally differs. All signed test flags checked against author outputs; four-decimal effect classification reproduces printed counts. This is not a claim that the public estimator yields the paper counts.",
+  "preprocessing": "Keep all 4176 sequences; retain nucleotide offsets 0,1,5,26,42,45,65,68,69,70; preserve log fitness and SE. Replay uses variance=6*SE**2. Replay author duplicated-target variance, n=min(k_u,k_v), df=n-1, two-sided tests, separate all-pair BH families at FDR .01; classify effects after four-decimal formatting.",
+  "sources": [
+    {
+      "url": "https://doi.org/10.1038/s41467-023-39321-8",
+      "locator": "Results: EE mutations are more frequent but have smaller fitness effects in the RNA adaptive landscape; Supplementary Fig. S2."
+    },
+    {
+      "url": "https://github.com/andreas-wagner-uzh/EE_mutations/blob/7b3071ea1dec1b91818bea69cdf6ccf219f47877/RNA_EEmutations_out.txt",
+      "locator": "delfit, del_neigh_fit_del_fit_0 and del_neigh_fit_0_0 columns; companion adaptive_walks notebook classification cell."
+    }
+  ],
+  "expected": {
+    "ordered_pairs": 52672,
+    "beneficial": 2983,
+    "deleterious": 3702
+  },
+  "comparison": {
+    "kind": "exact",
+    "tolerance": 0,
+    "justification": "Printed integer counts; every signed statistical decision must also match. Two RNA rounded numeric effects differ at the last digit without changing sign or decisions and are separately disclosed."
+  },
+  "inputs": [
+    {
+      "root": "repo",
+      "path": "tests/fixtures/literature/wagner2023/rna.csv.gz",
+      "sha256": "9f0d55055d75f24b00264c77324b44f07e56feb3f85d022b450865cf19ab830d"
+    },
+    {
+      "root": "repo",
+      "path": "tests/fixtures/literature/wagner2023/rna_author.npz",
+      "sha256": "eeeccc5ae42850139efb0ee3860d4f1e281f6faf586975fd8a966839435519ca"
+    }
+  ],
+  "pytest_node": "tests/test_ee_literature.py::test_wagner_author_replay_and_corrected_kernel[rna]"
+}

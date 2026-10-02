@@ -1,0 +1,60 @@
+{
+  "protein": {
+    "variants": 7882,
+    "ordered_pairs": 175552,
+    "author_signed_flags_compared": 351104,
+    "author_flag_mismatches": 0,
+    "four_decimal_effect_differences": 0,
+    "paper_replay_rounded_effects": {
+      "beneficial": 681,
+      "deleterious": 221,
+      "neutral": 1
+    },
+    "author_procedure_full_precision": {
+      "beneficial": 681,
+      "deleterious": 222,
+      "neutral": 0
+    },
+    "corrected_symmetric_variance": {
+      "beneficial": 196,
+      "deleterious": 389,
+      "neutral": 0
+    },
+    "corrected_kernel_oracle_mismatches": 0,
+    "public_neighborhood_variation_counts": {
+      "beneficial": 196,
+      "deleterious": 389,
+      "neutral": 0
+    },
+    "public_proportion": 0.003332345971563981
+  },
+  "rna": {
+    "variants": 4176,
+    "ordered_pairs": 52672,
+    "author_signed_flags_compared": 105344,
+    "author_flag_mismatches": 0,
+    "four_decimal_effect_differences": 2,
+    "paper_replay_rounded_effects": {
+      "beneficial": 2983,
+      "deleterious": 3702,
+      "neutral": 10
+    },
+    "author_procedure_full_precision": {
+      "beneficial": 2990,
+      "deleterious": 3705,
+      "neutral": 0
+    },
+    "corrected_symmetric_variance": {
+      "beneficial": 2583,
+      "deleterious": 3535,
+      "neutral": 0
+    },
+    "corrected_kernel_oracle_mismatches": 0,
+    "public_neighborhood_variation_counts": {
+      "beneficial": 2,
+      "deleterious": 0,
+      "neutral": 0
+    },
+    "public_proportion": 3.797083839611178e-05
+  }
+}

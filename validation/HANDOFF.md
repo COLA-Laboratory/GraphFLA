@@ -6,6 +6,13 @@ session **add** validations instead of restarting or redoing them.
 
 Nothing here is a finished benchmark. It is reviewed raw material.
 
+**2026-10-02 package follow-up:** the historical open EE/idiosyncrasy defects
+listed below have now been addressed in the package branch. See
+[EE_MUTATIONS_REVIEW.md](EE_MUTATIONS_REVIEW.md) and
+[IDIOSYNCRASY_REVIEW.md](IDIOSYNCRASY_REVIEW.md) for promoted offline checks,
+remaining API questions and boundaries on what has been reproduced. In
+particular, exact Wagner author replay and the corrected EE estimator differ.
+
 ---
 
 ## 1. Where things live
