@@ -119,51 +119,104 @@ def _idiosyncratic_ratio(effect_sd, n_pairs, fitness_pool, rng):
 
 
 def idiosyncratic_index(landscape, mutation, min_pairs: int = 3):
-    """Estimate the SD-based idiosyncratic index of one mutation [1]_.
+    r"""Estimate a mutation's idiosyncratic index from matched backgrounds.
 
-    Divide the standard deviation of the mutation's effects across matching
-    backgrounds by the standard deviation of fitness differences in a random
-    control. The control contains the same number of genotype pairs as observed
-    backgrounds; both endpoints are drawn independently with replacement from
-    the landscape. Both standard deviations use ``ddof=0``.
+    The index compares the standard deviation of one mutation's effects with
+    that of an equally sized sample of random genotype-pair differences [1]_.
+    Effects and controls use the fitness scale supplied in the landscape.
 
     Parameters
     ----------
     landscape : Landscape
-        Built landscape. Matching backgrounds and the random-pair pool both use
-        the nodes returned by ``get_data()``; previously pruned genotypes are
-        unavailable. Fitness is used as supplied, without a log transformation.
-    mutation : tuple(A, pos, B)
-        Original allele, feature-column label, and new allele. A and B must be
-        distinct observed values at pos. Other features must match exactly.
+        Built landscape with unique configurations and finite fitness values.
+        Both matched backgrounds and random controls use the genotypes retained
+        in ``landscape.get_data()``.
+    mutation : tuple of (source, position, target)
+        Allele substitution to evaluate. ``position`` is a configuration-column
+        label from ``landscape.data_types``, not a positional column index.
+        ``source`` and ``target`` must be distinct observed alleles at that
+        position. For example, ``(0, "bit_0", 1)`` changes the first Boolean
+        feature from 0 to 1.
     min_pairs : int, default=3
-        Minimum number of matched backgrounds, at least 2. This is a GraphFLA
-        estimation guard, not a cutoff specified by Lyons et al.
+        Minimum number of observed matching backgrounds, at least 2. All
+        matching backgrounds are used when this threshold is met. The control
+        then contains the same number of random pairs. This threshold is a
+        GraphFLA estimation guard, not a cutoff specified in [1]_.
 
     Returns
     -------
-    float
-        Ratio of standard deviations. Returns NaN for insufficient backgrounds,
-        constant fitness, or a sampled control with zero variance. The latter
-        also emits a RuntimeWarning. Estimates can exceed 1; they are not clipped.
+    index : float
+        Ratio of observed-effect SD to sampled-control SD. Values can exceed 1.
+        Returns NaN for a constant-fitness landscape, fewer than ``min_pairs``
+        backgrounds, or a sampled control with zero SD. A well-defined value of
+        zero indicates constant mutation effects across the observed backgrounds.
+
+    Raises
+    ------
+    RuntimeError
+        If the landscape has not been built.
+    ValueError
+        If ``min_pairs`` is invalid, the mutation uses an unknown position or
+        allele, or source and target are equal. Also raised for missing
+        configuration values, duplicate configurations, or nonfinite fitness.
+
+    Warns
+    -----
+    RuntimeWarning
+        If the sampled control has zero SD. No replacement sample is drawn.
+
+    See Also
+    --------
+    global_idiosyncratic_index : Average the index over directed mutations.
+    gamma : Measure correlations of mutation effects between nearby backgrounds.
 
     Notes
     -----
-    This is a Monte Carlo estimate and repeated calls can differ. The current
-    single-mutation API has no seed parameter. It uses a local random generator
-    and does not modify NumPy's global random state. For a reproducible landscape
-    mean, use ``global_idiosyncratic_index(..., seed=...)``.
+    For a substitution A to B, match configurations that agree at every other
+    feature and calculate ``f(B, background) - f(A, background)``. With n such
+    backgrounds, independently draw n pairs of genotypes with replacement from
+    the retained population. Repeated genotypes and self-pairs are allowed.
+    The index is
 
-    The population SD ``sqrt(2) * std(fitness)`` is an infinite-control limit,
-    not the finite matched-size control specified in [1]_. This statistic
-    measures overall background dependence on the supplied fitness scale; it
-    does not isolate residual interactions after fitting a global epistasis model.
+    .. math::
+
+        I_{\mathrm{id}}(m) =
+        \frac{\operatorname{SD}[\Delta f_m(b)]}
+             {\operatorname{SD}[f(V_i)-f(U_i)]}.
+
+    Both standard deviations use ``ddof=0``. The finite control is part of the
+    estimator; replacing it with ``sqrt(2) * std(fitness)`` changes the statistic.
+    Matching depends on configuration values, not on graph edges or their
+    orientation. Any pair of observed alleles at the focal feature can be used.
+
+    This function draws a fresh local random stream and does not change NumPy's
+    global RNG state. Its current API has no seed parameter, so repeated calls
+    can differ. Use the seeded global function for a reproducible landscape mean.
+
+    No log transformation or measurement-error correction is applied. Removed
+    genotypes cannot contribute to the control, including isolates pruned during
+    construction. This index measures background dependence; it does not isolate
+    residual interactions after fitting a global epistasis model.
 
     References
     ----------
-    .. [1] Lyons DM, Zou Z, Xu H, Zhang J (2020). Idiosyncratic epistasis creates
-       universals in mutational effects and evolutionary trajectories.
-       Nature Ecology & Evolution 4, 1685-1693. doi:10.1038/s41559-020-01286-y.
+    .. [1] Lyons, Daniel M., Zhengting Zou, Haiqing Xu, and Jianzhi Zhang.
+       "Idiosyncratic epistasis creates universals in mutational effects and
+       evolutionary trajectories." Nature Ecology & Evolution 4 (2020):
+       1685-1693. https://doi.org/10.1038/s41559-020-01286-y.
+
+    Examples
+    --------
+    >>> from graphfla.landscape import BooleanLandscape
+    >>> from graphfla.analysis import idiosyncratic_index
+    >>> sequences = ["000", "001", "010", "011", "100", "101", "110", "111"]
+    >>> fitness = [0., 1., 2., 3., 1., 2., 4., 6.]
+    >>> landscape = BooleanLandscape().build_from_data(
+    ...     sequences, fitness, epsilon=0, verbose=False
+    ... )
+    >>> value = idiosyncratic_index(landscape, (0, "bit_0", 1))
+    >>> isinstance(value, float)
+    True
     """
     _validate_min_pairs(min_pairs)
     A, pos, B = mutation
@@ -188,57 +241,111 @@ def idiosyncratic_index(landscape, mutation, min_pairs: int = 3):
 
 
 def global_idiosyncratic_index(landscape, n_jobs=-1, seed=None, min_pairs: int = 3):
-    """Estimate the mean idiosyncratic index across directed mutations [1]_.
+    r"""Estimate the mean idiosyncratic index across directed mutations.
 
-    For each position and ordered pair of observed alleles, match all available
-    backgrounds and apply the same matched-size control as
-    :func:`idiosyncratic_index`. Each eligible directed mutation has equal weight,
-    regardless of its number of backgrounds. Forward and reverse mutations have
-    the same observed SD but receive independent random controls.
+    Apply the SD ratio defined by Lyons et al. [1]_ to each eligible directed
+    mutation and return their arithmetic mean. Every mutation receives equal
+    weight, irrespective of its number of observed backgrounds.
 
     Parameters
     ----------
     landscape : Landscape
-        Built landscape. Both effects and controls use the retained nodes from
-        ``get_data()``. Apply study-specific filtering and fitness transformations
-        before building the landscape. To reproduce a study, retain its entire
-        control population, including genotypes without single-mutant neighbors.
+        Built landscape with unique configurations and finite fitness values.
+        Mutation effects and random controls both use the genotypes retained
+        in ``landscape.get_data()``. Apply the intended fitness transformation
+        and population selection before constructing the landscape.
     n_jobs : int, default=-1
-        Number of parallel background-matching jobs; -1 uses all available cores.
-    seed : int or None, default=None
-        Seed for a local NumPy RandomState. A fixed seed reproduces the result
-        for the same ordered input, independently of n_jobs. None draws a fresh
-        stream. NumPy's global random state is not modified.
+        Number of parallel jobs for background matching. -1 uses all available
+        cores; 1 runs serially. This does not change a fixed-seed result.
+    seed : int, default=None
+        Seed for a local NumPy RandomState. An integer reproduces the result for
+        the same ordered input and parameters. None starts a fresh random stream.
+        NumPy's global RNG state is not modified.
     min_pairs : int, default=3
-        Minimum matched backgrounds per directed mutation, at least 2. Mutations
-        below this threshold are omitted from the mean. The paper specifies no
-        minimum for this index; this is a GraphFLA estimation guard.
+        Minimum number of matching backgrounds for a mutation to contribute,
+        at least 2. Mutations below this threshold are omitted. All matching
+        backgrounds of eligible mutations are used, with equally sized random
+        controls. The paper specifies no minimum for this index.
 
     Returns
     -------
-    float
-        Arithmetic mean of the eligible mutation ratios. Returns NaN for a flat
-        landscape, no eligible mutations, or any eligible mutation with a
-        zero-variance sampled control (with RuntimeWarning in the last case).
-        A failed control is not silently dropped or resampled. Values can exceed 1.
+    mean_index : float
+        Arithmetic mean of the eligible mutation indices. Values can exceed 1.
+        Returns NaN for constant fitness, no eligible mutations, or a zero-SD
+        control for any eligible mutation. A failed control is not omitted
+        from the mean or resampled.
+
+    Raises
+    ------
+    RuntimeError
+        If the landscape has not been built.
+    ValueError
+        If ``min_pairs`` or the random seed is invalid, or configurations are
+        missing or duplicated, or fitness contains nonfinite values.
+
+    Warns
+    -----
+    RuntimeWarning
+        If any eligible mutation's sampled control has zero SD.
+
+    See Also
+    --------
+    idiosyncratic_index : Estimate the index for one specified mutation.
+    gamma : Measure correlations of mutation effects between nearby backgrounds.
 
     Notes
     -----
-    Sampling is performed in feature-column order, then sorted source and target
-    allele order, after parallel background matching. A finite random control
-    cannot be replaced by ``sqrt(2) * std(fitness)`` without changing the estimator.
-    Reverse mutations are included, as in Lyons' empirical analysis. Study-specific
-    seed conventions, such as reseeding by background count in the tRNA notebook,
-    are not part of the mathematical definition and are not applied here.
+    Enumerate each position and ordered pair of observed alleles. For each
+    mutation, match configurations at all other positions, calculate its effects,
+    and divide their population SD by that of an equally sized random control.
+    Both control endpoints are drawn independently with replacement from the
+    retained fitness population. Both SDs use ``ddof=0``. The landscape mean is
 
-    This measures background dependence, including that generated by a nonlinear
-    global fitness map; it is not a residual or model-comparison statistic.
+    .. math::
+
+        \overline{I}_{\mathrm{id}} =
+        \frac{1}{|\mathcal{M}|}\sum_{m\in\mathcal{M}} I_{\mathrm{id}}(m),
+
+    where M contains the mutations meeting ``min_pairs``. A mean of position
+    means or a mean weighted by background count would be a different summary.
+    Forward and reverse mutations have the same observed SD but receive
+    independent controls here.
+
+    Random draws follow configuration-column order, then sorted source and
+    target allele order, after parallel matching. The published tRNA notebook
+    reinitializes its seed for each background count; that study-specific seed
+    policy is not used by this function. Equal seeds only reproduce equal input
+    ordering and the same sampling procedure.
+
+    Graph adjacency does not define the matched pairs. Any two observed alleles
+    at one feature are considered, including nonadjacent ordinal values. However,
+    genotypes pruned during graph construction remain unavailable to both effects
+    and controls. Reproducing a study requires its full reference population,
+    including isolated genotypes when the study includes them.
+
+    Fitness is used as supplied. The result summarizes background dependence,
+    which can also arise from a nonlinear global fitness map; it is not a test
+    separating global epistasis from specific interactions. The function returns
+    a scalar, without per-position summaries or an uncertainty estimate.
 
     References
     ----------
-    .. [1] Lyons DM, Zou Z, Xu H, Zhang J (2020). Idiosyncratic epistasis creates
-       universals in mutational effects and evolutionary trajectories.
-       Nature Ecology & Evolution 4, 1685-1693. doi:10.1038/s41559-020-01286-y.
+    .. [1] Lyons, Daniel M., Zhengting Zou, Haiqing Xu, and Jianzhi Zhang.
+       "Idiosyncratic epistasis creates universals in mutational effects and
+       evolutionary trajectories." Nature Ecology & Evolution 4 (2020):
+       1685-1693. https://doi.org/10.1038/s41559-020-01286-y.
+
+    Examples
+    --------
+    >>> from graphfla.landscape import BooleanLandscape
+    >>> from graphfla.analysis import global_idiosyncratic_index
+    >>> sequences = ["000", "001", "010", "011", "100", "101", "110", "111"]
+    >>> fitness = [0., 1., 2., 3., 1., 2., 4., 6.]
+    >>> landscape = BooleanLandscape().build_from_data(
+    ...     sequences, fitness, epsilon=0, verbose=False
+    ... )
+    >>> round(global_idiosyncratic_index(landscape, n_jobs=1, seed=0), 3)
+    0.416
     """
     _validate_min_pairs(min_pairs)
     rng = np.random.RandomState(seed)
