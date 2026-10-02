@@ -12,7 +12,7 @@ import numpy as np
 
 from graphfla.algorithms import HillClimb, RandomWalk, SearchCache
 
-from . import _datasets
+from .. import _datasets
 
 N_STARTS = 2000
 WALK_LENGTH = 100

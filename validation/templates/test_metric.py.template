@@ -1,0 +1,22 @@
+"""Study Author (year), DOI; exact claim/locator.
+
+Resource review: N observations, input MiB, typical seconds and peak MiB,
+measured with COMMAND / environment. Provenance: PATH_TO_FIXTURE_README.
+Replace every placeholder before promoting; do not commit generated targets.
+"""
+
+import pytest
+
+from validation.testing import assert_case_matches
+
+CASE = "study.condition.metric.v1"
+
+
+@pytest.mark.literature_case(CASE, role="paper_result")
+def test_published_statistic(literature_inputs):
+    # Every input has already been hash-checked by the autouse fixture.
+    (path,) = literature_inputs[CASE]
+    data = read_pinned_input(path)  # Implement documented preprocessing here.
+    observed = calculate_public_statistic(data)  # Call the public API.
+    assert_case_matches(CASE, {"statistic": observed})
+    # Add per-item comparisons if independently sourced labels are available.

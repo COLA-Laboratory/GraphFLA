@@ -12,10 +12,10 @@ from graphfla.analysis import (
 )
 from graphfla.analysis._evolvability import (
     _benjamini_hochberg, _bh_adjusted_pvalues, _ee_pvalues, _ee_statistics,
-    _landscape_ee_statistics,
+    _landscape_ee_statistics, _validate_fdr,
 )
 from graphfla.landscape import BooleanLandscape, Landscape
-from validation.ee_mutations import reference_statistics
+from validation.oracles.ee import reference_statistics
 
 
 def hamming_pairs(configs):
@@ -157,6 +157,9 @@ def test_invalid_inputs():
     X, f, pairs = two_stars()
     with pytest.raises(ValueError, match="one-site"):
         _ee_statistics(X, f, [(1, 7)])
+    for malformed in [X.ravel(), X[:-1]]:
+        with pytest.raises(ValueError, match="align"):
+            _ee_statistics(malformed, f, pairs)
     bad = f.copy()
     bad[0] = np.nan
     with pytest.raises(ValueError, match="finite"):
@@ -182,12 +185,9 @@ def test_constant_landscape_has_no_ee_mutations():
 
 
 @pytest.mark.parametrize("fdr", [0, 1, -.1, np.inf, np.nan, True, "0.01", None, [0.01]])
-@pytest.mark.parametrize("function", [evolvability_enhancing_fraction, evolvability_effects])
-def test_invalid_fdr(function, fdr):
-    X, f, _ = two_stars()
-    ls = BooleanLandscape().build_from_data(X, f, epsilon=.001, verbose=False)
+def test_invalid_fdr(fdr):
     with pytest.raises(ValueError, match="fdr"):
-        function(ls, fdr=fdr)
+        _validate_fdr(fdr)
 
 
 @pytest.mark.parametrize("effect_type", ["positive", "", None, ["all"], 1])
@@ -264,3 +264,69 @@ def test_legacy_parameters_keep_their_behavior_with_migration_warning():
     assert "delta_mean_neighbor_fit" in ls.graph.es.attributes()
     with pytest.warns(FutureWarning):
         assert evolvability_enhancing_mutations(ls, epsilon=99, auto_calculate=False) == 0
+
+
+@pytest.mark.parametrize("function", [evolvability_enhancing_fraction, evolvability_effects])
+def test_public_input_validation_and_unbuilt_guard(function):
+    with pytest.raises(RuntimeError, match="built"):
+        function(BooleanLandscape())
+    X, f, _ = two_stars()
+    ls = BooleanLandscape().build_from_data(X, f, epsilon=.001, verbose=False)
+    with pytest.raises(ValueError, match="fdr"):
+        function(ls, fdr=0)
+    # Each malformed landscape is rejected before producing classifications.
+    column = next(iter(ls.data_types))
+    original = ls.graph.vs[column]
+    ls.graph.vs[0][column] = None
+    with pytest.raises(ValueError, match="missing"):
+        function(ls)
+    ls.graph.vs[column] = original
+    for name in ls.data_types:
+        ls.graph.vs[1][name] = ls.graph.vs[0][name]
+    with pytest.raises(ValueError, match="unique"):
+        function(ls)
+
+
+def test_blocking_wide_inputs_and_edge_order(monkeypatch):
+    import graphfla.analysis._evolvability as implementation
+    X = np.asarray(list(product(range(3), range(3), range(2), range(2))))
+    f = .1 + X[:, 1]*1e-4 + X[:, 2]*.02 + X[:, 3]*.03
+    f += np.where(X[:, 0] == 2, 2.0, X[:, 0]*(1+X[:, 1]*.01))
+    X = np.column_stack([np.zeros((len(X), 37)), X, np.ones((len(X), 41))])
+    X = np.delete(X, [3, 8, 19], axis=0)
+    f = np.delete(f, [3, 8, 19])
+    pairs = hamming_pairs(X)[::-1]
+    pairs[::2] = [(v, u) for u, v in pairs[::2]]
+    oracle = reference_statistics(X, f, pairs)
+    monkeypatch.setattr(implementation, "_MOMENT_CELLS", 17)
+    actual = _ee_statistics(X, f, pairs)
+    for name in ["p_effect", "p_zero"]:
+        np.testing.assert_allclose(actual[name], oracle[name], rtol=1e-10, atol=2e-12)
+    expected = np.where(oracle["effect"] > 0, oracle["flag_effect"] == 1,
+                        oracle["flag_zero"] == 1)
+    np.testing.assert_array_equal(actual.ee, expected)
+
+
+def test_empty_focal_neighborhood_is_untestable():
+    # All changes are at a single categorical position, so exclusion removes
+    # every neighbor even though the graph has many edges.
+    X = np.arange(5)[:, None]
+    actual = _ee_statistics(X, np.arange(5), hamming_pairs(X))
+    assert len(actual) == 20 and (actual.n_source == 0).all()
+    assert actual.p_effect.isna().all() and not actual.testable.any()
+
+
+def test_large_excluded_effect_preserves_small_nonfocal_variance():
+    # Do not subtract huge focal second moments from total second moments.
+    # Check well-conditioned local moments directly; tiny differences between
+    # means near 1e10 cannot provide a precise p-value oracle in float64.
+    X = np.asarray(list(product(range(3), range(3), range(2))))
+    f = X[:, 1]*1e-4 + X[:, 2]*.02 + np.where(X[:, 0] == 2, 1e10, X[:, 0])
+    table = _ee_statistics(X, f, hamming_pairs(X))
+    selected = table[(table.position == 0) & (X[table.source, 0] < 2)]
+    assert len(selected) > 0
+    for row in selected.itertuples():
+        u = row.source
+        neighbors = (np.sum(X != X[u], axis=1) == 1) & (X[:, 0] == X[u, 0])
+        np.testing.assert_allclose(row.variance_source, np.var(f[neighbors]),
+                                   rtol=1e-12, atol=1e-16)

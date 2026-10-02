@@ -134,7 +134,8 @@ that metric's snapshots.
 
 ```
 python -m validation.ee_mutations
-pytest tests/test_ee_mutations.py tests/test_ee_literature.py -q
+python -m pytest tests/test_ee_mutations.py -q
+python -m validation.tests --literature-study Wagner2023 -q
 ```
 
 Inputs and compact author-output fixtures are hash-pinned and run offline.

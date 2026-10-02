@@ -5,6 +5,18 @@ returned statistic are marked, because downstream analyses depend on them.
 
 ## Unreleased
 
+### Validation and performance
+
+- Literature tests now run separately with `python -m validation.tests`, with
+  study/case filters, paper references, evidence roles, mandatory input hashes,
+  JUnit provenance, a permanent contract/template and an independent CI job.
+  Default pytest runs only the basic suite; historical case identities remain.
+- Performance benchmarks are split into `construction` and individually selectable
+  `analysis` modules. The bounded comparison runner can benchmark EE alone.
+- EE neighborhood moments use bounded vectorized blocks with centered variances.
+  Public API and statistical definitions are unchanged; basic oracles, complete
+  author-data comparisons and output snapshots guard the optimization.
+
 ### Changed — EE analysis API
 
 - `evolvability_enhancing_fraction(landscape, *, fdr=0.01, effect_type="all")`

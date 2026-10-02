@@ -1,21 +1,10 @@
-"""Public analysis functions on fixed inputs with prepared landscape caches."""
+"""Public analysis functions on bounded synthetic landscapes."""
 
 from functools import partial
 
 from graphfla import analysis as A
 
-from ._datasets import build_dataset
-
-# Every exported function is represented; result dataclasses are not workloads.
-METHODS = [
-    name
-    for name in A.__all__
-    if name
-    not in {
-        "EpistasisClassification",
-        "ExtradimensionalBypass",
-    }
-]
+from ._workloads import SMALL_CASES, build_case
 
 
 def prepare_call(landscape, method):
@@ -73,20 +62,22 @@ def prepare_call(landscape, method):
     return partial(getattr(A, method), landscape, **kwargs)
 
 
-class Analysis:
-    params = (["CR6261", "TrpB3I", "synthetic-rna", "synthetic-hpo"], METHODS)
-    param_names = ["dataset", "method"]
-    timeout = 120
+class _MetricBenchmark:
+    """Shared harness; each concrete metric has its own importable module."""
+
+    params = SMALL_CASES
+    param_names = ["dataset"]
+    timeout = 30
+    number = 1
     repeat = 5
 
-    def setup(self, dataset, method):
-        landscape = build_dataset(dataset)
-        for name in ("basins", "dist_to_go", "neighbor_fitness", "accessible_paths"):
-            getattr(landscape, name)
-        self.call = prepare_call(landscape, method)
+    def setup(self, dataset):
+        landscape = build_case(dataset)
+        # Only prepare dependencies needed by the selected metric.
+        self.call = prepare_call(landscape, self.method)
 
-    def time_method(self, dataset, method):
+    def time_metric(self, dataset):
         self.call()
 
-    def peakmem_method(self, dataset, method):
+    def peakmem_metric(self, dataset):
         self.call()

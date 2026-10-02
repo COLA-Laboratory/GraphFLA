@@ -11,6 +11,7 @@ def trna_result():
     return reproduce()
 
 
+@pytest.mark.literature_case("lyons.trna.iid.v1", role="paper_result")
 def test_lyons_published_landscape_mean(trna_result):
     actual = trna_result["independent_author_procedure"]
     assert actual["example_n"] == 88
@@ -27,6 +28,7 @@ def test_lyons_published_landscape_mean(trna_result):
     )
 
 
+@pytest.mark.literature_case("lyons.trna.iid.v1", role="independent_check")
 def test_lyons_example_author_code_disagrees_with_printed_control(trna_result):
     # Do not adjust the seed or widen the paper tolerance to hide this mismatch.
     # The released Fig. 1a cell specifies 4033, yielding 0.508..., while the text
@@ -37,6 +39,7 @@ def test_lyons_example_author_code_disagrees_with_printed_control(trna_result):
     assert abs(actual["example_index"] - 0.49) > 0.005
 
 
+@pytest.mark.literature_case("lyons.trna.iid.v1", role="independent_check")
 def test_lyons_complete_population_public_global(trna_result):
     assert trna_result["population"] == {
         "viable_genotypes": 28530,

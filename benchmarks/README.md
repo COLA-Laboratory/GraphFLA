@@ -8,28 +8,47 @@ runtime and process peak memory. Data loading is excluded from runtime.
 All inputs are local, deterministic and pinned; missing data fails explicitly.
 Install with `python -m pip install -r requirements-dev.txt -e .`.
 
-## Coverage
+## Select a scope
 
-| Module | Workloads |
-|---|---|
-| `construction.py` | All seven landscape classes; 21 datasets; neighborhood strategies and edit radii; full build time, peak RSS, output size and variable sites |
-| `analysis.py` | All 32 public analysis functions; Boolean, protein, RNA and mixed HPO inputs; fixed seeds, one analysis worker |
-| `landscape.py` | Cold and warm lazy properties, configuration materialization, data export, local optima network, GraphML read/write |
-| `algorithms.py` | Search cache, both hill-climb strategies, random walks; time and peak memory |
-| `utilities.py` | Distances, filters, all sampling functions, all concrete problem generators |
+Construction and analysis are independent benchmark groups. Each analysis metric
+has its own module; selecting EE does not execute other metrics or construction
+benchmarks. Input construction happens in setup and is excluded from metric time.
 
-Result dataclasses, abstract protocols, logging, registration/accessor methods
-and visualization rendering are not computational benchmarks. Tests cover API
-contracts separately. A benchmark executes a method; it does not validate the
-scientific interpretation of its result. Analysis implementations are unchanged.
+| Group / module | Workloads |
+| --- | --- |
+| `construction.build` | Existing 21 datasets, seven classes, neighborhood strategies and radii |
+| `construction.utilities` | Distances, filters, samplers and problem generators |
+| `analysis.ee` | EE fraction and effects table, six bounded landscapes, 64–1,024 input configurations |
+| `analysis.<function_name>` | One other public metric on Boolean-6 and categorical-3×3 inputs |
+| `analysis.landscape` | Cold/warm lazy properties, export, LON and GraphML operations |
+| `analysis.trajectories` | Search caches, hill-climbing and random walks |
 
-`Analysis` prepares landscape caches outside measurement. The separate cold
-property cases invalidate the relevant cache on every invocation; their timing
-includes that small invalidation cost. Memory measurements include the process,
-imports and prepared input, not just allocations attributable to the operation.
-`LandscapeOperations` prepares basins and configuration tuples before measuring
-LON and serialization operations. Separate cases measure their construction.
-ASV fixes native thread counts and the hash seed in its environment matrix.
+The registry in `analysis/__init__.py` maps public functions to modules and gives
+reasons for exclusions. The deprecated EE wrapper is covered by basic compatibility
+tests and shares the canonical calculation. Dataclasses, abstract protocols,
+registration/accessor methods and visualization rendering are not timed.
+A basic test checks that every public analysis function is benchmarked or explicitly
+excluded and that its bounded call remains valid.
+
+To add a metric, copy a small `analysis/<function>.py` subclass, register it, and
+bind any required parameters in `_shared.prepare_call`. Start with `SMALL_CASES`;
+add a dedicated bounded workload only when it answers a specific performance
+question. Especially for epistasis enumeration, do not reuse the large construction
+corpus by default. Benchmark modules must not load data or calculate metrics at
+import time. Set a timeout and keep setup out of the timer. Scientific correctness
+belongs in basic/oracle and [literature tests](../validation/TESTING.md).
+
+Calls with seed parameters use fixed seeds. The existing single-mutation
+`idiosyncratic_index` has no seed parameter; its numerical draws vary and it is
+only a timing workload. `profile` measures an explicitly named small subset.
+Metrics may populate their own lazy dependencies; setup does not compute unrelated
+metrics. Separate cold-property cases invalidate the relevant cache on each call.
+Process memory includes imports and the prepared input, not only metric allocations.
+
+The reorganization changes ASV IDs (for example,
+`construction.Construction.time_build` → `construction.build.Construction.time_build`).
+Historical results remain intact. Compare old/new source using the same benchmark
+harness or the construction round runner, rather than joining different IDs.
 
 ## Inputs
 
@@ -69,21 +88,60 @@ the original CSV bytes. To restore them: `python tools/fetch_benchmark_data.py`.
 ProteinGym and RNAGym distribute their benchmark resources under MIT; attribution
 and source links remain in the manifest and here.
 
-## Running ASV
+## Targeted ASV execution
 
 ```bash
-python -m asv check --python=same
-python -m asv run --python=same --quick --dry-run --show-stderr
-python -m asv run --python=same -b Construction
-python -m asv continuous main HEAD
-python -m asv publish
-python -m asv preview
+# EE only: smoke check (24 workload/output/measurement combinations).
+python -m asv run --python=same --quick --dry-run -b '^analysis.ee\.' --show-stderr
+# Repeated timing for one selected metric, or construction only.
+python -m asv run --python=same -b '^analysis.ee\.'
+python -m asv run --python=same -b '^analysis.gamma\.'
+python -m asv run --python=same -b '^construction\.build\.'
 ```
 
-`--quick` verifies execution and is unsuitable for performance claims. ASV
-isolated environments are preferred for commit comparisons. The current
-environment mode requires installing the intended checkout first. Pin dependency
-versions when comparing different runs; result metadata records installed versions.
+Omitting `-b` explicitly selects the entire suite and may be expensive. Normal
+iteration and CI use a metric selector. `--quick` verifies execution and is not
+performance evidence. With `--python=same`, first install the intended checkout
+with `python -m pip install --no-deps -e .` in the active environment; another
+worktree's editable install would benchmark the wrong implementation. ASV isolated
+environments are preferred for commit comparisons. Pin dependencies between runs.
+
+## Bounded analysis comparisons
+
+```bash
+python tools/benchmark_analysis.py --metric ee --output baseline.json
+# Change only the implementation; keep the workload and runner fixed.
+python tools/benchmark_analysis.py --metric ee --output candidate.json --compare baseline.json
+# Another metric can run independently on the small general fixtures.
+python tools/benchmark_analysis.py --metric gamma --output gamma.json
+```
+
+`--metric` and `--output` are required; there is no all-metric default. EE records
+both public outputs. Other functions are independently selectable by name; the
+full output-equivalence comparator currently supports the EE group only.
+
+Each workload uses three fresh processes, one warmup per function, and three timed
+samples per process. Construction, GC, serialization and output checks are untimed.
+Defaults cap each process at 30 seconds (maximum configurable 60), repetitions at
+10 and processes at five. BLAS/OpenMP threads and the hash seed are fixed. Missing
+inputs, timeout, failed comparisons and subprocess errors fail the run; interrupted
+runs retain a partial JSON. Existing results and snapshot directories are never
+overwritten. This runner uses `resource` on macOS/Linux; ASV is the portable entry.
+
+Reports include raw samples, process medians/MAD, total process peak RSS, input and
+source hashes, runner/workload hashes and environment versions. Comparison rejects
+changed protocols, inputs or environments. EE snapshots compare labels, counts and
+nullable decisions exactly, floats at `rtol=1e-10, atol=2e-12` with matching NaNs.
+Snapshot hashes prevent silently edited references. The numerical tolerance covers
+summation-order roundoff on these bounded workloads; it is not a paper tolerance.
+
+A change is called improved/regressed only beyond both 5% and three times the sum
+of process-median MADs. This is a practical noise gate, not a significance test.
+Keep the machine otherwise idle and repeat the baseline as a drift control.
+RSS is a process high-water mark, including imports; it does not isolate allocation
+cost or justify claims about arbitrarily large landscapes. For EE, a trusted local
+old kernel can be supplied with `--baseline-kernel` while keeping the public wrapper
+and harness fixed. No code is downloaded. See [EE results](EE_RESULTS.md).
 
 ## Iterative construction optimization
 

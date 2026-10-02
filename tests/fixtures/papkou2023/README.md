@@ -23,7 +23,7 @@ the authors clip lethal fitness values when computing edge weights. This test
 compares graph topology exactly and checks GraphFLA's weights against the
 original measurements; it does not assert equality to the clipped weights.
 
-Run `python -m pytest tests/test_papkou_construction.py`. No downloads or R
+Run `python -m validation.tests -k papkou_author_graph`. No downloads or R
 installation are needed. Regenerate the fixtures from extracted archive
 members with `python tools/prepare_papkou_fixture.py AUTHOR_DIRECTORY`
 (requires `pyreadr` for the one-time conversion).

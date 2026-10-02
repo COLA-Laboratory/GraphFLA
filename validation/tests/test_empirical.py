@@ -10,7 +10,7 @@ from graphfla.landscape import BooleanLandscape, DNALandscape, ProteinLandscape
 from validation.contract import load_definitions, matches, verify_artifact
 
 
-REPO = Path(__file__).resolve().parents[1]
+REPO = Path(__file__).resolve().parents[2]
 CASES = load_definitions(REPO / "validation")[2]
 
 
@@ -55,6 +55,7 @@ def papkou():
     )
 
 
+@pytest.mark.literature_case("papkou.topology.v1", role="paper_result")
 def test_papkou_published_network_and_peaks(papkou):
     _assert_published(
         "papkou.topology.v1",
@@ -70,6 +71,7 @@ def test_papkou_published_network_and_peaks(papkou):
     assert papkou.graph.is_connected(mode="weak")
 
 
+@pytest.mark.literature_case("papkou.topology.v1", role="input_check")
 def test_papkou_edge_filter_and_alignment(papkou):
     fitness = papkou.graph.vs["fitness"]
     variants = papkou._configs_array
@@ -81,6 +83,7 @@ def test_papkou_edge_filter_and_alignment(papkou):
         assert sum(variants[i] != variants[j]) == 1
 
 
+@pytest.mark.literature_case("papkou.classification.v1", role="author_result")
 def test_papkou_author_epistasis_classification(papkou):
     """Exact class fractions from the authors' archived Figure S20 notebook.
 
@@ -100,6 +103,7 @@ def test_papkou_author_epistasis_classification(papkou):
     )
 
 
+@pytest.mark.literature_case("westmann.peaks.v1", role="paper_result")
 def test_westmann_published_peak_count():
     """Nature Communications 15, 10745 (2024), supplementary Table S1."""
     filename = _input("westmann.peaks.v1")
@@ -122,7 +126,9 @@ def test_westmann_published_peak_count():
 
 @pytest.mark.parametrize(
     "antigen,order",
-    [("h1", 1), ("h1", 2), ("h9", 1), ("h9", 2)],
+    [pytest.param(a, o, marks=pytest.mark.literature_case(
+        f"phillips.cr6261.{a}.order{o}.v1", role="author_result"
+    )) for a, o in [("h1", 1), ("h1", 2), ("h9", 1), ("h9", 2)]],
 )
 def test_phillips_author_regression_outputs(antigen, order):
     """Reproduce full-data OLS outputs, not held-out cross-validation scores.
@@ -143,6 +149,7 @@ def test_phillips_author_regression_outputs(antigen, order):
     _assert_published(case_id, float(higher_order_epistasis(landscape, order=order)))
 
 
+@pytest.mark.literature_case("bank.reia_peaks.v1", role="paper_result")
 def test_bank_archived_landscape_reproduces_reia_peak_identities():
     """Reia and Campos (2020), Figure 1: six named peaks in Bank's landscape.
 
@@ -193,6 +200,7 @@ def _complete_protein_fixture(case_id):
     return frame, landscape
 
 
+@pytest.mark.literature_case("wu.peaks.v1", "wu.accessibility.v1", role="paper_result")
 def test_wu_completed_landscape_peaks_and_accessibility():
     """eLife 16965: 30 peaks, 15 above WT (p. 9 / Fig. 4A).
 
@@ -219,6 +227,7 @@ def test_wu_completed_landscape_peaks_and_accessibility():
     _assert_published("wu.accessibility.v1", len(reachable) / landscape.n_configs)
 
 
+@pytest.mark.literature_case("johnston.active_peaks.v1", role="paper_result")
 def test_johnston_peaks_among_active_measured_candidates():
     """PNAS 2400439121: 520 peaks among 9,783 active measured TrpB variants.
 

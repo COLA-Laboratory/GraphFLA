@@ -40,7 +40,7 @@ does not by itself establish that a result can be reproduced.
 
 ## Current promoted empirical tests
 
-`test_literature.py` fixes preprocessing and input SHA-256 hashes. Expected
+`validation/tests/test_empirical.py` fixes preprocessing and input SHA-256 hashes. Expected
 results come from the publication or its archived author outputs, not from
 GraphFLA. The local data directory is part of the checkout; no network request
 is made during tests.

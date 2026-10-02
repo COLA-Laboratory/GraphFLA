@@ -5,7 +5,7 @@ from scipy.stats import uniform
 
 from graphfla import distances, sampling, problems
 from graphfla.filters import LandscapeFilter
-from ._datasets import random_ordinal
+from .._datasets import random_ordinal
 
 
 class Distances:
