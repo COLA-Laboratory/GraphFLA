@@ -1,0 +1,41 @@
+{
+  "schema_version": 1,
+  "kind": "case",
+  "id": "song.kuo.rs.ols.v1",
+  "revision": 1,
+  "study_id": "SongZhang2021",
+  "metric_ids": [
+    "roughness_slope"
+  ],
+  "evidence_tier": "independent_equation",
+  "definition_match": "yes",
+  "scope": "Check public r/s against independent explicit design matrices for both reference choices; NOT a claim of agreement with the supplied four-state formula or the empirical Ridge estimator.",
+  "preprocessing": "All 197890 rows of bundled Kuo2020.csv, 9 RNA positions, stored log(GFP) values unchanged. Explicit reference U and A checked separately; three nonreference indicators per position, OLS with intercept, denominator 27. Data-only view passes the entire population to the public function without graph construction. No missing-state imputation, RNG, graph filtering, or extrapolation.",
+  "sources": [
+    {
+      "url": "https://doi.org/10.1111/evo.14363",
+      "locator": "Methods Estimation of r/s; supplied PDF p.2669 uses 4n, unlike the 27-column author code. See review."
+    },
+    {
+      "url": "https://github.com/song88180/fitness-landscape-error/blob/a9d15169d0488b5e615467132710d6847dc2f73e/5_Empirical_Extrapolation/SD_seq/Generate_raw_data.ipynb",
+      "locator": "Cells defining load_sequence, x, cal_r_s; ATCG coding omits U. Public test uses OLS, while notebook uses Ridge(alpha=1)."
+    }
+  ],
+  "expected": {
+    "A": 3.7324438990677855,
+    "U": 4.062897962892546
+  },
+  "comparison": {
+    "kind": "absolute",
+    "tolerance": 1e-10,
+    "justification": "Independent dense SVD on fixed float64 inputs; 1e-10 permits QR and summation roundoff, not definition changes."
+  },
+  "inputs": [
+    {
+      "root": "repo",
+      "path": "data/BioSequence/Kuo2020.csv",
+      "sha256": "69a86caf1ccbfc94a519f5917624d6862a0dfede0082abae79300eda0bb959c0"
+    }
+  ],
+  "pytest_node": "validation/tests/test_r_s_ratio.py::test_kuo_reference_conventions"
+}

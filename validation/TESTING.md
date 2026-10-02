@@ -152,3 +152,15 @@ reviewed trials through `python -m validation` using the existing event contract
   harness tests. The test does not silently skip or download missing inputs.
 - Runtime and memory fit the reviewed workload; the literature suite is still
   absent from default `python -m pytest` collection.
+
+## Fitted-model statistics
+
+For r/s and similar fitted summaries, record the explicit design, reference
+states, intercept, coefficient constraints, regularization, objective scale,
+rank convention and weighting. Compare coefficients and residuals when
+identifiable, as well as numerator and denominator. The
+[additive-model template](templates/test_additive_metric.py.template) illustrates
+this contract. A different author estimator needs a separate author-result
+case even if its rounded value equals the public result. A data-only test view
+may avoid graph construction for edge-independent metrics, provided every
+observation is retained and the adapter and preprocessing are disclosed.

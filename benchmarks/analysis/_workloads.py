@@ -35,6 +35,12 @@ GAMMA_CASES = [
 ]
 
 
+RS_CASES = [
+    "boolean-6", "boolean-14", "categorical-4x5", "categorical-64x2",
+    "sparse-boolean-12", "long-boolean-72", "ordinal-8x3", "mixed-4x3",
+]
+
+
 def cases_for_metric(metric):
     if metric == "ee":
         return EE_CASES
@@ -42,6 +48,8 @@ def cases_for_metric(metric):
         return IDIOSYNCRASY_CASES
     if metric in {"gamma", "gamma_star"}:
         return GAMMA_CASES
+    if metric == "r_s_ratio":
+        return RS_CASES
     return SMALL_CASES
 
 
@@ -73,6 +81,10 @@ def build_case(name):
             if kind == "ordinal"
             else {"data_types": {str(i): "categorical" for i in range(n)}}
         )
+    if name == "mixed-4x3":
+        X[:, -1] %= 2
+        X = np.unique(X, axis=0)
+        kwargs = {"data_types": {"mode": "categorical", "level": "ordinal", "on": "boolean"}}
     # Interaction and nonmonotonic terms prevent an all-additive timing fixture.
     f = X.sum(axis=1) + 2 * X[:, 0] * X[:, -1] + rng.normal(size=len(X))
     if kwargs:

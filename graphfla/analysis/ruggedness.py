@@ -1,20 +1,14 @@
 import numpy as np
 import pandas as pd
 
-import warnings
 import random
 
 from ..algorithms import RandomWalk, SearchCache
-from sklearn.linear_model import LinearRegression
+from ._roughness import roughness_slope_ratio
 
 
 from ._utils import _pythonize
 
-# Noise floor for the additive slope, relative to the centred fitness spread.
-# Set above the round-off of a float64 least-squares solve on a well-conditioned
-# design; it does not account for rank deficiency or ill-conditioning, which
-# make individual coefficients unidentifiable regardless of tolerance.
-_SLOPE_REL_TOL = 1e-12
 
 
 def local_optima_ratio(landscape) -> float:
@@ -146,179 +140,73 @@ def gradient_intensity(landscape) -> float:
 
 
 def r_s_ratio(landscape) -> float:
-    """
-    Calculate the roughness-to-slope (r/s) ratio of a fitness landscape.
-
-    This metric quantifies the deviation from additivity by comparing the
-    root-mean-square error of the linear model fit (roughness)
-    to the mean absolute additive coefficients (slope). Higher values
-    indicate greater ruggedness and epistasis relative to the additive trend.
-
-    Calculation follows definitions used in Rough Mount Fuji models and
-    empirical landscape studies, e.g., [1]-[4].
-
-    References
-    ----------
-    [1] I. Fragata et al., "Evolution in the light of fitness landscape
-        theory," Trends Ecol. Evol., vol. 34, no. 1, pp. 69-82, Jan. 2019.
-    [2] T. Aita, H. Uchiyama, T. Inaoka, M. Nakajima, T. Kokubo, and
-        Y. Husimi, "Analysis of a local fitness landscape with a model of
-        the rough Mount Fuji-type landscape," Biophys. Chem., vol. 88,
-        no. 1-3, pp. 1-10, Dec. 2000.
-    [3] A. Skwara et al., "Statistically learning the functional landscape
-        of microbial communities," Nat. Ecol. Evol., vol. 7, no. 11,
-        pp. 1823-1833, Nov. 2023.
-    [4] C. Bank, R. T. Hietpas, J. D. Jensen, and D. N. A. Bolon, "A
-        systematic survey of an intragenic epistatic landscape," Proc. Natl.
-        Acad. Sci. USA, vol. 113, no. 50, pp. 14424-14429, Dec. 2016.
+    r"""Return the roughness-to-slope ratio of an additive least-squares fit.
 
     Parameters
     ----------
-    landscape : graphfal.landscape.Landscape
-        A Landscape object instance. It must have attributes `n_vars`,
-        `data_types`, and a method `get_data()` that returns a DataFrame
-        containing the raw configurations and a 'fitness' column.
+    landscape : Landscape
+        Built landscape. Each retained configuration has equal weight; its
+        stored ``fitness`` is the objective value, with no log transformation.
+        Boolean variables use 0/1 coding. Categorical variables use one
+        indicator per observed state except the first in pandas category
+        order (normally sorted labels). Ordinal variables use the integer
+        ranks established during construction, or pandas category order if
+        construction codes are unavailable. Constant variables are excluded.
 
     Returns
     -------
-    float
-        The roughness-to-slope (r/s) ratio. Returns np.inf if the slope (s)
-        is zero or very close to zero. Returns np.nan if the calculation fails.
+    ratio : float
+        Residual root mean square divided by the mean absolute coefficient,
+        excluding the intercept. The mean weights encoded columns equally,
+        not original variables. Returns zero, up to rounding error, for an
+        exact additive fit with nonzero slope. Returns ``numpy.inf`` when
+        slope is at most ``1e-12`` times the objective range. Returns
+        ``numpy.nan`` for empty or constant data, an unidentifiable fit,
+        a failed numerical solve, or a model exceeding the workspace limit.
 
     Raises
     ------
+    RuntimeError
+        If the landscape has not been built.
     ValueError
-        If the landscape object is missing required attributes/methods or if
-        data types are unsupported.
+        If a variable type is unsupported or an objective value is nonfinite.
+
+    Warns
+    -----
+    UserWarning
+        If the ratio is undefined, the slope is numerically zero, or the fit
+        is saturated (no residual degrees of freedom). A fit also returns
+        NaN with a warning if its quadratic QR workspace exceeds 64 MiB.
+
+    See Also
+    --------
+    higher_order_epistasis : Variance explained by interactions up to an order.
+
+    Notes
+    -----
+    With an intercept, fit :math:`\hat f_i=b_0+\sum_j b_j x_{ij}` by ordinary
+    least squares, then calculate :math:`r=\sqrt{\sum_i(f_i-\hat f_i)^2/N}`
+    and :math:`s=\sum_j|b_j|/p` [1]_. Missing configurations are not imputed;
+    graph edges and the optimization direction do not enter the fit.
+
+    For categorical variables with more than two states, changing the
+    reference state can change ``s`` and the ratio. For ordinal variables,
+    nonlinear effects of a single variable also contribute to ``r``.
+    Compare values only under consistent coding and objective scales.
+
+    References
+    ----------
+    .. [1] I. G. Szendro et al., "Quantitative analyses of empirical fitness
+       landscapes," J. Stat. Mech. P01005 (2013), Eqs. (3)-(5).
+       https://doi.org/10.1088/1742-5468/2013/01/P01005
+
+    Examples
+    --------
+    >>> from graphfla.landscape import BooleanLandscape
+    >>> from graphfla.analysis import r_s_ratio
+    >>> landscape = BooleanLandscape().build_from_data(
+    ...     [[0, 0], [0, 1], [1, 0], [1, 1]], [0, 1, 2, 4], verbose=False)
+    >>> round(r_s_ratio(landscape), 3)
+    0.125
     """
-    data = landscape.get_data()
-
-    raw_X = data[list(landscape.data_types.keys())]
-    fitness_values = data["fitness"].values
-    data_types = landscape.data_types
-
-    # 2. Prepare Numerical Genotype Representation for Additive Model
-    X_transform_list = []
-    cols = list(data_types.keys())  # preserve column order
-
-    # Vertex-aligned integer encoding; keeps ordinal codes consistent with build.
-    configs_array = getattr(landscape, "_configs_array", None)
-    if configs_array is not None and configs_array.shape[0] != len(raw_X):
-        configs_array = None
-
-    for j, col in enumerate(cols):
-        dtype = data_types[col]
-        if dtype == "boolean":
-            col_values = raw_X[col].astype(bool).astype(int).values.reshape(-1, 1)
-            X_transform_list.append(col_values)
-        elif dtype == "categorical":
-            cat_series = pd.Categorical(raw_X[col])
-            # drop_first avoids multicollinearity in the one-hot encoding
-            one_hot = pd.get_dummies(cat_series, drop_first=True)
-            X_transform_list.append(one_hot.values)
-        elif dtype == "ordinal":
-            # order-preserving numerical codes
-            if configs_array is not None:
-                col_values = np.asarray(
-                    configs_array[:, j], dtype=float
-                ).reshape(-1, 1)
-            else:
-                col_values = pd.Categorical(
-                    raw_X[col], ordered=True
-                ).codes.reshape(-1, 1)
-            X_transform_list.append(col_values)
-        else:
-            raise ValueError(
-                f"Unsupported data type '{dtype}' for r/s ratio calculation in column '{col}'"
-            )
-
-    if len(X_transform_list) == 1:
-        X_fit = X_transform_list[0]
-    else:
-        X_fit = np.hstack(X_transform_list)
-
-    n_samples, n_features = X_fit.shape
-    if n_samples <= n_features:
-        warnings.warn(
-            f"Number of samples ({n_samples}) is less than or equal to "
-            f"the number of features ({n_features}) after encoding. "
-            "Linear regression might be underdetermined or unstable.",
-            UserWarning,
-        )
-
-    # 3. Fit Additive (Linear) Model
-    try:
-        linear_model = LinearRegression(fit_intercept=True)
-        linear_model.fit(X_fit, fitness_values)
-
-        # slope s = mean absolute additive coefficient (beta)
-        additive_coeffs = np.asarray(linear_model.coef_, dtype=np.float64).reshape(-1)
-        if additive_coeffs.size == 1:
-            slope_s = np.abs(additive_coeffs[0])
-        elif additive_coeffs.size > 1:
-            slope_s = np.mean(np.abs(additive_coeffs))
-        else:  # n_features == 0, unreachable if validation holds
-            slope_s = 0
-
-        # r/s is invariant under f -> a*f + b: r and s both scale by |a|, and the
-        # intercept absorbs b. The degeneracy test must share that invariance, so
-        # it is relative to the *centred* fitness spread. An absolute tolerance
-        # would call a rescaled landscape flat; a tolerance relative to max|f|
-        # would do the same for a large offset.
-        # Constant fitness is detected by exact equality, not by a zero spread:
-        # np.std of identical non-representable values (e.g. 0.1) is a non-zero
-        # round-off, which would fall through to the slope branch and give inf.
-        #
-        # The spread is the range rather than the standard deviation: both scale
-        # by |a| under f -> a*f + b, but std squares the deviations and so
-        # overflows near 1e155 and underflows near 1e-200 on finite inputs.
-        if len(fitness_values):
-            f_min = float(np.min(fitness_values))
-            f_max = float(np.max(fitness_values))
-        else:
-            f_min = f_max = 0.0
-        fitness_spread = f_max - f_min
-        is_constant = len(fitness_values) == 0 or f_min == f_max
-
-        if is_constant:
-            # Constant fitness: r = s = 0, so the ratio is undefined. This is
-            # distinct from a purely epistatic landscape, where r > 0 and s = 0.
-            warnings.warn(
-                "Fitness is constant, so both roughness and slope are zero and "
-                "the r/s ratio is undefined. Returning nan.",
-                UserWarning,
-            )
-            return _pythonize(np.nan)
-
-        if slope_s <= _SLOPE_REL_TOL * fitness_spread:
-            warnings.warn(
-                "Slope 's' is zero or near zero. Landscape may be flat "
-                "or purely epistatic according to the linear fit. Returning inf.",
-                UserWarning,
-            )
-            return _pythonize(np.inf)
-
-        # Avoid np.matmul here because NumPy linked against Accelerate on
-        # macOS arm64 can emit spurious RuntimeWarnings for finite inputs.
-        predicted_fitness = (
-            np.sum(
-                np.asarray(X_fit, dtype=np.float64) * additive_coeffs,
-                axis=1,
-                dtype=np.float64,
-            )
-            + float(linear_model.intercept_)
-        )
-        residuals = fitness_values - predicted_fitness
-
-        # roughness r = RMSE of residuals, per the literature definition
-        roughness_r = np.sqrt(np.mean(residuals**2))
-
-        r_s_ratio_value = roughness_r / slope_s
-
-        return _pythonize(r_s_ratio_value)
-
-    except Exception as e:
-        warnings.warn(
-            f"Calculation of r/s ratio failed: {e}. Returning np.nan.", UserWarning
-        )
-        return _pythonize(np.nan)
+    return roughness_slope_ratio(landscape)

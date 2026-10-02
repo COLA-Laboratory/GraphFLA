@@ -1,0 +1,40 @@
+{
+  "schema_version": 1,
+  "kind": "case",
+  "id": "ferretti.csi.rs.v1",
+  "revision": 1,
+  "study_id": "Ferretti2016",
+  "metric_ids": [
+    "roughness_slope"
+  ],
+  "evidence_tier": "published_numeric",
+  "definition_match": "yes",
+  "scope": "Aspergillus five-variable csi landscape: r/s=0.89 in Section 4/Figure 4; same source-pinned 32 rows already reviewed for gamma. This does not certify gamma-star or TEM targets.",
+  "preprocessing": "Retain every input row with equal weight; no missing-state imputation, subsampling, uncertainty adjustment or RNG. Fit intercept plus 0/1 predictors by OLS; r is residual RMSE (divide by N); s is mean absolute non-intercept coefficient. Graph edges and optimization direction do not affect the statistic. Natural log of positive W, no rounding or other transformation.",
+  "sources": [
+    {
+      "url": "https://doi.org/10.1101/042010",
+      "locator": "Supplied March 1 2016 preprint, Section 4 printed p.19 and Figure 4 p.20: Aspergillus r/s=0.89."
+    },
+    {
+      "url": "https://journals.plos.org/ploscompbiol/article/file?id=10.1371/journal.pcbi.1002134.s009&type=supplementary",
+      "locator": "Franke 2011 Table S1; select arg,pyr,leu,oli,crn, other three sites absent; provenance in tests/fixtures/literature/ferretti2016/provenance.json."
+    }
+  ],
+  "expected": {
+    "ratio": 0.89
+  },
+  "comparison": {
+    "kind": "absolute",
+    "tolerance": 0.005,
+    "justification": "Half a unit in the last printed decimal."
+  },
+  "inputs": [
+    {
+      "root": "repo",
+      "path": "tests/fixtures/literature/ferretti2016/csi.csv",
+      "sha256": "8f8f977c781380b8d40fa3e6d7be226d6e9ba627ac296ab3d78cd1036d5b1354"
+    }
+  ],
+  "pytest_node": "validation/tests/test_r_s_ratio.py::test_boolean_paper_result"
+}

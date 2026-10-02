@@ -1,0 +1,40 @@
+"""Template for fitted statistics: define the model before comparing ratios.
+
+Copy to validation/tests/test_<metric>.py and replace all placeholders.
+Use TESTING.md and case.json.template for citation, hashing and resources.
+"""
+
+import pytest
+from validation.testing import assert_case_matches
+
+
+@pytest.fixture(scope="module")
+def fitted_population(verified_literature_inputs):
+    # Verify/load once. Preserve the complete population, state mapping,
+    # objective scale, intercept, weights, regularization and rank convention.
+    # Calculate the independent explicit model and the public estimator.
+    raise NotImplementedError("Load pinned input and independently fit model")
+
+
+@pytest.mark.literature_case("study.metric.v1", role="paper_result")
+def test_printed_result(fitted_population):
+    # Use this role ONLY if preprocessing, coding and estimator match.
+    assert_case_matches("study.metric.v1", fitted_population["public_summary"])
+
+
+@pytest.mark.literature_case("study.metric.equation.v1", role="independent_check")
+def test_fitted_components(fitted_population):
+    actual, reference = fitted_population["actual"], fitted_population["reference"]
+    assert actual["rank"] == reference["rank"]
+    # Align coefficient names/reference states before comparing vectors.
+    assert actual["coefficients"] == pytest.approx(reference["coefficients"])
+    assert actual["residuals"] == pytest.approx(reference["residuals"])
+    # Compare numerator and denominator separately, not only their quotient.
+    assert actual["roughness"] == pytest.approx(reference["roughness"])
+    assert actual["slope"] == pytest.approx(reference["slope"])
+
+
+# A different author estimator (for example Ridge instead of OLS) requires
+# its own author_result case/test. Do not tune coefficients or tolerances to
+# make it a public paper_result. Large population tests must be resource-reviewed;
+# a data-only protocol view may avoid building graph edges unused by the metric.

@@ -22,7 +22,6 @@ from graphfla.analysis import (
     gamma_star,
     classify_epistasis,
     autocorrelation,
-    r_s_ratio,
     fdc,
     neighbor_fitness_correlation,
     higher_order_epistasis,
@@ -117,9 +116,6 @@ def test_autocorrelation_additive_high_hoc_low():
 # ----------------------------------------------------------------------
 
 
-def test_r_s_ratio_additive_zero_hoc_large():
-    assert r_s_ratio(onemax(4)) < 1e-9  # additive fit is exact -> RMSE 0
-    assert r_s_ratio(hoc_landscape(4, seed=1)) > 0.5
 
 
 # ----------------------------------------------------------------------

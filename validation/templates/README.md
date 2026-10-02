@@ -29,3 +29,7 @@ all ordered position pairs and a known fourfold orientation multiplicity.
 Shared inputs are calculated once, while every selected case retains its own
 hash verification and evidence role. Acceptance of a remaining reproduction
 gap does not authorize widening frozen paper tolerances or replacing targets.
+
+Use `test_additive_metric.py.template` for fitted statistics such as r/s. It
+adds explicit encoding, rank, coefficient and residual checks to the existing
+case contract, and separates author regularization from public OLS behavior.

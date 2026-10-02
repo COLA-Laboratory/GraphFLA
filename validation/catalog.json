@@ -1289,7 +1289,7 @@
       "aliases": [
         "Doud2024"
       ],
-      "title": "Competition-driven eco-evolutionary feedback reshapes bacteriophage lambda’s fitness landscape and enables speciation",
+      "title": "Competition-driven eco-evolutionary feedback reshapes bacteriophage lambda\u2019s fitness landscape and enables speciation",
       "doi": null,
       "year": 2024,
       "origin": "supplied",
@@ -2702,6 +2702,32 @@
       "dossier": null,
       "local_inputs": [],
       "landscape_labels": []
+    },
+    {
+      "id": "Szendro2013",
+      "aliases": [],
+      "title": "Quantitative analyses of empirical fitness landscapes",
+      "doi": "10.1088/1742-5468/2013/01/P01005",
+      "year": 2013,
+      "origin": "supplied",
+      "citation_status": "verified_supplied_pdf",
+      "measured_variants": 16,
+      "theoretical_variants": null,
+      "state": "triaged",
+      "next_action": "Read validation/R_S_RATIO_REVIEW.md; only reopen unresolved targets with new evidence."
+    },
+    {
+      "id": "SongZhang2021",
+      "aliases": [],
+      "title": "Unbiased inference of the fitness landscape ruggedness from imprecise fitness estimates",
+      "doi": "10.1111/evo.14363",
+      "year": 2021,
+      "origin": "supplied",
+      "citation_status": "verified_supplied_pdf",
+      "measured_variants": 197890,
+      "theoretical_variants": null,
+      "state": "triaged",
+      "next_action": "Read validation/R_S_RATIO_REVIEW.md; only reopen unresolved targets with new evidence."
     }
   ]
 }
