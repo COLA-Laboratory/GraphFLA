@@ -1,6 +1,6 @@
 """End-to-end construction; input loading is excluded from measurement."""
 
-from ._datasets import DATASETS, load_dataset
+from .._datasets import DATASETS, load_dataset
 
 
 class Construction:
@@ -51,7 +51,7 @@ class NeighborhoodStrategies:
     def setup(self, geometry, strategy_and_radius):
         import numpy as np
         from graphfla.landscape import BooleanLandscape
-        from ._datasets import nk_boolean
+        from .._datasets import nk_boolean
 
         self.cls = BooleanLandscape
         if geometry == "wide":

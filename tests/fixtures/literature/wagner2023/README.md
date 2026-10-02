@@ -26,3 +26,9 @@ against a separate oracle. The original target-variance duplication and the
 rounded classification are replayed only in validation. See
 `validation/EE_MUTATIONS_REVIEW.md` for the two RNA printed-effect discrepancies,
 the corrected-formula results and the public API's uncertainty limitations.
+
+The executable regression entry is now
+`python -m validation.tests --literature-study Wagner2023 -q`. It is separate
+from the default basic tests, cites versioned cases, and also checks each public
+table decision against the independent oracle. See `validation/TESTING.md` for
+the reusable contract and `validation/EE_TEST_AUDIT.md` for resource observations.

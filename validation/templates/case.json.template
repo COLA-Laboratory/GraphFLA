@@ -1,0 +1,28 @@
+{
+  "schema_version": 1,
+  "kind": "case",
+  "id": "study.condition.metric.v1",
+  "revision": 1,
+  "study_id": "REPLACE_WITH_REGISTERED_STUDY_ID",
+  "metric_ids": ["REPLACE_WITH_REGISTERED_METRIC_ID"],
+  "evidence_tier": "published_numeric",
+  "definition_match": "yes",
+  "scope": "REPLACE: exact statistic, population, condition and limits of the claim",
+  "preprocessing": "REPLACE: units/transform, objective direction, graph/neighborhood, filters/missingness/ties, ordered or unordered units, weights/denominator, variance/test/FDR family, RNG/seed/sample size if applicable",
+  "sources": [{
+    "url": "https://doi.org/REPLACE",
+    "locator": "REPLACE: exact figure/table/equation/paragraph; add immutable author-code source if used"
+  }],
+  "expected": {"REPLACE_STATISTIC_NAME": "REPLACE_WITH_INDEPENDENT_NUMERIC_TARGET"},
+  "comparison": {
+    "kind": "exact",
+    "tolerance": 0,
+    "justification": "REPLACE: why exact, or derive absolute tolerance from source precision/error model"
+  },
+  "inputs": [{
+    "root": "repo",
+    "path": "tests/fixtures/literature/REPLACE/data.ext",
+    "sha256": "REPLACE_WITH_ACTUAL_SHA256"
+  }],
+  "pytest_node": "validation/tests/test_REPLACE.py::test_REPLACE"
+}

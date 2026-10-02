@@ -5,6 +5,72 @@ import pandas as pd
 from numbers import Real
 from scipy.stats import t
 
+_MOMENT_CELLS = 131072
+
+
+def _nonfocal_moments(configs, f, pairs, fitness_variance):
+    """Compute node/site moments with bounded, degree-bucketed neighbor blocks.
+
+    Use centered squared deviations, not total-minus-focal second moments:
+    the latter loses small non-focal variance next to large focal effects.
+    Graph indices use O(N + E) storage, without a dense node/site cube.
+    Blocks target _MOMENT_CELLS entries; one wide row may exceed that target.
+    """
+    n_edges = len(pairs)
+    positions = np.empty(n_edges, dtype=np.intp)
+    step = max(1, _MOMENT_CELLS // max(1, configs.shape[1]))
+    for start in range(0, n_edges, step):
+        block = pairs[start:start + step]
+        changed = configs[block[:, 0]] != configs[block[:, 1]]
+        if np.any(changed.sum(axis=1) != 1):
+            raise ValueError("EE mutations require one-site neighbor pairs.")
+        positions[start:start + len(block)] = changed.argmax(axis=1)
+    source = np.concatenate((pairs[:, 0], pairs[:, 1]))
+    target = np.concatenate((pairs[:, 1], pairs[:, 0]))
+    position = np.tile(positions, 2)
+    if not n_edges:
+        empty = np.empty((0, 3))
+        return source, target, position, empty, empty.copy()
+
+    # CSR adjacency in target-ID order, independent of input edge orientation.
+    order = np.lexsort((target, source))
+    neighbors, sites = target[order], position[order]
+    degree = np.bincount(source, minlength=len(f))
+    offsets = np.concatenate(([0], np.cumsum(degree)))
+    keys, inverse = np.unique(source * configs.shape[1] + position, return_inverse=True)
+    nodes, focal = np.divmod(keys, configs.shape[1])
+    sizes = degree[nodes]
+    buckets = np.floor(np.log2(sizes)).astype(int)
+    moments = np.empty((len(keys), 3))
+    for bucket in np.unique(buckets):
+        group = np.flatnonzero(buckets == bucket)
+        width = int(sizes[group].max())
+        rows_per_block = max(1, _MOMENT_CELLS // width)
+        columns = np.arange(width)
+        for start in range(0, len(group), rows_per_block):
+            rows = group[start:start + rows_per_block]
+            indices = offsets[nodes[rows], None] + columns
+            valid = columns < sizes[rows, None]
+            indices = np.minimum(indices, len(neighbors) - 1)
+            keep = valid & (sites[indices] != focal[rows, None])
+            count = keep.sum(axis=1)
+            values = f[neighbors[indices]]
+            mean = np.divide(np.where(keep, values, 0).sum(axis=1), count,
+                             out=np.full(len(rows), np.nan), where=count > 0)
+            if fitness_variance is None:
+                squared = (values - mean[:, None])**2
+                numerator = np.where(keep, squared, 0).sum(axis=1)
+                denominator = count
+            else:
+                numerator = np.where(keep, fitness_variance[neighbors[indices]], 0).sum(axis=1)
+                denominator = count**2
+            variance = np.divide(numerator, denominator, out=np.full(len(rows), np.nan),
+                                 where=count > 0)
+            moments[rows, 0], moments[rows, 1], moments[rows, 2] = mean, variance, count
+    left = moments[inverse]
+    right = np.concatenate((left[n_edges:], left[:n_edges]))
+    return source, target, position, left, right
+
 
 def _validate_fdr(fdr):
     if (not isinstance(fdr, Real) or isinstance(fdr, (bool, np.bool_))
@@ -72,35 +138,9 @@ def _ee_statistics(
     # the neighborhood subtraction or the roundoff guard.
     f = fitness - fitness[0] if len(fitness) else fitness.copy()
     pairs = np.asarray(pairs, dtype=np.intp).reshape(-1, 2)
-    adjacent = [[] for _ in f]
-    positions = []
-    for u, v in pairs:
-        changed = np.flatnonzero(configs[u] != configs[v])
-        if len(changed) != 1:
-            raise ValueError("EE mutations require one-site neighbor pairs.")
-        pos = int(changed[0])
-        positions.append(pos)
-        adjacent[u].append((v, pos))
-        adjacent[v].append((u, pos))
-
-    moments = {}
-    for u, neighbors in enumerate(adjacent):
-        for pos in {pos for _, pos in neighbors}:
-            ids = [v for v, other in neighbors if other != pos]
-            k = len(ids)
-            if not k:
-                moments[u, pos] = (np.nan, np.nan, 0)
-                continue
-            values = f[ids]
-            variance = (float(np.var(values)) if fitness_variance is None
-                        else float(np.sum(fitness_variance[ids]) / k**2))
-            moments[u, pos] = (float(np.mean(values)), variance, k)
-
-    source = np.concatenate((pairs[:, 0], pairs[:, 1]))
-    target = np.concatenate((pairs[:, 1], pairs[:, 0]))
-    position = np.tile(positions, 2).astype(np.intp)
-    left = np.asarray([moments[u, p] for u, p in zip(source, position)]).reshape(-1, 3)
-    right = np.asarray([moments[v, p] for v, p in zip(target, position)]).reshape(-1, 3)
+    source, target, position, left, right = _nonfocal_moments(
+        configs, f, pairs, fitness_variance
+    )
     delta_fitness = f[target] - f[source]
     delta_mean = right[:, 0] - left[:, 0]
     variance = left[:, 1] + right[:, 1]

@@ -32,7 +32,6 @@ from graphfla.analysis import (
     walsh_hadamard,
     fitness_distribution,
     neutrality,
-    evolvability_enhancing_fraction,
     global_optima_accessibility,
     mean_path_length_to_global_optimum,
     local_optima_ratio,
@@ -233,16 +232,6 @@ def test_neutrality_detects_ties():
         (1, 1, 1): 2.0,
     }
     assert neutrality(from_map(fmap, 3)) > 0.3
-
-
-# ----------------------------------------------------------------------
-# Evolvability-enhancing mutations (Wagner 2023)
-# ----------------------------------------------------------------------
-
-
-def test_evol_enhance_additive_is_zero():
-    # Position-excluded neighborhood gain equals the focal benefit exactly.
-    assert evolvability_enhancing_fraction(onemax(4)) == 0.0
 
 
 # ----------------------------------------------------------------------

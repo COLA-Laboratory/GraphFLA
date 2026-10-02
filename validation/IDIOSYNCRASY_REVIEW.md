@@ -152,7 +152,7 @@ preserves both public function signatures for the requested follow-up discussion
 mutation weighting, matched control size and replacement, reverse labels,
 missing backgrounds, seed effectiveness, parallel equality, global RNG
 isolation, long-sequence fallback, invalid input and undefined controls.
-`tests/test_idiosyncrasy_literature.py` checks the frozen paper case, per-mutation
+`validation/tests/test_idiosyncrasy.py` checks the frozen paper case, per-mutation
 author replay, the complete population and the retained Figure 1a discrepancy.
 Only this metric's synthetic golden values were replaced, using an independent
 literal reference with seed 0. Other golden metrics were left unchanged.

@@ -5,7 +5,7 @@ import tempfile
 
 from graphfla.landscape import Landscape
 
-from ._datasets import build_dataset
+from .._datasets import build_dataset
 
 FLAGS = {
     "basins": "_basin_calculated",

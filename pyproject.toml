@@ -5,9 +5,6 @@ build-backend = "setuptools.build_meta"
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 addopts = "--strict-markers"
-markers = [
-    "integration: full empirical construction checks using pinned local data",
-]
 
 [tool.coverage.run]
 branch = true

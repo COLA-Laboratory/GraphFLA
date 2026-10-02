@@ -1,15 +1,17 @@
 # Test suite
 
 Run `python -m pytest`; install dependencies from `requirements-dev.txt`.
-The default suite includes the pinned Papkou integration case and requires no
-network access. Use `-m 'not integration'` for small development checks.
+The default suite contains basic tests only and requires no network access.
+Empirical literature tests, including the full Papkou graph, run separately:
+`python -m validation.tests`. See the permanent [literature contract](../validation/TESTING.md).
 
 | Tests | Contract |
 |---|---|
 | `test_construction_oracles.py` | Independent all-pairs distance oracle across classes, directions, epsilon, sparsity and strategies; forced lookup, search, overflow, chunking and hash-collision paths |
 | `test_build_contracts.py` | Input types, numeric fitness overflow, Boolean aliases, field-name collisions, indices, thresholds, neutral graphs, genetic-background trimming and GraphML |
 | `test_compact_sequences.py` | Complete compact/general-path output equivalence with backgrounds, duplicates, input formats, thresholds, direction and custom input handlers |
-| `test_papkou_construction.py` | Full author input to exact author node/edge identities; original fitness and directed weights |
+| `test_ee_mutations.py` | Independent equations, categorical focal exclusion, BH families, edge cases and public EE API |
+| `test_literature_contract.py` | Evidence roles, citations, hash failures, collection filters and JUnit provenance |
 | `test_utilities_contracts.py` | Distances, rule combinations, Cartesian sampling and graph walks |
 | `test_benchmark_contracts.py` | Complete public analysis inventory, callable benchmark parameters, pinned DMS checksums and input dimensions |
 | Existing metric/profile/golden suites | Retained numerical and API regression coverage; separate literature-validation work remains independent |

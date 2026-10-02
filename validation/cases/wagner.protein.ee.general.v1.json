@@ -1,0 +1,48 @@
+{
+  "schema_version": 1,
+  "kind": "case",
+  "id": "wagner.protein.ee.general.v1",
+  "revision": 1,
+  "study_id": "Wagner2023",
+  "metric_ids": [
+    "ee"
+  ],
+  "evidence_tier": "independent_equation",
+  "definition_match": "yes",
+  "scope": "General public EE estimator checked against independent enumeration; corrected symmetric neighborhood variances, no experimental error inputs. These counts are independently derived, not numbers printed in Wagner 2023.",
+  "preprocessing": "Keep all sequences and W_ParE3 fitness without rescaling; restrict neighbors to one-nucleotide-accessible amino-acid replacements. Use population variation among non-focal neighbor fitnesses, symmetric endpoint variance sum, df=min(k_source,k_target)-1 and separate BH families at FDR .01. Full precision effects; all represented ordered pairs.",
+  "sources": [
+    {
+      "url": "https://doi.org/10.1038/s41467-023-39321-8",
+      "locator": "Results: EE mutations are rare in the protein adaptive landscape; Supplementary Fig. S1."
+    },
+    {
+      "url": "https://github.com/andreas-wagner-uzh/EE_mutations/blob/7b3071ea1dec1b91818bea69cdf6ccf219f47877/protein_EEmutations_out.txt",
+      "locator": "delfit, del_neigh_fit_del_fit_0 and del_neigh_fit_0_0 columns; companion adaptive_walks notebook classification cell."
+    }
+  ],
+  "expected": {
+    "ordered_pairs": 175552,
+    "beneficial": 196,
+    "deleterious": 389,
+    "neutral": 0
+  },
+  "comparison": {
+    "kind": "exact",
+    "tolerance": 0,
+    "justification": "Integer classification counts from the separately implemented SciPy summary-statistic oracle. No published-result equivalence is claimed."
+  },
+  "inputs": [
+    {
+      "root": "repo",
+      "path": "tests/fixtures/literature/wagner2023/protein.csv.gz",
+      "sha256": "0a50a66c7509d2dc0a838c8ecc1d29f5a4d92f3fd0a34217d0e497e219dbedbe"
+    },
+    {
+      "root": "repo",
+      "path": "tests/fixtures/literature/wagner2023/protein_author.npz",
+      "sha256": "8a8b677a3d6ff00f0998fce64f000113704b39f2cd70671b158771a01a0b5c95"
+    }
+  ],
+  "pytest_node": "validation/tests/test_ee.py::test_general_estimator[protein]"
+}

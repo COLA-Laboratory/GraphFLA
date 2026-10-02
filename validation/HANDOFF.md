@@ -24,7 +24,7 @@ particular, exact Wagner author replay and the corrected EE estimator differ.
 | Scope ledger and definition of done | `validation/harvest/LEDGER.md` | yes |
 | Metric-vs-paper definition findings | `validation/metric_provenance_findings.md` | yes |
 | Function-by-function validation plan | `tests/VALIDATION.md` | yes |
-| Promoted empirical tests and fixtures | `tests/test_literature.py`, `tests/fixtures/` | yes |
+| Promoted empirical tests and fixtures | `validation/tests/test_empirical.py`, `tests/fixtures/` | yes |
 | **Source PDFs, supplements, author code, per-study dossiers** | `~/Documents/GraphFLA-validation/2026-09-30/papers/` | **no — 1.7 GB, external by design** |
 | Append-only research event store | `~/Documents/GraphFLA-validation/2026-09-30/events/` | no |
 
@@ -87,7 +87,7 @@ snapshot, never evidence for (2) or (3).
    reproductions happen.
 3. Write `validation/harvest/<StudyKey>/record.json` per
    `validation/harvest/README.md`, one `overlaps` entry per candidate statistic.
-4. Only then promote to `validation/cases/` and a test in `tests/test_literature.py`.
+4. Only then promote to `validation/cases/` and a test in `validation/tests/test_empirical.py`.
 
 ### Outcome vocabulary
 

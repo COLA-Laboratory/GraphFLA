@@ -9,6 +9,12 @@ definition, and reproduction of an empirical result. A passing case certifies
 only its stated input, preprocessing and statistic. It does not validate a whole
 paper or every metric in the package.
 
+Executable literature tests live separately in `validation/tests/`. The permanent
+[testing contract and templates](TESTING.md) define citation, provenance, evidence
+roles, input verification, resource review and promotion requirements. Run
+`python -m validation.tests --literature-study Wagner2023` for EE alone;
+`python -m pytest` runs only basic tests.
+
 The EE review and offline reproduction are in
 [`EE_MUTATIONS_REVIEW.md`](EE_MUTATIONS_REVIEW.md) and
 `python -m validation.ee_mutations`. Published author-code replay is kept
@@ -152,8 +158,9 @@ an author-artifact match is not a printed-paper target.
 ## Review and verification
 
 ```sh
-python -m pytest -q tests/test_validation_contract.py tests/test_literature.py
-python -m ruff check validation tests/test_validation_contract.py tests/test_literature.py
+python -m pytest -q tests/test_validation_contract.py tests/test_literature_contract.py
+python -m validation.tests -q
+python -m ruff check validation tests/test_validation_contract.py tests/test_literature_contract.py
 ```
 
 Contract tests cover revision continuity, immutable snapshots, concurrent

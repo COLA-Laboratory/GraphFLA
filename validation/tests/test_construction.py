@@ -9,12 +9,13 @@ import pandas as pd
 import pytest
 
 from graphfla.landscape import DNALandscape
+from validation.testing import assert_case_matches
 
 
-FIXTURES = Path(__file__).parent / "fixtures" / "papkou2023"
+FIXTURES = Path(__file__).resolve().parents[2] / "tests/fixtures/papkou2023"
 
 
-@pytest.mark.integration
+@pytest.mark.literature_case("papkou.author_graph.v1", role="author_result")
 def test_papkou_author_graph():
     manifest = json.loads((FIXTURES / "manifest.json").read_text())
     for name, digest in manifest["fixtures"].items():
@@ -34,7 +35,9 @@ def test_papkou_author_graph():
         epsilon=0,
         verbose=False,
     )
-    assert landscape.shape == (135178, 324044)
+    assert_case_matches("papkou.author_graph.v1", {
+        "vertices": landscape.n_configs, "edges": landscape.n_edges,
+    })
     assert landscape.graph.is_simple()
     assert landscape.graph.is_connected(mode="weak")
 

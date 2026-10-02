@@ -1,0 +1,48 @@
+{
+  "schema_version": 1,
+  "kind": "case",
+  "id": "wagner.rna.ee.general.v1",
+  "revision": 1,
+  "study_id": "Wagner2023",
+  "metric_ids": [
+    "ee"
+  ],
+  "evidence_tier": "independent_equation",
+  "definition_match": "yes",
+  "scope": "General public EE estimator checked against independent enumeration; corrected symmetric neighborhood variances, no experimental error inputs. These counts are independently derived, not numbers printed in Wagner 2023.",
+  "preprocessing": "Keep all 4176 sequences; retain nucleotide offsets 0,1,5,26,42,45,65,68,69,70; preserve log fitness and SE. Use population variation among non-focal neighbor fitnesses, symmetric endpoint variance sum, df=min(k_source,k_target)-1 and separate BH families at FDR .01. Full precision effects; all represented ordered pairs.",
+  "sources": [
+    {
+      "url": "https://doi.org/10.1038/s41467-023-39321-8",
+      "locator": "Results: EE mutations are more frequent but have smaller fitness effects in the RNA adaptive landscape; Supplementary Fig. S2."
+    },
+    {
+      "url": "https://github.com/andreas-wagner-uzh/EE_mutations/blob/7b3071ea1dec1b91818bea69cdf6ccf219f47877/RNA_EEmutations_out.txt",
+      "locator": "delfit, del_neigh_fit_del_fit_0 and del_neigh_fit_0_0 columns; companion adaptive_walks notebook classification cell."
+    }
+  ],
+  "expected": {
+    "ordered_pairs": 52672,
+    "beneficial": 2,
+    "deleterious": 0,
+    "neutral": 0
+  },
+  "comparison": {
+    "kind": "exact",
+    "tolerance": 0,
+    "justification": "Integer classification counts from the separately implemented SciPy summary-statistic oracle. No published-result equivalence is claimed."
+  },
+  "inputs": [
+    {
+      "root": "repo",
+      "path": "tests/fixtures/literature/wagner2023/rna.csv.gz",
+      "sha256": "9f0d55055d75f24b00264c77324b44f07e56feb3f85d022b450865cf19ab830d"
+    },
+    {
+      "root": "repo",
+      "path": "tests/fixtures/literature/wagner2023/rna_author.npz",
+      "sha256": "eeeccc5ae42850139efb0ee3860d4f1e281f6faf586975fd8a966839435519ca"
+    }
+  ],
+  "pytest_node": "validation/tests/test_ee.py::test_general_estimator[rna]"
+}

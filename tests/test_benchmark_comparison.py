@@ -49,3 +49,25 @@ def test_incompatible_graph_or_input_is_rejected(key, value):
     after["datasets"]["small"][key] = value
     with pytest.raises(ValueError, match="mismatch"):
         compare(before, after)
+
+
+def test_analysis_snapshots_check_labels_shapes_dtypes_and_float_values(tmp_path):
+    import numpy as np
+    from tools.benchmark_analysis import compare_snapshots
+
+    baseline, candidate = tmp_path / "baseline.npz", tmp_path / "candidate.npz"
+    source = {"p": np.array([0.1, np.nan]), "is_ee": np.array([1, -1], dtype=np.int8)}
+    np.savez(baseline, **source)
+    np.savez(candidate, **{**source, "p": np.array([0.1 + 1e-13, np.nan])})
+    assert set(compare_snapshots(baseline, candidate)) == set(source)
+    for changed in [
+        {**source, "p": np.array([0.11, np.nan])},
+        {**source, "p": np.array([0.1, 0.2])},
+        {**source, "p": np.array([[0.1, np.nan]])},
+        {**source, "is_ee": np.array([0, -1], dtype=np.int8)},
+        {**source, "is_ee": np.array([1, -1], dtype=np.int64)},
+        {"p": source["p"]},
+    ]:
+        np.savez(candidate, **changed)
+        with pytest.raises(AssertionError):
+            compare_snapshots(baseline, candidate)
