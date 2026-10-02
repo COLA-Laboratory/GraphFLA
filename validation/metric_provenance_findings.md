@@ -7,6 +7,15 @@ not accepted.
 
 ## 1. `evolvability_enhancing_mutations` does not implement Wagner's definition
 
+**2026-10-02 follow-up:** the old implementation below has been replaced with
+position-excluded, bidirectional EE tests and BH FDR correction. All four
+published counts and every author signed test decision have been reproduced.
+The author scripts themselves duplicate the target variance and classify
+rounded effects; production corrects the variance and keeps full precision.
+RNA measurement-error input remains a public API gap. See
+[the EE review](EE_MUTATIONS_REVIEW.md) for the evidence and numeric differences.
+The original audit is retained below as historical context.
+
 **Citation is to a non-existent paper.** The docstring cites
 `10.1038/s41576-023-00559-0` ("The role of evolvability in the evolution of
 complex traits", Nat Rev Genet 24, 1-16). Verified by the lead: that DOI returns

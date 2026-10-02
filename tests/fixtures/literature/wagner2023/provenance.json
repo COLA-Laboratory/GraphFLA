@@ -1,0 +1,65 @@
+{
+  "doi": "10.1038/s41467-023-39321-8",
+  "author_repository": "https://github.com/andreas-wagner-uzh/EE_mutations",
+  "author_commit": "7b3071ea1dec1b91818bea69cdf6ccf219f47877",
+  "datasets": {
+    "protein": {
+      "source_url": "https://ftp.ncbi.nlm.nih.gov/geo/series/GSE153nnn/GSE153897/suppl/GSE153897_Variant_fitness.csv.gz",
+      "source_sha256": "0e8f80515c267d9f1e0e88ff34364632073fa84282e5b062c8885e5627f1d638",
+      "input_fixture": "protein.csv.gz",
+      "input_sha256": "0a50a66c7509d2dc0a838c8ecc1d29f5a4d92f3fd0a34217d0e497e219dbedbe",
+      "author_output_url": "https://github.com/andreas-wagner-uzh/EE_mutations/blob/7b3071ea1dec1b91818bea69cdf6ccf219f47877/protein_EEmutations_out.txt",
+      "author_output_sha256": "2482b8c87fc1108c1d57242359df63992390447bdc3cd8a08d238bfa9cd1c2ab",
+      "author_fixture": "protein_author.npz",
+      "author_fixture_sha256": "8a8b677a3d6ff00f0998fce64f000113704b39f2cd70671b158771a01a0b5c95",
+      "variants": 7882,
+      "ordered_pairs": 175552,
+      "paper_beneficial_ee": 681,
+      "paper_deleterious_ee": 221,
+      "preprocessing": "Keep all sequences and W_ParE3 fitness without rescaling; restrict neighbors to one-nucleotide-accessible amino-acid replacements.",
+      "author_fixture_content": "Original row order; endpoint ids mapped to input row numbers; four-decimal delfit and both signed significance flags copied unchanged.",
+      "source_store_path": "papers/Lite2020/sources/GSE153897_Variant_fitness_codex.csv"
+    },
+    "rna": {
+      "source_url": "https://static-content.springer.com/esm/art%3A10.1038%2Fs41586-018-0170-7/MediaObjects/41586_2018_170_MOESM2_ESM.xlsx",
+      "source_sha256": "c6d15c23ec727d72c3648e7225553cab84d0edf550f81ac534cb11257e724cf8",
+      "input_fixture": "rna.csv.gz",
+      "input_sha256": "9f0d55055d75f24b00264c77324b44f07e56feb3f85d022b450865cf19ab830d",
+      "author_output_url": "https://github.com/andreas-wagner-uzh/EE_mutations/blob/7b3071ea1dec1b91818bea69cdf6ccf219f47877/RNA_EEmutations_out.txt",
+      "author_output_sha256": "cb7658453b49137dcb72b26a8c043116631de4c2b26458994fc372fd779479e6",
+      "author_fixture": "rna_author.npz",
+      "author_fixture_sha256": "eeeccc5ae42850139efb0ee3860d4f1e281f6faf586975fd8a966839435519ca",
+      "variants": 4176,
+      "ordered_pairs": 52672,
+      "paper_beneficial_ee": 2983,
+      "paper_deleterious_ee": 3702,
+      "preprocessing": "Keep all 4176 sequences; retain nucleotide offsets 0,1,5,26,42,45,65,68,69,70; preserve log fitness and SE. Replay uses variance=6*SE**2.",
+      "author_fixture_content": "Original row order; endpoint ids mapped to input row numbers; four-decimal delfit and both signed significance flags copied unchanged.",
+      "source_store_path": "papers/Domingo2018/sources/RNA_landscape_data_codex.txt"
+    }
+  },
+  "author_files": {
+    "EE_funcs.py": {
+      "sha256": "cd0571a425f3d76abc9c7d9f7636308c82a7aa81decca524ab707fdce51e75e6",
+      "url": "https://github.com/andreas-wagner-uzh/EE_mutations/blob/7b3071ea1dec1b91818bea69cdf6ccf219f47877/EE_funcs.py"
+    },
+    "RNA_EEmutations.py": {
+      "sha256": "64ed68119534e2fa818fa13a44cab8037ab7ab976dfe34e7d1e9990cb886a6b4",
+      "url": "https://github.com/andreas-wagner-uzh/EE_mutations/blob/7b3071ea1dec1b91818bea69cdf6ccf219f47877/RNA_EEmutations.py"
+    },
+    "prot_EEmutations.py": {
+      "sha256": "af07ef40b7643fe3753a230d6375a9c3ad641a6bdca078c9fc3dd8245ce1e56d",
+      "url": "https://github.com/andreas-wagner-uzh/EE_mutations/blob/7b3071ea1dec1b91818bea69cdf6ccf219f47877/prot_EEmutations.py"
+    },
+    "adaptive_walks_RNA.ipynb": {
+      "sha256": "a08f9117297337e9ccc52b08bd4a9433cd861a34861013ca37095d950adb3a67",
+      "url": "https://github.com/andreas-wagner-uzh/EE_mutations/blob/7b3071ea1dec1b91818bea69cdf6ccf219f47877/adaptive_walks_RNA.ipynb"
+    },
+    "adaptive_walks_protein.ipynb": {
+      "sha256": "616c9945b3bef3c5b29ccaa61733220400b573ca1b39ca8a2bba03b9bdaff205",
+      "url": "https://github.com/andreas-wagner-uzh/EE_mutations/blob/7b3071ea1dec1b91818bea69cdf6ccf219f47877/adaptive_walks_protein.ipynb"
+    }
+  },
+  "review_date": "2026-10-02",
+  "author_repository_license": "GPL-3.0; no author source code copied into GraphFLA; fixtures contain extracted numerical data and test decisions."
+}

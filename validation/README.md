@@ -9,6 +9,11 @@ definition, and reproduction of an empirical result. A passing case certifies
 only its stated input, preprocessing and statistic. It does not validate a whole
 paper or every metric in the package.
 
+The EE review and offline reproduction are in
+[`EE_MUTATIONS_REVIEW.md`](EE_MUTATIONS_REVIEW.md) and
+`python -m validation.ee_mutations`. Published author-code replay is kept
+separate from the corrected two-endpoint variance calculation.
+
 ## Layout
 
 | Location | Purpose |

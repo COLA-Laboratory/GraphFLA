@@ -136,8 +136,8 @@
       "candidate_study_ids": [
         "Wagner2023"
       ],
-      "literature_next_action": "Reproduce original EE analysis with its exact neighbor/test conventions; correct reference provenance before extension.",
-      "review_status": "partial; see tests/VALIDATION.md and case records"
+      "literature_next_action": "Discuss public measurement-error input, per-class outputs and neighborhood contract. Author replay and corrected-formula validation are complete; see EE_MUTATIONS_REVIEW.md.",
+      "review_status": "author counts reproduced; production uses symmetric variance, not the published duplicated-target expression; public RNA uncertainty input pending"
     },
     {
       "id": "neutrality",

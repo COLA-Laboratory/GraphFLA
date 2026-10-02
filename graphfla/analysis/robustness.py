@@ -1,11 +1,13 @@
 from scipy.stats import binomtest
 from itertools import combinations
+from numbers import Real
 import warnings
 
 import numpy as np
 import pandas as pd
 
 from ._utils import _pythonize, _pack_rows
+from ._evolvability import _landscape_ee_statistics
 import logging
 
 logger = logging.getLogger(__name__)
@@ -89,44 +91,66 @@ def _mutation_effects_for_position(X, f_arr, f_std, position, test_type):
 
 
 def evolvability_enhancing_mutations(landscape, epsilon=0, auto_calculate=True):
-    """
-    Calculates the proportion of edges where the higher-fitness node connects to
-    a neighborhood with higher mean fitness than the lower-fitness node.
+    """Return the fraction of evolvability-enhancing directed mutations.
 
-    This metric quantifies the prevalence of potentially evolvability-enhancing (EE)
-    mutations in the landscape, as described in Wagner (2023). An edge represents
-    an EE mutation if the delta_mean_neighbor_fit (difference in mean neighbor fitness
-    between the connected nodes) exceeds the specified epsilon threshold.
+    Test Wagner's criterion ``delta_mean > max(0, delta_fitness)`` [1]_,
+    excluding the mutated position from both endpoints' neighborhoods.
 
     Parameters
     ----------
-    landscape : BaseLandscape
-        The fitness landscape object.
+    landscape : Landscape
+        Built landscape with configuration columns and one-site graph edges.
+        Both orientations of each graph or retained neutral pair are evaluated.
+        Neighborhoods follow the supplied graph; filtered-out configurations
+        and neutral pairs discarded during construction are not reconstructed.
+        Fitness is negated for minimization landscapes.
     epsilon : float, default=0
-        Tolerance threshold for detecting significant differences in mean neighbor fitness.
-        Only edges with delta_mean_neighbor_fit > epsilon are counted as EE mutations.
+        Nonnegative minimum excess above ``max(0, delta_fitness)``, in fitness
+        units. This is an effect-size tolerance, not a significance level.
     auto_calculate : bool, default=True
-        If True, automatically computes neighbour fitness (via the
-        landscape's .neighbor_fitness property) if needed.
-        If False, raises an exception when neighbor fitness metrics are missing.
+        Retain the legacy preparation of ``landscape.neighbor_fitness``.
+        If False, raise when those attributes are absent. Position-specific
+        neighborhood statistics are recomputed independently of that cache.
 
     Returns
     -------
-    float
-        The proportion of edges with delta_mean_neighbor_fit > epsilon.
+    proportion : float
+        Significant beneficial, deleterious and neutral EE mutations divided
+        by all represented ordered neighbor pairs. Pairs with fewer than two
+        non-focal neighbors at either endpoint remain in the denominator but
+        cannot be significant. Return NaN with a warning if no pair is testable.
 
     Raises
     ------
     RuntimeError
         If auto_calculate=False and neighbor fitness metrics haven't been calculated.
+    ValueError
+        If epsilon is invalid, configurations are missing or duplicated,
+        fitness is nonfinite, or a neighbor pair differs at multiple sites.
+
+    Notes
+    -----
+    Two-sided one-sample t tests use the sum of the two neighborhood population
+    variances, ``n = min(k_source, k_target)``, and ``df = n - 1``. Separate
+    Benjamini-Hochberg corrections at FDR 0.01 cover all ordered pairs for the
+    fitness-effect and zero nulls. Classification also requires the strict
+    directional inequality, allowing for floating-point roundoff.
+
+    This uses neighborhood fitness variation, as in the protein analysis.
+    It does not accept the measurement errors used for the paper's RNA data.
+    The published scripts duplicate the target variance; this implementation
+    uses both endpoints and does not round fitness effects before classification.
 
     References
     ----------
-    .. [1] Wagner, A. The role of evolvability in the evolution of
-          complex traits. Nat Rev Genet 24, 1-16 (2023).
-          https://doi.org/10.1038/s41576-023-00559-0
+    .. [1] Wagner, A. Evolvability-enhancing mutations in the fitness landscapes
+           of an RNA and a protein. Nat. Commun. 14, 3624 (2023).
+           https://doi.org/10.1038/s41467-023-39321-8
     """
     landscape._check_built()
+    if (not isinstance(epsilon, Real) or isinstance(epsilon, (bool, np.bool_))
+            or not np.isfinite(epsilon) or epsilon < 0):
+        raise ValueError("epsilon must be finite and nonnegative.")
 
     if "delta_mean_neighbor_fit" not in landscape.graph.es.attributes():
         if auto_calculate:
@@ -140,18 +164,16 @@ def evolvability_enhancing_mutations(landscape, epsilon=0, auto_calculate=True):
                 "or set auto_calculate=True."
             )
 
-    delta_values = landscape.graph.es["delta_mean_neighbor_fit"]
-    total_edges = landscape.graph.ecount()
-
-    if total_edges == 0:
-        warnings.warn("No edges found in the landscape graph.", RuntimeWarning)
-        # Undefined with no edges (no mutations to evaluate).
+    statistics = _landscape_ee_statistics(landscape, epsilon)
+    if statistics.empty or not statistics["testable"].any():
+        warnings.warn(
+            "No testable EE mutations: each endpoint needs at least two "
+            "neighbors outside the mutated position.",
+            RuntimeWarning,
+            stacklevel=2,
+        )
         return float("nan")
-
-    ee_count = sum(1 for delta in delta_values if delta > epsilon)
-    ee_proportion = ee_count / total_edges
-
-    return _pythonize(ee_proportion)
+    return float(statistics["ee"].sum() / len(statistics))
 
 
 def neutrality(landscape, threshold: float = 0.01) -> float:
