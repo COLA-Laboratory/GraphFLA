@@ -1,0 +1,43 @@
+{
+  "schema_version": 1,
+  "kind": "case",
+  "id": "lyons.trna.fig1a.control.v1",
+  "revision": 1,
+  "study_id": "Lyons2020",
+  "metric_ids": [
+    "idiosyncrasy"
+  ],
+  "evidence_tier": "independent_equation",
+  "definition_match": "yes",
+  "scope": "Independent reconstruction of the released Figure 1a code cell with seed 4033; preserves the disagreement with the printed example index 0.49 and control SD 0.26. Not a successful reproduction of those printed control values.",
+  "preprocessing": "Full 28,530 viable rows in original order; ln(Fit/0.5); effects for G to A at offset 10; RandomState(4033), 88 pairs with replacement, ddof=0. No seed search, no graph pruning, no log-base adjustment.",
+  "sources": [
+    {
+      "url": "https://www.nature.com/articles/s41559-020-01286-y",
+      "locator": "Results, Epistasis is highly idiosyncratic, p. 1686 (PDF page 2): I_id=0.612 +/- 0.005 s.e.m.; Methods, Estimating the idiosyncrasy index, p. 1692 (PDF page 8)."
+    },
+    {
+      "url": "https://github.com/lyonsdm/idiosyncrasy/blob/0a6c2ce3a277d56679dae52b222106d05af93983/01_trna/32_idiosyncrasy/distributions.ipynb",
+      "locator": "Code cell 2: mutation (10,G,A), floor exclusion, seed 4033, n=88 log-ratio effects. Values are independent calculations of this procedure; they disagree with the main-text illustrative control."
+    }
+  ],
+  "expected": {
+    "backgrounds": 88,
+    "effect_std": 0.12652395320488805,
+    "control_std": 0.24903011647303494,
+    "index": 0.5080668755924872
+  },
+  "comparison": {
+    "kind": "absolute",
+    "tolerance": 1e-12,
+    "justification": "Floating-point agreement on fixed input and a fixed RNG stream; not a tolerance fitted to a printed-paper value."
+  },
+  "inputs": [
+    {
+      "root": "repo",
+      "path": "tests/fixtures/literature/lyons2020/trna.csv.gz",
+      "sha256": "b704367243def42c3905c82c5e84ce609edf7b8d56a28f97e842fc594afe73c3"
+    }
+  ],
+  "pytest_node": "validation/tests/test_idiosyncrasy.py::test_fig1a_released_procedure"
+}

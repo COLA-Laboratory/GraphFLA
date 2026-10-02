@@ -19,6 +19,8 @@ import time
 
 REPO = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(REPO))
+from tools._resource_guard import ResourceLimitError, run_guarded
+
 THREADS = dict.fromkeys(
     [
         "OMP_NUM_THREADS",
@@ -140,6 +142,7 @@ def main():
     parser.add_argument("--processes", type=int, default=3)
     parser.add_argument("--repeats", type=int, default=3)
     parser.add_argument("--timeout", type=float, default=30)
+    parser.add_argument("--memory-limit-mib", type=int, default=1024)
     parser.add_argument("--compare", type=Path)
     parser.add_argument(
         "--baseline-kernel",
@@ -151,7 +154,7 @@ def main():
     parser.add_argument("--snapshot", type=Path, help=argparse.SUPPRESS)
     args = parser.parse_args()
     from benchmarks.analysis import METRIC_MODULES
-    from benchmarks.analysis._workloads import EE_CASES, SMALL_CASES
+    from benchmarks.analysis._workloads import cases_for_metric
 
     if args.metric != "ee" and args.metric not in METRIC_MODULES:
         parser.error("Choose 'ee' or one public metric: " + ", ".join(METRIC_MODULES))
@@ -159,11 +162,15 @@ def main():
         not 1 <= args.processes <= 5
         or not 1 <= args.repeats <= 10
         or not 0 < args.timeout <= 60
+        or not 64 <= args.memory_limit_mib <= 4096
     ):
         parser.error(
-            "Limits: 1..5 processes, 1..10 repeats, and 0 < timeout <= 60 seconds"
+            "Limits: 1..5 processes, 1..10 repeats, 0 < timeout <= 60 seconds, "
+            "64..4096 MiB process-tree RSS"
         )
     if args.worker:
+        if args.case not in cases_for_metric(args.metric):
+            parser.error("Worker case is not registered for the selected metric")
         print(json.dumps(worker(args), allow_nan=False))
         return
     if args.output is None:
@@ -187,6 +194,7 @@ def main():
         Path(__file__).resolve(),
         REPO / "benchmarks/analysis/_workloads.py",
         REPO / "benchmarks/analysis/_shared.py",
+        REPO / "tools/_resource_guard.py",
     ]
     protocol_hashes = {
         str(p.relative_to(REPO)): hashlib.sha256(p.read_bytes()).hexdigest()
@@ -206,6 +214,7 @@ def main():
         "processes": args.processes,
         "repeats": args.repeats,
         "timeout_seconds_per_process": args.timeout,
+        "memory_limit_bytes": args.memory_limit_mib * 1024**2,
         "kernel_sha256": (
             hashlib.sha256(source.read_bytes()).hexdigest()
             if args.metric == "ee"
@@ -215,7 +224,7 @@ def main():
         "source_sha256": implementation,
         "workloads": {},
     }
-    cases = EE_CASES if args.metric == "ee" else SMALL_CASES
+    cases = cases_for_metric(args.metric)
     if baseline:
         for key in [
             "python",
@@ -227,11 +236,13 @@ def main():
             "processes",
             "repeats",
             "timeout_seconds_per_process",
+            "memory_limit_bytes",
         ]:
             if baseline[key] != report[key]:
                 raise ValueError(
                     f"Cannot compare different protocols/environments: {key}"
                 )
+    partial.write_text(json.dumps(report, indent=2) + "\n")
     for case in cases:
         runs = []
         snapshot = snapshots / f"{case}.npz"
@@ -252,25 +263,37 @@ def main():
             if args.baseline_kernel:
                 cmd.extend(["--baseline-kernel", str(args.baseline_kernel.resolve())])
             try:
-                done = subprocess.run(
+                done = run_guarded(
                     cmd,
                     cwd=REPO,
-                    capture_output=True,
-                    text=True,
                     timeout=args.timeout,
-                    check=True,
+                    memory_bytes=args.memory_limit_mib * 1024**2,
                     env={**os.environ, **THREADS, "PYTHONHASHSEED": "0"},
                 )
-            except (subprocess.CalledProcessError, subprocess.TimeoutExpired) as exc:
+            except (
+                subprocess.CalledProcessError,
+                ResourceLimitError,
+                KeyboardInterrupt,
+            ) as exc:
                 report["failure"] = {
                     "case": case,
                     "process": index,
-                    "error": str(exc),
-                    "stderr": str(exc.stderr),
+                    "error": f"{type(exc).__name__}: {exc}",
+                    "stderr": str(getattr(exc, "stderr", "")),
                 }
                 partial.write_text(json.dumps(report, indent=2) + "\n")
-                raise RuntimeError(f"Benchmark failed: {case}\n{exc.stderr}") from exc
-            runs.append(json.loads(done.stdout))
+                raise RuntimeError(f"Benchmark failed: {case}\n{exc}") from exc
+            run = json.loads(done.stdout)
+            run["monitored_tree_peak_rss_bytes"] = done.monitored_peak_rss_bytes
+            if run["peak_rss_bytes"] > args.memory_limit_mib * 1024**2:
+                report["failure"] = {
+                    "case": case,
+                    "process": index,
+                    "error": "Worker high-water RSS exceeded the limit",
+                }
+                partial.write_text(json.dumps(report, indent=2) + "\n")
+                raise ResourceLimitError(report["failure"]["error"])
+            runs.append(run)
         row = {"runs": runs, "measurements": {}}
         for name in runs[0]["samples_seconds"]:
             medians = [statistics.median(r["samples_seconds"][name]) for r in runs]

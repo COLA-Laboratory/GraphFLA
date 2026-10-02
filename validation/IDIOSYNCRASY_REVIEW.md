@@ -156,3 +156,5 @@ isolation, long-sequence fallback, invalid input and undefined controls.
 author replay, the complete population and the retained Figure 1a discrepancy.
 Only this metric's synthetic golden values were replaced, using an independent
 literal reference with seed 0. Other golden metrics were left unchanged.
+
+The follow-up [test audit](IDIOSYNCRASY_TEST_AUDIT.md) records the dedicated literature cases, strengthened basic tests, resource limits and bounded performance checks. Scientific assertions now live in `validation/tests/test_idiosyncrasy.py`; the replay driver returns detailed observations.

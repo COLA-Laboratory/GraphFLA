@@ -4,5 +4,6 @@ pytest-cov>=4
 hypothesis>=6
 asv>=0.6
 ruff>=0.9
+psutil>=5.9
 matplotlib>=3.7
 seaborn>=0.12
