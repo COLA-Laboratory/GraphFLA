@@ -4,7 +4,7 @@
 Wang, Liu, Li, Lai, Chen, Lu & Chen, "High-throughput discovery of
 ultrahigh-temperature multi-principal element alloys by combinatorial
 additive manufacturing," *Nat. Commun.* **17**, 668 (2026).
-DOI: [10.1038/s41467-025-66119-z](https://doi.org/10.1038/s41467-025-66119-z).
+DOI: [10.1038/s41467-025-67301-7](https://doi.org/10.1038/s41467-025-67301-7).
 
 Built from the paper's consolidated **Source Data** xlsx
 (`Source_Data.xlsx`), which holds one sheet per figure panel (24 sheets
