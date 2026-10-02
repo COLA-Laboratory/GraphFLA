@@ -172,31 +172,14 @@ def idiosyncratic_index(landscape, mutation, min_pairs: int = 3):
 
     Notes
     -----
-    For a substitution A to B, match configurations that agree at every other
-    feature and calculate ``f(B, background) - f(A, background)``. With n such
-    backgrounds, independently draw n pairs of genotypes with replacement from
-    the retained population. Repeated genotypes and self-pairs are allowed.
-    The index is
+    Match genotypes at all positions except the focal one. Divide the SD of
+    their fitness differences by that of equally many random-pair differences,
+    sampling both endpoints independently with replacement. Both SDs use
+    ``ddof=0``; matching does not depend on graph edges.
 
-    .. math::
-
-        I_{\mathrm{id}}(m) =
-        \frac{\operatorname{SD}[\Delta f_m(b)]}
-             {\operatorname{SD}[f(V_i)-f(U_i)]}.
-
-    Both standard deviations use ``ddof=0``. The finite control is part of the
-    estimator; replacing it with ``sqrt(2) * std(fitness)`` changes the statistic.
-    Matching depends on configuration values, not on graph edges or their
-    orientation. Any pair of observed alleles at the focal feature can be used.
-
-    This function draws a fresh local random stream and does not change NumPy's
-    global RNG state. Its current API has no seed parameter, so repeated calls
-    can differ. Use the seeded global function for a reproducible landscape mean.
-
-    No log transformation or measurement-error correction is applied. Removed
-    genotypes cannot contribute to the control, including isolates pruned during
-    construction. This index measures background dependence; it does not isolate
-    residual interactions after fitting a global epistasis model.
+    Each call draws a fresh local random stream, so results can differ. Fitness
+    is used as supplied. The index measures background dependence, including
+    variation that can arise from a nonlinear global fitness map.
 
     References
     ----------
@@ -295,38 +278,12 @@ def global_idiosyncratic_index(landscape, n_jobs=-1, seed=None, min_pairs: int =
 
     Notes
     -----
-    Enumerate each position and ordered pair of observed alleles. For each
-    mutation, match configurations at all other positions, calculate its effects,
-    and divide their population SD by that of an equally sized random control.
-    Both control endpoints are drawn independently with replacement from the
-    retained fitness population. Both SDs use ``ddof=0``. The landscape mean is
+    Apply :func:`idiosyncratic_index`'s calculation to each ordered allele pair
+    at each position. Forward and reverse mutations receive independent
+    controls. Average over eligible mutations, not positions or backgrounds.
 
-    .. math::
-
-        \overline{I}_{\mathrm{id}} =
-        \frac{1}{|\mathcal{M}|}\sum_{m\in\mathcal{M}} I_{\mathrm{id}}(m),
-
-    where M contains the mutations meeting ``min_pairs``. A mean of position
-    means or a mean weighted by background count would be a different summary.
-    Forward and reverse mutations have the same observed SD but receive
-    independent controls here.
-
-    Random draws follow configuration-column order, then sorted source and
-    target allele order, after parallel matching. The published tRNA notebook
-    reinitializes its seed for each background count; that study-specific seed
-    policy is not used by this function. Equal seeds only reproduce equal input
-    ordering and the same sampling procedure.
-
-    Graph adjacency does not define the matched pairs. Any two observed alleles
-    at one feature are considered, including nonadjacent ordinal values. However,
-    genotypes pruned during graph construction remain unavailable to both effects
-    and controls. Reproducing a study requires its full reference population,
-    including isolated genotypes when the study includes them.
-
-    Fitness is used as supplied. The result summarizes background dependence,
-    which can also arise from a nonlinear global fitness map; it is not a test
-    separating global epistasis from specific interactions. The function returns
-    a scalar, without per-position summaries or an uncertainty estimate.
+    Matching uses configuration values rather than graph edges. Controls use
+    only retained genotypes, so graph pruning changes the reference population.
 
     References
     ----------
