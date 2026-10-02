@@ -1,0 +1,298 @@
+{
+  "schema_version": 1,
+  "kind": "metrics",
+  "policy": "The supplied bibliography is not exhaustive. Reassess literature for every metric; cite canonical definitions even outside prestigious venues. Never close a metric gap merely because its supplied papers were reviewed.",
+  "metrics": [
+    {
+      "id": "construction",
+      "functions": [
+        "n_lo",
+        "local_optima_ratio"
+      ],
+      "provenance": "canonical",
+      "synthetic_plan": "Exhaustive neighborhoods; ordinal vs categorical encodings, missing genotypes, ties, filters, plateaus, minimize/maximize.",
+      "candidate_study_ids": [
+        "PapkouRM23",
+        "WestmannGW24",
+        "WuDOLS16",
+        "JohnstonAWLPYA24",
+        "BankMHJ16"
+      ],
+      "literature_next_action": "Multiple experimental datasets and exact independent peak enumeration; extend neutral-plateau cases.",
+      "review_status": "partial; see tests/VALIDATION.md and case records"
+    },
+    {
+      "id": "classification",
+      "functions": [
+        "classify_epistasis"
+      ],
+      "provenance": "canonical",
+      "synthetic_plan": "Direct four-corner enumeration including additive and neutral squares; multiallelic and rank-label permutations.",
+      "candidate_study_ids": [
+        "PapkouRM23",
+        "BankMHJ16",
+        "WestmannGW24",
+        "JohnstonAWLPYA24"
+      ],
+      "literature_next_action": "Seek additional published class targets with matched denominator, background selection and uncertainty thresholds.",
+      "review_status": "partial; see tests/VALIDATION.md and case records"
+    },
+    {
+      "id": "gamma",
+      "functions": [
+        "gamma",
+        "gamma_star"
+      ],
+      "provenance": "canonical",
+      "synthetic_plan": "Direct directed-substitution pooled sums; sparse/multiallelic inputs; additive and pure-interaction anchors.",
+      "candidate_study_ids": [
+        "Ferretti2016",
+        "BankMHJ16"
+      ],
+      "literature_next_action": "Recover original empirical inputs and seek further independent studies; audit sparse estimator and multiallelic weighting.",
+      "review_status": "partial; see tests/VALIDATION.md and case records"
+    },
+    {
+      "id": "roughness_slope",
+      "functions": [
+        "r_s_ratio"
+      ],
+      "provenance": "canonical",
+      "synthetic_plan": "Independent OLS plus analytic additive/interaction cube; coding, zero slope and unit invariance.",
+      "candidate_study_ids": [
+        "Ferretti2016",
+        "Skwara2023",
+        "BankMHJ16"
+      ],
+      "literature_next_action": "Find multiple numerical targets with explicit coding and raw versus normalized ruggedness; resolve earlier Figure4 inputs.",
+      "review_status": "partial; see tests/VALIDATION.md and case records"
+    },
+    {
+      "id": "higher_order",
+      "functions": [
+        "higher_order_epistasis"
+      ],
+      "provenance": "adapted",
+      "synthetic_plan": "Known orthogonal components and incomplete/rank-deficient designs; in-sample residual R2.",
+      "candidate_study_ids": [
+        "PhillipsLMDCJCMWD21",
+        "KuoJCCLHWC20",
+        "PoelwijkSR19"
+      ],
+      "literature_next_action": "Distinguish OLS, conditional means, LASSO, held-out R2 and squared correlation in every new paper.",
+      "review_status": "partial; see tests/VALIDATION.md and case records"
+    },
+    {
+      "id": "walsh",
+      "functions": [
+        "walsh_hadamard"
+      ],
+      "provenance": "canonical",
+      "synthetic_plan": "Direct small transform, normalization by interaction order, reconstruction and reference changes.",
+      "candidate_study_ids": [
+        "Poelwijk2016",
+        "PoelwijkSR19",
+        "PhillipsLMDCJCMWD21"
+      ],
+      "literature_next_action": "Verify exact basis/normalization and author coefficients before promotion; seek another complete landscape.",
+      "review_status": "partial; see tests/VALIDATION.md and case records"
+    },
+    {
+      "id": "idiosyncrasy",
+      "functions": [
+        "idiosyncratic_index",
+        "global_idiosyncratic_index"
+      ],
+      "provenance": "adapted",
+      "synthetic_plan": "Enumerated matched backgrounds, SD convention, random-pair baseline and undefined-mutation aggregation.",
+      "candidate_study_ids": [
+        "Lyons2020",
+        "BakerleeNSRD22"
+      ],
+      "literature_next_action": "Original Lyons empirical reproduction first; audit global summary as a possible extension, then reassess gaps.",
+      "review_status": "partial; see tests/VALIDATION.md and case records"
+    },
+    {
+      "id": "returns_costs",
+      "functions": [
+        "diminishing_returns_index",
+        "increasing_costs_index"
+      ],
+      "provenance": "unconfirmed",
+      "synthetic_plan": "Explicit background/effect correlations, sign selection and constant-effect degeneracies.",
+      "candidate_study_ids": [
+        "Lyons2020"
+      ],
+      "literature_next_action": "Confirm exact aggregate-index and ceiling-normalization provenance; do not substitute biological context for a definition.",
+      "review_status": "partial; see tests/VALIDATION.md and case records"
+    },
+    {
+      "id": "ee",
+      "functions": [
+        "evolvability_enhancing_mutations"
+      ],
+      "provenance": "canonical",
+      "synthetic_plan": "Known neighbor effects, focal-site exclusion, orientation, denominator and significance rule.",
+      "candidate_study_ids": [
+        "Wagner2023"
+      ],
+      "literature_next_action": "Reproduce original EE analysis with its exact neighbor/test conventions; correct reference provenance before extension.",
+      "review_status": "partial; see tests/VALIDATION.md and case records"
+    },
+    {
+      "id": "neutrality",
+      "functions": [
+        "neutrality"
+      ],
+      "provenance": "adapted",
+      "synthetic_plan": "Count all neighbor pairs at threshold independently of construction epsilon.",
+      "candidate_study_ids": [],
+      "literature_next_action": "Match experimental threshold/neutrality definitions; no universal paper fraction assumed.",
+      "review_status": "partial; see tests/VALIDATION.md and case records"
+    },
+    {
+      "id": "fitness_effects",
+      "functions": [
+        "fitness_distribution",
+        "fitness_effect_distribution",
+        "single_mutation_effects",
+        "all_mutation_effects"
+      ],
+      "provenance": "canonical",
+      "synthetic_plan": "Hand arrays and B-A pairs; reverse mutations, one position, missing backgrounds and moments.",
+      "candidate_study_ids": [],
+      "literature_next_action": "Basic arithmetic has no required prestige citation; audit each source fitness scale and replicate aggregation.",
+      "review_status": "partial; see tests/VALIDATION.md and case records"
+    },
+    {
+      "id": "fdc",
+      "functions": [
+        "fdc"
+      ],
+      "provenance": "canonical",
+      "synthetic_plan": "Hand distances and Pearson/Spearman correlations, multiple optima and minimization.",
+      "candidate_study_ids": [
+        "JonesForrest1995"
+      ],
+      "literature_next_action": "Review original FDC and seek exact benchmark results on defined distance spaces.",
+      "review_status": "partial; see tests/VALIDATION.md and case records"
+    },
+    {
+      "id": "autocorrelation",
+      "functions": [
+        "autocorrelation"
+      ],
+      "provenance": "canonical",
+      "synthetic_plan": "Exact finite-graph transition expectations versus seeded random walks.",
+      "candidate_study_ids": [
+        "Weinberger1990"
+      ],
+      "literature_next_action": "Audit stationarity, weighting, centering and lag; seek justified empirical/simulation targets.",
+      "review_status": "partial; see tests/VALIDATION.md and case records"
+    },
+    {
+      "id": "neighbor_correlation",
+      "functions": [
+        "neighbor_fitness_correlation"
+      ],
+      "provenance": "unconfirmed",
+      "synthetic_plan": "Compute neighbor means then requested correlation; isolate edge-weighted alternatives.",
+      "candidate_study_ids": [],
+      "literature_next_action": "Establish definition provenance; distinguish correlation with mean neighbor fitness from edge-endpoint correlation.",
+      "review_status": "partial; see tests/VALIDATION.md and case records"
+    },
+    {
+      "id": "custom_indices",
+      "functions": [
+        "gradient_intensity",
+        "fitness_flattening_index"
+      ],
+      "provenance": "unconfirmed",
+      "synthetic_plan": "Direct documented equations, unit scaling, sign and degeneracy tests.",
+      "candidate_study_ids": [],
+      "literature_next_action": "Ask author for provenance if needed; record original definitions without forcing literature citations.",
+      "review_status": "partial; see tests/VALIDATION.md and case records"
+    },
+    {
+      "id": "accessibility",
+      "functions": [
+        "local_optima_accessibility",
+        "global_optima_accessibility"
+      ],
+      "provenance": "canonical",
+      "synthetic_plan": "Exact reachable sets, endpoint inclusion, disconnected components and multiple optima.",
+      "candidate_study_ids": [
+        "BankMHJ16",
+        "PapkouRM23",
+        "WuDOLS16"
+      ],
+      "literature_next_action": "Differentiate path existence, all-target intersections, walk probabilities and functional undirected graphs.",
+      "review_status": "partial; see tests/VALIDATION.md and case records"
+    },
+    {
+      "id": "path_lengths",
+      "functions": [
+        "mean_path_length_to_local_optima",
+        "mean_path_length_to_global_optimum"
+      ],
+      "provenance": "adapted",
+      "synthetic_plan": "Enumerate tiny paths or solve absorbing chain with an explicit transition rule.",
+      "candidate_study_ids": [
+        "BankMHJ16"
+      ],
+      "literature_next_action": "Match shortest-path, all-path and stochastic-walk expectations before a comparison.",
+      "review_status": "partial; see tests/VALIDATION.md and case records"
+    },
+    {
+      "id": "distances",
+      "functions": [
+        "mean_distance_to_local_optima",
+        "mean_distance_to_global_optimum"
+      ],
+      "provenance": "canonical",
+      "synthetic_plan": "Hand genotype distances, multiple optima, missing paths and custom metrics.",
+      "candidate_study_ids": [],
+      "literature_next_action": "Find paper targets specifying the same distance and averaging population; distinguish distance from path length.",
+      "review_status": "partial; see tests/VALIDATION.md and case records"
+    },
+    {
+      "id": "basins",
+      "functions": [
+        "basin_fitness_correlation"
+      ],
+      "provenance": "adapted",
+      "synthetic_plan": "Greedy vs full accessible basins, tied choices and basin transformations.",
+      "candidate_study_ids": [
+        "WestmannGW24"
+      ],
+      "literature_next_action": "Resolve source version and bounded-path definition before any additional empirical claim.",
+      "review_status": "partial; see tests/VALIDATION.md and case records"
+    },
+    {
+      "id": "bypass",
+      "functions": [
+        "extradimensional_bypass"
+      ],
+      "provenance": "adapted",
+      "synthetic_plan": "Direct small detour motif enumeration and known local path counts.",
+      "candidate_study_ids": [
+        "PapkouRM23",
+        "WuDOLS16"
+      ],
+      "literature_next_action": "Local reciprocal-square bypass fraction differs from global indirect accessibility; seek matching original target.",
+      "review_status": "partial; see tests/VALIDATION.md and case records"
+    },
+    {
+      "id": "wrappers",
+      "functions": [
+        "profile",
+        "list_metrics"
+      ],
+      "provenance": "infrastructure",
+      "synthetic_plan": "Selections, schema, argument propagation, exceptions and equality to direct metric calls.",
+      "candidate_study_ids": [],
+      "literature_next_action": "Inherits metric evidence; no separate paper necessary.",
+      "review_status": "partial; see tests/VALIDATION.md and case records"
+    }
+  ]
+}

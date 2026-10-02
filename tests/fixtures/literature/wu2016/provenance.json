@@ -1,0 +1,30 @@
+{
+  "doi": "10.7554/eLife.16965",
+  "authors": "Wu NC, Dai L, Olson CA, Lloyd-Smith JO, Sun R",
+  "license": "CC BY",
+  "source_url": "https://cdn.elifesciences.org/articles/16965/elife-16965-supp-v2.zip",
+  "version": "Version of Record v2 supplements",
+  "target_locator": "Results PDF p. 9 / Figure 4A (peaks); Results PDF p. 11 / Figure 4\u2014figure supplement 2C (all-15 accessibility); Methods PDF pp. 20\u201322",
+  "measured_rows": 149361,
+  "imputed_rows": 10639,
+  "fixture": "landscape.csv.gz",
+  "fixture_sha256": "8fd9fa77f92bf4a2b1892223525423f668a9e55b5babaf4140ae2c621cf03336",
+  "rows": 160000,
+  "columns": [
+    "sequence",
+    "fitness",
+    "imputed"
+  ],
+  "source_files": [
+    {
+      "relative_research_path": "papers/Wu2016/sources/elife-16965-supp-v2-expanded/elife-16965-supp/elife_poa_e16965_Supplementary_Dataset_1.xlsx",
+      "sha256": "ac9a16295cd24110ad3ef4bcc57741f023ff9f3f5c3d9f5fdc0a94b996dca9b7"
+    },
+    {
+      "relative_research_path": "papers/Wu2016/sources/elife-16965-supp-v2-expanded/elife-16965-supp/elife_poa_e16965_Supplementary_Dataset_2.xlsx",
+      "sha256": "01db8ef421236dc35ca0481e8c9afe9d1673cb3ac4da1e692a3486ad6a4b807f"
+    }
+  ],
+  "curation": "Select named columns; concatenate measured and imputed rows; sort by sequence; serialize IEEE float64 with 17 significant digits; deterministic gzip. No fitness values changed.",
+  "retrieved": "2026-09-30"
+}

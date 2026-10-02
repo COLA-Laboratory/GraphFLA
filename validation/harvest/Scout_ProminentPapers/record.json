@@ -1,0 +1,1059 @@
+{
+  "study_key": "Scout_ProminentPapers",
+  "dossier": "papers/_scout",
+  "recorded_at": "2026-10-01T12:05:00Z",
+  "agent": "claude-scout",
+  "_what_this_record_is": "A DISCOVERY record, not a single-study record. It holds a ranked shortlist of candidate reproducibility anchors for GraphFLA metrics, one `paper` block per candidate under `candidates`, and `overlaps` entries keyed by `paper_key`. Where the target was cheap and the input already local, the reproduction was attempted and the true outcome recorded; everything else is `not_attempted` or `input_unavailable` with a reason.",
+  "paper": {
+    "title": "Evaluation of machine learning-assisted directed evolution across diverse combinatorial landscapes",
+    "doi": "10.1016/j.cels.2025.101387",
+    "year": 2025,
+    "bibliography_verified_against": "crossref",
+    "supplied_bibliography_errors": "Not in the supplied corpus; no errors to report. This is the RANK 1 candidate and is placed here so the record has a primary `paper` block as the schema expects; all candidates including this one are itemised under `candidates`."
+  },
+  "candidates": [
+    {
+      "rank": 1,
+      "paper_key": "LiYJGYA25",
+      "title": "Evaluation of machine learning-assisted directed evolution across diverse combinatorial landscapes",
+      "authors": "Li, Francesca-Zhoufan; Yang, Jason; Johnston, Kadina E.; Gursoy, Emre; Yue, Yisong; Arnold, Frances H.",
+      "journal": "Cell Systems",
+      "year": 2025,
+      "volume_issue_pages": "16(9), article 101387",
+      "doi": "10.1016/j.cels.2025.101387",
+      "preprint_doi": "10.1101/2024.10.24.619774",
+      "bibliography_verified_against": "crossref",
+      "anchors_metrics": [
+        "fitness_distribution",
+        "classify_epistasis",
+        "local_optima_ratio"
+      ],
+      "printed_target_location": "Table S1 (Supplemental information), 'Combinatorial landscapes with additional details including landscapes with fewer than 1% active variants, related to Table 1'; 16 rows x columns Percent active | Fraction of local optima | Fraction of non-magnitude epistasis | Cauchy peak location | Kurtosis | Number of KDE peaks",
+      "printed_or_plotted": "printed",
+      "data_obtainable": "YES and already local: 15 of the 16 landscapes are bundled in data/BioSequence/. Authors' own deposit: Zenodo 10.5281/zenodo.13910506 and github.com/fhalab/SSMuLA.",
+      "definitions_likely_compatible": "YES for the fitness statistics (the paper names the exact scipy calls GraphFLA uses). NO as printed for the two ruggedness columns, which are restricted to 'active' variants under a cutoff that cannot be rebuilt from the bundled CSVs.",
+      "judgement": "Strongest candidate found and the first anchor for fitness_distribution, which previously had none. 14 of 15 local landscapes reproduce BOTH the Cauchy peak location and the kurtosis at the printed precision. Almost certainly the source GraphFLA's fitness_distribution was implemented from."
+    },
+    {
+      "rank": 2,
+      "paper_key": "SongZ21",
+      "title": "Unbiased inference of the fitness landscape ruggedness from imprecise fitness estimates",
+      "authors": "Song, Siliang; Zhang, Jianzhi",
+      "journal": "Evolution",
+      "year": 2021,
+      "volume_issue_pages": "75(11), 2658-2671",
+      "doi": "10.1111/evo.14363",
+      "bibliography_verified_against": "crossref",
+      "anchors_metrics": [
+        "r_s_ratio",
+        "n_lo",
+        "classify_epistasis",
+        "gamma",
+        "higher_order_epistasis"
+      ],
+      "printed_target_location": "Table 1, 'Ruggedness of three empirical fitness landscapes analyzed. Extrapolated ruggedness is presented, followed in parentheses by that based on average fitness estimates.' Eight statistics x three landscapes; the parenthesised column is the recomputable one.",
+      "printed_or_plotted": "printed",
+      "data_obtainable": "YES and already local for two of three landscapes, at identical row counts: data/BioSequence/Domingo2018.csv (4,176) and data/BioSequence/Kuo2020.csv (197,890). Authors' code (not data) at github.com/song88180/fitness-landscape-error.",
+      "definitions_likely_compatible": "r/s YES for biallelic loci (formula identical to GraphFLA's) but convention-dependent for multi-allelic; N_max YES against the authors' code (strict, observed neighbours only) though NOT against their prose; F_rse YES in substance; gamma NO; E NO.",
+      "judgement": "Second r_s_ratio anchor, reproduced exactly on Kuo under the paper's own allele coding (4.0628980 vs printed 4.063). Also yields the single most actionable GraphFLA finding in this pass: r_s_ratio is not invariant to the choice of reference allele. Settles decisively that this paper's gamma is NOT GraphFLA's gamma."
+    },
+    {
+      "rank": 3,
+      "paper_key": "FerrettiWTA18",
+      "title": "Evolutionary constraints in fitness landscapes",
+      "authors": "Ferretti, Luca; Weinreich, Daniel; Tajima, Fumio; Achaz, Guillaume",
+      "journal": "Heredity",
+      "year": 2018,
+      "volume_issue_pages": "121(5), 466-481",
+      "doi": "10.1038/s41437-018-0110-1",
+      "preprint": "arXiv:1507.00041, 'Epistasis and constraints in fitness landscapes', SEVEN authors (Ferretti, Weinreich, Schmiegelt, Yamauchi, Kobayashi, Tajima, Achaz); the journal version dropped to four and was retitled. This is NOT the preprint of the JTB 2016 gamma paper, whose preprint is bioRxiv 10.1101/042010.",
+      "bibliography_verified_against": "crossref",
+      "anchors_metrics": [
+        "gamma",
+        "gamma_star",
+        "r_s_ratio",
+        "n_lo"
+      ],
+      "printed_target_location": "Section 5 'Measures on two experimental landscapes' running text, and Figure 7 panel annotations, in arXiv:1507.00041 (Europe PMC and NCBI return abstract-only for PMC6180097).",
+      "printed_or_plotted": "printed (running text, plus printed text annotations inside Figure 7; no value was read off a plotted point)",
+      "data_obtainable": "Partly. The TEM landscape is local as data/BioSequence/Weinreich2006Tan2011_Weinreich2006.csv, subject to the documented tenfold defect. The authors' own input is Weinreich 2006 Science SOM / the MAGELLAN .fl file; the MAGELLAN library is currently unreachable.",
+      "definitions_likely_compatible": "YES - this is the paper that defines gamma and gamma_star, and GraphFLA cites its companion (Ferretti et al. 2016 JTB) as the source.",
+      "judgement": "Independently reprints the A. niger csI values already in LEDGER.md (confirming the ledger's reading of Ferretti 2016 Fig. 4c) and adds four printed TEM targets. Its most valuable contribution is eq. (15), gamma* = 1 - phi_s - 2*phi_rs, an exact identity needing no external data, which exposed a real GraphFLA tie-handling defect."
+    },
+    {
+      "rank": 4,
+      "paper_key": "CerveraLE16",
+      "title": "Effect of Host Species on Topography of the Fitness Landscape for a Plant RNA Virus",
+      "authors": "Cervera, Hector; Lalic, Jasna; Elena, Santiago F.",
+      "journal": "Journal of Virology",
+      "year": 2016,
+      "volume_issue_pages": "90(22), 10160-10169",
+      "doi": "10.1128/jvi.01243-16",
+      "bibliography_verified_against": "crossref",
+      "anchors_metrics": [
+        "n_lo",
+        "r_s_ratio",
+        "gamma",
+        "classify_epistasis"
+      ],
+      "printed_target_location": "Table 2, 'Summary statistics describing the topographies of both landscapes', computed with the MAGELLAN web server. Columns include number of peaks, number of sinks, a slope/roughness ratio, rho (= Ferretti's gamma), and the frequencies of multiplicative / magnitude / sign / reciprocal-sign epistasis, for two host landscapes of 5 biallelic loci.",
+      "printed_or_plotted": "printed (table). NOTE: this agent did NOT read Table 2 in the primary source - Europe PMC and NCBI return abstract-only for PMC5105653 - so its specific values are deliberately NOT transcribed into this record. Only the table's existence, caption and column list are recorded.",
+      "data_obtainable": "NO. The 32 per-host fitness values appear only in Figure 2; Table 1 lists mutations, not fitnesses; there is no data-availability statement and no supplementary data table. The A. thaliana values originate in Lalic & Elena 2015, J Evol Biol 28:2236-2247. No local CSV. MAGELLAN library unreachable.",
+      "definitions_likely_compatible": "Probably, since all statistics come from MAGELLAN, which implements Ferretti's definitions. Two traps: the statistic is labelled slope-to-roughness (the reciprocal of r/s) and it must be settled whether the printed numbers are theta or r/s; and the Results gloss rho as a correlation of fitness LEVELS while the Methods define it as a correlation of fitness EFFECTS.",
+      "judgement": "The only tabulated gamma plus peaks/sinks/r-s/epistasis-type panel for a real landscape outside Ferretti's own work. Would anchor four metrics at once, which is exactly the combination the project lacks. Blocked entirely on fitness-data access."
+    },
+    {
+      "rank": 5,
+      "paper_key": "WeinreichLJH18",
+      "title": "The Influence of Higher-Order Epistasis on Biological Fitness Landscape Topography",
+      "authors": "Weinreich, Daniel M.; Lan, Yinghong; Jaffe, Jacob; Heckendorn, Robert B.",
+      "journal": "Journal of Statistical Physics",
+      "year": 2018,
+      "volume_issue_pages": "172(1), 208-225",
+      "doi": "10.1007/s10955-018-1975-3",
+      "bibliography_verified_against": "crossref",
+      "anchors_metrics": [
+        "n_lo",
+        "higher_order_epistasis",
+        "walsh_hadamard"
+      ],
+      "printed_target_location": "Table 1 ('Analyses of published combinatorially complete empirical and simulated (NK) fitness landscapes, sorted by P value associated with Kendall's tau_b'), columns 'Number of loci (L)' and 'Number of maxima', 17 empirical rows. Table 3 ('Average epistatic influence on fitness landscape topography as a function of epistatic order in select datasets'), column 'Aggregate reduction in residual variance', for three empirical landscapes and one NK landscape. Decomposition is explicitly Fourier-Walsh.",
+      "printed_or_plotted": "printed",
+      "data_obtainable": "YES and largely local: roughly 15 of the 17 Table 1 landscapes have bundled CSVs, and all three Table 3 empirical landscapes do (Palmer_DHFR_ic75.csv, Bridgham2009.csv, Mira2015_TEM_AM.csv).",
+      "definitions_likely_compatible": "n_lo YES. higher_order_epistasis UNCERTAIN: their column is a per-order INCREMENT in a Fourier-Walsh basis, GraphFLA returns a CUMULATIVE one-hot OLS R-squared, so the comparison is R2(k) - R2(k-1) and the match is not guaranteed.",
+      "judgement": "The best remaining cheap target for the higher_order_epistasis / walsh_hadamard family, which currently has three anchors under three different conventions. Ranked below the top four only because the reproduction was not attempted in this pass. Its Table 2 is additionally a curated inventory of 18 further combinatorially complete landscapes for corpus expansion."
+    },
+    {
+      "rank": 6,
+      "paper_key": "JonesF95",
+      "title": "Fitness Distance Correlation as a Measure of Problem Difficulty for Genetic Algorithms",
+      "authors": "Jones, Terry; Forrest, Stephanie",
+      "journal": "Proceedings of the Sixth International Conference on Genetic Algorithms (ICGA'95), ed. Larry J. Eshelman, Morgan Kaufmann, pp. 184-192. Archival record: Santa Fe Institute Working Paper 1995-02-022, February 1995, RePEc:wop:safiwp:95-02-022.",
+      "year": 1995,
+      "doi": "NO DOI EXISTS. The ICGA'95 proceedings are not registered with Crossref; Morgan Kaufmann's pre-2000 ICGA volumes were never DOI-registered. Do not invent one. Cite the SFI working paper as the stable, openly downloadable artifact.",
+      "bibliography_verified_against": "publisher_page (researchr/dblp mirror for pages and editor; SFI working-paper title page for the author list)",
+      "anchors_metrics": [
+        "fdc"
+      ],
+      "printed_target_location": "Section 4.1 running text and the Figure 2 caption. The paper states FDC is computed exhaustively for spaces of 2^12 points or fewer, so those values are exact.",
+      "printed_or_plotted": "printed",
+      "data_obtainable": "NOT WITHOUT EFFORT. The fitness tables live in Whitley, FOGA 1 (1991) pp. 221-241; Deb & Goldberg, IlliGAL Report 92001; and Liepins & Vose, FOGA 1 (1991) pp. 36-50 - all pre-DOI and reproduced inconsistently in later literature, so the originals are required.",
+      "definitions_likely_compatible": "YES in substance, with one implementation mismatch: Jones & Forrest use the PEARSON correlation against Hamming distance to the NEAREST global optimum, while GraphFLA's fdc defaults to method='spearman'. Any comparison must pass method='pearson'.",
+      "judgement": "The origin of the metric, and the only source of exact recomputable FDC values. Blocked on three 1991-92 function definitions, not on GraphFLA. CAVEAT: the specific r values were reported by a delegated search and were NOT read by this agent in the primary PDF; they must be re-read before use."
+    },
+    {
+      "rank": 7,
+      "paper_key": "ManivannanO26",
+      "title": "Deconstructing empirical fitness seascapes across scales of granularity",
+      "authors": "Manivannan, Swathi Nachiar; Ogbunugafor, C Brandon",
+      "journal": "G3: Genes, Genomes, Genetics",
+      "year": 2026,
+      "volume_issue_pages": "16, article jkag166",
+      "doi": "10.1093/g3journal/jkag166",
+      "bibliography_verified_against": "crossref",
+      "anchors_metrics": [
+        "r_s_ratio",
+        "walsh_hadamard"
+      ],
+      "printed_target_location": "r/s DEFINITION printed as Methods eqs. 11-13. r/s VALUES appear only as text annotations inside Figure 6 panels a, b, d, e. Table 1 is the dataset inventory and Table 2 the metric inventory; there is NO table of computed statistics.",
+      "printed_or_plotted": "figure-annotated (printed text inside a figure, not a plotted point and not a table cell)",
+      "data_obtainable": "YES, mostly local: daSilva2010_*, Guerrero2019_* (9 files), Hall2010_*, Khan2011Flynn2013_*, Lozovsky_DHFR_ic50_c57..c61, Palmer_DHFR_ic75, Mira2015_TEM_* (15 files), Weinreich2006Tan2011_* (subject to the known defect).",
+      "definitions_likely_compatible": "UNCERTAIN. Eq. (12) as printed is the MEAN SQUARED residual with no square root, unlike Song & Zhang's otherwise identical formula which takes the root. Either a typographical error or r is on a squared scale; must be settled first.",
+      "judgement": "Medium strength. Would anchor r_s_ratio across 10 seascapes and many conditions with local inputs, but the targets are figure annotations and the roughness definition as printed is ambiguous. Worth one focused session mainly for breadth."
+    }
+  ],
+  "sources": [
+    {
+      "url": "https://api.crossref.org/works/10.1016/j.cels.2025.101387",
+      "http_status": 200,
+      "what": "Crossref metadata, Li et al. 2025"
+    },
+    {
+      "url": "https://www.biorxiv.org/content/10.1101/2024.10.24.619774v1.full.pdf",
+      "http_status": 200,
+      "sha256": "7afe869cf46882186dc8a9f62e70cf447a73d276ee034881f59dc40e3fefd618",
+      "saved_path": "papers/_scout/sources/Li2025_biorxiv_v1_scout.pdf",
+      "what": "Li et al. 2025 preprint full text incl. Table S1 and Methods"
+    },
+    {
+      "url": "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=pmc&id=9018209",
+      "http_status": 200,
+      "sha256": "360c450b09023078c896386e9e51540e31d6dddbec793016718be1379596802c",
+      "saved_path": "papers/_scout/sources/PMC9018209_ncbi.xml",
+      "what": "Song & Zhang 2021 full text incl. Table 1 and Methods"
+    },
+    {
+      "url": "https://raw.githubusercontent.com/song88180/fitness-landscape-error/master/utils/utils.py",
+      "http_status": 200,
+      "sha256": "ff6487628553c15f1de4cae7d5ee7370c4b7a311543581d416f8c6b7cb159dcc",
+      "saved_path": "papers/_scout/sources/SongZhang2021_utils_scout.py",
+      "what": "Song & Zhang 2021 ruggedness implementations"
+    },
+    {
+      "url": "https://raw.githubusercontent.com/song88180/fitness-landscape-error/master/5_Empirical_Extrapolation/trna_Domingo/Generate_raw_data.ipynb",
+      "http_status": 200,
+      "what": "Song & Zhang Domingo empirical pipeline (read, not archived): reveals the BASES=['A','T','C','G'] allele coding, Ridge in cal_r_s, strict get_N_max, two-sided cal_epi and the notebook-specific cal_gamma"
+    },
+    {
+      "url": "https://raw.githubusercontent.com/song88180/fitness-landscape-error/master/5_Empirical_Extrapolation/trna_Domingo/Prepare_index_files.ipynb",
+      "http_status": 200,
+      "what": "Song & Zhang square-motif enumeration, showing the index-order filter on intermediates"
+    },
+    {
+      "url": "https://raw.githubusercontent.com/song88180/fitness-landscape-error/master/5_Empirical_Extrapolation/SD_seq/Generate_raw_data.ipynb",
+      "http_status": 200,
+      "what": "Song & Zhang Kuo empirical pipeline; confirms the same allele coding and Ridge"
+    },
+    {
+      "url": "https://arxiv.org/pdf/1507.00041",
+      "http_status": 200,
+      "sha256": "30cf7490e11ea3e3e308f289757f10c673402d18500f89ba110cdc99099f50d4",
+      "saved_path": "papers/_scout/sources/Ferretti2018_arxiv1507.00041_scout.pdf",
+      "what": "Ferretti et al. 2018 preprint: printed gamma 0.85 / r/s 0.43, Figure 7 labels incl. gamma* 0.59, and eq. (15)"
+    },
+    {
+      "url": "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC5986866/fullTextXML",
+      "http_status": 200,
+      "sha256": "5c59ff7546abb10b23f5b1461574eb4c490aec991cb869a113bc8001e5b49a67",
+      "saved_path": "papers/_scout/sources/Weinreich2018_fulltext_scout.xml",
+      "what": "Weinreich et al. 2018 full text incl. Tables 1-3"
+    },
+    {
+      "url": "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC3708503/fullTextXML",
+      "http_status": 200,
+      "sha256": "8bfa4cf3f8e19333093d31133b0374171d4eece25cf7a30ec9dfcefacd35ed27",
+      "saved_path": "papers/_scout/sources/PMC3708503_fulltext.xml",
+      "what": "Schenk et al. 2013 full text (ruled out: statistics are box plots)"
+    },
+    {
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC6180090/",
+      "http_status": 200,
+      "what": "Fragata et al. 2018 article page; confirms gamma / r/s / optima counts are figure-only"
+    },
+    {
+      "url": "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=pmc&id=6180097",
+      "http_status": 200,
+      "what": "Ferretti et al. 2018 Heredity - returns ABSTRACT ONLY; quotes taken from the arXiv preprint instead"
+    },
+    {
+      "url": "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=pmc&id=5105653",
+      "http_status": 200,
+      "what": "Cervera et al. 2016 - returns ABSTRACT ONLY; Table 2 NOT read"
+    },
+    {
+      "url": "http://wwwabi.snv.jussieu.fr/public/Magellan/",
+      "http_status": null,
+      "what": "MAGELLAN landscape library - CONNECTION TIMED OUT over both http and https"
+    }
+  ],
+  "overlaps": [
+    {
+      "paper_key": "LiYJGYA25",
+      "metric": "fitness_distribution",
+      "paper_value": {
+        "note": "Two printed statistics per landscape: Cauchy peak location, and kurtosis (scipy default = Fisher/excess).",
+        "ParD2": {
+          "cauchy_loc": 0.0807,
+          "kurtosis_fisher": 0.07
+        },
+        "ParD3": {
+          "cauchy_loc": 0.2521,
+          "kurtosis_fisher": -0.29
+        },
+        "GB1": {
+          "cauchy_loc": 0.0003,
+          "kurtosis_fisher": 76.92
+        },
+        "T7": {
+          "cauchy_loc": 0.0,
+          "kurtosis_fisher": 46.51
+        },
+        "TEV": {
+          "cauchy_loc": -0.0114,
+          "kurtosis_fisher": 37.74
+        },
+        "TrpB3A": {
+          "cauchy_loc": -0.0399,
+          "kurtosis_fisher": 53.44
+        },
+        "TrpB3B": {
+          "cauchy_loc": -0.0554,
+          "kurtosis_fisher": 84.31
+        },
+        "TrpB3C": {
+          "cauchy_loc": -0.0736,
+          "kurtosis_fisher": 7.15
+        },
+        "TrpB3D": {
+          "cauchy_loc": 0.0036,
+          "kurtosis_fisher": 32.52
+        },
+        "TrpB3E": {
+          "cauchy_loc": 0.0008,
+          "kurtosis_fisher": 355.09
+        },
+        "TrpB3F": {
+          "cauchy_loc": -0.023,
+          "kurtosis_fisher": 47.49
+        },
+        "TrpB3G": {
+          "cauchy_loc": -0.0037,
+          "kurtosis_fisher": 131.81
+        },
+        "TrpB3H": {
+          "cauchy_loc": -0.0152,
+          "kurtosis_fisher": 464.45
+        },
+        "TrpB3I": {
+          "cauchy_loc": 0.0228,
+          "kurtosis_fisher": 9.38
+        },
+        "TrpB4": {
+          "cauchy_loc": 0.0118,
+          "kurtosis_fisher": 48.56
+        }
+      },
+      "locator": "Table S1, Supplemental information, bioRxiv v1 PDF p.21; columns 'Cauchy peak location' and 'Kurtosis'",
+      "quote": "Table S1. Combinatorial landscapes with additional details including landscapes with fewer than 1% active variants, related to Table 1.",
+      "printed_or_plotted": "printed",
+      "definition_match": "yes",
+      "definition_quote": "We used the 'statistical functions' (`scipy.stats`) and signal (`scipy.signal`) modules from the SciPy Python package75 to calculate kurtosis, estimate the Cauchy peak location, and determine the number of KDE peaks. Specifically, kurtosis was calculated using the `kurtosis` function with default settings from the `stats` module. Cauchy peak location was estimated using the `fit` method from the `cauchy` distribution object in the `stats` module.",
+      "definition_divergence": "One convention offset only: Li et al. report scipy's default Fisher (excess) kurtosis; GraphFLA adds 3 to convert to Pearson's. The comparison is graphfla_kurtosis - 3.",
+      "input": {
+        "path": "data/BioSequence/{Lite2020_ParD2, Lite2020_ParD3, Wu2016_GB1, Tu2022_T7, Tu2022_TEV, Johnston2024_TrpB3A..TrpB3I, Johnston2024_TrpB4}.csv",
+        "n_rows": "7882, 7882, 149361, 6725, 159132, 7784-7996 (TrpB3*), 159128 (TrpB4)",
+        "preprocessing": "fitness divided by its maximum, per the paper: 'All fitness values were normalized so that the variant with the maximum fitness has a value of one.' No imputation, per 'We do not impute missing values.'"
+      },
+      "graphfla_call": "Landscape().build_from_data(df[pos_cols], df['fitness']/df['fitness'].max(), data_types={c:'categorical'}); analysis.fitness_distribution(ls)",
+      "graphfla_value": {
+        "ParD2": {
+          "cauchy_loc": 0.080715,
+          "kurtosis_minus_3": 0.067
+        },
+        "ParD3": {
+          "cauchy_loc": 0.252104,
+          "kurtosis_minus_3": -0.2906
+        },
+        "GB1": {
+          "cauchy_loc": 0.000293,
+          "kurtosis_minus_3": 76.9202
+        },
+        "T7": {
+          "cauchy_loc": -0.723299,
+          "kurtosis_minus_3": -0.3771
+        },
+        "TEV": {
+          "cauchy_loc": -0.01136,
+          "kurtosis_minus_3": 37.7374
+        },
+        "TrpB3A": {
+          "cauchy_loc": -0.039944,
+          "kurtosis_minus_3": 53.4413
+        },
+        "TrpB3B": {
+          "cauchy_loc": -0.055374,
+          "kurtosis_minus_3": 84.3071
+        },
+        "TrpB3C": {
+          "cauchy_loc": -0.073578,
+          "kurtosis_minus_3": 7.1462
+        },
+        "TrpB3D": {
+          "cauchy_loc": 0.003583,
+          "kurtosis_minus_3": 32.5161
+        },
+        "TrpB3E": {
+          "cauchy_loc": 0.000781,
+          "kurtosis_minus_3": 355.0871
+        },
+        "TrpB3F": {
+          "cauchy_loc": -0.02296,
+          "kurtosis_minus_3": 47.4855
+        },
+        "TrpB3G": {
+          "cauchy_loc": -0.003729,
+          "kurtosis_minus_3": 131.8072
+        },
+        "TrpB3H": {
+          "cauchy_loc": -0.015176,
+          "kurtosis_minus_3": 464.4492
+        },
+        "TrpB3I": {
+          "cauchy_loc": 0.0228,
+          "kurtosis_minus_3": 9.3821
+        },
+        "TrpB4": {
+          "cauchy_loc": 0.011761,
+          "kurtosis_minus_3": 48.5621
+        }
+      },
+      "outcome": "reproduced_with_precision",
+      "reason": "14 of 15 locally-bundled landscapes reproduce BOTH the Cauchy peak location (4 dp) and the kurtosis (2 dp) at the printed precision. The single exception is T7 (see the separate T7 overlap entry). The 16th Table S1 landscape, DHFR, was not attempted: Li et al.'s DHFR is the amino-acid-level 20^3 landscape at A26/D27/L28 while the bundled Papkou2023_DHFR.csv is the nucleotide-level 4^9 landscape, so the inputs are not the same object. FIRST ANCHOR for this metric family.",
+      "lead_verification": "LEAD-VERIFIED. Re-run independently on data/BioSequence/Wu2016_GB1.csv and Tu2022_TEV.csv with ProteinLandscape over the non-null fitness rows: GB1 gives n_configs 149,361 and n_lo 184 (local-optima fraction 0.00123); TEV gives n_configs 159,132 and n_lo 1,109 (fraction 0.00697). All four figures match the agent exactly. The definition_incompatible verdict stands: Li et al. restrict starting variants to active ones and fold additive squares into magnitude, so their printed 0.40/0.56 non-magnitude and 0.005/0.060 local-optima fractions are not GraphFLA's quantities."
+    },
+    {
+      "paper_key": "LiYJGYA25",
+      "metric": "fitness_distribution",
+      "paper_value": {
+        "T7_cauchy_loc": 0.0,
+        "T7_kurtosis_fisher": 46.51
+      },
+      "locator": "Table S1, row T7",
+      "quote": "T7 1CEZ N748, R756, Q758 3.48 0.368 0.52 0.0000 46.51 11",
+      "printed_or_plotted": "printed",
+      "definition_match": "yes",
+      "definition_quote": "All fitness values were normalized so that the variant with the maximum fitness has a value of one.",
+      "definition_divergence": "None in definition. The divergence is in the INPUT: the bundled file is on a different fitness scale from Li et al.'s T7 input.",
+      "input": {
+        "path": "data/BioSequence/Tu2022_T7.csv",
+        "n_rows": 6725,
+        "preprocessing": "max-normalised; also tested after exp, 2**f and 10**f back-transforms"
+      },
+      "graphfla_call": "analysis.fitness_distribution(ls) on the max-normalised bundled fitness",
+      "graphfla_value": {
+        "cauchy_loc": -0.723299,
+        "kurtosis_minus_3": -0.3771,
+        "after_10_power_back_transform": {
+          "cauchy_loc": 0.0289,
+          "kurtosis_fisher": 39.39
+        }
+      },
+      "outcome": "mismatch",
+      "reason": "The bundled Tu2022_T7.csv is platykurtic (Fisher kurtosis -0.38) over the range -1.1766..0.8512, the shape of a log-transformed quantity, whereas Li's printed 46.51 / 0.0000 is the shape of a raw enrichment measure concentrated at zero with heavy tails. Undoing a base-10 log moves GraphFLA to 0.0289 / 39.39, much closer but still not matching. Tu2022_T7.csv and Tu2022_TEV.csv share an identical minimum of -1.1766, the signature of a curation-time floor, yet TEV reproduces exactly on the bundled scale while T7 does not. This is a DATA-PROVENANCE question about a bundled file, in the same class as the documented tenfold Weinreich2006 error, NOT a metric defect."
+    },
+    {
+      "paper_key": "LiYJGYA25",
+      "metric": "classify_epistasis",
+      "paper_value": {
+        "ParD2": 0.34,
+        "ParD3": 0.31,
+        "GB1": 0.4,
+        "T7": 0.52,
+        "TEV": 0.56,
+        "TrpB3A": 0.6,
+        "TrpB3B": 0.54,
+        "TrpB3I": 0.43
+      },
+      "locator": "Table S1, column 'Fraction of non-magnitude epistasis'",
+      "quote": "For each active variant, we assigned an epistasis type for each possible double substitution at chosen sites. We then calculated the fraction of epistasis type for each starting variant in the landscape. To enhance relevance to DE navigability, we incorporated additive interactions into magnitude epistasis, and merged sign and reciprocal sign epistasis into non-magnitude epistasis. Missing values are omitted.",
+      "printed_or_plotted": "printed",
+      "definition_match": "no",
+      "definition_quote": "For landscapes containing fitness data for variants with stop codons, \"active\" variants were defined as those 1.96 standard deviations above the mean fitness of all sequences containing stop codons, which are expected to be inactive. For GB1, T7, and TEV we followed the cutoffs set by the authors, based on the detection limit of their fitness measurement system.",
+      "definition_divergence": "Three divergences: (1) Li et al. restrict starting variants to ACTIVE ones, GraphFLA censuses all squares; (2) Li et al. fold ADDITIVE squares into magnitude, GraphFLA's three-way motif classification does not have an additive class; (3) Li et al. average per-starting-variant fractions, GraphFLA pools over all squares. The active cutoff cannot be rebuilt from the bundled CSVs because stop-codon rows are not present.",
+      "input": {
+        "path": "data/BioSequence/{Lite2020_ParD2, Lite2020_ParD3, Wu2016_GB1, Tu2022_T7, Tu2022_TEV, Johnston2024_TrpB3A, Johnston2024_TrpB3B, Johnston2024_TrpB3I}.csv",
+        "preprocessing": "none"
+      },
+      "graphfla_call": "classify_epistasis(ls, sample_cut_prob=0, seed=0); sign + reciprocal_sign",
+      "graphfla_value": {
+        "ParD2": 0.4195,
+        "ParD3": 0.3478,
+        "GB1": 0.5651,
+        "T7": 0.6785,
+        "TEV": 0.6652,
+        "TrpB3A": 0.6164,
+        "TrpB3B": 0.6479,
+        "TrpB3I": 0.5289
+      },
+      "outcome": "definition_incompatible",
+      "reason": "Values are in the right range but uniformly higher, exactly as expected when additive squares are not folded into magnitude and non-active starting variants are not excluded. Reproducible only if the per-landscape active cutoffs are recovered from the authors' code (github.com/fhalab/SSMuLA) or Zenodo 10.5281/zenodo.13910506. Measured here to size the divergence, not offered as a target. The two largest landscapes (GB1, 149,361 configurations; TEV, 159,132; 20 alleles per site) were measured in a later pass and behave exactly like the small ones, so the divergence is a property of the two definitions rather than an artefact of landscape size or of sparse activity alone.",
+      "lead_verification": "LEAD-VERIFIED. Re-run independently on data/BioSequence/Wu2016_GB1.csv and Tu2022_TEV.csv with ProteinLandscape over the non-null fitness rows: GB1 gives n_configs 149,361 and n_lo 184 (local-optima fraction 0.00123); TEV gives n_configs 159,132 and n_lo 1,109 (fraction 0.00697). All four figures match the agent exactly. The definition_incompatible verdict stands: Li et al. restrict starting variants to active ones and fold additive squares into magnitude, so their printed 0.40/0.56 non-magnitude and 0.005/0.060 local-optima fractions are not GraphFLA's quantities."
+    },
+    {
+      "paper_key": "LiYJGYA25",
+      "metric": "local_optima_ratio",
+      "paper_value": {
+        "ParD2": 0.001,
+        "ParD3": 0.001,
+        "GB1": 0.005,
+        "T7": 0.368,
+        "TEV": 0.06,
+        "TrpB3A": 0.39,
+        "TrpB3B": 0.667,
+        "TrpB3I": 0.006
+      },
+      "locator": "Table S1, column 'Fraction of local optima'",
+      "quote": "A local optimum is a variant with higher fitness than all its neighboring active variants differing by one",
+      "printed_or_plotted": "printed",
+      "definition_match": "no",
+      "definition_quote": "fraction of local optima (normalized to the number of variants measured)",
+      "definition_divergence": "Li et al. compare each candidate only against its ACTIVE neighbours, then divide by the number of variants MEASURED. GraphFLA's local_optima_ratio compares against all present neighbours with no activity filter. On sparsely-active landscapes the two differ by up to 70x.",
+      "input": {
+        "path": "same eight files as the classify_epistasis entry",
+        "preprocessing": "none"
+      },
+      "graphfla_call": "local_optima_ratio(ls)",
+      "graphfla_value": {
+        "ParD2": 0.00063,
+        "ParD3": 0.00051,
+        "GB1": 0.00123,
+        "T7": 0.01755,
+        "TEV": 0.00697,
+        "TrpB3A": 0.00778,
+        "TrpB3B": 0.00925,
+        "TrpB3I": 0.00206
+      },
+      "outcome": "definition_incompatible",
+      "reason": "The active-neighbour restriction is decisive: TrpB3B is 0.23% active, so nearly every active variant is a peak relative to other ACTIVE variants (printed 0.667) while only 74 of 7,996 are peaks against all present neighbours (0.00925). Recorded for completeness; local_optima_ratio is on the project's do-not-chase list in any case. GB1 (184/149,361 = 0.00123 vs printed 0.005) and TEV (1,109/159,132 = 0.00697 vs printed 0.060) were added in a later pass and show the same direction of divergence.",
+      "lead_verification": "LEAD-VERIFIED. Re-run independently on data/BioSequence/Wu2016_GB1.csv and Tu2022_TEV.csv with ProteinLandscape over the non-null fitness rows: GB1 gives n_configs 149,361 and n_lo 184 (local-optima fraction 0.00123); TEV gives n_configs 159,132 and n_lo 1,109 (fraction 0.00697). All four figures match the agent exactly. The definition_incompatible verdict stands: Li et al. restrict starting variants to active ones and fold additive squares into magnitude, so their printed 0.40/0.56 non-magnitude and 0.005/0.060 local-optima fractions are not GraphFLA's quantities."
+    },
+    {
+      "paper_key": "SongZ21",
+      "metric": "r_s_ratio",
+      "paper_value": 4.063,
+      "locator": "Table 1, Kuo et al. 2020 column, row 'r/s', parenthesised (average-fitness) value",
+      "quote": "r/s | 3.246 (3.355) | 1.964 (2.102) | 3.965 (4.063)",
+      "printed_or_plotted": "printed",
+      "definition_match": "yes",
+      "definition_quote": "The roughness value r is the square root of the mean squared fitness residual from the above regression and s is the average of the absolute values of the linear coefficients \u03b2 i (i =1, 2, \u2026, and n).",
+      "definition_divergence": "The formula is identical to GraphFLA's, but the ALLELE CODING differs and s is not invariant to it. The authors' notebooks build the design with BASES=['A','T','C','G'] over RNA sequences spelling U, so no U column is ever created and U becomes the implicit reference level; GraphFLA uses pd.get_dummies(drop_first=True), which drops the alphabetically first level, A. Same column space, so r is identical; different s, so the ratio differs by 8.9%.",
+      "input": {
+        "path": "data/BioSequence/Kuo2020.csv",
+        "sha256": "69a86caf1ccbfc94a519f5917624d6862a0dfede0082abae79300eda0bb959c0",
+        "n_rows": 197890,
+        "preprocessing": "none; fitness column used as-is"
+      },
+      "graphfla_call": "Landscape().build_from_data(df[pos_cols], df['fitness'], data_types={c:'categorical'}); analysis.r_s_ratio(ls)",
+      "graphfla_value": {
+        "graphfla_default_drop_first_A": 3.7324439,
+        "under_paper_coding_drop_U_OLS": 4.062898,
+        "under_paper_coding_drop_U_Ridge_alpha1": 4.0630308
+      },
+      "outcome": "reproduced_with_precision",
+      "reason": "Under the paper's own reference-allele coding GraphFLA's formula gives 4.0628980 against a printed 4.063 - an exact match at the printed precision, and Ridge(alpha=1) as the notebook actually calls gives 4.0630308, also 4.063, so the penalty is immaterial. GraphFLA's DEFAULT coding gives 3.7324439. FINDING: r_s_ratio is not invariant to the choice of reference allele on multi-allelic landscapes, and the current choice is undocumented and arbitrary."
+    },
+    {
+      "paper_key": "SongZ21",
+      "metric": "r_s_ratio",
+      "paper_value": 2.102,
+      "locator": "Table 1, Domingo et al. 2018 column, row 'r/s', parenthesised value",
+      "quote": "r/s | 3.246 (3.355) | 1.964 (2.102) | 3.965 (4.063)",
+      "printed_or_plotted": "printed",
+      "definition_match": "unknown",
+      "definition_quote": "When a landscape has four instead of two states per variable site, we adjusted the above additive model to F(x) = \u03b20 + \u03a3 \u03b2iA xiA + \u03b2iT xiT + \u03b2iC xiC + \u03b2iG xiG, ... and s = \u03a3 (|\u03b2iA| + |\u03b2iT| + |\u03b2iC| + |\u03b2iG|) / 3n",
+      "definition_divergence": "The Methods give formulas only for 2-state and 4-state sites; Domingo has 6 biallelic and 4 triallelic sites. Under the authors' actual coding the design has 17 columns, and at the three sites with no U (pos1 {A,G}, pos5 {A,C}, pos8 {A,G}) every observed allele keeps a column, so the design is rank-deficient and the individual beta are not identifiable. Their Domingo r/s is therefore both convention- and solver-dependent.",
+      "input": {
+        "path": "data/BioSequence/Domingo2018.csv",
+        "sha256": "5b8cf25627ec37a1dce53f48b6ac121bb043ddb6f33616bb5ed00b203a7df2ff",
+        "n_rows": 4176,
+        "preprocessing": "none; fitness column used as-is (already log-transformed Wrightian fitness, WT = 0)"
+      },
+      "graphfla_call": "analysis.r_s_ratio(ls)",
+      "graphfla_value": {
+        "graphfla_default": 1.845836,
+        "under_paper_coding": 2.0566631
+      },
+      "outcome": "mismatch",
+      "reason": "2.0566631 under the paper's coding against a printed 2.102, a 2.2% gap. Not closed by any coding or transform tested (drop-first, drop-U, min-norm full one-hot; denominators n, ncoef, 3n, 4n; raw/ln/log2/log10/min-max fitness; observed-only and 0-filled complete product space; OLS and Ridge at alpha in {0.01,0.1,1,10}). The residual cause is an input difference: the authors recompute fitness from raw read counts with their own generation-ratio formula (get_fitness in trna_Domingo/Generate_raw_data.ipynb) rather than using the published fitness column. Bundled file is at full precision (4,176 distinct values), so rounding is not the cause."
+    },
+    {
+      "paper_key": "SongZ21",
+      "metric": "n_lo",
+      "paper_value": 2404,
+      "locator": "Table 1, Kuo et al. 2020 column, row 'N max', parenthesised value",
+      "quote": "N max | 2518 (2534) | 53 (70) | NA2 (2404)",
+      "printed_or_plotted": "printed",
+      "definition_match": "yes",
+      "definition_quote": "A genotype is considered a local fitness maximum if it is fitter than all of its neighboring genotypes, which differ from the focal genotype by one point mutation.",
+      "definition_divergence": "GraphFLA matches the authors' CODE, not their prose. Their notebook is `if np.sum(fit <= y[neighbor_list[i]]) == 0` with neighbour lists built over OBSERVED sequences only - strictly fitter than every present neighbour, absent neighbours ignored. The Methods instead claim missing neighbours were 'treated ... as having a fitness of 0', which the code does not do.",
+      "input": {
+        "path": "data/BioSequence/Kuo2020.csv",
+        "sha256": "69a86caf1ccbfc94a519f5917624d6862a0dfede0082abae79300eda0bb959c0",
+        "n_rows": 197890,
+        "preprocessing": "none"
+      },
+      "graphfla_call": "Landscape().build_from_data(...).n_lo",
+      "graphfla_value": 2390,
+      "outcome": "mismatch",
+      "reason": "-0.58%. An independent numpy recount under the strict rule gives 2388; GraphFLA's 2390 is 2388 strict peaks plus 2 two-genotype plateaus with no fitter neighbour; counting ties as peaks gives 2425. The printed 2404 lies in that band but matches none of them. Cause: the bundled Kuo2020.csv is rounded to 3 decimal places (only 2,473 distinct fitness values across 197,890 rows), which manufactures ties and makes any tie-sensitive statistic precision-limited at the 0.5-1% level. The authors recomputed fitness from read counts at full precision. ALSO FOUND: sum(graph.vs['is_lo']) = 2392 while n_lo = 2390 - n_lo counts plateaus, is_lo flags their members, and the two accessors disagree with no documentation."
+    },
+    {
+      "paper_key": "SongZ21",
+      "metric": "n_lo",
+      "paper_value": 70,
+      "locator": "Table 1, Domingo et al. 2018 column, row 'N max', parenthesised value",
+      "quote": "N max | 2518 (2534) | 53 (70) | NA2 (2404)",
+      "printed_or_plotted": "printed",
+      "definition_match": "yes",
+      "definition_quote": "A genotype is considered a local fitness maximum if it is fitter than all of its neighboring genotypes, which differ from the focal genotype by one point mutation.",
+      "definition_divergence": "As above: GraphFLA matches the code (strict, observed neighbours only), not the prose.",
+      "input": {
+        "path": "data/BioSequence/Domingo2018.csv",
+        "sha256": "5b8cf25627ec37a1dce53f48b6ac121bb043ddb6f33616bb5ed00b203a7df2ff",
+        "n_rows": 4176,
+        "preprocessing": "none"
+      },
+      "graphfla_call": "Landscape().build_from_data(...).n_lo",
+      "graphfla_value": 86,
+      "outcome": "mismatch",
+      "reason": "+23%. An independent strict recount also gives 86, so GraphFLA is self-consistent. Imputing 0 for missing neighbours as the prose describes gives 42, which is further from 70, not closer; the 4-state site model gives 86 (absent) or 34 (imputed 0). The printed 70 is reachable from none of them, so the authors' Domingo fitness values differ from the bundled column despite an identical genotype count."
+    },
+    {
+      "paper_key": "SongZ21",
+      "metric": "classify_epistasis",
+      "paper_value": {
+        "Kuo2020_F_rse": 0.2141,
+        "Domingo2018_F_rse": 0.1748
+      },
+      "locator": "Table 1, row 'F rse', parenthesised values",
+      "quote": "For each genotype pair, reciprocal sign epistasis is recorded if both genotypes are either fitter or less fit than the two intermediate genotypes between them. F rse is the proportion of genotype pairs that exhibit reciprocal sign epistasis.",
+      "printed_or_plotted": "printed",
+      "definition_match": "yes",
+      "definition_quote": "For the three empirical landscapes, we examined all genotype pairs from genotypes with estimated fitness for F rse estimation.",
+      "definition_divergence": "Substantively the same quantity as GraphFLA's reciprocal_sign fraction - the notebook's cal_epi counts both orientations, matching GraphFLA. Two caveats: (1) their square enumeration keeps a square only when BOTH intermediate indices exceed the starting genotype's index, silently dropping squares whose intermediate sorts earlier in file order - a row-order artefact in both numerator and denominator; (2) utils.py's cal_epi, used for the simulated landscapes, counts only one orientation, so the authors' two implementations disagree with each other.",
+      "input": {
+        "path": "data/BioSequence/{Kuo2020,Domingo2018}.csv",
+        "preprocessing": "none"
+      },
+      "graphfla_call": "classify_epistasis(ls, sample_cut_prob=0, seed=0).reciprocal_sign",
+      "graphfla_value": {
+        "Kuo2020": 0.2154909,
+        "Domingo2018": 0.1820457
+      },
+      "outcome": "mismatch",
+      "reason": "Kuo +0.65%, Domingo +4.1%. The Kuo agreement to within 0.65% on a 197,890-genotype landscape is strong evidence the two statistics are the same quantity; the residual is attributable to their index-order filter plus the 3-dp rounding of the bundled Kuo file. This is the closest thing found to a second classify_epistasis anchor, and it would become one on the authors' full-precision inputs."
+    },
+    {
+      "paper_key": "SongZ21",
+      "metric": "gamma",
+      "paper_value": {
+        "Kuo2020_one_minus_gamma": 0.6322,
+        "Domingo2018_one_minus_gamma": 0.7005
+      },
+      "locator": "Table 1, row '1-\u03b3', parenthesised values",
+      "quote": "\u03b3 describes the correlation between the fitness effect of a mutation in one genetic background and that in another background differing from the first background at one site. We calculated \u03b3 by following a previous study (Ferretti et al., 2016) and regarded 1-\u03b3 as the ruggedness measure in our analysis so that it increases with ruggedness.",
+      "printed_or_plotted": "printed",
+      "definition_match": "no",
+      "definition_quote": "cal_gamma (empirical notebooks): cov = \u03a3 (y1-y0)(y3-y2) + \u03a3 (y2-y0)(y3-y1); cov = cov/(2*n_squares); var = np.var([y[nb] - y[i] for every i, every neighbour nb]); return cov/var",
+      "definition_divergence": "Despite citing Ferretti et al. 2016, neither of the authors' two implementations is Ferretti eq. (3). utils.py computes a CENTRED covariance over a ddof=0 variance, i.e. a regression slope. The empirical notebooks compute a non-centred second moment over the squares divided by the variance of ALL single-step fitness differences in the whole graph. GraphFLA's denominator is 0.5*(\u03a3b\u00b2 + \u03a3B\u00b2) over the SAME square-derived effects. Different denominator populations, hence different statistics.",
+      "input": {
+        "path": "data/BioSequence/{Kuo2020,Domingo2018}.csv",
+        "preprocessing": "none"
+      },
+      "graphfla_call": "analysis.gamma(ls); reported as 1 - gamma",
+      "graphfla_value": {
+        "Kuo2020_one_minus_gamma": 0.4983628,
+        "Domingo2018_one_minus_gamma": 0.7158542
+      },
+      "outcome": "definition_incompatible",
+      "reason": "Kuo -21%, Domingo +2.2%. The landscape-dependent sign and size of the gap is exactly what a denominator swap produces, and is incompatible with a constant rescaling. DO NOT tune gamma toward Table 1. Ferretti et al. 2016 remains the only gamma anchor; Song & Zhang is ruled out as a second one on definitional grounds."
+    },
+    {
+      "paper_key": "SongZ21",
+      "metric": "higher_order_epistasis",
+      "paper_value": {
+        "Kuo2020_E": 0.8066,
+        "Domingo2018_E": 0.3699
+      },
+      "locator": "Table 1, row 'E', parenthesised values",
+      "quote": "Therefore, E equals 1 \u2212 E 1 \u2211 j = 1 n E j , where E j is the epistasis of the j th order.",
+      "printed_or_plotted": "printed",
+      "definition_match": "no",
+      "definition_quote": "Given that genotypes with zero reads were discarded in the original paper, we filled all missing genotypes with fitness of 0 to obtain a complete fitness landscape to calculate E.",
+      "definition_divergence": "Theirs is a Walsh-Hadamard variance share, (\u03a3E\u00b2 - E0\u00b2 - \u03a3E1\u00b2)/(\u03a3E\u00b2 - E0\u00b2), computed on a COMPLETED 2^10 biallelic sub-landscape. GraphFLA's is an unregularised one-hot polynomial OLS R-squared on the observed subset. Different estimand and different support. A third paper/code inconsistency: the Methods say missing cells were filled with 0, but the notebook interpolates them with Ridge.",
+      "input": {
+        "path": "data/BioSequence/{Kuo2020,Domingo2018}.csv",
+        "preprocessing": "none"
+      },
+      "graphfla_call": "1 - analysis.higher_order_epistasis(ls, order=1)",
+      "graphfla_value": {
+        "Kuo2020": 0.7126037,
+        "Domingo2018": 0.4745851
+      },
+      "outcome": "definition_incompatible",
+      "reason": "Kuo -12%, Domingo +28%. Same verdict as Papkou Fig. S21 already in LEDGER.md: a penalised/orthogonal-basis variance share is not an unregularised OLS R-squared. Measured to size the divergence, not offered as a target."
+    },
+    {
+      "paper_key": "FerrettiWTA18",
+      "metric": "gamma_star",
+      "paper_value": "identity: gamma_star = 1 - phi_s - 2*phi_rs",
+      "locator": "arXiv:1507.00041 section 2.5 eq. (15), restated in the Discussion",
+      "quote": "\u03b3 \u2217 is directly related to the number of square motifs with sign and reciprocal sign epistasis as \u03b3 \u2217 = 1 \u2212 \u03c6s \u2212 2\u03c6rs.",
+      "printed_or_plotted": "printed",
+      "definition_match": "yes",
+      "definition_quote": "The measure \u03b3 \u2217 is defined as before: \u03b3 \u2217 = Cor[s\u2217(g), s\u2217(g1)]",
+      "definition_divergence": "None. This is the defining paper, and the identity must hold between GraphFLA's gamma_star and its own classify_epistasis fractions on any landscape, with no external data required.",
+      "input": {
+        "path": "data/BioSequence/{Weinreich2006Tan2011_Weinreich2006, deVisser2009, Mira2015_TEM_AM, Lozovsky2009Jiang2013_Lozovsky2009, Domingo2018, Lite2020_ParD2, Johnston2024_TrpB3A}.csv",
+        "preprocessing": "none"
+      },
+      "graphfla_call": "gamma_star(ls) vs 1 - classify_epistasis(ls, sample_cut_prob=0, seed=0).sign - 2*.reciprocal_sign",
+      "graphfla_value": {
+        "deVisser2009": {
+          "gamma_star": 0.075,
+          "identity": 0.075,
+          "abs_diff": 6.9e-17
+        },
+        "Mira2015_TEM_AM": {
+          "gamma_star": 0.2916666667,
+          "identity": 0.2916666667,
+          "abs_diff": 5.6e-17
+        },
+        "Lozovsky2009": {
+          "gamma_star": 0.5,
+          "identity": 0.5,
+          "abs_diff": 0.0
+        },
+        "Domingo2018": {
+          "gamma_star": 0.2819990667,
+          "identity": 0.2819990667,
+          "abs_diff": 5.6e-17
+        },
+        "Lite2020_ParD2": {
+          "gamma_star": 0.4678600496,
+          "identity": 0.4678600496,
+          "abs_diff": 5.6e-17
+        },
+        "Johnston2024_TrpB3A": {
+          "gamma_star": 0.12728387,
+          "identity": 0.1272800495,
+          "abs_diff": 3.8e-06
+        },
+        "Weinreich2006_TEM": {
+          "gamma_star": 0.6136363636,
+          "identity": 0.6585365854,
+          "abs_diff": 0.0449
+        }
+      },
+      "outcome": "mismatch",
+      "reason": "DEFECT LOCALISED. The identity holds to float round-off on five landscapes and to 4e-6 on one incomplete landscape, but fails by 0.0449 on the 32-genotype TEM landscape. Independent enumeration: that landscape has 80 square motifs of which 39 contain at least one tied (zero-magnitude) fitness effect, leaving 41 classifiable; an independent census of those 41 gives magnitude 29, sign 10, reciprocal-sign 2, exactly GraphFLA's reported 0.707317/0.243902/0.048780, so classify_epistasis is internally correct on the squares it counts but its denominator excludes every tied square. gamma_star separately drops zero-sign effects via np.sign, over a different population (edge pairs, not squares). Three mutually inconsistent answers result: gamma_star 0.613636, eq. (15) over the 41 classifiable squares 0.658537, eq. (15) over all 80 squares 0.825. CONCLUSION: gamma_star and classify_epistasis use different conventions for zero-magnitude fitness effects, breaking Ferretti eq. (15) on any landscape with exact fitness ties. Affects the whole MIC/doubling-dilution class including the 15 Mira2015_TEM_* files; Mira2015_TEM_AM happens to pass, so a single smoke test will not catch it."
+    },
+    {
+      "paper_key": "FerrettiWTA18",
+      "metric": "n_lo",
+      "paper_value": 1,
+      "locator": "arXiv:1507.00041 section 5 running text, and Figure 7 left panel label 'peaks: 1 / sinks: 1'",
+      "quote": "Given the huge selective advantage of the combined mutations, this landscape is single-peaked, where the peak corresponds to the five-point mutant. It also has a single sink, that interestingly does not correspond to the wild type.",
+      "printed_or_plotted": "printed",
+      "definition_match": "yes",
+      "definition_quote": "NOT STATED IN PAPER beyond the standard sense of a fitness peak; the paper takes 'peak' as given.",
+      "definition_divergence": "",
+      "input": {
+        "path": "data/BioSequence/Weinreich2006Tan2011_Weinreich2006.csv",
+        "n_rows": 32,
+        "preprocessing": "none; and separately with the all-ones genotype corrected from log2(41000) to log2(4100) = 12.00140819"
+      },
+      "graphfla_call": "Landscape().build_from_data(df[pos_cols], df['fitness'], data_types={c:'boolean'}).n_lo",
+      "graphfla_value": 1,
+      "outcome": "reproduced_exact",
+      "reason": "Both as bundled and with the tenfold defect corrected. The paper's 'single sink' is the minimisation-direction counterpart; GraphFLA exposes no sink count, so that half was not checked."
+    },
+    {
+      "paper_key": "FerrettiWTA18",
+      "metric": "gamma",
+      "paper_value": 0.85,
+      "locator": "arXiv:1507.00041 section 5 running text p.19, and Figure 7 left panel label",
+      "quote": "The difference in ruggedness between \u03b2-lactamase and Aspergillus landscapes is confirmed by the values of \u03b3 (0.85 vs 0.33) and r/s (0.43 vs 0.89).",
+      "printed_or_plotted": "printed",
+      "definition_match": "yes",
+      "definition_quote": "As an example of application of the new measures \u03b3 and chains, we use them to analyze two complete experimental landscapes of size L = 5.",
+      "definition_divergence": "",
+      "input": {
+        "path": "data/BioSequence/Weinreich2006Tan2011_Weinreich2006.csv",
+        "n_rows": 32,
+        "preprocessing": "as bundled, and with the all-ones genotype corrected to log2(4100)"
+      },
+      "graphfla_call": "analysis.gamma(ls)",
+      "graphfla_value": {
+        "as_bundled": 0.825394,
+        "defect_corrected": 0.835072
+      },
+      "outcome": "mismatch",
+      "reason": "HYPOTHESIS TESTED AND REJECTED: the known tenfold defect in this bundled file is NOT the cause of the long-standing TEM mismatch recorded in LEDGER.md. Correcting 41,000 to 4,100 moves gamma only from 0.8254 to 0.8351 against a printed 0.85. The corrected figures match the ledger's existing 0.8353/0.6136/0.4441, so the earlier agent was already working from the corrected value. The residual 2-5% gap is an input difference; the ledger's standing blocker on the Weinreich 2006 Supporting Online Material and the MAGELLAN .fl inputs remains. The MAGELLAN library is currently unreachable (connection timed out over http and https). VALUABLE SIDE RESULT: this paper independently reprints the A. niger csI values (4 peaks, 2 sinks, gamma 0.33, r/s 0.89) already reproduced in LEDGER.md, confirming the ledger's reading of Ferretti 2016 Fig. 4c was correct."
+    },
+    {
+      "paper_key": "FerrettiWTA18",
+      "metric": "gamma_star",
+      "paper_value": 0.59,
+      "locator": "arXiv:1507.00041 Figure 7 left panel label (printed text annotation inside the figure; the glyph for gamma* extracts from the PDF text layer as 'a*')",
+      "quote": "peaks: 1   r/s: 0.43   steps: 9   sinks: 1   a: 0.85   a*: 0.59   chain trees: 2   origins: 6",
+      "printed_or_plotted": "printed (text annotation inside a figure; NOT read off a plotted point)",
+      "definition_match": "yes",
+      "definition_quote": "\u03b3 \u2217 which uses just the sign of the fitness effects, instead of their value",
+      "definition_divergence": "",
+      "input": {
+        "path": "data/BioSequence/Weinreich2006Tan2011_Weinreich2006.csv",
+        "n_rows": 32,
+        "preprocessing": "as bundled, and defect-corrected"
+      },
+      "graphfla_call": "analysis.gamma_star(ls)",
+      "graphfla_value": 0.613636,
+      "outcome": "mismatch",
+      "reason": "Identical in both the bundled and defect-corrected versions, because gamma_star depends only on signs and the corrected value keeps the global optimum global. This is the FIRST printed gamma_star value found outside Ferretti et al. 2016 itself, so gamma_star now has a published number as well as the eq. (15) identity - but it does not reproduce, and neither does eq. (15) over all 80 squares (0.825) nor over the 41 classifiable ones (0.6585), so 0.59 is not recoverable from the bundled fitness values under any tie convention tested."
+    },
+    {
+      "paper_key": "FerrettiWTA18",
+      "metric": "r_s_ratio",
+      "paper_value": 0.43,
+      "locator": "arXiv:1507.00041 section 5 running text p.19, and Figure 7 left panel label 'r/s: 0.43'",
+      "quote": "The difference in ruggedness between \u03b2-lactamase and Aspergillus landscapes is confirmed by the values of \u03b3 (0.85 vs 0.33) and r/s (0.43 vs 0.89).",
+      "printed_or_plotted": "printed",
+      "definition_match": "unknown",
+      "definition_quote": "NOT STATED IN PAPER - r/s is used but not redefined; MAGELLAN attributes it to Aita et al. 2001.",
+      "definition_divergence": "The paper does not restate the formula, so whether it is the RMSE-over-mean-|beta| form GraphFLA uses cannot be confirmed from this source.",
+      "input": {
+        "path": "data/BioSequence/Weinreich2006Tan2011_Weinreich2006.csv",
+        "n_rows": 32,
+        "preprocessing": "as bundled, and defect-corrected"
+      },
+      "graphfla_call": "analysis.r_s_ratio(ls)",
+      "graphfla_value": {
+        "as_bundled": 0.445517,
+        "defect_corrected": 0.443968
+      },
+      "outcome": "mismatch",
+      "reason": "+3.2% against the printed 0.43. Not closed by correcting the tenfold defect. All five loci are biallelic here, so the reference-allele ambiguity found in the Song & Zhang case does not apply. Same input blocker as the gamma entry."
+    },
+    {
+      "paper_key": "WeinreichLJH18",
+      "metric": "n_lo",
+      "paper_value": {
+        "HSP90": 4,
+        "yeast_diploid": 4,
+        "IMDH": 1,
+        "avian_lysozyme": 1,
+        "M_extorquens": 1,
+        "HIV_CCR5": 3,
+        "TEM_cefotaxime": 1,
+        "fruit_fly_viability": 3,
+        "B_cereus_MBL_cefalexin": 1,
+        "LTEE_DM25_EGTA": 2,
+        "A_niger": 4,
+        "sesquiterpene_synthase": 10,
+        "P_falciparum_DHFR_pyrimethamine": 2,
+        "E_coli_DHFR_trimethoprim_IC75": 2,
+        "GR_cortisol": 4,
+        "TEM_ampicillin": 3
+      },
+      "locator": "Table 1, column 'Number of maxima', 17 empirical rows",
+      "quote": "Analyses of published combinatorially complete empirical and simulated (NK) fitness landscapes, sorted by P value associated with Kendall's \u03c4 b",
+      "printed_or_plotted": "printed",
+      "definition_match": "unknown",
+      "definition_quote": "NOT STATED IN PAPER in the extracted table region; the paper does not restate what counts as a maximum.",
+      "definition_divergence": "Needs checking against the paper's Methods before promotion, in particular tie handling on the MIC-based landscapes.",
+      "input": {
+        "path": "Roughly 15 of the 17 have bundled CSVs: Bank2016a/b, Hall2010_diploid, Lunzer2005_*, Malcolm1990, Chou2011, daSilva2010_CCR5, Weinreich2006Tan2011_Weinreich2006, Whitlock2000, Meini2015, Khan2011Flynn2013_DM25_EGTA, deVisser2009, Lozovsky2009Jiang2013_Lozovsky2009, Palmer_DHFR_ic75, Bridgham2009, Mira2015_TEM_AM (or _AMP - must be checked)",
+        "preprocessing": "unresolved per landscape: which fitness column and which transform"
+      },
+      "graphfla_call": "Landscape().build_from_data(...).n_lo, per landscape",
+      "graphfla_value": {
+        "TEM_cefotaxime": 1
+      },
+      "outcome": "not_attempted",
+      "reason": "Only one of the 17 was measured, incidentally while testing the eq. (15) identity: GraphFLA gives n_lo = 1 on Weinreich2006Tan2011_Weinreich2006.csv, matching the printed 1. The other 14 locally-available rows were deferred because the file-to-row mapping needs settling per landscape (which fitness column, which transform, and for Mira which of _AM/_AMP is ampicillin), and n_lo is already the project's best-anchored metric so the marginal value is lower than the Table 3 target below. Cheap work, recommended next."
+    },
+    {
+      "paper_key": "WeinreichLJH18",
+      "metric": "higher_order_epistasis",
+      "paper_value": {
+        "E_coli_DHFR_trimethoprim_IC75": [
+          0.279,
+          0.266,
+          0.233,
+          0.144,
+          0.0685,
+          0.0065
+        ],
+        "GR_cortisol": [
+          0.171,
+          0.405,
+          0.42,
+          0.004
+        ],
+        "TEM_ampicillin": [
+          0.353,
+          0.278,
+          0.279,
+          0.091
+        ],
+        "NK_N5_K4_simulated": [
+          0.027,
+          0.315,
+          0.402,
+          0.241,
+          0.015
+        ]
+      },
+      "locator": "Table 3, column 'Aggregate reduction in residual variance', panels (a)-(d), by epistatic order",
+      "quote": "Average epistatic influence on fitness landscape topography as a function of epistatic order in select datasets",
+      "printed_or_plotted": "printed",
+      "definition_match": "unknown",
+      "definition_quote": "The paper's Eq. 1 is explicitly the Fourier-Walsh transformation. Table 3 footnote: 'Largest value for each dataset shown in bold'.",
+      "definition_divergence": "Their column is a per-order INCREMENT in a Fourier-Walsh basis; GraphFLA's higher_order_epistasis returns a CUMULATIVE one-hot polynomial OLS R-squared. The comparison is R2(k) - R2(k-1) against their column, and the match is not guaranteed. Their third column ('number of epistatic terms significantly different from zero') implies regression-significance machinery GraphFLA does not expose.",
+      "input": {
+        "path": "data/BioSequence/{Palmer_DHFR_ic75, Bridgham2009, Mira2015_TEM_AM}.csv",
+        "preprocessing": "unresolved: the paper's phenotype labels are Log[IC75], cortisol sensitivity and Log[MIC], so the transform must be matched"
+      },
+      "graphfla_call": "[higher_order_epistasis(ls, order=k) for k in 1..L], differenced",
+      "graphfla_value": null,
+      "outcome": "not_attempted",
+      "reason": "Deferred on effort, not on availability. This is the single best remaining cheap target for the higher_order_epistasis / walsh_hadamard family, which currently has three anchors under three different conventions: three printed empirical order-wise profiles, all three inputs already local. Settle the increment-vs-cumulative question first."
+    },
+    {
+      "paper_key": "CerveraLE16",
+      "metric": "gamma",
+      "paper_value": "NOT READ BY THIS AGENT - Table 2 row 'Correlation between neighbors' fitness levels (rho)'. Values were reported by a delegated search and are deliberately not transcribed, because the primary table was not retrieved.",
+      "locator": "Table 2, 'Summary statistics describing the topographies of both landscapes'",
+      "quote": "NOT READ BY THIS AGENT. Europe PMC and NCBI efetch both return abstract-only for PMC5105653 and the J Virol site was not retrieved.",
+      "printed_or_plotted": "printed",
+      "definition_match": "unknown",
+      "definition_quote": "NOT READ BY THIS AGENT. Flagged trap: the Results reportedly gloss rho as a correlation between fitness LEVELS of nearby genotypes while the Methods define it as the correlation of fitness EFFECTS (Ferretti). The Methods sense is the one matching GraphFLA.",
+      "definition_divergence": "Unresolved pending a read of the primary table.",
+      "input": {
+        "path": "NONE. The 32 per-host fitness values appear only in Figure 2; Table 1 lists the five mutations, not fitnesses. No data-availability statement, no supplementary data table, no local CSV. A. thaliana values originate in Lalic & Elena 2015, J Evol Biol 28:2236-2247."
+      },
+      "graphfla_call": null,
+      "graphfla_value": null,
+      "outcome": "input_unavailable",
+      "reason": "The fitness data are not obtainable from this paper, and the MAGELLAN landscape library - the other plausible route - times out. Recorded because Table 2 is the only TABULATED panel found anywhere outside Ferretti's own work that prints peaks, sinks, an r/s-family ratio, gamma AND the four epistasis-type frequencies together, i.e. it would anchor four metrics at once. Next step: read Table 2 in the primary source, then try Lalic & Elena 2015 for the A. thaliana fitnesses. Second trap: the statistic is labelled slope-to-roughness, the reciprocal of r/s, so whether the printed numbers are theta or r/s must be settled."
+    },
+    {
+      "paper_key": "JonesF95",
+      "metric": "fdc",
+      "paper_value": {
+        "Whitley_F2_4bit_fully_deceptive": 0.51,
+        "Whitley_F3_4bit": 0.36,
+        "DebGoldberg_6bit_fully_deceptive": 0.3,
+        "DebGoldberg_6bit_fully_easy": -0.23,
+        "LiepinsVose_10bit_fully_deceptive": 0.98,
+        "LiepinsVose_transformed": -0.02,
+        "HornGoldbergDeb_11bit_long_path": -0.12,
+        "OneMax": -1.0
+      },
+      "locator": "Section 4.1 running text and the Figure 2 caption (SFI Working Paper 1995-02-022)",
+      "quote": "NOT READ BY THIS AGENT in the primary PDF. These values were reported by a delegated search and MUST be re-read before use. The reported exhaustiveness claim is: 'FDC is computed exhaustively when the problem space contains 2^12 or fewer points, and via a sample of 4000 randomly chosen points otherwise. When the exhaustive method is used, the FDC values are exact.'",
+      "printed_or_plotted": "printed",
+      "definition_match": "no",
+      "definition_quote": "Reported definition: the Pearson correlation coefficient between fitness and Hamming distance to the NEAREST global optimum, under maximisation.",
+      "definition_divergence": "GraphFLA's fdc defaults to method='spearman'; Jones & Forrest use Pearson. Any comparison must pass method='pearson'. The nearest-global-optimum convention appears to match GraphFLA's dist_to_go computation.",
+      "input": {
+        "path": "NONE LOCAL. The fitness tables live in Whitley, FOGA 1 (1991) pp. 221-241; Deb & Goldberg, IlliGAL Report 92001; Liepins & Vose, FOGA 1 (1991) pp. 36-50. All pre-DOI, and reproduced inconsistently in later literature, so the originals are required."
+      },
+      "graphfla_call": "fdc(ls, method='pearson') on a hand-built BooleanLandscape over the published fitness table",
+      "graphfla_value": null,
+      "outcome": "not_attempted",
+      "reason": "Recorded as the ORIGIN of the metric, which previously had none. Blocked on obtaining three 1991-92 function definitions, not on GraphFLA. The smallest targets are 16 and 64 genotypes, so once the tables are in hand this is trivial to run. Independent free corroboration exists for OneMax: Poli & Galvan-Lopez, FOGA 2007, LNCS 4436 pp. 138-164, DOI 10.1007/978-3-540-73482-6_9, section 4.3 derives analytically that OneMax has r = -1 for any string length, which is a published justification for the fdc(onemax) == -1 assertion already in tests/test_metrics.py."
+    },
+    {
+      "paper_key": "ManivannanO26",
+      "metric": "r_s_ratio",
+      "paper_value": "figure-annotated only; no table of computed statistics exists in this paper",
+      "locator": "Figure 6 panels a, b, d, e (text annotations); definition at Methods eqs. 11-13",
+      "quote": "(11) F ( x ) = \u03b2 0 + \u2211 i = 1 n \u03b2 i x i , where F ( x ) = fitness, x i = state at locus i , n = number of loci. The roughness is the mean squared error of the regression model, (12) \u2211 x ( f x \u2212 F ( x ) ) 2 m (where m = number of genotypes) , while the slope is the mean of absolute values of linear coefficients, (13) \u2211 i n | \u03b2 i | n .",
+      "printed_or_plotted": "figure-annotated (printed text inside a figure, not a plotted point and not a table cell)",
+      "definition_match": "unknown",
+      "definition_quote": "Section 3.6, qualitative only: 'we observe that the distributions of roughness-to-slope ratios look different across seascapes, and that within each seascape, environmental contexts can give rise to different extents of ruggedness'.",
+      "definition_divergence": "Eq. (12) as printed is the MEAN SQUARED residual with no square root, unlike Song & Zhang's otherwise identical formula which takes the root. Either a typographical error or their r is on a squared scale. Must be settled before any value from this paper is compared with GraphFLA's r_s_ratio.",
+      "input": {
+        "path": "Mostly local: data/BioSequence/{daSilva2010_CCR5, daSilva2010_CXCR5, Guerrero2019_* (9), Hall2010_haploid, Hall2010_diploid, Khan2011Flynn2013_* (3), Lozovsky_DHFR_ic50_c57..c61, Palmer_DHFR_ic75, Mira2015_TEM_* (15), Weinreich2006Tan2011_*}.csv",
+        "preprocessing": "Table 1 states the transform per seascape, e.g. ln(IC50), log10(replicative capacity), log2(mean MIC)"
+      },
+      "graphfla_call": "analysis.r_s_ratio(ls), per seascape per environment",
+      "graphfla_value": null,
+      "outcome": "not_attempted",
+      "reason": "Targets are figure annotations that require reading Figure 6 off the PDF, and the printed roughness definition is ambiguous. Worth one focused session mainly for breadth: 10 seascapes, most inputs local. NOTE the known tenfold defect in Weinreich2006Tan2011_Weinreich2006.csv applies to one of the ten."
+    },
+    {
+      "paper_key": "SchenkSSKV13",
+      "metric": "r_s_ratio",
+      "paper_value": "plot-only (box plots)",
+      "locator": "Figure 3",
+      "quote": "The central line of the box plots indicate the median, the borders of the box the 25th and the 75th percentile, and error bars the 1st and the 99th percentile, which are based on resampling the data.",
+      "printed_or_plotted": "plotted",
+      "definition_match": "unknown",
+      "definition_quote": "Next, we analyzed four measures of landscape ruggedness that were used in a recent meta-analysis of empirical fitness landscapes ( Szendro, Schenk, et al. 2013 ). These include 1) the roughness-to-slope ratio, r / s , which measures how well the landscape is described by a linear model; 2) the fraction of the total variation in resistance explained by two-way, three-way, and four-way interactions among mutations, F sum ; 3) the fraction of pairwise interactions that show sign or reciprocal sign epistasis, f s + f r ; and 4) the number of pathways to the global maximum from its antipode where resistance increases with each mutational step, N cp .",
+      "definition_divergence": "Not assessable: no numeric values are printed for any of the four statistics.",
+      "input": {
+        "path": "NONE LOCAL. Supplementary tables S1 and S2 at the MBE site, 2 x 16 genotypes."
+      },
+      "graphfla_call": null,
+      "graphfla_value": null,
+      "outcome": "not_attempted",
+      "reason": "RULED OUT as an anchor: all four ruggedness statistics are box plots, and plot-only values are not reproduction targets under the project rules. Verified citation (Crossref 10.1093/molbev/mst096): Schenk, Martijn F.; Szendro, Ivan G.; Salverda, Merijn L.M.; Krug, Joachim; de Visser, J. Arjan G.M., Mol Biol Evol 30(8):1779-1787, 2013; the supplied author list was correct. Its one recomputable printed result is topological - n_lo = 2 for the large-effect landscape, global maxima at E104K+G238S and I173V+S235T, local maximum at E104K+R164S, with the 4-fold mutants at 'rank 14 and 13 out of 16' - and n_lo is already well anchored. Residual value: a pointer to Szendro et al. 2013, which is in flight elsewhere. Recorded so no later session re-reads it."
+    },
+    {
+      "paper_key": "FragataMSBJB18",
+      "metric": "gamma",
+      "paper_value": "plot-only",
+      "locator": "Figure 4 and Figures S12-S13 (gamma_i->j); Figure S11 (r/s); Figure 5 and Figure S14 (number of optima)",
+      "quote": "NOT READ BY THIS AGENT - Europe PMC and NCBI efetch both return abstract-only for PMC6180090. The figure/section mapping was established from the PMC article page.",
+      "printed_or_plotted": "plotted",
+      "definition_match": "unknown",
+      "definition_quote": "NOT STATED IN PAPER as retrievable here.",
+      "definition_divergence": "Not assessable.",
+      "input": {
+        "path": "Dryad 10.5061/dryad.k7jm5hp; underlying measurements are the 576 single-codon mutants of Bank et al. (2014). No local CSV."
+      },
+      "graphfla_call": null,
+      "graphfla_value": null,
+      "outcome": "not_attempted",
+      "reason": "RULED OUT as a printed-number anchor: this paper computes exactly the right quantities - per-position-pair Ferretti gamma, r/s and peak counts - and every one is in a figure. Verified citation (Crossref 10.1038/s41437-018-0125-7): Fragata, Ines; Matuszewski, Sebastian; Schmitz, Mark A.; Bataillon, Thomas; Jensen, Jeffrey D.; Bank, Claudia, Heredity 121(5):422-437, 2018. RESIDUAL LEAD, labelled honestly: the Data archiving statement describes the Dryad deposit as 'The complete documentation of all analyses, which allows for the reiteration of all steps', so a later session could recover the authors' COMPUTED gamma values from the deposit. That is code-level corroboration, not anchoring to a printed number."
+    },
+    {
+      "paper_key": "SchulzTWW25",
+      "metric": "r_s_ratio",
+      "paper_value": "plot-only, and inverted (s/r)",
+      "locator": "SI Appendix, Fig. S10A",
+      "quote": "An analogous metric characterizing epistatic landscapes is the slope-to-roughness ratio, s / r ( Materials and Methods ). A large s / r indicates a smooth, Mt. Fuji-like global shape, i.e., an inverted funnel. We find that antibody landscape has a larger s / r than any constrained NK landscape ( SI Appendix , Fig. S10 A )",
+      "printed_or_plotted": "plotted",
+      "definition_match": "unknown",
+      "definition_quote": "The roughness-to-slope ratio r / s has been introduced ( 47 ) to measure global ruggedness of an epistatic fitness landscape. We take its inverse, s / r , to draw an analogy to the ratio Tf/Tg that characterizes the global degree of funneling in an energy landscape of protein folding",
+      "definition_divergence": "Not assessable: no numeric value is printed.",
+      "input": {
+        "path": "data/BioSequence/Schulz2025.csv exists locally (1,024 variants)."
+      },
+      "graphfla_call": null,
+      "graphfla_value": null,
+      "outcome": "not_attempted",
+      "reason": "EXCLUSION CONFIRMED, answering the brief's specific question. This paper sits exactly at the 1,024-variant corpus cutoff and was to be evaluated only if it offered an unusually strong printed statistic. It does not: its one r/s-family statistic is inverted and plotted, and there is no peak count, no epistasis-type fraction and no gamma in text or table. Worse, the landscape analysed is an INFERRED model (maximum-likelihood inference plus Walsh-Hadamard band-pass denoising, SI Appendix section C), not the raw measurements, so even a printed number would describe a fitted surface. Verified citation (Crossref 10.1073/pnas.2413884122): Schulz, Steven; Tan, Timothy J. C.; Wu, Nicholas C.; Wang, Shenshen, PNAS 122(2), 2025."
+    }
+  ],
+  "blockers": [
+    {
+      "what": "MAGELLAN bundled landscape library",
+      "url": "http://wwwabi.snv.jussieu.fr/public/Magellan/",
+      "why": "connection timed out over both http and https",
+      "needed_for": "the Weinreich 2006 .fl input behind the standing TEM gamma / gamma* / r_s_ratio mismatch; the Cervera 2016 per-host fitness values; and gamma for the 38-landscape Ferretti collection"
+    },
+    {
+      "what": "Cervera et al. 2016 Table 2 and the 32 per-host fitness values",
+      "url": "https://doi.org/10.1128/jvi.01243-16",
+      "why": "Europe PMC and NCBI efetch return abstract-only for PMC5105653; fitnesses appear only in Figure 2 and there is no data-availability statement or supplementary data table",
+      "needed_for": "the only tabulated gamma + peaks + sinks + r/s + epistasis-type panel outside Ferretti's own work, which would anchor four metrics at once"
+    },
+    {
+      "what": "Li et al. 2025 active-variant cutoffs and exact variant sets",
+      "url": "https://doi.org/10.5281/zenodo.13910506 and https://github.com/fhalab/SSMuLA",
+      "why": "not retrieved in this pass",
+      "needed_for": "unlocking the 'Fraction of local optima' and 'Fraction of non-magnitude epistasis' columns of Table S1, and resolving the Tu2022_T7.csv scale question"
+    },
+    {
+      "what": "Domingo 2018 raw read counts and Kuo 2020 per-replicate table",
+      "url": "primary papers' supplements",
+      "why": "not retrieved; the authors recompute fitness from reads with their own get_fitness formula rather than using the published fitness column",
+      "needed_for": "the Song & Zhang N_max and F_rse targets, which are not reachable from the bundled CSVs"
+    },
+    {
+      "what": "Whitley FOGA 1 (1991) pp. 221-241; Deb & Goldberg IlliGAL Report 92001; Liepins & Vose FOGA 1 (1991) pp. 36-50",
+      "url": "pre-DOI, not online in any verified location",
+      "why": "old conference/technical-report literature, reproduced inconsistently in later work",
+      "needed_for": "the exact exhaustive FDC targets from Jones & Forrest 1995, the only numeric anchor available for fdc"
+    },
+    {
+      "what": "Fragata et al. 2019 Trends Ecol Evol 34(1):69-82 full text",
+      "url": "https://doi.org/10.1016/j.tree.2018.10.009",
+      "why": "no PMC record, no preprint, no repository copy; cell.com and sciencedirect return 403",
+      "needed_for": "determining whether it contains a per-landscape numeric table; prior is low (abstract reads as a model taxonomy)"
+    }
+  ],
+  "verdict": "targets_found",
+  "verdict_reason": "Seven ranked candidates, of which three were actually reproduced against because their inputs were already local. The pass moved two metric families. (1) fitness_distribution went from NO anchor to a 14-landscape exact anchor: Li et al. 2025 Cell Systems Table S1 prints the fitted-Cauchy location and the kurtosis for 16 combinatorially complete protein landscapes, GraphFLA reproduces BOTH at the printed precision on 14 of the 15 bundled locally, and the paper's Methods name the exact scipy calls GraphFLA uses - it is almost certainly the implementation's source. (2) r_s_ratio gained a second anchor: Song & Zhang 2021 Table 1 r/s = 4.063 on Kuo 2020, reproduced as 4.0628980, but only under the paper's reference-allele coding - which exposed that GraphFLA's r_s_ratio is not invariant to which one-hot level is dropped (3.732 vs 4.063 on the same data). gamma gained a second printed value (Ferretti et al. 2018 Heredity / arXiv:1507.00041: TEM gamma = 0.85, gamma* = 0.59, r/s = 0.43, peaks 1, sinks 1), of which only the peak count reproduces; the hypothesis that the documented tenfold defect in the bundled Weinreich CSV explained that mismatch was tested and REJECTED. Song & Zhang was ruled out as a gamma anchor on definitional grounds after reading the authors' own code. Separately, Ferretti's eq. (15) gamma* = 1 - phi_s - 2*phi_rs gave a free internal consistency test that GraphFLA satisfies to 1e-16 on five tie-free landscapes and VIOLATES by 0.0449 on the 32-genotype TEM landscape, localising a real tie-handling inconsistency between gamma_star and classify_epistasis that affects the whole MIC/doubling-dilution class. Best unworked target left: Weinreich et al. 2018 J Stat Phys Table 3, three printed Fourier-Walsh order-wise variance profiles with all three inputs already local. Ruled out and recorded so no later session repeats them: Schenk 2013 MBE, Fragata 2018 Heredity and Schulz 2025 PNAS (all plot-only); de Visser & Krug 2014 and Bank 2022 (no tables at all); arXiv 1303.3842 (never peer-reviewed, mutation records not fitnesses); the MAGELLAN preprint (never published, prints no gamma value); Blanquart & Bataillon 2016 (different statistics); Weinreich 2013 COGD (plotted, two small exact unit tests survive); Hinz 2024 and Ghenu 2023 (gamma plot-only, reference implementations downloadable). gamma_star has a printed number but no second one; fdc has its origin identified but is blocked on three pre-DOI function definitions; four of the seven fitness_distribution descriptors have no published origin at all, which is a settled negative rather than an open question.",
+  "graphfla_observations_not_acted_on": [
+    "gamma_star and classify_epistasis use different conventions for zero-magnitude fitness effects, breaking Ferretti et al. eq. (15) on any landscape with exact fitness ties. Minimal reproducer: data/BioSequence/Weinreich2006Tan2011_Weinreich2006.csv, 32 rows, 39 of its 80 squares tied. Mira2015_TEM_AM passes, so a single smoke test will not catch it.",
+    "r_s_ratio is not invariant to the choice of reference allele on multi-allelic landscapes: 3.7324439 (drop first category, GraphFLA's default) vs 4.0628980 (drop U, the published convention) on data/BioSequence/Kuo2020.csv. The convention is undocumented.",
+    "sum(graph.vs['is_lo']) != landscape.n_lo when plateaus are present: 2392 vs 2390 on data/BioSequence/Kuo2020.csv. n_lo counts plateaus, is_lo flags their members; both defensible, the silent disagreement is not.",
+    "fitness_distribution's docstring claims the whole descriptor set is unitless and scale-invariant. cauchy_loc is a location parameter in fitness units and is neither scale- nor shift-invariant - which is exactly why Li et al. max-normalise before reporting it.",
+    "data/BioSequence/Tu2022_T7.csv is on a fitness scale inconsistent with its sibling Tu2022_TEV.csv relative to Li et al.'s inputs, and does not invert cleanly under exp, 2**f or 10**f. Both files share an identical minimum of -1.1766, the signature of a curation-time floor. A data-provenance question in the same class as the documented tenfold Weinreich2006 error.",
+    "data/BioSequence/Kuo2020.csv is rounded to 3 decimal places: 2,473 distinct fitness values across 197,890 rows. Any tie-sensitive statistic on this file is precision-limited at roughly the 0.5-1% level."
+  ]
+}

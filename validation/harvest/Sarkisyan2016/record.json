@@ -1,0 +1,293 @@
+{
+  "study_key": "Sarkisyan2016",
+  "dossier": "papers/_prominent_dms",
+  "recorded_at": "2026-10-01T10:11:29Z",
+  "agent": "codex-gpt6",
+  "paper": {
+    "title": "Local fitness landscape of the green fluorescent protein",
+    "doi": "10.1038/nature17995",
+    "year": 2016,
+    "bibliography_verified_against": "crossref",
+    "supplied_bibliography_errors": "The assignment’s abbreviated author string (Sarkisyan, Bolotin, Meer, … Kondrashov) matches the Crossref author order. Crossref author order: Karen S. Sarkisyan; Dmitry A. Bolotin; Margarita V. Meer; Dinara R. Usmanova; Alexander S. Mishin; George V. Sharonov; Dmitry N. Ivankov; Nina G. Bozhanova; Mikhail S. Baranov; Onuralp Soylemez; Natalya S. Bogatyreva; Peter K. Vlasov; Evgeny S. Egorov; Maria D. Logacheva; Alexey S. Kondrashov; Dmitry M. Chudakov; Ekaterina V. Putintseva; Ilgar Z. Mamedov; Dan S. Tawfik; Konstantin A. Lukyanov; Fyodor A. Kondrashov. The supplied title, DOI, journal, volume, pages, and year match; no substantive bibliography error was found."
+  },
+  "sources": [
+    {
+      "url": "https://api.crossref.org/works/10.1038/nature17995",
+      "http_status": 200,
+      "sha256": "c62d5aee9884bb2b785395846c10157a4bbed0413ec28599b5c2f8d9b5f912ad",
+      "saved_path": "papers/_prominent_dms/sources/Sarkisyan2016_crossref_codex.json",
+      "what": "Crossref bibliographic metadata used to verify title, DOI, year, and author list"
+    },
+    {
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC4968632/pdf/nature17995.pdf",
+      "http_status": 200,
+      "sha256": "ea096daeb94eb4dda13291fe5cb7e1e5f3c8dbd08d9762a7df9534f4f7f315cb",
+      "saved_path": "papers/_prominent_dms/sources/Sarkisyan2016_main_codex.pdf",
+      "what": "Failed PMC PDF attempt: HTTP 200 body is an HTML challenge response, retained for acquisition trace"
+    },
+    {
+      "url": "https://media.springernature.com/original/springer-static/esm/art%3A10.1038%2Fnature17995/MediaObjects/41586_2016_BFnature17995_MOESM548_ESM.pdf",
+      "http_status": 200,
+      "sha256": "806513a49e7bb3b756687e26bc202f5a8cc4e79ed7b92d217ae1d9d6b2649715",
+      "saved_path": "papers/_prominent_dms/sources/Sarkisyan2016_supplement_codex.pdf",
+      "what": "Publisher supplementary information PDF"
+    },
+    {
+      "url": "https://api.figshare.com/v2/articles/3102154",
+      "http_status": 200,
+      "sha256": "2f39eea17e58e74467ba62ed85fb6252340c2469185afc7a286db413764769fa",
+      "saved_path": "papers/_prominent_dms/sources/Sarkisyan2016_figshare_metadata_codex.json",
+      "what": "Figshare item metadata and processed-data file descriptions"
+    },
+    {
+      "url": "https://ndownloader.figshare.com/files/4820647",
+      "http_status": 200,
+      "sha256": "5581230b9888f9960708a4769ce1c9b4453561f0b5f0374525445b4a984d54d5",
+      "saved_path": "papers/_prominent_dms/sources/Sarkisyan2016_amino_acid_genotypes_to_brightness_codex.tsv",
+      "what": "Processed amino-acid genotypes and median log-brightness values"
+    },
+    {
+      "url": "https://ndownloader.figshare.com/files/4820650",
+      "http_status": 200,
+      "sha256": "d9c271c9706cefd04d790a1d30158602cac273ddc10c698d292ab01407798240",
+      "saved_path": "papers/_prominent_dms/sources/Sarkisyan2016_nucleotide_genotypes_to_brightness_codex.tsv",
+      "what": "Processed nucleotide genotypes and median log-brightness values"
+    },
+    {
+      "url": "https://ndownloader.figshare.com/files/4820653",
+      "http_status": 200,
+      "sha256": "2559ee1afe9d0f41e03ea75db96448a34178c2dd597c78e08f01b1ee4ab5e248",
+      "saved_path": "papers/_prominent_dms/sources/Sarkisyan2016_avGFP_reference_sequence_codex.fa",
+      "what": "Reference sequence used to reconstruct genotypes"
+    },
+    {
+      "url": "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC4968632/fullTextXML",
+      "http_status": 200,
+      "sha256": "9c18d29f7a5df13d6f667816d6aa32e086f03f270189793a964e4dc589fd9c55",
+      "saved_path": "papers/_prominent_dms/sources/Sarkisyan2016_main_codex.xml",
+      "what": "Full-text article XML, Europe PMC"
+    }
+  ],
+  "overlaps": [
+    {
+      "metric": "n_configs",
+      "paper_value": 51715,
+      "locator": "Main article, Results, paragraph beginning “We applied several strategies”; Supplementary Information S3.5, p. 8",
+      "quote": "“Our final dataset included 56,086 unique nucleotide sequences coding for 51,715 different protein sequences.”; “The final dataset consisted of 56,086 unique nucleotide genotypes and 51,715 unique amino acid genotypes.”",
+      "printed_or_plotted": "printed",
+      "definition_match": "no",
+      "definition_quote": "“We excluded genotypes containing insertions, deletions or stop codons, and grouped barcodes with the same nucleotide or amino acid genotypes. The final dataset consisted of 56,086 unique nucleotide genotypes and 51,715 unique amino acid genotypes.”",
+      "definition_divergence": "The paper counts all measured unique amino-acid genotypes after its stated exclusions. GraphFLA’s built-graph n_configs omits isolated genotypes with no observed one-amino-acid neighbor. The paper also states that the sampled fraction is tiny for sequences with more than two mutations, so the input is a sparse local sample.",
+      "input": {
+        "path": "papers/_prominent_dms/sources/Sarkisyan2016_amino_acid_genotypes_to_brightness_codex.tsv",
+        "sha256": "5581230b9888f9960708a4769ce1c9b4453561f0b5f0374525445b4a984d54d5",
+        "n_rows": 51715,
+        "preprocessing": "Removed rows with a stop symbol in aaMutations per Supplementary Information S3.5; reconstructed protein strings from the archived reference and amino-acid substitutions; used medianBrightness unchanged."
+      },
+      "graphfla_call": "ProteinLandscape().build_from_data(protein_sequences, medianBrightness, epsilon=0, verbose=False); ls.n_configs",
+      "graphfla_value": 17604,
+      "outcome": "mismatch",
+      "reason": "GraphFLA retained 17,604 vertices and 35,092 directed improving edges; its build warning reports 34,111 isolated configurations removed. The retained-graph count is not the paper’s count of measured genotypes."
+    },
+    {
+      "metric": "n_configs",
+      "paper_value": 56086,
+      "locator": "Main article, Results, paragraph beginning “We applied several strategies”; Supplementary Information S3.5, p. 8",
+      "quote": "“Our final dataset included 56,086 unique nucleotide sequences coding for 51,715 different protein sequences.”; “The final dataset consisted of 56,086 unique nucleotide genotypes and 51,715 unique amino acid genotypes.”",
+      "printed_or_plotted": "printed",
+      "definition_match": "no",
+      "definition_quote": "“The final dataset consisted of 56,086 unique nucleotide genotypes and 51,715 unique amino acid genotypes.”",
+      "definition_divergence": "The paper reports unique nucleotide genotypes, while GraphFLA n_configs is the number of vertices retained after graph construction and isolated-node removal. In addition, the archive mutation list conflicts with its archived reference at one coordinate for 915 filtered input rows; no coordinate or allele correction was justified by the paper.",
+      "input": {
+        "path": "papers/_prominent_dms/sources/Sarkisyan2016_nucleotide_genotypes_to_brightness_codex.tsv",
+        "sha256": "d9c271c9706cefd04d790a1d30158602cac273ddc10c698d292ab01407798240",
+        "n_rows": 56086,
+        "preprocessing": "Filtered out rows marked with a stop in aaMutations per Supplementary Information S3.5. Reconstruction from nMutations against the archived reference found reference-allele conflicts; no corrections or imputation applied.",
+        "reference_path": "papers/_prominent_dms/sources/Sarkisyan2016_avGFP_reference_sequence_codex.fa",
+        "reference_sha256": "2559ee1afe9d0f41e03ea75db96448a34178c2dd597c78e08f01b1ee4ab5e248"
+      },
+      "graphfla_call": "DNALandscape().build_from_data(nucleotide_sequences, medianBrightness, epsilon=0, verbose=False); ls.n_configs",
+      "graphfla_value": null,
+      "outcome": "input_unavailable",
+      "reason": "The attempted reconstruction found 915 reference-allele conflicts, all at position 191: the mutation strings state reference A while the archived reference has G. The DNALandscape build was not run rather than applying an unsupported repair."
+    },
+    {
+      "metric": "higher_order_epistasis",
+      "paper_value": 0.7,
+      "locator": "Main article, Results, paragraph beginning “In a unidimensional landscape”",
+      "quote": "“This simplest, non-epistatic model explained only 70% of the initial sample variance (σ²=1.12 and σ²=0.34 before and after the application of the model, respectively).”",
+      "printed_or_plotted": "printed",
+      "definition_match": "no",
+      "definition_quote": "“We used multiple regression considering a non-epistatic fitness function whereby log-fluorescence, F, is equal to the linear predictor, the fitness potential, p, such that F=f(p)=p.”",
+      "definition_divergence": "The additive regression is conceptually close to GraphFLA order-1 polynomial regression, but GraphFLA fits only the 17,604 vertices retained after isolate removal; the paper’s variance statistic is for its full measured genotype sample.",
+      "input": {
+        "path": "papers/_prominent_dms/sources/Sarkisyan2016_amino_acid_genotypes_to_brightness_codex.tsv",
+        "sha256": "5581230b9888f9960708a4769ce1c9b4453561f0b5f0374525445b4a984d54d5",
+        "n_rows": 51715,
+        "preprocessing": "Paper-stated final amino-acid genotype set after stop/indel exclusions; medianBrightness used unchanged; GraphFLA subsequently removed isolated nodes."
+      },
+      "graphfla_call": "A.higher_order_epistasis(ls, order=1, verbose=False) after ProteinLandscape().build_from_data(..., epsilon=0)",
+      "graphfla_value": 0.8700741822810955,
+      "outcome": "mismatch",
+      "reason": "GraphFLA order-1 R² on the pruned graph is 0.8700741822810955, versus the printed 70%. This comparison changes the fitted observations through graph pruning and is not a reproduction of the full-sample fit."
+    },
+    {
+      "metric": "higher_order_epistasis",
+      "paper_value": 0.85,
+      "locator": "Main article, Results, paragraph beginning “The simplest form of an epistatic fitness function”",
+      "quote": "“We, therefore, modeled F as a sigmoid function of p, which explained 85% of the initial sample variance (σ² = 0.17).”",
+      "printed_or_plotted": "printed",
+      "definition_match": "no",
+      "definition_quote": "“We, therefore, modeled F as a sigmoid function of p, which explained 85% of the initial sample variance.”",
+      "definition_divergence": "This is a nonlinear sigmoid of an additive fitness potential, not GraphFLA polynomial regression by interaction order.",
+      "input": {
+        "path": "papers/_prominent_dms/sources/Sarkisyan2016_amino_acid_genotypes_to_brightness_codex.tsv",
+        "sha256": "5581230b9888f9960708a4769ce1c9b4453561f0b5f0374525445b4a984d54d5",
+        "n_rows": 51715,
+        "preprocessing": "Not run; the paper uses a fitted sigmoid link over the full measured sample."
+      },
+      "graphfla_call": "not run; definition-incompatible nonlinear fitness-function fit",
+      "graphfla_value": null,
+      "outcome": "definition_incompatible",
+      "reason": "GraphFLA higher_order_epistasis does not fit the paper’s sigmoid link function."
+    },
+    {
+      "metric": "higher_order_epistasis",
+      "paper_value": 0.935,
+      "locator": "Main article, Results, paragraph beginning “A more complex sigmoid-shaped fitness function”",
+      "quote": "“A more complex sigmoid-shaped fitness function refined with a neural network approach … explained 93.5% of the initial sample variance (σ² = 0.065).”",
+      "printed_or_plotted": "printed",
+      "definition_match": "no",
+      "definition_quote": "“A more complex sigmoid-shaped fitness function refined with a neural network approach … explained 93.5% of the initial sample variance.”",
+      "definition_divergence": "This is the fit of a neural-network nonlinear mapping from fitness potential to log-fluorescence, not polynomial regression by interaction order.",
+      "input": {
+        "path": "papers/_prominent_dms/sources/Sarkisyan2016_amino_acid_genotypes_to_brightness_codex.tsv",
+        "sha256": "5581230b9888f9960708a4769ce1c9b4453561f0b5f0374525445b4a984d54d5",
+        "n_rows": 51715,
+        "preprocessing": "Not run; neural-network model and fit set differ from GraphFLA’s polynomial metric."
+      },
+      "graphfla_call": "not run; definition-incompatible neural-network fit",
+      "graphfla_value": null,
+      "outcome": "definition_incompatible",
+      "reason": "The estimator and target model are not GraphFLA higher_order_epistasis."
+    },
+    {
+      "metric": "higher_order_epistasis",
+      "paper_value": 0.95,
+      "locator": "Main article, Results, paragraph beginning “The threshold fitness function does a remarkably good job”",
+      "quote": "“The threshold fitness function does a remarkably good job in approximating the entire fitness landscape explaining ~95% of all variance.”",
+      "printed_or_plotted": "printed",
+      "definition_match": "no",
+      "definition_quote": "“The threshold fitness function does a remarkably good job in approximating the entire fitness landscape explaining ~95% of all variance.”",
+      "definition_divergence": "This is an approximate fit of a threshold-like nonlinear function, not GraphFLA polynomial regression by interaction order.",
+      "input": {
+        "path": "papers/_prominent_dms/sources/Sarkisyan2016_amino_acid_genotypes_to_brightness_codex.tsv",
+        "sha256": "5581230b9888f9960708a4769ce1c9b4453561f0b5f0374525445b4a984d54d5",
+        "n_rows": 51715,
+        "preprocessing": "Not run; threshold-model fit is not GraphFLA’s polynomial-order fit."
+      },
+      "graphfla_call": "not run; definition-incompatible threshold-model fit",
+      "graphfla_value": null,
+      "outcome": "definition_incompatible",
+      "reason": "The paper’s threshold-model fit is a different estimator and target."
+    },
+    {
+      "metric": "classify_epistasis",
+      "paper_value": "up to 30% of genotypes with multiple mutations, varying with mutation count",
+      "locator": "Main article, Results, paragraph beginning “Interaction of deleterious mutations can manifest in positive epistasis”",
+      "quote": "“Negative epistasis affected up to 30% of all genotypes, depending on the number of mutations.”",
+      "printed_or_plotted": "printed",
+      "definition_match": "no",
+      "definition_quote": "“We defined strong epistasis as |e| > 0.7, or as cases where the observed fluorescence differed from the expected by at least fivefold, with a false discovery rate of < 1%.”",
+      "definition_divergence": "The paper counts genotype-level strong negative epistasis using a clipped additive expectation and mutation-count strata. GraphFLA classify_epistasis partitions four-node motif instances into motif classes.",
+      "input": {
+        "path": "papers/_prominent_dms/sources/Sarkisyan2016_amino_acid_genotypes_to_brightness_codex.tsv",
+        "sha256": "5581230b9888f9960708a4769ce1c9b4453561f0b5f0374525445b4a984d54d5",
+        "n_rows": 51715,
+        "preprocessing": "Not run; paper’s class denominator and strong-epistasis rule do not match GraphFLA motif fractions."
+      },
+      "graphfla_call": "not run; statistic definition-incompatible",
+      "graphfla_value": null,
+      "outcome": "definition_incompatible",
+      "reason": "A genotype-level prevalence is not the proportion of four-node motifs in a GraphFLA graph."
+    },
+    {
+      "metric": "fitness_distribution",
+      "paper_value": {
+        "nonfluorescent_fraction": 0.094,
+        "log_fluorescence_cutoff": 3.0
+      },
+      "locator": "Supplementary Information S4.1 “Single mutant analysis,” p. 8",
+      "quote": "“Sequences with log-fluorescence < 3.0 have light intensity less than wild-type by 10^{3.72-3.0} ≈ 5 times (Figure 2a). 9.4% of genotypes had such low intensity, which we considered non-fluorescent.”",
+      "printed_or_plotted": "printed",
+      "definition_match": "no",
+      "definition_quote": "“Sequences with log-fluorescence < 3.0 … 9.4% of genotypes had such low intensity, which we considered non-fluorescent.”",
+      "definition_divergence": "This is a thresholded fraction of genotypes, not one of GraphFLA fitness_distribution’s unitless shape statistics; the paper’s denominator also includes the full sample rather than the pruned graph.",
+      "input": {
+        "path": "papers/_prominent_dms/sources/Sarkisyan2016_amino_acid_genotypes_to_brightness_codex.tsv",
+        "sha256": "5581230b9888f9960708a4769ce1c9b4453561f0b5f0374525445b4a984d54d5",
+        "n_rows": 51715,
+        "preprocessing": "Not run; no matching threshold-fraction output in GraphFLA fitness_distribution."
+      },
+      "graphfla_call": "not run; GraphFLA fitness_distribution has no threshold-fraction field",
+      "graphfla_value": null,
+      "outcome": "definition_incompatible",
+      "reason": "The named GraphFLA metric reports distribution moments and ratios, not the paper’s fraction below log-fluorescence 3.0."
+    },
+    {
+      "metric": "global_optima_accessibility",
+      "paper_value": {
+        "fraction_inaccessible_paths_lower_bound_by_mean_distance_from_wildtype": {
+          "1.2": {
+            "count": "0/596,228,074",
+            "fraction": 0.0
+          },
+          "1.6": {
+            "count": "1,201,621/70,670,872",
+            "fraction": 0.017
+          },
+          "2.0": {
+            "count": "13,324/202,308",
+            "fraction": 0.066
+          },
+          "2.4": {
+            "count": "6/174",
+            "fraction": 0.034
+          }
+        }
+      },
+      "locator": "Supplementary Information S4.7 “Path accessibility on the fitness landscapes,” p. 14",
+      "quote": "“The lower bound fraction of inaccessible paths was 0/596,228,074 (0%), 1,201,621/70,670,872 (1.7%), 13,324/202,308 (6.6%) and 6/174 (3.4%) for paths 1.2 (blue) 1.6 (orange), 2.0 (red), and 2.4 (purple), substitutions away from the wildtype, respectively (colour-coded with Supplementary Fig. 3).”",
+      "printed_or_plotted": "printed",
+      "definition_match": "no",
+      "definition_quote": "“We considered a path as accessible if all of the three intermediate genotypes were neutral or advantageous, that is conferred fluorescence at least as high as points at the ends of the path.”",
+      "definition_divergence": "The paper counts shortest paths between pairs of fluorescent genotypes at a specified distance from wild type. GraphFLA global_optima_accessibility measures access to a global optimum in its directed improving-edge graph.",
+      "input": {
+        "path": "papers/_prominent_dms/sources/Sarkisyan2016_amino_acid_genotypes_to_brightness_codex.tsv",
+        "sha256": "5581230b9888f9960708a4769ce1c9b4453561f0b5f0374525445b4a984d54d5",
+        "n_rows": 51715,
+        "preprocessing": "Not run; endpoint/path definitions differ."
+      },
+      "graphfla_call": "not run; endpoint/path definition-incompatible",
+      "graphfla_value": null,
+      "outcome": "definition_incompatible",
+      "reason": "The published path groups are not paths to a global optimum, so the GraphFLA output would not be a reproduction."
+    }
+  ],
+  "blockers": [
+    {
+      "what": "Nucleotide sequence reconstruction for the 56,086-genotype target",
+      "url": "https://ndownloader.figshare.com/files/4820650",
+      "why": "After paper-stated stop-codon filtering and source-described coordinate parsing, 915 rows conflict with the archived reference allele at position 191. No correction is supported by the paper.",
+      "needed_for": "DNALandscape input for the printed nucleotide-genotype count"
+    },
+    {
+      "what": "Usable PMC-hosted main article PDF",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC4968632/pdf/nature17995.pdf",
+      "why": "HTTP 200 response was HTML challenge content rather than a PDF; the complete article XML was acquired from Europe PMC.",
+      "needed_for": "PDF copy only; main-text evidence is available in XML"
+    }
+  ],
+  "verdict": "targets_found",
+  "verdict_reason": "The paper prints unique genotype counts, additive and nonlinear variance fits, a genotype-level epistasis prevalence, a thresholded fluorescence fraction, and lower-bound path fractions. GraphFLA reproduced none exactly: the protein graph count and order-1 R² differ after isolate pruning, nucleotide reconstruction is blocked by reference conflicts, and the remaining targets use different definitions. No local-optimum count is stated."
+}

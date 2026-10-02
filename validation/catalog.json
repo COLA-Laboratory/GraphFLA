@@ -1,0 +1,2707 @@
+{
+  "schema_version": 1,
+  "kind": "catalog",
+  "priority_policy": "Supplied papers with measured OR theoretical size >1024 first; then metric-driven gaps. Missing size is unknown, not small. Paper triage does not certify all metrics.",
+  "studies": [
+    {
+      "id": "KuoJCCLHWC20",
+      "aliases": [
+        "Kuo2020"
+      ],
+      "title": "Global fitness landscapes of the Shine-Dalgarno sequence",
+      "doi": "10.1101/gr.260182.119",
+      "year": 2020,
+      "origin": "supplied",
+      "citation_status": "author_names_corrected_from_publisher_DOI_10.1101/gr.260182.119",
+      "measured_variants": 197890,
+      "theoretical_variants": 262144,
+      "state": "triaged",
+      "next_action": "Read existing dossier; pursue only recorded unresolved metrics or changed evidence.",
+      "dossier": "papers/Kuo2020",
+      "local_inputs": [
+        {
+          "path": "data/BioSequence/Kuo2020.csv",
+          "rows": 197890,
+          "sha256": "69a86caf1ccbfc94a519f5917624d6862a0dfede0082abae79300eda0bb959c0"
+        }
+      ],
+      "landscape_labels": [
+        {
+          "label": "Kuo2020",
+          "sub_id": "-",
+          "encoding": "Nucleotide",
+          "theoretical_size_expression": "$4^9=262,144$",
+          "theoretical_size": 262144
+        }
+      ]
+    },
+    {
+      "id": "PapkouRM23",
+      "aliases": [
+        "Papkou2023"
+      ],
+      "title": "A rugged yet easily navigable fitness landscape",
+      "doi": "10.1126/science.adh3860",
+      "year": 2023,
+      "origin": "supplied",
+      "citation_status": "author_list_corrected_from_PubMed_37995212",
+      "measured_variants": 261333,
+      "theoretical_variants": 262144,
+      "state": "triaged",
+      "next_action": "Read existing dossier; pursue only recorded unresolved metrics or changed evidence.",
+      "dossier": "papers/Papkou2023",
+      "local_inputs": [
+        {
+          "path": "data/BioSequence/Papkou2023_DHFR.csv",
+          "rows": 135178,
+          "sha256": "fca2fb47cad417a049698f43b20f90b320a4927418d502e527ad112ea46c82da"
+        },
+        {
+          "path": "data/BioSequence/Papkou2023_DHFR_RAW.csv",
+          "rows": 261333,
+          "sha256": "fcd57493a10caecd4f12d510809fc96ece4f98b09ac5a9c5769d35179ccaaf05"
+        }
+      ],
+      "landscape_labels": [
+        {
+          "label": "Papkou2023",
+          "sub_id": "DHFR",
+          "encoding": "Nucleotide",
+          "theoretical_size_expression": "$4^9=262,144$",
+          "theoretical_size": 262144
+        }
+      ]
+    },
+    {
+      "id": "PodgornaiaL15",
+      "aliases": [
+        "Podgornaia2015"
+      ],
+      "title": "Pervasive degeneracy and epistasis in a protein-protein interface",
+      "doi": "10.1126/science.1257360",
+      "year": 2015,
+      "origin": "supplied",
+      "citation_status": "provided_bibliography_unverified",
+      "measured_variants": 140517,
+      "theoretical_variants": 160000,
+      "state": "blocked_access",
+      "next_action": "Await user assistance with Science SI robot check; need original functional labels. Do not repeat failed download routes.",
+      "dossier": "papers/PodgornaiaLaub2015",
+      "local_inputs": [
+        {
+          "path": "data/BioSequence/Podgornaia2015_PhoQ.csv",
+          "rows": 140517,
+          "sha256": "592809f2438a09dd42800adce24159c388223dfd5662a71a5b8554b8481f735a"
+        }
+      ],
+      "landscape_labels": [
+        {
+          "label": "PodgornaiaL15",
+          "sub_id": "PhoQ",
+          "encoding": "Protein",
+          "theoretical_size_expression": "$20^4=160,000$",
+          "theoretical_size": 160000
+        }
+      ]
+    },
+    {
+      "id": "WuDOLS16",
+      "aliases": [
+        "Wu2016"
+      ],
+      "title": "Adaptation in protein fitness landscapes is facilitated by indirect paths",
+      "doi": "10.7554/eLife.16965",
+      "year": 2016,
+      "origin": "supplied",
+      "citation_status": "provided_bibliography_unverified",
+      "measured_variants": 149361,
+      "theoretical_variants": 160000,
+      "state": "triaged",
+      "next_action": "Read existing dossier; pursue only recorded unresolved metrics or changed evidence.",
+      "dossier": "papers/Wu2016",
+      "local_inputs": [
+        {
+          "path": "data/BioSequence/Wu2016_GB1.csv",
+          "rows": 149361,
+          "sha256": "5794a0761f938cee3ed753ea25e2551782f15a3610763c44c11ec5c9dff2f998"
+        }
+      ],
+      "landscape_labels": [
+        {
+          "label": "Wu2016",
+          "sub_id": "GB1",
+          "encoding": "Protein",
+          "theoretical_size_expression": "$20^4=160,000$",
+          "theoretical_size": 160000
+        }
+      ]
+    },
+    {
+      "id": "JalalTSCLTNLL20",
+      "aliases": [
+        "Jalal2020"
+      ],
+      "title": "Diversification of DNA-binding specificity by permissive and specificity-switching mutations in the ParB/Noc protein family",
+      "doi": "10.1016/j.celrep.2020.107928",
+      "year": 2020,
+      "origin": "supplied",
+      "citation_status": "provided_bibliography_unverified",
+      "measured_variants": 160000,
+      "theoretical_variants": 160000,
+      "state": "closed_low_yield",
+      "next_action": "Reopen if source functional labels/one-nucleotide network become a required validation target; see follow-up checkpoint.",
+      "dossier": "papers/Jalal2020",
+      "local_inputs": [
+        {
+          "path": "data/BioSequence/Jalal2020_NBS.csv",
+          "rows": 160000,
+          "sha256": "b55df35cee80483a407c5ca85b71ad9c295b669839de48d4ba0099032d6f767a"
+        },
+        {
+          "path": "data/BioSequence/Jalal2020_parS.csv",
+          "rows": 160000,
+          "sha256": "b232e3d7153f937a8e4d4fd8e8ca146af65cda436742662673db59dcbf580977"
+        }
+      ],
+      "landscape_labels": [
+        {
+          "label": "Jalal2020",
+          "sub_id": "ParB",
+          "encoding": "Protein",
+          "theoretical_size_expression": "$20^4=160,000$",
+          "theoretical_size": 160000
+        },
+        {
+          "label": "Jalal2020",
+          "sub_id": "Noc",
+          "encoding": "Protein",
+          "theoretical_size_expression": "$20^4=160,000$",
+          "theoretical_size": 160000
+        }
+      ]
+    },
+    {
+      "id": "TuSE22",
+      "aliases": [
+        "Tu2022"
+      ],
+      "title": "An ultra-high-throughput method for measuring biomolecular activities",
+      "doi": "10.1101/2022.03.09.483646",
+      "year": 2022,
+      "origin": "supplied",
+      "citation_status": "provided_bibliography_unverified",
+      "measured_variants": 159132,
+      "theoretical_variants": 160000,
+      "state": "triaged",
+      "next_action": "Read existing dossier; pursue only recorded unresolved metrics or changed evidence.",
+      "dossier": "papers/Tu2022_bioRxiv",
+      "local_inputs": [
+        {
+          "path": "data/BioSequence/Tu2022_T7.csv",
+          "rows": 6725,
+          "sha256": "b7b5a10fc768352196560411b3bfc08008b90faa770385b2544fad9a17f26330"
+        },
+        {
+          "path": "data/BioSequence/Tu2022_TEV.csv",
+          "rows": 159132,
+          "sha256": "3f9f3676750e2b5b064507632d98c339549b417176f933f25602f0a32060c8e9"
+        }
+      ],
+      "landscape_labels": [
+        {
+          "label": "Tu2022",
+          "sub_id": "TEV",
+          "encoding": "Protein",
+          "theoretical_size_expression": "$20^4=160,000$",
+          "theoretical_size": 160000
+        },
+        {
+          "label": "Tu2022",
+          "sub_id": "T7",
+          "encoding": "Protein",
+          "theoretical_size_expression": "$20^3=8,000$",
+          "theoretical_size": 8000
+        }
+      ]
+    },
+    {
+      "id": "JohnstonAWLPYA24",
+      "aliases": [
+        "Johnston2024"
+      ],
+      "title": "A combinatorially complete epistatic fitness landscape in an enzyme active site",
+      "doi": "10.1073/pnas.2400439121",
+      "year": 2024,
+      "origin": "supplied",
+      "citation_status": "provided_bibliography_unverified",
+      "measured_variants": 159129,
+      "theoretical_variants": 160000,
+      "state": "triaged",
+      "next_action": "Read existing dossier; pursue only recorded unresolved metrics or changed evidence.",
+      "dossier": "papers/Johnston2024_PNAS",
+      "local_inputs": [
+        {
+          "path": "data/BioSequence/Johnston2024_TrpB3A.csv",
+          "rows": 7971,
+          "sha256": "3670753189cae7b6d4888ed63428ec9d8780a36e93b7fea8301cb357c9cb73df"
+        },
+        {
+          "path": "data/BioSequence/Johnston2024_TrpB3B.csv",
+          "rows": 7996,
+          "sha256": "6bb4b0f6867e375d07e484392b2d24c49dbe79a1b13ef9d22c6f2eca800ccce8"
+        },
+        {
+          "path": "data/BioSequence/Johnston2024_TrpB3C.csv",
+          "rows": 7994,
+          "sha256": "a771b677ad61757021b70110a3f2a2e5b73bb1622ff2de087406d9a647974e13"
+        },
+        {
+          "path": "data/BioSequence/Johnston2024_TrpB3D.csv",
+          "rows": 7763,
+          "sha256": "42caa93c3599e97e474a59051e77620df752058df803fc3bf6175830c28e10fb"
+        },
+        {
+          "path": "data/BioSequence/Johnston2024_TrpB3E.csv",
+          "rows": 7964,
+          "sha256": "c4ae0d6a1f45706978745ff6e014c5edde35958f285fdd8bdd80ebef082f3e6e"
+        },
+        {
+          "path": "data/BioSequence/Johnston2024_TrpB3F.csv",
+          "rows": 7737,
+          "sha256": "918e4f72bb1bf91cc8191b69f7366c581f14d9c4b1fa8c5be09a6dee4506416a"
+        },
+        {
+          "path": "data/BioSequence/Johnston2024_TrpB3G.csv",
+          "rows": 7891,
+          "sha256": "0eada7410f3aaf40cc848d4580c1422dee4b0f2feb2906242347e8a46127699e"
+        },
+        {
+          "path": "data/BioSequence/Johnston2024_TrpB3H.csv",
+          "rows": 7716,
+          "sha256": "c8706e769d1a6ac74767e7c711883c2c0b58369463a1229ac3b92d384e75b39e"
+        },
+        {
+          "path": "data/BioSequence/Johnston2024_TrpB3I.csv",
+          "rows": 7784,
+          "sha256": "7bdb58e4b0fc6c86a5eb15f7f139adb074bf1a96188d5481bd401b286a21ae85"
+        },
+        {
+          "path": "data/BioSequence/Johnston2024_TrpB4.csv",
+          "rows": 159129,
+          "sha256": "a34450ce649ec1627fff95dc91cdef937f16312b326973eadfa85056bf47b954"
+        }
+      ],
+      "landscape_labels": [
+        {
+          "label": "Johnston2024",
+          "sub_id": "TrpB4",
+          "encoding": "Protein",
+          "theoretical_size_expression": "$20^4=160,000$",
+          "theoretical_size": 160000
+        },
+        {
+          "label": "Johnston2024",
+          "sub_id": "TrpB3A",
+          "encoding": "Protein",
+          "theoretical_size_expression": "$20^3=8,000$",
+          "theoretical_size": 8000
+        },
+        {
+          "label": "Johnston2024",
+          "sub_id": "TrpB3B",
+          "encoding": "Protein",
+          "theoretical_size_expression": "$20^3=8,000$",
+          "theoretical_size": 8000
+        },
+        {
+          "label": "Johnston2024",
+          "sub_id": "TrpB3C",
+          "encoding": "Protein",
+          "theoretical_size_expression": "$20^3=8,000$",
+          "theoretical_size": 8000
+        },
+        {
+          "label": "Johnston2024",
+          "sub_id": "TrpB3D",
+          "encoding": "Protein",
+          "theoretical_size_expression": "$20^3=8,000$",
+          "theoretical_size": 8000
+        },
+        {
+          "label": "Johnston2024",
+          "sub_id": "TrpB3E",
+          "encoding": "Protein",
+          "theoretical_size_expression": "$20^3=8,000$",
+          "theoretical_size": 8000
+        },
+        {
+          "label": "Johnston2024",
+          "sub_id": "TrpB3F",
+          "encoding": "Protein",
+          "theoretical_size_expression": "$20^3=8,000$",
+          "theoretical_size": 8000
+        },
+        {
+          "label": "Johnston2024",
+          "sub_id": "TrpB3G",
+          "encoding": "Protein",
+          "theoretical_size_expression": "$20^3=8,000$",
+          "theoretical_size": 8000
+        },
+        {
+          "label": "Johnston2024",
+          "sub_id": "TrpB3H",
+          "encoding": "Protein",
+          "theoretical_size_expression": "$20^3=8,000$",
+          "theoretical_size": 8000
+        },
+        {
+          "label": "Johnston2024",
+          "sub_id": "TrpB3I",
+          "encoding": "Protein",
+          "theoretical_size_expression": "$20^3=8,000$",
+          "theoretical_size": 8000
+        }
+      ]
+    },
+    {
+      "id": "PhillipsLMDCJCMWD21",
+      "aliases": [
+        "Phillips2021"
+      ],
+      "title": "Binding affinity landscapes constrain the evolution of broadly neutralizing anti-influenza antibodies",
+      "doi": "10.7554/eLife.71393",
+      "year": 2021,
+      "origin": "supplied",
+      "citation_status": "provided_bibliography_unverified",
+      "measured_variants": 65536,
+      "theoretical_variants": 65536,
+      "state": "assigned",
+      "next_action": "CR6261 OLS completed; inspect largest CR9114 landscapes in separate dossier.",
+      "dossier": "papers/phillips2021",
+      "local_inputs": [
+        {
+          "path": "data/BioSequence/Phillips2021_CR6261_h1.csv",
+          "rows": 1917,
+          "sha256": "d5a24f1a9534e759099522032d524b3fc05540e4a6d0f3c88e24fccbb84fb390"
+        },
+        {
+          "path": "data/BioSequence/Phillips2021_CR6261_h9.csv",
+          "rows": 1917,
+          "sha256": "e80241bc514f625b0464ddc1a8fbc99f45f73f20502214d40e7ac0ad01547c4c"
+        },
+        {
+          "path": "data/BioSequence/Phillips2021_CR9114_fluB.csv",
+          "rows": 65536,
+          "sha256": "02ee03b7a00daa42a2db66f77068d3e526b13123b528bc577f08aaf29f554949"
+        },
+        {
+          "path": "data/BioSequence/Phillips2021_CR9114_h1.csv",
+          "rows": 65536,
+          "sha256": "30b6f5ee05661dd1025eee0836b4bc6d0985ef020078262b75d50fbc8403e6e9"
+        },
+        {
+          "path": "data/BioSequence/Phillips2021_CR9114_h3.csv",
+          "rows": 65536,
+          "sha256": "b5bb878020dc14ab7edee2715746ccccc507b24d687f7846311f0787500de2b2"
+        }
+      ],
+      "landscape_labels": [
+        {
+          "label": "Phillips2021",
+          "sub_id": "CR6261-h1",
+          "encoding": "Mutation",
+          "theoretical_size_expression": "$2^{11}=2,048$",
+          "theoretical_size": 2048
+        },
+        {
+          "label": "Phillips2021",
+          "sub_id": "CR6261-h9",
+          "encoding": "Mutation",
+          "theoretical_size_expression": "$2^{11}=2,048$",
+          "theoretical_size": 2048
+        },
+        {
+          "label": "Phillips2021",
+          "sub_id": "CR9114-h1",
+          "encoding": "Mutation",
+          "theoretical_size_expression": "$2^{16}=65,536$",
+          "theoretical_size": 65536
+        },
+        {
+          "label": "Phillips2021",
+          "sub_id": "CR9114-h3",
+          "encoding": "Mutation",
+          "theoretical_size_expression": "$2^{16}=65,536$",
+          "theoretical_size": 65536
+        },
+        {
+          "label": "Phillips2021",
+          "sub_id": "CR9114-flueB",
+          "encoding": "Mutation",
+          "theoretical_size_expression": "$2^{16}=65,536$",
+          "theoretical_size": 65536
+        }
+      ]
+    },
+    {
+      "id": "PhillipsMBDSD23",
+      "aliases": [
+        "Phillips2023"
+      ],
+      "title": "Hierarchical sequence-affinity landscapes shape the evolution of breadth in an anti-influenza receptor binding site antibody",
+      "doi": null,
+      "year": 2023,
+      "origin": "supplied",
+      "citation_status": "provided_bibliography_unverified",
+      "measured_variants": 65536,
+      "theoretical_variants": 65536,
+      "state": "queued",
+      "next_action": "Acquire main/relevant SI; identify overlapping targets before any experiment.",
+      "dossier": null,
+      "local_inputs": [
+        {
+          "path": "data/BioSequence/Phillips2023_G189E.csv",
+          "rows": 65536,
+          "sha256": "c775bfbdff7174dd69d341ebc49c743df1964b38449d28124a53d8f674bb120a"
+        },
+        {
+          "path": "data/BioSequence/Phillips2023_MA90.csv",
+          "rows": 65536,
+          "sha256": "9ae2e2d08945b00d7ad691c22efd87f87aa9583216a7d77c80e890394d40e81b"
+        },
+        {
+          "path": "data/BioSequence/Phillips2023_SI06.csv",
+          "rows": 65536,
+          "sha256": "5b2f1c66886ee5825ac61e515f50bc8f8644bcd2e0eed9c60e34e54986c667a5"
+        }
+      ],
+      "landscape_labels": [
+        {
+          "label": "Phillips2023",
+          "sub_id": "CH65-SI06",
+          "encoding": "Mutation",
+          "theoretical_size_expression": "$2^{16}=65,536$",
+          "theoretical_size": 65536
+        },
+        {
+          "label": "Phillips2023",
+          "sub_id": "CH65-MA90",
+          "encoding": "Mutation",
+          "theoretical_size_expression": "$2^{16}=65,536$",
+          "theoretical_size": 65536
+        },
+        {
+          "label": "Phillips2023",
+          "sub_id": "CH65-G189E",
+          "encoding": "Mutation",
+          "theoretical_size_expression": "$2^{16}=65,536$",
+          "theoretical_size": 65536
+        }
+      ]
+    },
+    {
+      "id": "WestmannGW24",
+      "aliases": [
+        "Westmann2024"
+      ],
+      "title": "The highly rugged yet navigable regulatory landscape of the bacterial transcription factor TetR",
+      "doi": "10.1038/s41467-024-54723-y",
+      "year": 2024,
+      "origin": "supplied",
+      "citation_status": "provided_bibliography_unverified",
+      "measured_variants": 17765,
+      "theoretical_variants": 65536,
+      "state": "triaged",
+      "next_action": "Read existing dossier; pursue only recorded unresolved metrics or changed evidence.",
+      "dossier": "papers/westmann2024",
+      "local_inputs": [
+        {
+          "path": "data/BioSequence/Westmann2024.csv",
+          "rows": 17765,
+          "sha256": "893ea92b471ae295a0a2f4488a55403652d03b9c5ad37af9323b3d55f33dc1db"
+        }
+      ],
+      "landscape_labels": [
+        {
+          "label": "Westmann24",
+          "sub_id": "-",
+          "encoding": "Nucleotide",
+          "theoretical_size_expression": "$4^{8}=65,536$",
+          "theoretical_size": 65536
+        }
+      ]
+    },
+    {
+      "id": "SooSFW21",
+      "aliases": [
+        "Soo2021"
+      ],
+      "title": "Fitness landscape of a dynamic RNA structure",
+      "doi": null,
+      "year": 2021,
+      "origin": "supplied",
+      "citation_status": "provided_bibliography_unverified",
+      "measured_variants": 65536,
+      "theoretical_variants": 65536,
+      "state": "queued",
+      "next_action": "Acquire main/relevant SI; identify overlapping targets before any experiment.",
+      "dossier": null,
+      "local_inputs": [
+        {
+          "path": "data/BioSequence/Soo2021_30C.csv",
+          "rows": 65536,
+          "sha256": "c9e496ad0a684c37a837d1ea79b2fdc4e7ef2cda82eb54f4ef49ffa69a13d669"
+        },
+        {
+          "path": "data/BioSequence/Soo2021_37C.csv",
+          "rows": 65536,
+          "sha256": "9a7a3b76b68083f993f4d38bc7128e20ea58db8017fcc6011f0f3af2b6f44a73"
+        }
+      ],
+      "landscape_labels": [
+        {
+          "label": "Soo2021",
+          "sub_id": "30C",
+          "encoding": "Nucleotide",
+          "theoretical_size_expression": "$4^8=65,536$",
+          "theoretical_size": 65536
+        },
+        {
+          "label": "Soo2021",
+          "sub_id": "37C",
+          "encoding": "Nucleotide",
+          "theoretical_size_expression": "$4^8=65,536$",
+          "theoretical_size": 65536
+        }
+      ]
+    },
+    {
+      "id": "WongKK18",
+      "aliases": [
+        "Wong2018"
+      ],
+      "title": "Quantitative activity profile and context dependence of all human 5' splice sites",
+      "doi": null,
+      "year": 2018,
+      "origin": "supplied",
+      "citation_status": "provided_bibliography_unverified",
+      "measured_variants": 32768,
+      "theoretical_variants": 32768,
+      "state": "queued",
+      "next_action": "Acquire main/relevant SI; identify overlapping targets before any experiment.",
+      "dossier": null,
+      "local_inputs": [
+        {
+          "path": "data/BioSequence/Wong2018_brca2.csv",
+          "rows": 32768,
+          "sha256": "8a0d8a86ecadf8937f1844834b18ce21658c4c6ecf6aeb61dd000042f3cd842d"
+        },
+        {
+          "path": "data/BioSequence/Wong2018_ikbkap.csv",
+          "rows": 32768,
+          "sha256": "6452c8a8b67aa32b8a623a1d24eeb82ca8a4981d9c90c8d9ef31c27e28f8a980"
+        },
+        {
+          "path": "data/BioSequence/Wong2018_smn1.csv",
+          "rows": 32768,
+          "sha256": "177f93741e71a6cb115037ce5fef5a568aeb7e7cf053b1adc12323fbad4510c9"
+        }
+      ],
+      "landscape_labels": [
+        {
+          "label": "Wong2018",
+          "sub_id": "BRCA2",
+          "encoding": "Nucleotide",
+          "theoretical_size_expression": "$32,768$",
+          "theoretical_size": 32768
+        },
+        {
+          "label": "Wong2018",
+          "sub_id": "SMN1",
+          "encoding": "Nucleotide",
+          "theoretical_size_expression": "$32,768$",
+          "theoretical_size": 32768
+        },
+        {
+          "label": "Wong2018",
+          "sub_id": "IKBKAP",
+          "encoding": "Nucleotide",
+          "theoretical_size_expression": "$32,768$",
+          "theoretical_size": 32768
+        }
+      ]
+    },
+    {
+      "id": "MoulanaDP22",
+      "aliases": [
+        "Moulana2022"
+      ],
+      "title": "Compensatory epistasis maintains ACE2 affinity in SARS-CoV-2 Omicron BA.1",
+      "doi": "10.1038/s41467-022-34506-z",
+      "year": 2022,
+      "origin": "supplied",
+      "citation_status": "provided_bibliography_unverified",
+      "measured_variants": 32768,
+      "theoretical_variants": 32768,
+      "state": "queued",
+      "next_action": "Acquire main/relevant SI; identify overlapping targets before any experiment.",
+      "dossier": null,
+      "local_inputs": [
+        {
+          "path": "data/BioSequence/Moulana2022_ACE2.csv",
+          "rows": 32768,
+          "sha256": "71b466b5d4165f955d5f6407d2fbd6fd412602f29020b006810ea22c82f6460e"
+        }
+      ],
+      "landscape_labels": [
+        {
+          "label": "Moulana2022",
+          "sub_id": "ACE",
+          "encoding": "Mutation",
+          "theoretical_size_expression": "$2^{15}=32,768$",
+          "theoretical_size": 32768
+        }
+      ]
+    },
+    {
+      "id": "MoulanaDPCRGSBD23",
+      "aliases": [
+        "Moulana2023"
+      ],
+      "title": "The landscape of antibody binding affinity in SARS-CoV-2 Omicron BA.1 evolution",
+      "doi": "10.7554/eLife.83442",
+      "year": 2023,
+      "origin": "supplied",
+      "citation_status": "provided_bibliography_unverified",
+      "measured_variants": 32768,
+      "theoretical_variants": 32768,
+      "state": "queued",
+      "next_action": "Acquire main/relevant SI; identify overlapping targets before any experiment.",
+      "dossier": null,
+      "local_inputs": [
+        {
+          "path": "data/BioSequence/Moulana2023_CB6.csv",
+          "rows": 32768,
+          "sha256": "d79dedd13cd96859e0a74869e2d2496cf8cd8eae44e88f3b2d6e493bcd7994a7"
+        },
+        {
+          "path": "data/BioSequence/Moulana2023_CoV555.csv",
+          "rows": 32768,
+          "sha256": "a71798523c135b3815fc8ff145a6d2028cbf5092414882f4005d2dd13c5cce44"
+        },
+        {
+          "path": "data/BioSequence/Moulana2023_REGN10987.csv",
+          "rows": 32768,
+          "sha256": "6c49d88ba72ef39477a63dba06664bfd4635d355a313a73cd9eb915c4ba96fd7"
+        },
+        {
+          "path": "data/BioSequence/Moulana2023_S309.csv",
+          "rows": 32768,
+          "sha256": "16f19ec64bbd2e8229cb33857a0b2987081e1ebd2b1ae47a2a33d0c86c998cab"
+        }
+      ],
+      "landscape_labels": [
+        {
+          "label": "Moulana2023",
+          "sub_id": "CB6",
+          "encoding": "Mutation",
+          "theoretical_size_expression": "$2^{15}=32,768$",
+          "theoretical_size": 32768
+        },
+        {
+          "label": "Moulana2023",
+          "sub_id": "CoV555",
+          "encoding": "Mutation",
+          "theoretical_size_expression": "$2^{15}=32,768$",
+          "theoretical_size": 32768
+        },
+        {
+          "label": "Moulana2023",
+          "sub_id": "REGN10987",
+          "encoding": "Mutation",
+          "theoretical_size_expression": "$2^{15}=32,768$",
+          "theoretical_size": 32768
+        },
+        {
+          "label": "Moulana2023",
+          "sub_id": "S309",
+          "encoding": "Mutation",
+          "theoretical_size_expression": "$2^{15}=32,768$",
+          "theoretical_size": 32768
+        }
+      ]
+    },
+    {
+      "id": "BendixsenCOH19",
+      "aliases": [
+        "Bendixsen2019"
+      ],
+      "title": "Genotype network intersections promote evolutionary innovation",
+      "doi": null,
+      "year": 2019,
+      "origin": "supplied",
+      "citation_status": "provided_bibliography_unverified",
+      "measured_variants": 16384,
+      "theoretical_variants": 16384,
+      "state": "queued",
+      "next_action": "Acquire main/relevant SI; identify overlapping targets before any experiment.",
+      "dossier": null,
+      "local_inputs": [
+        {
+          "path": "data/BioSequence/Bendixsen2019_hdv.csv",
+          "rows": 16384,
+          "sha256": "2f79bf6de119d46bb77b81b57713d1bb5891b0e9ad9d8048f997ca31665cfd95"
+        },
+        {
+          "path": "data/BioSequence/Bendixsen2019_ligase.csv",
+          "rows": 16384,
+          "sha256": "1bf07e5ff3423e930ed07e45dbd4cf8b58f57af900ceebff645ef921e18e425f"
+        }
+      ],
+      "landscape_labels": [
+        {
+          "label": "Bendixsen2019",
+          "sub_id": "HDV",
+          "encoding": "Mutation",
+          "theoretical_size_expression": "$2^{14}=16,384$",
+          "theoretical_size": 16384
+        },
+        {
+          "label": "Bendixsen2019",
+          "sub_id": "Ligase",
+          "encoding": "Mutation",
+          "theoretical_size_expression": "$2^{14}=16,384$",
+          "theoretical_size": 16384
+        }
+      ]
+    },
+    {
+      "id": "PoelwijkSR19",
+      "aliases": [
+        "Poelwijk2019"
+      ],
+      "title": "Learning the pattern of epistasis linking genotype and phenotype in a protein",
+      "doi": null,
+      "year": 2019,
+      "origin": "supplied",
+      "citation_status": "provided_bibliography_unverified",
+      "measured_variants": 8192,
+      "theoretical_variants": 8192,
+      "state": "queued",
+      "next_action": "Acquire main/relevant SI; identify overlapping targets before any experiment.",
+      "dossier": null,
+      "local_inputs": [
+        {
+          "path": "data/BioSequence/Poelwijk2019.csv",
+          "rows": 8192,
+          "sha256": "081afe1d004f9f86c002c0f4dbc7407136e32a1f16e53f5d88b1df91b36b422a"
+        }
+      ],
+      "landscape_labels": [
+        {
+          "label": "Poelwijk2019",
+          "sub_id": "eqFP611",
+          "encoding": "Mutation",
+          "theoretical_size_expression": "$2^{13}=8,192$",
+          "theoretical_size": 8192
+        }
+      ]
+    },
+    {
+      "id": "LiteGNLGL20",
+      "aliases": [
+        "Lite2020"
+      ],
+      "title": "Uncovering the basis of protein-protein interaction specificity with a combinatorially complete library",
+      "doi": null,
+      "year": 2020,
+      "origin": "supplied",
+      "citation_status": "provided_bibliography_unverified",
+      "measured_variants": 7882,
+      "theoretical_variants": 8000,
+      "state": "queued",
+      "next_action": "Acquire main/relevant SI; identify overlapping targets before any experiment.",
+      "dossier": null,
+      "local_inputs": [
+        {
+          "path": "data/BioSequence/Lite2020_ParD2.csv",
+          "rows": 7882,
+          "sha256": "ecc148455a0a1ab367aa15c37a82f5f1b603f6bd998ca7e26e33b77a81272dee"
+        },
+        {
+          "path": "data/BioSequence/Lite2020_ParD3.csv",
+          "rows": 7882,
+          "sha256": "49e2bf25eb6c6a9e727067c2f39410494b62696de9cc2f6c7c768b0181566a09"
+        }
+      ],
+      "landscape_labels": [
+        {
+          "label": "Lite2020",
+          "sub_id": "ParD2",
+          "encoding": "Protein",
+          "theoretical_size_expression": "$20^3=8,000$",
+          "theoretical_size": 8000
+        },
+        {
+          "label": "Lite2020",
+          "sub_id": "ParD3",
+          "encoding": "Protein",
+          "theoretical_size_expression": "$20^3=8,000$",
+          "theoretical_size": 8000
+        }
+      ]
+    },
+    {
+      "id": "BaezaCenturionMSVL19",
+      "aliases": [
+        "Centurion2019"
+      ],
+      "title": "Combinatorial genetics reveals a scaling law for the effects of mutations on splicing",
+      "doi": null,
+      "year": 2019,
+      "origin": "supplied",
+      "citation_status": "provided_bibliography_unverified",
+      "measured_variants": 3072,
+      "theoretical_variants": 3072,
+      "state": "queued",
+      "next_action": "Acquire main/relevant SI; identify overlapping targets before any experiment.",
+      "dossier": null,
+      "local_inputs": [
+        {
+          "path": "data/BioSequence/Centurion2019.csv",
+          "rows": 3072,
+          "sha256": "8af4261663c2a9fe91620939b100ae4c56bf0f45a71f06e92668f348d21e1890"
+        }
+      ],
+      "landscape_labels": [
+        {
+          "label": "Centurion2019",
+          "sub_id": "-",
+          "encoding": "Mutation",
+          "theoretical_size_expression": "$2^{10} \\times 3=3,072$",
+          "theoretical_size": 3072
+        }
+      ]
+    },
+    {
+      "id": "SchulzTWW25",
+      "aliases": [
+        "Schulz2025"
+      ],
+      "title": "Epistatic hotspots organize antibody fitness landscape and boost evolvability",
+      "doi": null,
+      "year": 2025,
+      "origin": "supplied",
+      "citation_status": "provided_bibliography_unverified",
+      "measured_variants": 1024,
+      "theoretical_variants": 1024,
+      "state": "queued",
+      "next_action": "Acquire main/relevant SI; identify overlapping targets before any experiment.",
+      "dossier": null,
+      "local_inputs": [
+        {
+          "path": "data/BioSequence/Schulz2025.csv",
+          "rows": 1024,
+          "sha256": "21b76addff90bc770e2be0e654e868133e479352e525f60254302adb15e79501"
+        }
+      ],
+      "landscape_labels": [
+        {
+          "label": "Schulz2025",
+          "sub_id": "-",
+          "encoding": "Mutation",
+          "theoretical_size_expression": "$2^{10}=1,024$",
+          "theoretical_size": 1024
+        }
+      ]
+    },
+    {
+      "id": "BakerleeNSRD22",
+      "aliases": [
+        "Bakerlee2022"
+      ],
+      "title": "Idiosyncratic epistasis leads to global fitness-correlated trends",
+      "doi": null,
+      "year": 2022,
+      "origin": "supplied",
+      "citation_status": "provided_bibliography_unverified",
+      "measured_variants": 1022,
+      "theoretical_variants": 1024,
+      "state": "queued",
+      "next_action": "Acquire main/relevant SI; identify overlapping targets before any experiment.",
+      "dossier": null,
+      "local_inputs": [
+        {
+          "path": "data/BioSequence/Bakerlee2022_hap_37C.csv",
+          "rows": 1022,
+          "sha256": "1cb124964838d8f91d04e1c54c501a2373ce33d7e9bf329dccf42a4ca47212d9"
+        },
+        {
+          "path": "data/BioSequence/Bakerlee2022_hap_4NQO.csv",
+          "rows": 1022,
+          "sha256": "acdf5ddbe142cc8ef8c0f101e198d0a798ea45d563ff41b8a57eae45c550117c"
+        },
+        {
+          "path": "data/BioSequence/Bakerlee2022_hap_YPDA.csv",
+          "rows": 1022,
+          "sha256": "621c315c24fe2bdd8b18c1be802765bede492dfd559a6e7f06a000d4f2f1ba21"
+        },
+        {
+          "path": "data/BioSequence/Bakerlee2022_hap_gu.csv",
+          "rows": 1022,
+          "sha256": "81424e9eb12ba348a70f0e3f2ea74dfbf1fc08d81be1449ea15b7b218d039da1"
+        },
+        {
+          "path": "data/BioSequence/Bakerlee2022_hap_salt.csv",
+          "rows": 1022,
+          "sha256": "a241f4123ee5559a519a549a82b4734579492e3af6a064e07edb9264ec52ae81"
+        },
+        {
+          "path": "data/BioSequence/Bakerlee2022_hap_suloc.csv",
+          "rows": 1022,
+          "sha256": "54d2b68a0088c90818f1bcd77f6b25da4fdbedca6f34d3910c546e67a3d9aac6"
+        },
+        {
+          "path": "data/BioSequence/Bakerlee2022_hom_37C.csv",
+          "rows": 1022,
+          "sha256": "257212bab920fad193349e6f45caacdf23a0988e61b038f1813c1531959ae9f2"
+        },
+        {
+          "path": "data/BioSequence/Bakerlee2022_hom_4NQO.csv",
+          "rows": 1022,
+          "sha256": "7eb0a4bdce8152fe30f9dbcbf19fd95c9bf52fe65c05020f43ff0aab16615f11"
+        },
+        {
+          "path": "data/BioSequence/Bakerlee2022_hom_YPDA.csv",
+          "rows": 1022,
+          "sha256": "0c639e50770261d8c27827688797b5775984cb2b8ec744ad5099b41ecb92a959"
+        },
+        {
+          "path": "data/BioSequence/Bakerlee2022_hom_gu.csv",
+          "rows": 1022,
+          "sha256": "e756052d0e6aaeb3b4a446009cd0c9316b613e4dfccbed49aeb398827bc6154f"
+        },
+        {
+          "path": "data/BioSequence/Bakerlee2022_hom_salt.csv",
+          "rows": 1022,
+          "sha256": "d55e32ab9bdce51c32708f7c6e5c087ff0897b9d6dd2f1b2eae03f06e2d47486"
+        },
+        {
+          "path": "data/BioSequence/Bakerlee2022_hom_suloc.csv",
+          "rows": 1022,
+          "sha256": "cbbcab9b3d2775b1d5127032341d76e9539df8d4a626e13a21ec242b37a5f4fc"
+        }
+      ],
+      "landscape_labels": [
+        {
+          "label": "Bakerlee2022",
+          "sub_id": "hap-4NQ0",
+          "encoding": "Mutation",
+          "theoretical_size_expression": "$2^{10}=1,024$",
+          "theoretical_size": 1024
+        },
+        {
+          "label": "Bakerlee2022",
+          "sub_id": "hap-37C",
+          "encoding": "Mutation",
+          "theoretical_size_expression": "$2^{10}=1,024$",
+          "theoretical_size": 1024
+        },
+        {
+          "label": "Bakerlee2022",
+          "sub_id": "hap-gu",
+          "encoding": "Mutation",
+          "theoretical_size_expression": "$2^{10}=1,024$",
+          "theoretical_size": 1024
+        },
+        {
+          "label": "Bakerlee2022",
+          "sub_id": "hap-salt",
+          "encoding": "Mutation",
+          "theoretical_size_expression": "$2^{10}=1,024$",
+          "theoretical_size": 1024
+        },
+        {
+          "label": "Bakerlee2022",
+          "sub_id": "hap-suloc",
+          "encoding": "Mutation",
+          "theoretical_size_expression": "$2^{10}=1,024$",
+          "theoretical_size": 1024
+        },
+        {
+          "label": "Bakerlee2022",
+          "sub_id": "hap-YPDA",
+          "encoding": "Mutation",
+          "theoretical_size_expression": "$2^{10}=1,024$",
+          "theoretical_size": 1024
+        },
+        {
+          "label": "Bakerlee2022",
+          "sub_id": "hom-4NQO",
+          "encoding": "Mutation",
+          "theoretical_size_expression": "$2^{10}=1,024$",
+          "theoretical_size": 1024
+        },
+        {
+          "label": "Bakerlee2022",
+          "sub_id": "hom-37C",
+          "encoding": "Mutation",
+          "theoretical_size_expression": "$2^{10}=1,024$",
+          "theoretical_size": 1024
+        },
+        {
+          "label": "Bakerlee2022",
+          "sub_id": "hom-gu",
+          "encoding": "Mutation",
+          "theoretical_size_expression": "$2^{10}=1,024$",
+          "theoretical_size": 1024
+        },
+        {
+          "label": "Bakerlee2022",
+          "sub_id": "hom-salt",
+          "encoding": "Mutation",
+          "theoretical_size_expression": "$2^{10}=1,024$",
+          "theoretical_size": 1024
+        },
+        {
+          "label": "Bakerlee2022",
+          "sub_id": "hom-suloc",
+          "encoding": "Mutation",
+          "theoretical_size_expression": "$2^{10}=1,024$",
+          "theoretical_size": 1024
+        },
+        {
+          "label": "Bakerlee2022",
+          "sub_id": "hom-YPDA",
+          "encoding": "Mutation",
+          "theoretical_size_expression": "$2^{10}=1,024$",
+          "theoretical_size": 1024
+        }
+      ]
+    },
+    {
+      "id": "BankMHJ16",
+      "aliases": [
+        "Bank2016"
+      ],
+      "title": "On the (un)predictability of a large intragenic fitness landscape",
+      "doi": "10.1073/pnas.1612676113",
+      "year": 2016,
+      "origin": "supplied",
+      "citation_status": "provided_bibliography_unverified",
+      "measured_variants": 640,
+      "theoretical_variants": 640,
+      "state": "triaged",
+      "next_action": "Read existing dossier; pursue only recorded unresolved metrics or changed evidence.",
+      "dossier": "papers/bank2016",
+      "local_inputs": [
+        {
+          "path": "data/BioSequence/Bank2016a.csv",
+          "rows": 640,
+          "sha256": "277e5d6a2d1a9972b5038d3ec75220b39f186e869bd06feb2ec82d110c8fb864"
+        },
+        {
+          "path": "data/BioSequence/Bank2016b.csv",
+          "rows": 64,
+          "sha256": "6b2378d6e74b92cc3116770ab858714db3bc2071ec859a01237d3e16beadd8eb"
+        }
+      ],
+      "landscape_labels": [
+        {
+          "label": "Bank2016",
+          "sub_id": "-",
+          "encoding": "Mutation",
+          "theoretical_size_expression": "$640$",
+          "theoretical_size": 640
+        },
+        {
+          "label": "Bank2016",
+          "sub_id": "-",
+          "encoding": "Mutation",
+          "theoretical_size_expression": "$2^{6}=64$",
+          "theoretical_size": 64
+        }
+      ]
+    },
+    {
+      "id": "WuOTNNW20",
+      "aliases": [
+        "Wu2020"
+      ],
+      "title": "Major antigenic site B of human influenza H3N2 viruses has an evolving local fitness landscape",
+      "doi": null,
+      "year": 2020,
+      "origin": "supplied",
+      "citation_status": "provided_bibliography_unverified",
+      "measured_variants": 576,
+      "theoretical_variants": 576,
+      "state": "queued",
+      "next_action": "Acquire main/relevant SI; identify overlapping targets before any experiment.",
+      "dossier": null,
+      "local_inputs": [
+        {
+          "path": "data/BioSequence/Wu2020_Bei89.csv",
+          "rows": 576,
+          "sha256": "704c80b9815154555905098d906234c7e437ca8b1af7ffe1fd3a035f85032e00"
+        },
+        {
+          "path": "data/BioSequence/Wu2020_Bk79.csv",
+          "rows": 576,
+          "sha256": "54434cbb550f1b758f712980b587706c9f813954e0d2829a706d1c160868acef"
+        },
+        {
+          "path": "data/BioSequence/Wu2020_Bris07L194.csv",
+          "rows": 576,
+          "sha256": "13d84a48aa07244b3af0204103fffa7bbb7bdfff16aa5a2d6995c27f09ce9aea"
+        },
+        {
+          "path": "data/BioSequence/Wu2020_Bris07P194.csv",
+          "rows": 576,
+          "sha256": "a3c271eb64929d0fc5e8e03c6b331c45424cf144733a49afabd2465e7572110a"
+        },
+        {
+          "path": "data/BioSequence/Wu2020_HK68.csv",
+          "rows": 576,
+          "sha256": "48e01a56c3a0e1fcbb51abb9758706d26a6b32f7a74711f8e6f01c07f8d1afed"
+        },
+        {
+          "path": "data/BioSequence/Wu2020_Mos99.csv",
+          "rows": 576,
+          "sha256": "4988ab05da23c63211cc60fcfb60acbb1c7255adbb3a539b5b282e247e477cf0"
+        },
+        {
+          "path": "data/BioSequence/Wu2020_NDako16.csv",
+          "rows": 576,
+          "sha256": "6d3a5a63e26499a73551ed50d78eeb108bec262e98896116c468efac2e0c51db"
+        }
+      ],
+      "landscape_labels": [
+        {
+          "label": "Wu2020",
+          "sub_id": "Bei89",
+          "encoding": "Mutation",
+          "theoretical_size_expression": "$576$",
+          "theoretical_size": 576
+        },
+        {
+          "label": "Wu2020",
+          "sub_id": "Bk79",
+          "encoding": "Mutation",
+          "theoretical_size_expression": "$576$",
+          "theoretical_size": 576
+        },
+        {
+          "label": "Wu2020",
+          "sub_id": "Bris07L194",
+          "encoding": "Mutation",
+          "theoretical_size_expression": "$576$",
+          "theoretical_size": 576
+        },
+        {
+          "label": "Wu2020",
+          "sub_id": "Bris07P194",
+          "encoding": "Mutation",
+          "theoretical_size_expression": "$576$",
+          "theoretical_size": 576
+        },
+        {
+          "label": "Wu2020",
+          "sub_id": "HK68",
+          "encoding": "Mutation",
+          "theoretical_size_expression": "$576$",
+          "theoretical_size": 576
+        },
+        {
+          "label": "Wu2020",
+          "sub_id": "Mos99",
+          "encoding": "Mutation",
+          "theoretical_size_expression": "$576$",
+          "theoretical_size": 576
+        },
+        {
+          "label": "Wu2020",
+          "sub_id": "NDako16",
+          "encoding": "Mutation",
+          "theoretical_size_expression": "$576$",
+          "theoretical_size": 576
+        }
+      ]
+    },
+    {
+      "id": "LunzerMFD05",
+      "aliases": [
+        "Lunzer2005"
+      ],
+      "title": "The biochemical architecture of an ancient adaptive landscape",
+      "doi": null,
+      "year": 2005,
+      "origin": "supplied",
+      "citation_status": "provided_bibliography_unverified",
+      "measured_variants": 512,
+      "theoretical_variants": 512,
+      "state": "queued",
+      "next_action": "Acquire main/relevant SI; identify overlapping targets before any experiment.",
+      "dossier": null,
+      "local_inputs": [
+        {
+          "path": "data/BioSequence/Lunzer2005_fitness.csv",
+          "rows": 512,
+          "sha256": "28513895359d99b23eff839711ea3a90ce996c33e05fffe9781837bc90f26f5b"
+        },
+        {
+          "path": "data/BioSequence/Lunzer2005_nad.csv",
+          "rows": 512,
+          "sha256": "2a1af2c5968fa43de2ce15cf6a74ab9600f3e3b0f7fb8ffc08deb3cf02492033"
+        },
+        {
+          "path": "data/BioSequence/Lunzer2005_nadp.csv",
+          "rows": 512,
+          "sha256": "209ecb59330b8e3a36a1452f1af8dc7254d0207b0a3eecab445e0af4c0e2adb3"
+        }
+      ],
+      "landscape_labels": [
+        {
+          "label": "Lunzer2005",
+          "sub_id": "fitness",
+          "encoding": "Protein",
+          "theoretical_size_expression": "$512$",
+          "theoretical_size": 512
+        },
+        {
+          "label": "Lunzer2005",
+          "sub_id": "NAD",
+          "encoding": "Protein",
+          "theoretical_size_expression": "$512$",
+          "theoretical_size": 512
+        },
+        {
+          "label": "Lunzer2005",
+          "sub_id": "NADP",
+          "encoding": "Protein",
+          "theoretical_size_expression": "$512$",
+          "theoretical_size": 512
+        }
+      ]
+    },
+    {
+      "id": "DoudGLMDFM24",
+      "aliases": [
+        "Doud2024"
+      ],
+      "title": "Competition-driven eco-evolutionary feedback reshapes bacteriophage lambda’s fitness landscape and enables speciation",
+      "doi": null,
+      "year": 2024,
+      "origin": "supplied",
+      "citation_status": "provided_bibliography_unverified",
+      "measured_variants": null,
+      "theoretical_variants": 512,
+      "state": "queued",
+      "next_action": "Acquire main/relevant SI; identify overlapping targets before any experiment.",
+      "dossier": null,
+      "local_inputs": [],
+      "landscape_labels": [
+        {
+          "label": "Doud2024",
+          "sub_id": "base",
+          "encoding": "Mutation",
+          "theoretical_size_expression": "$2^9=512$",
+          "theoretical_size": 512
+        },
+        {
+          "label": "Doud2024",
+          "sub_id": "LamB",
+          "encoding": "Mutation",
+          "theoretical_size_expression": "$2^9=512$",
+          "theoretical_size": 512
+        },
+        {
+          "label": "Doud2024",
+          "sub_id": "Lspec",
+          "encoding": "Mutation",
+          "theoretical_size_expression": "$2^9=512$",
+          "theoretical_size": 512
+        },
+        {
+          "label": "Doud2024",
+          "sub_id": "OmpF",
+          "encoding": "Mutation",
+          "theoretical_size_expression": "$2^9=512$",
+          "theoretical_size": 512
+        },
+        {
+          "label": "Doud2024",
+          "sub_id": "Ospec",
+          "encoding": "Mutation",
+          "theoretical_size_expression": "$2^9=512$",
+          "theoretical_size": 512
+        }
+      ]
+    },
+    {
+      "id": "DiazColungaCSRAS24",
+      "aliases": [
+        "Colunga2024"
+      ],
+      "title": "Full factorial construction of synthetic microbial communities",
+      "doi": null,
+      "year": 2024,
+      "origin": "supplied",
+      "citation_status": "provided_bibliography_unverified",
+      "measured_variants": null,
+      "theoretical_variants": 256,
+      "state": "queued",
+      "next_action": "Acquire main/relevant SI; identify overlapping targets before any experiment.",
+      "dossier": null,
+      "local_inputs": [],
+      "landscape_labels": [
+        {
+          "label": "Colunga2024",
+          "sub_id": "colorants",
+          "encoding": "Mutation",
+          "theoretical_size_expression": "$2^8=256$",
+          "theoretical_size": 256
+        },
+        {
+          "label": "Colunga2024",
+          "sub_id": "pseudo",
+          "encoding": "Mutation",
+          "theoretical_size_expression": "$2^8=256$",
+          "theoretical_size": 256
+        }
+      ]
+    },
+    {
+      "id": "HallRWRCCLSPEA20",
+      "aliases": [
+        "Hall2020"
+      ],
+      "title": "Intracellular complexities of acquiring a new enzymatic function revealed by mass-randomisation of active-site residues",
+      "doi": null,
+      "year": 2020,
+      "origin": "supplied",
+      "citation_status": "provided_bibliography_unverified",
+      "measured_variants": 128,
+      "theoretical_variants": 128,
+      "state": "queued",
+      "next_action": "Acquire main/relevant SI; identify overlapping targets before any experiment.",
+      "dossier": null,
+      "local_inputs": [
+        {
+          "path": "data/BioSequence/Hall2020_NfsA_ec50_2039.csv",
+          "rows": 128,
+          "sha256": "e28089a9780043b6c95ed965ea61f7ab5aa0fc819727357e7a42ecdb712afe09"
+        },
+        {
+          "path": "data/BioSequence/Hall2020_NfsA_ec50_3637.csv",
+          "rows": 128,
+          "sha256": "14931734f72cdbcaf6245faa0be27bd8ba5c9b56f364d1de03a13d5e1b265d9a"
+        }
+      ],
+      "landscape_labels": [
+        {
+          "label": "Hall2020",
+          "sub_id": "NfsA-2039",
+          "encoding": "Mutation",
+          "theoretical_size_expression": "$2^{7}=128$",
+          "theoretical_size": 128
+        },
+        {
+          "label": "Hall2020",
+          "sub_id": "NfsA-3637",
+          "encoding": "Mutation",
+          "theoretical_size_expression": "$2^{7}=128$",
+          "theoretical_size": 128
+        }
+      ]
+    },
+    {
+      "id": "Frohlich21",
+      "aliases": [
+        "Frohlich2021"
+      ],
+      "title": "On the evolvability of OXA-48",
+      "doi": null,
+      "year": 2021,
+      "origin": "supplied",
+      "citation_status": "provided_bibliography_unverified",
+      "measured_variants": null,
+      "theoretical_variants": 64,
+      "state": "queued",
+      "next_action": "Acquire main/relevant SI; identify overlapping targets before any experiment.",
+      "dossier": null,
+      "local_inputs": [],
+      "landscape_labels": [
+        {
+          "label": "Frohlich2021",
+          "sub_id": "CAZtraj1",
+          "encoding": "Mutation",
+          "theoretical_size_expression": "$2^{4}=16$",
+          "theoretical_size": 16
+        },
+        {
+          "label": "Frohlich2021",
+          "sub_id": "CAZtraj2",
+          "encoding": "Mutation",
+          "theoretical_size_expression": "$2^{6}=64$",
+          "theoretical_size": 64
+        },
+        {
+          "label": "Frohlich2021",
+          "sub_id": "CAZtraj3",
+          "encoding": "Mutation",
+          "theoretical_size_expression": "$2^{6}=64$",
+          "theoretical_size": 64
+        },
+        {
+          "label": "Frohlich2021",
+          "sub_id": "PIPtraj1",
+          "encoding": "Mutation",
+          "theoretical_size_expression": "$2^{4}=16$",
+          "theoretical_size": 16
+        },
+        {
+          "label": "Frohlich2021",
+          "sub_id": "PIPtraj2",
+          "encoding": "Mutation",
+          "theoretical_size_expression": "$2^{6}=64$",
+          "theoretical_size": 64
+        },
+        {
+          "label": "Frohlich2021",
+          "sub_id": "PIPtraj3",
+          "encoding": "Mutation",
+          "theoretical_size_expression": "$2^{6}=64$",
+          "theoretical_size": 64
+        }
+      ]
+    },
+    {
+      "id": "HallAP10",
+      "aliases": [
+        "Hall2010"
+      ],
+      "title": "Fitness epistasis among 6 biosynthetic loci in the budding yeast Saccharomyces cerevisiae",
+      "doi": null,
+      "year": 2010,
+      "origin": "supplied",
+      "citation_status": "provided_bibliography_unverified",
+      "measured_variants": 64,
+      "theoretical_variants": 64,
+      "state": "queued",
+      "next_action": "Acquire main/relevant SI; identify overlapping targets before any experiment.",
+      "dossier": null,
+      "local_inputs": [
+        {
+          "path": "data/BioSequence/Hall2010_diploid.csv",
+          "rows": 64,
+          "sha256": "d3241c4ad65d9549609678fcb62e1c965c25d4ca05734466d66c03a041f084ee"
+        },
+        {
+          "path": "data/BioSequence/Hall2010_haploid.csv",
+          "rows": 64,
+          "sha256": "af9a60315d8659d65ee25887372061424f1f493b878399bbeccd3ff502d558db"
+        }
+      ],
+      "landscape_labels": [
+        {
+          "label": "Hall2010",
+          "sub_id": "Haploid",
+          "encoding": "Mutation",
+          "theoretical_size_expression": "$2^6=64$",
+          "theoretical_size": 64
+        },
+        {
+          "label": "Hall2010",
+          "sub_id": "Diploid",
+          "encoding": "Mutation",
+          "theoretical_size_expression": "$2^6=64$",
+          "theoretical_size": 64
+        }
+      ]
+    },
+    {
+      "id": "TamerGARARAT19",
+      "aliases": [
+        "Tamer2019"
+      ],
+      "title": "High-order epistasis in catalytic power of dihydrofolate reductase gives rise to a rugged fitness landscape in the presence of trimethoprim selection",
+      "doi": null,
+      "year": 2019,
+      "origin": "supplied",
+      "citation_status": "provided_bibliography_unverified",
+      "measured_variants": null,
+      "theoretical_variants": 32,
+      "state": "queued",
+      "next_action": "Acquire main/relevant SI; identify overlapping targets before any experiment.",
+      "dossier": null,
+      "local_inputs": [],
+      "landscape_labels": [
+        {
+          "label": "Tamer2019",
+          "sub_id": "kcat-trajr",
+          "encoding": "Mutation",
+          "theoretical_size_expression": "$2^{5}=32$",
+          "theoretical_size": 32
+        },
+        {
+          "label": "Tamer2019",
+          "sub_id": "kcat-trajg",
+          "encoding": "Mutation",
+          "theoretical_size_expression": "$2^{5}=32$",
+          "theoretical_size": 32
+        },
+        {
+          "label": "Tamer2019",
+          "sub_id": "ki-trajr",
+          "encoding": "Mutation",
+          "theoretical_size_expression": "$2^{5}=32$",
+          "theoretical_size": 32
+        },
+        {
+          "label": "Tamer2019",
+          "sub_id": "ki-trajg",
+          "encoding": "Mutation",
+          "theoretical_size_expression": "$2^{5}=32$",
+          "theoretical_size": 32
+        }
+      ]
+    },
+    {
+      "id": "HallKCBCM19",
+      "aliases": [
+        "Hall2019"
+      ],
+      "title": "Environment changes epistasis to alter trade-offs along alternative evolutionary paths",
+      "doi": null,
+      "year": 2019,
+      "origin": "supplied",
+      "citation_status": "provided_bibliography_unverified",
+      "measured_variants": 32,
+      "theoretical_variants": 32,
+      "state": "queued",
+      "next_action": "Acquire main/relevant SI; identify overlapping targets before any experiment.",
+      "dossier": null,
+      "local_inputs": [
+        {
+          "path": "data/BioSequence/Hall2019_Acetate.csv",
+          "rows": 32,
+          "sha256": "2a097f3555a0d4d46b166bea03cb7cadbca4bbfc83acbb12ad1809299c24b17f"
+        },
+        {
+          "path": "data/BioSequence/Hall2019_Beef.csv",
+          "rows": 32,
+          "sha256": "bfda580e3dd19eb8c9aeb03da8d4f4b7d94b6e98e08ff3f42302f524e6fa2994"
+        },
+        {
+          "path": "data/BioSequence/Hall2019_Casamino.csv",
+          "rows": 32,
+          "sha256": "72476535616b08da1da3a34e4ff9a90b1d9ccecad189715cbf6dc84129d9d1cf"
+        },
+        {
+          "path": "data/BioSequence/Hall2019_Glucose.csv",
+          "rows": 32,
+          "sha256": "64f3b320358ec50d990ecf62301d6713146ab4ab6f346fad771ffb85ce8fde6a"
+        },
+        {
+          "path": "data/BioSequence/Hall2019_Milk.csv",
+          "rows": 32,
+          "sha256": "63b8e4008ddb56b470076e41fbddce822b99bc8df1a85b6b7d9c1d9f69406c81"
+        },
+        {
+          "path": "data/BioSequence/Hall2019_NAG.csv",
+          "rows": 32,
+          "sha256": "9917252aeded52e653000ea005c0ccbf346d75d2b60fe2b6292a9ee284993975"
+        },
+        {
+          "path": "data/BioSequence/Hall2019_Rhamnose.csv",
+          "rows": 32,
+          "sha256": "ae5c473f56c37fe21379cb882ace9df824c4aeb97312708a96000116d810fe94"
+        },
+        {
+          "path": "data/BioSequence/Hall2019_Trypsin.csv",
+          "rows": 32,
+          "sha256": "a79359a8a54eb9e6fe0b7f17df21e9e4dcaa99a688903e68ab46eb5e9ba7c152"
+        }
+      ],
+      "landscape_labels": [
+        {
+          "label": "Hall2019",
+          "sub_id": "Acetate",
+          "encoding": "Mutation",
+          "theoretical_size_expression": "$2^{5}=32$",
+          "theoretical_size": 32
+        },
+        {
+          "label": "Hall2019",
+          "sub_id": "Beef",
+          "encoding": "Mutation",
+          "theoretical_size_expression": "$2^{5}=32$",
+          "theoretical_size": 32
+        },
+        {
+          "label": "Hall2019",
+          "sub_id": "Casamino",
+          "encoding": "Mutation",
+          "theoretical_size_expression": "$2^{5}=32$",
+          "theoretical_size": 32
+        },
+        {
+          "label": "Hall2019",
+          "sub_id": "Glucose",
+          "encoding": "Mutation",
+          "theoretical_size_expression": "$2^{5}=32$",
+          "theoretical_size": 32
+        },
+        {
+          "label": "Hall2019",
+          "sub_id": "Milk",
+          "encoding": "Mutation",
+          "theoretical_size_expression": "$2^{5}=32$",
+          "theoretical_size": 32
+        },
+        {
+          "label": "Hall2019",
+          "sub_id": "NAG",
+          "encoding": "Mutation",
+          "theoretical_size_expression": "$2^{5}=32$",
+          "theoretical_size": 32
+        },
+        {
+          "label": "Hall2019",
+          "sub_id": "Rhamnose",
+          "encoding": "Mutation",
+          "theoretical_size_expression": "$2^{5}=32$",
+          "theoretical_size": 32
+        },
+        {
+          "label": "Hall2019",
+          "sub_id": "Trypsin",
+          "encoding": "Mutation",
+          "theoretical_size_expression": "$2^{5}=32$",
+          "theoretical_size": 32
+        }
+      ]
+    },
+    {
+      "id": "WhitlockB00",
+      "aliases": [
+        "Whitlock2000"
+      ],
+      "title": "Factors affecting the genetic load in Drosophila: synergistic epistasis and correlations among fitness components",
+      "doi": null,
+      "year": 2000,
+      "origin": "supplied",
+      "citation_status": "provided_bibliography_unverified",
+      "measured_variants": 32,
+      "theoretical_variants": 32,
+      "state": "queued",
+      "next_action": "Acquire main/relevant SI; identify overlapping targets before any experiment.",
+      "dossier": null,
+      "local_inputs": [
+        {
+          "path": "data/BioSequence/Whitlock2000.csv",
+          "rows": 32,
+          "sha256": "04f1cce66cc12a39f3b63ebb8240a46bac4a94d787c3243f535e78fba0a458da"
+        }
+      ],
+      "landscape_labels": [
+        {
+          "label": "Whitlock2000",
+          "sub_id": "-",
+          "encoding": "Mutation",
+          "theoretical_size_expression": "$2^5=32$",
+          "theoretical_size": 32
+        }
+      ]
+    },
+    {
+      "id": "deVisserPK09",
+      "aliases": [
+        "deVisser2009"
+      ],
+      "title": "Exploring the effect of sex on empirical fitness landscapes",
+      "doi": null,
+      "year": 2009,
+      "origin": "supplied",
+      "citation_status": "provided_bibliography_unverified",
+      "measured_variants": 32,
+      "theoretical_variants": 32,
+      "state": "queued",
+      "next_action": "Acquire main/relevant SI; identify overlapping targets before any experiment.",
+      "dossier": null,
+      "local_inputs": [
+        {
+          "path": "data/BioSequence/deVisser2009.csv",
+          "rows": 32,
+          "sha256": "a52f7164770c62b79b377b3094d7942760d1329b61778fc38c514b95071cf11c"
+        }
+      ],
+      "landscape_labels": [
+        {
+          "label": "deVisser2009",
+          "sub_id": "-",
+          "encoding": "Mutation",
+          "theoretical_size_expression": "$2^5=32$",
+          "theoretical_size": 32
+        }
+      ]
+    },
+    {
+      "id": "daSilvaCNPM10",
+      "aliases": [
+        "daSilva2010"
+      ],
+      "title": "Fitness epistasis and constraints on adaptation in a human immunodeficiency virus type 1 protein region",
+      "doi": null,
+      "year": 2010,
+      "origin": "supplied",
+      "citation_status": "provided_bibliography_unverified",
+      "measured_variants": 32,
+      "theoretical_variants": 32,
+      "state": "queued",
+      "next_action": "Acquire main/relevant SI; identify overlapping targets before any experiment.",
+      "dossier": null,
+      "local_inputs": [
+        {
+          "path": "data/BioSequence/daSilva2010_CCR5.csv",
+          "rows": 32,
+          "sha256": "264675903e98d653ab5458eda37f1b3166a40bbb11f4eb9be2993d98588be639"
+        },
+        {
+          "path": "data/BioSequence/daSilva2010_CXCR5.csv",
+          "rows": 32,
+          "sha256": "a8e3a16346bc00d9e3c35b36cbb7d5e13235cb34b63108eb8db3d340022dc93d"
+        }
+      ],
+      "landscape_labels": [
+        {
+          "label": "daSilva2010",
+          "sub_id": "CCR5",
+          "encoding": "Mutation",
+          "theoretical_size_expression": "$2^5=32$",
+          "theoretical_size": 32
+        },
+        {
+          "label": "daSilva2010",
+          "sub_id": "CXCR5",
+          "encoding": "Mutation",
+          "theoretical_size_expression": "$2^5=32$",
+          "theoretical_size": 32
+        }
+      ]
+    },
+    {
+      "id": "SundenPSRH15",
+      "aliases": [
+        "Sunden2015"
+      ],
+      "title": "Extensive site-directed mutagenesis reveals interconnected functional units in the alkaline phosphatase active site",
+      "doi": null,
+      "year": 2015,
+      "origin": "supplied",
+      "citation_status": "provided_bibliography_unverified",
+      "measured_variants": null,
+      "theoretical_variants": 32,
+      "state": "queued",
+      "next_action": "Acquire main/relevant SI; identify overlapping targets before any experiment.",
+      "dossier": null,
+      "local_inputs": [],
+      "landscape_labels": [
+        {
+          "label": "Sunden2015",
+          "sub_id": "AP",
+          "encoding": "Mutation",
+          "theoretical_size_expression": "$2^5=32$",
+          "theoretical_size": 32
+        }
+      ]
+    },
+    {
+      "id": "AndersonBYT21",
+      "aliases": [
+        "Anderson2021"
+      ],
+      "title": "The adaptive landscape of a metallo-enzyme is shaped by environment-dependent epistasis",
+      "doi": null,
+      "year": 2021,
+      "origin": "supplied",
+      "citation_status": "provided_bibliography_unverified",
+      "measured_variants": null,
+      "theoretical_variants": 32,
+      "state": "queued",
+      "next_action": "Acquire main/relevant SI; identify overlapping targets before any experiment.",
+      "dossier": null,
+      "local_inputs": [],
+      "landscape_labels": [
+        {
+          "label": "Anderson2021",
+          "sub_id": "MPH-CaPTM",
+          "encoding": "Mutation",
+          "theoretical_size_expression": "$2^{5}=32$",
+          "theoretical_size": 32
+        },
+        {
+          "label": "Anderson2021",
+          "sub_id": "MPH-CdPTM",
+          "encoding": "Mutation",
+          "theoretical_size_expression": "$2^{5}=32$",
+          "theoretical_size": 32
+        },
+        {
+          "label": "Anderson2021",
+          "sub_id": "MPH-CoPTM",
+          "encoding": "Mutation",
+          "theoretical_size_expression": "$2^{5}=32$",
+          "theoretical_size": 32
+        },
+        {
+          "label": "Anderson2021",
+          "sub_id": "MPH-CuPTM",
+          "encoding": "Mutation",
+          "theoretical_size_expression": "$2^{5}=32$",
+          "theoretical_size": 32
+        },
+        {
+          "label": "Anderson2021",
+          "sub_id": "MPH-MgPTM",
+          "encoding": "Mutation",
+          "theoretical_size_expression": "$2^{5}=32$",
+          "theoretical_size": 32
+        },
+        {
+          "label": "Anderson2021",
+          "sub_id": "MPH-MnPTM",
+          "encoding": "Mutation",
+          "theoretical_size_expression": "$2^{5}=32$",
+          "theoretical_size": 32
+        }
+      ]
+    },
+    {
+      "id": "WeinreichDDH06",
+      "aliases": [
+        "Weinreich2006Tan2011_Weinreich2006"
+      ],
+      "title": "Darwinian evolution can follow only very few mutational paths to fitter proteins",
+      "doi": null,
+      "year": 2006,
+      "origin": "supplied",
+      "citation_status": "provided_bibliography_unverified",
+      "measured_variants": 32,
+      "theoretical_variants": 32,
+      "state": "queued",
+      "next_action": "Acquire main/relevant SI; identify overlapping targets before any experiment.",
+      "dossier": null,
+      "local_inputs": [
+        {
+          "path": "data/BioSequence/Weinreich2006Tan2011_Weinreich2006.csv",
+          "rows": 32,
+          "sha256": "23abc08da2c7c39336cafd5bed1e29de4cb8ef61ca050c24a39d09915f9eb299"
+        }
+      ],
+      "landscape_labels": [
+        {
+          "label": "Weinreich20016",
+          "sub_id": "Cefotaxime",
+          "encoding": "Mutation",
+          "theoretical_size_expression": "$2^5=32$",
+          "theoretical_size": 32
+        }
+      ]
+    },
+    {
+      "id": "KhanDSLC11",
+      "aliases": [
+        "Khan2011"
+      ],
+      "title": "Negative epistasis between beneficial mutations in an evolving bacterial population",
+      "doi": null,
+      "year": 2011,
+      "origin": "supplied",
+      "citation_status": "provided_bibliography_unverified",
+      "measured_variants": 32,
+      "theoretical_variants": 32,
+      "state": "queued",
+      "next_action": "Acquire main/relevant SI; identify overlapping targets before any experiment.",
+      "dossier": null,
+      "local_inputs": [
+        {
+          "path": "data/BioSequence/Khan2011Flynn2013_DM25.csv",
+          "rows": 32,
+          "sha256": "de47b52666c7dabf9ece58ed465092d9d1dbaa703c1a04ddd722c10d0fd8a9c8"
+        },
+        {
+          "path": "data/BioSequence/Khan2011Flynn2013_DM25_EGTA.csv",
+          "rows": 32,
+          "sha256": "b91438405e02d262960bd40c9cf9c54828eced41a872e10d942d2e97c8b53021"
+        },
+        {
+          "path": "data/BioSequence/Khan2011Flynn2013_DM25_guanazole.csv",
+          "rows": 32,
+          "sha256": "b91438405e02d262960bd40c9cf9c54828eced41a872e10d942d2e97c8b53021"
+        }
+      ],
+      "landscape_labels": [
+        {
+          "label": "Khan2011",
+          "sub_id": "DM25",
+          "encoding": "Mutation",
+          "theoretical_size_expression": "$2^5=32$",
+          "theoretical_size": 32
+        }
+      ]
+    },
+    {
+      "id": "FlynnCMC13",
+      "aliases": [
+        "Flynn2013"
+      ],
+      "title": "The environment affects epistatic interactions to alter the topology of an empirical fitness landscape",
+      "doi": null,
+      "year": 2013,
+      "origin": "supplied",
+      "citation_status": "provided_bibliography_unverified",
+      "measured_variants": null,
+      "theoretical_variants": 32,
+      "state": "queued",
+      "next_action": "Acquire main/relevant SI; identify overlapping targets before any experiment.",
+      "dossier": null,
+      "local_inputs": [],
+      "landscape_labels": [
+        {
+          "label": "Flynn2013",
+          "sub_id": "DM25-EGTA",
+          "encoding": "Mutation",
+          "theoretical_size_expression": "$2^5=32$",
+          "theoretical_size": 32
+        },
+        {
+          "label": "Flynn2013",
+          "sub_id": "DM25-guanazole",
+          "encoding": "Mutation",
+          "theoretical_size_expression": "$2^5=32$",
+          "theoretical_size": 32
+        }
+      ]
+    },
+    {
+      "id": "LozovskyDHJH21",
+      "aliases": [
+        "Lozovsky2021"
+      ],
+      "title": "Relevance of higher-order epistasis in drug resistance",
+      "doi": null,
+      "year": 2021,
+      "origin": "supplied",
+      "citation_status": "provided_bibliography_unverified",
+      "measured_variants": null,
+      "theoretical_variants": 16,
+      "state": "queued",
+      "next_action": "Acquire main/relevant SI; identify overlapping targets before any experiment.",
+      "dossier": null,
+      "local_inputs": [],
+      "landscape_labels": [
+        {
+          "label": "Lozovsky2021",
+          "sub_id": "ic50-c57",
+          "encoding": "Mutation",
+          "theoretical_size_expression": "$2^{4}=16$",
+          "theoretical_size": 16
+        },
+        {
+          "label": "Lozovsky2021",
+          "sub_id": "ic50-c58",
+          "encoding": "Mutation",
+          "theoretical_size_expression": "$2^{4}=16$",
+          "theoretical_size": 16
+        },
+        {
+          "label": "Lozovsky2021",
+          "sub_id": "ic50-c59",
+          "encoding": "Mutation",
+          "theoretical_size_expression": "$2^{4}=16$",
+          "theoretical_size": 16
+        },
+        {
+          "label": "Lozovsky2021",
+          "sub_id": "ic50-c60",
+          "encoding": "Mutation",
+          "theoretical_size_expression": "$2^{4}=16$",
+          "theoretical_size": 16
+        },
+        {
+          "label": "Lozovsky2021",
+          "sub_id": "ic50-c61",
+          "encoding": "Mutation",
+          "theoretical_size_expression": "$2^{4}=16$",
+          "theoretical_size": 16
+        }
+      ]
+    },
+    {
+      "id": "MiraCGMSB15",
+      "aliases": [
+        "Mira2015"
+      ],
+      "title": "Rational design of antibiotic treatment plans: a treatment strategy for managing evolution and reversing resistance",
+      "doi": null,
+      "year": 2015,
+      "origin": "supplied",
+      "citation_status": "provided_bibliography_unverified",
+      "measured_variants": 16,
+      "theoretical_variants": 16,
+      "state": "queued",
+      "next_action": "Acquire main/relevant SI; identify overlapping targets before any experiment.",
+      "dossier": null,
+      "local_inputs": [
+        {
+          "path": "data/BioSequence/Mira2015_TEM_AM.csv",
+          "rows": 16,
+          "sha256": "4780f86abda7438f655e574867246047709bcee258186ba4b1104882abfad96e"
+        },
+        {
+          "path": "data/BioSequence/Mira2015_TEM_AMC.csv",
+          "rows": 16,
+          "sha256": "a71fad2786f1e9b081fd9d1ba7d412d2ae1d367ca83f762a13bdbbc95085ab71"
+        },
+        {
+          "path": "data/BioSequence/Mira2015_TEM_AMP.csv",
+          "rows": 16,
+          "sha256": "9b739ee9b9240a5f3a8705c0aa2725452171e582fccac5c7e7c52d3485fdddc3"
+        },
+        {
+          "path": "data/BioSequence/Mira2015_TEM_CAZ.csv",
+          "rows": 16,
+          "sha256": "fa17ced60e87c2106490bea0a4da5578c02aa2920e1977a24a00caa307291d67"
+        },
+        {
+          "path": "data/BioSequence/Mira2015_TEM_CEC.csv",
+          "rows": 16,
+          "sha256": "2d316b5d8f0c82587b528f18fec0575eb559dbccebbd0f7f0132f7a4d58cf4e7"
+        },
+        {
+          "path": "data/BioSequence/Mira2015_TEM_CPD.csv",
+          "rows": 16,
+          "sha256": "b074d40eddc7d9df1bfdb7ea668e39ca6aff321756684d089852320c3e117551"
+        },
+        {
+          "path": "data/BioSequence/Mira2015_TEM_CPR.csv",
+          "rows": 16,
+          "sha256": "83557c89c995b50ea6b1c02f714756e508737df71b87502e93da766ddbf56c94"
+        },
+        {
+          "path": "data/BioSequence/Mira2015_TEM_CRO.csv",
+          "rows": 16,
+          "sha256": "cfd873f2dbe38179505c0eb8f5a775dcb07dc396351800fe867bbabd46f20db8"
+        },
+        {
+          "path": "data/BioSequence/Mira2015_TEM_CTT.csv",
+          "rows": 16,
+          "sha256": "09597fc3e0967f54548e95ba07e53be2ba571637f408eb63da4e050f808b341c"
+        },
+        {
+          "path": "data/BioSequence/Mira2015_TEM_CTX.csv",
+          "rows": 16,
+          "sha256": "a804210eb0a3a6308be7cc1f45d425aea5b0eaf61534f1b579bd4a19e89be463"
+        },
+        {
+          "path": "data/BioSequence/Mira2015_TEM_CXM.csv",
+          "rows": 16,
+          "sha256": "d6c17af1e872e0e6d791d90f459c22950ff872833e6427e7f44ba773c115bd1d"
+        },
+        {
+          "path": "data/BioSequence/Mira2015_TEM_FEP.csv",
+          "rows": 16,
+          "sha256": "ad9c2d864be3d64bedca334057cf4241942659855de5fe56a45406215e0c7157"
+        },
+        {
+          "path": "data/BioSequence/Mira2015_TEM_SAM.csv",
+          "rows": 16,
+          "sha256": "ed5d16063a951f107f4cf38d9c68cccd73429fc0472117c82db7f768161b93f6"
+        },
+        {
+          "path": "data/BioSequence/Mira2015_TEM_TZP.csv",
+          "rows": 16,
+          "sha256": "6605a7496bfa97267030544a7d09b09bcfcc6410d73df84fdcc4d64e53df097b"
+        },
+        {
+          "path": "data/BioSequence/Mira2015_TEM_ZOX.csv",
+          "rows": 16,
+          "sha256": "6b119417490d4ad69b424d9d3b4e0c2bd8c40e65b46d84de0965a9802cc56eae"
+        }
+      ],
+      "landscape_labels": [
+        {
+          "label": "Mira2015",
+          "sub_id": "TEM-AMP",
+          "encoding": "Mutation",
+          "theoretical_size_expression": "$2^4=16$",
+          "theoretical_size": 16
+        },
+        {
+          "label": "Mira2015",
+          "sub_id": "TEM-AM",
+          "encoding": "Mutation",
+          "theoretical_size_expression": "$2^4=16$",
+          "theoretical_size": 16
+        },
+        {
+          "label": "Mira2015",
+          "sub_id": "TEM-CEC",
+          "encoding": "Mutation",
+          "theoretical_size_expression": "$2^4=16$",
+          "theoretical_size": 16
+        },
+        {
+          "label": "Mira2015",
+          "sub_id": "TEM-CTX",
+          "encoding": "Mutation",
+          "theoretical_size_expression": "$2^4=16$",
+          "theoretical_size": 16
+        },
+        {
+          "label": "Mira2015",
+          "sub_id": "TEM-ZOX",
+          "encoding": "Mutation",
+          "theoretical_size_expression": "$2^4=16$",
+          "theoretical_size": 16
+        },
+        {
+          "label": "Mira2015",
+          "sub_id": "TEM-CXM",
+          "encoding": "Mutation",
+          "theoretical_size_expression": "$2^4=16$",
+          "theoretical_size": 16
+        },
+        {
+          "label": "Mira2015",
+          "sub_id": "TEM-CRO",
+          "encoding": "Mutation",
+          "theoretical_size_expression": "$2^4=16$",
+          "theoretical_size": 16
+        },
+        {
+          "label": "Mira2015",
+          "sub_id": "TEM-AMC",
+          "encoding": "Mutation",
+          "theoretical_size_expression": "$2^4=16$",
+          "theoretical_size": 16
+        },
+        {
+          "label": "Mira2015",
+          "sub_id": "TEM-CAZ",
+          "encoding": "Mutation",
+          "theoretical_size_expression": "$2^4=16$",
+          "theoretical_size": 16
+        },
+        {
+          "label": "Mira2015",
+          "sub_id": "TEM-CTT",
+          "encoding": "Mutation",
+          "theoretical_size_expression": "$2^4=16$",
+          "theoretical_size": 16
+        },
+        {
+          "label": "Mira2015",
+          "sub_id": "TEM-SAM",
+          "encoding": "Mutation",
+          "theoretical_size_expression": "$2^4=16$",
+          "theoretical_size": 16
+        },
+        {
+          "label": "Mira2015",
+          "sub_id": "TEM-CPR",
+          "encoding": "Mutation",
+          "theoretical_size_expression": "$2^4=16$",
+          "theoretical_size": 16
+        },
+        {
+          "label": "Mira2015",
+          "sub_id": "TEM-CPD",
+          "encoding": "Mutation",
+          "theoretical_size_expression": "$2^4=16$",
+          "theoretical_size": 16
+        },
+        {
+          "label": "Mira2015",
+          "sub_id": "TEM-TZP",
+          "encoding": "Mutation",
+          "theoretical_size_expression": "$2^4=16$",
+          "theoretical_size": 16
+        },
+        {
+          "label": "Mira2015",
+          "sub_id": "TEM-FSP",
+          "encoding": "Mutation",
+          "theoretical_size_expression": "$2^4=16$",
+          "theoretical_size": 16
+        }
+      ]
+    },
+    {
+      "id": "MeiniTWV15",
+      "aliases": [
+        "Meini2015"
+      ],
+      "title": "Quantitative description of a protein fitness landscape based on molecular features",
+      "doi": null,
+      "year": 2015,
+      "origin": "supplied",
+      "citation_status": "provided_bibliography_unverified",
+      "measured_variants": 16,
+      "theoretical_variants": 16,
+      "state": "queued",
+      "next_action": "Acquire main/relevant SI; identify overlapping targets before any experiment.",
+      "dossier": null,
+      "local_inputs": [
+        {
+          "path": "data/BioSequence/Meini2015.csv",
+          "rows": 16,
+          "sha256": "e99aff9941cf9bc272d8aa4d1cdfa4f327c672199f27cea718fa197c7e1da82f"
+        }
+      ],
+      "landscape_labels": [
+        {
+          "label": "Meini2015",
+          "sub_id": "-",
+          "encoding": "Mutation",
+          "theoretical_size_expression": "$2^4=16$",
+          "theoretical_size": 16
+        }
+      ]
+    },
+    {
+      "id": "LozovskyCBISKNWH09",
+      "aliases": [
+        "Lozovsky2009"
+      ],
+      "title": "Stepwise acquisition of pyrimethamine resistance in the malaria parasite",
+      "doi": null,
+      "year": 2009,
+      "origin": "supplied",
+      "citation_status": "provided_bibliography_unverified",
+      "measured_variants": 16,
+      "theoretical_variants": 16,
+      "state": "queued",
+      "next_action": "Acquire main/relevant SI; identify overlapping targets before any experiment.",
+      "dossier": null,
+      "local_inputs": [
+        {
+          "path": "data/BioSequence/Lozovsky2009Jiang2013_Jiang2013.csv",
+          "rows": 16,
+          "sha256": "3372a813600944440c0e08612273239647ac2dd0b17ee004ba102d0772a71e21"
+        },
+        {
+          "path": "data/BioSequence/Lozovsky2009Jiang2013_Lozovsky2009.csv",
+          "rows": 16,
+          "sha256": "c90599aac9e169f35c6ff5bf4305f817ebb05ea9d65b059f00ca1de768f85657"
+        }
+      ],
+      "landscape_labels": [
+        {
+          "label": "Lozovsky2009",
+          "sub_id": "P. falciparum",
+          "encoding": "Mutation",
+          "theoretical_size_expression": "$2^4=16$",
+          "theoretical_size": 16
+        }
+      ]
+    },
+    {
+      "id": "JiangKOSMLW18",
+      "aliases": [
+        "Jiang2013"
+      ],
+      "title": "Accessible mutational trajectories for the evolution of Pyrimethamine resistance in the malaria parasite Plasmodium vivax",
+      "doi": null,
+      "year": 2018,
+      "origin": "supplied",
+      "citation_status": "provided_bibliography_unverified",
+      "measured_variants": null,
+      "theoretical_variants": 16,
+      "state": "queued",
+      "next_action": "Acquire main/relevant SI; identify overlapping targets before any experiment.",
+      "dossier": null,
+      "local_inputs": [],
+      "landscape_labels": [
+        {
+          "label": "Jiang2013",
+          "sub_id": "P. vivax",
+          "encoding": "Mutation",
+          "theoretical_size_expression": "$2^4=16$",
+          "theoretical_size": 16
+        }
+      ]
+    },
+    {
+      "id": "ChouCDSM11",
+      "aliases": [
+        "Chou2011"
+      ],
+      "title": "Diminishing returns epistasis among beneficial mutations decelerates adaptation",
+      "doi": null,
+      "year": 2011,
+      "origin": "supplied",
+      "citation_status": "provided_bibliography_unverified",
+      "measured_variants": 16,
+      "theoretical_variants": 16,
+      "state": "queued",
+      "next_action": "Acquire main/relevant SI; identify overlapping targets before any experiment.",
+      "dossier": null,
+      "local_inputs": [
+        {
+          "path": "data/BioSequence/Chou2011.csv",
+          "rows": 16,
+          "sha256": "55742ac0500ed7ea4f09a10d70d910a4153fc2c1895c658be77d68a759a0a5e9"
+        }
+      ],
+      "landscape_labels": [
+        {
+          "label": "Chou2011",
+          "sub_id": "-",
+          "encoding": "Mutation",
+          "theoretical_size_expression": "$2^4=16$",
+          "theoretical_size": 16
+        }
+      ]
+    },
+    {
+      "id": "MalcolmWMKW90",
+      "aliases": [
+        "Malcolm1990"
+      ],
+      "title": "Ancestral lysozymes reconstructed, neutrality tested, and thermostability linked to hydrocarbon packing",
+      "doi": null,
+      "year": 1990,
+      "origin": "supplied",
+      "citation_status": "provided_bibliography_unverified",
+      "measured_variants": 8,
+      "theoretical_variants": 8,
+      "state": "queued",
+      "next_action": "Acquire main/relevant SI; identify overlapping targets before any experiment.",
+      "dossier": null,
+      "local_inputs": [
+        {
+          "path": "data/BioSequence/Malcolm1990.csv",
+          "rows": 8,
+          "sha256": "b7687133b94cecfdc772f9c2db65cea4629a995a48f7b6e6cc0a7cccf8e76fb7"
+        }
+      ],
+      "landscape_labels": [
+        {
+          "label": "Malcolm1990",
+          "sub_id": "Diploid",
+          "encoding": "Mutation",
+          "theoretical_size_expression": "$2^3=8$",
+          "theoretical_size": 8
+        }
+      ]
+    },
+    {
+      "id": "GuerreroSRHO19",
+      "aliases": [
+        "Guerrero2019"
+      ],
+      "title": "Proteostasis environment shapes higher-order epistasis operating on antibiotic resistance",
+      "doi": null,
+      "year": 2019,
+      "origin": "supplied",
+      "citation_status": "provided_bibliography_unverified",
+      "measured_variants": 8,
+      "theoretical_variants": 8,
+      "state": "queued",
+      "next_action": "Acquire main/relevant SI; identify overlapping targets before any experiment.",
+      "dossier": null,
+      "local_inputs": [
+        {
+          "path": "data/BioSequence/Guerrero2019_C_muridarum_GroEL.csv",
+          "rows": 8,
+          "sha256": "f12bfd556db0255440c1661faffc6b2b25fb8561636bae69e9830b655d5d30f5"
+        },
+        {
+          "path": "data/BioSequence/Guerrero2019_C_muridarum_LON.csv",
+          "rows": 8,
+          "sha256": "3c6ccc180ad7bb4291238e8598ff8949637b1824ad4ffd004259637df9b50c95"
+        },
+        {
+          "path": "data/BioSequence/Guerrero2019_C_muridarum_WT.csv",
+          "rows": 8,
+          "sha256": "c736b3e7c63ef0bbbeb50b47d1910a5a94f1c4510fd398b7b9f54189a7be8191"
+        },
+        {
+          "path": "data/BioSequence/Guerrero2019_E_coli_GroEL.csv",
+          "rows": 8,
+          "sha256": "8fb2871bcd2d46c712786fc966dcd32398606287ef6e1149c16d006bbc49e407"
+        },
+        {
+          "path": "data/BioSequence/Guerrero2019_E_coli_LON.csv",
+          "rows": 8,
+          "sha256": "80930c4f0b205a56bce4987685f889089e18bf9f084b74399b5ba43f28e758ac"
+        },
+        {
+          "path": "data/BioSequence/Guerrero2019_E_coli_WT.csv",
+          "rows": 8,
+          "sha256": "215989bbcb53f5598088ece16b64d8ac35ff582c4a18f37beebe1b1edbe3b88f"
+        },
+        {
+          "path": "data/BioSequence/Guerrero2019_L_grayi_GroEL.csv",
+          "rows": 8,
+          "sha256": "11e2f799a9afc4fe1808ea89b42dafba6ee1f9337da453fafe632341673429c7"
+        },
+        {
+          "path": "data/BioSequence/Guerrero2019_L_grayi_LON.csv",
+          "rows": 8,
+          "sha256": "a2499bc7dacc17593c3cc02297ab31e4a907bfd03036331b2be62c2c537ba144"
+        },
+        {
+          "path": "data/BioSequence/Guerrero2019_L_grayi_WT.csv",
+          "rows": 8,
+          "sha256": "589543eb5c83d7eff175ad3a404a591dd14076fde098e9247fbe4730707f8f59"
+        }
+      ],
+      "landscape_labels": [
+        {
+          "label": "Guerrero2019",
+          "sub_id": "C-muri-GroEL",
+          "encoding": "Mutation",
+          "theoretical_size_expression": "$2^{3}=8$",
+          "theoretical_size": 8
+        },
+        {
+          "label": "Guerrero2019",
+          "sub_id": "C-muri-LON",
+          "encoding": "Mutation",
+          "theoretical_size_expression": "$2^{3}=8$",
+          "theoretical_size": 8
+        },
+        {
+          "label": "Guerrero2019",
+          "sub_id": "C-muri-WT",
+          "encoding": "Mutation",
+          "theoretical_size_expression": "$2^{3}=8$",
+          "theoretical_size": 8
+        },
+        {
+          "label": "Guerrero2019",
+          "sub_id": "E.coli-GroEL",
+          "encoding": "Mutation",
+          "theoretical_size_expression": "$2^{3}=8$",
+          "theoretical_size": 8
+        },
+        {
+          "label": "Guerrero2019",
+          "sub_id": "E.coli-LON",
+          "encoding": "Mutation",
+          "theoretical_size_expression": "$2^{3}=8$",
+          "theoretical_size": 8
+        },
+        {
+          "label": "Guerrero2019",
+          "sub_id": "E.coli-WT",
+          "encoding": "Mutation",
+          "theoretical_size_expression": "$2^{3}=8$",
+          "theoretical_size": 8
+        },
+        {
+          "label": "Guerrero2019",
+          "sub_id": "L-grayi-GroEL",
+          "encoding": "Mutation",
+          "theoretical_size_expression": "$2^{3}=8$",
+          "theoretical_size": 8
+        },
+        {
+          "label": "Guerrero2019",
+          "sub_id": "L-grayi-LON",
+          "encoding": "Mutation",
+          "theoretical_size_expression": "$2^{3}=8$",
+          "theoretical_size": 8
+        },
+        {
+          "label": "Guerrero2019",
+          "sub_id": "L-grayi-WT",
+          "encoding": "Mutation",
+          "theoretical_size_expression": "$2^{3}=8$",
+          "theoretical_size": 8
+        }
+      ]
+    },
+    {
+      "id": "DomingoDL18",
+      "aliases": [
+        "Domingo2018"
+      ],
+      "title": "Pairwise and higher-order genetic interactions during the evolution of a tRNA",
+      "doi": null,
+      "year": 2018,
+      "origin": "supplied",
+      "citation_status": "provided_bibliography_unverified",
+      "measured_variants": 4176,
+      "theoretical_variants": null,
+      "state": "queued",
+      "next_action": "Acquire main/relevant SI; identify overlapping targets before any experiment.",
+      "dossier": null,
+      "local_inputs": [
+        {
+          "path": "data/BioSequence/Domingo2018.csv",
+          "rows": 4176,
+          "sha256": "5b8cf25627ec37a1dce53f48b6ac121bb043ddb6f33616bb5ed00b203a7df2ff"
+        }
+      ],
+      "landscape_labels": [
+        {
+          "label": "Domingo2018",
+          "sub_id": "-",
+          "encoding": "Nucleotide",
+          "theoretical_size_expression": "$2^6 \\times 3^4 = 5,184$",
+          "theoretical_size": null
+        }
+      ]
+    },
+    {
+      "id": "Ogbunugafor22",
+      "aliases": [
+        "Ogbunugafor2022"
+      ],
+      "title": "The mutation effect reaction norm (mu-rn) highlights environmentally dependent mutation effects and epistatic interactions",
+      "doi": null,
+      "year": 2022,
+      "origin": "supplied",
+      "citation_status": "provided_bibliography_unverified",
+      "measured_variants": null,
+      "theoretical_variants": null,
+      "state": "queued",
+      "next_action": "Acquire main/relevant SI; identify overlapping targets before any experiment.",
+      "dossier": null,
+      "local_inputs": [],
+      "landscape_labels": [
+        {
+          "label": "Ogbunugafor2022",
+          "sub_id": "Pyrimethamine",
+          "encoding": "Mutation",
+          "theoretical_size_expression": "$(2^4) \\times 12$",
+          "theoretical_size": null
+        },
+        {
+          "label": "Ogbunugafor2022",
+          "sub_id": "Cycloguanil",
+          "encoding": "Mutation",
+          "theoretical_size_expression": "$(2^4) \\times 12$",
+          "theoretical_size": null
+        }
+      ]
+    },
+    {
+      "id": "Ferretti2016",
+      "aliases": [],
+      "title": "Measuring epistasis in fitness landscapes: The correlation of fitness effects of mutations",
+      "doi": "10.1016/j.jtbi.2016.01.037",
+      "year": 2016,
+      "origin": "metric_search",
+      "citation_status": "reference_identified; full definition review may remain",
+      "measured_variants": null,
+      "theoretical_variants": null,
+      "state": "blocked_artifact",
+      "next_action": "Recover the original Figure 4 inputs; 2018 reanalysis CSVs do not match.",
+      "dossier": "papers/ferretti2016",
+      "local_inputs": [],
+      "landscape_labels": []
+    },
+    {
+      "id": "Skwara2023",
+      "aliases": [],
+      "title": "Statistically learning the functional landscape of microbial communities",
+      "doi": "10.1038/s41559-023-02197-4",
+      "year": 2023,
+      "origin": "metric_search",
+      "citation_status": "reference_identified; full definition review may remain",
+      "measured_variants": null,
+      "theoretical_variants": null,
+      "state": "triaged",
+      "next_action": "Coordinate and shuffled-normalization mismatch documented; obtain numerical author artifacts before any new target.",
+      "dossier": "papers/skwara2023",
+      "local_inputs": [],
+      "landscape_labels": []
+    },
+    {
+      "id": "Lyons2020",
+      "aliases": [],
+      "title": "Idiosyncratic epistasis creates universals in mutational effects and evolutionary trajectories",
+      "doi": "10.1038/s41559-020-01286-y",
+      "year": 2020,
+      "origin": "metric_search",
+      "citation_status": "reference_identified; full definition review may remain",
+      "measured_variants": null,
+      "theoretical_variants": null,
+      "state": "queued",
+      "next_action": "Review original per-mutation definition, random-pair baseline and numeric source outputs.",
+      "dossier": null,
+      "local_inputs": [],
+      "landscape_labels": []
+    },
+    {
+      "id": "Wagner2023",
+      "aliases": [],
+      "title": "Evolvability-enhancing mutations in the fitness landscapes of an RNA and a protein",
+      "doi": "10.1038/s41467-023-39321-8",
+      "year": 2023,
+      "origin": "metric_search",
+      "citation_status": "reference_identified; full definition review may remain",
+      "measured_variants": null,
+      "theoretical_variants": null,
+      "state": "queued",
+      "next_action": "Review original neighborhood exclusions and significance test before comparing EE fractions.",
+      "dossier": null,
+      "local_inputs": [],
+      "landscape_labels": []
+    },
+    {
+      "id": "Poelwijk2016",
+      "aliases": [],
+      "title": "The Context-Dependence of Mutations: A Linkage of Formalisms",
+      "doi": "10.1371/journal.pcbi.1004771",
+      "year": 2016,
+      "origin": "metric_search",
+      "citation_status": "reference_identified; full definition review may remain",
+      "measured_variants": null,
+      "theoretical_variants": null,
+      "state": "queued",
+      "next_action": "Audit Walsh normalization and background-averaged/reference-specific definitions.",
+      "dossier": null,
+      "local_inputs": [],
+      "landscape_labels": []
+    },
+    {
+      "id": "Weinberger1990",
+      "aliases": [],
+      "title": "Correlated and uncorrelated fitness landscapes and how to tell the difference",
+      "doi": "10.1007/BF00202749",
+      "year": 1990,
+      "origin": "metric_search",
+      "citation_status": "reference_identified; full definition review may remain",
+      "measured_variants": null,
+      "theoretical_variants": null,
+      "state": "queued",
+      "next_action": "Audit autocorrelation centering, stationary weighting and exact small-graph expectations.",
+      "dossier": null,
+      "local_inputs": [],
+      "landscape_labels": []
+    },
+    {
+      "id": "JonesForrest1995",
+      "aliases": [],
+      "title": "Fitness Distance Correlation as a Measure of Problem Difficulty for Genetic Algorithms",
+      "doi": null,
+      "year": 1995,
+      "origin": "metric_search",
+      "citation_status": "reference_identified; full definition review may remain",
+      "measured_variants": null,
+      "theoretical_variants": null,
+      "state": "queued",
+      "next_action": "Audit nearest-optimum distance and correlation conventions from the original paper.",
+      "dossier": null,
+      "local_inputs": [],
+      "landscape_labels": []
+    }
+  ]
+}

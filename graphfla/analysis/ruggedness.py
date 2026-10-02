@@ -10,6 +10,12 @@ from sklearn.linear_model import LinearRegression
 
 from ._utils import _pythonize
 
+# Noise floor for the additive slope, relative to the centred fitness spread.
+# Set above the round-off of a float64 least-squares solve on a well-conditioned
+# design; it does not account for rank deficiency or ill-conditioning, which
+# make individual coefficients unidentifiable regardless of tolerance.
+_SLOPE_REL_TOL = 1e-12
+
 
 def local_optima_ratio(landscape) -> float:
     """
@@ -254,7 +260,37 @@ def r_s_ratio(landscape) -> float:
         else:  # n_features == 0, unreachable if validation holds
             slope_s = 0
 
-        if np.isclose(slope_s, 0):
+        # r/s is invariant under f -> a*f + b: r and s both scale by |a|, and the
+        # intercept absorbs b. The degeneracy test must share that invariance, so
+        # it is relative to the *centred* fitness spread. An absolute tolerance
+        # would call a rescaled landscape flat; a tolerance relative to max|f|
+        # would do the same for a large offset.
+        # Constant fitness is detected by exact equality, not by a zero spread:
+        # np.std of identical non-representable values (e.g. 0.1) is a non-zero
+        # round-off, which would fall through to the slope branch and give inf.
+        #
+        # The spread is the range rather than the standard deviation: both scale
+        # by |a| under f -> a*f + b, but std squares the deviations and so
+        # overflows near 1e155 and underflows near 1e-200 on finite inputs.
+        if len(fitness_values):
+            f_min = float(np.min(fitness_values))
+            f_max = float(np.max(fitness_values))
+        else:
+            f_min = f_max = 0.0
+        fitness_spread = f_max - f_min
+        is_constant = len(fitness_values) == 0 or f_min == f_max
+
+        if is_constant:
+            # Constant fitness: r = s = 0, so the ratio is undefined. This is
+            # distinct from a purely epistatic landscape, where r > 0 and s = 0.
+            warnings.warn(
+                "Fitness is constant, so both roughness and slope are zero and "
+                "the r/s ratio is undefined. Returning nan.",
+                UserWarning,
+            )
+            return _pythonize(np.nan)
+
+        if slope_s <= _SLOPE_REL_TOL * fitness_spread:
             warnings.warn(
                 "Slope 's' is zero or near zero. Landscape may be flat "
                 "or purely epistatic according to the linear fit. Returning inf.",

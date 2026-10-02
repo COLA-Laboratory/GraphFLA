@@ -1,0 +1,82 @@
+{
+  "study_key": "Lyons2020_Reproduction",
+  "dossier": "papers/Lyons2020",
+  "recorded_at": "2026-10-01T09:50:56Z",
+  "agent": "codex",
+  "paper": {
+    "title": "Idiosyncratic epistasis creates universals in mutational effects and evolutionary trajectories",
+    "doi": "10.1038/s41559-020-01286-y",
+    "year": 2020,
+    "bibliography_verified_against": "crossref",
+    "supplied_bibliography_errors": "No mismatch found: the assignment's title, DOI, and abbreviated author order agree with the Nature publisher citation; see notes for the verbatim citation and full author list."
+  },
+  "sources": [
+    {
+      "url": "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC7710555/fullTextXML",
+      "http_status": 200,
+      "sha256": "da216813fee6c2da29fe4d1381a5c95d6028d410374d7222175e6c203ecdb45a",
+      "saved_path": "papers/Lyons2020/sources/PMC7710555_fullText_codex.xml",
+      "what": "NIH author-manuscript JATS full text; source for the verbatim Results and Methods quotations"
+    },
+    {
+      "url": "https://github.com/lyonsdm/idiosyncrasy.git",
+      "http_status": 200,
+      "sha256": "7f1d1631e285045f7f2a14993df98578a98489129ea56a444d2cceec13f73448",
+      "saved_path": "papers/Lyons2020/sources/idiosyncrasy_repo_codex",
+      "what": "Shallow git clone at commit 0a6c2ce3a277d56679dae52b222106d05af93983; SHA-256 is the tracked-file git-archive tar-stream digest"
+    },
+    {
+      "url": "https://raw.githubusercontent.com/lyonsdm/idiosyncrasy/0a6c2ce3a277d56679dae52b222106d05af93983/01_trna/00_data/ExpData.txt",
+      "http_status": 200,
+      "sha256": "1a89b314dfc6fe69c60af8c50ff7d694121b3f2207b8ae961acf5e55d0fe8ddb",
+      "saved_path": "papers/Lyons2020/sources/ExpData_codex.txt",
+      "what": "Yeast tRNA landscape input; copied from the pinned git clone at commit 0a6c2ce3a277d56679dae52b222106d05af93983"
+    },
+    {
+      "url": "https://raw.githubusercontent.com/lyonsdm/idiosyncrasy/0a6c2ce3a277d56679dae52b222106d05af93983/01_trna/32_idiosyncrasy/distributions.ipynb",
+      "http_status": 200,
+      "sha256": "de683f829e153ad202b6f935eabb40aee72185bccc07fd1add0e626edc849e91",
+      "saved_path": "papers/Lyons2020/sources/distributions_codex.ipynb",
+      "what": "Authors' notebook containing the tRNA I_id analysis procedure; copied from the same pinned git clone"
+    },
+    {
+      "url": "https://api.crossref.org/works/10.1038/s41559-020-01286-y",
+      "http_status": 200,
+      "sha256": "faeb65760dd497a3016ae5fef8553cdd8cc6526f20d1c68d755fe21e2f26dcf9",
+      "saved_path": "papers/Lyons2020/sources/crossref_10.1038_s41559-020-01286-y_codex.json",
+      "what": "Crossref metadata used to verify the target paper's title, DOI, full author list, and publication details"
+    },
+    {
+      "url": "https://api.crossref.org/works/10.1126/science.aae0568",
+      "http_status": 200,
+      "sha256": "62129953795d9b0be7470c1c550cdb081ded3ad01415c3dc329a547dc5548f9b",
+      "saved_path": "papers/Lyons2020/sources/crossref_10.1126_science.aae0568_codex.json",
+      "what": "Crossref metadata used to verify the original tRNA landscape paper cited as the data source"
+    }
+  ],
+  "overlaps": [
+    {
+      "metric": "global_idiosyncratic_index",
+      "paper_value": 0.612,
+      "locator": "Results, section ‘Epistasis is highly idiosyncratic’ (author manuscript)",
+      "quote": "the average ratio of SD is Iid = 0.612 ± 0.005 (SE).",
+      "printed_or_plotted": "printed",
+      "definition_match": "unknown",
+      "definition_quote": "same number of pairs",
+      "definition_divergence": "The quoted phrase is from author manuscript, METHODS, 'Estimating idiosyncrasy index'; the complete verbatim definition is preserved in the existing dossier audit, §1b/§1d. GraphFLA's global_idiosyncratic_index side is under review. The current implementation uses an analytic sqrt(2)*std(f) baseline and min_pairs=3; the paper's author notebook uses a matched-size resampled control and states no minimum background filter (NOT STATED IN PAPER.). Here all 828 mutations have at least 3 retained backgrounds, so min_pairs excludes none. The GraphFLA builder also removes isolated viable genotypes before the metric reads fitness values, shrinking the denominator pool from the 28,530 rows supplied to 24,627 retained rows; see notes for code locators and the decomposition.",
+      "input": {
+        "path": "papers/Lyons2020/sources/ExpData_codex.txt",
+        "sha256": "1a89b314dfc6fe69c60af8c50ff7d694121b3f2207b8ae961acf5e55d0fe8ddb",
+        "n_rows": 28530,
+        "preprocessing": "Fit rescaled by /0.5; use rows with rescaled fitness >1.0 for the random-pair pool and GraphFLA input; mutation effects are log(f_mut/f_bg), excluding pairs that touch the exact rescaled floor 1.0. Verbatim author-code locators are in notes."
+      },
+      "graphfla_call": "DNALandscape().build_from_data(X, f, epsilon=0, verbose=False); A.global_idiosyncratic_index(ls, n_jobs=1, seed=0, min_pairs=3), with X=viable Seq strings and f=log(Fit/0.5).",
+      "graphfla_value": 0.5873601677532309,
+      "outcome": "mismatch",
+      "reason": "These local results are computed outputs, NOT STATED IN PAPER. The independent implementation produced 0.6121000731 (SE 0.0045646619), which reproduces the printed target at its precision. GraphFLA returned 0.5873601678. Substituting GraphFLA's analytic baseline on the same full viable input gives 0.5942481263, a -0.0178519468 shift; min_pairs=3 excludes 0 mutations and contributes 0. The additional -0.0068879585 comes from the GraphFLA builder dropping isolated viable genotypes from the baseline pool. Total GraphFLA-minus-paper gap is -0.0247399053. Computed values and code locators are in notes."
+    }
+  ],
+  "blockers": [],
+  "verdict": "targets_found",
+  "verdict_reason": "The printed tRNA target was reproduced independently from the authors' data and notebook procedure. GraphFLA does not reproduce it under its current implementation; the mismatch is quantified and attributable here to the analytic baseline and builder removal of isolated genotypes, while min_pairs=3 has no effect on this input."
+}
