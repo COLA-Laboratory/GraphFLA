@@ -2,17 +2,35 @@
 
 import numpy as np
 import pandas as pd
+from numbers import Real
 from scipy.stats import t
+
+
+def _validate_fdr(fdr):
+    if (not isinstance(fdr, Real) or isinstance(fdr, (bool, np.bool_))
+            or not np.isfinite(fdr) or not 0 < fdr < 1):
+        raise ValueError("fdr must be a finite real number strictly between 0 and 1.")
+
+
+def _bh_adjusted_pvalues(pvalues):
+    """BH adjusted p-values, keeping untestable hypotheses in the family."""
+    pvalues = np.asarray(pvalues, dtype=float)
+    valid = np.isfinite(pvalues)
+    values = np.where(valid, pvalues, 1.0)
+    order = np.argsort(values, kind="stable")
+    if not len(values):
+        return values
+    ranked = values[order] * len(values) / np.arange(1, len(values) + 1)
+    adjusted = np.empty_like(values)
+    adjusted[order] = np.minimum(1.0, np.minimum.accumulate(ranked[::-1])[::-1])
+    adjusted[~valid] = np.nan
+    return adjusted
 
 
 def _benjamini_hochberg(pvalues, fdr=0.01):
     """BH step-up decisions; untestable hypotheses remain in the family."""
-    pvalues = np.asarray(pvalues, dtype=float)
-    ordered = np.sort(np.where(np.isfinite(pvalues), pvalues, 1.0))
-    passing = ordered <= fdr * np.arange(1, len(ordered) + 1) / max(1, len(ordered))
-    if not passing.any():
-        return np.zeros(len(pvalues), dtype=bool)
-    return np.isfinite(pvalues) & (pvalues <= ordered[passing][-1])
+    _validate_fdr(fdr)
+    return _bh_adjusted_pvalues(pvalues) <= fdr
 
 
 def _ee_pvalues(difference, variance, n):
@@ -28,13 +46,16 @@ def _ee_pvalues(difference, variance, n):
     return pvalues
 
 
-def _ee_statistics(configs, fitness, pairs, *, fitness_variance=None, epsilon=0):
+def _ee_statistics(
+    configs, fitness, pairs, *, fitness_variance=None, epsilon=0, fdr=0.01
+):
     """Classify both orientations of represented, undirected one-site pairs.
 
     By default, use the population variance of each neighborhood's fitness
     values (ddof=0). Explicit per-genotype measurement variances instead
     propagate as sum(var)/k**2, where k is the neighborhood size.
     """
+    _validate_fdr(fdr)
     configs = np.asarray(configs)
     fitness = np.asarray(fitness, dtype=float)
     if configs.ndim != 2 or len(configs) != len(fitness):
@@ -86,8 +107,10 @@ def _ee_statistics(configs, fitness, pairs, *, fitness_variance=None, epsilon=0)
     n = np.minimum(left[:, 2], right[:, 2])
     p_effect = _ee_pvalues(delta_mean - delta_fitness, variance, n)
     p_zero = _ee_pvalues(delta_mean, variance, n)
-    reject_effect = _benjamini_hochberg(p_effect)
-    reject_zero = _benjamini_hochberg(p_zero)
+    q_effect = _bh_adjusted_pvalues(p_effect)
+    q_zero = _bh_adjusted_pvalues(p_zero)
+    reject_effect = q_effect <= fdr
+    reject_zero = q_zero <= fdr
     relevant_p = np.where(delta_fitness > 0, p_effect, p_zero)
     reject = np.where(delta_fitness > 0, reject_effect, reject_zero)
     scale = np.maximum.reduce([
@@ -104,12 +127,13 @@ def _ee_statistics(configs, fitness, pairs, *, fitness_variance=None, epsilon=0)
         "variance_source": left[:, 1], "variance_target": right[:, 1],
         "n_source": left[:, 2].astype(int), "n_target": right[:, 2].astype(int),
         "p_effect": p_effect, "p_zero": p_zero,
+        "q_effect": q_effect, "q_zero": q_zero, "excess": excess,
         "reject_effect": reject_effect, "reject_zero": reject_zero,
         "testable": np.isfinite(relevant_p), "ee": ee,
     })
 
 
-def _landscape_ee_statistics(landscape, epsilon):
+def _landscape_ee_statistics(landscape, epsilon=0, *, fdr=0.01):
     """Use graph relations, including retained neutral adjacency, exactly once."""
     data = landscape.get_data()
     if landscape.data_types is None:
@@ -124,4 +148,11 @@ def _landscape_ee_statistics(landscape, epsilon):
     pairs = {tuple(sorted(edge)) for edge in landscape.graph.get_edgelist()}
     for u, neighbors in (getattr(landscape, "_neutral_neighbors", None) or {}).items():
         pairs.update(tuple(sorted((u, v))) for v in neighbors)
-    return _ee_statistics(configs, f, sorted(pairs), epsilon=epsilon)
+    statistics = _ee_statistics(configs, f, sorted(pairs), epsilon=epsilon, fdr=fdr)
+    source = statistics["source"].to_numpy()
+    target = statistics["target"].to_numpy()
+    positions = statistics["position"].to_numpy()
+    statistics["source_allele"] = configs[source, positions]
+    statistics["target_allele"] = configs[target, positions]
+    statistics["position"] = pd.Series(X.columns.take(positions), dtype=object)
+    return statistics

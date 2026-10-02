@@ -7,7 +7,7 @@ import numpy as np
 import pandas as pd
 
 from ._utils import _pythonize, _pack_rows
-from ._evolvability import _landscape_ee_statistics
+from ._evolvability import _landscape_ee_statistics, _validate_fdr
 import logging
 
 logger = logging.getLogger(__name__)
@@ -90,72 +90,79 @@ def _mutation_effects_for_position(X, f_arr, f_std, position, test_type):
     return results
 
 
-def evolvability_enhancing_mutations(landscape, epsilon=0, auto_calculate=True):
+def _ee_fraction(statistics, effect_type="all"):
+    """Aggregate without changing the full testing family or denominator."""
+    if statistics.empty or not statistics["testable"].any():
+        warnings.warn(
+            "No testable EE mutations: each endpoint needs at least two "
+            "neighbors outside the mutated position.",
+            RuntimeWarning,
+            stacklevel=3,
+        )
+        return float("nan")
+    selected = statistics["ee"].to_numpy().copy()
+    effect = statistics["delta_fitness"].to_numpy()
+    if effect_type == "beneficial":
+        selected &= effect > 0
+    elif effect_type == "deleterious":
+        selected &= effect < 0
+    elif effect_type == "neutral":
+        selected &= effect == 0
+    return float(np.count_nonzero(selected) / len(statistics))
+
+
+def evolvability_enhancing_fraction(
+    landscape, *, fdr=0.01, effect_type="all"
+) -> float:
     """Return the fraction of evolvability-enhancing directed mutations.
 
-    For each one-site mutation, let ``delta_fitness`` be its fitness effect
-    and ``delta_mean`` the change in mean neighbor fitness after excluding
-    the mutated position. Count statistically supported increases satisfying
-    ``delta_mean > max(0, delta_fitness) + epsilon`` [1]_.
+    A mutation is evolvability-enhancing (EE) when the increase in mean
+    non-focal neighbor fitness significantly exceeds the larger of zero and
+    its own fitness effect [1]_. A mutation may be any one-variable change
+    represented in the landscape, including changes in nonbiological data.
 
     Parameters
     ----------
     landscape : Landscape
         Built landscape with unique, nonmissing configurations, finite fitness
         values and one-site neighbor pairs. Both orientations of each graph
-        pair and retained neutral pair are evaluated once. Neighborhoods follow
-        the supplied graph; discarded configurations and neutral pairs are not
-        reconstructed. Fitness is negated when ``landscape.maximize=False``.
-    epsilon : float, default=0
-        Nonnegative minimum excess above ``max(0, delta_fitness)``, in fitness
-        units. This is an effect-size tolerance, not a significance level.
-    auto_calculate : bool, default=True
-        Whether to compute missing ``landscape.neighbor_fitness`` attributes.
-        If False, those attributes must already exist. This setting controls
-        their preparation only; EE tests always recompute the position-specific
-        statistics independently of these unrestricted neighborhood means.
+        pair and retained neutral pair are evaluated once. Discarded vertices
+        and neighbor pairs are not reconstructed. Fitness is negated when
+        ``landscape.maximize=False`` so positive effects indicate improvement.
+    fdr : float, default=0.01
+        Benjamini-Hochberg false discovery rate, strictly between 0 and 1.
+        Corrections use all ordered pairs, before selecting an effect type.
+    effect_type : {"all", "beneficial", "deleterious", "neutral"}, default="all"
+        Effects to include in the numerator, classified by the sign of the
+        unrounded fitness change. The denominator always includes every
+        represented ordered neighbor pair. "all" combines all three classes.
 
     Returns
     -------
-    proportion : float
-        Number of significant EE mutations, combining beneficial, deleterious
-        and neutral effects, divided by all represented ordered neighbor pairs.
-        The value lies in [0, 1] when defined. Pairs with fewer than two
-        non-focal neighbors at either endpoint remain in the denominator and
-        are not counted as EE. Return NaN if no pair is testable.
+    fraction : float
+        Significant EE mutations of the selected type divided by all ordered
+        neighbor pairs. Untestable pairs remain in the denominator and are not
+        counted as EE. The value lies in [0, 1] when defined; return NaN if no
+        pair is testable. A type with no EE mutations returns zero if at least
+        one pair in the full landscape is testable.
 
     Raises
     ------
     graphfla.exceptions.NotBuiltError
         If the landscape has not been built.
-    RuntimeError
-        If ``auto_calculate=False`` and neighbor-fitness attributes are absent.
     ValueError
-        If epsilon is invalid, configurations are missing or duplicated,
-        fitness is nonfinite, or a neighbor pair does not differ at one site.
+        If fdr or effect_type is invalid, configurations are missing or
+        duplicated, fitness is nonfinite, or a pair does not differ at one site.
 
     Warns
     -----
     RuntimeWarning
-        If there are no neighbor pairs or no pair has enough non-focal
-        neighbors for statistical testing.
+        If no pair has at least two non-focal neighbors at each endpoint.
 
     See Also
     --------
-    single_mutation_effects : Summarize mutation effects across backgrounds
-        at one position.
-
-    Notes
-    -----
-    Two-sided one-sample t tests use the sum of both neighborhood population
-    variances (``ddof=0``), ``n = min(k_source, k_target)`` and ``df = n - 1``.
-    Separate Benjamini-Hochberg corrections at FDR 0.01 cover all ordered pairs
-    for the fitness-effect and zero nulls, with untestable pairs retained as
-    nonrejections.
-
-    Classification uses unrounded fitness effects and allows for floating-point
-    roundoff at the strict boundary. Variability is estimated from neighbor
-    fitnesses; experimental measurement errors are not accepted.
+    evolvability_effects : Per-mutation results, test definitions and
+        neighborhood-variance conventions.
 
     References
     ----------
@@ -170,13 +177,189 @@ def evolvability_enhancing_mutations(landscape, epsilon=0, auto_calculate=True):
 
     >>> from itertools import product
     >>> from graphfla.landscape import BooleanLandscape
-    >>> from graphfla.analysis import evolvability_enhancing_mutations
+    >>> from graphfla.analysis import evolvability_enhancing_fraction
     >>> X = list(product([0, 1], repeat=3))
     >>> landscape = BooleanLandscape()
     >>> _ = landscape.build_from_data(X, [sum(x) for x in X], verbose=False)
-    >>> evolvability_enhancing_mutations(landscape)
+    >>> evolvability_enhancing_fraction(landscape)
+    0.0
+    >>> evolvability_enhancing_fraction(landscape, effect_type="beneficial")
     0.0
     """
+    landscape._check_built()
+    _validate_fdr(fdr)
+    if not isinstance(effect_type, str) or effect_type not in (
+        "all", "beneficial", "deleterious", "neutral"
+    ):
+        raise ValueError(
+            "effect_type must be 'all', 'beneficial', 'deleterious' or 'neutral'."
+        )
+    return _ee_fraction(_landscape_ee_statistics(landscape, fdr=fdr), effect_type)
+
+
+def evolvability_effects(landscape, *, fdr=0.01) -> pd.DataFrame:
+    """Return EE statistics for each directed one-site mutation.
+
+    Each row represents a change between two configurations in a particular
+    background. The reverse change occupies a separate row. Exclude all
+    changes at the focal position from both endpoints' neighborhoods.
+
+    Parameters
+    ----------
+    landscape : Landscape
+        Built landscape satisfying the input requirements of
+        :func:`evolvability_enhancing_fraction`. The existing graph and retained
+        neutral adjacency define which changes are evaluated.
+    fdr : float, default=0.01
+        Benjamini-Hochberg false discovery rate, strictly between 0 and 1.
+        This changes the EE decisions, not the raw or adjusted p-values.
+
+    Returns
+    -------
+    effects : pandas.DataFrame
+        One row per ordered neighbor pair, sorted by source_id and target_id,
+        with a RangeIndex. An empty result retains the same column schema:
+
+        - ``source_id``, ``target_id`` : int
+            Vertex IDs matching ``landscape.get_data().index``.
+        - ``position``, ``source_allele``, ``target_allele`` : object
+            Configuration column name and original allele labels.
+        - ``effect_type`` : str
+            "beneficial", "deleterious" or "neutral", using the sign of the
+            unrounded fitness effect in the landscape's optimization direction.
+        - ``delta_fitness``, ``delta_neighbor_fitness``, ``excess`` : float
+            Focal effect, non-focal neighborhood mean difference and
+            ``delta_neighbor_fitness - max(0, delta_fitness)``, in fitness units.
+        - ``n_source_neighbors``, ``n_target_neighbors`` : int
+            Non-focal neighborhood sizes. Both must be at least two for a test.
+        - ``p_effect``, ``p_zero`` : float
+            Two-sided p-values for neighborhood difference equal to the focal
+            effect or zero, respectively. Untestable pairs have NaN values.
+        - ``q_effect``, ``q_zero`` : float
+            BH adjusted p-values, corrected separately over all ordered pairs.
+            Untestable pairs enter each family as p=1 but retain NaN in output.
+        - ``is_ee`` : pandas nullable boolean
+            EE classification; NA for an untestable pair. Positive focal effects
+            use q_effect; other effects use q_zero. A rejection must also have
+            positive excess, allowing for floating-point roundoff.
+        - ``status`` : str
+            "ok" or "insufficient_neighbors".
+
+    Raises
+    ------
+    graphfla.exceptions.NotBuiltError
+        If the landscape has not been built.
+    ValueError
+        If fdr or the landscape inputs are invalid.
+
+    See Also
+    --------
+    evolvability_enhancing_fraction : Aggregate EE counts over all ordered pairs.
+
+    Notes
+    -----
+    Two-sided one-sample t tests use the sum of both neighborhood population
+    variances (ddof=0), n=min(k_source, k_target) and df=n-1. The strict EE
+    criterion is delta_neighbor_fitness > max(0, delta_fitness).
+
+    Neighborhood variability describes differences among configurations, not
+    repeated-measurement uncertainty. This interface does not model experimental
+    errors. Applying the same screening procedure to other domains does not
+    establish statistical calibration for their sampling or dependence structure.
+
+    Examples
+    --------
+    >>> from itertools import product
+    >>> from graphfla.landscape import BooleanLandscape
+    >>> from graphfla.analysis import evolvability_effects
+    >>> X = list(product([0, 1], repeat=3))
+    >>> landscape = BooleanLandscape()
+    >>> _ = landscape.build_from_data(X, [sum(x) for x in X], verbose=False)
+    >>> effects = evolvability_effects(landscape)
+    >>> len(effects)
+    24
+    >>> bool(effects["is_ee"].any())
+    False
+    """
+    landscape._check_built()
+    _validate_fdr(fdr)
+    statistics = _landscape_ee_statistics(landscape, fdr=fdr)
+    effect = statistics["delta_fitness"].to_numpy()
+    statistics["effect_type"] = np.where(
+        effect > 0, "beneficial", np.where(effect < 0, "deleterious", "neutral")
+    )
+    statistics["is_ee"] = statistics["ee"].astype("boolean").mask(
+        ~statistics["testable"], pd.NA
+    )
+    statistics["status"] = np.where(
+        statistics["testable"], "ok", "insufficient_neighbors"
+    )
+    effects = statistics.rename(columns={
+        "source": "source_id", "target": "target_id",
+        "n_source": "n_source_neighbors", "n_target": "n_target_neighbors",
+    })
+    columns = [
+        "source_id", "target_id", "position", "source_allele", "target_allele",
+        "effect_type", "delta_fitness", "delta_neighbor_fitness", "excess",
+        "n_source_neighbors", "n_target_neighbors", "p_effect", "p_zero",
+        "q_effect", "q_zero", "is_ee", "status",
+    ]
+    return effects[columns].sort_values(
+        ["source_id", "target_id"], ignore_index=True
+    )
+
+
+def evolvability_enhancing_mutations(landscape, epsilon=0, auto_calculate=True):
+    """Return the EE fraction through the deprecated compatibility interface.
+
+    Use :func:`evolvability_enhancing_fraction` for new analyses. This entry
+    retains its original parameters and neighbor-cache preparation behavior.
+
+    Parameters
+    ----------
+    landscape : Landscape
+        Built landscape satisfying the requirements of
+        :func:`evolvability_enhancing_fraction`.
+    epsilon : float, default=0
+        Finite, nonnegative minimum excess above the EE criterion, in fitness
+        units. Nonzero values are a legacy extension of the paper's definition.
+    auto_calculate : bool, default=True
+        Prepare missing ``landscape.neighbor_fitness`` attributes. If False,
+        raise RuntimeError when those attributes are absent.
+
+    Returns
+    -------
+    fraction : float
+        Combined EE count over all ordered neighbor pairs at fixed FDR 0.01.
+        Return NaN with a warning if no pair is testable.
+
+    Raises
+    ------
+    graphfla.exceptions.NotBuiltError
+        If the landscape has not been built.
+    ValueError
+        If epsilon or the landscape inputs are invalid.
+    RuntimeError
+        If ``auto_calculate=False`` and neighbor-fitness attributes are absent.
+
+    Warns
+    -----
+    FutureWarning
+        On each call, directing callers to the new scalar interface.
+    RuntimeWarning
+        If no pair is testable.
+
+    See Also
+    --------
+    evolvability_enhancing_fraction : Scalar interface with fdr and effect_type.
+    evolvability_effects : Per-mutation evidence and classification.
+    """
+    warnings.warn(
+        "evolvability_enhancing_mutations is deprecated; use "
+        "evolvability_enhancing_fraction instead.",
+        FutureWarning,
+        stacklevel=2,
+    )
     landscape._check_built()
     if (not isinstance(epsilon, Real) or isinstance(epsilon, (bool, np.bool_))
             or not np.isfinite(epsilon) or epsilon < 0):
@@ -194,16 +377,7 @@ def evolvability_enhancing_mutations(landscape, epsilon=0, auto_calculate=True):
                 "or set auto_calculate=True."
             )
 
-    statistics = _landscape_ee_statistics(landscape, epsilon)
-    if statistics.empty or not statistics["testable"].any():
-        warnings.warn(
-            "No testable EE mutations: each endpoint needs at least two "
-            "neighbors outside the mutated position.",
-            RuntimeWarning,
-            stacklevel=2,
-        )
-        return float("nan")
-    return float(statistics["ee"].sum() / len(statistics))
+    return _ee_fraction(_landscape_ee_statistics(landscape, epsilon))
 
 
 def neutrality(landscape, threshold: float = 0.01) -> float:

@@ -30,6 +30,8 @@ from .robustness import (
     single_mutation_effects,
     all_mutation_effects,
     evolvability_enhancing_mutations,
+    evolvability_enhancing_fraction,
+    evolvability_effects,
 )
 from .epistasis import (
     higher_order_epistasis,
@@ -60,6 +62,8 @@ __all__ = [
     "r_s_ratio",
     "gradient_intensity",
     "evolvability_enhancing_mutations",
+    "evolvability_enhancing_fraction",
+    "evolvability_effects",
     "classify_epistasis",
     "idiosyncratic_index",
     "global_idiosyncratic_index",

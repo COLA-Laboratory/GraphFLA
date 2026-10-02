@@ -220,7 +220,7 @@ landscape.build_from_data(complex_search_space, f, data_types=data_types, verbos
 | Function | Measures | Range | Higher value → |
 |---|---|---|---|
 | `neutrality` | Fraction of neutral (equal-fitness) edges | [0, 1] | more neutral |
-| `evolvability_enhancing_mutations` | Fraction of mutations that open access to fitter regions | [0, 1] | more evolvable |
+| `evolvability_enhancing_fraction` | Fraction of directed neighbour pairs with significant evolvability enhancement | [0, 1] | more local EE changes |
 
 </details>
 

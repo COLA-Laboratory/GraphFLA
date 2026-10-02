@@ -225,7 +225,7 @@ def determine_neighbor_fitness(landscape) -> "Landscape":
 
     These unrestricted means describe local fitness context. EE mutation
     analysis requires separate neighborhoods that exclude the mutated site;
-    see :func:`graphfla.analysis.evolvability_enhancing_mutations`.
+    see :func:`graphfla.analysis.evolvability_enhancing_fraction`.
 
     Returns
     -------
