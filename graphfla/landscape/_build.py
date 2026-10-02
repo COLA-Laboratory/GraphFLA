@@ -156,13 +156,26 @@ class _BuildMixin:
         edges, delta_fits, neutral_pairs = self._build_edges(
             prepared.fitness, n_edit=n_edit, strategy=neighborhood_strategy
         )
-        if tau is not None and filter_mode == "both" and len(edges):
-            edges = np.asarray(edges, dtype=np.int64)
-            # The target is the fitter endpoint of every improving edge.
-            target_fitness = prepared.fitness[edges[:, 1]]
-            keep = target_fitness >= tau if self.maximize else target_fitness <= tau
-            edges = edges[keep]
-            delta_fits = np.asarray(delta_fits)[keep]
+        if tau is not None and filter_mode == "both":
+            if len(edges):
+                edges = np.asarray(edges, dtype=np.int64)
+                # The target is the fitter endpoint of every improving edge.
+                target_fitness = prepared.fitness[edges[:, 1]]
+                keep = target_fitness >= tau if self.maximize else target_fitness <= tau
+                edges = edges[keep]
+                delta_fits = np.asarray(delta_fits)[keep]
+            if neutral_pairs:
+                # Neutral pairs contribute to connectivity only if at least one
+                # endpoint is functional, just like improving edges. Attributes
+                # are attached after pruning, so use the prepared fitness array.
+                pairs = np.asarray(neutral_pairs, dtype=np.int64)
+                src, tgt = prepared.fitness[pairs[:, 0]], prepared.fitness[pairs[:, 1]]
+                keep = (
+                    (src >= tau) | (tgt >= tau)
+                    if self.maximize
+                    else (src <= tau) | (tgt <= tau)
+                )
+                neutral_pairs = [tuple(pair) for pair in pairs[keep]]
         self.graph = self._build_graph(len(prepared.fitness), edges, delta_fits)
         return neutral_pairs
 
@@ -178,18 +191,24 @@ class _BuildMixin:
         """Apply graph pruning and remap cached metadata when vertices are removed."""
         kept_indices = None
         if tau is not None and filter_mode == "both":
-            self.graph, kept_indices = _largest_weak_component(self.graph, verbose)
+            self.graph, kept_indices = _largest_weak_component(
+                self.graph, verbose, neutral_pairs=neutral_pairs
+            )
         self._n_configs, self._n_edges = self.graph.vcount(), self.graph.ecount()
 
         # Protect plateau-interior nodes (linked only by neutral/tied edges)
         # from isolation pruning, which runs before the plateau layer is built
-        # and would otherwise drop them as "isolated".
+        # and would otherwise drop them as "isolated". A pair protects its
+        # endpoints only if both survived component filtering.
         protected = None
         if neutral_pairs:
             if kept_indices is not None:
                 tau_map = {old: new for new, old in enumerate(kept_indices)}
                 protected = {
-                    tau_map[n] for pair in neutral_pairs for n in pair if n in tau_map
+                    tau_map[n]
+                    for pair in neutral_pairs
+                    if all(n in tau_map for n in pair)
+                    for n in pair
                 }
             else:
                 protected = {n for pair in neutral_pairs for n in pair}

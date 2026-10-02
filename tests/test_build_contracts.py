@@ -293,6 +293,74 @@ def test_standalone_graph_filter_preserves_threshold_and_component_contract():
     assert filtered.vs["fitness"] == [-1.0, 1.0, 2.0]
 
 
+def test_standalone_graph_filter_counts_surviving_neutral_connections():
+    import igraph as ig
+    from graphfla.utils import filter_graph
+
+    graph = ig.Graph(n=5, edges=[(0, 1)], directed=True)
+    graph.vs["fitness"] = [0.0, 1.0, 1.0, 2.0, 2.0]
+    filtered, n, m, kept = filter_graph(
+        graph, True, 0, "both", False, neutral_pairs=[(1, 2), (3, 4)]
+    )
+    assert (n, m, kept) == (3, 1, [0, 1, 2])
+    assert filtered.get_edgelist() == [(0, 1)]
+
+
+@pytest.mark.parametrize("maximize", [True, False])
+@pytest.mark.parametrize("strategy", ["active", "pairwise", "broadcast", "auto"])
+@pytest.mark.parametrize("form", ["sequence", "dataframe"])
+def test_functional_filter_preserves_neutral_bridge_and_attribute_alignment(
+    maximize, strategy, form
+):
+    # The first neutral pair straddles tau and joins the improving edge. The
+    # disconnected last pair is wholly nonfunctional and must be severed.
+    sequences = ["AAAA", "AAAC", "AACC", "CCCC", "CCCA"]
+    X = sequences
+    if form == "dataframe":
+        X = pd.DataFrame([list(s) for s in sequences], columns=list("abcd"))
+    sign = 1 if maximize else -1
+    fitness = sign * np.array([0.75, 1.0, 2.0, -2.0, -1.9])
+    ls = DNALandscape(maximize=maximize).build_from_data(
+        X,
+        fitness,
+        tau=sign,
+        filter_mode="both",
+        epsilon=0.3,
+        neighborhood_strategy=strategy,
+        verbose=False,
+    )
+    assert ls.shape == (3, 1)
+    assert ls.graph.get_edgelist() == [(1, 2)]
+    assert ls.graph.es["delta_fit"] == [1.0]
+    np.testing.assert_array_equal(ls.graph.vs["fitness"], fitness[:3])
+    columns = (
+        [f"pos_{i}" for i in range(4)] if form == "sequence" else list("abcd")
+    )
+    actual = ["".join(row) for row in zip(*(ls.graph.vs[c] for c in columns))]
+    assert actual == sequences[:3]
+    assert ls._neutral_neighbors == {0: [1], 1: [0]}
+    assert list(ls.configs.index) == [0, 1, 2]
+
+
+@pytest.mark.parametrize("maximize", [True, False])
+def test_neutral_pair_filter_with_exactly_representable_large_integer_fitness(maximize):
+    # Keep the threshold and inputs exactly representable in float64. The
+    # separate sep26 regression records the unresolved beyond-precision case.
+    sign = 1 if maximize else -1
+    offset = 2**53
+    fitness = sign * np.array([offset + 2] * 3 + [offset + 6, offset + 8])
+    ls = BooleanLandscape(maximize=maximize).build_from_data(
+        ["0000", "0001", "0010", "1111", "1110"],
+        fitness,
+        tau=sign * (offset + 4),
+        filter_mode="both",
+        verbose=False,
+    )
+    assert ls.shape == (2, 1)
+    assert ls.graph.vs["fitness"] == fitness[3:].tolist()
+    assert ls.graph.es["delta_fit"] == [2.0]
+
+
 def test_mixed_boolean_aliases_share_one_variant():
     X = pd.DataFrame({"enabled": ["0", 0, 1]})
     ls = Landscape().build_from_data(

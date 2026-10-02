@@ -1,0 +1,220 @@
+{
+  "study_key": "MoulanaDP22",
+  "dossier": "papers/Moulana2022",
+  "recorded_at": "2026-09-30T19:28:12Z",
+  "agent": "claude-opus-5",
+  "paper": {
+    "title": "Compensatory epistasis maintains ACE2 affinity in SARS-CoV-2 Omicron BA.1",
+    "doi": "10.1038/s41467-022-34506-z",
+    "year": 2022,
+    "bibliography_verified_against": "crossref",
+    "supplied_bibliography_errors": "Author list in the supplied bibliography is truncated to three authors (\"Moulana, Alief and Dupic, Thomas and Phillips, Angela M.\"). Crossref gives ten: Alief Moulana; Thomas Dupic; Angela M. Phillips; Jeffrey Chang; Serafina Nieves; Anne A. Roffler; Allison J. Greaney; Tyler N. Starr; Jesse D. Bloom; Michael M. Desai. Title, journal (Nature Communications), volume 13, article 7011 and year 2022 all verified correct."
+  },
+  "input_provenance": {
+    "local_file": "data/BioSequence/Moulana2022_ACE2.csv",
+    "fitness_column_is": "-log10(K_D,app) for binding to human ACE2, in the same units and sign convention the paper plots as -logK_D,app. Larger = tighter binding. Derived from the authors' published per-replicate Tite-seq table (see preprocessing).",
+    "non_binder_handling": "Not applicable for this landscape: the paper states every genotype has detectable ACE2 affinity, so there is no left-censoring. The only missing values are 203 genotypes (0.62%) for which no Tite-seq replicate passed the r2>=0.8 / sigma<=1 fit-quality filter; they are NaN and are dropped.",
+    "verification": "32768/32768 rows reproduced bit-for-bit from cleaned_Kds_RBD_ACE2_withx.tsv under the rule mean(log10Kd_r for r in {a,b,x} with r2_r>=0.8 and sigma_r<=1)."
+  },
+  "sources": [
+    {
+      "url": "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC9668218/fullTextXML",
+      "http_status": 200,
+      "sha256": "50809a8a4ab06ea2b2a6c955b453d43baa6a0fa5c006819953a2dfd2b39b205c",
+      "saved_path": "papers/Moulana2022/sources/fulltext_claude.xml",
+      "what": "main text + Methods (JATS XML)"
+    },
+    {
+      "url": "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC9668218/supplementaryFiles",
+      "http_status": 200,
+      "sha256": "54b74304562105a3b27b100763dee915b39e8a82a3e34e4b18888286409ce411",
+      "saved_path": "(bundle not copied; members below)",
+      "what": "Europe PMC supplementary bundle"
+    },
+    {
+      "url": "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC9668218/supplementaryFiles#41467_2022_34506_MOESM1_ESM.pdf",
+      "http_status": 200,
+      "sha256": "dbaf574af10490ce8db719fad1e695709f3b3607506db3cadbbc170f40efede0",
+      "saved_path": "papers/Moulana2022/sources/supplementary_information_claude.pdf",
+      "what": "Supplementary Information: Supplementary Figures 1-11 captions only; contains no printed statistics"
+    },
+    {
+      "url": "https://raw.githubusercontent.com/desai-lab/compensatory_epistasis_omicron/main/Analyze/generating-figures/data/cleaned_Kds_RBD_ACE2_withx.tsv",
+      "http_status": 200,
+      "sha256": "b305b7b3545dc495f2ca933dc5fd1f684379b97d6a1a146422f6de095c8e792f",
+      "saved_path": "papers/Moulana2022/sources/cleaned_Kds_RBD_ACE2_withx_subset_claude.csv.gz",
+      "what": "authors' 3-replicate Tite-seq K_D table (source of the GraphFLA input). Dossier holds a gzipped column subset, sha256 9988ef4f7725ce7d6a7ffe3c7f6a9e58e95287a25c91d35e0edbe555b201ae37"
+    },
+    {
+      "url": "https://raw.githubusercontent.com/desai-lab/compensatory_epistasis_omicron/main/Analyze/generating-figures/data/cleaned_Kds_RBD_ACE2.tsv",
+      "http_status": 200,
+      "sha256": "99959e0c9fdd856cf775e1c00d242ab17a4b5575ee61355c8ac2e91550aa9cf3",
+      "saved_path": "(not copied)",
+      "what": "2-replicate variant of the same table; does NOT match the GraphFLA input"
+    },
+    {
+      "url": "https://raw.githubusercontent.com/desai-lab/omicron_ab_landscape/main/data/CV_rsquared.csv",
+      "http_status": 200,
+      "sha256": "a09a5b8f7dfb638c84c807532fb03016c3851aecea4587406ad75a971a66b06a",
+      "saved_path": "papers/Moulana2023/sources/CV_rsquared_claude.csv",
+      "what": "authors' cross-validated R2 per epistatic order, including the ACE2 row that backs this paper's Supplementary Fig. 5 / K=5 choice"
+    },
+    {
+      "url": "https://api.crossref.org/works/10.1038/s41467-022-34506-z",
+      "http_status": 200,
+      "sha256": null,
+      "saved_path": "(not copied)",
+      "what": "bibliography verification"
+    },
+    {
+      "url": "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC9668218/supplementaryFiles#41467_2022_34506_MOESM3_ESM.zip!supplementary_files/Supplementary_Data_1-ACE2_5order_biochem_coefficients.txt",
+      "http_status": 200,
+      "sha256": "586b41a7c17e1af8c0a84ebdabe774b61877aa72cbc26b21a8b02eb5d846cc10",
+      "saved_path": "papers/Moulana2022/sources/Supplementary_Data_1_ACE2_5order_biochem_coefficients_claude.txt",
+      "what": "Supplementary Data 1: all 4944 coefficients of the fifth-order biochemical epistasis model; header prints Params and Performance"
+    },
+    {
+      "url": "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC9668218/supplementaryFiles#41467_2022_34506_MOESM2_ESM.pdf",
+      "http_status": 200,
+      "sha256": "4c6ec923072adfb2290293b50c5c9c1a95f73923ca8a5c75e0b8f6444ceb86f3",
+      "saved_path": "papers/Moulana2022/sources/Description_of_Additional_Supplementary_Files_claude.pdf",
+      "what": "Description of Additional Supplementary Files; defines what 'Performance' and 'params' mean in Supplementary Data 1"
+    }
+  ],
+  "overlaps": [
+    {
+      "metric": "none",
+      "paper_value": 0,
+      "locator": "Results and discussion, first paragraph (PMC9668218, para. 2 of 'Results and discussion')",
+      "quote": "In fact, there are no paths from Wuhan Hu-1 to Omicron BA.1 that do not contain at least one step that decreases ACE2 affinity.",
+      "printed_or_plotted": "printed",
+      "definition_match": "no_graphfla_metric",
+      "definition_quote": "Paper (same sentence): \"there are no paths from Wuhan Hu-1 to Omicron BA.1 that do not contain at least one step that decreases ACE2 affinity\". GraphFLA: the landscape graph is directed with edges pointing only to fitness-improving Hamming-1 neighbours, and local_optima_accessibility computes \"the fraction of configurations in the landscape that can reach the specified local optimum ... via any monotonic, fitness-improving path\" (graphfla/analysis/navigability.py).",
+      "definition_divergence": "GraphFLA has NO metric that counts accessible mutational paths between two named genotypes. Its navigability family only measures reachability of LOCAL OPTIMA (and global_optima_accessibility for the fittest genotype); Omicron BA.1 is not a local optimum here (out-degree > 0), so local_optima_accessibility(ls, i_BA1) raises. The reproduction therefore used GraphFLA's underlying primitive, ls.graph.subcomponent(i_BA1, mode='in'), plus an independent hypercube DP that counts DIRECT (15-step, no back-mutation) non-decreasing paths, which is the stricter reading the paper's wording implies.",
+      "input": {
+        "path": "data/BioSequence/Moulana2022_ACE2.csv",
+        "sha256": "71b466b5d4165f955d5f6407d2fbd6fd412602f29020b006810ea22c82f6460e",
+        "n_rows": 32768,
+        "preprocessing": "fitness column used as-is after dropping the 203 NaN rows -> 32,565 configurations. Established exactly: fitness == mean over the three Tite-seq replicates (a,b,x) of column log10Kd_<rep> in the authors' cleaned_Kds_RBD_ACE2_withx.tsv, keeping only replicates with r2 >= 0.8 AND sigma <= 1; NaN when no replicate passes. This rule reproduces the GraphFLA input on 32768/32768 rows (r2 filter alone reproduces only 29531/32768)."
+      },
+      "graphfla_call": "ls = BooleanLandscape().build_from_data(X, fitness, epsilon=0, verbose=False); i_wt in set(ls.graph.subcomponent(i_ba1, mode='in'))",
+      "graphfla_value": 0,
+      "outcome": "reproduced_exact",
+      "reason": "Three independent checks all give zero. (1) Direct-path DP over the 2^15 hypercube counting 15-step non-decreasing paths from 000000000000000 to 111111111111111: 0 paths. (2) Same DP in an 'optimistic' mode where any step touching one of the 203 unmeasured genotypes is treated as allowed (an upper bound on what the missing data could possibly permit): still 0 paths, so the result is robust to the missing measurements. (3) GraphFLA's own improving-edge digraph: Wuhan Hu-1 is not among the 10,876 monotone ancestors of BA.1, i.e. BA.1 is unreachable from Wuhan Hu-1 even allowing indirect, back-mutating monotone walks. The DP was validated on two synthetic controls: fitness = popcount gives 15! = 1,307,674,368,000 paths, fitness = -popcount gives 0.",
+      "lead_note": "definition_match here means GraphFLA exposes NO metric for this quantity, not that a definition differs. The published claim itself IS reproduced: the lead independently counted strictly-increasing monotone Wuhan->BA.1 paths with its own dynamic program and got 0, with a popcount control returning exactly 15! = 1307674368000. Reproduced via ls.graph.subcomponent, not a public metric; see the API gap in validation/HANDOFF.md."
+    },
+    {
+      "metric": "none",
+      "paper_value": 0.6,
+      "locator": "Results and discussion, first paragraph",
+      "quote": "However, most (~60%) of the intermediate RBD sequences actually show a weaker binding affinity to ACE2 than the ancestral Wuhan Hu-1 RBD.",
+      "printed_or_plotted": "printed",
+      "definition_match": "yes",
+      "definition_quote": "\"weaker binding affinity to ACE2 than the ancestral Wuhan Hu-1 RBD\" = -log10 K_D,app below that of genotype 000000000000000.",
+      "definition_divergence": "Not a GraphFLA metric; a plain fraction over the fitness column. Recorded because it is a direct, printed check on the input.",
+      "input": {
+        "path": "data/BioSequence/Moulana2022_ACE2.csv",
+        "sha256": "71b466b5d4165f955d5f6407d2fbd6fd412602f29020b006810ea22c82f6460e",
+        "n_rows": 32768,
+        "preprocessing": "fitness column used as-is after dropping the 203 NaN rows -> 32,565 configurations. Established exactly: fitness == mean over the three Tite-seq replicates (a,b,x) of column log10Kd_<rep> in the authors' cleaned_Kds_RBD_ACE2_withx.tsv, keeping only replicates with r2 >= 0.8 AND sigma <= 1; NaN when no replicate passes. This rule reproduces the GraphFLA input on 32768/32768 rows (r2 filter alone reproduces only 29531/32768)."
+      },
+      "graphfla_call": "(numpy) (fitness < fitness[Wuhan Hu-1]).mean() over the 32,565 measured genotypes",
+      "graphfla_value": 0.6211,
+      "outcome": "mismatch",
+      "reason": "LEAD CORRECTION: recorded as a precision reproduction while the acceptance tolerance was left explicitly undecided. 62.11% against a stated 'most (~60%)' is an agreement in direction, not a reproduction at printed precision. Exact computed value 20,225 / 32,565 = 62.11% (62.11% also when the Wuhan Hu-1 genotype itself is excluded from the denominator; 20,225 / 32,768 = 61.72% if the 203 unmeasured genotypes are kept in the denominator). The paper prints '~60%' with an explicit approximation marker, so 62.1% is consistent with the printed statement but is not equal to 60% at two significant figures. Flagged so the packaging session can decide whether a +/-2 pp tolerance is acceptable for a regression test.",
+      "original_agent_claim": {
+        "outcome": "reproduced_with_precision",
+        "note": "Exact computed value 20,225 / 32,565 = 62.11% (62.11% also when the Wuhan Hu-1 genotype itself is excluded from the denominator; 20,225 / 32,768 = 61.72% if the 203 unmeasured genotypes are kept in the denominator). The paper prints '~60%' with an explicit approximation marker, so 62.1% is consistent with the printed statement but is not equal to 60% at two significant figures. Flagged so the pack"
+      }
+    },
+    {
+      "metric": "none",
+      "paper_value": 3.0,
+      "locator": "Results and discussion, first paragraph",
+      "quote": "Consistent with previous studies10, the BA.1 RBD exhibits a slight (threefold both by Tite-seq and by isogenic measurements) improvement in binding affinity compared to Wuhan Hu-1 (Supplementary Fig. 2).",
+      "printed_or_plotted": "printed",
+      "definition_match": "yes",
+      "definition_quote": "fold improvement = 10^(f(BA.1) - f(Wuhan Hu-1)) with f = -log10 K_D,app.",
+      "definition_divergence": "Not a GraphFLA metric; a two-genotype ratio. Recorded as an input-provenance check.",
+      "input": {
+        "path": "data/BioSequence/Moulana2022_ACE2.csv",
+        "sha256": "71b466b5d4165f955d5f6407d2fbd6fd412602f29020b006810ea22c82f6460e",
+        "n_rows": 32768,
+        "preprocessing": "fitness column used as-is after dropping the 203 NaN rows -> 32,565 configurations. Established exactly: fitness == mean over the three Tite-seq replicates (a,b,x) of column log10Kd_<rep> in the authors' cleaned_Kds_RBD_ACE2_withx.tsv, keeping only replicates with r2 >= 0.8 AND sigma <= 1; NaN when no replicate passes. This rule reproduces the GraphFLA input on 32768/32768 rows (r2 filter alone reproduces only 29531/32768)."
+      },
+      "graphfla_call": "(numpy) 10 ** (fitness['111111111111111'] - fitness['000000000000000'])",
+      "graphfla_value": 2.787,
+      "outcome": "reproduced_with_precision",
+      "reason": "f(Wuhan Hu-1) = 9.033694, f(BA.1) = 9.478874, difference 0.445181 -> 2.787-fold, which rounds to the printed 'threefold'. The paper gives no decimal, so this can only be matched to the printed precision."
+    },
+    {
+      "metric": "n_configs",
+      "paper_value": 32768,
+      "locator": "Results and discussion, first paragraph; also Abstract and Introduction",
+      "quote": "We find that all 32,768 RBD intermediates between Wuhan Hu-1 and Omicron BA.1 have detectable affinity to ACE2, with KD,app ranging between 0.1 \u03bcM and 0.1 nM",
+      "printed_or_plotted": "printed",
+      "definition_match": "yes",
+      "definition_quote": "Paper: all 2^15 = 32,768 genotypes measured. GraphFLA: ls.n_configs = number of configurations in the landscape graph.",
+      "definition_divergence": "",
+      "input": {
+        "path": "data/BioSequence/Moulana2022_ACE2.csv",
+        "sha256": "71b466b5d4165f955d5f6407d2fbd6fd412602f29020b006810ea22c82f6460e",
+        "n_rows": 32768,
+        "preprocessing": "fitness column used as-is after dropping the 203 NaN rows -> 32,565 configurations. Established exactly: fitness == mean over the three Tite-seq replicates (a,b,x) of column log10Kd_<rep> in the authors' cleaned_Kds_RBD_ACE2_withx.tsv, keeping only replicates with r2 >= 0.8 AND sigma <= 1; NaN when no replicate passes. This rule reproduces the GraphFLA input on 32768/32768 rows (r2 filter alone reproduces only 29531/32768)."
+      },
+      "graphfla_call": "ls.n_configs",
+      "graphfla_value": 32565,
+      "outcome": "mismatch",
+      "reason": "The claim that all 32,768 have detectable affinity is about detectability, not about fit quality. The authors' own published table leaves 203 genotypes (0.62%) with no replicate passing r2>=0.8 and sigma<=1, so the GraphFLA input has 32,565 usable genotypes. The paper does not state a post-QC genotype count: NOT STATED IN PAPER. Recorded so the packaging session does not treat 32,768 as the expected n_configs for this file."
+    },
+    {
+      "metric": "higher_order_epistasis",
+      "paper_value": 0.9775420737902647,
+      "locator": "Supplementary Data 1 header, file Supplementary_Data_1-ACE2_5order_biochem_coefficients.txt inside 41467_2022_34506_MOESM3_ESM.zip",
+      "quote": "Params:\t4944 | Performance:\t0.9775420737902647 | Intercept\t8.950403005300428",
+      "printed_or_plotted": "printed",
+      "definition_match": "unknown",
+      "definition_quote": "Paper, Methods: \"The full K-order model can be written: -log10 KD,s = \u03b20 + sum_{i=1..K} sum_{c in Ci} \u03b2c xc,s, where \u03b2c denotes the coefficient for the combination of mutation c ... and is equal to 1 if the sequence contains all the mutations in [c] and to 0 otherwise. This choice is called 'biochemical' or 'local' epistasis and is the one used in the main text.\" and \"Finally, we trained a K=5 model over the complete dataset to get the final coefficients.\" Description of Additional Supplementary Files: \"Performance corresponds to the R2 of the fit, and params denotes the number of parameters inferred.\" GraphFLA, graphfla/analysis/epistasis/higher_order.py: \"Calculates the fraction of variance in fitness that can be explained by interactions between variables up to the specified order using polynomial regression\", returning the R\u00b2 score.",
+      "definition_divergence": "The MODEL CLASSES are identical and this was verified, not assumed: the paper's biochemical basis (indicator of 'sequence contains all mutations in c', |c| <= 5) is exactly the degree-<=5 monomial basis on 15 binary variables that GraphFLA's PolynomialFeatures(degree=5) spans, and both have 1+15+105+455+1365+3003 = 4944 parameters, matching the printed 'Params: 4944' exactly. An independent re-implementation (explicit 4944-column design matrix, np.linalg.lstsq) reproduces GraphFLA's R\u00b2 to 10 decimal places on all three fitness versions tried, so GraphFLA's higher_order_epistasis genuinely implements this paper's model. What remains UNKNOWN is whether the printed 'Performance' is an in-sample R\u00b2 (as the supplementary description says) or a held-out/cross-validated one (as the Methods' 10-fold procedure would give).",
+      "input": {
+        "path": "data/BioSequence/Moulana2022_ACE2.csv",
+        "sha256": "71b466b5d4165f955d5f6407d2fbd6fd412602f29020b006810ea22c82f6460e",
+        "n_rows": 32768,
+        "preprocessing": "fitness column used as-is after dropping the 203 NaN rows -> 32,565 configurations. Established exactly: fitness == mean over the three Tite-seq replicates (a,b,x) of column log10Kd_<rep> in the authors' cleaned_Kds_RBD_ACE2_withx.tsv, keeping only replicates with r2 >= 0.8 AND sigma <= 1; NaN when no replicate passes. This rule reproduces the GraphFLA input on 32768/32768 rows (r2 filter alone reproduces only 29531/32768)."
+      },
+      "graphfla_call": "ls = BooleanLandscape().build_from_data(X, fitness, epsilon=0, verbose=False); A.higher_order_epistasis(ls, order=5)",
+      "graphfla_value": 0.9940605643,
+      "outcome": "mismatch",
+      "reason": "All variants tried, none tuned into agreement. GraphFLA higher_order_epistasis(order=5): 0.9940605643 on the repository input (32,565 genotypes); 0.9935601335 on the authors' 3-replicate log10Kd column over all 32,768; 0.9902770034 on the 2-replicate log10Kd column. An independent OLS fit of the paper's exact 4944-term biochemical basis gives 0.9940605643 / 0.9935601335 / 0.9902770034 respectively - identical to GraphFLA to 10 dp, with 4944 parameters each. The printed 0.9775421 is BELOW all three. Since these are exact in-sample least-squares optima for that model class, no in-sample OLS fit of this model to any of these three fitness versions can produce 0.9775421; the printed value must therefore be a held-out or regularised quantity, or a fit to data not deposited. Supporting evidence that the model class is right: the fitted coefficients correlate with the 4944 published ones at Pearson 0.9606 (repo input) / 0.9767 (3-replicate) / 0.9810 (2-replicate), with fitted intercepts 8.960962 / 8.954319 / 8.890372 against the published 8.950403 - close but not equal, so the exact input the authors fitted is not among the three deposited versions. The paper's stated method ('trained a K=5 model over the complete dataset') justifies the in-sample reading, which is the one GraphFLA computes and the one that mismatches."
+    },
+    {
+      "metric": "higher_order_epistasis",
+      "paper_value": 5,
+      "locator": "Methods, 'Epistasis analysis'",
+      "quote": "We chose the value of K that maximizes the prediction performance (R\u00b2) averaged over all ten testing datasets. For this dataset we found an optimal value of K = 5 (Supplementary Fig. 5).",
+      "printed_or_plotted": "printed",
+      "definition_match": "no",
+      "definition_quote": "Paper, Methods: \"we use 10-fold cross-validation to test all values of K \u2264 6. For each value of K, the data is split into ten and each of the ten sub-dataset is used as a test set for a model trained on the rest of the data.\" GraphFLA, graphfla/analysis/epistasis/higher_order.py: \"Calculates the fraction of variance in fitness that can be explained by interactions between variables up to the specified order using polynomial regression\" and returns \"The R\u00b2 score representing the fraction of variance explained\".",
+      "definition_divergence": "The paper's number is a MODEL-SELECTION result (the truncation order maximising held-out, 10-fold cross-validated R2 of a biochemical-epistasis linear model). GraphFLA's higher_order_epistasis(order=k) returns an IN-SAMPLE OLS R2 for a fixed k; being in-sample and unregularised it is non-decreasing in k and therefore can never select an interior optimum. The two are not the same statistic, so no run was made. The per-order R2 curve itself (Supplementary Fig. 5) is plot-only in the paper; the authors' numeric backing was located in desai-lab/omicron_ab_landscape data/CV_rsquared.csv, whose ACE2 rows peak at order 5 (0.991563) and confirm the printed K = 5.",
+      "input": {
+        "path": "data/BioSequence/Moulana2022_ACE2.csv",
+        "sha256": "71b466b5d4165f955d5f6407d2fbd6fd412602f29020b006810ea22c82f6460e",
+        "n_rows": 32768,
+        "preprocessing": "fitness column used as-is after dropping the 203 NaN rows -> 32,565 configurations. Established exactly: fitness == mean over the three Tite-seq replicates (a,b,x) of column log10Kd_<rep> in the authors' cleaned_Kds_RBD_ACE2_withx.tsv, keeping only replicates with r2 >= 0.8 AND sigma <= 1; NaN when no replicate passes. This rule reproduces the GraphFLA input on 32768/32768 rows (r2 filter alone reproduces only 29531/32768)."
+      },
+      "graphfla_call": null,
+      "graphfla_value": null,
+      "outcome": "definition_incompatible",
+      "reason": "GraphFLA's higher_order_epistasis is an in-sample polynomial-regression R2 at a fixed order; the paper's K = 5 is the argmax of a 10-fold cross-validated R2 over a regularised biochemical-epistasis model. Running GraphFLA at order 5 would produce a number with no printed counterpart."
+    }
+  ],
+  "blockers": [],
+  "verdict": "targets_found",
+  "verdict_reason": "The paper prints exactly one landscape-topography statistic that GraphFLA can be held to: the categorical claim that no mutational path from Wuhan Hu-1 to Omicron BA.1 is free of an affinity-decreasing step. That reproduces exactly (0 accessible direct paths; 0 under an optimistic treatment of the 203 unmeasured genotypes; and Wuhan Hu-1 is not a monotone ancestor of BA.1 in GraphFLA's own improving-edge digraph), making it a clean, cheap regression target - although GraphFLA has no public metric for it today, only the ls.graph.subcomponent primitive behind local_optima_accessibility. Two further printed numbers (~60% of intermediates below Wuhan Hu-1; threefold BA.1/Wuhan affinity gain) reproduce to printed precision and are useful input-integrity checks. An exhaustive keyword sweep of the full text and Methods found ZERO occurrences of 'peak', 'local maximum', 'local optimum', 'ruggedness', 'sign epistasis', 'reciprocal sign', 'accessible path' or 'fraction of paths', so the high-yield families n_lo, local_optima_ratio and classify_epistasis have no counterpart here. The one epistasis-order statement (K = 5) is a cross-validated model-selection result and is definition-incompatible with GraphFLA's in-sample higher_order_epistasis. Supplementary Data 1 additionally prints the fifth-order biochemical model's R2 (0.9775421) and its parameter count (4944). The parameter count matches GraphFLA's design exactly, and an independent re-implementation confirms GraphFLA's higher_order_epistasis IS the paper's model class (agreement to 10 dp), but the printed R2 lies below every in-sample least-squares optimum for that class on every deposited fitness version, so it is recorded as a mismatch rather than forced. The input's provenance is now pinned exactly: fitness = mean of the authors' three Tite-seq -log10 K_D,app replicates filtered at r2>=0.8 and sigma<=1 (32768/32768 rows reproduced).",
+  "lead_correction": {
+    "lead_correction_2026_09_30": "Corrected by the lead after external review. The original agent claim is preserved in original_agent_claim. Records are machine-consumed, so the operative field is corrected rather than only annotated.",
+    "corrected_outcomes": [
+      "0.6"
+    ]
+  }
+}

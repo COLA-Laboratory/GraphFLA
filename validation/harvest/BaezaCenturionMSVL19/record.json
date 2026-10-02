@@ -1,0 +1,148 @@
+{
+  "study_key": "BaezaCenturionMSVL19",
+  "dossier": "papers/BaezaCenturion2019",
+  "recorded_at": "2026-09-30T19:31:42Z",
+  "agent": "codex-gpt-6",
+  "paper": {
+    "title": "Combinatorial Genetics Reveals a Scaling Law for the Effects of Mutations on Splicing",
+    "doi": "10.1016/j.cell.2018.12.010",
+    "year": 2019,
+    "bibliography_verified_against": "crossref",
+    "supplied_bibliography_errors": "Crossref confirms the supplied title and author list (Pablo Baeza-Centurion, Belén Miñana, Jörn M. Schmiedel, Juan Valcárcel, Ben Lehner), journal Cell, volume 176, issue 3, and year 2019. The supplied page span 549--563 is abbreviated; Crossref records 549-563.e23. No author-list error was found for this entry."
+  },
+  "sources": [
+    {
+      "url": "https://api.elsevier.com/content/article/pii/S0092867418316246?httpAccept=text%2Fxml",
+      "http_status": 200,
+      "sha256": "3346b11ec4497d92c19e581d1406aa962067bbdfd32bedf5ed3a9eb7608a6121",
+      "saved_path": "papers/BaezaCenturion2019/sources/cell_2018_12_010_fulltext_codex.xml",
+      "what": "Publisher API response; core metadata only, not full text"
+    },
+    {
+      "url": "https://ars.els-cdn.com/content/image/1-s2.0-S0092867418316246-mmc1.pdf",
+      "http_status": 200,
+      "sha256": "3207c26fb4fc924ab51a26f54021030eb49185b51c5ef47d19305154fc72092f",
+      "saved_path": "papers/BaezaCenturion2019/sources/cell_2018_12_010_supplement_codex.pdf",
+      "what": "Supplementary Information PDF"
+    },
+    {
+      "url": "https://ars.els-cdn.com/content/image/1-s2.0-S0092867418316246-mmc2.xlsx",
+      "http_status": 200,
+      "sha256": "cbb84b548c69e90e2e41a77b90d568bff07720008e5f9942630bfcf0b28b3074",
+      "saved_path": "papers/BaezaCenturion2019/sources/cell_2018_12_010_supplement_data_codex.xlsx",
+      "what": "Supplementary data workbook, including the combinatorially complete genotype table"
+    },
+    {
+      "url": "https://api.crossref.org/works/10.1016/j.cell.2018.12.010",
+      "http_status": 200,
+      "sha256": "070c667f21de63802fb259de80b1a319624123e5277e27e220d91716722a72fb",
+      "saved_path": "papers/BaezaCenturion2019/sources/crossref_work_10.1016_j.cell.2018.12.010_codex.json",
+      "what": "Crossref bibliographic record"
+    }
+  ],
+  "overlaps": [
+    {
+      "metric": "n_configs",
+      "paper_value": 3072,
+      "locator": "Results, 'Combinatorially Complete Mapping of a Genotype Space'; Figure 1B",
+      "quote": "3,072 genotypes",
+      "printed_or_plotted": "printed",
+      "definition_match": "yes",
+      "definition_quote": "10 positions can have 2 different nt and one can have 3 different nt",
+      "definition_divergence": "The article counts the designed genotypes in the complete FAS library; GraphFLA n_configs counts unique configurations in the built landscape. The publisher supplementary dataset contains the full matching genotype set.",
+      "input": {
+        "path": "/Users/arwen/Documents/GitHub/GraphFLA/data/BioSequence/Centurion2019.csv",
+        "sha256": "8af4261663c2a9fe91620939b100ae4c56bf0f45a71f06e92668f348d21e1890",
+        "n_rows": 3072,
+        "preprocessing": "None; pos1..pos11 and fitness passed as-is. The compact sequence codes and fitness values were cross-checked against the publisher's supplementary genotype table and Mean.PSI field."
+      },
+      "graphfla_call": "DNALandscape().build_from_data(df[['pos1', ..., 'pos11']], df['fitness'], epsilon=0, verbose=False); ls.n_configs",
+      "graphfla_value": 3072,
+      "outcome": "reproduced_exact",
+      "reason": "The local input contains the same complete genotype set as the publisher's supplementary workbook."
+    },
+    {
+      "metric": "n_vars",
+      "paper_value": 11,
+      "locator": "Results, 'Reconstructing the Evolution of FAS Exon 6'; Figures 1A, 1B, and S1B",
+      "quote": "11 positions",
+      "printed_or_plotted": "printed",
+      "definition_match": "yes",
+      "definition_quote": "11 positions",
+      "definition_divergence": "The paper's variable nucleotide positions map one-to-one to the 11 position columns supplied to DNALandscape.",
+      "input": {
+        "path": "/Users/arwen/Documents/GitHub/GraphFLA/data/BioSequence/Centurion2019.csv",
+        "sha256": "8af4261663c2a9fe91620939b100ae4c56bf0f45a71f06e92668f348d21e1890",
+        "n_rows": 3072,
+        "preprocessing": "None; pos1..pos11 used as the configuration variables."
+      },
+      "graphfla_call": "DNALandscape().build_from_data(df[['pos1', ..., 'pos11']], df['fitness'], epsilon=0, verbose=False); ls.n_vars",
+      "graphfla_value": 11,
+      "outcome": "reproduced_exact"
+    },
+    {
+      "metric": "fitness_distribution",
+      "paper_value": null,
+      "locator": "Results, 'Combinatorially Complete Mapping of a Genotype Space'; Figure 1D",
+      "quote": "bimodal",
+      "printed_or_plotted": "printed",
+      "definition_match": "no",
+      "definition_quote": "",
+      "definition_divergence": "The article characterizes the PSI distribution by modality and threshold shares. GraphFLA fitness_distribution returns unitless moments and ratios such as skewness, kurtosis, and coefficient of variation; these are not the same reported statistic.",
+      "input": {
+        "path": "/Users/arwen/Documents/GitHub/GraphFLA/data/BioSequence/Centurion2019.csv",
+        "sha256": "8af4261663c2a9fe91620939b100ae4c56bf0f45a71f06e92668f348d21e1890",
+        "n_rows": 3072,
+        "preprocessing": "None; fitness used as provided and verified against supplementary Mean.PSI."
+      },
+      "graphfla_call": "Not run; no like-for-like published value for GraphFLA fitness_distribution.",
+      "graphfla_value": null,
+      "outcome": "definition_incompatible",
+      "reason": "Modality and threshold percentages are not GraphFLA's published distribution outputs."
+    },
+    {
+      "metric": "global_idiosyncratic_index",
+      "paper_value": null,
+      "locator": "Results, 'Mutations Have Non-independent Effects on Splicing' and 'Non-linear Scaling of Mutation Effects as a Function of the Starting PSI'; Equation 2",
+      "quote": "context dependent",
+      "printed_or_plotted": "printed",
+      "definition_match": "unknown",
+      "definition_quote": "",
+      "definition_divergence": "This is a conceptual overlap: the paper studies mutation-effect variation across genetic contexts, while its scaling-law parameter A is a per-mutation model parameter rather than a published global idiosyncratic index. The GraphFLA metric is under review, so equivalence is unknown.",
+      "input": {
+        "path": "/Users/arwen/Documents/GitHub/GraphFLA/data/BioSequence/Centurion2019.csv",
+        "sha256": "8af4261663c2a9fe91620939b100ae4c56bf0f45a71f06e92668f348d21e1890",
+        "n_rows": 3072,
+        "preprocessing": "None; fitness used as provided and verified against supplementary Mean.PSI."
+      },
+      "graphfla_call": "Not run; no paper-level global idiosyncratic-index value to compare.",
+      "graphfla_value": null,
+      "outcome": "not_attempted",
+      "reason": "The paper does not report a scalar matching this index; GraphFLA's global idiosyncratic-index definition is under review."
+    },
+    {
+      "metric": "higher_order_epistasis",
+      "paper_value": null,
+      "locator": "STAR Methods, 'Simulated biallelic genotype landscape and phantom interactions'; Figure S5E",
+      "quote": "Walsh-Hadamard",
+      "printed_or_plotted": "plotted",
+      "definition_match": "no",
+      "definition_quote": "RMSE",
+      "definition_divergence": "The paper describes truncating Walsh-Hadamard coefficients and plotting RMSE for a simulated landscape. GraphFLA higher_order_epistasis returns an R-squared from polynomial regression on the measured landscape; these are different statistics.",
+      "graphfla_call": "Not run; Figure S5E values are plotted and are not reproduction targets.",
+      "graphfla_value": null,
+      "outcome": "definition_incompatible",
+      "reason": "No printed variance-explained-by-order value was reported, and plot values were not read."
+    }
+  ],
+  "blockers": [
+    {
+      "what": "Local main-text PDF/XML copy",
+      "url": "https://www.cell.com/cell/pdf/S0092867418316246.pdf",
+      "why": "Direct Cell/ScienceDirect PDF retrieval returned HTTP 403. The Elsevier text API returned HTTP 200 but only a core-metadata XML response, saved in the dossier. The publisher's indexed article page was accessible for review.",
+      "needed_for": "Local archival copy only; the publisher article page and supplementary files were sufficient for the reported comparisons."
+    }
+  ],
+  "verdict": "targets_found",
+  "verdict_reason": "The printed genotype-space structure gives exact targets for GraphFLA's configuration and variable counts. The paper's main splicing-scaling, model-fit, and plotted higher-order results do not provide like-for-like GraphFLA metrics."
+}

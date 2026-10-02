@@ -1,0 +1,156 @@
+{
+  "study_key": "PapkouRM23",
+  "dossier": "papers/Papkou2023",
+  "recorded_at": "2026-10-01T08:35:35Z",
+  "agent": "codex-gpt6",
+  "paper": {
+    "title": "A rugged yet easily navigable fitness landscape",
+    "doi": "10.1126/science.adh3860",
+    "year": 2023,
+    "bibliography_verified_against": "crossref",
+    "supplied_bibliography_errors": "The supplied corpus entry lists Andrei Papkou, Aviv Regev, and Joanna Masel. Crossref's DOI record lists Andrei Papkou, Lucia Garcia-Pastor, José Antonio Escudero, and Andreas Wagner."
+  },
+  "sources": [
+    {
+      "url": "https://api.crossref.org/works/10.1126/science.adh3860",
+      "http_status": 200,
+      "sha256": "cd77423598066009dc40253518933e8285ce9be1a0364f77bef7b097b93c78dd",
+      "saved_path": "papers/Papkou2023/sources/Papkou2023_crossref_adh3860_codex.json",
+      "what": "Crossref DOI metadata used to verify title and author list."
+    },
+    {
+      "url": "file:///Users/arwen/Documents/GitHub/GraphFLA/_verify/papers/papkou_science_SM.txt",
+      "http_status": null,
+      "sha256": "abd424ad6fee922b61e34ccb961490e28f820cdc17a4057dc123dc783b293072",
+      "saved_path": "papers/Papkou2023/sources/Papkou2023_science_adh3860_SM_codex.txt",
+      "what": "Copy of the pre-existing supplementary-materials text extraction. The publisher PDF route returned an HTML security page."
+    }
+  ],
+  "overlaps": [
+    {
+      "metric": "higher_order_epistasis",
+      "model_order": 1,
+      "panel": "H",
+      "paper_value": 0.28,
+      "locator": "Supplementary Materials, Fig. S21H panel annotation, printed p. 41; target transcription supplied in the assignment",
+      "quote": "R2 = 0.28",
+      "printed_or_plotted": "printed",
+      "definition_match": "no",
+      "definition_quote": "(H), (I), (J), (K) present the goodness of fit for lasso regression models restricted up to specific epistatic orders.",
+      "definition_divergence": "The paper describes a Walsh-Hadamard extension for non-biallelic genotypes and a penalized LASSO fit with lambda selected by cross-validation. GraphFLA uses one-hot drop-first features and unregularized polynomial OLS. Whether the reported R-squared is evaluated in-sample or on held-out folds is NOT STATED IN PAPER. The assigned processed input also contains 16,332 Asp27/Glu27 genotypes rather than the stated N=16,353, so no GraphFLA value was computed.",
+      "input": {
+        "path": "/Users/arwen/Documents/GitHub/GraphFLA/data/BioSequence/Papkou2023_DHFR.csv",
+        "sha256": "fca2fb47cad417a049698f43b20f90b320a4927418d502e527ad112ea46c82da",
+        "n_rows": 135178,
+        "preprocessing": "Reused dossier-audited processed input with the recorded nucleotide relabeling; D/E codon subset checked after decoding."
+      },
+      "graphfla_call": "NOT RUN; intended call would be A.higher_order_epistasis(landscape, order=1).",
+      "graphfla_value": null,
+      "outcome": "definition_incompatible",
+      "reason": "No R-squared calculation was made: the paper's regularized Walsh-Hadamard/LASSO model is not GraphFLA's in-sample one-hot OLS metric, and the specified processed input fails the required exact-subset count."
+    },
+    {
+      "metric": "higher_order_epistasis",
+      "model_order": 2,
+      "panel": "I",
+      "paper_value": 0.78,
+      "locator": "Supplementary Materials, Fig. S21I panel annotation, printed p. 41; target transcription supplied in the assignment",
+      "quote": "R2 = 0.78",
+      "printed_or_plotted": "printed",
+      "definition_match": "no",
+      "definition_quote": "(H), (I), (J), (K) present the goodness of fit for lasso regression models restricted up to specific epistatic orders.",
+      "definition_divergence": "The paper describes a Walsh-Hadamard extension for non-biallelic genotypes and a penalized LASSO fit with lambda selected by cross-validation. GraphFLA uses one-hot drop-first features and unregularized polynomial OLS. Whether the reported R-squared is evaluated in-sample or on held-out folds is NOT STATED IN PAPER. The assigned processed input also contains 16,332 Asp27/Glu27 genotypes rather than the stated N=16,353, so no GraphFLA value was computed.",
+      "input": {
+        "path": "/Users/arwen/Documents/GitHub/GraphFLA/data/BioSequence/Papkou2023_DHFR.csv",
+        "sha256": "fca2fb47cad417a049698f43b20f90b320a4927418d502e527ad112ea46c82da",
+        "n_rows": 135178,
+        "preprocessing": "Reused dossier-audited processed input with the recorded nucleotide relabeling; D/E codon subset checked after decoding."
+      },
+      "graphfla_call": "NOT RUN; intended call would be A.higher_order_epistasis(landscape, order=2).",
+      "graphfla_value": null,
+      "outcome": "definition_incompatible",
+      "reason": "No R-squared calculation was made: the paper's regularized Walsh-Hadamard/LASSO model is not GraphFLA's in-sample one-hot OLS metric, and the specified processed input fails the required exact-subset count."
+    },
+    {
+      "metric": "higher_order_epistasis",
+      "model_order": 3,
+      "panel": "J",
+      "paper_value": 0.93,
+      "locator": "Supplementary Materials, Fig. S21J panel annotation, printed p. 41; target transcription supplied in the assignment",
+      "quote": "R2 = 0.93",
+      "printed_or_plotted": "printed",
+      "definition_match": "no",
+      "definition_quote": "(H), (I), (J), (K) present the goodness of fit for lasso regression models restricted up to specific epistatic orders.",
+      "definition_divergence": "The paper describes a Walsh-Hadamard extension for non-biallelic genotypes and a penalized LASSO fit with lambda selected by cross-validation. GraphFLA uses one-hot drop-first features and unregularized polynomial OLS. Whether the reported R-squared is evaluated in-sample or on held-out folds is NOT STATED IN PAPER. The assigned processed input also contains 16,332 Asp27/Glu27 genotypes rather than the stated N=16,353, so no GraphFLA value was computed.",
+      "input": {
+        "path": "/Users/arwen/Documents/GitHub/GraphFLA/data/BioSequence/Papkou2023_DHFR.csv",
+        "sha256": "fca2fb47cad417a049698f43b20f90b320a4927418d502e527ad112ea46c82da",
+        "n_rows": 135178,
+        "preprocessing": "Reused dossier-audited processed input with the recorded nucleotide relabeling; D/E codon subset checked after decoding."
+      },
+      "graphfla_call": "NOT RUN; intended call would be A.higher_order_epistasis(landscape, order=3).",
+      "graphfla_value": null,
+      "outcome": "definition_incompatible",
+      "reason": "No R-squared calculation was made: the paper's regularized Walsh-Hadamard/LASSO model is not GraphFLA's in-sample one-hot OLS metric, and the specified processed input fails the required exact-subset count."
+    },
+    {
+      "metric": "higher_order_epistasis",
+      "model_order": 4,
+      "panel": "K",
+      "paper_value": 0.97,
+      "locator": "Supplementary Materials, Fig. S21K panel annotation, printed p. 41; target transcription supplied in the assignment",
+      "quote": "R2 = 0.97",
+      "printed_or_plotted": "printed",
+      "definition_match": "no",
+      "definition_quote": "(H), (I), (J), (K) present the goodness of fit for lasso regression models restricted up to specific epistatic orders.",
+      "definition_divergence": "The paper describes a Walsh-Hadamard extension for non-biallelic genotypes and a penalized LASSO fit with lambda selected by cross-validation. GraphFLA uses one-hot drop-first features and unregularized polynomial OLS. Whether the reported R-squared is evaluated in-sample or on held-out folds is NOT STATED IN PAPER. The assigned processed input also contains 16,332 Asp27/Glu27 genotypes rather than the stated N=16,353, so no GraphFLA value was computed.",
+      "input": {
+        "path": "/Users/arwen/Documents/GitHub/GraphFLA/data/BioSequence/Papkou2023_DHFR.csv",
+        "sha256": "fca2fb47cad417a049698f43b20f90b320a4927418d502e527ad112ea46c82da",
+        "n_rows": 135178,
+        "preprocessing": "Reused dossier-audited processed input with the recorded nucleotide relabeling; D/E codon subset checked after decoding."
+      },
+      "graphfla_call": "NOT RUN; intended call would be A.higher_order_epistasis(landscape, order=4).",
+      "graphfla_value": null,
+      "outcome": "definition_incompatible",
+      "reason": "No R-squared calculation was made: the paper's regularized Walsh-Hadamard/LASSO model is not GraphFLA's in-sample one-hot OLS metric, and the specified processed input fails the required exact-subset count."
+    },
+    {
+      "metric": "higher_order_epistasis",
+      "panel": "E",
+      "paper_value": null,
+      "locator": "Supplementary Materials, Fig. S21E, printed p. 41",
+      "quote": "(E) displays the R-squared values.",
+      "printed_or_plotted": "plotted",
+      "definition_match": "no",
+      "definition_quote": "(E) and (F) show the performance of a penalized lasso regression, in which epistatic coefficients up to a certain order were used as predictors.",
+      "definition_divergence": "The plotted order-by-order R-squared curve is based on the paper's penalized LASSO models; GraphFLA returns in-sample OLS R-squared values at fixed orders. Per-point panel E values were not digitized, as instructed.",
+      "input": {
+        "path": "/Users/arwen/Documents/GitHub/GraphFLA/data/BioSequence/Papkou2023_DHFR.csv",
+        "sha256": "fca2fb47cad417a049698f43b20f90b320a4927418d502e527ad112ea46c82da",
+        "n_rows": 135178,
+        "preprocessing": "Reused dossier-audited processed input; no GraphFLA run."
+      },
+      "graphfla_call": "NOT RUN; panel E points are plot-only and are not reproduction targets.",
+      "graphfla_value": null,
+      "outcome": "not_attempted",
+      "reason": "The per-point curve values are plotted rather than printed individually; no point values were digitized. The model definition also differs from GraphFLA."
+    }
+  ],
+  "blockers": [
+    {
+      "what": "Exact Asp27/Glu27 subset in the specified processed input",
+      "url": "file:///Users/arwen/Documents/GitHub/GraphFLA/data/BioSequence/Papkou2023_DHFR.csv",
+      "why": "The decoded D/E codon filter gives 16,332 genotypes in this processed input, while the paper specifies N=16,353. The dossier's full RAW CSV contains 16,353 for the same filter, but the explicitly assigned processed input is missing 21 of those sequences; it was not replaced or supplemented.",
+      "needed_for": "Any GraphFLA R-squared calculation against Fig. S21H-K."
+    },
+    {
+      "what": "Publisher supplementary-materials PDF",
+      "url": "https://www.science.org/doi/suppl/10.1126/science.adh3860/suppl_file/science.adh3860_sm.pdf",
+      "why": "The publisher route returned HTTP 403 with an HTML security-verification page, not the PDF. The existing SI text extraction supports Methods and caption quotes, but does not contain embedded panel labels; target labels below are transcribed from the assignment.",
+      "needed_for": "Independent image-level verification of the four printed panel annotations."
+    }
+  ],
+  "verdict": "definition_incompatible",
+  "verdict_reason": "Fig. S21H-K are candidate overlaps with GraphFLA higher_order_epistasis, but the paper fits penalized LASSO models in a Walsh-Hadamard basis while GraphFLA computes unregularized one-hot polynomial OLS R-squared; the paper's R-squared evaluation split is NOT STATED IN PAPER. In addition, the specified processed input does not contain the exact 16,353-row subset. No GraphFLA R-squared values were computed."
+}

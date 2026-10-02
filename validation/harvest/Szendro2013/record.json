@@ -1,0 +1,1559 @@
+{
+  "study_key": "Szendro2013",
+  "dossier": "papers/Szendro2013",
+  "recorded_at": "2026-10-01T10:13:16Z",
+  "agent": "codex-gpt6",
+  "paper": {
+    "title": "Quantitative analyses of empirical fitness landscapes",
+    "doi": "10.1088/1742-5468/2013/01/P01005",
+    "year": 2013,
+    "bibliography_verified_against": "crossref",
+    "supplied_bibliography_errors": "The supplied focal citation title and author order agree with the Crossref DOI record: Ivan G. Szendro, Martijn F. Schenk, Jasper Franke, Joachim Krug, and J. Arjan G. M. de Visser. No focal-entry mismatch found."
+  },
+  "sources": [
+    {
+      "url": "https://arxiv.org/pdf/1202.4378",
+      "http_status": 200,
+      "sha256": "df8dc2484f4a1e591a92ec9e9d7fe64ab57c003ae89eda0f3d59e331a4f66227",
+      "saved_path": "papers/Szendro2013/sources/Szendro2013_arxiv_v2_codex.pdf",
+      "what": "arXiv v2 manuscript PDF, 24 pages; main article text"
+    },
+    {
+      "url": "https://arxiv.org/src/1202.4378",
+      "http_status": 200,
+      "sha256": "adaf4b0669f51ae8dc47ce0ef5cea89a137af091702394940b0c80a3c701c854",
+      "saved_path": "papers/Szendro2013/sources/Szendro2013_arxiv_source_codex.tar.gz",
+      "what": "arXiv source archive; contains the TeX article and figures, no separate supplement"
+    },
+    {
+      "url": "https://api.crossref.org/works/10.1088%2F1742-5468%2F2013%2F01%2FP01005",
+      "http_status": 200,
+      "sha256": "9a7d9d223fcf5430d615435f9551a5d29b3f2769c46d2e65bff8ec2672be7830",
+      "saved_path": "papers/Szendro2013/sources/Szendro2013_crossref_codex.json",
+      "what": "Crossref DOI metadata used to verify the focal bibliography"
+    },
+    {
+      "url": "https://journals.plos.org/ploscompbiol/article/file?id=10.1371/journal.pcbi.1002134.s009&type=supplementary",
+      "http_status": 200,
+      "sha256": "e2a1368985da3f575c7ae6e67cd3c2c9c2c5d2c0e0d4ca79acc096577830914d",
+      "saved_path": "papers/Szendro2013/sources/Franke2011_A_niger_TableS1_codex.pdf",
+      "what": "Original-source Table S1 PDF used for the 8-locus A. niger input transcribed by this run"
+    },
+    {
+      "url": "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC2664519/fullTextXML",
+      "http_status": 200,
+      "sha256": "1e5b4f0f604d05613b72954e4137b12f963f0d0e7ead2c26cc1db609b3dce265",
+      "saved_path": "papers/Szendro2013/sources/OMaille2008_fulltext_codex.xml",
+      "what": "Europe PMC full-text XML for identifying original I/J supplement filenames and table contents"
+    },
+    {
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC2664519/",
+      "http_status": 200,
+      "sha256": "4878c5ef436f3dceaf275f06d68a296e479eb25f1f71bd0c69a456c68b5458d0",
+      "saved_path": "papers/Szendro2013/sources/OMaille2008_PMC_record_codex.html",
+      "what": "PMC article record used to identify exact supplementary-file URLs"
+    },
+    {
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/instance/2664519/bin/NIHMS67307-supplement-1.pdf",
+      "http_status": 200,
+      "sha256": "5867ae49970855194ec7126f3a1da9b7c64add2d21ac17faa66bb74d72743eda",
+      "saved_path": "papers/Szendro2013/sources/OMaille2008_supplement_1_codex.pdf",
+      "what": "Unusable HTTP 200 response body: NCBI proof-of-work HTML, not the requested supplementary PDF"
+    },
+    {
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/instance/2664519/bin/NIHMS67307-supplement-2.doc",
+      "http_status": 200,
+      "sha256": "24b363f6ff26e67318d7fa95cf27376434cf174b3601ef8b835af7ddfb70133e",
+      "saved_path": "papers/Szendro2013/sources/OMaille2008_supplement_2_codex.doc",
+      "what": "Unusable HTTP 200 response body: NCBI proof-of-work HTML, not the requested supplementary DOC"
+    },
+    {
+      "url": "https://datadryad.org/api/v2/datasets/doi%3A10.5061%2Fdryad.7nd70",
+      "http_status": 200,
+      "sha256": "93e6d8d7e06b0034ebb8dca120905c9f0ccbb04c6870823366e80e0a88aeb123",
+      "saved_path": "papers/Szendro2013/sources/Lunzer2005_Dryad_record_codex.json",
+      "what": "Dryad record metadata for the Table1-only Lunzer 2005 landscape; file DOI/URL identification"
+    }
+  ],
+  "overlaps": [
+    {
+      "metric": "r_s_ratio",
+      "paper_value": 0.122,
+      "locator": "Table 2, printed p.15, row A, column r_s_ratio",
+      "quote": "0.122",
+      "printed_or_plotted": "printed",
+      "definition_match": "yes",
+      "definition_quote": "Eq. (3): f^fit(\u03c3\u20d7)=a^(0)+\u03a3_j a_j^(1)\u03c3_j; Eq. (4): s=(1/L)\u03a3_j|a_j^(1)|; Eq. (5): r=\u221a(2^(\u2212L)\u03a3_\u03c3\u20d7(f\u2212f^fit)\u00b2).",
+      "definition_divergence": "GraphFLA Boolean r_s_ratio uses 0/1 predictors, the mean absolute coefficient, and residual RMSE. For L>4 the subgraph-background convention is not explicit; the primary call uses all fixed-background faces as the literal \u201call subgraphs\u201d reading and a WT-only alternative is separately logged.",
+      "input": {
+        "path": "data/BioSequence/Chou2011.csv",
+        "sha256": "55742ac0500ed7ea4f09a10d70d910a4153fc2c1895c658be77d68a759a0a5e9",
+        "n_rows": 16,
+        "preprocessing": "Use pos1\u2013pos4 as Boolean 0/1 and fitness as stored; epsilon=0. Full L=4 landscape is the single subgraph."
+      },
+      "graphfla_call": "mean(A.r_s_ratio(ls)) over eligible 4-locus faces",
+      "graphfla_value": 0.12179704425598965,
+      "outcome": "reproduced_with_precision",
+      "reason": ""
+    },
+    {
+      "metric": "higher_order_epistasis",
+      "paper_value": 0.989,
+      "locator": "Table 2, printed p.15, row A, column F1",
+      "quote": "0.989",
+      "printed_or_plotted": "printed",
+      "definition_match": "yes",
+      "definition_quote": "Eq. (7): F_n=\u03b2_n/(\u03a3_j \u03b2_j), \u03b2_n=\u03a3_j(b_j^(n))\u00b2.",
+      "definition_divergence": "On a complete, balanced 4-locus Boolean cube, GraphFLA order-1 polynomial OLS R\u00b2 equals the normalized first-order Fourier variance fraction F1.",
+      "input": {
+        "path": "data/BioSequence/Chou2011.csv",
+        "sha256": "55742ac0500ed7ea4f09a10d70d910a4153fc2c1895c658be77d68a759a0a5e9",
+        "n_rows": 16,
+        "preprocessing": "Use pos1\u2013pos4 as Boolean 0/1 and fitness as stored; epsilon=0. Full L=4 landscape is the single subgraph."
+      },
+      "graphfla_call": "mean(A.higher_order_epistasis(ls,order=1))",
+      "graphfla_value": 0.9894893538285899,
+      "outcome": "reproduced_with_precision",
+      "reason": ""
+    },
+    {
+      "metric": "higher_order_epistasis",
+      "paper_value": 0.009,
+      "locator": "Table 2, printed p.15, row A, column F2",
+      "quote": "0.009",
+      "printed_or_plotted": "printed",
+      "definition_match": "yes",
+      "definition_quote": "Eq. (7): F_n=\u03b2_n/(\u03a3_j \u03b2_j), \u03b2_n=\u03a3_j(b_j^(n))\u00b2.",
+      "definition_divergence": "GraphFLA higher_order_epistasis(order=2) is cumulative; for a complete balanced 4-locus cube, F2 is reproduced as order-2 R\u00b2 minus order-1 R\u00b2.",
+      "input": {
+        "path": "data/BioSequence/Chou2011.csv",
+        "sha256": "55742ac0500ed7ea4f09a10d70d910a4153fc2c1895c658be77d68a759a0a5e9",
+        "n_rows": 16,
+        "preprocessing": "Use pos1\u2013pos4 as Boolean 0/1 and fitness as stored; epsilon=0. Full L=4 landscape is the single subgraph."
+      },
+      "graphfla_call": "mean(A.higher_order_epistasis(ls,order=2)-A.higher_order_epistasis(ls,order=1))",
+      "graphfla_value": 0.009205903083077005,
+      "outcome": "reproduced_with_precision",
+      "reason": ""
+    },
+    {
+      "metric": "higher_order_epistasis",
+      "paper_value": 0.011,
+      "locator": "Table 2, printed p.15, row A, column Fsum",
+      "quote": "0.011",
+      "printed_or_plotted": "printed",
+      "definition_match": "yes",
+      "definition_quote": "Eq. (8): F_sum=\u03a3_(j=2)^L F_j.",
+      "definition_divergence": "For a complete balanced cube, F_sum is reproduced as 1 minus order-1 polynomial OLS R\u00b2; incomplete-state handling is a separate issue for H.",
+      "input": {
+        "path": "data/BioSequence/Chou2011.csv",
+        "sha256": "55742ac0500ed7ea4f09a10d70d910a4153fc2c1895c658be77d68a759a0a5e9",
+        "n_rows": 16,
+        "preprocessing": "Use pos1\u2013pos4 as Boolean 0/1 and fitness as stored; epsilon=0. Full L=4 landscape is the single subgraph."
+      },
+      "graphfla_call": "mean(1-A.higher_order_epistasis(ls,order=1))",
+      "graphfla_value": 0.010510646171410065,
+      "outcome": "reproduced_with_precision",
+      "reason": ""
+    },
+    {
+      "metric": "n_lo",
+      "paper_value": 1,
+      "locator": "Table 2, printed p.15, row A, column n_lo",
+      "quote": "1",
+      "printed_or_plotted": "printed",
+      "definition_match": "yes",
+      "definition_quote": "\u201cA frequently used measure of landscape ruggedness is the number of local fitness maxima N_max.\u201d",
+      "definition_divergence": "Ties are NOT STATED IN PAPER. GraphFLA was called with epsilon=0, so a tied neighbor disqualifies a strict peak.",
+      "input": {
+        "path": "data/BioSequence/Chou2011.csv",
+        "sha256": "55742ac0500ed7ea4f09a10d70d910a4153fc2c1895c658be77d68a759a0a5e9",
+        "n_rows": 16,
+        "preprocessing": "Use pos1\u2013pos4 as Boolean 0/1 and fitness as stored; epsilon=0. Full L=4 landscape is the single subgraph."
+      },
+      "graphfla_call": "mean(ls.n_lo) over eligible 4-locus faces",
+      "graphfla_value": 1.0,
+      "outcome": "reproduced_exact",
+      "reason": ""
+    },
+    {
+      "metric": "classify_epistasis",
+      "paper_value": 0,
+      "locator": "Table 2, printed p.15, row A, column fr",
+      "quote": "0",
+      "printed_or_plotted": "printed",
+      "definition_match": "no",
+      "definition_quote": "f_r",
+      "definition_divergence": "GraphFLA classify_epistasis.reciprocal_sign is conditional on the three epistatic square classes and uses directed improving-edge motifs; paper f_r is a fraction of local Hamming-distance-2 motifs. Definitions are incompatible.",
+      "input": {
+        "path": "data/BioSequence/Chou2011.csv",
+        "sha256": "55742ac0500ed7ea4f09a10d70d910a4153fc2c1895c658be77d68a759a0a5e9",
+        "n_rows": 16,
+        "preprocessing": "Use pos1\u2013pos4 as Boolean 0/1 and fitness as stored; epsilon=0. Full L=4 landscape is the single subgraph."
+      },
+      "graphfla_call": "A.classify_epistasis(ls,sample_cut_prob=0,seed=0).reciprocal_sign",
+      "graphfla_value": 0.0,
+      "outcome": "definition_incompatible",
+      "reason": "The GraphFLA value is retained as a diagnostic only; no denominator or graph preprocessing variant was tuned to create a match."
+    },
+    {
+      "metric": "classify_epistasis",
+      "paper_value": 0,
+      "locator": "Table 2, printed p.15, row A, column fs",
+      "quote": "0",
+      "printed_or_plotted": "printed",
+      "definition_match": "no",
+      "definition_quote": "f_s",
+      "definition_divergence": "GraphFLA classify_epistasis.sign is conditional on the three epistatic square classes and uses directed improving-edge motifs; paper f_s is a fraction of local Hamming-distance-2 motifs. Definitions are incompatible.",
+      "input": {
+        "path": "data/BioSequence/Chou2011.csv",
+        "sha256": "55742ac0500ed7ea4f09a10d70d910a4153fc2c1895c658be77d68a759a0a5e9",
+        "n_rows": 16,
+        "preprocessing": "Use pos1\u2013pos4 as Boolean 0/1 and fitness as stored; epsilon=0. Full L=4 landscape is the single subgraph."
+      },
+      "graphfla_call": "A.classify_epistasis(ls,sample_cut_prob=0,seed=0).sign",
+      "graphfla_value": 0.0,
+      "outcome": "definition_incompatible",
+      "reason": "The GraphFLA value is retained as a diagnostic only; no denominator or graph preprocessing variant was tuned to create a match."
+    },
+    {
+      "metric": "r_s_ratio",
+      "paper_value": 0.29,
+      "locator": "Table 2, printed p.15, row B, column r_s_ratio",
+      "quote": "0.290",
+      "printed_or_plotted": "printed",
+      "definition_match": "unknown",
+      "definition_quote": "Eq. (3): f^fit(\u03c3\u20d7)=a^(0)+\u03a3_j a_j^(1)\u03c3_j; Eq. (4): s=(1/L)\u03a3_j|a_j^(1)|; Eq. (5): r=\u221a(2^(\u2212L)\u03a3_\u03c3\u20d7(f\u2212f^fit)\u00b2).",
+      "definition_divergence": "GraphFLA Boolean r_s_ratio uses 0/1 predictors, the mean absolute coefficient, and residual RMSE. For L>4 the subgraph-background convention is not explicit; the primary call uses all fixed-background faces as the literal \u201call subgraphs\u201d reading and a WT-only alternative is separately logged. Whether backgrounds outside the WT context are included is NOT STATED IN PAPER. This record uses the literal all-face reading; the WT-only result is preserved as an alternate.",
+      "input": {
+        "path": "data/BioSequence/Khan2011Flynn2013_DM25.csv",
+        "sha256": "de47b52666c7dabf9ece58ed465092d9d1dbaa703c1a04ddd722c10d0fd8a9c8",
+        "n_rows": 32,
+        "preprocessing": "Use pos1\u2013pos5 as Boolean 0/1 and fitness as stored; epsilon=0; average over every 4-locus face."
+      },
+      "graphfla_call": "mean(A.r_s_ratio(ls)) over eligible 4-locus faces",
+      "graphfla_value": 0.7348261390788842,
+      "outcome": "mismatch",
+      "reason": "GraphFLA output 0.7348261390788842 does not round to the printed target 0.29 under the recorded all-face subgraph method. No fitness transform was tuned."
+    },
+    {
+      "metric": "higher_order_epistasis",
+      "paper_value": 0.942,
+      "locator": "Table 2, printed p.15, row B, column F1",
+      "quote": "0.942",
+      "printed_or_plotted": "printed",
+      "definition_match": "unknown",
+      "definition_quote": "Eq. (7): F_n=\u03b2_n/(\u03a3_j \u03b2_j), \u03b2_n=\u03a3_j(b_j^(n))\u00b2.",
+      "definition_divergence": "On a complete, balanced 4-locus Boolean cube, GraphFLA order-1 polynomial OLS R\u00b2 equals the normalized first-order Fourier variance fraction F1. The paper says all possible 4-locus subgraphs; its cited Franke implementation is WT-anchored. This record uses the literal all-face reading and preserves the WT-only run as an alternate.",
+      "input": {
+        "path": "data/BioSequence/Khan2011Flynn2013_DM25.csv",
+        "sha256": "de47b52666c7dabf9ece58ed465092d9d1dbaa703c1a04ddd722c10d0fd8a9c8",
+        "n_rows": 32,
+        "preprocessing": "Use pos1\u2013pos5 as Boolean 0/1 and fitness as stored; epsilon=0; average over every 4-locus face."
+      },
+      "graphfla_call": "mean(A.higher_order_epistasis(ls,order=1))",
+      "graphfla_value": 0.701688936543316,
+      "outcome": "mismatch",
+      "reason": "GraphFLA output 0.701688936543316 does not round to the printed target 0.942 under the recorded all-face subgraph method. No fitness transform was tuned."
+    },
+    {
+      "metric": "higher_order_epistasis",
+      "paper_value": 0.04,
+      "locator": "Table 2, printed p.15, row B, column F2",
+      "quote": "0.040",
+      "printed_or_plotted": "printed",
+      "definition_match": "unknown",
+      "definition_quote": "Eq. (7): F_n=\u03b2_n/(\u03a3_j \u03b2_j), \u03b2_n=\u03a3_j(b_j^(n))\u00b2.",
+      "definition_divergence": "GraphFLA higher_order_epistasis(order=2) is cumulative; for a complete balanced 4-locus cube, F2 is reproduced as order-2 R\u00b2 minus order-1 R\u00b2. The paper says all possible 4-locus subgraphs; its cited Franke implementation is WT-anchored. This record uses the literal all-face reading and preserves the WT-only run as an alternate.",
+      "input": {
+        "path": "data/BioSequence/Khan2011Flynn2013_DM25.csv",
+        "sha256": "de47b52666c7dabf9ece58ed465092d9d1dbaa703c1a04ddd722c10d0fd8a9c8",
+        "n_rows": 32,
+        "preprocessing": "Use pos1\u2013pos5 as Boolean 0/1 and fitness as stored; epsilon=0; average over every 4-locus face."
+      },
+      "graphfla_call": "mean(A.higher_order_epistasis(ls,order=2)-A.higher_order_epistasis(ls,order=1))",
+      "graphfla_value": 0.14219183286480774,
+      "outcome": "mismatch",
+      "reason": "GraphFLA output 0.14219183286480774 does not round to the printed target 0.04 under the recorded all-face subgraph method. No fitness transform was tuned."
+    },
+    {
+      "metric": "higher_order_epistasis",
+      "paper_value": 0.058,
+      "locator": "Table 2, printed p.15, row B, column Fsum",
+      "quote": "0.058",
+      "printed_or_plotted": "printed",
+      "definition_match": "unknown",
+      "definition_quote": "Eq. (8): F_sum=\u03a3_(j=2)^L F_j.",
+      "definition_divergence": "For a complete balanced cube, F_sum is reproduced as 1 minus order-1 polynomial OLS R\u00b2; incomplete-state handling is a separate issue for H. The paper says all possible 4-locus subgraphs; its cited Franke implementation is WT-anchored. This record uses the literal all-face reading and preserves the WT-only run as an alternate.",
+      "input": {
+        "path": "data/BioSequence/Khan2011Flynn2013_DM25.csv",
+        "sha256": "de47b52666c7dabf9ece58ed465092d9d1dbaa703c1a04ddd722c10d0fd8a9c8",
+        "n_rows": 32,
+        "preprocessing": "Use pos1\u2013pos5 as Boolean 0/1 and fitness as stored; epsilon=0; average over every 4-locus face."
+      },
+      "graphfla_call": "mean(1-A.higher_order_epistasis(ls,order=1))",
+      "graphfla_value": 0.298311063456684,
+      "outcome": "mismatch",
+      "reason": "GraphFLA output 0.298311063456684 does not round to the printed target 0.058 under the recorded all-face subgraph method. No fitness transform was tuned."
+    },
+    {
+      "metric": "n_lo",
+      "paper_value": 1.1,
+      "locator": "Table 2, printed p.15, row B, column n_lo",
+      "quote": "1.10",
+      "printed_or_plotted": "printed",
+      "definition_match": "unknown",
+      "definition_quote": "\u201cA frequently used measure of landscape ruggedness is the number of local fitness maxima N_max.\u201d",
+      "definition_divergence": "Ties are NOT STATED IN PAPER. GraphFLA was called with epsilon=0, so a tied neighbor disqualifies a strict peak. The paper says all possible 4-locus subgraphs; its cited Franke implementation is WT-anchored. This record uses the literal all-face reading and preserves the WT-only run as an alternate.",
+      "input": {
+        "path": "data/BioSequence/Khan2011Flynn2013_DM25.csv",
+        "sha256": "de47b52666c7dabf9ece58ed465092d9d1dbaa703c1a04ddd722c10d0fd8a9c8",
+        "n_rows": 32,
+        "preprocessing": "Use pos1\u2013pos5 as Boolean 0/1 and fitness as stored; epsilon=0; average over every 4-locus face."
+      },
+      "graphfla_call": "mean(ls.n_lo) over eligible 4-locus faces",
+      "graphfla_value": 1.6,
+      "outcome": "mismatch",
+      "reason": "GraphFLA output 1.6 does not round to the printed target 1.1 under the recorded all-face subgraph method. No fitness transform was tuned."
+    },
+    {
+      "metric": "classify_epistasis",
+      "paper_value": 0.013,
+      "locator": "Table 2, printed p.15, row B, column fr",
+      "quote": "0.013",
+      "printed_or_plotted": "printed",
+      "definition_match": "no",
+      "definition_quote": "f_r",
+      "definition_divergence": "GraphFLA classify_epistasis.reciprocal_sign is conditional on the three epistatic square classes and uses directed improving-edge motifs; paper f_r is a fraction of local Hamming-distance-2 motifs. Definitions are incompatible.",
+      "input": {
+        "path": "data/BioSequence/Khan2011Flynn2013_DM25.csv",
+        "sha256": "de47b52666c7dabf9ece58ed465092d9d1dbaa703c1a04ddd722c10d0fd8a9c8",
+        "n_rows": 32,
+        "preprocessing": "Use pos1\u2013pos5 as Boolean 0/1 and fitness as stored; epsilon=0; average over every 4-locus face."
+      },
+      "graphfla_call": "A.classify_epistasis(ls,sample_cut_prob=0,seed=0).reciprocal_sign",
+      "graphfla_value": 0.0875,
+      "outcome": "definition_incompatible",
+      "reason": "The GraphFLA value is retained as a diagnostic only; no denominator or graph preprocessing variant was tuned to create a match."
+    },
+    {
+      "metric": "classify_epistasis",
+      "paper_value": 0.15,
+      "locator": "Table 2, printed p.15, row B, column fs",
+      "quote": "0.150",
+      "printed_or_plotted": "printed",
+      "definition_match": "no",
+      "definition_quote": "f_s",
+      "definition_divergence": "GraphFLA classify_epistasis.sign is conditional on the three epistatic square classes and uses directed improving-edge motifs; paper f_s is a fraction of local Hamming-distance-2 motifs. Definitions are incompatible.",
+      "input": {
+        "path": "data/BioSequence/Khan2011Flynn2013_DM25.csv",
+        "sha256": "de47b52666c7dabf9ece58ed465092d9d1dbaa703c1a04ddd722c10d0fd8a9c8",
+        "n_rows": 32,
+        "preprocessing": "Use pos1\u2013pos5 as Boolean 0/1 and fitness as stored; epsilon=0; average over every 4-locus face."
+      },
+      "graphfla_call": "A.classify_epistasis(ls,sample_cut_prob=0,seed=0).sign",
+      "graphfla_value": 0.3,
+      "outcome": "definition_incompatible",
+      "reason": "The GraphFLA value is retained as a diagnostic only; no denominator or graph preprocessing variant was tuned to create a match."
+    },
+    {
+      "metric": "r_s_ratio",
+      "paper_value": 0.517,
+      "locator": "Table 2, printed p.15, row C, column r_s_ratio",
+      "quote": "0.517",
+      "printed_or_plotted": "printed",
+      "definition_match": "yes",
+      "definition_quote": "Eq. (3): f^fit(\u03c3\u20d7)=a^(0)+\u03a3_j a_j^(1)\u03c3_j; Eq. (4): s=(1/L)\u03a3_j|a_j^(1)|; Eq. (5): r=\u221a(2^(\u2212L)\u03a3_\u03c3\u20d7(f\u2212f^fit)\u00b2).",
+      "definition_divergence": "GraphFLA Boolean r_s_ratio uses 0/1 predictors, the mean absolute coefficient, and residual RMSE. For L>4 the subgraph-background convention is not explicit; the primary call uses all fixed-background faces as the literal \u201call subgraphs\u201d reading and a WT-only alternative is separately logged.",
+      "input": {
+        "path": "data/BioSequence/Lozovsky2009Jiang2013_Lozovsky2009.csv",
+        "sha256": "c90599aac9e169f35c6ff5bf4305f817ebb05ea9d65b059f00ca1de768f85657",
+        "n_rows": 16,
+        "preprocessing": "Unverified diagnostic candidate only: one 16-row fitness vector, phenotype not identified as Table2 C or D. No further transform; epsilon=0."
+      },
+      "graphfla_call": "mean(A.r_s_ratio(ls)) over eligible 4-locus faces",
+      "graphfla_value": null,
+      "outcome": "input_unavailable",
+      "reason": "Exact phenotype-specific input for Table2 C (resistance) and D (growth rate) is not resolved. The only 16-row repository Lozovsky vector was run diagnostically; it is not tagged as a reproduction. See blocker for the original PNAS Supporting Information URL."
+    },
+    {
+      "metric": "higher_order_epistasis",
+      "paper_value": 0.267,
+      "locator": "Table 2, printed p.15, row C, column F1",
+      "quote": "0.267",
+      "printed_or_plotted": "printed",
+      "definition_match": "yes",
+      "definition_quote": "Eq. (7): F_n=\u03b2_n/(\u03a3_j \u03b2_j), \u03b2_n=\u03a3_j(b_j^(n))\u00b2.",
+      "definition_divergence": "On a complete, balanced 4-locus Boolean cube, GraphFLA order-1 polynomial OLS R\u00b2 equals the normalized first-order Fourier variance fraction F1.",
+      "input": {
+        "path": "data/BioSequence/Lozovsky2009Jiang2013_Lozovsky2009.csv",
+        "sha256": "c90599aac9e169f35c6ff5bf4305f817ebb05ea9d65b059f00ca1de768f85657",
+        "n_rows": 16,
+        "preprocessing": "Unverified diagnostic candidate only: one 16-row fitness vector, phenotype not identified as Table2 C or D. No further transform; epsilon=0."
+      },
+      "graphfla_call": "mean(A.higher_order_epistasis(ls,order=1))",
+      "graphfla_value": null,
+      "outcome": "input_unavailable",
+      "reason": "Exact phenotype-specific input for Table2 C (resistance) and D (growth rate) is not resolved. The only 16-row repository Lozovsky vector was run diagnostically; it is not tagged as a reproduction. See blocker for the original PNAS Supporting Information URL."
+    },
+    {
+      "metric": "higher_order_epistasis",
+      "paper_value": 0.4,
+      "locator": "Table 2, printed p.15, row C, column F2",
+      "quote": "0.400",
+      "printed_or_plotted": "printed",
+      "definition_match": "yes",
+      "definition_quote": "Eq. (7): F_n=\u03b2_n/(\u03a3_j \u03b2_j), \u03b2_n=\u03a3_j(b_j^(n))\u00b2.",
+      "definition_divergence": "GraphFLA higher_order_epistasis(order=2) is cumulative; for a complete balanced 4-locus cube, F2 is reproduced as order-2 R\u00b2 minus order-1 R\u00b2.",
+      "input": {
+        "path": "data/BioSequence/Lozovsky2009Jiang2013_Lozovsky2009.csv",
+        "sha256": "c90599aac9e169f35c6ff5bf4305f817ebb05ea9d65b059f00ca1de768f85657",
+        "n_rows": 16,
+        "preprocessing": "Unverified diagnostic candidate only: one 16-row fitness vector, phenotype not identified as Table2 C or D. No further transform; epsilon=0."
+      },
+      "graphfla_call": "mean(A.higher_order_epistasis(ls,order=2)-A.higher_order_epistasis(ls,order=1))",
+      "graphfla_value": null,
+      "outcome": "input_unavailable",
+      "reason": "Exact phenotype-specific input for Table2 C (resistance) and D (growth rate) is not resolved. The only 16-row repository Lozovsky vector was run diagnostically; it is not tagged as a reproduction. See blocker for the original PNAS Supporting Information URL."
+    },
+    {
+      "metric": "higher_order_epistasis",
+      "paper_value": 0.733,
+      "locator": "Table 2, printed p.15, row C, column Fsum",
+      "quote": "0.733",
+      "printed_or_plotted": "printed",
+      "definition_match": "yes",
+      "definition_quote": "Eq. (8): F_sum=\u03a3_(j=2)^L F_j.",
+      "definition_divergence": "For a complete balanced cube, F_sum is reproduced as 1 minus order-1 polynomial OLS R\u00b2; incomplete-state handling is a separate issue for H.",
+      "input": {
+        "path": "data/BioSequence/Lozovsky2009Jiang2013_Lozovsky2009.csv",
+        "sha256": "c90599aac9e169f35c6ff5bf4305f817ebb05ea9d65b059f00ca1de768f85657",
+        "n_rows": 16,
+        "preprocessing": "Unverified diagnostic candidate only: one 16-row fitness vector, phenotype not identified as Table2 C or D. No further transform; epsilon=0."
+      },
+      "graphfla_call": "mean(1-A.higher_order_epistasis(ls,order=1))",
+      "graphfla_value": null,
+      "outcome": "input_unavailable",
+      "reason": "Exact phenotype-specific input for Table2 C (resistance) and D (growth rate) is not resolved. The only 16-row repository Lozovsky vector was run diagnostically; it is not tagged as a reproduction. See blocker for the original PNAS Supporting Information URL."
+    },
+    {
+      "metric": "n_lo",
+      "paper_value": 2,
+      "locator": "Table 2, printed p.15, row C, column n_lo",
+      "quote": "2",
+      "printed_or_plotted": "printed",
+      "definition_match": "yes",
+      "definition_quote": "\u201cA frequently used measure of landscape ruggedness is the number of local fitness maxima N_max.\u201d",
+      "definition_divergence": "Ties are NOT STATED IN PAPER. GraphFLA was called with epsilon=0, so a tied neighbor disqualifies a strict peak.",
+      "input": {
+        "path": "data/BioSequence/Lozovsky2009Jiang2013_Lozovsky2009.csv",
+        "sha256": "c90599aac9e169f35c6ff5bf4305f817ebb05ea9d65b059f00ca1de768f85657",
+        "n_rows": 16,
+        "preprocessing": "Unverified diagnostic candidate only: one 16-row fitness vector, phenotype not identified as Table2 C or D. No further transform; epsilon=0."
+      },
+      "graphfla_call": "mean(ls.n_lo) over eligible 4-locus faces",
+      "graphfla_value": null,
+      "outcome": "input_unavailable",
+      "reason": "Exact phenotype-specific input for Table2 C (resistance) and D (growth rate) is not resolved. The only 16-row repository Lozovsky vector was run diagnostically; it is not tagged as a reproduction. See blocker for the original PNAS Supporting Information URL."
+    },
+    {
+      "metric": "classify_epistasis",
+      "paper_value": 0.083,
+      "locator": "Table 2, printed p.15, row C, column fr",
+      "quote": "0.083",
+      "printed_or_plotted": "printed",
+      "definition_match": "no",
+      "definition_quote": "f_r",
+      "definition_divergence": "GraphFLA classify_epistasis.reciprocal_sign is conditional on the three epistatic square classes and uses directed improving-edge motifs; paper f_r is a fraction of local Hamming-distance-2 motifs. Definitions are incompatible.",
+      "input": {
+        "path": "data/BioSequence/Lozovsky2009Jiang2013_Lozovsky2009.csv",
+        "sha256": "c90599aac9e169f35c6ff5bf4305f817ebb05ea9d65b059f00ca1de768f85657",
+        "n_rows": 16,
+        "preprocessing": "Unverified diagnostic candidate only: one 16-row fitness vector, phenotype not identified as Table2 C or D. No further transform; epsilon=0."
+      },
+      "graphfla_call": "A.classify_epistasis(ls,sample_cut_prob=0,seed=0).reciprocal_sign",
+      "graphfla_value": 0.16666666666666666,
+      "outcome": "definition_incompatible",
+      "reason": "The GraphFLA value is retained as a diagnostic only; no denominator or graph preprocessing variant was tuned to create a match."
+    },
+    {
+      "metric": "classify_epistasis",
+      "paper_value": 0.25,
+      "locator": "Table 2, printed p.15, row C, column fs",
+      "quote": "0.250",
+      "printed_or_plotted": "printed",
+      "definition_match": "no",
+      "definition_quote": "f_s",
+      "definition_divergence": "GraphFLA classify_epistasis.sign is conditional on the three epistatic square classes and uses directed improving-edge motifs; paper f_s is a fraction of local Hamming-distance-2 motifs. Definitions are incompatible.",
+      "input": {
+        "path": "data/BioSequence/Lozovsky2009Jiang2013_Lozovsky2009.csv",
+        "sha256": "c90599aac9e169f35c6ff5bf4305f817ebb05ea9d65b059f00ca1de768f85657",
+        "n_rows": 16,
+        "preprocessing": "Unverified diagnostic candidate only: one 16-row fitness vector, phenotype not identified as Table2 C or D. No further transform; epsilon=0."
+      },
+      "graphfla_call": "A.classify_epistasis(ls,sample_cut_prob=0,seed=0).sign",
+      "graphfla_value": 0.16666666666666666,
+      "outcome": "definition_incompatible",
+      "reason": "The GraphFLA value is retained as a diagnostic only; no denominator or graph preprocessing variant was tuned to create a match."
+    },
+    {
+      "metric": "r_s_ratio",
+      "paper_value": 0.986,
+      "locator": "Table 2, printed p.15, row D, column r_s_ratio",
+      "quote": "0.986",
+      "printed_or_plotted": "printed",
+      "definition_match": "yes",
+      "definition_quote": "Eq. (3): f^fit(\u03c3\u20d7)=a^(0)+\u03a3_j a_j^(1)\u03c3_j; Eq. (4): s=(1/L)\u03a3_j|a_j^(1)|; Eq. (5): r=\u221a(2^(\u2212L)\u03a3_\u03c3\u20d7(f\u2212f^fit)\u00b2).",
+      "definition_divergence": "GraphFLA Boolean r_s_ratio uses 0/1 predictors, the mean absolute coefficient, and residual RMSE. For L>4 the subgraph-background convention is not explicit; the primary call uses all fixed-background faces as the literal \u201call subgraphs\u201d reading and a WT-only alternative is separately logged.",
+      "input": {
+        "path": "data/BioSequence/Lozovsky2009Jiang2013_Lozovsky2009.csv",
+        "sha256": "c90599aac9e169f35c6ff5bf4305f817ebb05ea9d65b059f00ca1de768f85657",
+        "n_rows": 16,
+        "preprocessing": "Unverified diagnostic candidate only: the repository file contains one fitness vector; Table2 D is the separate growth-rate phenotype. Exact Table2 D input not resolved."
+      },
+      "graphfla_call": "mean(A.r_s_ratio(ls)) over eligible 4-locus faces",
+      "graphfla_value": null,
+      "outcome": "input_unavailable",
+      "reason": "Exact phenotype-specific input for Table2 C (resistance) and D (growth rate) is not resolved. The only 16-row repository Lozovsky vector was run diagnostically; it is not tagged as a reproduction. See blocker for the original PNAS Supporting Information URL."
+    },
+    {
+      "metric": "higher_order_epistasis",
+      "paper_value": 0.537,
+      "locator": "Table 2, printed p.15, row D, column F1",
+      "quote": "0.537",
+      "printed_or_plotted": "printed",
+      "definition_match": "yes",
+      "definition_quote": "Eq. (7): F_n=\u03b2_n/(\u03a3_j \u03b2_j), \u03b2_n=\u03a3_j(b_j^(n))\u00b2.",
+      "definition_divergence": "On a complete, balanced 4-locus Boolean cube, GraphFLA order-1 polynomial OLS R\u00b2 equals the normalized first-order Fourier variance fraction F1.",
+      "input": {
+        "path": "data/BioSequence/Lozovsky2009Jiang2013_Lozovsky2009.csv",
+        "sha256": "c90599aac9e169f35c6ff5bf4305f817ebb05ea9d65b059f00ca1de768f85657",
+        "n_rows": 16,
+        "preprocessing": "Unverified diagnostic candidate only: the repository file contains one fitness vector; Table2 D is the separate growth-rate phenotype. Exact Table2 D input not resolved."
+      },
+      "graphfla_call": "mean(A.higher_order_epistasis(ls,order=1))",
+      "graphfla_value": null,
+      "outcome": "input_unavailable",
+      "reason": "Exact phenotype-specific input for Table2 C (resistance) and D (growth rate) is not resolved. The only 16-row repository Lozovsky vector was run diagnostically; it is not tagged as a reproduction. See blocker for the original PNAS Supporting Information URL."
+    },
+    {
+      "metric": "higher_order_epistasis",
+      "paper_value": 0.197,
+      "locator": "Table 2, printed p.15, row D, column F2",
+      "quote": "0.197",
+      "printed_or_plotted": "printed",
+      "definition_match": "yes",
+      "definition_quote": "Eq. (7): F_n=\u03b2_n/(\u03a3_j \u03b2_j), \u03b2_n=\u03a3_j(b_j^(n))\u00b2.",
+      "definition_divergence": "GraphFLA higher_order_epistasis(order=2) is cumulative; for a complete balanced 4-locus cube, F2 is reproduced as order-2 R\u00b2 minus order-1 R\u00b2.",
+      "input": {
+        "path": "data/BioSequence/Lozovsky2009Jiang2013_Lozovsky2009.csv",
+        "sha256": "c90599aac9e169f35c6ff5bf4305f817ebb05ea9d65b059f00ca1de768f85657",
+        "n_rows": 16,
+        "preprocessing": "Unverified diagnostic candidate only: the repository file contains one fitness vector; Table2 D is the separate growth-rate phenotype. Exact Table2 D input not resolved."
+      },
+      "graphfla_call": "mean(A.higher_order_epistasis(ls,order=2)-A.higher_order_epistasis(ls,order=1))",
+      "graphfla_value": null,
+      "outcome": "input_unavailable",
+      "reason": "Exact phenotype-specific input for Table2 C (resistance) and D (growth rate) is not resolved. The only 16-row repository Lozovsky vector was run diagnostically; it is not tagged as a reproduction. See blocker for the original PNAS Supporting Information URL."
+    },
+    {
+      "metric": "higher_order_epistasis",
+      "paper_value": 0.463,
+      "locator": "Table 2, printed p.15, row D, column Fsum",
+      "quote": "0.463",
+      "printed_or_plotted": "printed",
+      "definition_match": "yes",
+      "definition_quote": "Eq. (8): F_sum=\u03a3_(j=2)^L F_j.",
+      "definition_divergence": "For a complete balanced cube, F_sum is reproduced as 1 minus order-1 polynomial OLS R\u00b2; incomplete-state handling is a separate issue for H.",
+      "input": {
+        "path": "data/BioSequence/Lozovsky2009Jiang2013_Lozovsky2009.csv",
+        "sha256": "c90599aac9e169f35c6ff5bf4305f817ebb05ea9d65b059f00ca1de768f85657",
+        "n_rows": 16,
+        "preprocessing": "Unverified diagnostic candidate only: the repository file contains one fitness vector; Table2 D is the separate growth-rate phenotype. Exact Table2 D input not resolved."
+      },
+      "graphfla_call": "mean(1-A.higher_order_epistasis(ls,order=1))",
+      "graphfla_value": null,
+      "outcome": "input_unavailable",
+      "reason": "Exact phenotype-specific input for Table2 C (resistance) and D (growth rate) is not resolved. The only 16-row repository Lozovsky vector was run diagnostically; it is not tagged as a reproduction. See blocker for the original PNAS Supporting Information URL."
+    },
+    {
+      "metric": "n_lo",
+      "paper_value": 2,
+      "locator": "Table 2, printed p.15, row D, column n_lo",
+      "quote": "2",
+      "printed_or_plotted": "printed",
+      "definition_match": "yes",
+      "definition_quote": "\u201cA frequently used measure of landscape ruggedness is the number of local fitness maxima N_max.\u201d",
+      "definition_divergence": "Ties are NOT STATED IN PAPER. GraphFLA was called with epsilon=0, so a tied neighbor disqualifies a strict peak.",
+      "input": {
+        "path": "data/BioSequence/Lozovsky2009Jiang2013_Lozovsky2009.csv",
+        "sha256": "c90599aac9e169f35c6ff5bf4305f817ebb05ea9d65b059f00ca1de768f85657",
+        "n_rows": 16,
+        "preprocessing": "Unverified diagnostic candidate only: the repository file contains one fitness vector; Table2 D is the separate growth-rate phenotype. Exact Table2 D input not resolved."
+      },
+      "graphfla_call": "mean(ls.n_lo) over eligible 4-locus faces",
+      "graphfla_value": null,
+      "outcome": "input_unavailable",
+      "reason": "Exact phenotype-specific input for Table2 C (resistance) and D (growth rate) is not resolved. The only 16-row repository Lozovsky vector was run diagnostically; it is not tagged as a reproduction. See blocker for the original PNAS Supporting Information URL."
+    },
+    {
+      "metric": "classify_epistasis",
+      "paper_value": 0.125,
+      "locator": "Table 2, printed p.15, row D, column fr",
+      "quote": "0.125",
+      "printed_or_plotted": "printed",
+      "definition_match": "no",
+      "definition_quote": "f_r",
+      "definition_divergence": "GraphFLA classify_epistasis.reciprocal_sign is conditional on the three epistatic square classes and uses directed improving-edge motifs; paper f_r is a fraction of local Hamming-distance-2 motifs. Definitions are incompatible.",
+      "input": {
+        "path": "data/BioSequence/Lozovsky2009Jiang2013_Lozovsky2009.csv",
+        "sha256": "c90599aac9e169f35c6ff5bf4305f817ebb05ea9d65b059f00ca1de768f85657",
+        "n_rows": 16,
+        "preprocessing": "Unverified diagnostic candidate only: the repository file contains one fitness vector; Table2 D is the separate growth-rate phenotype. Exact Table2 D input not resolved."
+      },
+      "graphfla_call": "A.classify_epistasis(ls,sample_cut_prob=0,seed=0).reciprocal_sign",
+      "graphfla_value": 0.16666666666666666,
+      "outcome": "definition_incompatible",
+      "reason": "The GraphFLA value is retained as a diagnostic only; no denominator or graph preprocessing variant was tuned to create a match."
+    },
+    {
+      "metric": "classify_epistasis",
+      "paper_value": 0.458,
+      "locator": "Table 2, printed p.15, row D, column fs",
+      "quote": "0.458",
+      "printed_or_plotted": "printed",
+      "definition_match": "no",
+      "definition_quote": "f_s",
+      "definition_divergence": "GraphFLA classify_epistasis.sign is conditional on the three epistatic square classes and uses directed improving-edge motifs; paper f_s is a fraction of local Hamming-distance-2 motifs. Definitions are incompatible.",
+      "input": {
+        "path": "data/BioSequence/Lozovsky2009Jiang2013_Lozovsky2009.csv",
+        "sha256": "c90599aac9e169f35c6ff5bf4305f817ebb05ea9d65b059f00ca1de768f85657",
+        "n_rows": 16,
+        "preprocessing": "Unverified diagnostic candidate only: the repository file contains one fitness vector; Table2 D is the separate growth-rate phenotype. Exact Table2 D input not resolved."
+      },
+      "graphfla_call": "A.classify_epistasis(ls,sample_cut_prob=0,seed=0).sign",
+      "graphfla_value": 0.16666666666666666,
+      "outcome": "definition_incompatible",
+      "reason": "The GraphFLA value is retained as a diagnostic only; no denominator or graph preprocessing variant was tuned to create a match."
+    },
+    {
+      "metric": "r_s_ratio",
+      "paper_value": 0.418,
+      "locator": "Table 2, printed p.15, row E, column r_s_ratio",
+      "quote": "0.418",
+      "printed_or_plotted": "printed",
+      "definition_match": "unknown",
+      "definition_quote": "Eq. (3): f^fit(\u03c3\u20d7)=a^(0)+\u03a3_j a_j^(1)\u03c3_j; Eq. (4): s=(1/L)\u03a3_j|a_j^(1)|; Eq. (5): r=\u221a(2^(\u2212L)\u03a3_\u03c3\u20d7(f\u2212f^fit)\u00b2).",
+      "definition_divergence": "GraphFLA Boolean r_s_ratio uses 0/1 predictors, the mean absolute coefficient, and residual RMSE. For L>4 the subgraph-background convention is not explicit; the primary call uses all fixed-background faces as the literal \u201call subgraphs\u201d reading and a WT-only alternative is separately logged. Whether backgrounds outside the WT context are included is NOT STATED IN PAPER. This record uses the literal all-face reading; the WT-only result is preserved as an alternate.",
+      "input": {
+        "path": "data/BioSequence/Weinreich2006Tan2011_Weinreich2006.csv",
+        "sha256": "23abc08da2c7c39336cafd5bed1e29de4cb8ef61ca050c24a39d09915f9eb299",
+        "n_rows": 32,
+        "preprocessing": "Use pos1\u2013pos5 as Boolean 0/1 and fitness as stored; repository values are on a log-like scale; epsilon=0; average over every 4-locus face. No repair or retuning."
+      },
+      "graphfla_call": "mean(A.r_s_ratio(ls)) over eligible 4-locus faces",
+      "graphfla_value": 0.4219891633027787,
+      "outcome": "mismatch",
+      "reason": "GraphFLA output 0.4219891633027787 does not round to the printed target 0.418 under the recorded all-face subgraph method. No fitness transform was tuned."
+    },
+    {
+      "metric": "higher_order_epistasis",
+      "paper_value": 0.894,
+      "locator": "Table 2, printed p.15, row E, column F1",
+      "quote": "0.894",
+      "printed_or_plotted": "printed",
+      "definition_match": "unknown",
+      "definition_quote": "Eq. (7): F_n=\u03b2_n/(\u03a3_j \u03b2_j), \u03b2_n=\u03a3_j(b_j^(n))\u00b2.",
+      "definition_divergence": "On a complete, balanced 4-locus Boolean cube, GraphFLA order-1 polynomial OLS R\u00b2 equals the normalized first-order Fourier variance fraction F1. The paper says all possible 4-locus subgraphs; its cited Franke implementation is WT-anchored. This record uses the literal all-face reading and preserves the WT-only run as an alternate.",
+      "input": {
+        "path": "data/BioSequence/Weinreich2006Tan2011_Weinreich2006.csv",
+        "sha256": "23abc08da2c7c39336cafd5bed1e29de4cb8ef61ca050c24a39d09915f9eb299",
+        "n_rows": 32,
+        "preprocessing": "Use pos1\u2013pos5 as Boolean 0/1 and fitness as stored; repository values are on a log-like scale; epsilon=0; average over every 4-locus face. No repair or retuning."
+      },
+      "graphfla_call": "mean(A.higher_order_epistasis(ls,order=1))",
+      "graphfla_value": 0.8938355350338878,
+      "outcome": "reproduced_with_precision",
+      "reason": ""
+    },
+    {
+      "metric": "higher_order_epistasis",
+      "paper_value": 0.064,
+      "locator": "Table 2, printed p.15, row E, column F2",
+      "quote": "0.064",
+      "printed_or_plotted": "printed",
+      "definition_match": "unknown",
+      "definition_quote": "Eq. (7): F_n=\u03b2_n/(\u03a3_j \u03b2_j), \u03b2_n=\u03a3_j(b_j^(n))\u00b2.",
+      "definition_divergence": "GraphFLA higher_order_epistasis(order=2) is cumulative; for a complete balanced 4-locus cube, F2 is reproduced as order-2 R\u00b2 minus order-1 R\u00b2. The paper says all possible 4-locus subgraphs; its cited Franke implementation is WT-anchored. This record uses the literal all-face reading and preserves the WT-only run as an alternate.",
+      "input": {
+        "path": "data/BioSequence/Weinreich2006Tan2011_Weinreich2006.csv",
+        "sha256": "23abc08da2c7c39336cafd5bed1e29de4cb8ef61ca050c24a39d09915f9eb299",
+        "n_rows": 32,
+        "preprocessing": "Use pos1\u2013pos5 as Boolean 0/1 and fitness as stored; repository values are on a log-like scale; epsilon=0; average over every 4-locus face. No repair or retuning."
+      },
+      "graphfla_call": "mean(A.higher_order_epistasis(ls,order=2)-A.higher_order_epistasis(ls,order=1))",
+      "graphfla_value": 0.06375685233058848,
+      "outcome": "reproduced_with_precision",
+      "reason": ""
+    },
+    {
+      "metric": "higher_order_epistasis",
+      "paper_value": 0.106,
+      "locator": "Table 2, printed p.15, row E, column Fsum",
+      "quote": "0.106",
+      "printed_or_plotted": "printed",
+      "definition_match": "unknown",
+      "definition_quote": "Eq. (8): F_sum=\u03a3_(j=2)^L F_j.",
+      "definition_divergence": "For a complete balanced cube, F_sum is reproduced as 1 minus order-1 polynomial OLS R\u00b2; incomplete-state handling is a separate issue for H. The paper says all possible 4-locus subgraphs; its cited Franke implementation is WT-anchored. This record uses the literal all-face reading and preserves the WT-only run as an alternate.",
+      "input": {
+        "path": "data/BioSequence/Weinreich2006Tan2011_Weinreich2006.csv",
+        "sha256": "23abc08da2c7c39336cafd5bed1e29de4cb8ef61ca050c24a39d09915f9eb299",
+        "n_rows": 32,
+        "preprocessing": "Use pos1\u2013pos5 as Boolean 0/1 and fitness as stored; repository values are on a log-like scale; epsilon=0; average over every 4-locus face. No repair or retuning."
+      },
+      "graphfla_call": "mean(1-A.higher_order_epistasis(ls,order=1))",
+      "graphfla_value": 0.1061644649661122,
+      "outcome": "reproduced_with_precision",
+      "reason": ""
+    },
+    {
+      "metric": "n_lo",
+      "paper_value": 1.5,
+      "locator": "Table 2, printed p.15, row E, column n_lo",
+      "quote": "1.50",
+      "printed_or_plotted": "printed",
+      "definition_match": "unknown",
+      "definition_quote": "\u201cA frequently used measure of landscape ruggedness is the number of local fitness maxima N_max.\u201d",
+      "definition_divergence": "Ties are NOT STATED IN PAPER. GraphFLA was called with epsilon=0, so a tied neighbor disqualifies a strict peak. The paper says all possible 4-locus subgraphs; its cited Franke implementation is WT-anchored. This record uses the literal all-face reading and preserves the WT-only run as an alternate.",
+      "input": {
+        "path": "data/BioSequence/Weinreich2006Tan2011_Weinreich2006.csv",
+        "sha256": "23abc08da2c7c39336cafd5bed1e29de4cb8ef61ca050c24a39d09915f9eb299",
+        "n_rows": 32,
+        "preprocessing": "Use pos1\u2013pos5 as Boolean 0/1 and fitness as stored; repository values are on a log-like scale; epsilon=0; average over every 4-locus face. No repair or retuning."
+      },
+      "graphfla_call": "mean(ls.n_lo) over eligible 4-locus faces",
+      "graphfla_value": 1.1,
+      "outcome": "mismatch",
+      "reason": "GraphFLA output 1.1 does not round to the printed target 1.5 under the recorded all-face subgraph method. No fitness transform was tuned."
+    },
+    {
+      "metric": "classify_epistasis",
+      "paper_value": 0.025,
+      "locator": "Table 2, printed p.15, row E, column fr",
+      "quote": "0.025",
+      "printed_or_plotted": "printed",
+      "definition_match": "no",
+      "definition_quote": "f_r",
+      "definition_divergence": "GraphFLA classify_epistasis.reciprocal_sign is conditional on the three epistatic square classes and uses directed improving-edge motifs; paper f_r is a fraction of local Hamming-distance-2 motifs. Definitions are incompatible.",
+      "input": {
+        "path": "data/BioSequence/Weinreich2006Tan2011_Weinreich2006.csv",
+        "sha256": "23abc08da2c7c39336cafd5bed1e29de4cb8ef61ca050c24a39d09915f9eb299",
+        "n_rows": 32,
+        "preprocessing": "Use pos1\u2013pos5 as Boolean 0/1 and fitness as stored; repository values are on a log-like scale; epsilon=0; average over every 4-locus face. No repair or retuning."
+      },
+      "graphfla_call": "A.classify_epistasis(ls,sample_cut_prob=0,seed=0).reciprocal_sign",
+      "graphfla_value": 0.04699346405228758,
+      "outcome": "definition_incompatible",
+      "reason": "The GraphFLA value is retained as a diagnostic only; no denominator or graph preprocessing variant was tuned to create a match."
+    },
+    {
+      "metric": "classify_epistasis",
+      "paper_value": 0.15,
+      "locator": "Table 2, printed p.15, row E, column fs",
+      "quote": "0.150",
+      "printed_or_plotted": "printed",
+      "definition_match": "no",
+      "definition_quote": "f_s",
+      "definition_divergence": "GraphFLA classify_epistasis.sign is conditional on the three epistatic square classes and uses directed improving-edge motifs; paper f_s is a fraction of local Hamming-distance-2 motifs. Definitions are incompatible.",
+      "input": {
+        "path": "data/BioSequence/Weinreich2006Tan2011_Weinreich2006.csv",
+        "sha256": "23abc08da2c7c39336cafd5bed1e29de4cb8ef61ca050c24a39d09915f9eb299",
+        "n_rows": 32,
+        "preprocessing": "Use pos1\u2013pos5 as Boolean 0/1 and fitness as stored; repository values are on a log-like scale; epsilon=0; average over every 4-locus face. No repair or retuning."
+      },
+      "graphfla_call": "A.classify_epistasis(ls,sample_cut_prob=0,seed=0).sign",
+      "graphfla_value": 0.23422682709447415,
+      "outcome": "definition_incompatible",
+      "reason": "The GraphFLA value is retained as a diagnostic only; no denominator or graph preprocessing variant was tuned to create a match."
+    },
+    {
+      "metric": "r_s_ratio",
+      "paper_value": 0.38,
+      "locator": "Table 2, printed p.15, row F, column r_s_ratio",
+      "quote": "0.380",
+      "printed_or_plotted": "printed",
+      "definition_match": "unknown",
+      "definition_quote": "Eq. (3): f^fit(\u03c3\u20d7)=a^(0)+\u03a3_j a_j^(1)\u03c3_j; Eq. (4): s=(1/L)\u03a3_j|a_j^(1)|; Eq. (5): r=\u221a(2^(\u2212L)\u03a3_\u03c3\u20d7(f\u2212f^fit)\u00b2).",
+      "definition_divergence": "GraphFLA Boolean r_s_ratio uses 0/1 predictors, the mean absolute coefficient, and residual RMSE. For L>4 the subgraph-background convention is not explicit; the primary call uses all fixed-background faces as the literal \u201call subgraphs\u201d reading and a WT-only alternative is separately logged. Whether backgrounds outside the WT context are included is NOT STATED IN PAPER. This record uses the literal all-face reading; the WT-only result is preserved as an alternate.",
+      "input": {
+        "path": "data/BioSequence/Weinreich2006Tan2011_Tan2011.csv",
+        "sha256": "e6e54648b5fc0d3ffc6f7703212caaf5255d9ae2dcf369ad64efea83c80e056e",
+        "n_rows": 32,
+        "preprocessing": "Use pos1\u2013pos5 as Boolean 0/1 and fitness as stored; Szendro footnote says these MIC values are already logarithms; epsilon=0; average over every 4-locus face."
+      },
+      "graphfla_call": "mean(A.r_s_ratio(ls)) over eligible 4-locus faces",
+      "graphfla_value": 0.3909762979848442,
+      "outcome": "mismatch",
+      "reason": "GraphFLA output 0.3909762979848442 does not round to the printed target 0.38 under the recorded all-face subgraph method. No fitness transform was tuned."
+    },
+    {
+      "metric": "higher_order_epistasis",
+      "paper_value": 0.921,
+      "locator": "Table 2, printed p.15, row F, column F1",
+      "quote": "0.921",
+      "printed_or_plotted": "printed",
+      "definition_match": "unknown",
+      "definition_quote": "Eq. (7): F_n=\u03b2_n/(\u03a3_j \u03b2_j), \u03b2_n=\u03a3_j(b_j^(n))\u00b2.",
+      "definition_divergence": "On a complete, balanced 4-locus Boolean cube, GraphFLA order-1 polynomial OLS R\u00b2 equals the normalized first-order Fourier variance fraction F1. The paper says all possible 4-locus subgraphs; its cited Franke implementation is WT-anchored. This record uses the literal all-face reading and preserves the WT-only run as an alternate.",
+      "input": {
+        "path": "data/BioSequence/Weinreich2006Tan2011_Tan2011.csv",
+        "sha256": "e6e54648b5fc0d3ffc6f7703212caaf5255d9ae2dcf369ad64efea83c80e056e",
+        "n_rows": 32,
+        "preprocessing": "Use pos1\u2013pos5 as Boolean 0/1 and fitness as stored; Szendro footnote says these MIC values are already logarithms; epsilon=0; average over every 4-locus face."
+      },
+      "graphfla_call": "mean(A.higher_order_epistasis(ls,order=1))",
+      "graphfla_value": 0.9140561108772811,
+      "outcome": "mismatch",
+      "reason": "GraphFLA output 0.9140561108772811 does not round to the printed target 0.921 under the recorded all-face subgraph method. No fitness transform was tuned."
+    },
+    {
+      "metric": "higher_order_epistasis",
+      "paper_value": 0.061,
+      "locator": "Table 2, printed p.15, row F, column F2",
+      "quote": "0.061",
+      "printed_or_plotted": "printed",
+      "definition_match": "unknown",
+      "definition_quote": "Eq. (7): F_n=\u03b2_n/(\u03a3_j \u03b2_j), \u03b2_n=\u03a3_j(b_j^(n))\u00b2.",
+      "definition_divergence": "GraphFLA higher_order_epistasis(order=2) is cumulative; for a complete balanced 4-locus cube, F2 is reproduced as order-2 R\u00b2 minus order-1 R\u00b2. The paper says all possible 4-locus subgraphs; its cited Franke implementation is WT-anchored. This record uses the literal all-face reading and preserves the WT-only run as an alternate.",
+      "input": {
+        "path": "data/BioSequence/Weinreich2006Tan2011_Tan2011.csv",
+        "sha256": "e6e54648b5fc0d3ffc6f7703212caaf5255d9ae2dcf369ad64efea83c80e056e",
+        "n_rows": 32,
+        "preprocessing": "Use pos1\u2013pos5 as Boolean 0/1 and fitness as stored; Szendro footnote says these MIC values are already logarithms; epsilon=0; average over every 4-locus face."
+      },
+      "graphfla_call": "mean(A.higher_order_epistasis(ls,order=2)-A.higher_order_epistasis(ls,order=1))",
+      "graphfla_value": 0.06312416755850303,
+      "outcome": "mismatch",
+      "reason": "GraphFLA output 0.06312416755850303 does not round to the printed target 0.061 under the recorded all-face subgraph method. No fitness transform was tuned."
+    },
+    {
+      "metric": "higher_order_epistasis",
+      "paper_value": 0.079,
+      "locator": "Table 2, printed p.15, row F, column Fsum",
+      "quote": "0.079",
+      "printed_or_plotted": "printed",
+      "definition_match": "unknown",
+      "definition_quote": "Eq. (8): F_sum=\u03a3_(j=2)^L F_j.",
+      "definition_divergence": "For a complete balanced cube, F_sum is reproduced as 1 minus order-1 polynomial OLS R\u00b2; incomplete-state handling is a separate issue for H. The paper says all possible 4-locus subgraphs; its cited Franke implementation is WT-anchored. This record uses the literal all-face reading and preserves the WT-only run as an alternate.",
+      "input": {
+        "path": "data/BioSequence/Weinreich2006Tan2011_Tan2011.csv",
+        "sha256": "e6e54648b5fc0d3ffc6f7703212caaf5255d9ae2dcf369ad64efea83c80e056e",
+        "n_rows": 32,
+        "preprocessing": "Use pos1\u2013pos5 as Boolean 0/1 and fitness as stored; Szendro footnote says these MIC values are already logarithms; epsilon=0; average over every 4-locus face."
+      },
+      "graphfla_call": "mean(1-A.higher_order_epistasis(ls,order=1))",
+      "graphfla_value": 0.08594388912271889,
+      "outcome": "mismatch",
+      "reason": "GraphFLA output 0.08594388912271889 does not round to the printed target 0.079 under the recorded all-face subgraph method. No fitness transform was tuned."
+    },
+    {
+      "metric": "n_lo",
+      "paper_value": 1.3,
+      "locator": "Table 2, printed p.15, row F, column n_lo",
+      "quote": "1.30",
+      "printed_or_plotted": "printed",
+      "definition_match": "unknown",
+      "definition_quote": "\u201cA frequently used measure of landscape ruggedness is the number of local fitness maxima N_max.\u201d",
+      "definition_divergence": "Ties are NOT STATED IN PAPER. GraphFLA was called with epsilon=0, so a tied neighbor disqualifies a strict peak. The paper says all possible 4-locus subgraphs; its cited Franke implementation is WT-anchored. This record uses the literal all-face reading and preserves the WT-only run as an alternate.",
+      "input": {
+        "path": "data/BioSequence/Weinreich2006Tan2011_Tan2011.csv",
+        "sha256": "e6e54648b5fc0d3ffc6f7703212caaf5255d9ae2dcf369ad64efea83c80e056e",
+        "n_rows": 32,
+        "preprocessing": "Use pos1\u2013pos5 as Boolean 0/1 and fitness as stored; Szendro footnote says these MIC values are already logarithms; epsilon=0; average over every 4-locus face."
+      },
+      "graphfla_call": "mean(ls.n_lo) over eligible 4-locus faces",
+      "graphfla_value": 1.1,
+      "outcome": "mismatch",
+      "reason": "GraphFLA output 1.1 does not round to the printed target 1.3 under the recorded all-face subgraph method. No fitness transform was tuned."
+    },
+    {
+      "metric": "classify_epistasis",
+      "paper_value": 0.05,
+      "locator": "Table 2, printed p.15, row F, column fr",
+      "quote": "0.050",
+      "printed_or_plotted": "printed",
+      "definition_match": "no",
+      "definition_quote": "f_r",
+      "definition_divergence": "GraphFLA classify_epistasis.reciprocal_sign is conditional on the three epistatic square classes and uses directed improving-edge motifs; paper f_r is a fraction of local Hamming-distance-2 motifs. Definitions are incompatible.",
+      "input": {
+        "path": "data/BioSequence/Weinreich2006Tan2011_Tan2011.csv",
+        "sha256": "e6e54648b5fc0d3ffc6f7703212caaf5255d9ae2dcf369ad64efea83c80e056e",
+        "n_rows": 32,
+        "preprocessing": "Use pos1\u2013pos5 as Boolean 0/1 and fitness as stored; Szendro footnote says these MIC values are already logarithms; epsilon=0; average over every 4-locus face."
+      },
+      "graphfla_call": "A.classify_epistasis(ls,sample_cut_prob=0,seed=0).reciprocal_sign",
+      "graphfla_value": 0.07551691729323307,
+      "outcome": "definition_incompatible",
+      "reason": "The GraphFLA value is retained as a diagnostic only; no denominator or graph preprocessing variant was tuned to create a match."
+    },
+    {
+      "metric": "classify_epistasis",
+      "paper_value": 0.25,
+      "locator": "Table 2, printed p.15, row F, column fs",
+      "quote": "0.250",
+      "printed_or_plotted": "printed",
+      "definition_match": "no",
+      "definition_quote": "f_s",
+      "definition_divergence": "GraphFLA classify_epistasis.sign is conditional on the three epistatic square classes and uses directed improving-edge motifs; paper f_s is a fraction of local Hamming-distance-2 motifs. Definitions are incompatible.",
+      "input": {
+        "path": "data/BioSequence/Weinreich2006Tan2011_Tan2011.csv",
+        "sha256": "e6e54648b5fc0d3ffc6f7703212caaf5255d9ae2dcf369ad64efea83c80e056e",
+        "n_rows": 32,
+        "preprocessing": "Use pos1\u2013pos5 as Boolean 0/1 and fitness as stored; Szendro footnote says these MIC values are already logarithms; epsilon=0; average over every 4-locus face."
+      },
+      "graphfla_call": "A.classify_epistasis(ls,sample_cut_prob=0,seed=0).sign",
+      "graphfla_value": 0.273156850459482,
+      "outcome": "definition_incompatible",
+      "reason": "The GraphFLA value is retained as a diagnostic only; no denominator or graph preprocessing variant was tuned to create a match."
+    },
+    {
+      "metric": "r_s_ratio",
+      "paper_value": 1.18,
+      "locator": "Table 2, printed p.15, row G, column r_s_ratio",
+      "quote": "1.180",
+      "printed_or_plotted": "printed",
+      "definition_match": "unknown",
+      "definition_quote": "Eq. (3): f^fit(\u03c3\u20d7)=a^(0)+\u03a3_j a_j^(1)\u03c3_j; Eq. (4): s=(1/L)\u03a3_j|a_j^(1)|; Eq. (5): r=\u221a(2^(\u2212L)\u03a3_\u03c3\u20d7(f\u2212f^fit)\u00b2).",
+      "definition_divergence": "GraphFLA Boolean r_s_ratio uses 0/1 predictors, the mean absolute coefficient, and residual RMSE. For L>4 the subgraph-background convention is not explicit; the primary call uses all fixed-background faces as the literal \u201call subgraphs\u201d reading and a WT-only alternative is separately logged. Whether backgrounds outside the WT context are included is NOT STATED IN PAPER. This record uses the literal all-face reading; the WT-only result is preserved as an alternate. Table1 identifies only \u201cGrowth rate\u201d; whether Table2 G uses haploid or diploid growth is NOT STATED IN PAPER. Both repository candidates were run; the primary recorded value is haploid.",
+      "input": {
+        "path": "data/BioSequence/Hall2010_haploid.csv",
+        "sha256": "af9a60315d8659d65ee25887372061424f1f493b878399bbeccd3ff502d558db",
+        "n_rows": 64,
+        "preprocessing": "Haploid-growth candidate used as primary diagnostic; epsilon=0; average over every 4-locus face. The paper does not identify haploid versus diploid growth rate.",
+        "candidate_alternatives": [
+          {
+            "path": "data/BioSequence/Hall2010_diploid.csv",
+            "sha256": "d3241c4ad65d9549609678fcb62e1c965c25d4ca05734466d66c03a041f084ee",
+            "n_rows": 64,
+            "all_face_r_s": 1.1873412624191004,
+            "mean_n_lo": 3.0833333333333335
+          }
+        ]
+      },
+      "graphfla_call": "mean(A.r_s_ratio(ls)) over eligible 4-locus faces",
+      "graphfla_value": 1.182960637546408,
+      "outcome": "mismatch",
+      "reason": "GraphFLA output 1.182960637546408 does not round to the printed target 1.18 under the recorded all-face subgraph method. No fitness transform was tuned."
+    },
+    {
+      "metric": "higher_order_epistasis",
+      "paper_value": 0.658,
+      "locator": "Table 2, printed p.15, row G, column F1",
+      "quote": "0.658",
+      "printed_or_plotted": "printed",
+      "definition_match": "unknown",
+      "definition_quote": "Eq. (7): F_n=\u03b2_n/(\u03a3_j \u03b2_j), \u03b2_n=\u03a3_j(b_j^(n))\u00b2.",
+      "definition_divergence": "On a complete, balanced 4-locus Boolean cube, GraphFLA order-1 polynomial OLS R\u00b2 equals the normalized first-order Fourier variance fraction F1. The paper says all possible 4-locus subgraphs; its cited Franke implementation is WT-anchored. This record uses the literal all-face reading and preserves the WT-only run as an alternate. Table1 identifies only \u201cGrowth rate\u201d; whether Table2 G uses haploid or diploid growth is NOT STATED IN PAPER. Both repository candidates were run; the primary recorded value is haploid.",
+      "input": {
+        "path": "data/BioSequence/Hall2010_haploid.csv",
+        "sha256": "af9a60315d8659d65ee25887372061424f1f493b878399bbeccd3ff502d558db",
+        "n_rows": 64,
+        "preprocessing": "Haploid-growth candidate used as primary diagnostic; epsilon=0; average over every 4-locus face. The paper does not identify haploid versus diploid growth rate.",
+        "candidate_alternatives": [
+          {
+            "path": "data/BioSequence/Hall2010_diploid.csv",
+            "sha256": "d3241c4ad65d9549609678fcb62e1c965c25d4ca05734466d66c03a041f084ee",
+            "n_rows": 64,
+            "all_face_r_s": 1.1873412624191004,
+            "mean_n_lo": 3.0833333333333335
+          }
+        ]
+      },
+      "graphfla_call": "mean(A.higher_order_epistasis(ls,order=1))",
+      "graphfla_value": 0.5023025637218973,
+      "outcome": "mismatch",
+      "reason": "GraphFLA output 0.5023025637218973 does not round to the printed target 0.658 under the recorded all-face subgraph method. No fitness transform was tuned."
+    },
+    {
+      "metric": "higher_order_epistasis",
+      "paper_value": 0.179,
+      "locator": "Table 2, printed p.15, row G, column F2",
+      "quote": "0.179",
+      "printed_or_plotted": "printed",
+      "definition_match": "unknown",
+      "definition_quote": "Eq. (7): F_n=\u03b2_n/(\u03a3_j \u03b2_j), \u03b2_n=\u03a3_j(b_j^(n))\u00b2.",
+      "definition_divergence": "GraphFLA higher_order_epistasis(order=2) is cumulative; for a complete balanced 4-locus cube, F2 is reproduced as order-2 R\u00b2 minus order-1 R\u00b2. The paper says all possible 4-locus subgraphs; its cited Franke implementation is WT-anchored. This record uses the literal all-face reading and preserves the WT-only run as an alternate. Table1 identifies only \u201cGrowth rate\u201d; whether Table2 G uses haploid or diploid growth is NOT STATED IN PAPER. Both repository candidates were run; the primary recorded value is haploid.",
+      "input": {
+        "path": "data/BioSequence/Hall2010_haploid.csv",
+        "sha256": "af9a60315d8659d65ee25887372061424f1f493b878399bbeccd3ff502d558db",
+        "n_rows": 64,
+        "preprocessing": "Haploid-growth candidate used as primary diagnostic; epsilon=0; average over every 4-locus face. The paper does not identify haploid versus diploid growth rate.",
+        "candidate_alternatives": [
+          {
+            "path": "data/BioSequence/Hall2010_diploid.csv",
+            "sha256": "d3241c4ad65d9549609678fcb62e1c965c25d4ca05734466d66c03a041f084ee",
+            "n_rows": 64,
+            "all_face_r_s": 1.1873412624191004,
+            "mean_n_lo": 3.0833333333333335
+          }
+        ]
+      },
+      "graphfla_call": "mean(A.higher_order_epistasis(ls,order=2)-A.higher_order_epistasis(ls,order=1))",
+      "graphfla_value": 0.22922276127238383,
+      "outcome": "mismatch",
+      "reason": "GraphFLA output 0.22922276127238383 does not round to the printed target 0.179 under the recorded all-face subgraph method. No fitness transform was tuned."
+    },
+    {
+      "metric": "higher_order_epistasis",
+      "paper_value": 0.342,
+      "locator": "Table 2, printed p.15, row G, column Fsum",
+      "quote": "0.342",
+      "printed_or_plotted": "printed",
+      "definition_match": "unknown",
+      "definition_quote": "Eq. (8): F_sum=\u03a3_(j=2)^L F_j.",
+      "definition_divergence": "For a complete balanced cube, F_sum is reproduced as 1 minus order-1 polynomial OLS R\u00b2; incomplete-state handling is a separate issue for H. The paper says all possible 4-locus subgraphs; its cited Franke implementation is WT-anchored. This record uses the literal all-face reading and preserves the WT-only run as an alternate. Table1 identifies only \u201cGrowth rate\u201d; whether Table2 G uses haploid or diploid growth is NOT STATED IN PAPER. Both repository candidates were run; the primary recorded value is haploid.",
+      "input": {
+        "path": "data/BioSequence/Hall2010_haploid.csv",
+        "sha256": "af9a60315d8659d65ee25887372061424f1f493b878399bbeccd3ff502d558db",
+        "n_rows": 64,
+        "preprocessing": "Haploid-growth candidate used as primary diagnostic; epsilon=0; average over every 4-locus face. The paper does not identify haploid versus diploid growth rate.",
+        "candidate_alternatives": [
+          {
+            "path": "data/BioSequence/Hall2010_diploid.csv",
+            "sha256": "d3241c4ad65d9549609678fcb62e1c965c25d4ca05734466d66c03a041f084ee",
+            "n_rows": 64,
+            "all_face_r_s": 1.1873412624191004,
+            "mean_n_lo": 3.0833333333333335
+          }
+        ]
+      },
+      "graphfla_call": "mean(1-A.higher_order_epistasis(ls,order=1))",
+      "graphfla_value": 0.4976974362781027,
+      "outcome": "mismatch",
+      "reason": "GraphFLA output 0.4976974362781027 does not round to the printed target 0.342 under the recorded all-face subgraph method. No fitness transform was tuned."
+    },
+    {
+      "metric": "n_lo",
+      "paper_value": 2.13,
+      "locator": "Table 2, printed p.15, row G, column n_lo",
+      "quote": "2.13",
+      "printed_or_plotted": "printed",
+      "definition_match": "unknown",
+      "definition_quote": "\u201cA frequently used measure of landscape ruggedness is the number of local fitness maxima N_max.\u201d",
+      "definition_divergence": "Ties are NOT STATED IN PAPER. GraphFLA was called with epsilon=0, so a tied neighbor disqualifies a strict peak. The paper says all possible 4-locus subgraphs; its cited Franke implementation is WT-anchored. This record uses the literal all-face reading and preserves the WT-only run as an alternate. Table1 identifies only \u201cGrowth rate\u201d; whether Table2 G uses haploid or diploid growth is NOT STATED IN PAPER. Both repository candidates were run; the primary recorded value is haploid.",
+      "input": {
+        "path": "data/BioSequence/Hall2010_haploid.csv",
+        "sha256": "af9a60315d8659d65ee25887372061424f1f493b878399bbeccd3ff502d558db",
+        "n_rows": 64,
+        "preprocessing": "Haploid-growth candidate used as primary diagnostic; epsilon=0; average over every 4-locus face. The paper does not identify haploid versus diploid growth rate.",
+        "candidate_alternatives": [
+          {
+            "path": "data/BioSequence/Hall2010_diploid.csv",
+            "sha256": "d3241c4ad65d9549609678fcb62e1c965c25d4ca05734466d66c03a041f084ee",
+            "n_rows": 64,
+            "all_face_r_s": 1.1873412624191004,
+            "mean_n_lo": 3.0833333333333335
+          }
+        ]
+      },
+      "graphfla_call": "mean(ls.n_lo) over eligible 4-locus faces",
+      "graphfla_value": 3.0,
+      "outcome": "mismatch",
+      "reason": "GraphFLA output 3.0 does not round to the printed target 2.13 under the recorded all-face subgraph method. No fitness transform was tuned."
+    },
+    {
+      "metric": "classify_epistasis",
+      "paper_value": 0.229,
+      "locator": "Table 2, printed p.15, row G, column fr",
+      "quote": "0.229",
+      "printed_or_plotted": "printed",
+      "definition_match": "no",
+      "definition_quote": "f_r",
+      "definition_divergence": "GraphFLA classify_epistasis.reciprocal_sign is conditional on the three epistatic square classes and uses directed improving-edge motifs; paper f_r is a fraction of local Hamming-distance-2 motifs. Definitions are incompatible.",
+      "input": {
+        "path": "data/BioSequence/Hall2010_haploid.csv",
+        "sha256": "af9a60315d8659d65ee25887372061424f1f493b878399bbeccd3ff502d558db",
+        "n_rows": 64,
+        "preprocessing": "Haploid-growth candidate used as primary diagnostic; epsilon=0; average over every 4-locus face. The paper does not identify haploid versus diploid growth rate.",
+        "candidate_alternatives": [
+          {
+            "path": "data/BioSequence/Hall2010_diploid.csv",
+            "sha256": "d3241c4ad65d9549609678fcb62e1c965c25d4ca05734466d66c03a041f084ee",
+            "n_rows": 64,
+            "all_face_r_s": 1.1873412624191004,
+            "mean_n_lo": 3.0833333333333335
+          }
+        ]
+      },
+      "graphfla_call": "A.classify_epistasis(ls,sample_cut_prob=0,seed=0).reciprocal_sign",
+      "graphfla_value": 0.2916666666666667,
+      "outcome": "definition_incompatible",
+      "reason": "The GraphFLA value is retained as a diagnostic only; no denominator or graph preprocessing variant was tuned to create a match."
+    },
+    {
+      "metric": "classify_epistasis",
+      "paper_value": 0.358,
+      "locator": "Table 2, printed p.15, row G, column fs",
+      "quote": "0.358",
+      "printed_or_plotted": "printed",
+      "definition_match": "no",
+      "definition_quote": "f_s",
+      "definition_divergence": "GraphFLA classify_epistasis.sign is conditional on the three epistatic square classes and uses directed improving-edge motifs; paper f_s is a fraction of local Hamming-distance-2 motifs. Definitions are incompatible.",
+      "input": {
+        "path": "data/BioSequence/Hall2010_haploid.csv",
+        "sha256": "af9a60315d8659d65ee25887372061424f1f493b878399bbeccd3ff502d558db",
+        "n_rows": 64,
+        "preprocessing": "Haploid-growth candidate used as primary diagnostic; epsilon=0; average over every 4-locus face. The paper does not identify haploid versus diploid growth rate.",
+        "candidate_alternatives": [
+          {
+            "path": "data/BioSequence/Hall2010_diploid.csv",
+            "sha256": "d3241c4ad65d9549609678fcb62e1c965c25d4ca05734466d66c03a041f084ee",
+            "n_rows": 64,
+            "all_face_r_s": 1.1873412624191004,
+            "mean_n_lo": 3.0833333333333335
+          }
+        ]
+      },
+      "graphfla_call": "A.classify_epistasis(ls,sample_cut_prob=0,seed=0).sign",
+      "graphfla_value": 0.37916666666666665,
+      "outcome": "definition_incompatible",
+      "reason": "The GraphFLA value is retained as a diagnostic only; no denominator or graph preprocessing variant was tuned to create a match."
+    },
+    {
+      "metric": "r_s_ratio",
+      "paper_value": 1.304,
+      "locator": "Table 2, printed p.15, row H, column r_s_ratio",
+      "quote": "1.304",
+      "printed_or_plotted": "printed",
+      "definition_match": "unknown",
+      "definition_quote": "Eq. (3): f^fit(\u03c3\u20d7)=a^(0)+\u03a3_j a_j^(1)\u03c3_j; Eq. (4): s=(1/L)\u03a3_j|a_j^(1)|; Eq. (5): r=\u221a(2^(\u2212L)\u03a3_\u03c3\u20d7(f\u2212f^fit)\u00b2).",
+      "definition_divergence": "GraphFLA Boolean r_s_ratio uses 0/1 predictors, the mean absolute coefficient, and residual RMSE. For L>4 the subgraph-background convention is not explicit; the primary call uses all fixed-background faces as the literal \u201call subgraphs\u201d reading and a WT-only alternative is separately logged. For H, Szendro says missing genotypes are nonviable and omits the log transform, but its own missing-state inclusion rule is NOT STATED IN PAPER; zeros were taken from the cited Franke source method.",
+      "input": {
+        "path": "papers/Szendro2013/sources/Franke2011_A_niger_TableS1_codex.pdf",
+        "sha256": "e2a1368985da3f575c7ae6e67cd3c2c9c2c5d2c0e0d4ca79acc096577830914d",
+        "n_rows": 256,
+        "n_observed": 186,
+        "preprocessing": "Transcribe Table S1; retain 186 measured values and encode 70 m (missing/nonviable) genotypes as fitness 0 using the cited Franke method; no log transform for dataset H; keep faces with at least 8 measured states; epsilon=0."
+      },
+      "graphfla_call": "mean(A.r_s_ratio(ls)) over eligible 4-locus faces",
+      "graphfla_value": 1.2251227741944237,
+      "outcome": "mismatch",
+      "reason": "GraphFLA output 1.2251227741944237 does not round to the printed target 1.304 under the recorded all-face subgraph method. No fitness transform was tuned."
+    },
+    {
+      "metric": "higher_order_epistasis",
+      "paper_value": 0.547,
+      "locator": "Table 2, printed p.15, row H, column F1",
+      "quote": "0.547",
+      "printed_or_plotted": "printed",
+      "definition_match": "unknown",
+      "definition_quote": "Eq. (7): F_n=\u03b2_n/(\u03a3_j \u03b2_j), \u03b2_n=\u03a3_j(b_j^(n))\u00b2.",
+      "definition_divergence": "On a complete, balanced 4-locus Boolean cube, GraphFLA order-1 polynomial OLS R\u00b2 equals the normalized first-order Fourier variance fraction F1. For H, Szendro says missing genotypes are nonviable and omits the log transform, but its own missing-state inclusion rule is NOT STATED IN PAPER; zeros were taken from the cited Franke source method.",
+      "input": {
+        "path": "papers/Szendro2013/sources/Franke2011_A_niger_TableS1_codex.pdf",
+        "sha256": "e2a1368985da3f575c7ae6e67cd3c2c9c2c5d2c0e0d4ca79acc096577830914d",
+        "n_rows": 256,
+        "n_observed": 186,
+        "preprocessing": "Transcribe Table S1; retain 186 measured values and encode 70 m (missing/nonviable) genotypes as fitness 0 using the cited Franke method; no log transform for dataset H; keep faces with at least 8 measured states; epsilon=0."
+      },
+      "graphfla_call": "mean(A.higher_order_epistasis(ls,order=1))",
+      "graphfla_value": 0.5512611774860333,
+      "outcome": "mismatch",
+      "reason": "GraphFLA output 0.5512611774860333 does not round to the printed target 0.547 under the recorded all-face subgraph method. No fitness transform was tuned."
+    },
+    {
+      "metric": "higher_order_epistasis",
+      "paper_value": 0.269,
+      "locator": "Table 2, printed p.15, row H, column F2",
+      "quote": "0.269",
+      "printed_or_plotted": "printed",
+      "definition_match": "unknown",
+      "definition_quote": "Eq. (7): F_n=\u03b2_n/(\u03a3_j \u03b2_j), \u03b2_n=\u03a3_j(b_j^(n))\u00b2.",
+      "definition_divergence": "GraphFLA higher_order_epistasis(order=2) is cumulative; for a complete balanced 4-locus cube, F2 is reproduced as order-2 R\u00b2 minus order-1 R\u00b2. For H, Szendro says missing genotypes are nonviable and omits the log transform, but its own missing-state inclusion rule is NOT STATED IN PAPER; zeros were taken from the cited Franke source method.",
+      "input": {
+        "path": "papers/Szendro2013/sources/Franke2011_A_niger_TableS1_codex.pdf",
+        "sha256": "e2a1368985da3f575c7ae6e67cd3c2c9c2c5d2c0e0d4ca79acc096577830914d",
+        "n_rows": 256,
+        "n_observed": 186,
+        "preprocessing": "Transcribe Table S1; retain 186 measured values and encode 70 m (missing/nonviable) genotypes as fitness 0 using the cited Franke method; no log transform for dataset H; keep faces with at least 8 measured states; epsilon=0."
+      },
+      "graphfla_call": "mean(A.higher_order_epistasis(ls,order=2)-A.higher_order_epistasis(ls,order=1))",
+      "graphfla_value": 0.2654310629740406,
+      "outcome": "mismatch",
+      "reason": "GraphFLA output 0.2654310629740406 does not round to the printed target 0.269 under the recorded all-face subgraph method. No fitness transform was tuned."
+    },
+    {
+      "metric": "higher_order_epistasis",
+      "paper_value": 0.453,
+      "locator": "Table 2, printed p.15, row H, column Fsum",
+      "quote": "0.453",
+      "printed_or_plotted": "printed",
+      "definition_match": "unknown",
+      "definition_quote": "Eq. (8): F_sum=\u03a3_(j=2)^L F_j.",
+      "definition_divergence": "For a complete balanced cube, F_sum is reproduced as 1 minus order-1 polynomial OLS R\u00b2; incomplete-state handling is a separate issue for H. For H, Szendro says missing genotypes are nonviable and omits the log transform, but its own missing-state inclusion rule is NOT STATED IN PAPER; zeros were taken from the cited Franke source method.",
+      "input": {
+        "path": "papers/Szendro2013/sources/Franke2011_A_niger_TableS1_codex.pdf",
+        "sha256": "e2a1368985da3f575c7ae6e67cd3c2c9c2c5d2c0e0d4ca79acc096577830914d",
+        "n_rows": 256,
+        "n_observed": 186,
+        "preprocessing": "Transcribe Table S1; retain 186 measured values and encode 70 m (missing/nonviable) genotypes as fitness 0 using the cited Franke method; no log transform for dataset H; keep faces with at least 8 measured states; epsilon=0."
+      },
+      "graphfla_call": "mean(1-A.higher_order_epistasis(ls,order=1))",
+      "graphfla_value": 0.4487388225139667,
+      "outcome": "mismatch",
+      "reason": "GraphFLA output 0.4487388225139667 does not round to the printed target 0.453 under the recorded all-face subgraph method. No fitness transform was tuned."
+    },
+    {
+      "metric": "n_lo",
+      "paper_value": 2.61,
+      "locator": "Table 2, printed p.15, row H, column n_lo",
+      "quote": "2.61",
+      "printed_or_plotted": "printed",
+      "definition_match": "unknown",
+      "definition_quote": "\u201cA frequently used measure of landscape ruggedness is the number of local fitness maxima N_max.\u201d",
+      "definition_divergence": "Ties are NOT STATED IN PAPER. GraphFLA was called with epsilon=0, so a tied neighbor disqualifies a strict peak. For H, Szendro says missing genotypes are nonviable and omits the log transform, but its own missing-state inclusion rule is NOT STATED IN PAPER; zeros were taken from the cited Franke source method.",
+      "input": {
+        "path": "papers/Szendro2013/sources/Franke2011_A_niger_TableS1_codex.pdf",
+        "sha256": "e2a1368985da3f575c7ae6e67cd3c2c9c2c5d2c0e0d4ca79acc096577830914d",
+        "n_rows": 256,
+        "n_observed": 186,
+        "preprocessing": "Transcribe Table S1; retain 186 measured values and encode 70 m (missing/nonviable) genotypes as fitness 0 using the cited Franke method; no log transform for dataset H; keep faces with at least 8 measured states; epsilon=0."
+      },
+      "graphfla_call": "mean(ls.n_lo) over eligible 4-locus faces",
+      "graphfla_value": 2.2328629032258065,
+      "outcome": "mismatch",
+      "reason": "GraphFLA output 2.2328629032258065 does not round to the printed target 2.61 under the recorded all-face subgraph method. No fitness transform was tuned."
+    },
+    {
+      "metric": "classify_epistasis",
+      "paper_value": 0.154,
+      "locator": "Table 2, printed p.15, row H, column fr",
+      "quote": "0.154",
+      "printed_or_plotted": "printed",
+      "definition_match": "no",
+      "definition_quote": "f_r",
+      "definition_divergence": "GraphFLA classify_epistasis.reciprocal_sign is conditional on the three epistatic square classes and uses directed improving-edge motifs; paper f_r is a fraction of local Hamming-distance-2 motifs. Definitions are incompatible.",
+      "input": {
+        "path": "papers/Szendro2013/sources/Franke2011_A_niger_TableS1_codex.pdf",
+        "sha256": "e2a1368985da3f575c7ae6e67cd3c2c9c2c5d2c0e0d4ca79acc096577830914d",
+        "n_rows": 256,
+        "n_observed": 186,
+        "preprocessing": "Transcribe Table S1; retain 186 measured values and encode 70 m (missing/nonviable) genotypes as fitness 0 using the cited Franke method; no log transform for dataset H; keep faces with at least 8 measured states; epsilon=0."
+      },
+      "graphfla_call": "A.classify_epistasis(ls,sample_cut_prob=0,seed=0).reciprocal_sign",
+      "graphfla_value": 0.22457485621758785,
+      "outcome": "definition_incompatible",
+      "reason": "The GraphFLA value is retained as a diagnostic only; no denominator or graph preprocessing variant was tuned to create a match."
+    },
+    {
+      "metric": "classify_epistasis",
+      "paper_value": 0.262,
+      "locator": "Table 2, printed p.15, row H, column fs",
+      "quote": "0.262",
+      "printed_or_plotted": "printed",
+      "definition_match": "no",
+      "definition_quote": "f_s",
+      "definition_divergence": "GraphFLA classify_epistasis.sign is conditional on the three epistatic square classes and uses directed improving-edge motifs; paper f_s is a fraction of local Hamming-distance-2 motifs. Definitions are incompatible.",
+      "input": {
+        "path": "papers/Szendro2013/sources/Franke2011_A_niger_TableS1_codex.pdf",
+        "sha256": "e2a1368985da3f575c7ae6e67cd3c2c9c2c5d2c0e0d4ca79acc096577830914d",
+        "n_rows": 256,
+        "n_observed": 186,
+        "preprocessing": "Transcribe Table S1; retain 186 measured values and encode 70 m (missing/nonviable) genotypes as fitness 0 using the cited Franke method; no log transform for dataset H; keep faces with at least 8 measured states; epsilon=0."
+      },
+      "graphfla_call": "A.classify_epistasis(ls,sample_cut_prob=0,seed=0).sign",
+      "graphfla_value": 0.38086229841990316,
+      "outcome": "definition_incompatible",
+      "reason": "The GraphFLA value is retained as a diagnostic only; no denominator or graph preprocessing variant was tuned to create a match."
+    },
+    {
+      "metric": "r_s_ratio",
+      "paper_value": 1.317,
+      "locator": "Table 2, printed p.15, row I, column r_s_ratio",
+      "quote": "1.317",
+      "printed_or_plotted": "printed",
+      "definition_match": "unknown",
+      "definition_quote": "Eq. (3): f^fit(\u03c3\u20d7)=a^(0)+\u03a3_j a_j^(1)\u03c3_j; Eq. (4): s=(1/L)\u03a3_j|a_j^(1)|; Eq. (5): r=\u221a(2^(\u2212L)\u03a3_\u03c3\u20d7(f\u2212f^fit)\u00b2).",
+      "definition_divergence": "GraphFLA Boolean r_s_ratio uses 0/1 predictors, the mean absolute coefficient, and residual RMSE. For L>4 the subgraph-background convention is not explicit; the primary call uses all fixed-background faces as the literal \u201call subgraphs\u201d reading and a WT-only alternative is separately logged.",
+      "input": {
+        "path": null,
+        "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/instance/2664519/bin/NIHMS67307-supplement-1.pdf",
+        "source_item": "O\u2019Maille et al. (2008) Supplementary Table 3; product output/genotype data",
+        "preprocessing": "not run; requested file response was proof-of-work HTML, not source data"
+      },
+      "graphfla_call": "mean(A.r_s_ratio(ls)) over eligible 4-locus faces",
+      "graphfla_value": null,
+      "outcome": "input_unavailable",
+      "reason": "No exact genotype\u2013fitness table for the O\u2019Maille landscape was obtained. The publisher supplement contains the M9 library table, but the PMC download returned proof-of-work HTML."
+    },
+    {
+      "metric": "higher_order_epistasis",
+      "paper_value": 0.376,
+      "locator": "Table 2, printed p.15, row I, column F1",
+      "quote": "0.376",
+      "printed_or_plotted": "printed",
+      "definition_match": "unknown",
+      "definition_quote": "Eq. (7): F_n=\u03b2_n/(\u03a3_j \u03b2_j), \u03b2_n=\u03a3_j(b_j^(n))\u00b2.",
+      "definition_divergence": "On a complete, balanced 4-locus Boolean cube, GraphFLA order-1 polynomial OLS R\u00b2 equals the normalized first-order Fourier variance fraction F1.",
+      "input": {
+        "path": null,
+        "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/instance/2664519/bin/NIHMS67307-supplement-1.pdf",
+        "source_item": "O\u2019Maille et al. (2008) Supplementary Table 3; product output/genotype data",
+        "preprocessing": "not run; requested file response was proof-of-work HTML, not source data"
+      },
+      "graphfla_call": "mean(A.higher_order_epistasis(ls,order=1))",
+      "graphfla_value": null,
+      "outcome": "input_unavailable",
+      "reason": "No exact genotype\u2013fitness table for the O\u2019Maille landscape was obtained. The publisher supplement contains the M9 library table, but the PMC download returned proof-of-work HTML."
+    },
+    {
+      "metric": "higher_order_epistasis",
+      "paper_value": 0.368,
+      "locator": "Table 2, printed p.15, row I, column F2",
+      "quote": "0.368",
+      "printed_or_plotted": "printed",
+      "definition_match": "unknown",
+      "definition_quote": "Eq. (7): F_n=\u03b2_n/(\u03a3_j \u03b2_j), \u03b2_n=\u03a3_j(b_j^(n))\u00b2.",
+      "definition_divergence": "GraphFLA higher_order_epistasis(order=2) is cumulative; for a complete balanced 4-locus cube, F2 is reproduced as order-2 R\u00b2 minus order-1 R\u00b2.",
+      "input": {
+        "path": null,
+        "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/instance/2664519/bin/NIHMS67307-supplement-1.pdf",
+        "source_item": "O\u2019Maille et al. (2008) Supplementary Table 3; product output/genotype data",
+        "preprocessing": "not run; requested file response was proof-of-work HTML, not source data"
+      },
+      "graphfla_call": "mean(A.higher_order_epistasis(ls,order=2)-A.higher_order_epistasis(ls,order=1))",
+      "graphfla_value": null,
+      "outcome": "input_unavailable",
+      "reason": "No exact genotype\u2013fitness table for the O\u2019Maille landscape was obtained. The publisher supplement contains the M9 library table, but the PMC download returned proof-of-work HTML."
+    },
+    {
+      "metric": "higher_order_epistasis",
+      "paper_value": 0.624,
+      "locator": "Table 2, printed p.15, row I, column Fsum",
+      "quote": "0.624",
+      "printed_or_plotted": "printed",
+      "definition_match": "unknown",
+      "definition_quote": "Eq. (8): F_sum=\u03a3_(j=2)^L F_j.",
+      "definition_divergence": "For a complete balanced cube, F_sum is reproduced as 1 minus order-1 polynomial OLS R\u00b2; incomplete-state handling is a separate issue for H.",
+      "input": {
+        "path": null,
+        "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/instance/2664519/bin/NIHMS67307-supplement-1.pdf",
+        "source_item": "O\u2019Maille et al. (2008) Supplementary Table 3; product output/genotype data",
+        "preprocessing": "not run; requested file response was proof-of-work HTML, not source data"
+      },
+      "graphfla_call": "mean(1-A.higher_order_epistasis(ls,order=1))",
+      "graphfla_value": null,
+      "outcome": "input_unavailable",
+      "reason": "No exact genotype\u2013fitness table for the O\u2019Maille landscape was obtained. The publisher supplement contains the M9 library table, but the PMC download returned proof-of-work HTML."
+    },
+    {
+      "metric": "n_lo",
+      "paper_value": 2.66,
+      "locator": "Table 2, printed p.15, row I, column n_lo",
+      "quote": "2.66",
+      "printed_or_plotted": "printed",
+      "definition_match": "unknown",
+      "definition_quote": "\u201cA frequently used measure of landscape ruggedness is the number of local fitness maxima N_max.\u201d",
+      "definition_divergence": "Ties are NOT STATED IN PAPER. GraphFLA was called with epsilon=0, so a tied neighbor disqualifies a strict peak.",
+      "input": {
+        "path": null,
+        "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/instance/2664519/bin/NIHMS67307-supplement-1.pdf",
+        "source_item": "O\u2019Maille et al. (2008) Supplementary Table 3; product output/genotype data",
+        "preprocessing": "not run; requested file response was proof-of-work HTML, not source data"
+      },
+      "graphfla_call": "mean(ls.n_lo) over eligible 4-locus faces",
+      "graphfla_value": null,
+      "outcome": "input_unavailable",
+      "reason": "No exact genotype\u2013fitness table for the O\u2019Maille landscape was obtained. The publisher supplement contains the M9 library table, but the PMC download returned proof-of-work HTML."
+    },
+    {
+      "metric": "classify_epistasis",
+      "paper_value": 0.24,
+      "locator": "Table 2, printed p.15, row I, column fr",
+      "quote": "0.240",
+      "printed_or_plotted": "printed",
+      "definition_match": "no",
+      "definition_quote": "f_r",
+      "definition_divergence": "GraphFLA classify_epistasis.reciprocal_sign is conditional on the three epistatic square classes and uses directed improving-edge motifs; paper f_r is a fraction of local Hamming-distance-2 motifs. Definitions are incompatible.",
+      "input": null,
+      "graphfla_call": "A.classify_epistasis(ls,sample_cut_prob=0,seed=0).reciprocal_sign",
+      "graphfla_value": null,
+      "outcome": "definition_incompatible",
+      "reason": "The GraphFLA value is retained as a diagnostic only; no denominator or graph preprocessing variant was tuned to create a match."
+    },
+    {
+      "metric": "classify_epistasis",
+      "paper_value": 0.292,
+      "locator": "Table 2, printed p.15, row I, column fs",
+      "quote": "0.292",
+      "printed_or_plotted": "printed",
+      "definition_match": "no",
+      "definition_quote": "f_s",
+      "definition_divergence": "GraphFLA classify_epistasis.sign is conditional on the three epistatic square classes and uses directed improving-edge motifs; paper f_s is a fraction of local Hamming-distance-2 motifs. Definitions are incompatible.",
+      "input": null,
+      "graphfla_call": "A.classify_epistasis(ls,sample_cut_prob=0,seed=0).sign",
+      "graphfla_value": null,
+      "outcome": "definition_incompatible",
+      "reason": "The GraphFLA value is retained as a diagnostic only; no denominator or graph preprocessing variant was tuned to create a match."
+    },
+    {
+      "metric": "r_s_ratio",
+      "paper_value": 1.199,
+      "locator": "Table 2, printed p.15, row J, column r_s_ratio",
+      "quote": "1.199",
+      "printed_or_plotted": "printed",
+      "definition_match": "unknown",
+      "definition_quote": "Eq. (3): f^fit(\u03c3\u20d7)=a^(0)+\u03a3_j a_j^(1)\u03c3_j; Eq. (4): s=(1/L)\u03a3_j|a_j^(1)|; Eq. (5): r=\u221a(2^(\u2212L)\u03a3_\u03c3\u20d7(f\u2212f^fit)\u00b2).",
+      "definition_divergence": "GraphFLA Boolean r_s_ratio uses 0/1 predictors, the mean absolute coefficient, and residual RMSE. For L>4 the subgraph-background convention is not explicit; the primary call uses all fixed-background faces as the literal \u201call subgraphs\u201d reading and a WT-only alternative is separately logged.",
+      "input": {
+        "path": null,
+        "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/instance/2664519/bin/NIHMS67307-supplement-1.pdf",
+        "source_item": "O\u2019Maille et al. (2008) Supplementary Table 3; product output/genotype data",
+        "preprocessing": "not run; requested file response was proof-of-work HTML, not source data"
+      },
+      "graphfla_call": "mean(A.r_s_ratio(ls)) over eligible 4-locus faces",
+      "graphfla_value": null,
+      "outcome": "input_unavailable",
+      "reason": "No exact genotype\u2013fitness table for the O\u2019Maille landscape was obtained. The publisher supplement contains the M9 library table, but the PMC download returned proof-of-work HTML."
+    },
+    {
+      "metric": "higher_order_epistasis",
+      "paper_value": 0.383,
+      "locator": "Table 2, printed p.15, row J, column F1",
+      "quote": "0.383",
+      "printed_or_plotted": "printed",
+      "definition_match": "unknown",
+      "definition_quote": "Eq. (7): F_n=\u03b2_n/(\u03a3_j \u03b2_j), \u03b2_n=\u03a3_j(b_j^(n))\u00b2.",
+      "definition_divergence": "On a complete, balanced 4-locus Boolean cube, GraphFLA order-1 polynomial OLS R\u00b2 equals the normalized first-order Fourier variance fraction F1.",
+      "input": {
+        "path": null,
+        "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/instance/2664519/bin/NIHMS67307-supplement-1.pdf",
+        "source_item": "O\u2019Maille et al. (2008) Supplementary Table 3; product output/genotype data",
+        "preprocessing": "not run; requested file response was proof-of-work HTML, not source data"
+      },
+      "graphfla_call": "mean(A.higher_order_epistasis(ls,order=1))",
+      "graphfla_value": null,
+      "outcome": "input_unavailable",
+      "reason": "No exact genotype\u2013fitness table for the O\u2019Maille landscape was obtained. The publisher supplement contains the M9 library table, but the PMC download returned proof-of-work HTML."
+    },
+    {
+      "metric": "higher_order_epistasis",
+      "paper_value": 0.372,
+      "locator": "Table 2, printed p.15, row J, column F2",
+      "quote": "0.372",
+      "printed_or_plotted": "printed",
+      "definition_match": "unknown",
+      "definition_quote": "Eq. (7): F_n=\u03b2_n/(\u03a3_j \u03b2_j), \u03b2_n=\u03a3_j(b_j^(n))\u00b2.",
+      "definition_divergence": "GraphFLA higher_order_epistasis(order=2) is cumulative; for a complete balanced 4-locus cube, F2 is reproduced as order-2 R\u00b2 minus order-1 R\u00b2.",
+      "input": {
+        "path": null,
+        "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/instance/2664519/bin/NIHMS67307-supplement-1.pdf",
+        "source_item": "O\u2019Maille et al. (2008) Supplementary Table 3; product output/genotype data",
+        "preprocessing": "not run; requested file response was proof-of-work HTML, not source data"
+      },
+      "graphfla_call": "mean(A.higher_order_epistasis(ls,order=2)-A.higher_order_epistasis(ls,order=1))",
+      "graphfla_value": null,
+      "outcome": "input_unavailable",
+      "reason": "No exact genotype\u2013fitness table for the O\u2019Maille landscape was obtained. The publisher supplement contains the M9 library table, but the PMC download returned proof-of-work HTML."
+    },
+    {
+      "metric": "higher_order_epistasis",
+      "paper_value": 0.617,
+      "locator": "Table 2, printed p.15, row J, column Fsum",
+      "quote": "0.617",
+      "printed_or_plotted": "printed",
+      "definition_match": "unknown",
+      "definition_quote": "Eq. (8): F_sum=\u03a3_(j=2)^L F_j.",
+      "definition_divergence": "For a complete balanced cube, F_sum is reproduced as 1 minus order-1 polynomial OLS R\u00b2; incomplete-state handling is a separate issue for H.",
+      "input": {
+        "path": null,
+        "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/instance/2664519/bin/NIHMS67307-supplement-1.pdf",
+        "source_item": "O\u2019Maille et al. (2008) Supplementary Table 3; product output/genotype data",
+        "preprocessing": "not run; requested file response was proof-of-work HTML, not source data"
+      },
+      "graphfla_call": "mean(1-A.higher_order_epistasis(ls,order=1))",
+      "graphfla_value": null,
+      "outcome": "input_unavailable",
+      "reason": "No exact genotype\u2013fitness table for the O\u2019Maille landscape was obtained. The publisher supplement contains the M9 library table, but the PMC download returned proof-of-work HTML."
+    },
+    {
+      "metric": "n_lo",
+      "paper_value": 2.48,
+      "locator": "Table 2, printed p.15, row J, column n_lo",
+      "quote": "2.48",
+      "printed_or_plotted": "printed",
+      "definition_match": "unknown",
+      "definition_quote": "\u201cA frequently used measure of landscape ruggedness is the number of local fitness maxima N_max.\u201d",
+      "definition_divergence": "Ties are NOT STATED IN PAPER. GraphFLA was called with epsilon=0, so a tied neighbor disqualifies a strict peak.",
+      "input": {
+        "path": null,
+        "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/instance/2664519/bin/NIHMS67307-supplement-1.pdf",
+        "source_item": "O\u2019Maille et al. (2008) Supplementary Table 3; product output/genotype data",
+        "preprocessing": "not run; requested file response was proof-of-work HTML, not source data"
+      },
+      "graphfla_call": "mean(ls.n_lo) over eligible 4-locus faces",
+      "graphfla_value": null,
+      "outcome": "input_unavailable",
+      "reason": "No exact genotype\u2013fitness table for the O\u2019Maille landscape was obtained. The publisher supplement contains the M9 library table, but the PMC download returned proof-of-work HTML."
+    },
+    {
+      "metric": "classify_epistasis",
+      "paper_value": 0.227,
+      "locator": "Table 2, printed p.15, row J, column fr",
+      "quote": "0.227",
+      "printed_or_plotted": "printed",
+      "definition_match": "no",
+      "definition_quote": "f_r",
+      "definition_divergence": "GraphFLA classify_epistasis.reciprocal_sign is conditional on the three epistatic square classes and uses directed improving-edge motifs; paper f_r is a fraction of local Hamming-distance-2 motifs. Definitions are incompatible.",
+      "input": null,
+      "graphfla_call": "A.classify_epistasis(ls,sample_cut_prob=0,seed=0).reciprocal_sign",
+      "graphfla_value": null,
+      "outcome": "definition_incompatible",
+      "reason": "The GraphFLA value is retained as a diagnostic only; no denominator or graph preprocessing variant was tuned to create a match."
+    },
+    {
+      "metric": "classify_epistasis",
+      "paper_value": 0.3,
+      "locator": "Table 2, printed p.15, row J, column fs",
+      "quote": "0.300",
+      "printed_or_plotted": "printed",
+      "definition_match": "no",
+      "definition_quote": "f_s",
+      "definition_divergence": "GraphFLA classify_epistasis.sign is conditional on the three epistatic square classes and uses directed improving-edge motifs; paper f_s is a fraction of local Hamming-distance-2 motifs. Definitions are incompatible.",
+      "input": null,
+      "graphfla_call": "A.classify_epistasis(ls,sample_cut_prob=0,seed=0).sign",
+      "graphfla_value": null,
+      "outcome": "definition_incompatible",
+      "reason": "The GraphFLA value is retained as a diagnostic only; no denominator or graph preprocessing variant was tuned to create a match."
+    }
+  ],
+  "blockers": [
+    {
+      "what": "O\u2019Maille 2008 Supplementary Tables 2\u20133 and genotype\u2013product source data for landscapes I/J",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/instance/2664519/bin/NIHMS67307-supplement-1.pdf",
+      "why": "The response was HTTP 200 but file inspection showed NCBI proof-of-work HTML titled \u201cPreparing to download ...\u201d; earlier candidate URLs returned 404. The requested PDF was not acquired.",
+      "needed_for": "I/J r/s_ratio, n_lo, F1, F2, Fsum inputs"
+    },
+    {
+      "what": "Lozovsky 2009 Table S1 resistance and Table S2 growth-rate vectors for landscapes C/D",
+      "url": "https://www.pnas.org/doi/suppl/10.1073/pnas.0905922106/suppl_file/pnas.0905922106.sapp.pdf",
+      "why": "Publisher supplement request returned HTTP 403. The local repository has a single 16-row Lozovsky fitness vector without a phenotype mapping to C versus D.",
+      "needed_for": "Resolve exact input for the separate Table2 C and D landscapes"
+    },
+    {
+      "what": "Hall 2010 phenotype/ploidy mapping for Table2 landscape G",
+      "url": "https://doi.org/10.1093/jhered/esq007",
+      "why": "The paper\u2019s Table1 says \u201cGrowth rate\u201d but does not identify haploid or diploid growth; GraphFLA has both 64-row candidates and both were run.",
+      "needed_for": "Choose the exact Hall2010 input vector for row G"
+    },
+    {
+      "what": "Lunzer 2005 curated genotype data file (Table1-only row; no Table2 target)",
+      "url": "https://datadryad.org/downloads/file_stream/53262",
+      "why": "Dryad metadata is available at DOI 10.5061/dryad.7nd70, but the file stream returned HTTP 403 and the API download endpoint returned HTTP 401.",
+      "needed_for": "Confirm whether the repository\u2019s 512-row Lunzer files derive from the 164 measured variants"
+    }
+  ],
+  "verdict": "targets_found",
+  "verdict_reason": "The printed Table2 supplies direct GraphFLA overlaps for r/s, local-optimum counts, normalized Fourier order fractions, and epistasis-class fractions. Chou A reproduces r/s, n_lo, F1, F2, and Fsum; some other values mismatch. Table2 rows C/D and I/J do not have confirmed exact inputs, Hall G is phenotype-ambiguous, and the classifier fractions are definition-incompatible.",
+  "lead_verification": "LEAD RE-VERIFICATION (supersedes an earlier, mistaken lead downgrade). CONFIRMED on Chou2011: n_lo 1 vs 1, r_s_ratio 0.121797044 vs 0.122, order-1 Fourier 0.989489354 vs 0.989, order-2 increment 0.009206 vs 0.009. ALSO CONFIRMED on the Weinreich landscape: averaging the ten four-locus faces of the five-locus landscape, which is the procedure the record states, reproduces 0.893835535 / 0.063756852 / 0.106164465 against the printed 0.894 / 0.064 / 0.106. An earlier lead check wrongly ran the whole five-locus landscape and got 0.918275, and wrongly accused the record of a column mis-mapping; the record correctly identifies the third column as Fsum, the total epistatic fraction 1 - F1, not an order-3 term. The agent's values stand."
+}

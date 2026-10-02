@@ -1,0 +1,108 @@
+{
+  "study_key": "PapkouRM23",
+  "dossier": "papers/Papkou2023",
+  "recorded_at": "2026-10-01T09:14:43Z",
+  "agent": "codex-gpt6",
+  "paper": {
+    "title": "A rugged yet easily navigable fitness landscape",
+    "doi": "10.1126/science.adh3860",
+    "year": 2023,
+    "bibliography_verified_against": "crossref",
+    "supplied_bibliography_errors": "corpus_registry.json records provided_author as Andrei Papkou and Aviv Regev and Joanna Masel. The Crossref DOI record instead lists Andrei Papkou, Lucia Garcia-Pastor, José Antonio Escudero, and Andreas Wagner."
+  },
+  "sources": [
+    {
+      "url": "https://api.crossref.org/works/10.1126%2Fscience.adh3860",
+      "http_status": 200,
+      "sha256": "cd77423598066009dc40253518933e8285ce9be1a0364f77bef7b097b93c78dd",
+      "saved_path": "papers/Papkou2023/sources/Papkou2023_crossref_adh3860_codex.json",
+      "what": "Crossref DOI metadata used to verify title, year, DOI, and author list."
+    },
+    {
+      "url": "file:///Users/arwen/Documents/GitHub/GraphFLA/_verify/papers/papkou_science_SM.txt",
+      "http_status": null,
+      "sha256": "abd424ad6fee922b61e34ccb961490e28f820cdc17a4057dc123dc783b293072",
+      "saved_path": "papers/Papkou2023/sources/Papkou2023_science_adh3860_SM_codex.txt",
+      "what": "Existing extracted SI text reused read-only and copied into the dossier; it is not a new HTTP download."
+    },
+    {
+      "url": "https://www.science.org/doi/suppl/10.1126/science.adh3860/suppl_file/science.adh3860_sm.pdf",
+      "http_status": 403,
+      "sha256": "a8dcb3644f15a0204540d77f056853a6b6915f1d6e8acde7fe8ada2a02bdbe50",
+      "saved_path": "papers/Papkou2023/sources/Papkou2023_science_adh3860_supplement_attempt_codex.html",
+      "what": "Failed publisher SI request; the saved response is an HTML security verification page, not the supplement PDF."
+    }
+  ],
+  "overlaps": [
+    {
+      "metric": "none",
+      "paper_value": 24542,
+      "locator": "Supplementary Fig. S22 caption, printed p.42; Supplementary Materials, Estimating global epistasis, printed p.19.",
+      "quote": "Panel (A) demonstrates a nonlinear function (blue line), mapping the sum of first-order predictors onto the fitness of 24,542 variants with the Asp27/Glu27/Cys27 genotype.",
+      "printed_or_plotted": "printed",
+      "definition_match": "no",
+      "definition_quote": "We detected the presence of global epistasis as a nonlinear dependence between fitness values and the sum of linear predictors of the first order (72). To this end, we estimated first-order additive effects of each allele for each position using a linear regression model. We sum the first order effects and mapped them to fitness values of corresponding variants via a nonlinear monotonically increasing function. In particular, we used I-splines basis functions (72).",
+      "definition_divergence": "The panel-A statistic is a fitted first-order I-spline mapping, for which the live GraphFLA metric inventory has no equivalent. The caption does not state the nucleotide-level codon filter: NOT STATED IN PAPER. As an input-side count check, the full RAW CSV contains 24,542 Asp/Glu/Cys-at-27 records, while the trusted processed component CSV contains 23,745; 797 group members are absent from that component input. The latter file-derived counts are NOT STATED IN PAPER.",
+      "input": {
+        "path": "data/BioSequence/Papkou2023_DHFR_RAW.csv",
+        "sha256": "fcd57493a10caecd4f12d510809fc96ece4f98b09ac5a9c5769d35179ccaaf05",
+        "n_rows": 261333,
+        "preprocessing": "Full raw sequence table; used only to count the panel-A genotype group. Row count is file-derived; NOT STATED IN PAPER. The genotype-group count matches the caption. The exact nucleotide triplet list is NOT STATED IN PAPER."
+      },
+      "graphfla_call": "none; no GraphFLA metric fits the paper's first-order I-spline mapping. Panel A curve not fitted.",
+      "graphfla_value": null,
+      "outcome": "definition_incompatible",
+      "reason": "The printed subset count was confirmed from the full raw sequence table, but the fitted curve was not reconstructed. The trusted processed component input has fewer group members, so it cannot reproduce the panel-A population by itself."
+    },
+    {
+      "metric": "n_edges",
+      "paper_value": 324044,
+      "locator": "Supplementary Materials, Determining nonfunctional mutations, printed pp.14–15; Analysis of the fitness landscape—Constructing a network of variants, printed p.15; Supplementary Fig. S22 caption, printed p.42.",
+      "quote": "This connected subgraph of variants is the fitness landscape we analyze. It contains 135,178 variants and 324,044 edges between them.",
+      "printed_or_plotted": "printed",
+      "definition_match": "yes",
+      "definition_quote": "Exclude pairs where both variants are nonfunctional (i.e., their fitness is below the cut-off)\nConstruct a network by connecting each pair of neighboring variants with a directed edge (arrow). Any one such edge corresponds to a fitness-increasing mutation, i.e., it points from the variant with lower fitness to the neighbor with higher fitness.",
+      "definition_divergence": "The paper defines each fitness-increasing mutation as one directed edge after excluding neighbor pairs where both variants are nonfunctional. The cutoff quote is Supplementary Materials, Determining nonfunctional mutations, printed pp.14–15: ‘This procedure resulted in a relative fitness cut-off of 𝑟 𝑖 − 𝑟 WT = -0.507774.’ Building the trusted processed input with that filter reproduces the same directed edge population. Independent direct one-nucleotide neighbor enumeration yielded the identical oriented pair set.",
+      "input": {
+        "path": "data/BioSequence/Papkou2023_DHFR.csv",
+        "sha256": "fca2fb47cad417a049698f43b20f90b320a4927418d502e527ad112ea46c82da",
+        "n_rows": 135178,
+        "preprocessing": "Existing audited processed component reused; build with epsilon=0, tau=-0.507774, filter_mode='both', verbose=False."
+      },
+      "graphfla_call": "DNALandscape().build_from_data(sequences, fitness, epsilon=0, tau=-0.507774, filter_mode='both', verbose=False); ls.graph.ecount()",
+      "graphfla_value": 324044,
+      "outcome": "reproduced_exact",
+      "reason": "The Fig. S22 N=324,044 mutation count equals the filtered GraphFLA directed edge count. The exact edge set also equals an independent enumeration of beneficial single-nucleotide pairs."
+    },
+    {
+      "metric": "diminishing_returns_index",
+      "paper_value": "NOT STATED IN PAPER",
+      "locator": "Supplementary Fig. S22 caption, printed p.42; Supplementary Materials, Estimating global epistasis, printed p.19.",
+      "quote": "The fitness gain of beneficial mutations (vertical axis) decreases in genetic backgrounds with higher fitness (horizontal axis). The blue line represents a linear regression model (fitness gain is the response variable and the fitness of the genetic background is the predictor variable). N=324,044 mutations. (B) shows a magnified part of (C).",
+      "printed_or_plotted": "plotted",
+      "definition_match": "no",
+      "definition_quote": "The blue line represents a linear regression model (fitness gain is the response variable and the fitness of the genetic background is the predictor variable). N=324,044 mutations.",
+      "definition_divergence": "Panel B/C is an edge-level ordinary least squares regression using one observation per beneficial mutation. GraphFLA's docstring states: ‘This function quantifies this trend by calculating the correlation between the fitness of each genotype (node) and the average fitness improvement provided by its direct successors (fitter one-mutant neighbors).’ Locator: graphfla/analysis/epistasis/idiosyncrasy.py, lines 263–270. Its signature is ‘method: Literal[\"pearson\", \"spearman\", \"regression\"] = \"pearson\"’ (lines 259–262). Thus the default DRI collapses multiple outgoing edges from one background into one node-level mean and weights source backgrounds once; the panel regression weights each mutation edge. The two outputs have different statistics and units. Their negative signs agree, but the DRI is not a faithful numeric summary of the plotted slope.",
+      "input": {
+        "path": "data/BioSequence/Papkou2023_DHFR.csv",
+        "sha256": "fca2fb47cad417a049698f43b20f90b320a4927418d502e527ad112ea46c82da",
+        "n_rows": 135178,
+        "preprocessing": "Existing audited processed component reused; build with epsilon=0, tau=-0.507774, filter_mode='both', verbose=False."
+      },
+      "graphfla_call": "A.diminishing_returns_index(ls), default method='pearson'; ls is the DNALandscape built from the processed input with epsilon=0, tau=-0.507774, filter_mode='both'.",
+      "graphfla_value": -0.3834071314404972,
+      "outcome": "definition_incompatible",
+      "reason": "The paper plots the regression but does not state its slope, intercept, or correlation: NOT STATED IN PAPER. Computed reconstruction, not a printed target; fitness gain was operationalized as fitter-endpoint fitness minus background fitness, and the paper's gain equation is NOT STATED IN PAPER. Panel B from direct neighbor enumeration: slope=-0.432920741883921, intercept=0.43477401242456315, correlation=-0.4764872794862937, n=324044. Panel C from the GraphFLA edge list: slope=-0.43292074188392254, intercept=0.4347740124245627, correlation=-0.47648727948629294, n=324044. B/C edge sets are identical. GraphFLA has 134664 unique source backgrounds with improving edges; this file-derived count is NOT STATED IN PAPER. GraphFLA DRI was computed successfully, but it uses a different aggregation and statistic."
+    }
+  ],
+  "blockers": [
+    {
+      "what": "Publisher Supplementary Materials PDF and any publisher-hosted source-data attachment",
+      "url": "https://www.science.org/doi/suppl/10.1126/science.adh3860/suppl_file/science.adh3860_sm.pdf",
+      "why": "The publisher returned HTTP 403 with an HTML security verification page. The existing extracted SI text from the shared GraphFLA verification tree was copied into the dossier and used for the quoted methods and figure-caption locators; the publisher PDF itself was not acquired.",
+      "needed_for": "A self-contained publisher SI PDF and any publisher-hosted source-data files."
+    }
+  ],
+  "verdict": "targets_found",
+  "verdict_reason": "The paper's printed 324,044 beneficial-mutation population is exactly the filtered directed edge set reproduced by GraphFLA. The full raw input confirms the Fig. S22A subset count, while the trusted processed component omits some members. Panels B/C coefficients are plot-only and were reconstructed from the input. GraphFLA's DRI is negative but is not the same statistic or weighting as the edge-level regression slope."
+}

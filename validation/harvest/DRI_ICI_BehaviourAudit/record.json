@@ -1,0 +1,982 @@
+{
+  "study_key": "DRI_ICI_BehaviourAudit",
+  "dossier": "papers/_dri_ici",
+  "recorded_at": "2026-10-01T08:48:27Z",
+  "agent": "codex-gpt-6",
+  "paper": {
+    "title": "A rugged yet easily navigable fitness landscape",
+    "doi": "10.1126/science.adh3860",
+    "year": 2023,
+    "bibliography_verified_against": "pubmed",
+    "supplied_bibliography_errors": "The supplied selected_references.bib entry and corpus registry provided_author field give Andrei Papkou, Aviv Regev, and Joanna Masel. PubMed verifies title/DOI and lists Andrei Papkou, Lucia Garcia-Pastor, José Antonio Escudero, and Andreas Wagner. The supplied author list is wrong; title and DOI are correct."
+  },
+  "scope_note": "Empirical implementation audit, not a promotion-ready benchmark or a reproduction of Fig. S22. The requested papers/_dri_ici dossier did not exist; the existing papers/Papkou2023 dossier was reused. No new source was downloaded. Fig. S22 values remain plotted-only and were not read. Paper-level n_configs and n_edges counts were checked because they overlap GraphFLA metrics.",
+  "sources": [
+    {
+      "url": "https://public.websites.umich.edu/~zhanglab/clubPaper/04_19_2024.pdf",
+      "http_status": null,
+      "sha256": "3296d3f4e8bb2f0aeabc7c2f0ae435699524b58df16bfa617d9e6acdd47f12edf",
+      "saved_path": "papers/Papkou2023/sources/Papkou2023_main_umich.pdf",
+      "what": "Existing main-paper PDF reused from papers/Papkou2023; not copied or downloaded in this task.",
+      "reused_from_existing_dossier": true
+    },
+    {
+      "url": "https://zenodo.org/api/records/8228920/files/code_analyses_figures.zip/content",
+      "http_status": null,
+      "sha256": "085217d669d4b03051a95b03aa74c7b2ea4ed929aece312088db2504a3d7eca4",
+      "saved_path": "papers/Papkou2023/sources/zenodo_8228920/00.make_graph_object/01.script.ipynb",
+      "what": "Existing author notebook reused for fitness floor and edge selection; not copied or downloaded.",
+      "reused_from_existing_dossier": true
+    },
+    {
+      "url": "https://zenodo.org/api/records/8228920/files/code_analyses_figures.zip/content",
+      "http_status": null,
+      "sha256": "0f900ff9b08cfb3b56d3bb8d9c5253d755fc71e28a0f877d82d226a273956a71",
+      "saved_path": "papers/Papkou2023/sources/zenodo_8228920/lib/import_data.R",
+      "what": "Existing author helper reused for exact threshold; not copied or downloaded.",
+      "reused_from_existing_dossier": true
+    }
+  ],
+  "overlaps": [
+    {
+      "metric": "n_configs",
+      "paper_value": 135178,
+      "locator": "Results, “The fitness landscape is rugged,” printed p. 2",
+      "quote": "Fifty-two percent of DHFR variants (135,178)",
+      "printed_or_plotted": "printed",
+      "definition_match": "yes",
+      "definition_quote": "“Fifty-two percent of DHFR variants (135,178) in this network are contained in the largest connected subgraph”; “Any two DHFR variants that differ at one nucleotide position are immediate (one-mutant) neighbors connected by an edge.”",
+      "definition_divergence": "The paper counts variants in the largest connected subgraph; the curated local CSV has one row per retained variant and GraphFLA retains all 135,178 input configurations.",
+      "input": {
+        "path": "data/BioSequence/Papkou2023_DHFR.csv",
+        "sha256": "fca2fb47cad417a049698f43b20f90b320a4927418d502e527ad112ea46c82da",
+        "n_rows": 135178,
+        "preprocessing": "Existing curated component CSV; no rows dropped."
+      },
+      "graphfla_call": "DNALandscape(maximize=True).build_from_data(X, fitness, epsilon=0, verbose=False); ls.graph.vcount()",
+      "graphfla_value": 135178,
+      "outcome": "reproduced_exact",
+      "reason": "The printed 135,178-variant component count equals the row count and GraphFLA graph node count."
+    },
+    {
+      "metric": "n_edges",
+      "paper_value": 324044,
+      "locator": "Results, “The fitness landscape is rugged,” printed p. 2",
+      "quote": "with as many functional-to-functional edges (50%, 161,015/324,044) as nonfunctional-to-functional edges.",
+      "printed_or_plotted": "printed",
+      "definition_match": "yes",
+      "definition_quote": "“Any two DHFR variants that differ at one nucleotide position are immediate (one-mutant) neighbors connected by an edge.” Methods, p. 6: “In general, we only considered fitness-increasing edges accessible to Darwinian evolution.” Author notebook cell 4 floors values and removes zero-difference pairs.",
+      "definition_divergence": "The analyzed graph excludes tied/nonfunctional-to-nonfunctional pairs after flooring. Raw fitness without the author floor gives a different edge count; the author-coded floor was used for this comparison.",
+      "input": {
+        "path": "data/BioSequence/Papkou2023_DHFR.csv",
+        "sha256": "fca2fb47cad417a049698f43b20f90b320a4927418d502e527ad112ea46c82da",
+        "n_rows": 135178,
+        "preprocessing": "Clip fitness to max(f,-0.507774) per existing author-repository code, then epsilon=0 makes tied pairs neutral."
+      },
+      "graphfla_call": "DNALandscape(maximize=True).build_from_data(X, f_clipped, epsilon=0, verbose=False); ls.graph.ecount()",
+      "graphfla_value": 324044,
+      "outcome": "reproduced_exact",
+      "reason": "The printed edge total is reproduced exactly under author-code floor preprocessing; no value was read from Fig. S22."
+    },
+    {
+      "metric": "diminishing_returns_index",
+      "paper_value": "NOT STATED IN PAPER",
+      "locator": "Discussion, printed p. 5; Fig. S22 is referenced but plotted; no fit coefficient transcribed",
+      "quote": "a reduction in fitness gains from beneficial mutations as evolving populations approach the maximum fitness (fig. S22).",
+      "printed_or_plotted": "plotted",
+      "definition_match": "no",
+      "definition_quote": "Papkou et al. p. 5: “a reduction in fitness gains from beneficial mutations as evolving populations approach the maximum fitness.” GraphFLA idiosyncrasy.py:268–270: “the average fitness improvement provided by its direct successors (fitter one-mutant neighbors). A significant negative correlation indicates diminishing returns.”",
+      "definition_divergence": "The paper describes mutation-level beneficial gains against background fitness. GraphFLA default DRI correlates raw node fitness with the node-equal mean gain over improving successors; regression fits those node-level means. This changes edge weighting and is not the pooled/per-mutation regression.",
+      "input": {
+        "path": "data/BioSequence/Papkou2023_DHFR.csv",
+        "sha256": "fca2fb47cad417a049698f43b20f90b320a4927418d502e527ad112ea46c82da",
+        "n_rows": 135178,
+        "preprocessing": "Author-code floor clip f to -0.507774 for figure-aligned variant; raw no-floor variant is also retained under behavior_audit."
+      },
+      "graphfla_call": "DNALandscape(maximize=True).build_from_data(X, f_clipped, epsilon=0, verbose=False); A.diminishing_returns_index(ls, method=\"pearson\") and method=\"regression\"",
+      "graphfla_value": -0.2578492271366022,
+      "additional_graphfla_values": {
+        "regression": -0.40650132525027216,
+        "spearman": -0.2527733710206171
+      },
+      "outcome": "definition_incompatible",
+      "reason": "Fig. S22 is plotted-only and supplies no numeric coefficient target under the harvest rule; the node-equal statistic is not the field’s pooled/per-mutation regression. The independent audit reports both methods on the same floor-clipped data."
+    }
+  ],
+  "blockers": [
+    {
+      "what": "Author notebook input distDF_fitness.rds / exact Fig. S22 edge table",
+      "url": null,
+      "why": "The existing author notebook reads ../in_data/distDF_fitness.rds, absent from the existing papers/Papkou2023 dossier. Its saved aligned-edge output is 324321, while the article prints 324044 and the local floor-clipped reconstruction gives 324044. Exact figure-level fitted coefficients are not independently verifiable here.",
+      "needed_for": "Exact Fig. S22 source-data slope/correlation; deliberately not reproduced because a sibling is handling that figure."
+    }
+  ],
+  "verdict": "definition_incompatible",
+  "verdict_reason": "The direct DRI overlap is Fig. S22, whose fit is plot-only and not transcribed. GraphFLA DRI/ICI are implemented consistently with their documented node-average graph calculations for maximize=True, but are not the pooled/per-mutation field regressions. The audit also found House-of-Cards, scale, and maximize-encoding sensitivity. Overall implementation verdict: wrong as a general representation-robust measure; on a fixed raw scale with maximize=True it is an accurate but differently weighted node-level correlation.",
+  "implementation_verdict": "wrong",
+  "behavior_audit": {
+    "implementation_quotes": {
+      "dri_definition": {
+        "quote": "The function quantifies this trend by calculating the correlation between the fitness of each genotype (node) and the average fitness improvement provided by its direct successors (fitter one-mutant neighbors). A significant negative correlation indicates diminishing returns.",
+        "locator": "GraphFLA graphfla/analysis/epistasis/idiosyncrasy.py:268–270"
+      },
+      "dri_implementation": {
+        "quote": "# Mean improvement toward the optimum across each node's improving out-edges.",
+        "locator": "GraphFLA graphfla/analysis/epistasis/idiosyncrasy.py:306; delta_fit out-strength divided by out-degree at lines 327–332."
+      },
+      "ici_definition": {
+        "quote": "A significant positive correlation indicates increasing cost.",
+        "locator": "GraphFLA graphfla/analysis/epistasis/idiosyncrasy.py:402–408"
+      },
+      "ici_implementation": {
+        "quote": "# Mirror of diminishing_returns_index over IN-edges: mean cost across each node's improving predecessors.",
+        "locator": "GraphFLA graphfla/analysis/epistasis/idiosyncrasy.py:444–448; in-strength divided by in-degree at lines 463–468."
+      },
+      "raw_predictor_for_maximize_flag": {
+        "quote": "node_fitnesses = fitness",
+        "locator": "GraphFLA graphfla/analysis/epistasis/idiosyncrasy.py:312–313 and 449–450."
+      },
+      "correlation_return": {
+        "quote": "correlation, _ = corr_func(node_fitnesses, avg_improvement)",
+        "locator": "GraphFLA graphfla/analysis/epistasis/idiosyncrasy.py:388–390; ICI equivalent at lines 512–514."
+      },
+      "dri_signature": {
+        "quote": "def diminishing_returns_index(\n    landscape,\n    method: Literal[\"pearson\", \"spearman\", \"regression\"] = \"pearson\",\n) -> float:",
+        "locator": "GraphFLA graphfla/analysis/epistasis/idiosyncrasy.py:259–262"
+      },
+      "ici_signature": {
+        "quote": "def increasing_costs_index(\n    landscape,\n    method: Literal[\"pearson\", \"spearman\", \"regression\"] = \"pearson\",\n) -> float:",
+        "locator": "GraphFLA graphfla/analysis/epistasis/idiosyncrasy.py:396–399"
+      }
+    },
+    "independent_analysis_method": "For each observed one-site pair, independently create one beneficial record oriented from lower to higher fitness, and regress positive delta on lower-endpoint fitness. For reverse deleterious costs, use the same positive magnitude against higher-endpoint fitness. Pool mutation rows and separately group by position and directed allele change for per-mutation slopes. Pooled analysis weights each mutation row; GraphFLA node means weight each genotype once.",
+    "synthetic_cases": [
+      {
+        "case": "strictly_additive",
+        "fitness_rule": "f(x)=sum(x_j) over all 5-bit genotypes; every 0->1 effect is exactly 1.",
+        "expected_under_standard_analysis": "Benefit slope 0 and reverse cost-magnitude slope 0 for every mutation; Pearson is undefined because each response is constant.",
+        "n_configs": 32,
+        "n_mutation_pairs": 80,
+        "pooled_beneficial_gain_vs_lower_background": {
+          "n": 80,
+          "slope": 0.0,
+          "pearson": null
+        },
+        "per_mutation_beneficial_slope_summary": {
+          "n_estimable": 5,
+          "mean": 0.0,
+          "median": 0.0,
+          "min": 0.0,
+          "max": 0.0,
+          "negative": 0,
+          "zero": 5,
+          "positive": 0
+        },
+        "pooled_reverse_deleterious_cost_vs_higher_background": {
+          "n": 80,
+          "slope": 0.0,
+          "pearson": null
+        },
+        "per_mutation_reverse_cost_slope_summary": {
+          "n_estimable": 5,
+          "mean": 0.0,
+          "median": 0.0,
+          "min": 0.0,
+          "max": 0.0,
+          "negative": 0,
+          "zero": 5,
+          "positive": 0
+        },
+        "graphfla": {
+          "dri_pearson": null,
+          "dri_regression": -6.593557537388059e-17,
+          "dri_spearman": null,
+          "ici_pearson": null,
+          "ici_regression": -6.181460191301306e-17,
+          "ici_spearman": null,
+          "graph_nodes": 32,
+          "graph_edges": 80
+        },
+        "result_locator": "record.json#/behavior_audit/synthetic_cases/strictly_additive",
+        "result_quote": "pooled_beneficial_slope=0.0; pooled_beneficial_pearson=NaN; mean_per_mutation_beneficial_slope=0.0; median_per_mutation_beneficial_slope=0.0; pooled_reverse_cost_slope=0.0; pooled_reverse_cost_pearson=NaN; GraphFLA_DRI_pearson=NaN; GraphFLA_DRI_regression=-6.593557537388059e-17; GraphFLA_ICI_pearson=NaN; GraphFLA_ICI_regression=-6.181460191301306e-17",
+        "expected_locator": "record.json#/behavior_audit/synthetic_cases/strictly_additive/expected_under_standard_analysis"
+      },
+      {
+        "case": "explicit_diminishing_returns",
+        "fitness_rule": "f(x)=log(1+sum(x_j)) over all 5-bit genotypes.",
+        "expected_under_standard_analysis": "Beneficial gains decline with background fitness (negative slope/correlation). Reverse deleterious cost magnitudes also decline with higher-fitness source (negative ICI; not increasing costs).",
+        "n_configs": 32,
+        "n_mutation_pairs": 80,
+        "pooled_beneficial_gain_vs_lower_background": {
+          "n": 80,
+          "slope": -0.3061464179533985,
+          "pearson": -0.983582779138306
+        },
+        "per_mutation_beneficial_slope_summary": {
+          "n_estimable": 5,
+          "mean": -0.30614641795340125,
+          "median": -0.30614641795340125,
+          "min": -0.30614641795340125,
+          "max": -0.30614641795340125,
+          "negative": 5,
+          "zero": 0,
+          "positive": 0
+        },
+        "pooled_reverse_deleterious_cost_vs_higher_background": {
+          "n": 80,
+          "slope": -0.43184315699848147,
+          "pearson": -0.9658150516848337
+        },
+        "per_mutation_reverse_cost_slope_summary": {
+          "n_estimable": 5,
+          "mean": -0.4318431569984685,
+          "median": -0.4318431569984685,
+          "min": -0.4318431569984685,
+          "max": -0.4318431569984685,
+          "negative": 5,
+          "zero": 0,
+          "positive": 0
+        },
+        "graphfla": {
+          "dri_pearson": -0.9812529237559038,
+          "dri_regression": -0.28215859389608455,
+          "dri_spearman": -1.0,
+          "ici_pearson": -0.9725997186935738,
+          "ici_regression": -0.49315453482272475,
+          "ici_spearman": -1.0,
+          "graph_nodes": 32,
+          "graph_edges": 80
+        },
+        "result_locator": "record.json#/behavior_audit/synthetic_cases/explicit_diminishing_returns",
+        "result_quote": "pooled_beneficial_slope=-0.3061464179533985; pooled_beneficial_pearson=-0.983582779138306; mean_per_mutation_beneficial_slope=-0.30614641795340125; median_per_mutation_beneficial_slope=-0.30614641795340125; pooled_reverse_cost_slope=-0.43184315699848147; pooled_reverse_cost_pearson=-0.9658150516848337; GraphFLA_DRI_pearson=-0.9812529237559038; GraphFLA_DRI_regression=-0.28215859389608455; GraphFLA_ICI_pearson=-0.9725997186935738; GraphFLA_ICI_regression=-0.49315453482272475",
+        "expected_locator": "record.json#/behavior_audit/synthetic_cases/explicit_diminishing_returns/expected_under_standard_analysis"
+      },
+      {
+        "case": "explicit_increasing_costs",
+        "fitness_rule": "f(x)=(sum(x_j))^2 over all 5-bit genotypes.",
+        "expected_under_standard_analysis": "Beneficial gains rise with source fitness (positive DRI, hence no diminishing returns); reverse deleterious cost magnitudes rise with higher-fitness source (positive ICI).",
+        "n_configs": 32,
+        "n_mutation_pairs": 80,
+        "pooled_beneficial_gain_vs_lower_background": {
+          "n": 80,
+          "slope": 0.45714285714285713,
+          "pearson": 0.9561828874675149
+        },
+        "per_mutation_beneficial_slope_summary": {
+          "n_estimable": 5,
+          "mean": 0.45714285714285713,
+          "median": 0.45714285714285713,
+          "min": 0.45714285714285713,
+          "max": 0.45714285714285713,
+          "negative": 0,
+          "zero": 0,
+          "positive": 5
+        },
+        "pooled_reverse_deleterious_cost_vs_higher_background": {
+          "n": 80,
+          "slope": 0.32,
+          "pearson": 0.9797958971132712
+        },
+        "per_mutation_reverse_cost_slope_summary": {
+          "n_estimable": 5,
+          "mean": 0.32,
+          "median": 0.32,
+          "min": 0.32,
+          "max": 0.32,
+          "negative": 0,
+          "zero": 0,
+          "positive": 5
+        },
+        "graphfla": {
+          "dri_pearson": 0.9672388203287415,
+          "dri_regression": 0.4054054054054054,
+          "dri_spearman": 1.0,
+          "ici_pearson": 0.9756156783416059,
+          "ici_regression": 0.35353535353535354,
+          "ici_spearman": 1.0,
+          "graph_nodes": 32,
+          "graph_edges": 80
+        },
+        "result_locator": "record.json#/behavior_audit/synthetic_cases/explicit_increasing_costs",
+        "result_quote": "pooled_beneficial_slope=0.45714285714285713; pooled_beneficial_pearson=0.9561828874675149; mean_per_mutation_beneficial_slope=0.45714285714285713; median_per_mutation_beneficial_slope=0.45714285714285713; pooled_reverse_cost_slope=0.32; pooled_reverse_cost_pearson=0.9797958971132712; GraphFLA_DRI_pearson=0.9672388203287415; GraphFLA_DRI_regression=0.4054054054054054; GraphFLA_ICI_pearson=0.9756156783416059; GraphFLA_ICI_regression=0.35353535353535354",
+        "expected_locator": "record.json#/behavior_audit/synthetic_cases/explicit_increasing_costs/expected_under_standard_analysis"
+      },
+      {
+        "case": "pure_house_of_cards_fixed_seed",
+        "fitness_rule": "Independent N(0,1) fitness assigned to each of 32 genotypes; numpy default_rng seed 20261001.",
+        "expected_under_standard_analysis": "The construction has no shared g(sum(x)) rule. Zero structural trend is the intended null, but raw delta-vs-parent-fitness regression is not expected to be zero: delta contains minus parent fitness, and benefit-only analysis conditions on positive delta. See the 256-landscape sweep.",
+        "n_configs": 32,
+        "n_mutation_pairs": 80,
+        "pooled_beneficial_gain_vs_lower_background": {
+          "n": 80,
+          "slope": -0.5644369872368947,
+          "pearson": -0.5282189352168338
+        },
+        "per_mutation_beneficial_slope_summary": {
+          "n_estimable": 10,
+          "mean": -0.5443537680287915,
+          "median": -0.5708499587132403,
+          "min": -1.1340768900365517,
+          "max": -0.1368594647586183,
+          "negative": 10,
+          "zero": 0,
+          "positive": 0
+        },
+        "pooled_reverse_deleterious_cost_vs_higher_background": {
+          "n": 80,
+          "slope": 0.5700097047862809,
+          "pearson": 0.536879621847493
+        },
+        "per_mutation_reverse_cost_slope_summary": {
+          "n_estimable": 10,
+          "mean": 0.5519877750464168,
+          "median": 0.533459568384413,
+          "min": 0.126103097742888,
+          "max": 1.1725648297377418,
+          "negative": 0,
+          "zero": 0,
+          "positive": 10
+        },
+        "graphfla": {
+          "dri_pearson": -0.8662471449709506,
+          "dri_regression": -0.5084612894819515,
+          "dri_spearman": -0.8661538461538462,
+          "ici_pearson": 0.7899604715030412,
+          "ici_regression": 0.5796299490966677,
+          "ici_spearman": 0.818119658119658,
+          "graph_nodes": 32,
+          "graph_edges": 80
+        },
+        "result_locator": "record.json#/behavior_audit/synthetic_cases/pure_house_of_cards_fixed_seed",
+        "result_quote": "pooled_beneficial_slope=-0.5644369872368947; pooled_beneficial_pearson=-0.5282189352168338; mean_per_mutation_beneficial_slope=-0.5443537680287915; median_per_mutation_beneficial_slope=-0.5708499587132403; pooled_reverse_cost_slope=0.5700097047862809; pooled_reverse_cost_pearson=0.536879621847493; GraphFLA_DRI_pearson=-0.8662471449709506; GraphFLA_DRI_regression=-0.5084612894819515; GraphFLA_ICI_pearson=0.7899604715030412; GraphFLA_ICI_regression=0.5796299490966677",
+        "pooled_all_directed_signed_effect_vs_parent_background": {
+          "n": 160,
+          "slope": -1.1571241600729925,
+          "pearson": -0.7606326840443397
+        },
+        "per_mutation_all_directed_slope_summary": {
+          "n_estimable": 10,
+          "mean": -1.1507715070547855,
+          "median": -1.242685327674654,
+          "min": -1.5051901558934557,
+          "max": -0.6014647657774387,
+          "negative": 10,
+          "zero": 0,
+          "positive": 0
+        },
+        "expected_locator": "record.json#/behavior_audit/synthetic_cases/pure_house_of_cards_fixed_seed/expected_under_standard_analysis"
+      },
+      {
+        "case": "beneficial_trend_only_reverse_costs_flat",
+        "fitness_rule": "Four disconnected 0->1 edges share one mutation type. Lower fitness [6,7,6,3], upper fitness [7,9,9,7], gains [1,2,3,4].",
+        "expected_under_standard_analysis": "Beneficial gain slope is negative; reverse cost magnitude is exactly uncorrelated with higher-fitness background (slope and Pearson 0).",
+        "n_configs": 8,
+        "n_mutation_pairs": 4,
+        "pooled_beneficial_gain_vs_lower_background": {
+          "n": 4,
+          "slope": -0.5555555555555556,
+          "pearson": -0.7453559924999299
+        },
+        "per_mutation_beneficial_slope_summary": {
+          "n_estimable": 1,
+          "mean": -0.5555555555555556,
+          "median": -0.5555555555555556,
+          "min": -0.5555555555555556,
+          "max": -0.5555555555555556,
+          "negative": 1,
+          "zero": 0,
+          "positive": 0
+        },
+        "pooled_reverse_deleterious_cost_vs_higher_background": {
+          "n": 4,
+          "slope": 0.0,
+          "pearson": 0.0
+        },
+        "per_mutation_reverse_cost_slope_summary": {
+          "n_estimable": 1,
+          "mean": 0.0,
+          "median": 0.0,
+          "min": 0.0,
+          "max": 0.0,
+          "negative": 0,
+          "zero": 1,
+          "positive": 0
+        },
+        "graphfla": {
+          "dri_pearson": -0.7453559924999299,
+          "dri_regression": -0.5555555555555555,
+          "dri_spearman": -0.632455532033676,
+          "ici_pearson": 0.0,
+          "ici_regression": 3.885780586188049e-16,
+          "ici_spearman": 0.0,
+          "graph_nodes": 8,
+          "graph_edges": 4
+        },
+        "result_locator": "record.json#/behavior_audit/synthetic_cases/beneficial_trend_only_reverse_costs_flat",
+        "result_quote": "pooled_beneficial_slope=-0.5555555555555556; pooled_beneficial_pearson=-0.7453559924999299; mean_per_mutation_beneficial_slope=-0.5555555555555556; median_per_mutation_beneficial_slope=-0.5555555555555556; pooled_reverse_cost_slope=0.0; pooled_reverse_cost_pearson=0.0; GraphFLA_DRI_pearson=-0.7453559924999299; GraphFLA_DRI_regression=-0.5555555555555555; GraphFLA_ICI_pearson=0.0; GraphFLA_ICI_regression=3.885780586188049e-16",
+        "expected_locator": "record.json#/behavior_audit/synthetic_cases/beneficial_trend_only_reverse_costs_flat/expected_under_standard_analysis"
+      }
+    ],
+    "house_of_cards_ensemble": {
+      "replicates": 256,
+      "seeds": "numpy default_rng(0), sequential seeds 0..255; 5-locus Boolean HoC fitness iid Normal(0,1)",
+      "summary": {
+        "all_signed_slope": {
+          "n": 256,
+          "mean": -1.0255998070812087,
+          "sd": 0.10630550384441827,
+          "median": -1.0407345969984105,
+          "q05": -1.1691593101338098,
+          "q95": -0.8573780657018569,
+          "negative_n": 256,
+          "zero_n": 0,
+          "positive_n": 0
+        },
+        "all_signed_corr": {
+          "n": 256,
+          "mean": -0.7151217715148849,
+          "sd": 0.03749998139504948,
+          "median": -0.7213648737264435,
+          "q05": -0.7645780838999436,
+          "q95": -0.6547429964310031,
+          "negative_n": 256,
+          "zero_n": 0,
+          "positive_n": 0
+        },
+        "benefit_edge_slope": {
+          "n": 256,
+          "mean": -0.5230639180709886,
+          "sd": 0.12733424036579152,
+          "median": -0.53091349867798,
+          "q05": -0.7194228131242206,
+          "q95": -0.3167732800429671,
+          "negative_n": 256,
+          "zero_n": 0,
+          "positive_n": 0
+        },
+        "benefit_edge_corr": {
+          "n": 256,
+          "mean": -0.505031797274599,
+          "sd": 0.1385209355110505,
+          "median": -0.5231811776405089,
+          "q05": -0.6989432072548364,
+          "q95": -0.26346677134765967,
+          "negative_n": 256,
+          "zero_n": 0,
+          "positive_n": 0
+        },
+        "cost_edge_slope": {
+          "n": 256,
+          "mean": 0.526089296524225,
+          "sd": 0.1372171956328262,
+          "median": 0.5288707956124867,
+          "q05": 0.27768304961534185,
+          "q95": 0.7346083901365291,
+          "negative_n": 0,
+          "zero_n": 0,
+          "positive_n": 256
+        },
+        "cost_edge_corr": {
+          "n": 256,
+          "mean": 0.5112296038772327,
+          "sd": 0.14586412356770165,
+          "median": 0.5148656480517305,
+          "q05": 0.2483129366302957,
+          "q95": 0.7329563363561039,
+          "negative_n": 0,
+          "zero_n": 0,
+          "positive_n": 256
+        },
+        "dri": {
+          "n": 256,
+          "mean": -0.7059353696442531,
+          "sd": 0.15654273427683718,
+          "median": -0.7475122869744015,
+          "q05": -0.9032277880951703,
+          "q95": -0.3890487171741403,
+          "negative_n": 256,
+          "zero_n": 0,
+          "positive_n": 0
+        },
+        "dri_slope": {
+          "n": 256,
+          "mean": -0.47854331071631107,
+          "sd": 0.12268005911648264,
+          "median": -0.4878255480163777,
+          "q05": -0.6469897379839814,
+          "q95": -0.2721536101759009,
+          "negative_n": 256,
+          "zero_n": 0,
+          "positive_n": 0
+        },
+        "ici": {
+          "n": 256,
+          "mean": 0.7042065979393379,
+          "sd": 0.16671742048407165,
+          "median": 0.7347829673771928,
+          "q05": 0.37125106722919365,
+          "q95": 0.9003881933085446,
+          "negative_n": 1,
+          "zero_n": 0,
+          "positive_n": 255
+        },
+        "ici_slope": {
+          "n": 256,
+          "mean": 0.47996443332819505,
+          "sd": 0.13459529419219415,
+          "median": 0.48339700993061346,
+          "q05": 0.25040238628759837,
+          "q95": 0.6698234228164641,
+          "negative_n": 1,
+          "zero_n": 0,
+          "positive_n": 255
+        }
+      },
+      "result_quote": "all_signed_slope_mean=-1.0255998070812087; all_signed_corr_mean=-0.7151217715148849; benefit_edge_slope_mean=-0.5230639180709886; benefit_edge_corr_mean=-0.505031797274599; dri_mean=-0.7059353696442531; dri_negative=256/256; ici_mean=0.7042065979393379; ici_positive=255/256"
+    },
+    "robustness": {
+      "reference_offsets": [
+        {
+          "reference": "reference_index_0",
+          "reference_fitness": 0.0,
+          "graphfla": {
+            "dri_pearson": -0.9812529237559038,
+            "dri_regression": -0.28215859389608455,
+            "dri_spearman": -1.0,
+            "ici_pearson": -0.9725997186935738,
+            "ici_regression": -0.49315453482272475,
+            "ici_spearman": -1.0,
+            "graph_nodes": 32,
+            "graph_edges": 80
+          }
+        },
+        {
+          "reference": "reference_index_31",
+          "reference_fitness": 1.791759469228055,
+          "graphfla": {
+            "dri_pearson": -0.9812529237559037,
+            "dri_regression": -0.2821585938960843,
+            "dri_spearman": -1.0,
+            "ici_pearson": -0.9725997186935736,
+            "ici_regression": -0.49315453482272475,
+            "ici_spearman": -1.0,
+            "graph_nodes": 32,
+            "graph_edges": 80
+          }
+        }
+      ],
+      "maximize_true_fitness_vs_minimize_negative_fitness": {
+        "maximize_true": {
+          "dri_pearson": -0.9812529237559038,
+          "dri_regression": -0.28215859389608455,
+          "dri_spearman": -1.0,
+          "ici_pearson": -0.9725997186935738,
+          "ici_regression": -0.49315453482272475,
+          "ici_spearman": -1.0,
+          "graph_nodes": 32,
+          "graph_edges": 80
+        },
+        "minimize_negated": {
+          "dri_pearson": 0.9812529237559038,
+          "dri_regression": 0.28215859389608455,
+          "dri_spearman": 1.0,
+          "ici_pearson": 0.9725997186935738,
+          "ici_regression": 0.49315453482272475,
+          "ici_spearman": 1.0,
+          "graph_nodes": 32,
+          "graph_edges": 80
+        },
+        "interpretation": "Equivalent ordering after negating the objective reverses Pearson, Spearman, and regression signs because code correlates raw node_fitnesses=fitness."
+      },
+      "monotone_rescaling_of_concave_fitness": [
+        {
+          "transform": "identity",
+          "fitness_min": 0.0,
+          "fitness_max": 1.791759469228055,
+          "standard_beneficial": {
+            "n": 80,
+            "slope": -0.3061464179533985,
+            "pearson": -0.983582779138306
+          },
+          "standard_reverse_cost": {
+            "n": 80,
+            "slope": -0.43184315699848147,
+            "pearson": -0.9658150516848337
+          },
+          "graphfla": {
+            "dri_pearson": -0.9812529237559038,
+            "dri_regression": -0.28215859389608455,
+            "dri_spearman": -1.0,
+            "ici_pearson": -0.9725997186935738,
+            "ici_regression": -0.49315453482272475,
+            "ici_spearman": -1.0,
+            "graph_nodes": 32,
+            "graph_edges": 80
+          },
+          "result_locator": "#/behavior_audit/robustness/monotone_rescaling_of_concave_fitness/identity",
+          "result_quote": "transform=identity; DRI_pearson=-0.9812529237559038; DRI_regression=-0.28215859389608455; ICI_pearson=-0.9725997186935738; ICI_regression=-0.49315453482272475"
+        },
+        {
+          "transform": "square_monotone_on_nonnegative",
+          "fitness_min": 0.0,
+          "fitness_max": 3.210401995568401,
+          "standard_beneficial": {
+            "n": 80,
+            "slope": -0.0014343253274032679,
+            "pearson": -0.016146916133415467
+          },
+          "standard_reverse_cost": {
+            "n": 80,
+            "slope": 0.0064241236596782455,
+            "pearson": 0.07250093574468187
+          },
+          "graphfla": {
+            "dri_pearson": -0.3617951220014535,
+            "dri_regression": -0.025878855071060334,
+            "dri_spearman": -0.7973856209150327,
+            "ici_pearson": 0.4577075189225712,
+            "ici_regression": 0.05479124293916651,
+            "ici_spearman": -0.12200435729847497,
+            "graph_nodes": 32,
+            "graph_edges": 80
+          },
+          "result_locator": "#/behavior_audit/robustness/monotone_rescaling_of_concave_fitness/square_monotone_on_nonnegative",
+          "result_quote": "transform=square_monotone_on_nonnegative; DRI_pearson=-0.3617951220014535; DRI_regression=-0.025878855071060334; ICI_pearson=0.4577075189225712; ICI_regression=0.05479124293916651"
+        },
+        {
+          "transform": "exp_monotone",
+          "fitness_min": 1.0,
+          "fitness_max": 6.0,
+          "standard_beneficial": {
+            "n": 80,
+            "slope": 0.0,
+            "pearson": null
+          },
+          "standard_reverse_cost": {
+            "n": 80,
+            "slope": 0.0,
+            "pearson": null
+          },
+          "graphfla": {
+            "dri_pearson": 0.027064987134842955,
+            "dri_regression": -4.665252974567023e-17,
+            "dri_spearman": -0.11546840958605666,
+            "ici_pearson": -0.5037643095584788,
+            "ici_regression": -2.22755322209056e-16,
+            "ici_spearman": -0.6339869281045752,
+            "graph_nodes": 32,
+            "graph_edges": 80
+          },
+          "result_locator": "#/behavior_audit/robustness/monotone_rescaling_of_concave_fitness/exp_monotone",
+          "result_quote": "transform=exp_monotone; DRI_pearson=0.027064987134842955; DRI_regression=-4.665252974567023e-17; ICI_pearson=-0.5037643095584788; ICI_regression=-2.22755322209056e-16"
+        },
+        {
+          "transform": "exp_5x",
+          "fitness_min": 1.0,
+          "fitness_max": 7776.0,
+          "standard_beneficial": {
+            "n": 80,
+            "slope": 1.4845214897994776,
+            "pearson": 0.9859561971488131
+          },
+          "standard_reverse_cost": {
+            "n": 80,
+            "slope": 0.6015889287614281,
+            "pearson": 0.9977612817564938
+          },
+          "graphfla": {
+            "dri_pearson": 0.9911287580307535,
+            "dri_regression": 1.400448502365419,
+            "dri_spearman": 1.0,
+            "ici_pearson": 0.9972303439796026,
+            "ici_regression": 0.6154081626899196,
+            "ici_spearman": 1.0,
+            "graph_nodes": 32,
+            "graph_edges": 80
+          },
+          "result_locator": "#/behavior_audit/robustness/monotone_rescaling_of_concave_fitness/exp_5x",
+          "result_quote": "transform=exp_5x; DRI_pearson=0.9911287580307535; DRI_regression=1.400448502365419; ICI_pearson=0.9972303439796026; ICI_regression=0.6154081626899196"
+        }
+      ],
+      "beneficial_mutation_selection": "DRI uses improving outgoing edges only. ICI uses those same edges at their fitter endpoints as reverse-cost magnitudes; it is not an independently enumerated set of deleterious edges. The split synthetic case directly tests this pairing."
+    },
+    "real_landscape_comparisons": [
+      {
+        "case": "Papkou2023_DHFR",
+        "input_path": "data/BioSequence/Papkou2023_DHFR.csv",
+        "input_sha256": "fca2fb47cad417a049698f43b20f90b320a4927418d502e527ad112ea46c82da",
+        "raw_n_rows": 135178,
+        "used_n_rows": 135178,
+        "fitness_missing_rows_dropped": 0,
+        "preprocessing": "No fitness transform; component CSV fitness used as stored. Audit variant, not author analysis.",
+        "n_hamming1_pairs": 1490486,
+        "n_beneficial_edges": 1490486,
+        "n_neutral_pairs": 0,
+        "pooled_beneficial_gain_vs_lower_background": {
+          "n": 1490486,
+          "slope": 0.070009252095349,
+          "pearson": 0.07604039429524366
+        },
+        "per_mutation_beneficial_slope_summary": {
+          "n_estimable": 108,
+          "mean": 0.08667612453367196,
+          "median": 0.08372335217825017,
+          "min": -0.606403400009537,
+          "max": 1.5066326361718823,
+          "negative": 23,
+          "zero": 0,
+          "positive": 85
+        },
+        "pooled_reverse_deleterious_cost_vs_higher_background": {
+          "n": 1490486,
+          "slope": 0.4616791598337813,
+          "pearson": 0.7069722429393024
+        },
+        "per_mutation_reverse_cost_slope_summary": {
+          "n_estimable": 108,
+          "mean": 0.34674145167520676,
+          "median": 0.2549563700373866,
+          "min": 0.0038499478701807133,
+          "max": 0.9884262268792503,
+          "negative": 0,
+          "zero": 0,
+          "positive": 108
+        },
+        "graphfla": {
+          "dri_pearson": 0.06480988633081898,
+          "dri_regression": 0.03216503608187424,
+          "dri_spearman": 0.24708052461447833,
+          "ici_pearson": 0.97133369840374,
+          "ici_regression": 0.4690210344391862,
+          "ici_spearman": 0.778639908979613,
+          "graph_nodes": 135178,
+          "graph_edges": 1490486
+        },
+        "graph_edge_count_minus_independent_improving_count": 0,
+        "result_locator": "record.json#/behavior_audit/real_landscape_comparisons/Papkou2023_DHFR",
+        "result_quote": "pooled_beneficial_slope=0.070009252095349; pooled_beneficial_pearson=0.07604039429524366; mean_per_mutation_beneficial_slope=0.08667612453367196; median_per_mutation_beneficial_slope=0.08372335217825017; pooled_reverse_cost_slope=0.4616791598337813; pooled_reverse_cost_pearson=0.7069722429393024; GraphFLA_DRI_pearson=0.06480988633081898; GraphFLA_DRI_regression=0.03216503608187424; GraphFLA_ICI_pearson=0.97133369840374; GraphFLA_ICI_regression=0.4690210344391862; beneficial_edges=1490486; GraphFLA_graph_edges=1490486"
+      },
+      {
+        "case": "Papkou2023_DHFR_author_floor_clipped",
+        "input_path": "data/BioSequence/Papkou2023_DHFR.csv",
+        "input_sha256": "fca2fb47cad417a049698f43b20f90b320a4927418d502e527ad112ea46c82da",
+        "raw_n_rows": 135178,
+        "used_n_rows": 135178,
+        "fitness_missing_rows_dropped": 0,
+        "preprocessing": "Clip fitness to max(f,-0.507774) per author repository code; epsilon=0 then removes ties.",
+        "n_hamming1_pairs": 1490486,
+        "n_beneficial_edges": 324044,
+        "n_neutral_pairs": 1166442,
+        "pooled_beneficial_gain_vs_lower_background": {
+          "n": 324044,
+          "slope": -0.31403398776700997,
+          "pearson": -0.32902899010485287
+        },
+        "per_mutation_beneficial_slope_summary": {
+          "n_estimable": 107,
+          "mean": 0.07449802758838332,
+          "median": -0.019579525601914907,
+          "min": -7.305437389133894,
+          "max": 7.1784575805122035,
+          "negative": 64,
+          "zero": 0,
+          "positive": 43
+        },
+        "pooled_reverse_deleterious_cost_vs_higher_background": {
+          "n": 324044,
+          "slope": 0.46528463070615134,
+          "pearson": 0.5521615778243071
+        },
+        "per_mutation_reverse_cost_slope_summary": {
+          "n_estimable": 108,
+          "mean": 0.3934911782162742,
+          "median": 0.2694427544506922,
+          "min": 0.00805812373417849,
+          "max": 1.0002380890480802,
+          "negative": 0,
+          "zero": 0,
+          "positive": 108
+        },
+        "graphfla": {
+          "dri_pearson": -0.2578492271366022,
+          "dri_regression": -0.40650132525027216,
+          "dri_spearman": -0.2527733710206171,
+          "ici_pearson": 0.9459258529461695,
+          "ici_regression": 0.4760974581378907,
+          "ici_spearman": 0.9516363160133371,
+          "graph_nodes": 135178,
+          "graph_edges": 324044
+        },
+        "graph_edge_count_minus_independent_improving_count": 0,
+        "result_locator": "record.json#/behavior_audit/real_landscape_comparisons/Papkou2023_DHFR_author_floor_clipped",
+        "result_quote": "pooled_beneficial_slope=-0.31403398776700997; pooled_beneficial_pearson=-0.32902899010485287; mean_per_mutation_beneficial_slope=0.07449802758838332; median_per_mutation_beneficial_slope=-0.019579525601914907; pooled_reverse_cost_slope=0.46528463070615134; pooled_reverse_cost_pearson=0.5521615778243071; GraphFLA_DRI_pearson=-0.2578492271366022; GraphFLA_DRI_regression=-0.40650132525027216; GraphFLA_ICI_pearson=0.9459258529461695; GraphFLA_ICI_regression=0.4760974581378907; beneficial_edges=324044; GraphFLA_graph_edges=324044"
+      },
+      {
+        "case": "Bendixsen2019_hdv",
+        "input_path": "data/BioSequence/Bendixsen2019_hdv.csv",
+        "input_sha256": "2f79bf6de119d46bb77b81b57713d1bb5891b0e9ad9d8048f997ca31665cfd95",
+        "raw_n_rows": 16384,
+        "used_n_rows": 16384,
+        "fitness_missing_rows_dropped": 0,
+        "preprocessing": "No preprocessing; fitness column used as stored.",
+        "n_hamming1_pairs": 114688,
+        "n_beneficial_edges": 85366,
+        "n_neutral_pairs": 29322,
+        "pooled_beneficial_gain_vs_lower_background": {
+          "n": 85366,
+          "slope": 0.1826463916726223,
+          "pearson": 0.08554058330048839
+        },
+        "per_mutation_beneficial_slope_summary": {
+          "n_estimable": 28,
+          "mean": -0.04318724862004364,
+          "median": 0.03463074167345044,
+          "min": -1.0021933160363357,
+          "max": 1.9950943910095311,
+          "negative": 13,
+          "zero": 0,
+          "positive": 15
+        },
+        "pooled_reverse_deleterious_cost_vs_higher_background": {
+          "n": 85366,
+          "slope": 0.8003763015589137,
+          "pearson": 0.9123820625130835
+        },
+        "per_mutation_reverse_cost_slope_summary": {
+          "n_estimable": 28,
+          "mean": 0.7344798786283305,
+          "median": 0.8619021901931783,
+          "min": 0.25690697155798176,
+          "max": 1.0000365565163787,
+          "negative": 0,
+          "zero": 0,
+          "positive": 28
+        },
+        "graphfla": {
+          "dri_pearson": 0.19171038315656858,
+          "dri_regression": 0.25306674273100344,
+          "dri_spearman": -0.5537058442614368,
+          "ici_pearson": 0.9872228869751002,
+          "ici_regression": 0.8022571372242667,
+          "ici_spearman": 0.7245495768977176,
+          "graph_nodes": 16384,
+          "graph_edges": 85366
+        },
+        "graph_edge_count_minus_independent_improving_count": 0,
+        "result_locator": "record.json#/behavior_audit/real_landscape_comparisons/Bendixsen2019_hdv",
+        "result_quote": "pooled_beneficial_slope=0.1826463916726223; pooled_beneficial_pearson=0.08554058330048839; mean_per_mutation_beneficial_slope=-0.04318724862004364; median_per_mutation_beneficial_slope=0.03463074167345044; pooled_reverse_cost_slope=0.8003763015589137; pooled_reverse_cost_pearson=0.9123820625130835; GraphFLA_DRI_pearson=0.19171038315656858; GraphFLA_DRI_regression=0.25306674273100344; GraphFLA_ICI_pearson=0.9872228869751002; GraphFLA_ICI_regression=0.8022571372242667; GraphFLA_DRI_spearman=-0.5537058442614368"
+      },
+      {
+        "case": "Domingo2018",
+        "input_path": "data/BioSequence/Domingo2018.csv",
+        "input_sha256": "5b8cf25627ec37a1dce53f48b6ac121bb043ddb6f33616bb5ed00b203a7df2ff",
+        "raw_n_rows": 4176,
+        "used_n_rows": 4176,
+        "fitness_missing_rows_dropped": 0,
+        "preprocessing": "No preprocessing; fitness column used as stored.",
+        "n_hamming1_pairs": 26336,
+        "n_beneficial_edges": 26336,
+        "n_neutral_pairs": 0,
+        "pooled_beneficial_gain_vs_lower_background": {
+          "n": 26336,
+          "slope": -0.3532356851138551,
+          "pearson": -0.5423329229224351
+        },
+        "per_mutation_beneficial_slope_summary": {
+          "n_estimable": 36,
+          "mean": -0.32543084313931425,
+          "median": -0.32820968256785443,
+          "min": -0.527547408543012,
+          "max": -0.1173386088468706,
+          "negative": 36,
+          "zero": 0,
+          "positive": 0
+        },
+        "pooled_reverse_deleterious_cost_vs_higher_background": {
+          "n": 26336,
+          "slope": 0.0989060082220452,
+          "pearson": 0.12865066954609625
+        },
+        "per_mutation_reverse_cost_slope_summary": {
+          "n_estimable": 36,
+          "mean": 0.08612561276125,
+          "median": 0.09333988132996379,
+          "min": -0.11604251181916428,
+          "max": 0.27892760181634063,
+          "negative": 6,
+          "zero": 0,
+          "positive": 30
+        },
+        "graphfla": {
+          "dri_pearson": -0.7565430915517805,
+          "dri_regression": -0.32694487875357037,
+          "dri_spearman": -0.7730857367506792,
+          "ici_pearson": 0.26614110424559495,
+          "ici_regression": 0.09620180853555874,
+          "ici_spearman": 0.26342625710742906,
+          "graph_nodes": 4176,
+          "graph_edges": 26336
+        },
+        "graph_edge_count_minus_independent_improving_count": 0,
+        "result_locator": "record.json#/behavior_audit/real_landscape_comparisons/Domingo2018",
+        "result_quote": "pooled_beneficial_slope=-0.3532356851138551; pooled_beneficial_pearson=-0.5423329229224351; mean_per_mutation_beneficial_slope=-0.32543084313931425; median_per_mutation_beneficial_slope=-0.32820968256785443; pooled_reverse_cost_slope=0.0989060082220452; pooled_reverse_cost_pearson=0.12865066954609625; GraphFLA_DRI_pearson=-0.7565430915517805; GraphFLA_DRI_regression=-0.32694487875357037; GraphFLA_ICI_pearson=0.26614110424559495; GraphFLA_ICI_regression=0.09620180853555874"
+      },
+      {
+        "case": "Lite2020_ParD3",
+        "input_path": "data/BioSequence/Lite2020_ParD3.csv",
+        "input_sha256": "49e2bf25eb6c6a9e727067c2f39410494b62696de9cc2f6c7c768b0181566a09",
+        "raw_n_rows": 7882,
+        "used_n_rows": 7882,
+        "fitness_missing_rows_dropped": 0,
+        "preprocessing": "No preprocessing; fitness column used as stored.",
+        "n_hamming1_pairs": 221531,
+        "n_beneficial_edges": 221531,
+        "n_neutral_pairs": 0,
+        "pooled_beneficial_gain_vs_lower_background": {
+          "n": 221531,
+          "slope": -0.13059950646110471,
+          "pearson": -0.17885719096714608
+        },
+        "per_mutation_beneficial_slope_summary": {
+          "n_estimable": 1139,
+          "mean": -0.03978229153806597,
+          "median": -0.05333361680530598,
+          "min": -1.8846152879992004,
+          "max": 4.442024783090496,
+          "negative": 835,
+          "zero": 0,
+          "positive": 304
+        },
+        "pooled_reverse_deleterious_cost_vs_higher_background": {
+          "n": 221531,
+          "slope": 0.3164964610139238,
+          "pearson": 0.4888473728668145
+        },
+        "per_mutation_reverse_cost_slope_summary": {
+          "n_estimable": 1139,
+          "mean": 0.1687628686550435,
+          "median": 0.08593226106386653,
+          "min": -0.4282930428340188,
+          "max": 1.7910713531261353,
+          "negative": 277,
+          "zero": 0,
+          "positive": 862
+        },
+        "graphfla": {
+          "dri_pearson": -0.5598937702717106,
+          "dri_regression": -0.15735061155130375,
+          "dri_spearman": -0.4829269632519868,
+          "ici_pearson": 0.8899320982783874,
+          "ici_regression": 0.3356687303945935,
+          "ici_spearman": 0.9555615078781133,
+          "graph_nodes": 7882,
+          "graph_edges": 221531
+        },
+        "graph_edge_count_minus_independent_improving_count": 0,
+        "result_locator": "record.json#/behavior_audit/real_landscape_comparisons/Lite2020_ParD3",
+        "result_quote": "pooled_beneficial_slope=-0.13059950646110471; pooled_beneficial_pearson=-0.17885719096714608; mean_per_mutation_beneficial_slope=-0.03978229153806597; median_per_mutation_beneficial_slope=-0.05333361680530598; pooled_reverse_cost_slope=0.3164964610139238; pooled_reverse_cost_pearson=0.4888473728668145; GraphFLA_DRI_pearson=-0.5598937702717106; GraphFLA_DRI_regression=-0.15735061155130375; GraphFLA_ICI_pearson=0.8899320982783874; GraphFLA_ICI_regression=0.3356687303945935"
+      }
+    ],
+    "independent_analysis_method_quote": "For each observed one-site pair, independently create one beneficial record oriented from lower to higher fitness, and regress positive delta on lower-endpoint fitness. For reverse deleterious costs, use the same positive magnitude against higher-endpoint fitness. Pool mutation rows and separately group by position and directed allele change for per-mutation slopes. Pooled analysis weights each mutation row; GraphFLA node means weight each genotype once."
+  }
+}

@@ -39,8 +39,34 @@ def timeit(method):
     return timed
 
 
-def filter_graph(graph, maximize, tau, filter_mode, verbose):
+def _merge_neutral_components(membership, neutral_pairs):
+    """Merge weak components connected by surviving neutral neighbour pairs."""
+    n_components = int(membership.max()) + 1
+    parent = np.arange(n_components)
+
+    def find(x):
+        while parent[x] != x:
+            parent[x] = parent[parent[x]]
+            x = parent[x]
+        return x
+
+    for u, v in neutral_pairs:
+        root_u, root_v = find(membership[u]), find(membership[v])
+        if root_u != root_v:
+            parent[root_u] = root_v
+
+    roots = np.fromiter((find(c) for c in range(n_components)), dtype=np.int32)
+    return roots[membership]
+
+
+def filter_graph(graph, maximize, tau, filter_mode, verbose, neutral_pairs=None):
     """Apply post-construction filtering to the landscape graph.
+
+    Parameters
+    ----------
+    neutral_pairs : list[tuple[int, int]] or None, default=None
+        Surviving neutral neighbour pairs in the graph's current index space.
+        They count toward connectivity when the largest component is selected.
 
     Returns
     -------
@@ -99,7 +125,9 @@ def filter_graph(graph, maximize, tau, filter_mode, verbose):
                 if verbose:
                     logger.info("   - No edges removed (all connect functional configs)")
 
-            graph, kept_vertex_indices = _largest_weak_component(graph, verbose)
+            graph, kept_vertex_indices = _largest_weak_component(
+                graph, verbose, neutral_pairs=neutral_pairs
+            )
 
     n_configs = graph.vcount()
     n_edges = graph.ecount()
@@ -112,12 +140,14 @@ def filter_graph(graph, maximize, tau, filter_mode, verbose):
     return graph, n_configs, n_edges, kept_vertex_indices
 
 
-def _largest_weak_component(graph, verbose=False):
-    """Return the largest weak component and its original vertex indices."""
+def _largest_weak_component(graph, verbose=False, neutral_pairs=None):
+    """Return the largest component, including surviving neutral connections."""
     initial_nodes = graph.vcount()
     membership = np.asarray(graph.connected_components(mode="weak").membership)
     kept = None
     if membership.size:
+        if neutral_pairs:
+            membership = _merge_neutral_components(membership, neutral_pairs)
         largest = int(np.bincount(membership).argmax())
         mask = membership == largest
         if not np.all(mask):

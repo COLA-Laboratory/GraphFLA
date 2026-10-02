@@ -1,0 +1,35 @@
+{
+  "schema_version": 1,
+  "kind": "case",
+  "id": "johnston.active_peaks.v1",
+  "revision": 1,
+  "study_id": "JohnstonAWLPYA24",
+  "metric_ids": [
+    "construction"
+  ],
+  "evidence_tier": "published_numeric",
+  "definition_match": "yes",
+  "scope": "Active measured peak candidates",
+  "preprocessing": "Build all160000 including871 imputed neighbors; count optima with author active=True and imputed=False.9783 candidates; unrestricted797 is not target.",
+  "sources": [
+    {
+      "url": "https://doi.org/10.1073/pnas.2400439121",
+      "locator": "Results Epistasis Constrains Navigation; SI FigS29 p.39"
+    }
+  ],
+  "expected": 520,
+  "comparison": {
+    "kind": "exact",
+    "tolerance": 0,
+    "justification": "Exact integer or sequence identity reported independently."
+  },
+  "inputs": [
+    {
+      "root": "repo",
+      "path": "tests/fixtures/literature/johnston2024/landscape.csv.gz",
+      "sha256": "c45a07006ebba7c8d75b8c3d7b0691ade26757f8dcb225d1573e9df348766292"
+    }
+  ],
+  "pytest_node": "tests/test_literature.py::test_johnston_peaks_among_active_measured_candidates",
+  "history_note": "Imported from reviewed 2026-09-30 research. Original frozen evidence and trial artifacts remain in the external dossiers; this import does not claim targets were newly frozen before historical runs."
+}

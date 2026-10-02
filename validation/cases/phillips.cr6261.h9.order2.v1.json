@@ -1,0 +1,35 @@
+{
+  "schema_version": 1,
+  "kind": "case",
+  "id": "phillips.cr6261.h9.order2.v1",
+  "revision": 1,
+  "study_id": "PhillipsLMDCJCMWD21",
+  "metric_ids": [
+    "higher_order"
+  ],
+  "evidence_tier": "author_artifact_numeric",
+  "definition_match": "yes",
+  "scope": "Full-data OLS order2 on h9",
+  "preprocessing": "Drop missing fitness; Boolean sequence dtype=str; no held-out/CV comparison.",
+  "sources": [
+    {
+      "url": "https://github.com/klawrence26/bnab-landscapes/tree/514d62f387070f43b8a172f02e60c70137f8a8b8",
+      "locator": "CR6261/Epistasis_linear_models/model_coefs/H9_2order_stat.txt"
+    }
+  ],
+  "expected": 0.8743026327570844,
+  "comparison": {
+    "kind": "absolute",
+    "tolerance": 1e-10,
+    "justification": "Tolerance is floating-point regression/quotient precision, except Wu accessibility where 0.005 is half the printed whole-percent unit."
+  },
+  "inputs": [
+    {
+      "root": "repo",
+      "path": "data/BioSequence/Phillips2021_CR6261_h9.csv",
+      "sha256": "e80241bc514f625b0464ddc1a8fbc99f45f73f20502214d40e7ac0ad01547c4c"
+    }
+  ],
+  "pytest_node": "tests/test_literature.py::test_phillips_author_regression_outputs",
+  "history_note": "Imported from reviewed 2026-09-30 research. Original frozen evidence and trial artifacts remain in the external dossiers; this import does not claim targets were newly frozen before historical runs."
+}

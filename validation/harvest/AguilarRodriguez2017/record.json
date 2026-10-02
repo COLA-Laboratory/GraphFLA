@@ -1,0 +1,125 @@
+{
+  "study_key": "AguilarRodriguez2017",
+  "dossier": "papers/_navigability_lit",
+  "recorded_at": "2026-10-01T10:10:11Z",
+  "agent": "codex",
+  "paper": {
+    "title": "A thousand empirical adaptive landscapes and their navigability",
+    "doi": "10.1038/s41559-016-0045",
+    "year": 2017,
+    "bibliography_verified_against": "publisher_page",
+    "supplied_bibliography_errors": "The Nature publisher page confirms the title and the authors José Aguilar-Rodríguez, Joshua L. Payne, and Andreas Wagner; no discrepancy with the task citation was found."
+  },
+  "sources": [
+    {
+      "url": "https://joshualevipayne.com/wp-content/uploads/2020/11/44Aguilar_NEE_17.pdf",
+      "http_status": 200,
+      "sha256": "88ed2136135a80a839567d93753c5f0fa94f9542ed04d67b576beb3dac22bdb6",
+      "saved_path": "papers/_core_lit_navigability/sources/aguilar_rodriguez_2017_nature_codex.pdf",
+      "what": "Reused existing author-hosted main article PDF; original download is in the prior core-literature dossier."
+    },
+    {
+      "url": "https://media.springernature.com/original/springer-static/esm/art%3A10.1038%2Fs41559-016-0045/MediaObjects/41559_2016_BFs415590160045_MOESM214_ESM.pdf",
+      "http_status": 200,
+      "sha256": "53d25bc333d0cc48fc74b61d79aecf9d407e44f35f14b076820f51335c32676a",
+      "saved_path": "papers/_core_lit_navigability/sources/aguilar_rodriguez_2017_supplement_codex.pdf",
+      "what": "Reused existing Nature supplementary-information PDF; original download is in the prior core-literature dossier."
+    }
+  ],
+  "overlaps": [
+    {
+      "metric": "n_lo",
+      "paper_value": {
+        "multiple_peak_landscapes": 478,
+        "landscapes_total": 1137,
+        "share_printed_percent": 42,
+        "peak_count_range_for_multiple_peak_landscapes": [2, 36]
+      },
+      "locator": "Results, ‘Landscape navigability: the number of peaks’, printed p. 2",
+      "quote": "42% of the empirically derived landscapes (478 of 1,137) have multiple peaks of unequal height ... peak numbers ranging from 2 to 36",
+      "printed_or_plotted": "printed",
+      "definition_match": "unknown",
+      "definition_quote": "a member of a plateau; For each TF, we calculated δ as the residual standard error; otherwise, we could not differentiate between the two affinity values.",
+      "definition_locator": "Methods, printed pp. 7–8",
+      "definition_divergence": "The paper treats neighboring affinities within a TF-specific noise threshold δ as unresolved plateau relationships. GraphFLA's required epsilon=0 baseline only treats exact ties as neutral; because no complete input was acquired, compatibility under the per-factor δ was not tested.",
+      "input": {
+        "path": null,
+        "sha256": null,
+        "n_rows": null,
+        "preprocessing": "The paper points to UniPROBE and CIS-BP and gives the accession crosswalk in Supplementary Table 1. The full set of per-factor E-score data and the crosswalk were not reconstructed."
+      },
+      "graphfla_call": "For each factor, DNALandscape().build_from_data(bound_sequences, e_scores, epsilon=TF_specific_delta, verbose=False), then aggregate the number of landscapes with n_lo > 1; not run.",
+      "graphfla_value": null,
+      "outcome": "input_unavailable",
+      "reason": "The printed corpus target is an aggregate over the full set of transcription-factor landscapes. No complete per-factor input or accession mapping was acquired, so no GraphFLA aggregate was calculated."
+    },
+    {
+      "metric": "classify_epistasis",
+      "paper_value": {
+        "mean_combined_simple_and_reciprocal_sign_epistasis_fraction": 0.047
+      },
+      "locator": "Results, ‘Landscape navigability: epistasis’, printed p. 3",
+      "quote": "sign epistasis is more frequent and affects 4.7% of squares, on average",
+      "printed_or_plotted": "printed",
+      "definition_match": "unknown",
+      "definition_quote": "epistasis can be partitioned into ... magnitude, simple sign and reciprocal sign",
+      "definition_locator": "Results, ‘Landscape navigability: epistasis’, printed p. 3",
+      "definition_divergence": "The reported 4.7% is the average sign-epistasis fraction across landscapes, combining simple and reciprocal sign epistasis. A reproduction needs the same complete-square set, TF-specific δ decisions, and averaging across landscapes; these could not be checked without the source inputs.",
+      "input": {
+        "path": null,
+        "sha256": null,
+        "n_rows": null,
+        "preprocessing": "Same unreconstructed UniPROBE/CIS-BP transcription-factor inputs as the n_lo target."
+      },
+      "graphfla_call": "For each factor, graphfla.analysis.classify_epistasis(landscape).sign, then average per-factor values with the paper's weighting; not run.",
+      "graphfla_value": null,
+      "outcome": "input_unavailable",
+      "reason": "The paper prints an aggregate class fraction, but the landscapes and TF-specific noise thresholds required to reproduce it were not acquired."
+    },
+    {
+      "metric": "global_optima_accessibility",
+      "paper_value": "Per-landscape mean and standard deviation of the fraction of accessible paths; individual values are shown as plotted symbols.",
+      "locator": "Figure 2c caption, printed p. 3",
+      "quote": "For each of the 1,137 adaptive landscapes we show the mean (symbols) and standard deviation (error bars)",
+      "printed_or_plotted": "plotted",
+      "definition_match": "unknown",
+      "definition_quote": "fraction of accessible paths to the highest-affinity site in the landscape",
+      "definition_locator": "Figure 2c caption, printed p. 3",
+      "definition_divergence": "The paper's per-landscape path fractions are plotted, not printed as a numeric summary. This GraphFLA metric was explicitly ruled out as a literature-validation target for this assignment.",
+      "input": null,
+      "graphfla_call": null,
+      "graphfla_value": null,
+      "outcome": "not_attempted",
+      "reason": "No value was read from Figure 2c; the plotted points are not reproduction targets, and the user excluded global_optima_accessibility from literature validation."
+    },
+    {
+      "metric": "none",
+      "paper_value": {
+        "Gcn4": "all 71 accessible mutational paths also increased gene expression monotonically",
+        "Fhl1": "all except one of the 37 accessible mutational paths increased gene expression monotonically"
+      },
+      "locator": "Results, ‘Gene expression reflects landscape topography’, printed p. 5",
+      "quote": "For Gcn4, all 71 accessible mutational paths ... for Fhl1 all except one of the 37 accessible mutational paths",
+      "printed_or_plotted": "printed",
+      "definition_match": "no",
+      "definition_quote": "accessible mutational paths exhibit monotonic increases in gene expression",
+      "definition_locator": "Results, ‘Gene expression reflects landscape topography’, printed p. 5",
+      "definition_divergence": "These printed results ask whether gene expression is monotonic along already-accessible binding-affinity paths in a restricted in-vivo subset. They are not a fraction of accessible paths in each complete landscape or across the transcription-factor corpus.",
+      "input": null,
+      "graphfla_call": null,
+      "graphfla_value": null,
+      "outcome": "definition_incompatible",
+      "reason": "The printed Gcn4/Fhl1 result concerns a second phenotype along selected paths and has no corresponding GraphFLA metric."
+    }
+  ],
+  "blockers": [
+    {
+      "what": "Supplementary Table 1 accession crosswalk and the full per-factor E-score inputs",
+      "url": "https://media.springernature.com/original/springer-static/esm/art%3A10.1038%2Fs41559-016-0045/MediaObjects/41559_2016_BFs415590160045_MOESM215_ESM.xlsx",
+      "why": "The prior publisher request returned HTTP 200 with an HTML security challenge rather than an XLSX workbook. The failed body and checksum are preserved in papers/_core_lit_navigability/acquisition_codex.jsonl and referenced in the new acquisition log. The article identifies public UniPROBE/CIS-BP sources, but no complete per-factor input set was assembled.",
+      "needed_for": "Reproducing the printed multi-peak aggregate, the sign-epistasis average, and any landscape-level peak-count range."
+    }
+  ],
+  "verdict": "blocked",
+  "verdict_reason": "The paper prints a strong aggregate n_lo overlap (478 of 1,137 landscapes have multiple peaks, with a printed range of 2–36) and a mean sign-epistasis fraction, but the complete inputs were not recovered. The individual peak-accessibility values are plotted; no mean, median, or single-peak landscape count is printed."
+}

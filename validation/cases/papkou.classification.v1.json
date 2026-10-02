@@ -1,0 +1,39 @@
+{
+  "schema_version": 1,
+  "kind": "case",
+  "id": "papkou.classification.v1",
+  "revision": 1,
+  "study_id": "PapkouRM23",
+  "metric_ids": [
+    "classification"
+  ],
+  "evidence_tier": "author_artifact_numeric",
+  "definition_match": "yes",
+  "scope": "Exact directed motif classes",
+  "preprocessing": "Same threshold/component as topology; exact sample_cut_prob=0; additive grouped with magnitude; positive/negative excluded.",
+  "sources": [
+    {
+      "url": "https://zenodo.org/records/8228920",
+      "locator": "14.reciprocal_sign_epistasis/01.count_different_types_of_epistasis.ipynb; SI Fig.S20 p.40 confirms total/reciprocal counts"
+    }
+  ],
+  "expected": {
+    "magnitude": 0.551281999321815,
+    "sign": 0.33361163235888147,
+    "reciprocal_sign": 0.11510636831930356
+  },
+  "comparison": {
+    "kind": "absolute",
+    "tolerance": 1e-12,
+    "justification": "Tolerance is floating-point regression/quotient precision, except Wu accessibility where 0.005 is half the printed whole-percent unit."
+  },
+  "inputs": [
+    {
+      "root": "repo",
+      "path": "data/BioSequence/Papkou2023_DHFR.csv",
+      "sha256": "fca2fb47cad417a049698f43b20f90b320a4927418d502e527ad112ea46c82da"
+    }
+  ],
+  "pytest_node": "tests/test_literature.py::test_papkou_author_epistasis_classification",
+  "history_note": "Imported from reviewed 2026-09-30 research. Original frozen evidence and trial artifacts remain in the external dossiers; this import does not claim targets were newly frozen before historical runs."
+}

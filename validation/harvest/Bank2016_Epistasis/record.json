@@ -1,0 +1,104 @@
+{
+  "study_key": "Bank2016_Epistasis",
+  "dossier": "papers/bank2016",
+  "recorded_at": "2026-10-01T10:14:42Z",
+  "agent": "codex",
+  "paper": {
+    "title": "On the (un)predictability of a large intragenic fitness landscape",
+    "doi": "10.1073/pnas.1612676113",
+    "year": 2016,
+    "bibliography_verified_against": "crossref",
+    "supplied_bibliography_errors": "The supplied author list Bank, Hietpas, Jensen, Bolon omits Matuszewski and belongs to a different Crossref record, DOI 10.1093/molbev/msu301, titled A Systematic Survey of an Intragenic Epistatic Landscape. Crossref for the target DOI lists Bank, Matuszewski, Hietpas, Jensen and pages 14085–14090, not the supplied 14424."
+  },
+  "sources": [
+    {
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC5150413/",
+      "http_status": 200,
+      "sha256": "a53dad8b60feaf4eb79b3234c3524bb286e4ae4ce243343a34b800c15a4359d0",
+      "saved_path": "papers/bank2016/sources/main.html",
+      "what": "main article text and Data deposition statement"
+    },
+    {
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/instance/5150413/bin/pnas.1612676113.sapp.pdf",
+      "http_status": 200,
+      "sha256": "8b0a76b65021294fb4e117041554678045334a8f26817c45c414628ef6b3da42",
+      "saved_path": "papers/bank2016/sources/supplement.pdf",
+      "what": "Supporting Information, epistasis definitions, normalization, and Fig. S3_5"
+    },
+    {
+      "url": "https://datadryad.org/downloads/file_stream/37443",
+      "http_status": 200,
+      "sha256": "6a229ce03df110b02f1940ea506fa8ae4056e59f8151b66d2e0ab7843ec04dfd",
+      "saved_path": "papers/bank2016/sources/data.csv",
+      "what": "Bank Dryad raw sequencing counts from both replicates"
+    },
+    {
+      "url": "https://datadryad.org/downloads/file_stream/232012",
+      "http_status": 200,
+      "sha256": "06a4e14f7486540149ca7f82fe206d1d17650595515201bdd8282cd11bba6988",
+      "saved_path": "papers/bank2016/sources/HSP90_fitness_landscape.txt",
+      "what": "Reia and Campos downstream Hsp90 point-estimate landscape; extracted archive member"
+    },
+    {
+      "url": "https://codeload.github.com/Matu2083/empiricIST/zip/refs/heads/master",
+      "http_status": 200,
+      "sha256": "b24143db6ba4197312487af063280e0c377b7b4b39321bca5e2215cd814d961f",
+      "saved_path": "papers/bank2016/sources/empiricIST_codex.zip",
+      "what": "public MCMC source archive used for an exploratory raw-count reanalysis; not the authors' posterior output"
+    }
+  ],
+  "overlaps": [
+    {
+      "metric": "classify_epistasis",
+      "paper_value": {
+        "main_text_percent": {
+          "magnitude": 62,
+          "sign": 30,
+          "reciprocal_sign": 8
+        },
+        "SI_Fig_S3_5B_mean_fraction": {
+          "none": 0.00000824,
+          "magnitude": 0.62,
+          "sign": 0.298,
+          "reciprocal_sign": 0.082
+        },
+        "SI_Fig_S3_5B_95_percent_IQR": {
+          "none": [0.0, 0.0000947],
+          "magnitude": [0.612, 0.628],
+          "sign": [0.291, 0.305],
+          "reciprocal_sign": [0.078, 0.086]
+        }
+      },
+      "locator": "Results, ‘Adaptive Walks on the Fitness Landscape,’ printed pp. 14086–14087; SI Appendix, Fig. S3_5B table and caption, printed p. 9 of 9",
+      "quote": "Main-text fragments: ‘sign (30%),’ ‘reciprocal sign (8%),’ ‘remaining 62%.’ SI Fig. S3_5B table: none 8.24E-06 [0, 9.47E-05], magnitude 0.62 [0.612, 0.628], sign 0.298 [0.291, 0.305], reciprocal sign 0.082 [0.078, 0.086]. Caption: ‘10,000 posterior samples’ at ‘standard threshold ε = 10−6.’",
+      "printed_or_plotted": "printed",
+      "definition_match": "no",
+      "definition_quote": "Eq. S1_16: none if |s_i(g[j])−s_i(g)|=0; magnitude if s_j(g)s_j(g[i])≥0 and s_i(g)s_i(g[j])≥0; reciprocal sign if both products <0; sign otherwise. Eq. S1_17 sums 1_x(e(g,k,l)) over g and allele-pair indices; x ∈ {none, magnitude, sign, reciprocal sign}; c is the same sum with 1 in place of the indicator. SI, printed p. 3.",
+      "definition_divergence": "The paper includes the none/additive class in its denominator; GraphFLA returns proportions normalized only across magnitude, sign, and reciprocal-sign motifs. The paper's target is the mean of 10,000 posterior-sample fractions, while the obtainable full landscape is a single downstream point-estimate vector. The paper's ε is a threshold on a change in selection effect used to assign none; GraphFLA's build epsilon controls neutral neighboring fitness values and is not the same operation.",
+      "input": {
+        "path": "papers/bank2016/sources/HSP90_fitness_landscape.txt",
+        "sha256": "06a4e14f7486540149ca7f82fe206d1d17650595515201bdd8282cd11bba6988",
+        "n_rows": 640,
+        "preprocessing": "Excluded the stop-codon control Q*GWSANME; used the remaining 640 sequence/fitness rows as archived, with no fitness transform. Reia and Campos' cleaning script names the fitness column median."
+      },
+      "graphfla_call": "ProteinLandscape().build_from_data(sequences, fitness, epsilon=0, verbose=False); classify_epistasis(landscape, sample_cut_prob=0, seed=0)",
+      "graphfla_value": {
+        "magnitude": 0.6384469696969697,
+        "sign": 0.2771780303030303,
+        "reciprocal_sign": 0.084375
+      },
+      "outcome": "mismatch",
+      "reason": "GraphFLA and independent four-corner enumeration agree on the recovered point-estimate landscape: 6,742 magnitude, 2,927 sign, and 891 reciprocal-sign squares out of 10,560. Applying the paper's per-square ε = 10−6 rule to that input leaves the same counts and no none squares, so the denominator tolerance does not explain the few-percent gap. The paper's posterior sample vectors are not deposited; the exploratory raw-count MCMC reruns did not converge sufficiently to reproduce the posterior-mean target."
+    }
+  ],
+  "blockers": [
+    {
+      "what": "Original 10,000 posterior growth-rate vectors for the 640-genotype landscape",
+      "url": "https://datadryad.org/dataset/doi:10.5061/dryad.th0rj",
+      "why": "The paper reports class fractions averaged over 10,000 posterior samples, but the linked Dryad inventory contains only data.csv, described as raw deep-mutational-scanning data from both replicates. An exploratory reanalysis with public empiricIST code saved 1,000 draws per replicate but had minimum ESS values 2.69475 and 2.6812, far below the paper's reported minimum ESS of 725; those draws were not used as reproduction targets.",
+      "needed_for": "Recompute the posterior-mean class fractions from the authors' actual fitted growth-rate samples and distinguish posterior aggregation from other source differences."
+    }
+  ],
+  "verdict": "targets_found",
+  "verdict_reason": "The paper prints a clear classify_epistasis overlap. On the only recovered full point-estimate landscape GraphFLA returns 63.8447% magnitude, 27.7178% sign, and 8.4375% reciprocal-sign epistasis, differing from the paper's posterior-mean fractions. The paper's formula includes none in the denominator, but its default none fraction is only 8.24E-06 and applying its ε to the recovered input changes no counts. The likely explanation is the single downstream median landscape versus posterior-sample averaging, but the original posterior vectors are unavailable and the fresh MCMC attempt failed convergence; therefore the mismatch remains unresolved."
+}

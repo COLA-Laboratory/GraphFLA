@@ -30,11 +30,10 @@ def _mutation_effects_for_position(X, f_arr, f_std, position, test_type):
     """Fitness effects of every allele-pair mutation at one ``position``, sharing a
     single background grouping (genetic background = all other positions).
 
-    Vectorised equivalent of the original per-pair ``apply(tuple)`` + merge: each
-    (allele, background) is a unique genotype, so per-allele fitness is gathered
-    into a background-indexed array and a pair's effect is ``f_A - f_B`` over their
-    shared backgrounds. median / mean / binomtest are order-invariant, so values
-    match the original exactly. Returns a list of per-pair result dicts.
+    Each (allele, background) is a unique genotype, so per-allele fitness is
+    gathered into a background-indexed array and the effect of the mutation
+    ``A -> B`` is ``f_B - f_A`` over their shared backgrounds. Returns a list of
+    per-pair result dicts.
     """
     pos_vals = X[position].to_numpy()
     bg_cols = [c for c in X.columns if c != position]
@@ -60,7 +59,9 @@ def _mutation_effects_for_position(X, f_arr, f_std, position, test_type):
         fa = fit_by_val[A]
         fb = fit_by_val[B]
         mask = ~(np.isnan(fa) | np.isnan(fb))  # shared genetic backgrounds
-        diff = fa[mask] - fb[mask]             # f_A - f_B (== original fitness_1 - fitness_2)
+        # Effect of the mutation as labelled (mutation_from=A -> mutation_to=B),
+        # i.e. f_B - f_A, matching ``fitness_effect_distribution``.
+        diff = fb[mask] - fa[mask]
         n_trials = int(diff.size)
         if n_trials == 0:
             median_effect = np.nan
@@ -219,13 +220,21 @@ def single_mutation_effects(
         The name of the position (variable) to assess mutations for.
 
     test_type : str, default='positive'
-        The type of significance test to perform. Must be 'positive' or 'negative'.
+        The type of significance test to perform. Must be 'positive' or
+        'negative', i.e. whether a majority of backgrounds show a fitness
+        increase or a decrease under the mutation.
 
     Returns
     -------
     pd.DataFrame
         A DataFrame containing mutation pairs, median absolute fitness effect,
-        p-values, and significance flags.
+        mean fitness effect, p-values, and significance flags.
+
+    Notes
+    -----
+    Effects are signed as ``mutation_to`` minus ``mutation_from`` in each shared
+    genetic background, the same convention as
+    :func:`~graphfla.analysis.fitness_effect_distribution`.
     """
 
     if test_type not in ("positive", "negative"):
@@ -254,13 +263,22 @@ def all_mutation_effects(
         The Landscape object containing the data and graph.
 
     test_type : str, default='positive'
-        The type of significance test to perform. Must be 'positive' or 'negative'.
+        The type of significance test to perform. Must be 'positive' or
+        'negative', i.e. whether a majority of backgrounds show a fitness
+        increase or a decrease under the mutation.
 
     Returns
     -------
     pd.DataFrame
-        A DataFrame containing, for each position and mutation pair, the median absolute fitness effect,
-        p-values, and significance flags.
+        A DataFrame containing, for each position and mutation pair, the median
+        absolute fitness effect, mean fitness effect, p-values, and significance
+        flags.
+
+    Notes
+    -----
+    Effects are signed as ``mutation_to`` minus ``mutation_from`` in each shared
+    genetic background, the same convention as
+    :func:`~graphfla.analysis.fitness_effect_distribution`.
     """
 
     if test_type not in ("positive", "negative"):
