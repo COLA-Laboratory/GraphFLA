@@ -108,7 +108,7 @@ def test_global_idiosyncratic_additive_zero():
 
 
 def test_global_idiosyncratic_hoc_near_one():
-    val = global_idiosyncratic_index(hoc_landscape(6, seed=3), n_jobs=1)
+    val = global_idiosyncratic_index(hoc_landscape(6, seed=3), n_jobs=1, seed=0)
     assert 0.7 < val < 1.3
 
 

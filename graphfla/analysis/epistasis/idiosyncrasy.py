@@ -1,10 +1,8 @@
-"""Idiosyncratic epistasis indices.
-
-Idiosyncratic index plus the diminishing-returns and increasing-costs
-indices derived from per-background mutation effects.
-"""
+"""Mutation-effect variation (Lyons et al. 2020) and fitness-trend indices."""
 
 import warnings
+from itertools import permutations
+from numbers import Integral
 from typing import Literal
 
 import numpy as np
@@ -15,245 +13,249 @@ from joblib import Parallel, delayed
 from .._utils import _pythonize, _pack_rows
 
 
-def _idiosyncratic_position_worker(Xcodes, f, std_baseline, j, min_pairs):
-    """Idiosyncratic indices for ALL allele pairs at position ``j``, sharing ONE
-    background grouping (computed once, not per pair).
+def _validate_min_pairs(min_pairs):
+    if (
+        isinstance(min_pairs, bool)
+        or not isinstance(min_pairs, Integral)
+        or min_pairs < 2
+    ):
+        raise ValueError("min_pairs must be an integer of at least 2.")
 
-    Gives values identical to :func:`idiosyncratic_index`'s core: keep-first dedup
-    per background (a no-op since each (allele, background) is a unique genotype),
-    analytic random-pair baseline, and NaN for too-few-background mutations so they
-    are excluded from -- rather than dilute -- the landscape average. Returns the
-    list of per-mutation indices for this position.
+
+def _idiosyncratic_data(landscape):
+    """Read the retained landscape population without altering its fitness scale."""
+    data = landscape.get_data()
+    if landscape.data_types is None:
+        raise ValueError("Configuration columns are required to match backgrounds.")
+    X = data[list(landscape.data_types)]
+    f = data["fitness"].to_numpy(dtype=float)
+    if not np.all(np.isfinite(f)):
+        raise ValueError("Fitness values must be finite.")
+    if X.isna().any().any():
+        raise ValueError("Configuration values must not be missing.")
+    if X.duplicated().any():
+        raise ValueError("Configurations must be unique; aggregate replicates first.")
+    codes, labels = [], []
+    for col in X:
+        c, alleles = pd.factorize(X[col], sort=True)
+        codes.append(c)
+        labels.append(alleles)
+    Xcodes = (
+        np.column_stack(codes).astype(np.int32)
+        if codes
+        else np.empty((len(f), 0), dtype=np.int32)
+    )
+    return X, Xcodes, f, labels
+
+
+def _idiosyncratic_position_worker(Xcodes, f, j):
+    """Return (allele A, allele B, effect SD, count) for each directed mutation.
+
+    Background matching is shared by every allele pair at a position. No random
+    numbers are drawn in workers, so job scheduling cannot change the estimate.
     """
-    P = Xcodes.shape[1]
-    other = np.delete(np.arange(P), j)
+    other = np.delete(np.arange(Xcodes.shape[1]), j)
     col = Xcodes[:, j]
-    alleles = np.unique(col)  # sorted codes -> same mutation set/order as before
+    alleles = np.unique(col)
+    if len(alleles) < 2 or not len(f):
+        return []
     bg_ids, n_bg = _pack_rows(Xcodes[:, other])
-    out = []
+    summaries = {}
     if bg_ids is not None:
-        # Per-allele fitness indexed by background id; one O(V) fill per allele.
         fit = []
         for a in alleles:
             arr = np.full(n_bg, np.nan)
             rows = np.flatnonzero(col == a)
             arr[bg_ids[rows]] = f[rows]
             fit.append(arr)
-        for ai in range(len(alleles)):
-            fa = fit[ai]
+        for ai, a in enumerate(alleles):
             for bi in range(ai + 1, len(alleles)):
-                fb = fit[bi]
-                mask = ~(np.isnan(fa) | np.isnan(fb))  # shared backgrounds
-                if int(np.count_nonzero(mask)) < min_pairs:
-                    out.append(np.nan)
-                    continue
-                eff = fb[mask] - fa[mask]
-                out.append(float(np.std(eff) / std_baseline))
-    else:
-        # High-dim fallback: per-allele dict grouping, still shared across pairs.
-        bgcols = Xcodes[:, other]
-        dicts = []
-        for a in alleles:
-            d = {}
-            for i in np.flatnonzero(col == a):
-                k = bgcols[i].tobytes()
-                if k not in d:
-                    d[k] = f[i]
-            dicts.append(d)
-        for ai in range(len(alleles)):
-            da = dicts[ai]
-            for bi in range(ai + 1, len(alleles)):
-                db = dicts[bi]
-                common = da.keys() & db.keys()
-                if len(common) < min_pairs:
-                    out.append(np.nan)
-                    continue
-                eff = np.fromiter(
-                    (db[k] - da[k] for k in common), dtype=float, count=len(common)
+                b = alleles[bi]
+                mask = np.isfinite(fit[ai]) & np.isfinite(fit[bi])
+                effects = fit[bi][mask] - fit[ai][mask]
+                summaries[a, b] = (
+                    float(np.std(effects)) if len(effects) else np.nan,
+                    len(effects),
                 )
-                out.append(float(np.std(eff) / std_baseline))
-    return out
+    else:
+        # Mixed-radix packing can overflow on long sequences. Byte keys preserve
+        # exact background identity without constructing a dense genotype cube.
+        bgcols = Xcodes[:, other]
+        fit = [
+            {bgcols[i].tobytes(): f[i] for i in np.flatnonzero(col == a)}
+            for a in alleles
+        ]
+        for ai, a in enumerate(alleles):
+            for bi in range(ai + 1, len(alleles)):
+                b = alleles[bi]
+                common = sorted(fit[ai].keys() & fit[bi].keys())
+                effects = np.asarray([fit[bi][k] - fit[ai][k] for k in common])
+                summaries[a, b] = (
+                    float(np.std(effects)) if len(effects) else np.nan,
+                    len(effects),
+                )
+    return [
+        (a, b, *summaries[min(a, b), max(a, b)]) for a, b in permutations(alleles, 2)
+    ]
+
+
+def _idiosyncratic_ratio(effect_sd, n_pairs, fitness_pool, rng):
+    """Lyons' matched-size control: one with-replacement draw of n pairs.
+
+    Keeping this numeric kernel separate allows exact reproduction of a study's
+    recorded RNG stream without embedding its incidental seeds in the metric.
+    """
+    pairs = rng.choice(fitness_pool, size=(n_pairs, 2), replace=True)
+    control_sd = float(np.std(pairs[:, 1] - pairs[:, 0]))
+    if control_sd == 0:
+        warnings.warn(
+            "The sampled random-pair control has zero standard deviation; "
+            "the idiosyncratic index is undefined (NaN).",
+            RuntimeWarning,
+            stacklevel=2,
+        )
+        return float("nan")
+    return float(effect_sd / control_sd)
 
 
 def idiosyncratic_index(landscape, mutation, min_pairs: int = 3):
-    """
-    Calculates the idiosyncratic index for the fitness landscape proposed in [1].
+    """Estimate the SD-based idiosyncratic index of one mutation [1]_.
 
-    The idiosyncratic index of a specific genetic mutation quantifies the sensitivity
-    of a specific mutation to idiosyncratic epistasis. It is defined as the
-    variation in the fitness difference between genotypes that differ by the mutation,
-    relative to the variation in the fitness difference between random genotype pairs.
-    We compute this for the entire fitness landscape by averaging it across individual
-    mutations.
-
-    The index is typically in [0, 1] (0 = no idiosyncrasy); a mutation whose effect
-    varies more across backgrounds than random genotype pairs can exceed 1.
-
-    For more information, please refer to the original paper:
-
-    [1] Daniel M. Lyons et al, "Idiosyncratic epistasis creates universals in mutational
-    effects and evolutionary trajectories", Nat. Ecol. Evo., 2020.
+    Divide the standard deviation of the mutation's effects across matching
+    backgrounds by the standard deviation of fitness differences in a random
+    control. The control contains the same number of genotype pairs as observed
+    backgrounds; both endpoints are drawn independently with replacement from
+    the landscape. Both standard deviations use ``ddof=0``.
 
     Parameters
     ----------
     landscape : Landscape
-        The fitness landscape object.
-
+        Built landscape. Matching backgrounds and the random-pair pool both use
+        the nodes returned by ``get_data()``; previously pruned genotypes are
+        unavailable. Fitness is used as supplied, without a log transformation.
     mutation : tuple(A, pos, B)
-        A tuple containing:
-        - A: The original variable value (allele) at the given position.
-        - pos: The position in the configuration where the mutation occurs.
-        - B: The new variable value (allele) after the mutation.
-
+        Original allele, feature-column label, and new allele. A and B must be
+        distinct observed values at pos. Other features must match exactly.
     min_pairs : int, default=3
-        Minimum number of shared genetic backgrounds required to estimate the
-        index. Mutations with fewer background-matched pairs yield an unstable
-        effect-variance estimate and return NaN (so they are excluded from any
-        landscape average rather than biasing it toward zero).
+        Minimum number of matched backgrounds, at least 2. This is a GraphFLA
+        estimation guard, not a cutoff specified by Lyons et al.
 
     Returns
     -------
     float
-        The calculated idiosyncratic index, or NaN when it cannot be estimated
-        (fewer than ``min_pairs`` shared backgrounds).
-    """
-    A, pos, B = mutation
+        Ratio of standard deviations. Returns NaN for insufficient backgrounds,
+        constant fitness, or a sampled control with zero variance. The latter
+        also emits a RuntimeWarning. Estimates can exceed 1; they are not clipped.
 
-    data = landscape.get_data()
-    X = data[list(landscape.data_types.keys())]
-    f = data["fitness"]
+    Notes
+    -----
+    This is a Monte Carlo estimate and repeated calls can differ. The current
+    single-mutation API has no seed parameter. It uses a local random generator
+    and does not modify NumPy's global random state. For a reproducible landscape
+    mean, use ``global_idiosyncratic_index(..., seed=...)``.
 
-    unique_alleles = X[pos].unique()
-    if A not in unique_alleles:
-        raise ValueError(
-            f"Original allele '{A}' not found at position '{pos}'. Available: {unique_alleles}"
-        )
-    if B not in unique_alleles:
-        raise ValueError(
-            f"New allele '{B}' not found at position '{pos}'. Available: {unique_alleles}"
-        )
-
-    X_A = X[X[pos] == A]
-    X_B = X[X[pos] == B]
-
-    if X_A.empty or X_B.empty:
-        warnings.warn(
-            f"No genotypes found for allele '{A}' or '{B}' at position '{pos}'. Returning 0.0.",
-            UserWarning,
-        )
-        return 0.0
-
-    background_cols = [col for col in X.columns if col != pos]
-
-    if not background_cols:
-        X_A_backgrounds = pd.Series([tuple()] * len(X_A), index=X_A.index)
-        X_B_backgrounds = pd.Series([tuple()] * len(X_B), index=X_B.index)
-    else:
-        X_A_backgrounds = X_A[background_cols].apply(tuple, axis=1)
-        X_B_backgrounds = X_B[background_cols].apply(tuple, axis=1)
-
-    df_A = pd.DataFrame({"background": X_A_backgrounds, "fitness_A": f.loc[X_A.index]})
-    df_B = pd.DataFrame({"background": X_B_backgrounds, "fitness_B": f.loc[X_B.index]})
-
-    df_A = df_A.drop_duplicates(subset="background", keep="first").set_index(
-        "background"
-    )
-    df_B = df_B.drop_duplicates(subset="background", keep="first").set_index(
-        "background"
-    )
-
-    df_merged = pd.merge(df_A, df_B, left_index=True, right_index=True, how="inner")
-
-    if df_merged.empty:
-        return _pythonize(np.nan)
-
-    mutation_effects = df_merged["fitness_B"] - df_merged["fitness_A"]
-    n_pairs = len(mutation_effects)
-
-    if n_pairs < min_pairs:
-        return _pythonize(np.nan)
-
-    all_fitness_values = f.values
-    if len(all_fitness_values) <= 1 or np.all(
-        all_fitness_values == all_fitness_values[0]
-    ):
-        # Idiosyncrasy is undefined on a flat (constant-fitness) landscape.
-        return _pythonize(np.nan)
-
-    # Random-pair baseline uses the exact closed form Var(diff) = 2*Var(f)
-    # (i.i.d. draws): deterministic and avoids a near-zero denominator vs sampling.
-    std_mutation_effect = np.std(mutation_effects)
-    std_random_diff = np.sqrt(2.0) * np.std(all_fitness_values)
-
-    idiosyncratic_val = std_mutation_effect / std_random_diff
-
-    return _pythonize(idiosyncratic_val)
-
-
-def global_idiosyncratic_index(landscape, n_jobs=-1, seed=None, min_pairs: int = 3):
-    """
-    Calculates the global idiosyncratic index for the entire fitness landscape using parallel processing.
-
-    This function extends the individual mutation idiosyncratic index from Lyons et al. (2020)
-    to provide a global measure by averaging across all possible mutations in the landscape.
-    The global index quantifies the overall sensitivity of the landscape to idiosyncratic
-    epistasis.
-
-    The index is typically in [0, 1], with higher values indicating stronger idiosyncratic
-    effects; individual mutations whose effects vary more than random genotype pairs can push
-    the average above 1.
-
-    Parameters
-    ----------
-    landscape : Landscape
-        The fitness landscape object.
-    n_jobs : int, optional
-        Number of parallel jobs to use. Default is -1 (all available cores).
-    seed : int, optional
-        Accepted for API consistency with other stochastic functions, but the
-        index is computed deterministically (analytic random-pair baseline), so
-        this has no effect on the result.
-    min_pairs : int, default=3
-        Minimum number of shared genetic backgrounds for a mutation to contribute
-        (passed to :func:`idiosyncratic_index`).
-
-    Returns
-    -------
-    float
-        The overall idiosyncratic index (average across all mutations).
+    The population SD ``sqrt(2) * std(fitness)`` is an infinite-control limit,
+    not the finite matched-size control specified in [1]_. This statistic
+    measures overall background dependence on the supplied fitness scale; it
+    does not isolate residual interactions after fitting a global epistasis model.
 
     References
     ----------
-    .. [1] Daniel M. Lyons et al, "Idiosyncratic epistasis creates universals in mutational
-       effects and evolutionary trajectories", Nat. Ecol. Evo., 2020.
+    .. [1] Lyons DM, Zou Z, Xu H, Zhang J (2020). Idiosyncratic epistasis creates
+       universals in mutational effects and evolutionary trajectories.
+       Nature Ecology & Evolution 4, 1685-1693. doi:10.1038/s41559-020-01286-y.
     """
-    data = landscape.get_data()
-    X = data[list(landscape.data_types.keys())]
-    f = data["fitness"].to_numpy(dtype=float)
+    _validate_min_pairs(min_pairs)
+    A, pos, B = mutation
+    X, Xcodes, f, labels = _idiosyncratic_data(landscape)
+    if pos not in X.columns:
+        raise ValueError(f"Position {pos!r} is not a configuration column.")
+    j = X.columns.get_loc(pos)
+    for allele in (A, B):
+        if allele not in labels[j]:
+            raise ValueError(f"Allele {allele!r} not found at position {pos!r}.")
+    if A == B:
+        raise ValueError("A mutation must change the allele (A != B).")
+    if len(f) < 2 or np.all(f == f[0]):
+        return float("nan")
+    a, b = labels[j].get_loc(A), labels[j].get_loc(B)
+    for aa, bb, effect_sd, n in _idiosyncratic_position_worker(Xcodes, f, j):
+        if (aa, bb) == (a, b):
+            if n < min_pairs:
+                return float("nan")
+            return _idiosyncratic_ratio(effect_sd, n, f, np.random.RandomState())
+    return float("nan")
 
-    # Flat landscape: mirror idiosyncratic_index (every mutation 0.0) -> avg 0.0, not NaN.
-    if len(f) <= 1 or np.all(f == f[0]):
-        return _pythonize(0.0)
-    std_baseline = float(np.sqrt(2.0) * np.std(f))
 
-    # Sorted-allele codes (match original sorted iteration); memmapped to workers.
-    Xcodes = np.column_stack(
-        [pd.Categorical(X[c], categories=sorted(X[c].unique())).codes for c in X.columns]
-    ).astype(np.int32)
+def global_idiosyncratic_index(landscape, n_jobs=-1, seed=None, min_pairs: int = 3):
+    """Estimate the mean idiosyncratic index across directed mutations [1]_.
 
-    # Process-based (loky) parallelism over POSITIONS: each task computes all of a
-    # position's allele-pair indices from a single shared background grouping
-    # (vs. regrouping once per allele pair), then we flatten.
+    For each position and ordered pair of observed alleles, match all available
+    backgrounds and apply the same matched-size control as
+    :func:`idiosyncratic_index`. Each eligible directed mutation has equal weight,
+    regardless of its number of backgrounds. Forward and reverse mutations have
+    the same observed SD but receive independent random controls.
+
+    Parameters
+    ----------
+    landscape : Landscape
+        Built landscape. Both effects and controls use the retained nodes from
+        ``get_data()``. Apply study-specific filtering and fitness transformations
+        before building the landscape. To reproduce a study, retain its entire
+        control population, including genotypes without single-mutant neighbors.
+    n_jobs : int, default=-1
+        Number of parallel background-matching jobs; -1 uses all available cores.
+    seed : int or None, default=None
+        Seed for a local NumPy RandomState. A fixed seed reproduces the result
+        for the same ordered input, independently of n_jobs. None draws a fresh
+        stream. NumPy's global random state is not modified.
+    min_pairs : int, default=3
+        Minimum matched backgrounds per directed mutation, at least 2. Mutations
+        below this threshold are omitted from the mean. The paper specifies no
+        minimum for this index; this is a GraphFLA estimation guard.
+
+    Returns
+    -------
+    float
+        Arithmetic mean of the eligible mutation ratios. Returns NaN for a flat
+        landscape, no eligible mutations, or any eligible mutation with a
+        zero-variance sampled control (with RuntimeWarning in the last case).
+        A failed control is not silently dropped or resampled. Values can exceed 1.
+
+    Notes
+    -----
+    Sampling is performed in feature-column order, then sorted source and target
+    allele order, after parallel background matching. A finite random control
+    cannot be replaced by ``sqrt(2) * std(fitness)`` without changing the estimator.
+    Reverse mutations are included, as in Lyons' empirical analysis. Study-specific
+    seed conventions, such as reseeding by background count in the tRNA notebook,
+    are not part of the mathematical definition and are not applied here.
+
+    This measures background dependence, including that generated by a nonlinear
+    global fitness map; it is not a residual or model-comparison statistic.
+
+    References
+    ----------
+    .. [1] Lyons DM, Zou Z, Xu H, Zhang J (2020). Idiosyncratic epistasis creates
+       universals in mutational effects and evolutionary trajectories.
+       Nature Ecology & Evolution 4, 1685-1693. doi:10.1038/s41559-020-01286-y.
+    """
+    _validate_min_pairs(min_pairs)
+    rng = np.random.RandomState(seed)
+    _, Xcodes, f, _ = _idiosyncratic_data(landscape)
+    if len(f) < 2 or np.all(f == f[0]):
+        return float("nan")
     per_pos = Parallel(n_jobs=n_jobs)(
-        delayed(_idiosyncratic_position_worker)(Xcodes, f, std_baseline, j, min_pairs)
+        delayed(_idiosyncratic_position_worker)(Xcodes, f, j)
         for j in range(Xcodes.shape[1])
     )
-    values = [v for sub in per_pos for v in sub]
-    # Too-few-background mutations are NaN and excluded from the mean (padding
-    # 0.0 would bias sparse landscapes toward zero idiosyncrasy).
-    if not values or np.all(np.isnan(values)):
-        return _pythonize(np.nan)
-    return _pythonize(float(np.nanmean(values)))
+    values = [
+        _idiosyncratic_ratio(effect_sd, n, f, rng)
+        for rows in per_pos
+        for _, _, effect_sd, n in rows
+        if n >= min_pairs
+    ]
+    return float(np.mean(values)) if values else float("nan")
 
 
 def diminishing_returns_index(

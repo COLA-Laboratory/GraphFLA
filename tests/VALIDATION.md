@@ -91,7 +91,10 @@ is made during tests.
 - Skwara's ±1 coding and shuffle-normalized ruggedness differ from GraphFLA's
   raw r/s in 0/1 coding. This is not an arithmetic defect.
 - Broad coverage and saved regression snapshots do not replace original-paper
-  reproduction for gamma, r/s, idiosyncrasy, EE mutations or path statistics.
+  reproduction for gamma, r/s, EE mutations or path statistics. For idiosyncrasy,
+  the Lyons tRNA global mean/SEM now have an offline empirical test and case
+  `lyons.trna.iid.v1`; see `validation/IDIOSYNCRASY_REVIEW.md` for its RNG and
+  population scope and the unresolved Fig. 1a source discrepancy.
 
 ## Resolved defects
 

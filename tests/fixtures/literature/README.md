@@ -23,6 +23,8 @@ or a directory-specific README. Tests verify the fixture checksum.
   by this peak check. Main Results and SI Figure S29 specify the target.
 - **Bank / Reia and Campos:** see `bank2016_reia2020/README.md` for the unmodified
   small downstream archive and the separate read-count provenance issue.
+- **Lyons et al. (2020):** see `lyons2020/README.md` for the complete viable tRNA
+  population, matched-size control, author seeds and Figure 1a discrepancy.
 
 The compressed CSVs retain source float64 values with 17 significant digits.
 Read them using `float_precision="round_trip"`. Gzip timestamps are fixed to

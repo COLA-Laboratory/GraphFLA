@@ -151,7 +151,7 @@ def extract(e, seed=0):
     else:
         out["walsh_maxabs_by_order"] = None
     # --- idiosyncratic ---
-    _try(out, "global_idiosyncratic_index", lambda: global_idiosyncratic_index(ls, n_jobs=1))
+    _try(out, "global_idiosyncratic_index", lambda: global_idiosyncratic_index(ls, n_jobs=1, seed=seed))
     # --- ruggedness ---
     _try(out, "autocorrelation", lambda: autocorrelation(ls, walk_length=30, walk_times=3000, seed=seed))
     _try(out, "r_s_ratio", lambda: r_s_ratio(ls))
