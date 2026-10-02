@@ -31,6 +31,7 @@ THREADS = dict.fromkeys(
     ],
     "1",
 )
+SNAPSHOT_METRICS = {"ee", "gamma", "gamma_star"}
 
 
 def worker(args):
@@ -44,13 +45,16 @@ def worker(args):
     from benchmarks.analysis import prepare_call
     from graphfla.analysis import robustness as ee
 
+    module = None
     if args.baseline_kernel:
         spec = importlib.util.spec_from_file_location(
-            "ee_baseline", args.baseline_kernel
+            "ee_baseline" if args.metric == "ee" else
+            "graphfla.analysis.epistasis._gamma_baseline", args.baseline_kernel
         )
         module = importlib.util.module_from_spec(spec)
         spec.loader.exec_module(module)
-        ee._landscape_ee_statistics = module._landscape_ee_statistics
+        if args.metric == "ee":
+            ee._landscape_ee_statistics = module._landscape_ee_statistics
     landscape = build_case(args.case)
     calls = (
         {
@@ -60,6 +64,8 @@ def worker(args):
         if args.metric == "ee"
         else {args.metric: prepare_call(landscape, args.metric)}
     )
+    if module is not None and args.metric in {"gamma", "gamma_star"}:
+        calls = {args.metric: lambda: getattr(module, args.metric)(landscape, n_jobs=1)}
     results = {}
     for name, call in calls.items():
         call()  # Untimed warmup; construction is also outside the timer.
@@ -88,6 +94,8 @@ def worker(args):
                 arrays[col] = table[col].to_numpy()
         arrays["fraction"] = np.asarray(ee.evolvability_enhancing_fraction(landscape))
         np.savez_compressed(args.snapshot, **arrays)
+    elif args.snapshot and args.metric in {"gamma", "gamma_star"}:
+        np.savez_compressed(args.snapshot, **{args.metric: np.asarray(calls[args.metric]())})
     input_digest = hashlib.sha256(landscape.get_data().to_json(orient="split").encode())
     input_digest.update(np.asarray(landscape.graph.vs["fitness"]).tobytes())
     input_digest.update(repr(landscape.graph.get_edgelist()).encode())
@@ -147,7 +155,7 @@ def main():
     parser.add_argument(
         "--baseline-kernel",
         type=Path,
-        help="EE-only trusted local baseline module; never downloads code",
+        help="Trusted local EE kernel or gamma module; never downloads code",
     )
     parser.add_argument("--worker", action="store_true", help=argparse.SUPPRESS)
     parser.add_argument("--case", help=argparse.SUPPRESS)
@@ -168,6 +176,10 @@ def main():
             "Limits: 1..5 processes, 1..10 repeats, 0 < timeout <= 60 seconds, "
             "64..4096 MiB process-tree RSS"
         )
+    if args.compare and args.metric not in SNAPSHOT_METRICS:
+        parser.error("Output-equivalence comparison supports ee, gamma and gamma_star")
+    if args.baseline_kernel and args.metric not in SNAPSHOT_METRICS:
+        parser.error("--baseline-kernel applies only to EE or gamma metrics")
     if args.worker:
         if args.case not in cases_for_metric(args.metric):
             parser.error("Worker case is not registered for the selected metric")
@@ -175,12 +187,6 @@ def main():
         return
     if args.output is None:
         parser.error("--output is required")
-    if args.compare and args.metric != "ee":
-        parser.error(
-            "Output-equivalence comparison currently supports --metric ee only"
-        )
-    if args.baseline_kernel and args.metric != "ee":
-        parser.error("--baseline-kernel applies only to EE")
     output = args.output.resolve()
     partial = output.with_suffix(".partial.json")
     snapshots = output.with_suffix(".snapshots")
@@ -189,7 +195,10 @@ def main():
     output.parent.mkdir(parents=True, exist_ok=True)
     snapshots.mkdir()
     baseline = json.loads(args.compare.read_text()) if args.compare else None
-    source = args.baseline_kernel or REPO / "graphfla/analysis/_evolvability.py"
+    source = args.baseline_kernel or REPO / (
+        "graphfla/analysis/epistasis/gamma.py" if args.metric in {"gamma", "gamma_star"}
+        else "graphfla/analysis/_evolvability.py"
+    )
     protocol = [
         Path(__file__).resolve(),
         REPO / "benchmarks/analysis/_workloads.py",
@@ -217,7 +226,7 @@ def main():
         "memory_limit_bytes": args.memory_limit_mib * 1024**2,
         "kernel_sha256": (
             hashlib.sha256(source.read_bytes()).hexdigest()
-            if args.metric == "ee"
+            if args.metric in SNAPSHOT_METRICS
             else None
         ),
         "protocol_sha256": protocol_hashes,
@@ -258,7 +267,7 @@ def main():
                 "--repeats",
                 str(args.repeats),
             ]
-            if index == 0 and args.metric == "ee":
+            if index == 0 and args.metric in SNAPSHOT_METRICS:
                 cmd.extend(["--snapshot", str(snapshot)])
             if args.baseline_kernel:
                 cmd.extend(["--baseline-kernel", str(args.baseline_kernel.resolve())])
@@ -303,7 +312,7 @@ def main():
                 "median_seconds": median,
                 "mad_seconds": statistics.median(abs(x - median) for x in medians),
             }
-        if args.metric == "ee":
+        if args.metric in SNAPSHOT_METRICS:
             row["snapshot"] = str(snapshot.relative_to(output.parent))
             row["snapshot_sha256"] = hashlib.sha256(snapshot.read_bytes()).hexdigest()
         if baseline:

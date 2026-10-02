@@ -71,3 +71,31 @@ def test_analysis_snapshots_check_labels_shapes_dtypes_and_float_values(tmp_path
         np.savez(candidate, **changed)
         with pytest.raises(AssertionError):
             compare_snapshots(baseline, candidate)
+
+
+@pytest.mark.parametrize("metric", ["gamma", "gamma_star"])
+def test_gamma_worker_snapshots_the_selected_baseline(tmp_path, metric):
+    import numpy as np
+    from types import SimpleNamespace
+    from tools.benchmark_analysis import worker
+
+    baseline = tmp_path / "old_gamma.py"
+    baseline.write_text(
+        "from .._utils import _pythonize\n"
+        f"def {metric}(landscape, n_jobs=-1):\n"
+        "    return _pythonize(0.25)\n"
+    )
+    snapshot = tmp_path / "value.npz"
+    report = worker(
+        SimpleNamespace(
+            baseline_kernel=baseline,
+            metric=metric,
+            case="boolean-6",
+            repeats=1,
+            snapshot=snapshot,
+        )
+    )
+    assert set(report["samples_seconds"]) == {metric}
+    with np.load(snapshot, allow_pickle=False) as values:
+        assert values.files == [metric]
+        assert values[metric].shape == () and values[metric].item() == 0.25

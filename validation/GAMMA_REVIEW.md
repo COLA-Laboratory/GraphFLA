@@ -1,5 +1,12 @@
 # Gamma and gamma-star calculation review
 
+Follow-up: the user accepted the remaining empirical discrepancies on
+2026-10-02. They remain documented scientific limits, not widened test tolerances.
+The subsequent [test audit](GAMMA_TEST_AUDIT.md) and
+[bounded performance results](../benchmarks/GAMMA_RESULTS.md) describe nine
+dedicated literature tests, expanded basic coverage and an equivalent faster
+implementation. This initial review's six-test counts below are historical.
+
 Reviewed 2026-10-02 against the nine PDFs supplied for this task. Public
 signatures are unchanged. The mathematical pooling in the previous version
 already implements Ferretti's complete-square equations, including exact ties.

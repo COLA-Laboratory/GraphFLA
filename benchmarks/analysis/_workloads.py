@@ -25,6 +25,14 @@ IDIOSYNCRASY_CASES = [
     "sparse-boolean-12",
     "long-boolean-72",
 ]
+GAMMA_CASES = [
+    "boolean-6",
+    "boolean-10",
+    "categorical-4x5",
+    "categorical-16x2",
+    "sparse-boolean-12",
+    "long-boolean-72",
+]
 
 
 def cases_for_metric(metric):
@@ -32,6 +40,8 @@ def cases_for_metric(metric):
         return EE_CASES
     if metric in {"idiosyncratic_index", "global_idiosyncratic_index"}:
         return IDIOSYNCRASY_CASES
+    if metric in {"gamma", "gamma_star"}:
+        return GAMMA_CASES
     return SMALL_CASES
 
 

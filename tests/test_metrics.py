@@ -19,7 +19,6 @@ import pytest
 from scipy import stats as scipy_stats
 
 from graphfla.analysis import (
-    gamma,
     gamma_star,
     classify_epistasis,
     autocorrelation,
@@ -50,17 +49,6 @@ from _landscapes import (
 # ----------------------------------------------------------------------
 # Gamma / gamma* (Ferretti 2016) -- regression for fixed bug #1
 # ----------------------------------------------------------------------
-
-
-def test_gamma_additive_is_one():
-    # Purely additive: a mutation's effect is identical on every background,
-    # so the (non-centered) correlation of effects is exactly 1.
-    assert gamma(onemax(5), n_jobs=1) == pytest.approx(1.0, abs=1e-6)
-
-
-def test_gamma_hoc_near_zero():
-    # House-of-Cards: effects are uncorrelated across backgrounds -> ~0.
-    assert abs(gamma(hoc_landscape(6, seed=3), n_jobs=1)) < 0.5
 
 
 def test_gamma_star_magnitude_sign_reciprocal():

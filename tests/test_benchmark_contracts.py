@@ -12,6 +12,7 @@ from benchmarks.analysis import METHODS, METRIC_MODULES, EXCLUDED_METHODS, prepa
 from benchmarks.analysis._workloads import (
     SMALL_CASES,
     IDIOSYNCRASY_CASES,
+    GAMMA_CASES,
     build_case,
     cases_for_metric,
 )
@@ -79,3 +80,16 @@ def test_idiosyncrasy_workload_bounds_and_shapes(case):
         assert cases_for_metric(method) == IDIOSYNCRASY_CASES
         benchmark = import_module(f"benchmarks.analysis.{method}").Benchmark
         assert benchmark.params == IDIOSYNCRASY_CASES
+
+
+@pytest.mark.parametrize("case", GAMMA_CASES)
+def test_gamma_workload_bounds_and_selection(case):
+    ls = build_case(case)
+    assert 2 <= ls.n_configs <= 1024 and 2 <= len(ls.data_types) <= 72
+    assert np.isfinite(ls.graph.vs["fitness"]).all()
+    for method in ("gamma", "gamma_star"):
+        assert cases_for_metric(method) == GAMMA_CASES
+        assert (
+            import_module(f"benchmarks.analysis.{method}").Benchmark.params
+            == GAMMA_CASES
+        )
