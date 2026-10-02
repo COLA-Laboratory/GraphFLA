@@ -1,0 +1,39 @@
+{
+  "schema_version": 1,
+  "kind": "case",
+  "id": "ferretti.csi.gamma_star.figure4.unresolved.v1",
+  "revision": 1,
+  "study_id": "Ferretti2016",
+  "metric_ids": [
+    "gamma"
+  ],
+  "evidence_tier": "published_numeric",
+  "definition_match": "unresolved",
+  "scope": "UNRESOLVED Fig.4c gamma_star target. The 2011 printed table yields 7/26 under Eq.(11). Exact author .fl input/precision and tolerance are not available. Kept as a failed reproduction target; no passing scientific test is claimed.",
+  "preprocessing": "Full 32-genotype biallelic 5-site landscape; natural log of supplied positive W/MIC; maximize. All 640 directed focal/background substitution pairs on 80 complete squares; pool products and squares with equal directed-pair weights. Exact ties have sign zero and remain in the square population. No epsilon, imputation, significance filter, subsampling, variance inference or RNG.",
+  "sources": [
+    {
+      "url": "https://doi.org/10.1016/j.jtbi.2016.01.037",
+      "locator": "Published version Section 2.1 Eq.(1), Section 2.5 Eqs.(10)-(12), and Fig.4c on p.138. Eq.(12) assumes no neutral mutations."
+    },
+    {
+      "url": "https://journals.plos.org/ploscompbiol/article/file?id=10.1371/journal.pcbi.1002134.s009&type=supplementary",
+      "locator": "Franke et al. (2011) Table S1 (supplement s009). Select arg,pyr,leu,oli,crn; fwn,phe,lys absent. CC BY data; provenance.json records source hash."
+    }
+  ],
+  "expected": {
+    "gamma_star": 0.25
+  },
+  "comparison": {
+    "kind": "absolute",
+    "tolerance": 0.005,
+    "justification": "Half the last printed decimal place (two decimals); not fitted to GraphFLA."
+  },
+  "inputs": [
+    {
+      "root": "repo",
+      "path": "tests/fixtures/literature/ferretti2016/csi.csv",
+      "sha256": "8f8f977c781380b8d40fa3e6d7be226d6e9ba627ac296ab3d78cd1036d5b1354"
+    }
+  ]
+}

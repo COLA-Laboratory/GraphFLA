@@ -1,0 +1,58 @@
+{
+  "study": "Ferretti et al. (2016), doi:10.1016/j.jtbi.2016.01.037, Fig. 4c",
+  "data_source": "Franke, Klozer, de Visser and Krug (2011), doi:10.1371/journal.pcbi.1002134, Table S1",
+  "source_url": "https://journals.plos.org/ploscompbiol/article/file?id=10.1371/journal.pcbi.1002134.s009&type=supplementary",
+  "source_sha256": "e2a1368985da3f575c7ae6e67cd3c2c9c2c5d2c0e0d4ca79acc096577830914d",
+  "source_store_path": "papers/ferretti2016/sources/Franke2011_TableS1_alt_codex.pdf",
+  "license": "Creative Commons Attribution; copyright (2011) Franke et al.; see article copyright statement.",
+  "acquired": "2026-09-30; source and extraction rechecked 2026-10-02",
+  "source_columns": [
+    "fwn",
+    "arg",
+    "pyr",
+    "leu",
+    "phe",
+    "lys",
+    "oli",
+    "crn"
+  ],
+  "retained_columns": [
+    "arg",
+    "pyr",
+    "leu",
+    "oli",
+    "crn"
+  ],
+  "fixed_absent_columns": [
+    "fwn",
+    "phe",
+    "lys"
+  ],
+  "membership_source": "de Visser et al. (1997), Results p.1502/Table4 p.1503; also arXiv:0807.3002v1 Table1 footnote1",
+  "conversion": "pdftotext -layout; parse 10-field table rows (mutation count, eight bits, W); keep fwn=phe=lys=0, retain arg,pyr,leu,oli,crn; sort lexicographically; preserve printed W strings. CSV uses LF line endings.",
+  "fitness_for_test": "ln(W); complete 32-genotype Boolean landscape; no filtering, imputation, threshold or random sampling.",
+  "fixture_sha256": "8f8f977c781380b8d40fa3e6d7be226d6e9ba627ac296ab3d78cd1036d5b1354",
+  "additional_inputs": [
+    {
+      "file": "csi2008.csv",
+      "source_pdf": "0807.3002v1.pdf",
+      "source_url": "https://arxiv.org/pdf/0807.3002v1",
+      "source_sha256": "4c4a965fabf65304d0c66ba87667e670bf0a1a2d1b387115f60375bc213d0c84",
+      "locator": "Table 1, manuscript pp.32-33; CS I w column, genotype column; footnote1 defines loci.",
+      "conversion": "Transcribe the 32 Table1 rows only, retaining displayed decimal strings and strain order; header genotype,W; CRLF. No tie-breaking by the separately printed ranks.",
+      "rights": "Only numerical genotype/fitness facts are extracted; no license for the whole manuscript is asserted.",
+      "fixture_sha256": "527bcc57e6dd3809593285816effca46ebe054dfc17f92912c199aa59d250dfb"
+    },
+    {
+      "file": "tem_mic.csv",
+      "data_publication": "Ogbunugafor (2026), doi:10.1093/genetics/iyag140, Data availability; underlying Weinreich et al. (2006), doi:10.1126/science.1123539.",
+      "source_url": "https://raw.githubusercontent.com/OgPlexus/DEFPreflect/ae47fda1f973c25551d4f45129287fff25ac4d6b/1.%20FINAL_DataBinary_MIC.csv",
+      "source_sha256": "3acf967fd37dc48c41f171136d4f9318d0458da2eda7e4953f9afcc3cdd34054",
+      "commit": "ae47fda1f973c25551d4f45129287fff25ac4d6b",
+      "conversion": "Byte-identical author numerical table. Use first five 0/1 columns and ln(MIC); ignore log_MIC (base10) column. 11111 MIC=4100. No package data are edited.",
+      "rights": "Numerical measurements only; the author repository has no declared license. No repository-wide license is asserted or code redistributed.",
+      "retrieved": "2026-10-02",
+      "fixture_sha256": "3acf967fd37dc48c41f171136d4f9318d0458da2eda7e4953f9afcc3cdd34054"
+    }
+  ]
+}

@@ -261,6 +261,14 @@ def classify_epistasis(landscape, sample_cut_prob="auto", seed=None, time_budget
         If landscape.graph is not an igraph.Graph object or does not exist.
     ValueError
         If sample_cut_prob is invalid, or if the fitness attribute is missing.
+
+    Notes
+    -----
+    Fractions are normalized over the directed motifs found in the constructed
+    graph. Missing or neutral edges can remove a square from this population.
+    The relation ``gamma_star = 1 - sign - 2*reciprocal_sign`` requires exact
+    counts of the same variable squares with no neutral effects; it is not an
+    identity for arbitrarily filtered or sampled graphs. See :func:`gamma_star`.
     """
     motif_size = 4
     square_indices = {19, 52, 66}  # set for O(1) membership in callback

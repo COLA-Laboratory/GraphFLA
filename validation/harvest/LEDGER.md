@@ -1,5 +1,12 @@
 # Scope ledger — definition of done
 
+**2026-10-02 gamma addendum:** [the calculation review](../GAMMA_REVIEW.md)
+corrects the later claim that ties reveal a gamma-star/classification bug.
+Ferretti's published Eq. (12) assumes no neutral mutations; its failure outside
+that domain is expected. New source-pinned equation checks and a numerical
+scale fix are complete. The empirical gamma-star/TEM mismatches below remain
+unresolved; they are not hidden by the new passing equation tests.
+
 **Scope rule (set by the user, 2026-09-30):** within the **supplied corpus**, only
 landscapes with **more than 1,024 variants**. No supplied-corpus study at or below
 1,024 variants is worked. The cutoff selects which supplied studies to spend effort

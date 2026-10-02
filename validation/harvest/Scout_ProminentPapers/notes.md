@@ -1,5 +1,11 @@
 # Scout_ProminentPapers — ranked shortlist of reproducibility anchors
 
+**Correction, 2026-10-02:** the gamma-star defect conclusion below was based on
+applying a tie-free identity to tied data. The published paper explicitly
+states the missing assumption (Eq. (12), Appendix C.3). See
+[GAMMA_REVIEW.md](../../GAMMA_REVIEW.md). The original numerical observations
+and `record.json` are retained as research history, not current defect claims.
+
 Agent: claude-scout (discovery pass, 2026-10-01).
 
 Brief: find prominent published papers that could anchor GraphFLA metrics, weighted

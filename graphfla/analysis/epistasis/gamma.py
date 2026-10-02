@@ -1,5 +1,6 @@
 """Gamma epistasis statistics (decay of fitness-effect correlation by distance)."""
 
+import math
 import warnings
 
 import numpy as np
@@ -7,6 +8,57 @@ import pandas as pd
 from joblib import Parallel, delayed
 
 from .._utils import _pythonize, _pack_rows
+
+
+def _gamma_effect_contribution(a, b, c, d):
+    """Scaled second moments for parallel effects a-b and c-d.
+
+    Track powers of two rather than squaring effects in their original units.
+    This also permits pooling tiny observed squares when unrelated genotypes
+    have enormous fitness. Signs are evaluated on the original values.
+    """
+    with np.errstate(over="ignore", invalid="ignore"):
+        bv, Bv = a - b, c - d
+        num = float(np.dot(bv, Bv))
+        den = 0.5 * float(np.dot(bv, bv) + np.dot(Bv, Bv))
+    # Infinite differences still have the correct signs. Compute them before
+    # rescaling, which could erase tiny nonzero effects in a mixed-scale batch.
+    sb, sB = np.sign(bv), np.sign(Bv)
+    snum = float(np.dot(sb, sB))
+    sden = 0.5 * float(np.count_nonzero(sb) + np.count_nonzero(sB))
+    # Ordinary units keep the original arithmetic and avoid extra array passes.
+    # The conservative range leaves ample headroom when pooling finite inputs.
+    if 2.0**-500 <= den <= 2.0**500:
+        return num, den, snum, sden, 0
+    shift = 0
+    if np.isinf(bv).any() or np.isinf(Bv).any():
+        # Finite endpoints can differ by up to twice float64's maximum.
+        bv = np.ldexp(a, -1) - np.ldexp(b, -1)
+        Bv = np.ldexp(c, -1) - np.ldexp(d, -1)
+        shift = 1
+    largest = max(np.max(np.abs(bv)), np.max(np.abs(Bv)))
+    if largest == 0:
+        return 0.0, 0.0, snum, sden, 0
+    exponent = math.frexp(largest)[1]
+    bv, Bv = np.ldexp(bv, -exponent), np.ldexp(Bv, -exponent)
+    num = float(np.dot(bv, Bv))
+    den = 0.5 * float(np.dot(bv, bv) + np.dot(Bv, Bv))
+    return num, den, snum, sden, exponent + shift
+
+
+def _merge_gamma_contributions(total, addition):
+    """Pool raw moments at a shared exponent, retaining effect-size weights."""
+    num, den, snum, sden, exponent = total
+    n, d, sn, sd, e = addition
+    if d:
+        if not den:
+            num, den, exponent = n, d, e
+        else:
+            common = max(exponent, e)
+            num = math.ldexp(num, 2 * (exponent - common)) + math.ldexp(n, 2 * (e - common))
+            den = math.ldexp(den, 2 * (exponent - common)) + math.ldexp(d, 2 * (e - common))
+            exponent = common
+    return num, den, snum + sn, sden + sd, exponent
 
 
 def _gamma_pair_via_dict(Xcodes, f, p1, p2, alleles1, alleles2, other):
@@ -24,7 +76,7 @@ def _gamma_pair_via_dict(Xcodes, f, p1, p2, alleles1, alleles2, other):
         bk = bg[i].tobytes()
         if bk not in d:
             d[bk] = f[i]
-    num = den = snum = sden = 0.0
+    total = (0.0, 0.0, 0.0, 0.0, 0)
     for ai in range(len(alleles1)):
         for aj in range(ai + 1, len(alleles1)):
             a, A_ = alleles1[ai], alleles1[aj]
@@ -42,15 +94,12 @@ def _gamma_pair_via_dict(Xcodes, f, p1, p2, alleles1, alleles2, other):
                         continue
                     common = list(common)
                     n = len(common)
-                    bvec = np.fromiter((g_ab[k] - g_Ab[k] for k in common), float, n)
-                    Bvec = np.fromiter((g_aB[k] - g_AB[k] for k in common), float, n)
-                    num += float(np.dot(bvec, Bvec))
-                    den += 0.5 * float(np.dot(bvec, bvec) + np.dot(Bvec, Bvec))
-                    sb = np.sign(bvec)
-                    sB = np.sign(Bvec)
-                    snum += float(np.dot(sb, sB))
-                    sden += 0.5 * float(np.count_nonzero(sb) + np.count_nonzero(sB))
-    return num, den, snum, sden
+                    corners = [np.fromiter((g[k] for k in common), float, n)
+                               for g in (g_ab, g_Ab, g_aB, g_AB)]
+                    total = _merge_gamma_contributions(
+                        total, _gamma_effect_contribution(*corners)
+                    )
+    return total
 
 
 def _gamma_position_pair_worker(Xcodes, f, p1, p2, alleles1, alleles2, other):
@@ -60,10 +109,11 @@ def _gamma_position_pair_worker(Xcodes, f, p1, p2, alleles1, alleles2, other):
     p1-mutation, correlate its effect on backgrounds with allele ``b`` at p2 with
     its effect on backgrounds with allele ``B`` at p2, across all shared genetic
     backgrounds. The correlation is *non-centered* (a raw second-moment ratio, as
-    in eq. 3 of the paper), so it equals +1 for additive landscapes rather than
-    being undefined. Returns the partial sums ``(num, den, snum, sden)`` to be
+    in Eq. (1) of the paper), so it equals +1 for additive landscapes rather than
+    being undefined. Returns ``(num, den, snum, sden, exponent)`` to be
     pooled across all ordered pairs by :func:`_gamma_statistics`, giving
-    ``gamma = num / den`` and ``gamma_star = snum / sden``.
+    ``gamma = num / den`` and ``gamma_star = snum / sden`` after rescaling
+    the numeric moments to a common power-of-two exponent.
     """
     # Group nodes by background. When the background columns pack into an int64
     # key (boolean / DNA / ordinal / low-dimensional protein) this is a fast 1D
@@ -86,7 +136,7 @@ def _gamma_position_pair_worker(Xcodes, f, p1, p2, alleles1, alleles2, other):
     G = np.full((n_bg, A1, A2), np.nan)
     G[bg_ids, a1_local, a2_local] = f
 
-    num = den = snum = sden = 0.0
+    total = (0.0, 0.0, 0.0, 0.0, 0)
     # Same allele-quadruple loops as the dict path, but each (num,den,snum,sden)
     # update is vectorised over the background axis instead of set intersections.
     for ai in range(A1):
@@ -95,20 +145,14 @@ def _gamma_position_pair_worker(Xcodes, f, p1, p2, alleles1, alleles2, other):
                 g_ai_bi = G[:, ai, bi]
                 g_aj_bi = G[:, aj, bi]
                 for bj in range(bi + 1, A2):
-                    bvec = g_ai_bi - g_aj_bi          # effect at p2=bi: f(a,b)-f(A,b)
-                    Bvec = G[:, ai, bj] - G[:, aj, bj]  # effect at p2=bj: f(a,B)-f(A,B)
-                    mask = ~(np.isnan(bvec) | np.isnan(Bvec))  # shared backgrounds
+                    corners = (g_ai_bi, g_aj_bi, G[:, ai, bj], G[:, aj, bj])
+                    mask = ~np.logical_or.reduce([np.isnan(v) for v in corners])
                     if not mask.any():
                         continue
-                    bv = bvec[mask]
-                    Bv = Bvec[mask]
-                    num += float(np.dot(bv, Bv))
-                    den += 0.5 * float(np.dot(bv, bv) + np.dot(Bv, Bv))
-                    sb = np.sign(bv)
-                    sB = np.sign(Bv)
-                    snum += float(np.dot(sb, sB))
-                    sden += 0.5 * float(np.count_nonzero(sb) + np.count_nonzero(sB))
-    return num, den, snum, sden
+                    total = _merge_gamma_contributions(
+                        total, _gamma_effect_contribution(*(v[mask] for v in corners))
+                    )
+    return total
 
 
 def _gamma_statistics(landscape, n_jobs=-1):
@@ -149,10 +193,10 @@ def _gamma_statistics(landscape, n_jobs=-1):
 
     # Pool over all ordered pairs (both orderings cover both square sides) into
     # the single global non-centered correlation of Ferretti et al. (2016).
-    num = sum(r[0] for r in results)
-    den = sum(r[1] for r in results)
-    snum = sum(r[2] for r in results)
-    sden = sum(r[3] for r in results)
+    total = (0.0, 0.0, 0.0, 0.0, 0)
+    for result in results:
+        total = _merge_gamma_contributions(total, result)
+    num, den, snum, sden, _ = total
 
     return {
         "gamma": num / den if den else np.nan,
@@ -161,73 +205,129 @@ def _gamma_statistics(landscape, n_jobs=-1):
 
 
 def gamma(landscape, n_jobs=-1):
-    """
-    Calculates the gamma and gamma_star statistics for a fitness landscape.
+    """Measure the correlation of mutation effects across neighboring backgrounds.
 
     Parameters
     ----------
     landscape : Landscape
-        The fitness landscape object containing fitness data.
-    n_jobs : int, optional
-        Number of parallel jobs to use. Default is -1 (all available cores).
+        Built landscape. Fitness is used on its supplied scale; apply any
+        scientifically appropriate log transformation before construction.
+        All observed allele pairs at two distinct variables are considered.
+    n_jobs : int, default=-1
+        Number of joblib workers. ``-1`` uses all available CPUs; ``1`` runs
+        serially.
 
     Returns
     -------
     float
-        The traditional gamma statistic value. gamma = 1 means a mutation has
-        the same effect in both backgrounds of every *observed* square, values
-        near 0 mean uncorrelated effects (House of Cards), and negative values
-        mean systematically reversed effects. On sparse data gamma = 1 shows
-        additivity over the squares that are present, not global additivity.
+        Non-centered correlation in [-1, 1]. One means equal mutation effects
+        across every observed square; negative values indicate opposing
+        effects. Returns NaN if there are no complete squares or every effect
+        on those squares is zero.
+
+    Warns
+    -----
+    UserWarning
+        If fewer than two variables remain in the built landscape.
+
+    See Also
+    --------
+    gamma_star : Correlation of the signs of mutation effects.
 
     Notes
     -----
-    - The gamma statistic measures the correlation between fitness effects of mutations
-      across different genetic backgrounds, providing a measure of epistatic interactions
-      in the landscape.
-    - It is computed as the non-centered (raw second-moment) correlation of fitness
-      effects pooled over all square motifs, following eq. (3) of Ferretti et al.
-      (2016). Hence a purely additive landscape gives gamma = 1, a House-of-Cards
-      landscape gives gamma ~ 0, and a reciprocal-sign-dominated landscape gives
-      gamma < 0.
-    - The gamma_star statistic focuses only on sign consistency, ignoring the magnitude
-      of fitness effects. It indicates whether mutations tend to have consistent
-      directional effects across different genetic backgrounds.
+    For parallel effects a and b, pool their products and squared effects:
+    ``sum(a*b) / sum((a*a + b*b)/2)`` over both directions of every complete
+    two-variable square [1]_. Pool sums, rather than averaging square ratios.
+    Every allele-pair combination has equal weight, including in multiallelic
+    landscapes; fitness offsets and nonzero linear rescaling leave gamma
+    unchanged.
+
+    Missing corners exclude a square from both sums. This describes the
+    observed squares, not the paper's separate distance-correlation estimator
+    for missing data (Eq. (2)). Enumeration uses retained configurations,
+    independently of graph edges, ordinal step restrictions and construction
+    epsilon. A value of one on incomplete data does not establish global
+    additivity.
 
     References
     ----------
-    .. [1] L. Ferretti et al., "Measuring epistasis in fitness landscapes: The
-       correlation of fitness effects of mutations", J. Theor. Biol. 396, 132-143 (2016).
-    """
+    .. [1] Ferretti, L. et al. (2016). Measuring epistasis in fitness landscapes:
+       The correlation of fitness effects of mutations. Journal of Theoretical
+       Biology, 396, 132-143. Eqs. (1), (3), Appendix C.1.
+       https://doi.org/10.1016/j.jtbi.2016.01.037
 
+    Examples
+    --------
+    >>> from graphfla.landscape import BooleanLandscape
+    >>> from graphfla.analysis import gamma
+    >>> landscape = BooleanLandscape().build_from_data(
+    ...     ["00", "01", "10", "11"], [0, 1, 2, 4], verbose=False)
+    >>> round(gamma(landscape, n_jobs=1), 6)
+    0.888889
+    """
     stats = _gamma_statistics(landscape, n_jobs=n_jobs)
     return _pythonize(stats["gamma"])
 
 
 def gamma_star(landscape, n_jobs=-1):
-    """
-    Calculate the gamma-star statistic for a fitness landscape.
+    """Measure the correlation of mutation-effect signs across backgrounds.
 
     Parameters
     ----------
     landscape : Landscape
-        The fitness landscape object containing fitness data.
-    n_jobs : int, optional
-        Number of parallel jobs to use. Default is -1 (all available cores).
+        Built landscape. Positive, zero and negative fitness differences are
+        assigned +1, 0 and -1, respectively. Only exact ties are neutral;
+        construction epsilon does not set a sign tolerance for this metric.
+    n_jobs : int, default=-1
+        Number of joblib workers. ``-1`` uses all available CPUs; ``1`` runs
+        serially.
 
     Returns
     -------
     float
-        The gamma-star statistic, which considers only the sign of fitness
-        effects. Values close to 1 indicate that a mutation keeps the same
-        sign across backgrounds (little sign epistasis), values close to -1
-        indicate systematically reversed signs (pervasive sign epistasis), and
-        values close to 0 indicate signs that are uncorrelated in aggregate.
+        Sign correlation in [-1, 1]. One indicates consistent nonzero signs,
+        minus one indicates reversed signs, and zero indicates cancellation
+        or absence of nonzero parallel products. Returns NaN if there are no
+        complete squares or all effects on those squares are neutral.
+
+    Warns
+    -----
+    UserWarning
+        If fewer than two variables remain in the built landscape.
+
+    See Also
+    --------
+    gamma : Square enumeration and pooling conventions shared by both metrics.
+    classify_epistasis : Proportions of directed graph motifs.
+
+    Notes
+    -----
+    Apply the pooling formula of :func:`gamma` to effect signs [1]_. A zero
+    effect contributes zero to the numerator and its squared-effect term;
+    it does not cause the entire square to be discarded. The function uses
+    Eq. (11) with zero tolerance, not the optional positive-tolerance variant.
+
+    The identity ``gamma_star = 1 - phi_sign - 2*phi_reciprocal`` (Eq. (12))
+    requires no neutral effects and the same square population. It need not
+    hold for :func:`classify_epistasis` when graph filtering removes edges,
+    graph motifs differ from variable squares, or motif counts are sampled.
 
     References
     ----------
-    .. [1] L. Ferretti et al., "Measuring epistasis in fitness landscapes: The
-       correlation of fitness effects of mutations", J. Theor. Biol. 396, 132-143 (2016).
+    .. [1] Ferretti, L. et al. (2016). Measuring epistasis in fitness landscapes:
+       The correlation of fitness effects of mutations. Journal of Theoretical
+       Biology, 396, 132-143. Eqs. (10)-(12), Appendix C.3.
+       https://doi.org/10.1016/j.jtbi.2016.01.037
+
+    Examples
+    --------
+    >>> from graphfla.landscape import BooleanLandscape
+    >>> from graphfla.analysis import gamma_star
+    >>> landscape = BooleanLandscape().build_from_data(
+    ...     ["00", "01", "10", "11"], [0, 0, 1, 2], verbose=False)
+    >>> round(gamma_star(landscape, n_jobs=1), 6)
+    0.666667
     """
     stats = _gamma_statistics(landscape, n_jobs=n_jobs)
     return _pythonize(stats["gamma_star"])

@@ -49,8 +49,8 @@
         "Ferretti2016",
         "BankMHJ16"
       ],
-      "literature_next_action": "Recover original empirical inputs and seek further independent studies; audit sparse estimator and multiallelic weighting.",
-      "review_status": "partial; see tests/VALIDATION.md and case records"
+      "literature_next_action": "Recover exact Fig.4 .fl inputs/precision and sign tolerance to resolve csI gamma_star and TEM gamma/gamma_star; do not apply the tie-free motif identity to neutral data. Review sparse estimator/API choices separately.",
+      "review_status": "Formula pooling verified; numerical scale correction implemented; six literature tests on three pinned input tables. csI gamma=0.33 reproduced; remaining Fig.4 values unresolved. See GAMMA_REVIEW.md."
     },
     {
       "id": "roughness_slope",
