@@ -1,0 +1,40 @@
+"""REPLACE: paper authors/year, DOI, equation and result locators.
+
+For pooled statistics, scalar agreement can hide compensating errors between
+groups. This pattern also checks independently enumerated group contributions.
+Use the existing TESTING.md contract, case template and citation-aware suite.
+Resource/provenance review: REPLACE_PATH. Do not regenerate expected targets.
+"""
+
+import numpy as np
+import pytest
+from validation.testing import assert_case_matches
+
+CASES = ["REPLACE_FROZEN_EQUATION_CASE"]
+
+
+@pytest.fixture(scope="module")
+def observations(verified_literature_inputs):
+    selected = {case: verified_literature_inputs[case] for case in CASES
+                if case in verified_literature_inputs}
+    cache = {paths: collect_observations(paths) for paths in set(selected.values())}
+    return {case: cache[paths] for case, paths in selected.items()}
+
+
+@pytest.mark.parametrize("case", [pytest.param(case, marks=pytest.mark.literature_case(
+    case, role="independent_check")) for case in CASES])
+def test_pooled_equation_and_group_contributions(case, observations):
+    observed = observations[case]
+    assert_case_matches(case, observed["public_summary"])
+    assert observed["group_keys"] == observed["independent_group_keys"]
+    # Derive any orientation/multiplicity conversion from the equation, not
+    # from a fitted scale factor. Never compare means of group ratios when the
+    # statistic is the ratio of pooled moments.
+    np.testing.assert_allclose(
+        observed["group_numerators"], observed["independent_numerators"],
+        rtol=REPLACE_JUSTIFIED_RTOL, atol=REPLACE_JUSTIFIED_ATOL,
+    )
+    np.testing.assert_allclose(
+        observed["group_denominators"], observed["independent_denominators"],
+        rtol=REPLACE_JUSTIFIED_RTOL, atol=REPLACE_JUSTIFIED_ATOL,
+    )

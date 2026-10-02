@@ -22,3 +22,10 @@ The existing EE tests illustrate author replay and independent checks; the
 Lyons and empirical modules include paper-result comparisons.
 
 For full-population studies with separate paper replay and public-estimator conventions, start with `test_metric_details.py.template`. Share verified input, compare per-item identities/values explicitly, and keep the two evidence roles separate.
+
+For pooled ratios/correlations, `test_pooled_metric.py.template` checks group
+numerators and denominators as well as the scalar. Gamma illustrates this with
+all ordered position pairs and a known fourfold orientation multiplicity.
+Shared inputs are calculated once, while every selected case retains its own
+hash verification and evidence role. Acceptance of a remaining reproduction
+gap does not authorize widening frozen paper tolerances or replacing targets.

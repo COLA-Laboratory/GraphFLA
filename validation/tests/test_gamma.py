@@ -18,8 +18,15 @@ from validation.testing import assert_case_matches
 
 @pytest.fixture(scope="module")
 def datasets(verified_literature_inputs):
-    return {case_id: reproduce(paths[0]) for case_id, paths in verified_literature_inputs.items()
-            if case_id.startswith("ferretti.")}
+    selected = {
+        case_id: paths[0]
+        for case_id, paths in verified_literature_inputs.items()
+        if case_id.startswith("ferretti.")
+    }
+    # The paper and equation cases share csI input. Verify every case through
+    # the suite contract, but compute each distinct input only once.
+    cache = {path: reproduce(path) for path in dict.fromkeys(selected.values())}
+    return {case_id: cache[path] for case_id, path in selected.items()}
 
 
 @pytest.mark.literature_case("ferretti.csi.gamma.figure4.v1", role="paper_result")
@@ -29,8 +36,16 @@ def test_csi_published_gamma(datasets):
         assert_case_matches("ferretti.csi.gamma.figure4.v1", {"gamma": value})
 
 
-@pytest.mark.parametrize("case_id", [pytest.param(case_id, marks=pytest.mark.literature_case(
-    case_id, role="independent_check")) for case_id in CASES.values()])
+@pytest.mark.parametrize(
+    "case_id",
+    [
+        pytest.param(
+            case_id,
+            marks=pytest.mark.literature_case(case_id, role="independent_check"),
+        )
+        for case_id in CASES.values()
+    ],
+)
 def test_complete_landscape_equations(case_id, datasets):
     variants, fitness, landscape, reference, actual = datasets[case_id]
     assert len(variants) == landscape.n_configs == 32
@@ -45,9 +60,14 @@ def test_complete_landscape_equations(case_id, datasets):
     centered = fitness - np.mean(fitness)
     correlations = {}
     for distance in (1, 2):
-        pairs = [(i, j) for i, j in combinations(range(32), 2)
-                 if np.count_nonzero(X[i] != X[j]) == distance]
-        correlations[distance] = np.mean([centered[i]*centered[j] for i, j in pairs]) / np.var(fitness)
+        pairs = [
+            (i, j)
+            for i, j in combinations(range(32), 2)
+            if np.count_nonzero(X[i] != X[j]) == distance
+        ]
+        correlations[distance] = np.mean(
+            [centered[i] * centered[j] for i, j in pairs]
+        ) / np.var(fitness)
     assert actual["gamma"] == pytest.approx(
         (correlations[1] - correlations[2]) / (1 - correlations[1]), abs=1e-13
     )
@@ -59,13 +79,23 @@ def test_complete_landscape_equations(case_id, datasets):
             if p1 == p2:
                 continue
             n, d, sn, sd, e = _gamma_position_pair_worker(
-                X, fitness, p1, p2, alleles[p1], alleles[p2],
-                np.delete(np.arange(5), [p1, p2])
+                X,
+                fitness,
+                p1,
+                p2,
+                alleles[p1],
+                alleles[p2],
+                np.delete(np.arange(5), [p1, p2]),
             )
-            assert (4*math.ldexp(n, 2*e), 4*math.ldexp(d, 2*e)) == pytest.approx(
+            assert (
+                4 * math.ldexp(n, 2 * e),
+                4 * math.ldexp(d, 2 * e),
+            ) == pytest.approx(
                 reference["gamma"]["by_position_pair"][p1, p2], abs=1e-12
             )
-            assert (4*sn, 4*sd) == reference["gamma_star"]["by_position_pair"][p1, p2]
+            assert (4 * sn, 4 * sd) == reference["gamma_star"]["by_position_pair"][
+                p1, p2
+            ]
 
 
 @pytest.mark.literature_case("ferretti.csi.equations.v1", role="independent_check")
@@ -84,3 +114,24 @@ def test_tem_sign_denominator_includes_neutral_effects(datasets):
     assert reference["gamma_star"]["denominator"] == 528
     assert actual["gamma_star"] == pytest.approx(27 / 44)
     assert analysis.gamma_star(landscape, n_jobs=2) == actual["gamma_star"]
+
+
+@pytest.mark.parametrize(
+    "case_id",
+    [
+        pytest.param(
+            case_id, marks=pytest.mark.literature_case(case_id, role="input_check")
+        )
+        for case_id in CASES.values()
+    ],
+)
+def test_complete_pinned_population(case_id, datasets):
+    variants, fitness, landscape, _, _ = datasets[case_id]
+    X = np.asarray(variants)
+    assert X.shape == (32, 5) and len(set(variants)) == 32
+    assert np.isin(X, [0, 1]).all() and np.isfinite(fitness).all()
+    assert landscape.n_configs == 32 and landscape.n_vars == 5
+    assert (
+        np.count_nonzero(np.triu((X[:, None, :] != X[None, :, :]).sum(axis=2) == 1))
+        == 80
+    )

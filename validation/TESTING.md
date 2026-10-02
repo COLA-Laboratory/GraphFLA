@@ -65,6 +65,15 @@ Figure 1a code/text discrepancy remains an independent procedural check, not a
 successful paper-number claim. See [the detailed-test template](templates/test_metric_details.py.template)
 for sharing verified input while keeping these claims separate.
 
+Gamma illustrates pooled statistics: compare every ordered-position numerator
+and denominator in addition to the public ratio. Its printed-result and
+independent-equation cases remain distinct even when they share a dataset.
+The user accepted the remaining printed-value differences on 2026-10-02;
+those unresolved cases stay recorded with their original tolerances and are
+not reclassified as passing paper reproductions. The
+[pooled-statistic template](templates/test_pooled_metric.py.template) generalizes
+this pattern without introducing a second test framework.
+
 ## Required record before promotion
 
 1. **Reference and claim.** Reuse a study ID from `catalog.json`, or add its

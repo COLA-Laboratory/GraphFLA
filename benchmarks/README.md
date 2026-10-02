@@ -20,6 +20,7 @@ benchmarks. Input construction happens in setup and is excluded from metric time
 | `construction.utilities` | Distances, filters, samplers and problem generators |
 | `analysis.ee` | EE fraction and effects table, six bounded landscapes, 64–1,024 input configurations |
 | `analysis.idiosyncratic_index`, `analysis.global_idiosyncratic_index` | Single mutation / landscape mean separately, six inputs with at most 1,024 configurations and 72 positions |
+| `analysis.gamma`, `analysis.gamma_star` | Each scalar separately, six inputs of 64–1,024 configurations, up to 72 positions and 16 alleles |
 | `analysis.<function_name>` | One other public metric on Boolean-6 and categorical-3×3 inputs |
 | `analysis.landscape` | Cold/warm lazy properties, export, LON and GraphML operations |
 | `analysis.trajectories` | Search caches, hill-climbing and random walks |
@@ -113,16 +114,18 @@ environments are preferred for commit comparisons. Pin dependencies between runs
 python tools/benchmark_analysis.py --metric ee --output baseline.json
 # Change only the implementation; keep the workload and runner fixed.
 python tools/benchmark_analysis.py --metric ee --output candidate.json --compare baseline.json
-# Another metric can run independently on the small general fixtures.
+# Gamma metrics each have six bounded fixtures and scalar output snapshots.
 python tools/benchmark_analysis.py --metric gamma --output gamma.json
+python tools/benchmark_analysis.py --metric gamma_star --output gamma-star.json
 # Idiosyncrasy only: bounded inputs, time and process-tree RSS.
 python tools/benchmark_analysis.py --metric global_idiosyncratic_index --output iid.json --timeout 30 --memory-limit-mib 1024
 python tools/benchmark_analysis.py --metric idiosyncratic_index --output single-iid.json --timeout 30 --memory-limit-mib 1024
 ```
 
 `--metric` and `--output` are required; there is no all-metric default. EE records
-both public outputs. Other functions are independently selectable by name; the
-full output-equivalence comparator currently supports the EE group only.
+both public outputs. Other functions are independently selectable by name.
+Output-equivalence comparison supports EE tables/fractions and gamma/gamma-star
+scalar snapshots, including matching NaNs.
 
 Each workload uses three fresh processes, one warmup per function, and three timed
 samples per process. Construction, GC, serialization and output checks are untimed.
@@ -152,9 +155,11 @@ A change is called improved/regressed only beyond both 5% and three times the su
 of process-median MADs. This is a practical noise gate, not a significance test.
 Keep the machine otherwise idle and repeat the baseline as a drift control.
 RSS is a process high-water mark, including imports; it does not isolate allocation
-cost or justify claims about arbitrarily large landscapes. For EE, a trusted local
-old kernel can be supplied with `--baseline-kernel` while keeping the public wrapper
-and harness fixed. No code is downloaded. See [EE results](EE_RESULTS.md).
+cost or justify claims about arbitrarily large landscapes. A trusted local old
+EE kernel or gamma module can be supplied with `--baseline-kernel`. EE keeps the
+public wrapper fixed; gamma calls the selected module's original public function
+with the same signature and workload. No code is downloaded. See
+[EE results](EE_RESULTS.md) and [gamma results](GAMMA_RESULTS.md).
 
 ## Iterative construction optimization
 

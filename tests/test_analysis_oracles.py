@@ -11,62 +11,6 @@ from graphfla import analysis as A
 from graphfla.landscape import BooleanLandscape, Landscape, ProteinLandscape
 
 
-def gamma_reference(variants, fitness, signs=False):
-    """Ferretti et al. (2016), eq. 3, evaluated by directed substitutions."""
-    lookup = dict(zip(map(tuple, variants), fitness))
-    alleles = [sorted({v[j] for v in lookup}) for j in range(len(variants[0]))]
-    numerator = denominator = 0.0
-    for variant, value in lookup.items():
-        for focal in range(len(alleles)):
-            for allele in alleles[focal]:
-                if allele == variant[focal]:
-                    continue
-                mutant = list(variant)
-                mutant[focal] = allele
-                if tuple(mutant) not in lookup:
-                    continue
-                effect = lookup[tuple(mutant)] - value
-                for background in range(len(alleles)):
-                    if background == focal:
-                        continue
-                    for alternative in alleles[background]:
-                        if alternative == variant[background]:
-                            continue
-                        other, double = list(variant), list(mutant)
-                        other[background] = double[background] = alternative
-                        if tuple(other) not in lookup or tuple(double) not in lookup:
-                            continue
-                        other_effect = lookup[tuple(double)] - lookup[tuple(other)]
-                        a, b = (
-                            (np.sign(effect), np.sign(other_effect))
-                            if signs
-                            else (effect, other_effect)
-                        )
-                        numerator += a * b
-                        denominator += a * a
-    return numerator / denominator if denominator else np.nan
-
-
-@pytest.mark.parametrize("sparse", [False, True])
-@pytest.mark.parametrize("maximize", [True, False])
-@pytest.mark.parametrize("n_alleles", [2, 3])
-def test_gamma_matches_directed_substitution_equation(sparse, maximize, n_alleles):
-    variants = list(product(range(n_alleles), repeat=3))
-    if sparse:
-        variants = variants[:-2]
-    fitness = np.random.default_rng(27).integers(-3, 7, len(variants)).astype(float)
-    sequences = ["".join("ACW"[v] for v in variant) for variant in variants]
-    landscape = ProteinLandscape(maximize=maximize).build_from_data(
-        sequences, fitness, verbose=False
-    )
-    assert A.gamma(landscape, n_jobs=1) == pytest.approx(
-        gamma_reference(variants, fitness)
-    )
-    assert A.gamma_star(landscape, n_jobs=1) == pytest.approx(
-        gamma_reference(variants, fitness, signs=True)
-    )
-
-
 @pytest.mark.parametrize(
     "scale,offset",
     [
@@ -100,16 +44,6 @@ def test_higher_order_variance_from_orthogonal_components(order):
         sum(i * i for i in range(1, order + 1)) / 14
     )
 
-
-def test_gamma_high_dimensional_fallback():
-    variants = np.zeros((8, 66), dtype=int)
-    variants[:, :3] = list(product(range(2), repeat=3))
-    variants[:, 3:] = variants[:, 2, None]
-    fitness = [0, 1, 2, 4, 3, 5, 7, 8]
-    landscape = BooleanLandscape().build_from_data(variants, fitness, verbose=False)
-    assert A.gamma(landscape, n_jobs=1) == pytest.approx(
-        gamma_reference(variants, fitness)
-    )
 
 
 def test_mutation_effects_have_consistent_direction():

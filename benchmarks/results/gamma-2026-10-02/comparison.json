@@ -1,0 +1,170 @@
+[
+  {
+    "metric": "gamma",
+    "workload": "boolean-6",
+    "old_seconds": 0.0016852498520165682,
+    "new_seconds": 0.0014272918924689293,
+    "conservative_speedup": 1.1807324492689601,
+    "decisions_vs_baseline_and_control": [
+      "improved",
+      "within_noise"
+    ],
+    "output_checks": {
+      "gamma": "equivalent"
+    }
+  },
+  {
+    "metric": "gamma",
+    "workload": "boolean-10",
+    "old_seconds": 0.008782749995589256,
+    "new_seconds": 0.0071059169713407755,
+    "conservative_speedup": 1.2359770077544388,
+    "decisions_vs_baseline_and_control": [
+      "improved",
+      "improved"
+    ],
+    "output_checks": {
+      "gamma": "equivalent"
+    }
+  },
+  {
+    "metric": "gamma",
+    "workload": "categorical-4x5",
+    "old_seconds": 0.008224750170484185,
+    "new_seconds": 0.004190457984805107,
+    "conservative_speedup": 1.962732999664405,
+    "decisions_vs_baseline_and_control": [
+      "improved",
+      "improved"
+    ],
+    "output_checks": {
+      "gamma": "equivalent"
+    }
+  },
+  {
+    "metric": "gamma",
+    "workload": "categorical-16x2",
+    "old_seconds": 0.183956875000149,
+    "new_seconds": 0.0034497908782213926,
+    "conservative_speedup": 53.324065572053335,
+    "decisions_vs_baseline_and_control": [
+      "improved",
+      "improved"
+    ],
+    "output_checks": {
+      "gamma": "equivalent"
+    }
+  },
+  {
+    "metric": "gamma",
+    "workload": "sparse-boolean-12",
+    "old_seconds": 0.012816417030990124,
+    "new_seconds": 0.008549374993890524,
+    "conservative_speedup": 1.4991057287987573,
+    "decisions_vs_baseline_and_control": [
+      "improved",
+      "improved"
+    ],
+    "output_checks": {
+      "gamma": "equivalent"
+    }
+  },
+  {
+    "metric": "gamma",
+    "workload": "long-boolean-72",
+    "old_seconds": 1.1777287079021335,
+    "new_seconds": 0.4692907079588622,
+    "conservative_speedup": 2.5095930687069403,
+    "decisions_vs_baseline_and_control": [
+      "improved",
+      "improved"
+    ],
+    "output_checks": {
+      "gamma": "equivalent"
+    }
+  },
+  {
+    "metric": "gamma_star",
+    "workload": "boolean-6",
+    "old_seconds": 0.0017177499830722809,
+    "new_seconds": 0.0014973748475313187,
+    "conservative_speedup": 1.1471743270593122,
+    "decisions_vs_baseline_and_control": [
+      "within_noise",
+      "within_noise"
+    ],
+    "output_checks": {
+      "gamma_star": "equivalent"
+    }
+  },
+  {
+    "metric": "gamma_star",
+    "workload": "boolean-10",
+    "old_seconds": 0.008566166972741485,
+    "new_seconds": 0.007819124963134527,
+    "conservative_speedup": 1.095540359455706,
+    "decisions_vs_baseline_and_control": [
+      "improved",
+      "improved"
+    ],
+    "output_checks": {
+      "gamma_star": "equivalent"
+    }
+  },
+  {
+    "metric": "gamma_star",
+    "workload": "categorical-4x5",
+    "old_seconds": 0.007998875109478831,
+    "new_seconds": 0.004163000034168363,
+    "conservative_speedup": 1.9214208608760572,
+    "decisions_vs_baseline_and_control": [
+      "improved",
+      "improved"
+    ],
+    "output_checks": {
+      "gamma_star": "equivalent"
+    }
+  },
+  {
+    "metric": "gamma_star",
+    "workload": "categorical-16x2",
+    "old_seconds": 0.17996695800684392,
+    "new_seconds": 0.0035983750130981207,
+    "conservative_speedup": 50.01339697829226,
+    "decisions_vs_baseline_and_control": [
+      "improved",
+      "improved"
+    ],
+    "output_checks": {
+      "gamma_star": "equivalent"
+    }
+  },
+  {
+    "metric": "gamma_star",
+    "workload": "sparse-boolean-12",
+    "old_seconds": 0.012709166156128049,
+    "new_seconds": 0.009428457822650671,
+    "conservative_speedup": 1.347958106743172,
+    "decisions_vs_baseline_and_control": [
+      "improved",
+      "improved"
+    ],
+    "output_checks": {
+      "gamma_star": "equivalent"
+    }
+  },
+  {
+    "metric": "gamma_star",
+    "workload": "long-boolean-72",
+    "old_seconds": 1.1702518330421299,
+    "new_seconds": 0.47735987487249076,
+    "conservative_speedup": 2.4515085884726275,
+    "decisions_vs_baseline_and_control": [
+      "improved",
+      "improved"
+    ],
+    "output_checks": {
+      "gamma_star": "equivalent"
+    }
+  }
+]
