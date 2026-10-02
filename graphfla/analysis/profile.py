@@ -46,7 +46,7 @@ from .navigability import (
     mean_distance_to_global_optimum,
     mean_path_length_to_global_optimum,
 )
-from .robustness import evolvability_enhancing_mutations, neutrality
+from .robustness import evolvability_enhancing_fraction, neutrality
 from .epistasis import (
     classify_epistasis,
     diminishing_returns_index,
@@ -84,7 +84,7 @@ _REGISTRY = (
     _Metric("r_s_ratio", r_s_ratio, "ruggedness"),
 
     _Metric("neutrality", neutrality, "robustness"),
-    _Metric("evolvability_enhancing_mutations", evolvability_enhancing_mutations, "robustness"),
+    _Metric("evolvability_enhancing_fraction", evolvability_enhancing_fraction, "robustness"),
 
     _Metric("fdc", fdc, "correlation"),
     _Metric("basin_fitness_correlation", basin_fitness_correlation, "correlation"),
@@ -111,6 +111,37 @@ _REGISTRY = (
 
 _BY_NAME = {m.name: m for m in _REGISTRY}
 _GROUPS = tuple(dict.fromkeys(m.group for m in _REGISTRY))
+_EE_OLD_NAME = "evolvability_enhancing_mutations"
+_EE_NAME = "evolvability_enhancing_fraction"
+
+
+def _resolve_ee_alias(name):
+    if name == _EE_OLD_NAME:
+        warnings.warn(
+            f"The profile metric {_EE_OLD_NAME!r} is deprecated; use {_EE_NAME!r}. "
+            "The output column uses the new name.",
+            FutureWarning,
+            stacklevel=4,
+        )
+        return _EE_NAME
+    return name
+
+
+def _ee_profile_params(params):
+    """Migrate the old metric key without silently discarding legacy options."""
+    params = dict(params or {})
+    if _EE_OLD_NAME in params:
+        if _EE_NAME in params:
+            raise ValueError("Pass EE parameters under only one metric name.")
+        legacy = params.pop(_EE_OLD_NAME)
+        if set(legacy) & {"epsilon", "auto_calculate"}:
+            raise ValueError(
+                "profile uses evolvability_enhancing_fraction with fdr and "
+                "effect_type. Call evolvability_enhancing_mutations directly "
+                "if legacy epsilon or auto_calculate behavior is required."
+            )
+        params[_resolve_ee_alias(_EE_OLD_NAME)] = legacy
+    return params
 
 
 def _as_float(v):
@@ -149,12 +180,17 @@ def _select(groups, include, exclude):
         raise ValueError("pass at most one of `groups` or `include`, not both")
     if include is not None:
         include = [include] if isinstance(include, str) else list(include)
+        include = [_resolve_ee_alias(n) for n in include]
         unknown = [n for n in include if n not in _BY_NAME]
         if unknown:
             raise ValueError(
                 f"unknown metric name(s) in include: {unknown}; see analysis.list_metrics()"
             )
-        base = [_BY_NAME[n] for n in include]
+        base = []
+        for name in include:
+            if name == _EE_NAME and any(m.name == _EE_NAME for m in base):
+                continue
+            base.append(_BY_NAME[name])
     elif groups is not None:
         groups = [groups] if isinstance(groups, str) else list(groups)
         unknown = [g for g in groups if g not in _GROUPS]
@@ -166,6 +202,7 @@ def _select(groups, include, exclude):
         base = list(_REGISTRY)
     if exclude:
         exclude = [exclude] if isinstance(exclude, str) else list(exclude)
+        exclude = [_resolve_ee_alias(n) for n in exclude]
         unknown = [n for n in exclude if n not in _BY_NAME]
         if unknown:
             raise ValueError(f"unknown metric name(s) in exclude: {unknown}")
@@ -387,12 +424,15 @@ def profile(
         ``group`` values). Mutually exclusive with ``include``.
     include : str or sequence of str, optional
         Use exactly these metrics (by registry name). Mutually exclusive with
-        ``groups``.
+        ``groups``. The legacy EE name is accepted with a FutureWarning;
+        its output column is ``evolvability_enhancing_fraction``.
     exclude : str or sequence of str, optional
         Drop these metrics from whatever ``groups`` / ``include`` selected
         (or from the full default). Composes with either.
     params : dict, optional
         Per-metric keyword overrides, ``{metric_name: {kwarg: value}}``.
+        EE accepts ``fdr`` and ``effect_type``. Legacy ``epsilon`` and
+        ``auto_calculate`` options require calling the old function directly.
     n_jobs, seed, time_budget : optional
         Shared keywords forwarded to each metric *that accepts them*.
     on_error : {"warn", "raise", "ignore"}, default "warn"
@@ -419,6 +459,7 @@ def profile(
     """
     if on_error not in ("warn", "raise", "ignore"):
         raise ValueError("on_error must be 'warn', 'raise', or 'ignore'")
+    params = _ee_profile_params(params)
 
     if isinstance(landscape, (list, tuple)):
         show = _resolve_show(progress)
@@ -442,7 +483,6 @@ def profile(
         return df
 
     metrics = _select(groups, include, exclude)
-    params = params or {}
     out = {}
     if include_structure:
         for k, v in landscape.describe().items():

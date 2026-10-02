@@ -23,7 +23,7 @@ def test_profile_returns_float_series_with_expected_metrics():
     assert isinstance(s, pd.Series)
     assert s.dtype == float
     for col in (
-        "gamma", "fdc", "neutrality", "evolvability_enhancing_mutations",
+        "gamma", "fdc", "neutrality", "evolvability_enhancing_fraction",
         "fitness.skewness", "epistasis.magnitude", "bypass.proportion",
     ):
         assert col in s.index
@@ -130,6 +130,49 @@ def test_list_metrics_shape():
     assert {"group", "kind", "columns", "n_jobs", "seed", "time_budget"}.issubset(lm.columns)
     assert lm.loc["classify_epistasis", "time_budget"]
     assert lm.loc["autocorrelation", "seed"]
+
+
+def test_profile_ee_parameters_and_single_canonical_registry_entry():
+    name = "evolvability_enhancing_fraction"
+    ls = hoc_landscape(4, seed=2)
+    options = {"fdr": .9, "effect_type": "beneficial"}
+    result = profile(ls, include=name, params={name: options}, on_error="raise")
+    assert result[name] == A.evolvability_enhancing_fraction(ls, **options)
+    metrics = list_metrics()
+    assert name in metrics.index
+    assert "evolvability_enhancing_mutations" not in metrics.index
+    assert "evolvability_effects" not in metrics.index
+
+
+def test_profile_ee_legacy_selection_uses_one_canonical_column(monkeypatch):
+    import graphfla.analysis.robustness as robustness
+    original = robustness._landscape_ee_statistics
+    calls = []
+
+    def counted(*args, **kwargs):
+        calls.append(1)
+        return original(*args, **kwargs)
+
+    monkeypatch.setattr(robustness, "_landscape_ee_statistics", counted)
+    old, new = "evolvability_enhancing_mutations", "evolvability_enhancing_fraction"
+    with pytest.warns(FutureWarning, match="new name"):
+        result = profile(onemax(4), include=[old, new], on_error="raise")
+    assert result.index.tolist() == [new] and len(calls) == 1
+    with pytest.warns(FutureWarning):
+        excluded = profile(onemax(4), groups="robustness", exclude=old)
+    assert excluded.index.tolist() == ["neutrality"]
+    with pytest.warns(FutureWarning):
+        renamed = profile(onemax(4), include=new, params={old: {"fdr": .02}})
+    assert renamed.index.tolist() == [new]
+
+
+def test_profile_does_not_silently_ignore_legacy_ee_parameters():
+    old, new = "evolvability_enhancing_mutations", "evolvability_enhancing_fraction"
+    ls = onemax(4)
+    with pytest.raises(ValueError, match="legacy epsilon"):
+        profile(ls, include=new, params={old: {"epsilon": .1}})
+    with pytest.raises(ValueError, match="only one metric name"):
+        profile(ls, include=new, params={old: {}, new: {}})
 
 
 # --------------------------------------------------------------------------- #

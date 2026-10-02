@@ -16,7 +16,7 @@ import numpy as np
 import pandas as pd
 from scipy.stats import ttest_ind_from_stats
 
-from graphfla.analysis import evolvability_enhancing_mutations
+from graphfla.analysis import evolvability_enhancing_fraction
 from graphfla.analysis._evolvability import _ee_statistics
 from graphfla.landscape import Landscape
 
@@ -63,7 +63,9 @@ def enumerate_pairs(sequences, protein=False):
     return sorted(pairs)
 
 
-def reference_statistics(configs, fitness, pairs, variance=None, author_bug=False):
+def reference_statistics(
+    configs, fitness, pairs, variance=None, author_bug=False, fdr=0.01
+):
     """Literal per-mutation oracle, independent of production helpers."""
     adjacency = [set() for _ in fitness]
     for u, v in pairs:
@@ -106,7 +108,7 @@ def reference_statistics(configs, fitness, pairs, variance=None, author_bug=Fals
         values = sorted(1.0 if not np.isfinite(p) else p for p in pvalues)
         cutoff = -1.0
         for rank, p in enumerate(values, 1):
-            threshold = .01 * rank / len(values)
+            threshold = fdr * rank / len(values)
             passes = p < threshold if author_bug else p <= threshold
             if passes:
                 cutoff = p
@@ -193,7 +195,7 @@ def reproduce_dataset(kind):
     generic_counts = counts(generic["effect"], generic["flag_effect"], generic["flag_zero"])
     with tempfile.TemporaryDirectory() as tmp:
         landscape = import_landscape(frame, pairs, Path(tmp)/"landscape.graphml")
-        proportion = evolvability_enhancing_mutations(landscape)
+        proportion = evolvability_enhancing_fraction(landscape)
     expected_proportion = sum(generic_counts.values())/meta["ordered_pairs"]
     np.testing.assert_allclose(proportion, expected_proportion, rtol=0, atol=1e-15)
     return {

@@ -4,7 +4,8 @@ Reviewed 2026-10-02. Scope: Wagner (2023), *Evolvability-enhancing mutations in
 the fitness landscapes of an RNA and a protein*,
 [doi:10.1038/s41467-023-39321-8](https://doi.org/10.1038/s41467-023-39321-8).
 The user clarified that this task concerns one paper, not the four papers from
-the preceding idiosyncrasy review. Public API redesign remains a separate step.
+the preceding idiosyncrasy review. The subsequent user-approved general API
+is recorded below; measurement-error options are deliberately not exposed.
 
 ## Sources and definition
 
@@ -103,11 +104,11 @@ EE decisions agree for both studies under the symmetric variance formula.
 
 The RNA difference is substantial: experimental measurement uncertainty cannot
 be replaced silently by variation among neighbors. The private numeric kernel
-accepts variances for validation, but the public API does not yet expose that
-input. Its RNA result is verified against its own stated model, **not** called
+accepts variances for validation, but the general public API deliberately omits
+that input. Its RNA result is verified against its own stated model, **not** called
 a reproduction of the RNA empirical EE fraction.
 
-The unchanged scalar return type now aggregates all three EE effect classes
+The default scalar return aggregates all three EE effect classes
 over all represented ordered pairs. On the study graphs this is 585/175552 =
 0.003332345971563981 for protein and 2/52672 = 0.00003797083839611178 for RNA
 under the public neighborhood-variation model. These totals must not be compared
@@ -116,8 +117,8 @@ to the paper's beneficial-only percentages.
 The public function follows the supplied graph and retained neutral adjacency,
 deduplicating reciprocal graph edges. It rejects multi-site edges, negates
 fitness for minimization, and is independent of unrestricted neighbor-mean
-cache values. The existing `auto_calculate` cache-preparation behavior remains
-for compatibility. Construction has not changed: dropped configurations or
+cache values. Only the deprecated compatibility function retains the old
+`auto_calculate` cache preparation. Construction has not changed: dropped configurations or
 discarded neutral pairs cannot be recovered, and the ordinary protein builder
 does not impose Wagner's codon restriction. The reproduction imports the exact
 study graph via the existing GraphML API.
@@ -129,7 +130,7 @@ reciprocal storage, cache independence and invalid inputs. All 30 golden-catalog
 EE references were checked against the independent oracle before updating only
 that metric's snapshots.
 
-## Re-run and remaining API discussion
+## Re-run and finalized general API
 
 ```
 python -m validation.ee_mutations
@@ -142,9 +143,30 @@ Matching headline numbers alone is insufficient: here it would preserve a
 published implementation defect. The author replay is a validation tool, not
 an optional production mode.
 
-Proposals, not implemented interfaces: expose uncertainty data with explicit
-SE/SD/variance and replicate-count semantics; return class counts, denominators
-and per-mutation p-values; make FDR and neighborhood completeness explicit;
-retire the unrelated `auto_calculate` dependency. The current fix neither adds
-parameters nor changes the result type. Naming and result-schema decisions
-remain for the user discussion.
+The approved public interfaces are:
+
+```python
+evolvability_enhancing_fraction(landscape, *, fdr=0.01, effect_type="all") -> float
+evolvability_effects(landscape, *, fdr=0.01) -> pandas.DataFrame
+```
+
+`effect_type` accepts all/beneficial/deleterious/neutral and filters only the
+numerator after the full testing procedure. The per-mutation table retains all
+pairs, actual position and allele labels, both p-value families and their BH
+adjustments; untestable rows have nullable `is_ee=NA` and an explicit status.
+Its row count is the scalar denominator. No cache preparation is required.
+
+FDR is validated as finite and strictly between zero and one. Tests compare
+several FDR settings with the independent oracle, ensure scalar/table agreement
+for every effect class, and exercise nonbiological categorical labels. The
+default results above are unchanged. `profile()` registers only the new scalar
+name; old selectors resolve with a warning and cannot cause duplicate EE work.
+The old direct function retains its legacy parameters with a FutureWarning.
+
+The public algorithm is the same for biological and nonbiological landscapes.
+Neighbor heterogeneity and repeated-measurement noise are distinct statistical
+objects, not interchangeable methods selected by molecule type. Variance
+inputs and an extra effect-size threshold were removed from the API proposal
+before approval. General measurement-error inference, if needed later, requires
+a separate design and calibration; the paper's numerical replay alone does
+not establish calibration across arbitrary sampling/dependence structures.

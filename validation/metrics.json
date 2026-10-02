@@ -129,6 +129,8 @@
     {
       "id": "ee",
       "functions": [
+        "evolvability_enhancing_fraction",
+        "evolvability_effects",
         "evolvability_enhancing_mutations"
       ],
       "provenance": "canonical",
@@ -136,8 +138,8 @@
       "candidate_study_ids": [
         "Wagner2023"
       ],
-      "literature_next_action": "Discuss public measurement-error input, per-class outputs and neighborhood contract. Author replay and corrected-formula validation are complete; see EE_MUTATIONS_REVIEW.md.",
-      "review_status": "author counts reproduced; production uses symmetric variance, not the published duplicated-target expression; public RNA uncertainty input pending"
+      "literature_next_action": "General API finalized with fdr, effect_type and per-mutation output. Further measurement-error models require a separate scientific scope; author replay need not be repeated. See EE_MUTATIONS_REVIEW.md.",
+      "review_status": "author counts reproduced; corrected symmetric-variance estimator and general scalar/table APIs validated; measurement-error input deliberately excluded from the public API"
     },
     {
       "id": "neutrality",

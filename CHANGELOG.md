@@ -5,6 +5,25 @@ returned statistic are marked, because downstream analyses depend on them.
 
 ## Unreleased
 
+### Changed — EE analysis API
+
+- `evolvability_enhancing_fraction(landscape, *, fdr=0.01, effect_type="all")`
+  is the canonical scalar entry point. It uses neighborhood fitness variation
+  for all data domains; experimental measurement-error options are not exposed.
+  Selecting an effect type filters only the numerator, keeping all ordered
+  neighbor pairs in the denominator and the two complete BH testing families.
+- `evolvability_effects(landscape, *, fdr=0.01)` returns one row per directed
+  mutation, including original position/allele labels, raw and BH adjusted
+  p-values, and nullable EE decisions for insufficient neighborhoods.
+- `evolvability_enhancing_mutations` remains available with a FutureWarning
+  and its legacy `epsilon`/`auto_calculate` behavior. New entry points neither
+  require nor populate the unrestricted neighbor-fitness cache.
+- `profile()` and `list_metrics()` use the canonical scalar name and column.
+  The old name in include/exclude or parameter keys warns and resolves to the
+  new name; including both names computes EE once. Legacy profile overrides
+  for `epsilon`/`auto_calculate` raise an explicit migration error instead of
+  being silently ignored. Use the old function directly for those options.
+
 ### Changed — affects returned values
 
 - `evolvability_enhancing_mutations` now excludes the focal site, tests
@@ -16,7 +35,7 @@ returned statistic are marked, because downstream analyses depend on them.
   not the paper's beneficial-only fraction. Insufficient neighborhoods return
   NaN when no pair is testable. Existing results need recalculation. See
   `validation/EE_MUTATIONS_REVIEW.md` for exact author replay, RNA measurement
-  error limitations, and pending API decisions. Construction is unchanged.
+  error limitations, and the finalized general API. Construction is unchanged.
 - `single_mutation_effects` and `all_mutation_effects` now report `mean_effect`
   as `mutation_to` minus `mutation_from`, matching the row's own label and the
   convention already used by `fitness_effect_distribution`. Up to and including
