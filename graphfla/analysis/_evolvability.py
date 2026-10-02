@@ -1,9 +1,4 @@
-"""Position-excluded neighborhoods and statistical EE classification.
-
-The published Wagner scripts repeat the target variance in the difference
-variance. This implementation uses both endpoints; historical replay belongs
-in validation, not in the estimator.
-"""
+"""Statistical classification of one-site evolvability-enhancing mutations."""
 
 import numpy as np
 import pandas as pd
@@ -36,10 +31,9 @@ def _ee_pvalues(difference, variance, n):
 def _ee_statistics(configs, fitness, pairs, *, fitness_variance=None, epsilon=0):
     """Classify both orientations of represented, undirected one-site pairs.
 
-    By default a neighborhood's variance is its population fitness variance
-    (ddof=0, as in the protein analysis). For the RNA reproduction, explicit
-    per-genotype measurement variances instead propagate as sum(var)/k**2.
-    This private input is not yet a public uncertainty-data API.
+    By default, use the population variance of each neighborhood's fitness
+    values (ddof=0). Explicit per-genotype measurement variances instead
+    propagate as sum(var)/k**2, where k is the neighborhood size.
     """
     configs = np.asarray(configs)
     fitness = np.asarray(fitness, dtype=float)

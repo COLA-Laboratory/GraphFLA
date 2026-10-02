@@ -93,59 +93,89 @@ def _mutation_effects_for_position(X, f_arr, f_std, position, test_type):
 def evolvability_enhancing_mutations(landscape, epsilon=0, auto_calculate=True):
     """Return the fraction of evolvability-enhancing directed mutations.
 
-    Test Wagner's criterion ``delta_mean > max(0, delta_fitness)`` [1]_,
-    excluding the mutated position from both endpoints' neighborhoods.
+    For each one-site mutation, let ``delta_fitness`` be its fitness effect
+    and ``delta_mean`` the change in mean neighbor fitness after excluding
+    the mutated position. Count statistically supported increases satisfying
+    ``delta_mean > max(0, delta_fitness) + epsilon`` [1]_.
 
     Parameters
     ----------
     landscape : Landscape
-        Built landscape with configuration columns and one-site graph edges.
-        Both orientations of each graph or retained neutral pair are evaluated.
-        Neighborhoods follow the supplied graph; filtered-out configurations
-        and neutral pairs discarded during construction are not reconstructed.
-        Fitness is negated for minimization landscapes.
+        Built landscape with unique, nonmissing configurations, finite fitness
+        values and one-site neighbor pairs. Both orientations of each graph
+        pair and retained neutral pair are evaluated once. Neighborhoods follow
+        the supplied graph; discarded configurations and neutral pairs are not
+        reconstructed. Fitness is negated when ``landscape.maximize=False``.
     epsilon : float, default=0
         Nonnegative minimum excess above ``max(0, delta_fitness)``, in fitness
         units. This is an effect-size tolerance, not a significance level.
     auto_calculate : bool, default=True
-        Retain the legacy preparation of ``landscape.neighbor_fitness``.
-        If False, raise when those attributes are absent. Position-specific
-        neighborhood statistics are recomputed independently of that cache.
+        Whether to compute missing ``landscape.neighbor_fitness`` attributes.
+        If False, those attributes must already exist. This setting controls
+        their preparation only; EE tests always recompute the position-specific
+        statistics independently of these unrestricted neighborhood means.
 
     Returns
     -------
     proportion : float
-        Significant beneficial, deleterious and neutral EE mutations divided
-        by all represented ordered neighbor pairs. Pairs with fewer than two
-        non-focal neighbors at either endpoint remain in the denominator but
-        cannot be significant. Return NaN with a warning if no pair is testable.
+        Number of significant EE mutations, combining beneficial, deleterious
+        and neutral effects, divided by all represented ordered neighbor pairs.
+        The value lies in [0, 1] when defined. Pairs with fewer than two
+        non-focal neighbors at either endpoint remain in the denominator and
+        are not counted as EE. Return NaN if no pair is testable.
 
     Raises
     ------
+    graphfla.exceptions.NotBuiltError
+        If the landscape has not been built.
     RuntimeError
-        If auto_calculate=False and neighbor fitness metrics haven't been calculated.
+        If ``auto_calculate=False`` and neighbor-fitness attributes are absent.
     ValueError
         If epsilon is invalid, configurations are missing or duplicated,
-        fitness is nonfinite, or a neighbor pair differs at multiple sites.
+        fitness is nonfinite, or a neighbor pair does not differ at one site.
+
+    Warns
+    -----
+    RuntimeWarning
+        If there are no neighbor pairs or no pair has enough non-focal
+        neighbors for statistical testing.
+
+    See Also
+    --------
+    single_mutation_effects : Summarize mutation effects across backgrounds
+        at one position.
 
     Notes
     -----
-    Two-sided one-sample t tests use the sum of the two neighborhood population
-    variances, ``n = min(k_source, k_target)``, and ``df = n - 1``. Separate
-    Benjamini-Hochberg corrections at FDR 0.01 cover all ordered pairs for the
-    fitness-effect and zero nulls. Classification also requires the strict
-    directional inequality, allowing for floating-point roundoff.
+    Two-sided one-sample t tests use the sum of both neighborhood population
+    variances (``ddof=0``), ``n = min(k_source, k_target)`` and ``df = n - 1``.
+    Separate Benjamini-Hochberg corrections at FDR 0.01 cover all ordered pairs
+    for the fitness-effect and zero nulls, with untestable pairs retained as
+    nonrejections.
 
-    This uses neighborhood fitness variation, as in the protein analysis.
-    It does not accept the measurement errors used for the paper's RNA data.
-    The published scripts duplicate the target variance; this implementation
-    uses both endpoints and does not round fitness effects before classification.
+    Classification uses unrounded fitness effects and allows for floating-point
+    roundoff at the strict boundary. Variability is estimated from neighbor
+    fitnesses; experimental measurement errors are not accepted.
 
     References
     ----------
     .. [1] Wagner, A. Evolvability-enhancing mutations in the fitness landscapes
            of an RNA and a protein. Nat. Commun. 14, 3624 (2023).
            https://doi.org/10.1038/s41467-023-39321-8
+
+    Examples
+    --------
+    An additive landscape has no EE mutations: the neighborhood increase
+    equals the focal mutation's own fitness benefit.
+
+    >>> from itertools import product
+    >>> from graphfla.landscape import BooleanLandscape
+    >>> from graphfla.analysis import evolvability_enhancing_mutations
+    >>> X = list(product([0, 1], repeat=3))
+    >>> landscape = BooleanLandscape()
+    >>> _ = landscape.build_from_data(X, [sum(x) for x in X], verbose=False)
+    >>> evolvability_enhancing_mutations(landscape)
+    0.0
     """
     landscape._check_built()
     if (not isinstance(epsilon, Real) or isinstance(epsilon, (bool, np.bool_))
