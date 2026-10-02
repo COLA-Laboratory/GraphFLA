@@ -109,8 +109,8 @@
         "Lyons2020",
         "BakerleeNSRD22"
       ],
-      "literature_next_action": "Original Lyons empirical reproduction first; audit global summary as a possible extension, then reassess gaps.",
-      "review_status": "partial; see tests/VALIDATION.md and case records"
+      "literature_next_action": "Resolve the Fig. 1a printed-control vs released-code discrepancy; discuss raw input/reference population and single-mutation seed API. Bakerlee 2022 is a conceptual comparator, not an I_id numeric anchor.",
+      "review_status": "Lyons tRNA global paper mean/SEM reproduced with author seeds; public seed=0 matches an independent same-stream oracle. See IDIOSYNCRASY_REVIEW.md and lyons.trna.iid.v1."
     },
     {
       "id": "returns_costs",

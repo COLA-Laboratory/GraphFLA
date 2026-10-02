@@ -1,0 +1,33 @@
+{
+  "doi": "10.1038/s41559-020-01286-y",
+  "source_dataset_doi": "10.1126/science.aae0568",
+  "author_commit": "0a6c2ce3a277d56679dae52b222106d05af93983",
+  "source_url": "https://raw.githubusercontent.com/lyonsdm/idiosyncrasy/0a6c2ce3a277d56679dae52b222106d05af93983/01_trna/00_data/ExpData.txt",
+  "source_sha256": "1a89b314dfc6fe69c60af8c50ff7d694121b3f2207b8ae961acf5e55d0fe8ddb",
+  "fixture_sha256": "b704367243def42c3905c82c5e84ce609edf7b8d56a28f97e842fc594afe73c3",
+  "source_rows": 65537,
+  "retained_rows": 28530,
+  "sequence_length": 72,
+  "preprocessing": [
+    "Keep original source row order.",
+    "Exclude Fit <= 0.5 (nonfunctional floor); source has no values below 0.5.",
+    "Use f = natural logarithm of (Fit / 0.5), equivalent in differences to authors log fitness ratios.",
+    "Keep isolated viable genotypes in the control population.",
+    "Serialize float64 values with 17 significant digits; read float_precision=round_trip."
+  ],
+  "paper_targets": {
+    "global_mean": 0.612,
+    "global_sem": 0.005,
+    "directed_mutations": 828,
+    "example_position": 10,
+    "example_source": "G",
+    "example_target": "A",
+    "example_backgrounds": 88,
+    "example_index": 0.49
+  },
+  "author_rng": {
+    "global": "For each directed mutation with n backgrounds, a fresh numpy.random.RandomState(n**2 + 3).",
+    "example": "numpy.random.RandomState(4033)"
+  },
+  "note": "Numerical genotype/fitness facts extracted from the author data; not GraphFLA-generated targets. No repository-wide license is asserted for the source."
+}

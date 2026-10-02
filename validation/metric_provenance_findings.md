@@ -55,6 +55,14 @@ Author code and precomputed per-edge outputs:
 
 ## 2. `global_idiosyncratic_index` uses an analytic baseline, not Lyons' control
 
+**2026-10-02 follow-up:** the historical discrepancy described below is now
+addressed by matched-size sampling and directed-mutation aggregation. The
+published tRNA mean and SEM reproduce with the author's seeds; the public
+seeded function matches a separate same-stream oracle. Input-population and
+Fig. 1a source differences remain explicit. See
+[the four-paper review](IDIOSYNCRASY_REVIEW.md). The following audit is retained
+as historical evidence rather than rewritten as if the old behavior never existed.
+
 Lyons et al. 2020 (Nat Ecol Evol, `10.1038/s41559-020-01286-y`) define the
 per-mutation index as the SD of a mutation's effects across its backgrounds
 divided by the SD of fitness differences of **an equal number of randomly
