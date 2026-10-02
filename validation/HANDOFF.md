@@ -1,5 +1,13 @@
 # Validation handoff
 
+**2026-10-02 gamma correction:** [GAMMA_REVIEW.md](GAMMA_REVIEW.md) supersedes
+the old interpretation of the tied-data motif discrepancy: the published
+identity explicitly excludes neutral mutations, so that discrepancy is not a
+gamma-star defect. Core pooling agrees with Eqs. (1)/(11); numeric overflow and
+underflow are repaired. Six executable literature tests cover three pinned
+inputs. csI gamma reproduces 0.33; gamma-star and TEM Figure 4 targets remain
+unresolved. Historical observations and their immutable case records are kept.
+
 Read this before doing any validation work. It records what two sessions
 established, where the material lives, and the contract that lets a later
 session **add** validations instead of restarting or redoing them.

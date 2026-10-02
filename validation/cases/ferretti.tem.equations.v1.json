@@ -1,0 +1,41 @@
+{
+  "schema_version": 1,
+  "kind": "case",
+  "id": "ferretti.tem.equations.v1",
+  "revision": 1,
+  "study_id": "Ferretti2016",
+  "metric_ids": [
+    "gamma"
+  ],
+  "evidence_tier": "independent_equation",
+  "definition_match": "yes",
+  "scope": "Independent Eqs.(1),(11) enumeration on pinned tem numerical input. Validate production calculation, all 20 ordered-position contributions and Eq.(2) on a complete cube. NOT a claim to reproduce the Figure4 gamma_star result or its original input.",
+  "preprocessing": "Full 32-genotype biallelic 5-site landscape; natural log of supplied positive W/MIC; maximize. All 640 directed focal/background substitution pairs on 80 complete squares; pool products and squares with equal directed-pair weights. Exact ties have sign zero and remain in the square population. No epsilon, imputation, significance filter, subsampling, variance inference or RNG.",
+  "sources": [
+    {
+      "url": "https://doi.org/10.1016/j.jtbi.2016.01.037",
+      "locator": "Published version Section 2.1 Eq.(1), Section 2.5 Eqs.(10)-(12), and Fig.4c on p.138. Eq.(12) assumes no neutral mutations."
+    },
+    {
+      "url": "https://raw.githubusercontent.com/OgPlexus/DEFPreflect/ae47fda1f973c25551d4f45129287fff25ac4d6b/1.%20FINAL_DataBinary_MIC.csv",
+      "locator": "Pinned numerical table of Ogbunugafor (2026), DOI 10.1093/genetics/iyag140, Data availability. First five columns define genotype; MIC column defines input. The exact Ferretti Fig.4 .fl input remains unavailable."
+    }
+  ],
+  "expected": {
+    "gamma": 0.8353479320444075,
+    "gamma_star": 0.6136363636363636
+  },
+  "comparison": {
+    "kind": "absolute",
+    "tolerance": 1e-12,
+    "justification": "Agreement with independently enumerated directed-substitution equations on fixed source data; numeric roundoff only. These are not published numerical targets."
+  },
+  "inputs": [
+    {
+      "root": "repo",
+      "path": "tests/fixtures/literature/ferretti2016/tem_mic.csv",
+      "sha256": "3acf967fd37dc48c41f171136d4f9318d0458da2eda7e4953f9afcc3cdd34054"
+    }
+  ],
+  "pytest_node": "validation/tests/test_gamma.py::test_complete_landscape_equations"
+}

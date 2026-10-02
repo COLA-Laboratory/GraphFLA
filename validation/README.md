@@ -20,6 +20,12 @@ The EE review and offline reproduction are in
 `python -m validation.ee_mutations`. Published author-code replay is kept
 separate from the corrected two-endpoint variance calculation.
 
+The [gamma review](GAMMA_REVIEW.md) and `python -m validation.gamma` compare
+three source-pinned inputs, independent equations and published targets.
+Run `python -m validation.tests --literature-study Ferretti2016` for its six
+promoted tests. Unresolved Figure 4 targets remain separate case records;
+passing equation checks do not certify those printed numbers.
+
 ## Layout
 
 | Location | Purpose |
