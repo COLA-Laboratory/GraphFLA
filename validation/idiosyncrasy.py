@@ -5,7 +5,6 @@ The reference enumerates sequence neighbors directly, rather than using the
 metric's encoded-background grouping. No author notebook is executed.
 """
 
-from itertools import permutations
 from pathlib import Path
 import hashlib
 import json
@@ -22,45 +21,25 @@ from graphfla.analysis.epistasis.idiosyncrasy import (
     _idiosyncratic_ratio,
 )
 from graphfla.landscape import DNALandscape
+from validation.oracles.idiosyncrasy import sequence_effects, control_ratios
 
 
 FIXTURE = Path(__file__).resolve().parents[1] / "tests/fixtures/literature/lyons2020"
 
 
-def load_trna():
+def load_trna(path=None):
     provenance = json.loads((FIXTURE / "provenance.json").read_text())
-    path = FIXTURE / "trna.csv.gz"
+    path = FIXTURE / "trna.csv.gz" if path is None else Path(path)
     assert hashlib.sha256(path.read_bytes()).hexdigest() == provenance["fixture_sha256"]
     frame = pd.read_csv(path, float_precision="round_trip")
-    assert len(frame) == 28530 and frame.sequence.is_unique
-    assert frame.sequence.str.len().eq(72).all()
-    assert (frame.fitness > 0).all()
     return frame
 
 
 def enumerate_trna(frame):
     """Direct sequence substitution oracle; also construct true Hamming-1 edges."""
-    seqs = frame.sequence.tolist()
-    fitness = frame.fitness.to_numpy()
-    lookup = {s: i for i, s in enumerate(seqs)}
-    effects, edges = {}, []
-    # Authors' position labels are Python string offsets 1..69 in this input.
-    for pos in range(1, 70):
-        for a, b in permutations("ACGT", 2):
-            values = []
-            for i, seq in enumerate(seqs):
-                if seq[pos] != a:
-                    continue
-                other = seq[:pos] + b + seq[pos + 1 :]
-                j = lookup.get(other)
-                if j is not None:
-                    values.append(fitness[j] - fitness[i])
-                    if fitness[i] < fitness[j]:
-                        edges.append((i, j))
-            effects[pos, a, b] = np.asarray(values)
-    assert len(effects) == 828
-    assert min(map(len, effects.values())) == 3
-    return effects, edges
+    return sequence_effects(
+        frame.sequence.tolist(), frame.fitness.to_numpy(), range(1, 70)
+    )
 
 
 def load_full_population(frame, edges, path):
@@ -79,29 +58,20 @@ def load_full_population(frame, edges, path):
     graph["epsilon"] = "0"
     graph.write_graphml(str(path))
     landscape = DNALandscape.build_from_graph(str(path), verbose=False)
-    assert landscape.n_configs == len(frame)
-    np.testing.assert_allclose(
-        landscape.graph.vs["fitness"], frame.fitness, rtol=1e-14, atol=1e-15
-    )
     return landscape
 
 
 def reference_ratios(effects, pool, seed=None, author_seeds=False):
     """Independent literal implementation of the paper's matched-size control."""
-    rng = np.random.RandomState(seed)
-    values = []
-    for effect in effects.values():
-        n = len(effect)
-        if author_seeds:
-            rng = np.random.RandomState(n**2 + 3)
-        pair_indices = rng.choice(len(pool), size=(n, 2), replace=True)
-        null = [pool[j] - pool[i] for i, j in pair_indices]
-        values.append(float(np.std(effect) / np.std(null)))
-    return np.asarray(values)
+    return np.asarray(
+        list(
+            control_ratios(effects, pool, seed=seed, author_seeds=author_seeds).values()
+        )
+    )
 
 
-def reproduce():
-    frame = load_trna()
+def reproduce(path=None, *, details=False):
+    frame = load_trna(path)
     effects, edges = enumerate_trna(frame)
     pool = frame.fitness.to_numpy()
     author = reference_ratios(effects, pool, author_seeds=True)
@@ -115,25 +85,28 @@ def reproduce():
     oracle_seed0 = float(reference_ratios(effects, pool, seed=0).mean())
     with tempfile.TemporaryDirectory() as tmp:
         landscape = load_full_population(frame, edges, Path(tmp) / "trna.graphml")
-        _, codes, f, _ = _idiosyncratic_data(landscape)
+        _, codes, f, labels = _idiosyncratic_data(landscape)
         summaries = [
-            row
+            (j + 1, *row)
             for j in range(codes.shape[1])
             for row in _idiosyncratic_position_worker(codes, f, j)
         ]
+        keys = [
+            (pos, labels[pos - 1][a], labels[pos - 1][b])
+            for pos, a, b, _, _ in summaries
+        ]
+        counts = np.asarray([n for _, _, _, _, n in summaries])
+        effect_sds = np.asarray([sd for _, _, _, sd, _ in summaries])
         kernel_author = np.asarray(
             [
                 _idiosyncratic_ratio(sd, n, f, np.random.RandomState(n**2 + 3))
-                for _, _, sd, n in summaries
+                for _, _, _, sd, n in summaries
             ]
         )
-        np.testing.assert_allclose(kernel_author, author, rtol=1e-12, atol=1e-12)
         actual = global_idiosyncratic_index(landscape, n_jobs=1, seed=0)
         parallel = global_idiosyncratic_index(landscape, n_jobs=2, seed=0)
-        assert actual == parallel
-        np.testing.assert_allclose(actual, oracle_seed0, rtol=1e-12, atol=1e-12)
         isolates = int(sum(d == 0 for d in landscape.graph.degree()))
-    return {
+    report = {
         "paper_targets": {"mean": 0.612, "sem": 0.005, "example": 0.49},
         "population": {
             "viable_genotypes": len(frame),
@@ -153,6 +126,7 @@ def reproduce():
         },
         "production_kernel_with_author_seeds": {
             "mean": float(kernel_author.mean()),
+            "sem": float(kernel_author.std() / np.sqrt(len(kernel_author))),
             "max_abs_per_mutation_error": float(np.max(np.abs(kernel_author - author))),
         },
         "public_global_seed0": {
@@ -165,6 +139,22 @@ def reproduce():
             np.mean([v.std() / (np.sqrt(2) * pool.std()) for v in effects.values()])
         ),
     }
+
+    if details:
+        return {
+            "report": report,
+            "frame": frame,
+            "loaded_fitness": f,
+            "effect_keys": list(effects),
+            "reference_counts": np.asarray([len(v) for v in effects.values()]),
+            "reference_sds": np.asarray([np.std(v) for v in effects.values()]),
+            "reference_ratios": author,
+            "production_keys": keys,
+            "production_counts": counts,
+            "production_sds": effect_sds,
+            "production_ratios": kernel_author,
+        }
+    return report
 
 
 if __name__ == "__main__":

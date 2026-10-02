@@ -40,3 +40,18 @@ The paper's Figure 1a illustrative index is 0.49, while the released Figure 1a
 code with seed 4033 gives 0.5080668756. The separate, pre-existing global-notebook
 policy (`n**2+3`) gives 0.4905242284 for that mutation. The two policies are not
 silently interchanged. See `validation/IDIOSYNCRASY_REVIEW.md`.
+
+
+Run the dedicated suite with
+`python -m validation.tests --literature-study Lyons2020 -q`. Default
+`python -m pytest` excludes these empirical tests. The original global case is
+unchanged; separate cases record the input population, public seed-0 independent
+check and Figure 1a procedural discrepancy. Each supplies an explicit source
+locator and evidence role under `validation/TESTING.md`.
+
+Resource review (2026-10-02, macOS arm64 / Python 3.13.11): this 450,155-byte
+compressed input is used in full. The five tests share one reproduction;
+pytest took 10.68 s, and sampled worker-plus-child peak RSS was 1,186,660,352
+bytes. The supervised invocation imposed 60 s and 1,536 MiB limits. RSS can
+count shared pages more than once and the 50 ms sampler can miss short peaks.
+These observations are correctness-run resource checks, not metric timing.

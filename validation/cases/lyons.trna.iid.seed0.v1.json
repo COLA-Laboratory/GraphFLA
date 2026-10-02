@@ -1,0 +1,40 @@
+{
+  "schema_version": 1,
+  "kind": "case",
+  "id": "lyons.trna.iid.seed0.v1",
+  "revision": 1,
+  "study_id": "Lyons2020",
+  "metric_ids": [
+    "idiosyncrasy"
+  ],
+  "evidence_tier": "independent_equation",
+  "definition_match": "yes",
+  "scope": "Public global I_id on the complete viable population using a single RandomState(0) stream. Independent sequence-substitution and random-index oracle; this is NOT the paper RNG policy or a printed target.",
+  "preprocessing": "Retain all 28,530 genotypes with Fit > 0.5, including 3,903 isolates; preserve source row order; use ln(Fit/0.5). Match positions 1..69 and every ordered A/C/G/T allele pair. Draw n random pairs with replacement using one RandomState(0) stream without reseeding, ddof=0; mean and population SD/sqrt(828).",
+  "sources": [
+    {
+      "url": "https://www.nature.com/articles/s41559-020-01286-y",
+      "locator": "Results, Epistasis is highly idiosyncratic, p. 1686 (PDF page 2): I_id=0.612 +/- 0.005 s.e.m.; Methods, Estimating the idiosyncrasy index, p. 1692 (PDF page 8)."
+    },
+    {
+      "url": "https://github.com/lyonsdm/idiosyncrasy/blob/0a6c2ce3a277d56679dae52b222106d05af93983/01_trna/32_idiosyncrasy/distributions.ipynb",
+      "locator": "Methods, Estimating the idiosyncrasy index. The general matched-size definition is used with an explicitly chosen validation seed 0; expected value independently reconstructed on 2026-10-02, not taken from GraphFLA."
+    }
+  ],
+  "expected": {
+    "mean": 0.6141679589301012
+  },
+  "comparison": {
+    "kind": "absolute",
+    "tolerance": 1e-12,
+    "justification": "Floating-point agreement on fixed input and a fixed RNG stream; not a tolerance fitted to a printed-paper value."
+  },
+  "inputs": [
+    {
+      "root": "repo",
+      "path": "tests/fixtures/literature/lyons2020/trna.csv.gz",
+      "sha256": "b704367243def42c3905c82c5e84ce609edf7b8d56a28f97e842fc594afe73c3"
+    }
+  ],
+  "pytest_node": "validation/tests/test_idiosyncrasy.py::test_public_global_matches_independent_stream"
+}

@@ -20,3 +20,5 @@ Do not paste new GraphFLA results into the template as expected values. Without
 an independent target, retain a research checkpoint rather than a dummy test.
 The existing EE tests illustrate author replay and independent checks; the
 Lyons and empirical modules include paper-result comparisons.
+
+For full-population studies with separate paper replay and public-estimator conventions, start with `test_metric_details.py.template`. Share verified input, compare per-item identities/values explicitly, and keep the two evidence roles separate.

@@ -17,11 +17,35 @@ EE_CASES = [
     "ordinal-8x3",
 ]
 SMALL_CASES = ["boolean-6", "categorical-3x3"]
+IDIOSYNCRASY_CASES = [
+    "boolean-6",
+    "boolean-10",
+    "categorical-4x5",
+    "categorical-16x2",
+    "sparse-boolean-12",
+    "long-boolean-72",
+]
+
+
+def cases_for_metric(metric):
+    if metric == "ee":
+        return EE_CASES
+    if metric in {"idiosyncratic_index", "global_idiosyncratic_index"}:
+        return IDIOSYNCRASY_CASES
+    return SMALL_CASES
 
 
 def build_case(name):
     rng = np.random.RandomState(23)
-    if name.startswith("sparse-"):
+    if name == "long-boolean-72":
+        # 70 adjacent backgrounds x 8 focal configurations, not 2**72 inputs.
+        backgrounds = np.arange(69)[None, :] < np.arange(70)[:, None]
+        focal = np.asarray(list(product([0, 1], repeat=3)))
+        X = np.column_stack(
+            [np.tile(focal, (70, 1)), np.repeat(backgrounds, 8, axis=0)]
+        )
+        cls, kwargs = BooleanLandscape, {}
+    elif name.startswith("sparse-"):
         X = np.asarray(list(product([0, 1], repeat=12)))
         X = X[np.sort(rng.choice(len(X), 1024, replace=False))]
         cls, kwargs = BooleanLandscape, {}

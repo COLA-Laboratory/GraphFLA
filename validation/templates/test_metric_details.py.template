@@ -1,0 +1,41 @@
+"""REPLACE: author/year, DOI, exact paper and pinned-code locators.
+
+Resource review and provenance: REPLACE_PATH. The driver returns observations
+and per-item arrays; scientific assertions live here, not only inside a script.
+Use this pattern when author replay and the public API have different random
+streams or other explicitly documented conventions. A single direct public-API
+test is preferable when it supports the complete claim.
+"""
+
+import numpy as np
+import pytest
+from validation.testing import assert_case_matches
+
+PAPER = "REPLACE_WITH_PUBLISHED_MATCHING_CASE"
+PUBLIC = "REPLACE_WITH_SEPARATE_INDEPENDENT_CASE"
+
+
+@pytest.fixture(scope="module")
+def observations(verified_literature_inputs):
+    # Both frozen cases must refer to the SAME verified input for this pattern.
+    selected = next(c for c in (PAPER, PUBLIC) if c in verified_literature_inputs)
+    return collect_observations(verified_literature_inputs[selected])
+
+
+@pytest.mark.literature_case(PAPER, role="paper_result")
+def test_published_summary(observations):
+    assert_case_matches(PAPER, observations["author_protocol_summary"])
+
+
+@pytest.mark.literature_case(PAPER, role="independent_check")
+def test_detailed_agreement(observations):
+    np.testing.assert_array_equal(observations["keys"], observations["oracle_keys"])
+    np.testing.assert_allclose(
+        observations["values"], observations["oracle_values"],
+        rtol=REPLACE_JUSTIFIED_RTOL, atol=REPLACE_JUSTIFIED_ATOL, equal_nan=True,
+    )
+
+
+@pytest.mark.literature_case(PUBLIC, role="independent_check")
+def test_public_estimator(observations):
+    assert_case_matches(PUBLIC, observations["public_summary"])

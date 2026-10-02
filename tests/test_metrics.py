@@ -2,14 +2,13 @@
 
 Each test pins a metric to a value that is analytically known for a controlled
 landscape, so a silently-wrong implementation fails CI. These are the guards
-the smoke tests in ``test_all.py`` lack: the three value-bugs fixed during
-verification (gamma/gamma*, autocorrelation, idiosyncratic-index dilution) all
-returned plausible floats and would pass a type check, but fail the anchors
-below.
+the smoke tests in ``test_all.py`` lack. Incorrect metrics can return plausible
+floats and pass a type check while failing these independent anchors. Dedicated
+idiosyncrasy and EE definition tests live in their own basic-test modules.
 
 Anchor key (additive == OneMax unless noted):
   gamma=1, gamma*(mag/sign/recip)=+1/0/-1, classify additive=all-magnitude,
-  idiosyncratic additive=0 / HoC~1, autocorr=exact regular-graph rho,
+  autocorr=exact regular-graph rho,
   r/s additive=0, FDC OneMax=-1, neighbor_fit_corr additive=+1,
   higher-order additive order-1 R^2=1, Walsh additive order>=2 = 0,
   evol_enhance additive=0, GO-accessibility=1, mean path length OneMax(6)=3.
@@ -23,7 +22,6 @@ from graphfla.analysis import (
     gamma,
     gamma_star,
     classify_epistasis,
-    global_idiosyncratic_index,
     autocorrelation,
     r_s_ratio,
     fdc,
@@ -94,21 +92,6 @@ def test_classify_epistasis_additive_all_magnitude():
     assert res.magnitude == pytest.approx(1.0)
     assert res.sign == pytest.approx(0.0)
     assert res.reciprocal_sign == pytest.approx(0.0)
-
-
-# ----------------------------------------------------------------------
-# Idiosyncratic index (Lyons 2020) -- regression for fixed bug #2
-# ----------------------------------------------------------------------
-
-
-def test_global_idiosyncratic_additive_zero():
-    ls, _ = additive_landscape(6, seed=2)
-    assert global_idiosyncratic_index(ls, n_jobs=1) == pytest.approx(0.0, abs=0.02)
-
-
-def test_global_idiosyncratic_hoc_near_one():
-    val = global_idiosyncratic_index(hoc_landscape(6, seed=3), n_jobs=1, seed=0)
-    assert 0.7 < val < 1.3
 
 
 # ----------------------------------------------------------------------

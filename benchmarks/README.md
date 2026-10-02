@@ -19,6 +19,7 @@ benchmarks. Input construction happens in setup and is excluded from metric time
 | `construction.build` | Existing 21 datasets, seven classes, neighborhood strategies and radii |
 | `construction.utilities` | Distances, filters, samplers and problem generators |
 | `analysis.ee` | EE fraction and effects table, six bounded landscapes, 64–1,024 input configurations |
+| `analysis.idiosyncratic_index`, `analysis.global_idiosyncratic_index` | Single mutation / landscape mean separately, six inputs with at most 1,024 configurations and 72 positions |
 | `analysis.<function_name>` | One other public metric on Boolean-6 and categorical-3×3 inputs |
 | `analysis.landscape` | Cold/warm lazy properties, export, LON and GraphML operations |
 | `analysis.trajectories` | Search caches, hill-climbing and random walks |
@@ -114,6 +115,9 @@ python tools/benchmark_analysis.py --metric ee --output baseline.json
 python tools/benchmark_analysis.py --metric ee --output candidate.json --compare baseline.json
 # Another metric can run independently on the small general fixtures.
 python tools/benchmark_analysis.py --metric gamma --output gamma.json
+# Idiosyncrasy only: bounded inputs, time and process-tree RSS.
+python tools/benchmark_analysis.py --metric global_idiosyncratic_index --output iid.json --timeout 30 --memory-limit-mib 1024
+python tools/benchmark_analysis.py --metric idiosyncratic_index --output single-iid.json --timeout 30 --memory-limit-mib 1024
 ```
 
 `--metric` and `--output` are required; there is no all-metric default. EE records
@@ -127,6 +131,15 @@ Defaults cap each process at 30 seconds (maximum configurable 60), repetitions a
 inputs, timeout, failed comparisons and subprocess errors fail the run; interrupted
 runs retain a partial JSON. Existing results and snapshot directories are never
 overwritten. This runner uses `resource` on macOS/Linux; ASV is the portable entry.
+
+The runner also polls worker-plus-descendant RSS every 50 ms. The default limit
+is 1,024 MiB, adjustable to 64–4,096 MiB with `--memory-limit-mib`. Limit violations
+terminate the isolated process group and retain a partial failure report. The
+worker's high-water RSS is checked after completion too. This watchdog can miss
+short allocation spikes, and summing process RSS can double-count shared pages;
+it is not an OS allocation reservation. Fixed registered inputs are the primary
+size guard; hidden worker calls reject unregistered cases before construction.
+ASV retains its separate timeout and does not inherit this RSS watchdog.
 
 Reports include raw samples, process medians/MAD, total process peak RSS, input and
 source hashes, runner/workload hashes and environment versions. Comparison rejects

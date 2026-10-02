@@ -1,6 +1,6 @@
 """Definition-level controls for Lyons' finite-sample SD ratio."""
 
-from itertools import permutations, product
+from itertools import product
 from types import SimpleNamespace
 
 import numpy as np
@@ -9,35 +9,21 @@ import pytest
 
 from graphfla.analysis import idiosyncratic_index, global_idiosyncratic_index
 from graphfla.analysis.epistasis.idiosyncrasy import (
-    _idiosyncratic_position_worker,
     _idiosyncratic_ratio,
 )
 from graphfla.landscape import BooleanLandscape, Landscape
+from validation.oracles.idiosyncrasy import landscape_mean
 
 
 def literal_reference(landscape, seed, min_pairs=3):
     """Independent tuple lookup and literal control enumeration, no metric helpers."""
     data = landscape.get_data()
-    columns = list(landscape.data_types)
-    configs = list(data[columns].itertuples(index=False, name=None))
-    fitness = data.fitness.to_numpy()
-    lookup = dict(zip(configs, fitness))
-    rng = np.random.RandomState(seed)
-    ratios = []
-    for j in range(len(columns)):
-        for a, b in permutations(sorted({x[j] for x in configs}), 2):
-            effects = []
-            for x, f in zip(configs, fitness):
-                y = x[:j] + (b,) + x[j + 1 :]
-                if x[j] == a and y in lookup:
-                    effects.append(lookup[y] - f)
-            if len(effects) >= min_pairs:
-                pairs = rng.choice(len(fitness), size=(len(effects), 2), replace=True)
-                null = [fitness[v] - fitness[u] for u, v in pairs]
-                if np.std(null) == 0:
-                    return np.nan
-                ratios.append(np.std(effects) / np.std(null))
-    return float(np.mean(ratios)) if ratios else np.nan
+    return landscape_mean(
+        data[list(landscape.data_types)].itertuples(index=False, name=None),
+        data.fitness.to_numpy(),
+        seed,
+        min_pairs,
+    )
 
 
 @pytest.fixture
@@ -80,15 +66,11 @@ def test_single_mutation_labels_and_reverse_use_correct_backgrounds(
 ):
     import graphfla.analysis.epistasis.idiosyncrasy as module
 
-    original = module._idiosyncratic_ratio
-    monkeypatch.setattr(
-        module,
-        "_idiosyncratic_ratio",
-        lambda sd, n, f, rng: original(sd, n, f, np.random.RandomState(7)),
-    )
+    rng_class = np.random.RandomState
     fitness = categorical.get_data().fitness.to_numpy()
-    pairs = np.random.RandomState(7).choice(fitness, (4, 2), replace=True)
+    pairs = rng_class(7).choice(fitness, (4, 2), replace=True)
     expected = np.std([2, 7, 1, 5]) / np.std(pairs[:, 1] - pairs[:, 0])
+    monkeypatch.setattr(module.np.random, "RandomState", lambda: rng_class(7))
     assert idiosyncratic_index(categorical, ("A", "site_9", "C")) == pytest.approx(
         expected
     )
@@ -124,7 +106,13 @@ def test_invalid_min_pairs(categorical, value):
 
 
 @pytest.mark.parametrize(
-    "mutation", [("A", "missing", "C"), ("T", "site_9", "C"), ("A", "site_9", "A")]
+    "mutation",
+    [
+        ("A", "missing", "C"),
+        ("T", "site_9", "C"),
+        ("A", "site_9", "T"),
+        ("A", "site_9", "A"),
+    ],
 )
 def test_invalid_mutation(categorical, mutation):
     with pytest.raises(ValueError):
@@ -176,14 +164,13 @@ def test_missing_backgrounds_do_not_dilute_mean():
     assert np.isnan(idiosyncratic_index(ls, ("A", "focal", "C")))
 
 
-def test_long_sequence_fallback_agrees_with_packed_grouping():
-    # Duplicating background columns preserves matches but overflows radix packing.
+def test_long_sequence_fallback_matches_independent_oracle():
     short = np.asarray(list(product(range(2), repeat=4)), dtype=np.int32)
     long = np.column_stack([short[:, 0], np.tile(short[:, 1:], (1, 24))])
     f = np.random.RandomState(0).normal(size=len(short))
-    a = _idiosyncratic_position_worker(short, f, 0)
-    b = _idiosyncratic_position_worker(long, f, 0)
-    np.testing.assert_allclose(a, b, rtol=1e-14)
+    ls = table_landscape(long, f)
+    actual = global_idiosyncratic_index(ls, n_jobs=1, seed=23)
+    assert actual == pytest.approx(literal_reference(ls, 23), rel=1e-12)
 
 
 def test_nonlinear_global_map_can_have_positive_lyons_index():
@@ -196,15 +183,123 @@ def test_nonlinear_global_map_can_have_positive_lyons_index():
     assert global_idiosyncratic_index(ls, n_jobs=1, seed=0) > 0
 
 
-@pytest.mark.parametrize("bad", ["duplicate", "nonfinite", "missing"])
+@pytest.mark.parametrize("bad", ["duplicate", "nonfinite", "missing", "no_columns"])
 def test_ambiguous_imported_data_is_rejected(bad):
     frame = pd.DataFrame({"x": [0, 1, 2], "fitness": [1.0, 2.0, 3.0]})
     if bad == "duplicate":
         frame.loc[2, "x"] = 1
     elif bad == "nonfinite":
         frame.loc[2, "fitness"] = np.inf
-    else:
+    elif bad == "missing":
         frame.loc[2, "x"] = np.nan
-    ls = SimpleNamespace(get_data=lambda: frame, data_types={"x": "categorical"})
+    ls = SimpleNamespace(
+        get_data=lambda: frame,
+        data_types=None if bad == "no_columns" else {"x": "categorical"},
+    )
     with pytest.raises(ValueError):
         global_idiosyncratic_index(ls, n_jobs=1, seed=0)
+
+
+def table_landscape(configs, fitness):
+    """A retained-data view; tests metric semantics without graph pruning."""
+    X = pd.DataFrame(configs).rename(columns=lambda i: f"site_{i}")
+    frame = X.assign(fitness=np.asarray(fitness, dtype=float))
+    return SimpleNamespace(
+        get_data=lambda: frame.copy(), data_types=dict.fromkeys(X, "categorical")
+    )
+
+
+def test_integer_additive_landscape_is_exactly_zero():
+    X = np.asarray(list(product(range(2), repeat=4)))
+    ls = table_landscape(X, X @ [1, 2, 4, 8])
+    assert global_idiosyncratic_index(ls, n_jobs=1, seed=0) == 0.0
+
+
+def test_large_indices_are_not_clipped():
+    X = np.asarray(list(product(range(2), repeat=5)))
+    ls = table_landscape(X, X.sum(axis=1) % 2)
+    expected = literal_reference(ls, 0)
+    assert expected > 1
+    assert global_idiosyncratic_index(ls, n_jobs=1, seed=0) == pytest.approx(expected)
+
+
+@pytest.mark.parametrize("scale,offset", [(8, 32), (-8, 32)])
+def test_affine_fitness_invariance(categorical, scale, offset):
+    frame = categorical.get_data()
+    X = frame[list(categorical.data_types)]
+    changed = Landscape(maximize=scale > 0).build_from_data(
+        X,
+        scale * frame.fitness + offset,
+        data_types=categorical.data_types,
+        verbose=False,
+    )
+    assert global_idiosyncratic_index(changed, n_jobs=1, seed=7) == pytest.approx(
+        global_idiosyncratic_index(categorical, n_jobs=1, seed=7),
+        rel=1e-12,
+    )
+
+
+@pytest.mark.parametrize("minimum", [2, np.int64(3), 4])
+def test_background_threshold_boundary(minimum):
+    X = [[a, b] for a in (0, 1) for b in range(3)]
+    ls = table_landscape(X, [0, 1, 4, 2, 6, 7])
+    expected = literal_reference(ls, 23, minimum)
+    actual = global_idiosyncratic_index(ls, n_jobs=1, seed=23, min_pairs=minimum)
+    np.testing.assert_allclose(actual, expected, rtol=1e-12, equal_nan=True)
+
+
+def test_two_backgrounds_can_give_a_defined_single_mutation_index(monkeypatch):
+    import graphfla.analysis.epistasis.idiosyncrasy as module
+
+    class FixedControl:
+        def choice(self, pool, size, replace):
+            assert size == (2, 2) and replace
+            return pool[[[0, 1], [0, 3]]]
+
+    ls = table_landscape([[0, 0], [0, 1], [1, 0], [1, 1]], [0, 1, 2, 4])
+    monkeypatch.setattr(module.np.random, "RandomState", FixedControl)
+    assert idiosyncratic_index(ls, (0, "site_0", 1), min_pairs=2) == pytest.approx(
+        1 / 3
+    )
+    assert np.isnan(idiosyncratic_index(ls, (0, "site_0", 1), min_pairs=3))
+
+
+def test_no_backgrounds_or_no_mutations_are_undefined():
+    for X, f in [
+        ([], []),
+        ([[0]], [1]),
+        ([[0], [1]], [0, 1]),
+        ([[0, 0], [1, 1]], [0, 1]),
+    ]:
+        ls = table_landscape(X, f)
+        assert np.isnan(global_idiosyncratic_index(ls, n_jobs=1, seed=0, min_pairs=2))
+    ls = table_landscape([[0, 0], [1, 1]], [0, 1])
+    assert np.isnan(idiosyncratic_index(ls, (0, "site_0", 1), min_pairs=2))
+
+
+def test_invariant_features_do_not_add_mutations_or_consume_control_draws():
+    X = np.asarray(list(product(range(2), repeat=4)))
+    f = np.random.RandomState(11).normal(size=len(X))
+    base = table_landscape(X, f)
+    padded = table_landscape(np.column_stack([np.zeros(len(X)), X]), f)
+    assert global_idiosyncratic_index(
+        base, n_jobs=1, seed=7
+    ) == global_idiosyncratic_index(padded, n_jobs=1, seed=7)
+
+
+def test_isolated_genotype_still_belongs_to_the_control_pool():
+    X = np.asarray(list(product(range(2), repeat=3)))
+    f = [0, 1, 2, 3, 1, 2, 4, 6]
+    base = table_landscape(X, f)
+    full = table_landscape(np.vstack([X, [2, 2, 2]]), f + [50])
+    expected = literal_reference(full, 7)
+    actual = global_idiosyncratic_index(full, n_jobs=1, seed=7)
+    assert actual == pytest.approx(expected, rel=1e-12)
+    assert actual != pytest.approx(global_idiosyncratic_index(base, n_jobs=1, seed=7))
+
+
+def test_unbuilt_landscape_is_rejected():
+    with pytest.raises(RuntimeError):
+        global_idiosyncratic_index(BooleanLandscape(), n_jobs=1, seed=0)
+    with pytest.raises(RuntimeError):
+        idiosyncratic_index(BooleanLandscape(), (0, "bit_0", 1))

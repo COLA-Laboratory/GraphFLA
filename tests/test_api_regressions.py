@@ -16,11 +16,10 @@ from graphfla.sampling import latin_hypercube_sampling, sobol_sampling
 from graphfla.analysis import (
     autocorrelation,
     classify_epistasis,
-    global_idiosyncratic_index,
     mean_path_length_to_global_optimum,
 )
 
-from _landscapes import onemax, hoc_landscape, from_map, TWO_PEAK_3CUBE
+from _landscapes import onemax, from_map, TWO_PEAK_3CUBE
 
 
 # ----------------------------------------------------------------------
@@ -125,13 +124,6 @@ def test_classify_epistasis_approximate_seed_reproducible():
     r1 = classify_epistasis(ls, sample_cut_prob=0.5, seed=11)
     r2 = classify_epistasis(ls, sample_cut_prob=0.5, seed=11)
     assert r1 == r2
-
-
-def test_global_idiosyncratic_seed_reproducible():
-    ls = hoc_landscape(6, seed=2)
-    assert global_idiosyncratic_index(ls, n_jobs=1, seed=3) == global_idiosyncratic_index(
-        ls, n_jobs=1, seed=3
-    )
 
 
 # ----------------------------------------------------------------------

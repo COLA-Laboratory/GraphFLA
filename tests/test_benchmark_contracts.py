@@ -9,7 +9,12 @@ import pytest
 
 from benchmarks._datasets import DATASETS, DMS, load_dataset
 from benchmarks.analysis import METHODS, METRIC_MODULES, EXCLUDED_METHODS, prepare_call
-from benchmarks.analysis._workloads import SMALL_CASES, build_case
+from benchmarks.analysis._workloads import (
+    SMALL_CASES,
+    IDIOSYNCRASY_CASES,
+    build_case,
+    cases_for_metric,
+)
 from importlib import import_module
 from graphfla import analysis
 
@@ -61,3 +66,16 @@ def test_asv_discovers_only_concrete_metric_benchmarks():
         prefix = f"analysis.{module}."
         assert len([name for name in names if name.startswith(prefix)]) == 2
     assert any(name.startswith("construction.build.") for name in names)
+
+
+@pytest.mark.parametrize("case", IDIOSYNCRASY_CASES)
+def test_idiosyncrasy_workload_bounds_and_shapes(case):
+    ls = build_case(case)
+    assert 2 <= ls.n_configs <= 1024 and 1 <= len(ls.data_types) <= 72
+    assert np.isfinite(ls.graph.vs["fitness"]).all()
+    if case == "long-boolean-72":
+        assert (ls.n_configs, len(ls.data_types)) == (560, 72)
+    for method in ("idiosyncratic_index", "global_idiosyncratic_index"):
+        assert cases_for_metric(method) == IDIOSYNCRASY_CASES
+        benchmark = import_module(f"benchmarks.analysis.{method}").Benchmark
+        assert benchmark.params == IDIOSYNCRASY_CASES

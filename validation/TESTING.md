@@ -56,6 +56,15 @@ error procedure does not validate the public estimator's neighborhood variance.
 Likewise, a matching summary count alone can hide incorrect individual labels;
 compare detailed results with an independent oracle when those results exist.
 
+Lyons illustrates a different distinction: its tRNA notebook reseeds by mutation
+background count, while the public global function uses one seeded stream.
+The paper mean/SEM case therefore tests the production kernel with author seeds;
+a separate independent-equation case tests the public function under seed 0.
+Mutation labels, counts, SDs and all 828 ratios are compared explicitly. The
+Figure 1a code/text discrepancy remains an independent procedural check, not a
+successful paper-number claim. See [the detailed-test template](templates/test_metric_details.py.template)
+for sharing verified input while keeping these claims separate.
+
 ## Required record before promotion
 
 1. **Reference and claim.** Reuse a study ID from `catalog.json`, or add its
