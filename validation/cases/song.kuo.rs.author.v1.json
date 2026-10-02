@@ -1,0 +1,40 @@
+{
+  "schema_version": 1,
+  "kind": "case",
+  "id": "song.kuo.rs.author.v1",
+  "revision": 1,
+  "study_id": "SongZhang2021",
+  "metric_ids": [
+    "roughness_slope"
+  ],
+  "evidence_tier": "published_numeric",
+  "definition_match": "no",
+  "scope": "Replay the empirical notebook Ridge(alpha=1) with reference U; compare to Table 1 parenthesized 4.063. This is an author-procedure result, not a public GraphFLA OLS paper-result claim.",
+  "preprocessing": "All 197890 rows of bundled Kuo2020.csv, 9 RNA positions, stored log(GFP) values unchanged. Explicit reference U and A checked separately; three nonreference indicators per position, Ridge(alpha=1) with intercept, denominator 27. A local algebraic replay uses sklearn Ridge, without executing downloaded notebook code. No missing-state imputation, RNG, graph filtering, or extrapolation.",
+  "sources": [
+    {
+      "url": "https://doi.org/10.1111/evo.14363",
+      "locator": "Table 1 Kuo et al. 2020 r/s parenthesized value 4.063; this is average-measurement ruggedness, not extrapolated 3.965."
+    },
+    {
+      "url": "https://github.com/song88180/fitness-landscape-error/blob/a9d15169d0488b5e615467132710d6847dc2f73e/5_Empirical_Extrapolation/SD_seq/Generate_raw_data.ipynb",
+      "locator": "cal_r_s uses Ridge and mean absolute retained coefficients; input coding load_sequence uses ATCG. Supplied Methods formula differs."
+    }
+  ],
+  "expected": {
+    "ratio": 4.063
+  },
+  "comparison": {
+    "kind": "absolute",
+    "tolerance": 0.0005,
+    "justification": "Half a unit in the last printed decimal."
+  },
+  "inputs": [
+    {
+      "root": "repo",
+      "path": "data/BioSequence/Kuo2020.csv",
+      "sha256": "69a86caf1ccbfc94a519f5917624d6862a0dfede0082abae79300eda0bb959c0"
+    }
+  ],
+  "pytest_node": "validation/tests/test_r_s_ratio.py::test_kuo_author_ridge_result"
+}

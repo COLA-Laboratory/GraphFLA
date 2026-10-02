@@ -21,7 +21,7 @@ from graphfla.landscape import BooleanLandscape, Landscape, ProteinLandscape
         (1e10, 0),
     ],
 )
-def test_roughness_slope_is_invariant_to_fitness_units(scale, offset):
+def test_higher_order_variance_is_invariant_to_fitness_units(scale, offset):
     # Walsh basis: residual = 3*z0*z1, slopes in 0/1 coding are 4, 8, 12.
     variants = np.array(list(product(range(2), repeat=3)))
     z = 2 * variants - 1
@@ -29,7 +29,6 @@ def test_roughness_slope_is_invariant_to_fitness_units(scale, offset):
     landscape = BooleanLandscape().build_from_data(
         variants, scale * fitness + offset, verbose=False
     )
-    assert A.r_s_ratio(landscape) == pytest.approx(3 / 8, rel=1e-10)
     assert A.higher_order_epistasis(landscape, order=1) == pytest.approx(56 / 65)
     assert A.higher_order_epistasis(landscape, order=2) == pytest.approx(1)
 
@@ -113,35 +112,8 @@ def test_every_metric_is_defined_on_a_fully_neutral_landscape():
         assert np.isnan(A.increasing_costs_index(landscape))
 
 
-@pytest.mark.parametrize(
-    "scale,offset",
-    [(1, 0), (3, 17), (-2, 11), (1e-10, 0), (1e10, 0), (1, 1e13), (1, -1e9)],
-)
-def test_roughness_slope_is_invariant_to_affine_fitness_rescaling(scale, offset):
-    # r and s both scale by |a| and the intercept absorbs b, so r/s is invariant
-    # under f -> a*f + b. Guards against a degeneracy tolerance that tracks
-    # either the fitness magnitude or its offset.
-    variants = np.array(list(product(range(2), repeat=3)))
-    z = 2 * variants - 1
-    fitness = 2 * z[:, 0] + 4 * z[:, 1] + 6 * z[:, 2] + 3 * z[:, 0] * z[:, 1]
-    landscape = BooleanLandscape().build_from_data(
-        variants, scale * fitness + offset, verbose=False
-    )
-    with warnings.catch_warnings():
-        warnings.simplefilter("ignore")
-        assert A.r_s_ratio(landscape) == pytest.approx(3 / 8, rel=1e-9)
 
 
-def test_roughness_slope_is_nan_for_constant_fitness():
-    # r = s = 0, so the ratio is undefined -- distinct from a purely epistatic
-    # landscape (r > 0, s = 0), which is inf.
-    variants = np.array(list(product(range(2), repeat=3)))
-    landscape = BooleanLandscape().build_from_data(
-        variants, np.ones(8), verbose=False
-    )
-    with warnings.catch_warnings():
-        warnings.simplefilter("ignore")
-        assert np.isnan(A.r_s_ratio(landscape))
 
 
 @pytest.mark.parametrize("filter_mode", ["both", "any"])
@@ -179,32 +151,8 @@ def test_functional_filter_severs_below_threshold_neutral_pairs(maximize):
     assert sorted(landscape.graph.vs["fitness"]) == sorted([2 * sign, 3 * sign])
 
 
-def test_roughness_slope_is_nan_for_constant_non_representable_fitness():
-    # np.std of identical 0.1 values is ~1.4e-17, not 0. Constant fitness must be
-    # detected by exact equality or this falls through and returns inf.
-    landscape = ProteinLandscape().build_from_data(["A", "C", "W"], [0.1] * 3, verbose=False)
-    with warnings.catch_warnings():
-        warnings.simplefilter("ignore")
-        assert np.isnan(A.r_s_ratio(landscape))
 
 
-@pytest.mark.parametrize(
-    "fitness,expected",
-    [
-        ([0, 1e155, 2e155, 3e155], 0.0),        # additive at a scale where std overflows
-        ([0, 1e-200, 1e-200, 0], float("inf")),  # purely epistatic where std underflows
-    ],
-)
-def test_roughness_slope_survives_extreme_fitness_scales(fitness, expected):
-    # The degeneracy test uses the fitness range, not the standard deviation:
-    # squaring the deviations overflows near 1e155 and underflows near 1e-200 on
-    # inputs that are still finite.
-    landscape = BooleanLandscape().build_from_data(
-        ["00", "01", "10", "11"], fitness, verbose=False
-    )
-    with warnings.catch_warnings():
-        warnings.simplefilter("ignore")
-        assert A.r_s_ratio(landscape) == pytest.approx(expected, abs=1e-12)
 
 
 @pytest.mark.parametrize("maximize", [True, False])

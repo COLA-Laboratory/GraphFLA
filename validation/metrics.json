@@ -58,14 +58,16 @@
         "r_s_ratio"
       ],
       "provenance": "canonical",
-      "synthetic_plan": "Independent OLS plus analytic additive/interaction cube; coding, zero slope and unit invariance.",
+      "synthetic_plan": "Analytic finite nonzero ratio; extreme units; explicit categorical and ordinal coding; mixed/incomplete designs; rank, degeneracies and bounded QR workspace. See tests/test_r_s_ratio.py.",
       "candidate_study_ids": [
         "Ferretti2016",
         "Skwara2023",
-        "BankMHJ16"
+        "BankMHJ16",
+        "Szendro2013",
+        "SongZhang2021"
       ],
-      "literature_next_action": "Find multiple numerical targets with explicit coding and raw versus normalized ruggedness; resolve earlier Figure4 inputs.",
-      "review_status": "partial; see tests/VALIDATION.md and case records"
+      "literature_next_action": "Two binary published targets and full Kuo independent coding/author Ridge checks are promoted. Preserve unresolved TEM, Domingo and other Szendro rows; reopen only with corrected source/input evidence. See R_S_RATIO_REVIEW.md.",
+      "review_status": "Calculation reviewed 2026-10-03; 9 independent literature tests. Multistate reference/ordinal model API proposals remain local and unimplemented."
     },
     {
       "id": "higher_order",

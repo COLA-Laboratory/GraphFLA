@@ -31,7 +31,7 @@ THREADS = dict.fromkeys(
     ],
     "1",
 )
-SNAPSHOT_METRICS = {"ee", "gamma", "gamma_star"}
+SNAPSHOT_METRICS = {"ee", "gamma", "gamma_star", "r_s_ratio"}
 
 
 def worker(args):
@@ -49,6 +49,7 @@ def worker(args):
     if args.baseline_kernel:
         spec = importlib.util.spec_from_file_location(
             "ee_baseline" if args.metric == "ee" else
+            "graphfla.analysis._r_s_baseline" if args.metric == "r_s_ratio" else
             "graphfla.analysis.epistasis._gamma_baseline", args.baseline_kernel
         )
         module = importlib.util.module_from_spec(spec)
@@ -66,6 +67,8 @@ def worker(args):
     )
     if module is not None and args.metric in {"gamma", "gamma_star"}:
         calls = {args.metric: lambda: getattr(module, args.metric)(landscape, n_jobs=1)}
+    if module is not None and args.metric == "r_s_ratio":
+        calls = {args.metric: lambda: module.r_s_ratio(landscape)}
     results = {}
     for name, call in calls.items():
         call()  # Untimed warmup; construction is also outside the timer.
@@ -94,7 +97,7 @@ def worker(args):
                 arrays[col] = table[col].to_numpy()
         arrays["fraction"] = np.asarray(ee.evolvability_enhancing_fraction(landscape))
         np.savez_compressed(args.snapshot, **arrays)
-    elif args.snapshot and args.metric in {"gamma", "gamma_star"}:
+    elif args.snapshot and args.metric in {"gamma", "gamma_star", "r_s_ratio"}:
         np.savez_compressed(args.snapshot, **{args.metric: np.asarray(calls[args.metric]())})
     input_digest = hashlib.sha256(landscape.get_data().to_json(orient="split").encode())
     input_digest.update(np.asarray(landscape.graph.vs["fitness"]).tobytes())
@@ -155,7 +158,7 @@ def main():
     parser.add_argument(
         "--baseline-kernel",
         type=Path,
-        help="Trusted local EE kernel or gamma module; never downloads code",
+        help="Trusted local EE, gamma or r/s module; never downloads code",
     )
     parser.add_argument("--worker", action="store_true", help=argparse.SUPPRESS)
     parser.add_argument("--case", help=argparse.SUPPRESS)
@@ -177,9 +180,9 @@ def main():
             "64..4096 MiB process-tree RSS"
         )
     if args.compare and args.metric not in SNAPSHOT_METRICS:
-        parser.error("Output-equivalence comparison supports ee, gamma and gamma_star")
+        parser.error("Output-equivalence comparison supports ee, gamma, gamma_star and r_s_ratio")
     if args.baseline_kernel and args.metric not in SNAPSHOT_METRICS:
-        parser.error("--baseline-kernel applies only to EE or gamma metrics")
+        parser.error("--baseline-kernel applies only to EE, gamma or r/s metrics")
     if args.worker:
         if args.case not in cases_for_metric(args.metric):
             parser.error("Worker case is not registered for the selected metric")
@@ -197,6 +200,7 @@ def main():
     baseline = json.loads(args.compare.read_text()) if args.compare else None
     source = args.baseline_kernel or REPO / (
         "graphfla/analysis/epistasis/gamma.py" if args.metric in {"gamma", "gamma_star"}
+        else "graphfla/analysis/_roughness.py" if args.metric == "r_s_ratio"
         else "graphfla/analysis/_evolvability.py"
     )
     protocol = [

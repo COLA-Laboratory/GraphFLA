@@ -1,0 +1,40 @@
+{
+  "schema_version": 1,
+  "kind": "case",
+  "id": "szendro.chou.rs.v1",
+  "revision": 1,
+  "study_id": "Szendro2013",
+  "metric_ids": [
+    "roughness_slope"
+  ],
+  "evidence_tier": "published_numeric",
+  "definition_match": "yes",
+  "scope": "Table 2 row A: all 16 four-variable configurations; reproduction on the existing repository log-fitness transcription. Raw experimental source conversion is not re-certified by this test.",
+  "preprocessing": "Retain every input row with equal weight; no missing-state imputation, subsampling, uncertainty adjustment or RNG. Fit intercept plus 0/1 predictors by OLS; r is residual RMSE (divide by N); s is mean absolute non-intercept coefficient. Graph edges and optimization direction do not affect the statistic. Chou2011.csv fitness is already on the log-relative scale; do not log again.",
+  "sources": [
+    {
+      "url": "https://doi.org/10.1088/1742-5468/2013/01/P01005",
+      "locator": "Section 3.1 Eqs.(3)-(5), Section 3.2 log transformation, Table 2 row A, printed p.15."
+    },
+    {
+      "url": "https://doi.org/10.1126/science.1203799",
+      "locator": "Chou et al. 2011 source study; existing GraphFLA transcription and its provenance limitations documented in R_S_RATIO_REVIEW.md."
+    }
+  ],
+  "expected": {
+    "ratio": 0.122
+  },
+  "comparison": {
+    "kind": "absolute",
+    "tolerance": 0.0005,
+    "justification": "Half a unit in the last printed decimal."
+  },
+  "inputs": [
+    {
+      "root": "repo",
+      "path": "data/BioSequence/Chou2011.csv",
+      "sha256": "55742ac0500ed7ea4f09a10d70d910a4153fc2c1895c658be77d68a759a0a5e9"
+    }
+  ],
+  "pytest_node": "validation/tests/test_r_s_ratio.py::test_boolean_paper_result"
+}

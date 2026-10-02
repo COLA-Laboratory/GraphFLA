@@ -175,3 +175,8 @@ history, artifact hashes and path containment. Scientific tests cover the
 separate published cases and synthetic oracles. No test requires network access.
 Run the complete suite after integrating a reviewed tranche. Keep known failures
 explicit; they are not passing correctness evidence.
+
+The [r/s review](R_S_RATIO_REVIEW.md) promotes two binary paper targets and a
+separate full-population Kuo coding check and author Ridge replay. Run
+`python -m validation.r_s_ratio` for the numerical report. The public OLS
+estimator is not represented as the author Ridge estimator.
