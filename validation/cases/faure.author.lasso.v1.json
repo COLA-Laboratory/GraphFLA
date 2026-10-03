@@ -1,0 +1,73 @@
+{
+  "schema_version": 1,
+  "kind": "case",
+  "revision": 1,
+  "study_id": "Faure2024",
+  "metric_ids": [
+    "walsh"
+  ],
+  "definition_match": "yes",
+  "sources": [
+    {
+      "url": "https://doi.org/10.1371/journal.pcbi.1012132",
+      "locator": "Faure et al. (2024), Eqs. (9), (12), (23)-(25); Table 1; Methods: Lasso regression models."
+    },
+    {
+      "url": "https://github.com/lehner-lab/whmatrixextms/tree/daabe62d0a8256e2333be8818324413daf723486",
+      "locator": "whmatrixextms-benchmarking.ipynb: H_matrix_recursive, H_matrix, V_matrix; whmatrixextms.py fit_lasso (fit_intercept=False)."
+    }
+  ],
+  "id": "faure.author.lasso.v1",
+  "evidence_tier": "author_artifact_numeric",
+  "scope": "Fixed-alpha author objective replay on a complete centered synthetic landscape, where penalized versus unpenalized constant agrees. Does not reproduce Figure 2 or author CV/data splitting.",
+  "preprocessing": "Uniform observed Cartesian product; fitness as supplied, maximize=True, epsilon=0; no imputation, transformations, duplicates, sample weighting or measurement-error propagation; graph nodes verified unchanged. Reference is first observation. No RNG in OLS. Full max_order=3; L1 alpha=0.05, no feature scaling, fit_intercept=False with constant included as in author code. Centered full-space fitness ensures constant is zero. tol=1e-12, max_iter=100000 for numeric convergence.",
+  "expected": {
+    "WT": 0.0,
+    "0_3_1": 2.700000000000003,
+    "0_3_2": 4.033333333333335,
+    "0_3_3": 3.2000000000000037,
+    "0_2_1": -1.7250000000000014,
+    "0_2_1-0_3_1": -27.29999999996812,
+    "0_2_1-0_3_2": -15.299999999975526,
+    "0_2_1-0_3_3": -3.299999999981215,
+    "0_2_2": 1.4750000000000016,
+    "0_2_2-0_3_1": -15.299999999973762,
+    "0_2_2-0_3_2": -6.799999999979858,
+    "0_2_2-0_3_3": -13.799999999984543,
+    "0_1_1": 5.466666666666663,
+    "0_1_1-0_3_1": 3.400000000000008,
+    "0_1_1-0_3_2": -0.3333333333333276,
+    "0_1_1-0_3_3": 3.0666666666666753,
+    "0_1_1-0_2_1": -1.449999999999998,
+    "0_1_1-0_2_1-0_3_1": -18.2,
+    "0_1_1-0_2_1-0_3_2": -16.599999999999998,
+    "0_1_1-0_2_1-0_3_3": -16.600000000000005,
+    "0_1_1-0_2_2": -12.449999999999996,
+    "0_1_1-0_2_2-0_3_1": 27.8,
+    "0_1_1-0_2_2-0_3_2": 0.0,
+    "0_1_1-0_2_2-0_3_3": 0.0
+  },
+  "comparison": {
+    "kind": "absolute",
+    "tolerance": 2e-08,
+    "justification": "Independent author-matrix solver replay; tolerance covers coordinate-descent ordering differences, with KKT conditions checked separately."
+  },
+  "inputs": [
+    {
+      "root": "repo",
+      "path": "tests/fixtures/literature/faure2024/synthetic.json",
+      "sha256": "617d147928bc80b91527c61b55060b0b9be63651b4184949758bc842d2e6d629"
+    },
+    {
+      "root": "repo",
+      "path": "tests/fixtures/literature/faure2024/author_matrices.py",
+      "sha256": "f6c53609e1c614116c21ef49eecbebc5ed8dff84a67090daa9b15cc616884557"
+    },
+    {
+      "root": "repo",
+      "path": "tests/fixtures/literature/faure2024/LICENSE.author",
+      "sha256": "834781c9e20867eebacf2728c4d853d35eeb103e12b16153412bce3bfac9bb9c"
+    }
+  ],
+  "pytest_node": "validation/tests/test_walsh_hadamard.py::test_author_lasso_on_centered_complete_design"
+}

@@ -2728,6 +2728,21 @@
       "theoretical_variants": null,
       "state": "triaged",
       "next_action": "Read validation/R_S_RATIO_REVIEW.md; only reopen unresolved targets with new evidence."
+    },
+    {
+      "id": "Faure2024",
+      "aliases": [
+        "FaureLMCSW24"
+      ],
+      "title": "An extension of the Walsh-Hadamard transform to calculate and model epistasis in genetic landscapes of arbitrary shape and complexity",
+      "doi": "10.1371/journal.pcbi.1012132",
+      "year": 2024,
+      "origin": "supplied",
+      "state": "ready_for_trial",
+      "next_action": "Verify Table 1, independent multistate differences and pinned author matrices/Lasso; distinguish general API from author inference protocol.",
+      "dossier": "papers/faure2024",
+      "measured_variants": null,
+      "theoretical_variants": null
     }
   ]
 }

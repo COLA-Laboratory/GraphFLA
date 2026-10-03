@@ -1,0 +1,31 @@
+"""STUDY: exact coefficients versus fitted-model estimates.
+
+Use with case.json.template and validation/TESTING.md. Freeze input and target
+hashes before comparing production output. Keep direct transforms, author
+procedures and regularized estimates in separate cases when conventions differ.
+"""
+
+import pytest
+from validation.testing import assert_case_matches
+
+
+@pytest.mark.literature_case("study.coefficients.v1", role="paper_result")
+def test_published_coefficients(literature_inputs):
+    # Read the hash-verified input, retain the exact cited population/units,
+    # and align rows by original positions AND allele contrasts. Include the
+    # constant and zero coefficients; do not compare only a summary statistic.
+    observed = ...
+    assert_case_matches("study.coefficients.v1", observed)
+
+
+@pytest.mark.literature_case("study.fit.v1", role="independent_check")
+def test_independent_model(literature_inputs):
+    # Build an independent mathematical design or finite-difference oracle.
+    # Record reference states, basis scaling, order truncation, weighting,
+    # intercept penalty, coefficient penalty, folds/seeds, fit and test sets.
+    # For full-rank OLS compare all coefficients and reconstructed values.
+    # For Lasso also check residual-gradient/KKT conditions, including zeros.
+    # A good prediction does not by itself validate coefficient recovery.
+    # Full-space, incomplete-model and regularized estimates are distinct claims.
+    observed = ...
+    assert_case_matches("study.fit.v1", observed)

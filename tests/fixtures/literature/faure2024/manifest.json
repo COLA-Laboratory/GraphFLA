@@ -1,0 +1,20 @@
+{
+  "retrieved": "2026-10-03",
+  "commit": "daabe62d0a8256e2333be8818324413daf723486",
+  "source_sha256": {
+    "LICENSE": "834781c9e20867eebacf2728c4d853d35eeb103e12b16153412bce3bfac9bb9c",
+    "whmatrixextms-validations.ipynb": "843ca4b38049829844f096148d1b7ec98996747f4a7ac856f57d281de286f639",
+    "README.md": "9b2c139f0a0c39257e617a38844f6c0357e6a1af063a4d58bd43a838426659a8",
+    "commit.json": "a272d9445ff3308915ff11552048ce0844ada3166a83e852f72d96ed0ecc8c76",
+    "whmatrixextms-benchmarking.ipynb": "ab70bbe92ba817227a06256799fe7cb2b3b730d1cd5c3702f9548418e7bf5af9",
+    "whmatrixextms.py": "fe64003f2298844c1fef716d53314ed3c15df55a2ca05004424f5bb33ecf772f",
+    "journal.pcbi.1012132.pdf": "98aab17a0537d4e9c737b2aebef52fdeb474d569d2454ca1136fca9f18cfdd69"
+  },
+  "supplied_pdf_sha256": "98aab17a0537d4e9c737b2aebef52fdeb474d569d2454ca1136fca9f18cfdd69",
+  "derived_sha256": {
+    "synthetic.json": "617d147928bc80b91527c61b55060b0b9be63651b4184949758bc842d2e6d629",
+    "author_matrices.py": "f6c53609e1c614116c21ef49eecbebc5ed8dff84a67090daa9b15cc616884557",
+    "table1.csv": "5b783d8e19c1f613c234b81c9a6b64041cc664a4735daa38ff1c82fe8b4a2f51",
+    "LICENSE.author": "834781c9e20867eebacf2728c4d853d35eeb103e12b16153412bce3bfac9bb9c"
+  }
+}

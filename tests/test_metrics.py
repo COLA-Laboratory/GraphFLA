@@ -25,7 +25,6 @@ from graphfla.analysis import (
     fdc,
     neighbor_fitness_correlation,
     higher_order_epistasis,
-    walsh_hadamard,
     fitness_distribution,
     neutrality,
     global_optima_accessibility,
@@ -153,16 +152,6 @@ def test_higher_order_epistasis_additive_order1_is_one():
     assert higher_order_epistasis(onemax(4), order=1) == pytest.approx(1.0, abs=1e-6)
     # HoC is not explainable by order-1 alone.
     assert higher_order_epistasis(hoc_landscape(4, seed=1), order=1) < 0.99
-
-
-def test_walsh_additive_higher_orders_are_zero():
-    coeffs = walsh_hadamard(onemax(5), max_order=2)
-    order2 = coeffs.loc[coeffs["order"] == 2, "coefficient"]
-    assert len(order2)  # there are pairwise terms to check
-    assert order2.abs().max() < 1e-6
-    # ...while the additive (order-1) effects are non-trivial.
-    order1 = coeffs.loc[coeffs["order"] == 1, "coefficient"]
-    assert order1.abs().max() > 1e-2
 
 
 # ----------------------------------------------------------------------

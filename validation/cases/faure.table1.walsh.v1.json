@@ -1,0 +1,48 @@
+{
+  "schema_version": 1,
+  "kind": "case",
+  "revision": 1,
+  "study_id": "Faure2024",
+  "metric_ids": [
+    "walsh"
+  ],
+  "definition_match": "yes",
+  "sources": [
+    {
+      "url": "https://doi.org/10.1371/journal.pcbi.1012132",
+      "locator": "Faure et al. (2024), Eqs. (9), (12), (23)-(25); Table 1; Methods: Lasso regression models."
+    },
+    {
+      "url": "https://github.com/lehner-lab/whmatrixextms/tree/daabe62d0a8256e2333be8818324413daf723486",
+      "locator": "whmatrixextms-benchmarking.ipynb: H_matrix_recursive, H_matrix, V_matrix; whmatrixextms.py fit_lasso (fit_intercept=False)."
+    }
+  ],
+  "id": "faure.table1.walsh.v1",
+  "evidence_tier": "published_numeric",
+  "scope": "All nine printed Table 1 background-averaged coefficients, not unrounded experimental coefficients.",
+  "preprocessing": "Uniform observed Cartesian product; fitness as supplied, maximize=True, epsilon=0; no imputation, transformations, duplicates, sample weighting or measurement-error propagation; graph nodes verified unchanged. Reference is first observation. No RNG in OLS. Two sites are embedded at original positions 6 and 66; full 3x3 population, max_order=2.",
+  "expected": {
+    "WT": -0.17,
+    "C_66_A": -0.21,
+    "C_66_T": 0.02,
+    "G_6_A": -0.24,
+    "G_6_A-C_66_A": -0.53,
+    "G_6_A-C_66_T": 0.19,
+    "G_6_T": -0.05,
+    "G_6_T-C_66_A": 0.33,
+    "G_6_T-C_66_T": 0.08
+  },
+  "comparison": {
+    "kind": "absolute",
+    "tolerance": 0.005,
+    "justification": "Half the last printed decimal unit; inputs and expected coefficients are both printed to two decimals. No claim of agreement to unreported precision."
+  },
+  "inputs": [
+    {
+      "root": "repo",
+      "path": "tests/fixtures/literature/faure2024/table1.csv",
+      "sha256": "5b783d8e19c1f613c234b81c9a6b64041cc664a4735daa38ff1c82fe8b4a2f51"
+    }
+  ],
+  "pytest_node": "validation/tests/test_walsh_hadamard.py::test_table1_published_coefficients"
+}

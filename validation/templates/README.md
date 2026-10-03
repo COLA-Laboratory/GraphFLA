@@ -33,3 +33,8 @@ gap does not authorize widening frozen paper tolerances or replacing targets.
 Use `test_additive_metric.py.template` for fitted statistics such as r/s. It
 adds explicit encoding, rank, coefficient and residual checks to the existing
 case contract, and separates author regularization from public OLS behavior.
+
+For transform coefficients and regularized models, use
+[test_coefficient_model.py.template](test_coefficient_model.py.template).
+It separates printed coefficients, direct-transform oracles, author replay and
+regularized estimates, with explicit intercept/basis/CV conventions.
