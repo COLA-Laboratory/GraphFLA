@@ -1,0 +1,163 @@
+{
+  "original_notebooks": "GraphFLA-tutorial-drafts/2026-10-03/non-biology",
+  "original_package_revision": "d7b244db91be286ad3abeb622235c58084751328",
+  "package_revision": "c64262b28bf0f7f547c22010843a7b2a48953f1b",
+  "adaptations": [
+    "Walsh result fields use dictionary keys",
+    "profile include -> metrics; remove on_error"
+  ],
+  "notebooks": [
+    {
+      "notebook": "04_suzuki_landscape.ipynb",
+      "source_sha256": "e0d4ff44ac6b64b3775978a44f78ee2226871b259e11210191f361ea108bca86",
+      "adapted_code_cells": [
+        23,
+        25,
+        30
+      ],
+      "page": "tutorials/suzuki.md",
+      "sha256": "d21bfe50461f1a084f9063c2a70b6c332ccecc80c271ef63f216b443633f8e79",
+      "code_cells": 14,
+      "outputs": 13,
+      "data_sha256": {
+        "suzuki.csv": "78d04ea7d689a9c5737851e7888a90f2490591dec8deac6d7f8812d764856ed0"
+      }
+    },
+    {
+      "notebook": "05_flow_semihydrogenation_landscape.ipynb",
+      "source_sha256": "9d02f830979aa966ac2551f5b0f286d151e351cd46ea9a508ec9dc9b89a6a7de",
+      "adapted_code_cells": [
+        23,
+        25,
+        30
+      ],
+      "page": "tutorials/flow-semihydrogenation.md",
+      "sha256": "fc0113cac0fefc9daf51628105f930ec78514d40ece1a63c6acfa1d7aac36919",
+      "code_cells": 14,
+      "outputs": 13,
+      "data_sha256": {
+        "flow_semihydrogenation.csv": "bc108cc3b1a598c331d74065a004daad9c66e56987b1d4c2e4c7764a98b71d56"
+      }
+    },
+    {
+      "notebook": "06_alloy_landscape.ipynb",
+      "source_sha256": "a7ee9ecd9fa27aee31ee8177d2fb8bf3876d023ec2e958cda13c0a9fc791667c",
+      "adapted_code_cells": [
+        23,
+        25,
+        30
+      ],
+      "page": "tutorials/alloy.md",
+      "sha256": "014a676afcf16b02e8d58e0198e638396e1f9e167ed61074649dead6058cd41b",
+      "code_cells": 14,
+      "outputs": 13,
+      "data_sha256": {
+        "wreos.csv": "e303690c25fd07a72f523564e1b516fcc86e50aa4b9b997e18d54f62eaa4f40c"
+      }
+    },
+    {
+      "notebook": "07_perovskite_landscape.ipynb",
+      "source_sha256": "a3b0715cf271fee77b64a5046f8e75a19d6eb0f9c630b89b3e6671972edda6c5",
+      "adapted_code_cells": [
+        23,
+        25,
+        30
+      ],
+      "page": "tutorials/perovskite.md",
+      "sha256": "43e0fe504afa3de4cdf2d9498a2c2f77696614c1a6d241703910d536e4fc33df",
+      "code_cells": 14,
+      "outputs": 13,
+      "data_sha256": {
+        "perovskites.csv": "ba55731336cf68a2fcc2a8c6b542ee06d4c238c91ced27d243ce9de95f8d6518"
+      }
+    },
+    {
+      "notebook": "08_microbiome_landscape.ipynb",
+      "source_sha256": "99df7188bb7d4d0a364bb7387647e6eb73ec284dc43f486d425e6f6166d0d096",
+      "adapted_code_cells": [
+        23,
+        25,
+        30
+      ],
+      "page": "tutorials/microbiome.md",
+      "sha256": "17235d39b9d9e5dc3791b5cf1eab4090be1ce2680f52ca78ee171bc4dcd207d8",
+      "code_cells": 14,
+      "outputs": 13,
+      "data_sha256": {
+        "bacpus.csv": "c985dcf1fe2e56b6073aaf7b0a5d5c132635093cc69ef12150f7c37a4fd5b11c"
+      }
+    },
+    {
+      "notebook": "09_cyanimide_landscape.ipynb",
+      "source_sha256": "f406bbca25f83ffee97479f53be10e4a3c4743af5bf0bed88a9e5dc88f9ad8df",
+      "adapted_code_cells": [
+        23,
+        24,
+        26,
+        31
+      ],
+      "page": "tutorials/cyanimide.md",
+      "sha256": "fe4d22ee112dde10455f1117e65687c33378aaed1a981ef19633fe8b70d783f7",
+      "code_cells": 15,
+      "outputs": 15,
+      "data_sha256": {
+        "cyanimide.csv": "f834f708d36cba425141140c14f4a7e41b6f25ce9ada15ec243c2da324778947"
+      }
+    },
+    {
+      "notebook": "10_drug_combination_landscape.ipynb",
+      "source_sha256": "fe06e7fbdf958b9372fd428693024f4b7145b7541f6c2fa5e20873692cd463fa",
+      "adapted_code_cells": [
+        23,
+        25,
+        30
+      ],
+      "page": "tutorials/drug-combination.md",
+      "sha256": "057abc8a1f589b1ccbd286c1377204d3692097157147c2c2f5cb06cf2b055354",
+      "code_cells": 14,
+      "outputs": 14,
+      "data_sha256": {
+        "almanac.csv": "3e88879d5598b415026b5c311edcba75093c183579b9795343b2adab1a5893e6",
+        "almanac_doses.csv": "ebbd94a8a6863d10610cf931c119290a1ab7e03e400ee6d160c0b0b5a911e4f7"
+      }
+    },
+    {
+      "notebook": "11_neural_architecture_landscape.ipynb",
+      "source_sha256": "28e92d96ce55f530bb00d3d42cd7b9a4c6a8ab5bb3175f4cbf9937e5c4f2e5c6",
+      "adapted_code_cells": [
+        23,
+        25,
+        30
+      ],
+      "page": "tutorials/neural-architecture.md",
+      "sha256": "c6f391a76641dd2f0f5c991733b1f27732098bcdf9f50fd4ced045cc1dae57c2",
+      "code_cells": 14,
+      "outputs": 13,
+      "data_sha256": {
+        "nasbench201.csv": "541b3a43c265dc751561ee1b0055ed8ec0debe0dc94da26bd6f2cd9d848ff58f"
+      }
+    },
+    {
+      "notebook": "12_software_configuration_landscape.ipynb",
+      "source_sha256": "5e23e90dcde43b28c5ca310d391268c65c274110942bdbc57a0b902de22f6000",
+      "adapted_code_cells": [
+        23,
+        25,
+        30
+      ],
+      "page": "tutorials/software-configuration.md",
+      "sha256": "c4716374af6dc3961a40c935d84f3d9faaeeaad61abd116b08b2c55de7060996",
+      "code_cells": 14,
+      "outputs": 13,
+      "data_sha256": {
+        "llvm.csv": "347dd3d08f59e06f198605e9bea092fdd4c4d5ef4a82e4360ae39b5aead600a7"
+      }
+    }
+  ],
+  "execution": {
+    "code_cells": 127,
+    "notebooks": 9,
+    "status": "passed",
+    "package_revision": "c64262b28bf0f7f547c22010843a7b2a48953f1b"
+  }
+}

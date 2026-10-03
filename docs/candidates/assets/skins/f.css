@@ -1,0 +1,15 @@
+/* F — white-on-ink names; white panels with precise dark edges. */
+.md-typeset {
+  --api-input-ink: #24232b;
+  --api-input-tint: #ffffff;
+  --api-input-edge: #d2cfd8;
+  --api-input-name-ink: #ffffff;
+  --api-input-name-fill: #292633;
+  --api-output-ink: #24232b;
+  --api-output-tint: #ffffff;
+  --api-output-edge: #d2cfd8;
+  --api-output-name-ink: #ffffff;
+  --api-output-name-fill: #292633;
+  --api-type-ink: #514d59;
+  --api-signature-fill: #f8f7fa;
+}

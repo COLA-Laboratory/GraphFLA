@@ -1,0 +1,5 @@
+# Optional: executing notebooks, separate from ordinary website builds.
+-r requirements.txt
+nbclient==0.11.0
+ipykernel==7.2.0
+psutil==7.2.2

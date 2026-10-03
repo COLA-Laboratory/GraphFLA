@@ -1,4 +1,8 @@
 docs/site/
+docs/.build/
+docs/candidates/.build/
+docs/candidates/.generated/
+docs/candidates/.logs/
 .DS_Store
 
 # landscape-analysis verification (uncommitted)

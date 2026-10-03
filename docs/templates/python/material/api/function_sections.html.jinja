@@ -1,0 +1,17 @@
+{% import 'api/tabs.html.jinja' as tabs %}
+{% set sections = function.docstring.parsed if function.docstring else [] %}
+{% set layout = sections|api_function_layout %}
+{% with autoref_hook = AutorefsHook(obj, config) %}
+  {% include 'api/summary.html.jinja' with context %}
+  {% if layout.groups %}
+    {% call(label, index) tabs.render('api-tabs-function-' + html_id|replace('.', '-'), layout.groups|map(attribute='label')|list, 'api-function-tabs') %}
+      {% set group = layout.groups[index] %}
+      {% if group.description %}
+      <div class="api-extended-description">
+        {{ group.description|api_markup(html_id)|convert_markdown(heading_level, html_id, autoref_hook=autoref_hook) }}
+      </div>
+      {% endif %}
+      {% with docstring_sections = group.sections %}{% include 'docstring.html.jinja' with context %}{% endwith %}
+    {% endcall %}
+  {% endif %}
+{% endwith %}

@@ -1,0 +1,45 @@
+{# Classes embedded in an authored article: summary stays visible; API starts at Parameters. #}
+{% import 'api/macros.html.jinja' as api with context %}
+{% import 'api/tabs.html.jinja' as tabs_ui %}
+{% set sections = class.docstring.parsed if class.docstring else [] %}
+{% set init = class.all_members.get('__init__') %}
+{% set init_sections = init.docstring.parsed if init and init.docstring else [] %}
+{% set all_sections = sections + init_sections %}
+{% set layout = all_sections|rejectattr('kind.value', 'equalto', 'attributes')|list|api_function_layout %}
+{% set parameters = layout.groups|selectattr('key', 'equalto', 'parameters')|list %}
+{% set examples = layout.groups|selectattr('key', 'equalto', 'examples')|list %}
+{% set notes = layout.groups|rejectattr('key', 'in', ['parameters', 'examples'])|list %}
+{% set attribute_sections = all_sections|selectattr('kind.value', 'equalto', 'attributes')|list %}
+{% set attributes = class.attributes|filter_objects(filters=config.filters, inherited_members=config.inherited_members, keep_no_docstrings=false)|order_members(config.members_order, none)|list %}
+{% set methods = class.functions|filter_objects(filters=config.filters, inherited_members=config.inherited_members, keep_no_docstrings=true)|order_members(config.members_order, none)|list %}
+{% set labels = [] %}
+{% if parameters %}{% set labels = labels + ['Parameters'] %}{% endif %}
+{% if attribute_sections or attributes %}{% set labels = labels + ['Attributes'] %}{% endif %}
+{% if methods %}{% set labels = labels + ['Methods'] %}{% endif %}
+{% if examples %}{% set labels = labels + ['Examples'] %}{% endif %}
+{% if notes %}{% set labels = labels + ['Notes'] %}{% endif %}
+<div class="api-inline-class" data-api-path="{{ html_id }}">
+  {% if init %}
+    {{ api.signature(init, config.extra.get('public_path', class.path)) }}
+  {% else %}
+    <div class="doc-signature highlight"><pre><code>{{ config.extra.get('public_path', class.path) }}()</code></pre></div>
+  {% endif %}
+  {% with autoref_hook = AutorefsHook(obj, config) %}
+    {% include 'api/summary.html.jinja' with context %}
+    {% if labels %}
+      {% call(label, index) tabs_ui.render('api-tabs-class-' + html_id|replace('.', '-'), labels, 'api-class-tabs api-inline-class-tabs') %}
+        {% if label == 'Attributes' %}
+          {% include 'api/class_attributes.html.jinja' with context %}
+        {% elif label == 'Methods' %}
+          {% include 'api/class_methods.html.jinja' with context %}
+        {% else %}
+          {% set groups = parameters if label == 'Parameters' else examples if label == 'Examples' else notes %}
+          {% for group in groups %}
+            {% if group.description %}{{ group.description|api_markup(html_id)|convert_markdown(heading_level, html_id, autoref_hook=autoref_hook) }}{% endif %}
+            {% with docstring_sections = group.sections %}{% include 'docstring.html.jinja' with context %}{% endwith %}
+          {% endfor %}
+        {% endif %}
+      {% endcall %}
+    {% endif %}
+  {% endwith %}
+</div>

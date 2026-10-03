@@ -1,0 +1,304 @@
+component_role,compound_nsc,compound_name,dose_index,concentration,unit
+anchor,256439,Idarubicin hydrochloride,1,1.00E-10,M
+anchor,256439,Idarubicin hydrochloride,2,1.00E-09,M
+anchor,256439,Idarubicin hydrochloride,3,1.00E-08,M
+partner,740,Methotrexate,1,1.00E-08,M
+partner,740,Methotrexate,2,1.00E-07,M
+partner,740,Methotrexate,3,1.00E-06,M
+partner,750,Busulfan,1,5.00E-08,M
+partner,750,Busulfan,2,5.00E-07,M
+partner,750,Busulfan,3,5.00E-06,M
+partner,752,Thioguanine,1,3.00E-08,M
+partner,752,Thioguanine,2,3.00E-07,M
+partner,752,Thioguanine,3,3.00E-06,M
+partner,755,Mercaptopurine,1,5.00E-08,M
+partner,755,Mercaptopurine,2,5.00E-07,M
+partner,755,Mercaptopurine,3,5.00E-06,M
+partner,762,Mechlorethamine hydrochloride,1,1.00E-07,M
+partner,762,Mechlorethamine hydrochloride,2,1.00E-06,M
+partner,762,Mechlorethamine hydrochloride,3,1.00E-05,M
+partner,1390,Allopurinol,1,1.00E-06,M
+partner,1390,Allopurinol,2,1.00E-05,M
+partner,1390,Allopurinol,3,1.00E-04,M
+partner,3053,Dactinomycin,1,1.00E-10,M
+partner,3053,Dactinomycin,2,1.00E-09,M
+partner,3053,Dactinomycin,3,1.00E-08,M
+partner,3088,Chlorambucil,1,1.00E-07,M
+partner,3088,Chlorambucil,2,1.00E-06,M
+partner,3088,Chlorambucil,3,1.00E-05,M
+partner,6396,Thiotepa,1,3.00E-07,M
+partner,6396,Thiotepa,2,3.00E-06,M
+partner,6396,Thiotepa,3,3.00E-05,M
+partner,8806,Melphalan,1,1.00E-07,M
+partner,8806,Melphalan,2,1.00E-06,M
+partner,8806,Melphalan,3,1.00E-05,M
+partner,9706,Triethylenemelamine,1,1.00E-07,M
+partner,9706,Triethylenemelamine,2,1.00E-06,M
+partner,9706,Triethylenemelamine,3,1.00E-05,M
+partner,13875,Altretamine,1,3.00E-08,M
+partner,13875,Altretamine,2,3.00E-07,M
+partner,13875,Altretamine,3,3.00E-06,M
+partner,14229,Quinacrine hydrochloride,1,3.00E-08,M
+partner,14229,Quinacrine hydrochloride,2,3.00E-07,M
+partner,14229,Quinacrine hydrochloride,3,3.00E-06,M
+partner,18509,Aminolevulinic acid hydrochloride,1,1.00E-06,M
+partner,18509,Aminolevulinic acid hydrochloride,2,1.00E-05,M
+partner,18509,Aminolevulinic acid hydrochloride,3,1.00E-04,M
+partner,19893,Fluorouracil,1,1.00E-06,M
+partner,19893,Fluorouracil,2,1.00E-05,M
+partner,19893,Fluorouracil,3,1.00E-04,M
+partner,24559,Plicamycin,1,1.00E-09,M
+partner,24559,Plicamycin,2,1.00E-08,M
+partner,24559,Plicamycin,3,1.00E-07,M
+partner,25154,Pipobroman,1,1.00E-06,M
+partner,25154,Pipobroman,2,1.00E-05,M
+partner,25154,Pipobroman,3,1.00E-04,M
+partner,26271,Cyclophosphamide,1,1.00E-06,M
+partner,26271,Cyclophosphamide,2,1.00E-05,M
+partner,26271,Cyclophosphamide,3,1.00E-04,M
+partner,26980,Mitomycin,1,1.00E-08,M
+partner,26980,Mitomycin,2,1.00E-07,M
+partner,26980,Mitomycin,3,1.00E-06,M
+partner,27640,Floxuridine,1,1.00E-08,M
+partner,27640,Floxuridine,2,1.00E-07,M
+partner,27640,Floxuridine,3,1.00E-06,M
+partner,32065,Hydroxyurea,1,1.00E-06,M
+partner,32065,Hydroxyurea,2,1.00E-05,M
+partner,32065,Hydroxyurea,3,1.00E-04,M
+partner,34462,Uracil mustard,1,1.00E-06,M
+partner,34462,Uracil mustard,2,1.00E-05,M
+partner,34462,Uracil mustard,3,1.00E-04,M
+partner,38721,Mitotane,1,3.00E-07,M
+partner,38721,Mitotane,2,3.00E-06,M
+partner,38721,Mitotane,3,3.00E-05,M
+partner,45388,Dacarbazine,1,3.00E-07,M
+partner,45388,Dacarbazine,2,3.00E-06,M
+partner,45388,Dacarbazine,3,3.00E-05,M
+partner,45923,Methoxsalen,1,1.00E-08,M
+partner,45923,Methoxsalen,2,1.00E-07,M
+partner,45923,Methoxsalen,3,1.00E-06,M
+partner,49842,Vinblastine sulfate,1,1.00E-10,M
+partner,49842,Vinblastine sulfate,2,1.00E-09,M
+partner,49842,Vinblastine sulfate,3,1.00E-08,M
+partner,63878,Cytarabine hydrochloride,1,1.00E-07,M
+partner,63878,Cytarabine hydrochloride,2,1.00E-06,M
+partner,63878,Cytarabine hydrochloride,3,1.00E-05,M
+partner,66847,Thalidomide,1,1.00E-07,M
+partner,66847,Thalidomide,2,1.00E-06,M
+partner,66847,Thalidomide,3,1.00E-05,M
+partner,67574,Vincristine sulfate,1,1.00E-10,M
+partner,67574,Vincristine sulfate,2,1.00E-09,M
+partner,67574,Vincristine sulfate,3,1.00E-08,M
+partner,71423,Megestrol acetate,1,1.00E-07,M
+partner,71423,Megestrol acetate,2,1.00E-06,M
+partner,71423,Megestrol acetate,3,1.00E-05,M
+partner,77213,Procarbazine hydrochloride,1,3.00E-08,M
+partner,77213,Procarbazine hydrochloride,2,3.00E-07,M
+partner,77213,Procarbazine hydrochloride,3,3.00E-06,M
+partner,79037,Lomustine,1,1.00E-07,M
+partner,79037,Lomustine,2,1.00E-06,M
+partner,79037,Lomustine,3,1.00E-05,M
+partner,82151,Daunorubicin hydrochloride,1,1.00E-09,M
+partner,82151,Daunorubicin hydrochloride,2,1.00E-08,M
+partner,82151,Daunorubicin hydrochloride,3,1.00E-07,M
+partner,85998,Streptozocin,1,1.00E-05,M
+partner,85998,Streptozocin,2,1.00E-04,M
+partner,85998,Streptozocin,3,1.00E-03,M
+partner,92859,Arsenic trioxide,1,1.00E-07,M
+partner,92859,Arsenic trioxide,2,1.00E-06,M
+partner,92859,Arsenic trioxide,3,1.00E-05,M
+partner,102816,Azacitidine,1,3.00E-08,M
+partner,102816,Azacitidine,2,3.00E-07,M
+partner,102816,Azacitidine,3,3.00E-06,M
+partner,105014,Cladribine,1,1.00E-08,M
+partner,105014,Cladribine,2,1.00E-07,M
+partner,105014,Cladribine,3,1.00E-06,M
+partner,109724,Ifosfamide,1,4.00E-06,M
+partner,109724,Ifosfamide,2,4.00E-05,M
+partner,109724,Ifosfamide,3,4.00E-04,M
+partner,119875,Cisplatin,1,1.00E-07,M
+partner,119875,Cisplatin,2,1.00E-06,M
+partner,119875,Cisplatin,3,1.00E-05,M
+partner,122758,Tretinoin,1,1.00E-08,M
+partner,122758,Tretinoin,2,1.00E-07,M
+partner,122758,Tretinoin,3,1.00E-06,M
+partner,122819,Teniposide,1,1.00E-08,M
+partner,122819,Teniposide,2,1.00E-07,M
+partner,122819,Teniposide,3,1.00E-06,M
+partner,123127,Doxorubicin hydrochloride,1,2.50E-09,M
+partner,123127,Doxorubicin hydrochloride,2,2.50E-08,M
+partner,123127,Doxorubicin hydrochloride,3,2.50E-07,M
+partner,125066,Bleomycin sulfate,1,1.00E-08,M
+partner,125066,Bleomycin sulfate,2,1.00E-07,M
+partner,125066,Bleomycin sulfate,3,1.00E-06,M
+partner,125973,Paclitaxel,1,1.00E-09,M
+partner,125973,Paclitaxel,2,1.00E-08,M
+partner,125973,Paclitaxel,3,1.00E-07,M
+partner,127716,Decitabine,1,3.00E-08,M
+partner,127716,Decitabine,2,3.00E-07,M
+partner,127716,Decitabine,3,3.00E-06,M
+partner,138783,bendamustine hydrochloride,1,3.00E-07,M
+partner,138783,bendamustine hydrochloride,2,3.00E-06,M
+partner,138783,bendamustine hydrochloride,3,3.00E-05,M
+partner,141540,Etoposide,1,1.00E-07,M
+partner,141540,Etoposide,2,1.00E-06,M
+partner,141540,Etoposide,3,1.00E-05,M
+partner,169780,Dexrazoxane,1,1.00E-06,M
+partner,169780,Dexrazoxane,2,1.00E-05,M
+partner,169780,Dexrazoxane,3,1.00E-04,M
+partner,180973,Tamoxifen citrate,1,1.00E-08,M
+partner,180973,Tamoxifen citrate,2,1.00E-07,M
+partner,180973,Tamoxifen citrate,3,1.00E-06,M
+partner,218321,Pentostatin,1,1.00E-07,M
+partner,218321,Pentostatin,2,1.00E-06,M
+partner,218321,Pentostatin,3,1.00E-05,M
+partner,226080,Sirolimus,1,1.00E-10,M
+partner,226080,Sirolimus,2,1.00E-09,M
+partner,226080,Sirolimus,3,1.00E-08,M
+partner,241240,Carboplatin,1,1.00E-06,M
+partner,241240,Carboplatin,2,1.00E-05,M
+partner,241240,Carboplatin,3,1.00E-04,M
+partner,246131,Valrubicin,1,1.00E-09,M
+partner,246131,Valrubicin,2,1.00E-08,M
+partner,246131,Valrubicin,3,1.00E-07,M
+partner,266046,Oxaliplatin,1,5.00E-08,M
+partner,266046,Oxaliplatin,2,5.00E-07,M
+partner,266046,Oxaliplatin,3,5.00E-06,M
+partner,279836,Mitoxantrone,1,1.00E-09,M
+partner,279836,Mitoxantrone,2,1.00E-08,M
+partner,279836,Mitoxantrone,3,1.00E-07,M
+partner,296961,Amifostine,1,1.00E-06,M
+partner,296961,Amifostine,2,1.00E-05,M
+partner,296961,Amifostine,3,1.00E-04,M
+partner,362856,Temozolomide,1,1.00E-06,M
+partner,362856,Temozolomide,2,1.00E-05,M
+partner,362856,Temozolomide,3,1.00E-04,M
+partner,369100,Imiquimod,1,5.00E-09,M
+partner,369100,Imiquimod,2,5.00E-08,M
+partner,369100,Imiquimod,3,5.00E-07,M
+partner,409962,Carmustine,1,5.00E-07,M
+partner,409962,Carmustine,2,5.00E-06,M
+partner,409962,Carmustine,3,5.00E-05,M
+partner,606869,Clofarabine,1,7.00E-09,M
+partner,606869,Clofarabine,2,7.00E-08,M
+partner,606869,Clofarabine,3,7.00E-07,M
+partner,608210,Vinorelbine tartrate,1,1.00E-09,M
+partner,608210,Vinorelbine tartrate,2,1.00E-08,M
+partner,608210,Vinorelbine tartrate,3,1.00E-07,M
+partner,609699,Topotecan hydrochloride,1,1.00E-09,M
+partner,609699,Topotecan hydrochloride,2,1.00E-08,M
+partner,609699,Topotecan hydrochloride,3,1.00E-07,M
+partner,613327,Gemcitabine hydrochloride,1,1.00E-09,M
+partner,613327,Gemcitabine hydrochloride,2,1.00E-08,M
+partner,613327,Gemcitabine hydrochloride,3,1.00E-07,M
+partner,628503,Docetaxel,1,1.00E-10,M
+partner,628503,Docetaxel,2,1.00E-09,M
+partner,628503,Docetaxel,3,1.00E-08,M
+partner,673596,SN-38,1,1.00E-09,M
+partner,673596,SN-38,2,1.00E-08,M
+partner,673596,SN-38,3,1.00E-07,M
+partner,681239,Bortezomib,1,1.00E-09,M
+partner,681239,Bortezomib,2,1.00E-08,M
+partner,681239,Bortezomib,3,1.00E-07,M
+partner,686673,Nelarabine,1,1.00E-06,M
+partner,686673,Nelarabine,2,1.00E-05,M
+partner,686673,Nelarabine,3,1.00E-04,M
+partner,698037,Pemetrexed Disodium ,1,1.00E-06,M
+partner,698037,Pemetrexed Disodium ,2,1.00E-05,M
+partner,698037,Pemetrexed Disodium ,3,1.00E-04,M
+partner,701852,Vorinostat,1,2.00E-08,M
+partner,701852,Vorinostat,2,2.00E-07,M
+partner,701852,Vorinostat,3,2.00E-06,M
+partner,702294,Estramustine phosphate sodium,1,1.00E-06,M
+partner,702294,Estramustine phosphate sodium,2,1.00E-05,M
+partner,702294,Estramustine phosphate sodium,3,1.00E-04,M
+partner,707389,,1,1.00E-10,M
+partner,707389,,2,1.00E-09,M
+partner,707389,,3,1.00E-08,M
+partner,712807,Capecitabine,1,1.00E-07,M
+partner,712807,Capecitabine,2,1.00E-06,M
+partner,712807,Capecitabine,3,1.00E-05,M
+partner,713563,Exemestane,1,1.00E-09,M
+partner,713563,Exemestane,2,1.00E-08,M
+partner,713563,Exemestane,3,1.00E-07,M
+partner,715055,Gefitinib,1,1.00E-08,M
+partner,715055,Gefitinib,2,1.00E-07,M
+partner,715055,Gefitinib,3,1.00E-06,M
+partner,718781,Erlotinib hydrochloride,1,1.00E-07,M
+partner,718781,Erlotinib hydrochloride,2,1.00E-06,M
+partner,718781,Erlotinib hydrochloride,3,1.00E-05,M
+partner,719276,Fulvestrant,1,1.00E-09,M
+partner,719276,Fulvestrant,2,1.00E-08,M
+partner,719276,Fulvestrant,3,1.00E-07,M
+partner,719344,Arimidex,1,3.00E-10,M
+partner,719344,Arimidex,2,3.00E-09,M
+partner,719344,Arimidex,3,3.00E-08,M
+partner,719345,Letrozole,1,1.00E-08,M
+partner,719345,Letrozole,2,1.00E-07,M
+partner,719345,Letrozole,3,1.00E-06,M
+partner,719627,Celecoxib,1,3.00E-07,M
+partner,719627,Celecoxib,2,3.00E-06,M
+partner,719627,Celecoxib,3,3.00E-05,M
+partner,721517,Zoledronic acid,1,1.00E-07,M
+partner,721517,Zoledronic acid,2,1.00E-06,M
+partner,721517,Zoledronic acid,3,1.00E-05,M
+partner,732517,Dasatinib,1,1.00E-09,M
+partner,732517,Dasatinib,2,1.00E-08,M
+partner,732517,Dasatinib,3,1.00E-07,M
+partner,733504,Everolimus,1,5.00E-10,M
+partner,733504,Everolimus,2,5.00E-09,M
+partner,733504,Everolimus,3,5.00E-08,M
+partner,737754,,1,5.00E-07,M
+partner,737754,,2,5.00E-06,M
+partner,737754,,3,5.00E-05,M
+partner,743414,Imatinib mesylate,1,5.00E-08,M
+partner,743414,Imatinib mesylate,2,5.00E-07,M
+partner,743414,Imatinib mesylate,3,5.00E-06,M
+partner,745750,Lapatinib ditosylate,1,3.00E-08,M
+partner,745750,Lapatinib ditosylate,2,3.00E-07,M
+partner,745750,Lapatinib ditosylate,3,3.00E-06,M
+partner,747599,Nilotinib,1,1.00E-08,M
+partner,747599,Nilotinib,2,1.00E-07,M
+partner,747599,Nilotinib,3,1.00E-06,M
+partner,747971,Sorafenib tosylate,1,1.00E-07,M
+partner,747971,Sorafenib tosylate,2,1.00E-06,M
+partner,747971,Sorafenib tosylate,3,1.00E-05,M
+partner,747972,Lenalidomide,1,1.00E-08,M
+partner,747972,Lenalidomide,2,1.00E-07,M
+partner,747972,Lenalidomide,3,1.00E-06,M
+partner,747973,Ixabepilone,1,1.00E-12,M
+partner,747973,Ixabepilone,2,1.00E-11,M
+partner,747973,Ixabepilone,3,1.00E-10,M
+partner,747974,Raloxifene hydrochloride,1,1.00E-10,M
+partner,747974,Raloxifene hydrochloride,2,1.00E-09,M
+partner,747974,Raloxifene hydrochloride,3,1.00E-08,M
+partner,749226,Abiraterone,1,5.00E-08,M
+partner,749226,Abiraterone,2,5.00E-07,M
+partner,749226,Abiraterone,3,5.00E-06,M
+partner,750690,Sunitinib (free base),1,1.00E-08,M
+partner,750690,Sunitinib (free base),2,1.00E-07,M
+partner,750690,Sunitinib (free base),3,1.00E-06,M
+partner,754143,Depsipeptide,1,1.00E-09,M
+partner,754143,Depsipeptide,2,1.00E-08,M
+partner,754143,Depsipeptide,3,1.00E-07,M
+partner,754230,pralatrexate,1,1.00E-09,M
+partner,754230,pralatrexate,2,1.00E-08,M
+partner,754230,pralatrexate,3,1.00E-07,M
+partner,755986,Vismodegib,1,3.00E-07,M
+partner,755986,Vismodegib,2,3.00E-06,M
+partner,755986,Vismodegib,3,3.00E-05,M
+partner,756645,PF-2341066,1,1.00E-08,M
+partner,756645,PF-2341066,2,1.00E-07,M
+partner,756645,PF-2341066,3,1.00E-06,M
+partner,757441,AG-013736,1,1.00E-08,M
+partner,757441,AG-013736,2,1.00E-07,M
+partner,757441,AG-013736,3,1.00E-06,M
+partner,760766,Vandetanib,1,2.00E-08,M
+partner,760766,Vandetanib,2,2.00E-07,M
+partner,760766,Vandetanib,3,2.00E-06,M
+partner,761432,Cabazitaxel,1,1.00E-09,M
+partner,761432,Cabazitaxel,2,1.00E-08,M
+partner,761432,Cabazitaxel,3,1.00E-07,M
+partner,763371,,1,1.00E-07,M
+partner,763371,,2,1.00E-06,M
+partner,763371,,3,1.00E-05,M

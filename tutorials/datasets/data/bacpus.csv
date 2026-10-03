@@ -1,0 +1,561 @@
+strain_id,strain,genus,polysaccharide,polysaccharide_name,polysaccharide_source,source_kingdom,OD600_48h,OD600_48h_sd,n_rep,OD600_48h_batch1,OD600_48h_batch2
+DA103,Bacteroides_massiliensis,Bacteroides,APs,Astragalus polysaccharides,Astragalus membranaceus,Plant,0.03,0.026057628441590763,3,0.03,
+DA103,Bacteroides_massiliensis,Bacteroides,AdPs,Adenophora polysaccharides,Glehnia littoralis,Plant,-0.0018333333333333333,0.0023166067138525406,6,-0.002,-0.0016666666666666668
+DA103,Bacteroides_massiliensis,Bacteroides,AnPs,Angelica polysaccharides,Angelica sinensis,Plant,0.010833333333333334,0.009826834010334492,6,0.018,0.0036666666666666666
+DA103,Bacteroides_massiliensis,Bacteroides,CPPs,Codonopsis pilosula polysaccharides,Codonopsis pilosula,Plant,-0.0033333333333333335,0.0028751811537130437,6,-0.004333333333333334,-0.0023333333333333335
+DA103,Bacteroides_massiliensis,Bacteroides,DPs_1,Dendrobe polysaccharides 1,Dendrobium officinale,Plant,0.0845,0.02179449471770337,3,0.0845,
+DA103,Bacteroides_massiliensis,Bacteroides,DPs_2,Dendrobe polysaccharides 2,Dendrobium officinale,Plant,0.039,0.004358898943540671,3,0.039,
+DA103,Bacteroides_massiliensis,Bacteroides,GLPs_1,Ganoderma lucidum polysaccharides 1,Ganoderma lucidum,Fungus,-0.0071666666666666675,0.011590225767142474,3,-0.0071666666666666675,
+DA103,Bacteroides_massiliensis,Bacteroides,GLPs_2,Ganoderma lucidum polysaccharides 2,Ganoderma lucidum,Fungus,0.03366666666666667,0.029871948937646057,3,0.03366666666666667,
+DA103,Bacteroides_massiliensis,Bacteroides,GPs,Ginseng polysaccharides,Panax ginseng,Plant,0.0785,0.0036055512754639926,3,0.0785,
+DA103,Bacteroides_massiliensis,Bacteroides,HAPs,Hovenia acerba polysaccharides,Hovenia acerba,Plant,-0.005833333333333334,0.0038686776379877746,6,-0.0026666666666666666,-0.009
+DA103,Bacteroides_massiliensis,Bacteroides,LBPs_1,Lycium barbarum polysaccharides 1,Lycium barbarum,Plant,0.054,0.010535653752852741,3,0.054,
+DA103,Bacteroides_massiliensis,Bacteroides,LBPs_2,Lycium barbarum polysaccharides 2,Lycium barbarum,Plant,0.0,0.0,3,0.0,
+DA103,Bacteroides_massiliensis,Bacteroides,PLPs,Pueraria lobata polysaccharides,Pueraria lobata,Plant,0.028666666666666663,0.02215099696778153,6,0.03133333333333333,0.025999999999999995
+DA103,Bacteroides_massiliensis,Bacteroides,PPs,Poria polysaccharides,Poria cocos,Fungus,-0.0028333333333333335,0.0027141603981096375,6,-0.0026666666666666666,-0.0030000000000000005
+DA103,Bacteroides_massiliensis,Bacteroides,PQPs,Panax Quinquefolium polysaccharides,Panax quinquefolium,Plant,-0.011666666666666667,0.01364795466971761,6,-0.024000000000000004,0.0006666666666666666
+DA103,Bacteroides_massiliensis,Bacteroides,PSPs,Polygonatum sibiricum polysaccharides,Polygonatum sibiricum,Plant,0.0033333333333333335,0.0036696957185394364,6,0.005333333333333333,0.0013333333333333333
+DA103,Bacteroides_massiliensis,Bacteroides,RAPs,Rhizoma Anemarrhenae polysaccharides,Anemarrhena asphodeloides,Plant,0.03716666666666666,0.00713909424693824,6,0.034999999999999996,0.03933333333333333
+DA103,Bacteroides_massiliensis,Bacteroides,RNPs,Radix Notoginseng polysaccharides,Panax notoginseng,Plant,0.0135,0.013953494186045303,6,0.01933333333333333,0.007666666666666666
+DA103,Bacteroides_massiliensis,Bacteroides,RPPs,Radix Pseudostellariae polysaccharides,Pseudostellaria heterophylla,Plant,-0.0026666666666666666,0.004589843860815602,6,0.0013333333333333333,-0.006666666666666667
+DA103,Bacteroides_massiliensis,Bacteroides,SPs,Scrophulariaceae polysaccharide,Scrophularia ningpoensis,Plant,0.029833333333333333,0.01734839089560374,6,0.023000000000000003,0.03666666666666667
+DA104,Parabacteroides_distasonis,Parabacteroides,APs,Astragalus polysaccharides,Astragalus membranaceus,Plant,0.21466666666666667,0.042359571921034955,3,0.21466666666666667,
+DA104,Parabacteroides_distasonis,Parabacteroides,AdPs,Adenophora polysaccharides,Glehnia littoralis,Plant,0.004666666666666667,0.005921711464320654,6,0.007333333333333333,0.002
+DA104,Parabacteroides_distasonis,Parabacteroides,AnPs,Angelica polysaccharides,Angelica sinensis,Plant,0.044833333333333336,0.02866647286756197,6,0.06733333333333334,0.022333333333333334
+DA104,Parabacteroides_distasonis,Parabacteroides,CPPs,Codonopsis pilosula polysaccharides,Codonopsis pilosula,Plant,0.049666666666666665,0.005202563470700445,6,0.050333333333333334,0.048999999999999995
+DA104,Parabacteroides_distasonis,Parabacteroides,DPs_1,Dendrobe polysaccharides 1,Dendrobium officinale,Plant,0.067666667,0.025119713374160933,3,0.067666667,
+DA104,Parabacteroides_distasonis,Parabacteroides,DPs_2,Dendrobe polysaccharides 2,Dendrobium officinale,Plant,0.011666666666666667,0.00404145188432738,3,0.011666666666666667,
+DA104,Parabacteroides_distasonis,Parabacteroides,GLPs_1,Ganoderma lucidum polysaccharides 1,Ganoderma lucidum,Fungus,0.158666667,0.006999999999999989,3,0.158666667,
+DA104,Parabacteroides_distasonis,Parabacteroides,GLPs_2,Ganoderma lucidum polysaccharides 2,Ganoderma lucidum,Fungus,0.014666666666666666,0.008326663997864532,3,0.014666666666666666,
+DA104,Parabacteroides_distasonis,Parabacteroides,GPs,Ginseng polysaccharides,Panax ginseng,Plant,0.37633333333333335,0.0045092497528228985,3,0.37633333333333335,
+DA104,Parabacteroides_distasonis,Parabacteroides,HAPs,Hovenia acerba polysaccharides,Hovenia acerba,Plant,0.0355,0.01120267825120404,6,0.042333333333333334,0.028666666666666663
+DA104,Parabacteroides_distasonis,Parabacteroides,LBPs_1,Lycium barbarum polysaccharides 1,Lycium barbarum,Plant,0.08233333366666666,0.005686240703077331,3,0.08233333366666666,
+DA104,Parabacteroides_distasonis,Parabacteroides,LBPs_2,Lycium barbarum polysaccharides 2,Lycium barbarum,Plant,0.015666666666666666,0.01844812546936228,3,0.015666666666666666,
+DA104,Parabacteroides_distasonis,Parabacteroides,PLPs,Pueraria lobata polysaccharides,Pueraria lobata,Plant,0.1515,0.03893969696851786,6,0.17800000000000002,0.125
+DA104,Parabacteroides_distasonis,Parabacteroides,PPs,Poria polysaccharides,Poria cocos,Fungus,0.1125,0.025001999920006398,6,0.10233333333333333,0.12266666666666666
+DA104,Parabacteroides_distasonis,Parabacteroides,PQPs,Panax Quinquefolium polysaccharides,Panax quinquefolium,Plant,-0.0008333333333333335,0.014851487018701754,6,-0.010666666666666666,0.009
+DA104,Parabacteroides_distasonis,Parabacteroides,PSPs,Polygonatum sibiricum polysaccharides,Polygonatum sibiricum,Plant,0.01,0.004732863826479693,6,0.011666666666666667,0.008333333333333333
+DA104,Parabacteroides_distasonis,Parabacteroides,RAPs,Rhizoma Anemarrhenae polysaccharides,Anemarrhena asphodeloides,Plant,0.113,0.0038987177379235837,6,0.11399999999999999,0.112
+DA104,Parabacteroides_distasonis,Parabacteroides,RNPs,Radix Notoginseng polysaccharides,Panax notoginseng,Plant,0.07933333333333333,0.005609515724790029,6,0.082,0.07666666666666666
+DA104,Parabacteroides_distasonis,Parabacteroides,RPPs,Radix Pseudostellariae polysaccharides,Pseudostellaria heterophylla,Plant,0.009166666666666665,0.0034880749227427245,6,0.011000000000000001,0.007333333333333333
+DA104,Parabacteroides_distasonis,Parabacteroides,SPs,Scrophulariaceae polysaccharide,Scrophularia ningpoensis,Plant,0.33,0.04391355143916284,6,0.3196666666666667,0.3403333333333333
+DA1114,Bacteroides_eggerthii,Bacteroides,APs,Astragalus polysaccharides,Astragalus membranaceus,Plant,0.10266666666666667,0.019295940851208396,3,0.10266666666666667,
+DA1114,Bacteroides_eggerthii,Bacteroides,AdPs,Adenophora polysaccharides,Glehnia littoralis,Plant,0.3373333333333333,0.03411549012789742,6,0.36466666666666664,0.31
+DA1114,Bacteroides_eggerthii,Bacteroides,AnPs,Angelica polysaccharides,Angelica sinensis,Plant,0.04133333333333333,0.01462418088874268,6,0.046000000000000006,0.03666666666666666
+DA1114,Bacteroides_eggerthii,Bacteroides,CPPs,Codonopsis pilosula polysaccharides,Codonopsis pilosula,Plant,0.006333333333333333,0.0018618986725025253,6,0.007333333333333333,0.005333333333333333
+DA1114,Bacteroides_eggerthii,Bacteroides,DPs_1,Dendrobe polysaccharides 1,Dendrobium officinale,Plant,0.071666667,0.024331050121192882,3,0.071666667,
+DA1114,Bacteroides_eggerthii,Bacteroides,DPs_2,Dendrobe polysaccharides 2,Dendrobium officinale,Plant,0.033,0.005291502622129182,3,0.033,
+DA1114,Bacteroides_eggerthii,Bacteroides,GLPs_1,Ganoderma lucidum polysaccharides 1,Ganoderma lucidum,Fungus,0.040333333666666665,0.002886751345948128,3,0.040333333666666665,
+DA1114,Bacteroides_eggerthii,Bacteroides,GLPs_2,Ganoderma lucidum polysaccharides 2,Ganoderma lucidum,Fungus,0.0,0.0,3,0.0,
+DA1114,Bacteroides_eggerthii,Bacteroides,GPs,Ginseng polysaccharides,Panax ginseng,Plant,0.38599999999999995,0.005567764362830027,3,0.38599999999999995,
+DA1114,Bacteroides_eggerthii,Bacteroides,HAPs,Hovenia acerba polysaccharides,Hovenia acerba,Plant,0.07883333333333332,0.010870449239413552,6,0.085,0.07266666666666667
+DA1114,Bacteroides_eggerthii,Bacteroides,LBPs_1,Lycium barbarum polysaccharides 1,Lycium barbarum,Plant,0.097666667,0.009165151389911674,3,0.097666667,
+DA1114,Bacteroides_eggerthii,Bacteroides,LBPs_2,Lycium barbarum polysaccharides 2,Lycium barbarum,Plant,0.03866666666666667,0.010408329997330663,3,0.03866666666666667,
+DA1114,Bacteroides_eggerthii,Bacteroides,PLPs,Pueraria lobata polysaccharides,Pueraria lobata,Plant,0.14966666666666667,0.015564917817536555,6,0.15666666666666665,0.14266666666666666
+DA1114,Bacteroides_eggerthii,Bacteroides,PPs,Poria polysaccharides,Poria cocos,Fungus,-0.0015000000000000002,0.00216794833886788,6,-0.0006666666666666666,-0.0023333333333333335
+DA1114,Bacteroides_eggerthii,Bacteroides,PQPs,Panax Quinquefolium polysaccharides,Panax quinquefolium,Plant,-0.0015000000000000002,0.012660963628413123,6,-0.013,0.01
+DA1114,Bacteroides_eggerthii,Bacteroides,PSPs,Polygonatum sibiricum polysaccharides,Polygonatum sibiricum,Plant,0.014666666666666666,0.006218252702059211,6,0.01933333333333333,0.01
+DA1114,Bacteroides_eggerthii,Bacteroides,RAPs,Rhizoma Anemarrhenae polysaccharides,Anemarrhena asphodeloides,Plant,0.0365,0.011273863579093015,6,0.030333333333333334,0.042666666666666665
+DA1114,Bacteroides_eggerthii,Bacteroides,RNPs,Radix Notoginseng polysaccharides,Panax notoginseng,Plant,0.3363333333333333,0.017293544074788902,6,0.3466666666666667,0.326
+DA1114,Bacteroides_eggerthii,Bacteroides,RPPs,Radix Pseudostellariae polysaccharides,Pseudostellaria heterophylla,Plant,0.0095,0.0052440442408507575,6,0.012666666666666666,0.006333333333333333
+DA1114,Bacteroides_eggerthii,Bacteroides,SPs,Scrophulariaceae polysaccharide,Scrophularia ningpoensis,Plant,0.105,0.012099586769803335,6,0.09699999999999999,0.11299999999999999
+DA1209,Bacteroides_sartorii,Bacteroides,APs,Astragalus polysaccharides,Astragalus membranaceus,Plant,0.154,0.0485077313425396,3,0.154,
+DA1209,Bacteroides_sartorii,Bacteroides,AdPs,Adenophora polysaccharides,Glehnia littoralis,Plant,0.30383333333333334,0.03267669913970299,6,0.29833333333333334,0.3093333333333333
+DA1209,Bacteroides_sartorii,Bacteroides,AnPs,Angelica polysaccharides,Angelica sinensis,Plant,0.17933333333333334,0.014637850479720953,6,0.17233333333333334,0.18633333333333335
+DA1209,Bacteroides_sartorii,Bacteroides,CPPs,Codonopsis pilosula polysaccharides,Codonopsis pilosula,Plant,0.451,0.029966648127543405,6,0.4766666666666666,0.42533333333333334
+DA1209,Bacteroides_sartorii,Bacteroides,DPs_1,Dendrobe polysaccharides 1,Dendrobium officinale,Plant,0.08750000000000001,0.014000000000000002,3,0.08750000000000001,
+DA1209,Bacteroides_sartorii,Bacteroides,DPs_2,Dendrobe polysaccharides 2,Dendrobium officinale,Plant,0.06799999999999999,0.011357816691600542,3,0.06799999999999999,
+DA1209,Bacteroides_sartorii,Bacteroides,GLPs_1,Ganoderma lucidum polysaccharides 1,Ganoderma lucidum,Fungus,0.22216666666666665,0.01504437879519568,3,0.22216666666666665,
+DA1209,Bacteroides_sartorii,Bacteroides,GLPs_2,Ganoderma lucidum polysaccharides 2,Ganoderma lucidum,Fungus,0.059666666666666666,0.0355715241918776,3,0.059666666666666666,
+DA1209,Bacteroides_sartorii,Bacteroides,GPs,Ginseng polysaccharides,Panax ginseng,Plant,0.5366666666666666,0.02309942279221138,3,0.5366666666666666,
+DA1209,Bacteroides_sartorii,Bacteroides,HAPs,Hovenia acerba polysaccharides,Hovenia acerba,Plant,-0.0003333333333333333,0.003559026084010437,6,-0.0013333333333333333,0.0006666666666666666
+DA1209,Bacteroides_sartorii,Bacteroides,LBPs_1,Lycium barbarum polysaccharides 1,Lycium barbarum,Plant,0.12166666666666666,0.006658328118479393,3,0.12166666666666666,
+DA1209,Bacteroides_sartorii,Bacteroides,LBPs_2,Lycium barbarum polysaccharides 2,Lycium barbarum,Plant,0.08133333333333333,0.015275252316519468,3,0.08133333333333333,
+DA1209,Bacteroides_sartorii,Bacteroides,PLPs,Pueraria lobata polysaccharides,Pueraria lobata,Plant,-0.0008333333333333334,0.001834847859269718,6,-0.0006666666666666666,-0.001
+DA1209,Bacteroides_sartorii,Bacteroides,PPs,Poria polysaccharides,Poria cocos,Fungus,0.12083333333333333,0.028840365231159383,6,0.13599999999999998,0.10566666666666667
+DA1209,Bacteroides_sartorii,Bacteroides,PQPs,Panax Quinquefolium polysaccharides,Panax quinquefolium,Plant,0.24916666666666665,0.022202852669570783,6,0.2333333333333333,0.26499999999999996
+DA1209,Bacteroides_sartorii,Bacteroides,PSPs,Polygonatum sibiricum polysaccharides,Polygonatum sibiricum,Plant,0.31416666666666665,0.008471520918150816,6,0.314,0.31433333333333335
+DA1209,Bacteroides_sartorii,Bacteroides,RAPs,Rhizoma Anemarrhenae polysaccharides,Anemarrhena asphodeloides,Plant,0.24866666666666667,0.03642892623543365,6,0.248,0.24933333333333332
+DA1209,Bacteroides_sartorii,Bacteroides,RNPs,Radix Notoginseng polysaccharides,Panax notoginseng,Plant,0.36000000000000004,0.019677398201998146,6,0.359,0.361
+DA1209,Bacteroides_sartorii,Bacteroides,RPPs,Radix Pseudostellariae polysaccharides,Pseudostellaria heterophylla,Plant,0.2776666666666667,0.014109098719148096,6,0.2806666666666667,0.27466666666666667
+DA1209,Bacteroides_sartorii,Bacteroides,SPs,Scrophulariaceae polysaccharide,Scrophularia ningpoensis,Plant,0.0295,0.015149257407543118,6,0.01933333333333333,0.03966666666666667
+DA1247,Bacteroides_salyersiae,Bacteroides,APs,Astragalus polysaccharides,Astragalus membranaceus,Plant,0.09166666666666667,0.014433756729740649,3,0.09166666666666667,
+DA1247,Bacteroides_salyersiae,Bacteroides,AdPs,Adenophora polysaccharides,Glehnia littoralis,Plant,0.54,0.02954995769878528,6,0.5216666666666666,0.5583333333333333
+DA1247,Bacteroides_salyersiae,Bacteroides,AnPs,Angelica polysaccharides,Angelica sinensis,Plant,0.27666666666666667,0.02093481948015473,6,0.28400000000000003,0.26933333333333337
+DA1247,Bacteroides_salyersiae,Bacteroides,CPPs,Codonopsis pilosula polysaccharides,Codonopsis pilosula,Plant,0.47333333333333333,0.017951787283350548,6,0.48533333333333334,0.4613333333333333
+DA1247,Bacteroides_salyersiae,Bacteroides,DPs_1,Dendrobe polysaccharides 1,Dendrobium officinale,Plant,0.07916666666666666,0.017897858344878396,3,0.07916666666666666,
+DA1247,Bacteroides_salyersiae,Bacteroides,DPs_2,Dendrobe polysaccharides 2,Dendrobium officinale,Plant,0.014333333333333332,0.010598742063723098,3,0.014333333333333332,
+DA1247,Bacteroides_salyersiae,Bacteroides,GLPs_1,Ganoderma lucidum polysaccharides 1,Ganoderma lucidum,Fungus,0.03183333333333333,0.034385074281340924,3,0.03183333333333333,
+DA1247,Bacteroides_salyersiae,Bacteroides,GLPs_2,Ganoderma lucidum polysaccharides 2,Ganoderma lucidum,Fungus,0.001,0.0017320508075688774,3,0.001,
+DA1247,Bacteroides_salyersiae,Bacteroides,GPs,Ginseng polysaccharides,Panax ginseng,Plant,0.5498333333333333,0.015307950004273341,3,0.5498333333333333,
+DA1247,Bacteroides_salyersiae,Bacteroides,HAPs,Hovenia acerba polysaccharides,Hovenia acerba,Plant,-0.0011666666666666668,0.003188521078284832,6,0.0013333333333333333,-0.0036666666666666666
+DA1247,Bacteroides_salyersiae,Bacteroides,LBPs_1,Lycium barbarum polysaccharides 1,Lycium barbarum,Plant,0.16166666666666665,0.007637626158259743,3,0.16166666666666665,
+DA1247,Bacteroides_salyersiae,Bacteroides,LBPs_2,Lycium barbarum polysaccharides 2,Lycium barbarum,Plant,0.20466666666666666,0.003055050463303884,3,0.20466666666666666,
+DA1247,Bacteroides_salyersiae,Bacteroides,PLPs,Pueraria lobata polysaccharides,Pueraria lobata,Plant,0.08916666666666667,0.0027141603981096366,6,0.08833333333333333,0.09000000000000001
+DA1247,Bacteroides_salyersiae,Bacteroides,PPs,Poria polysaccharides,Poria cocos,Fungus,-0.0035,0.0030166206257996714,6,-0.001,-0.006000000000000001
+DA1247,Bacteroides_salyersiae,Bacteroides,PQPs,Panax Quinquefolium polysaccharides,Panax quinquefolium,Plant,0.371,0.022503333086456315,6,0.37366666666666665,0.36833333333333335
+DA1247,Bacteroides_salyersiae,Bacteroides,PSPs,Polygonatum sibiricum polysaccharides,Polygonatum sibiricum,Plant,0.42816666666666664,0.04101910124157606,6,0.429,0.42733333333333334
+DA1247,Bacteroides_salyersiae,Bacteroides,RAPs,Rhizoma Anemarrhenae polysaccharides,Anemarrhena asphodeloides,Plant,0.3626666666666667,0.035319494145112915,6,0.3336666666666666,0.39166666666666666
+DA1247,Bacteroides_salyersiae,Bacteroides,RNPs,Radix Notoginseng polysaccharides,Panax notoginseng,Plant,0.3285,0.02076294776759792,6,0.3333333333333333,0.32366666666666666
+DA1247,Bacteroides_salyersiae,Bacteroides,RPPs,Radix Pseudostellariae polysaccharides,Pseudostellaria heterophylla,Plant,0.0385,0.006534523701081816,6,0.036,0.041
+DA1247,Bacteroides_salyersiae,Bacteroides,SPs,Scrophulariaceae polysaccharide,Scrophularia ningpoensis,Plant,0.0105,0.00151657508881031,6,0.011000000000000001,0.01
+DA14,Bacteroides_xylanisolvens,Bacteroides,APs,Astragalus polysaccharides,Astragalus membranaceus,Plant,0.25533333333333336,0.014502873278538067,3,0.25533333333333336,
+DA14,Bacteroides_xylanisolvens,Bacteroides,AdPs,Adenophora polysaccharides,Glehnia littoralis,Plant,0.32616666666666666,0.02209449403509087,6,0.3263333333333333,0.326
+DA14,Bacteroides_xylanisolvens,Bacteroides,AnPs,Angelica polysaccharides,Angelica sinensis,Plant,0.2628333333333333,0.009558591249063159,6,0.26333333333333336,0.26233333333333336
+DA14,Bacteroides_xylanisolvens,Bacteroides,CPPs,Codonopsis pilosula polysaccharides,Codonopsis pilosula,Plant,0.07116666666666667,0.006823977334858805,6,0.07433333333333333,0.068
+DA14,Bacteroides_xylanisolvens,Bacteroides,DPs_1,Dendrobe polysaccharides 1,Dendrobium officinale,Plant,0.09683333333333333,0.03350124375800595,3,0.09683333333333333,
+DA14,Bacteroides_xylanisolvens,Bacteroides,DPs_2,Dendrobe polysaccharides 2,Dendrobium officinale,Plant,0.06999999999999999,0.00435889894354067,3,0.06999999999999999,
+DA14,Bacteroides_xylanisolvens,Bacteroides,GLPs_1,Ganoderma lucidum polysaccharides 1,Ganoderma lucidum,Fungus,0.1275,0.013000000000000008,3,0.1275,
+DA14,Bacteroides_xylanisolvens,Bacteroides,GLPs_2,Ganoderma lucidum polysaccharides 2,Ganoderma lucidum,Fungus,0.01,0.010148891565092221,3,0.01,
+DA14,Bacteroides_xylanisolvens,Bacteroides,GPs,Ginseng polysaccharides,Panax ginseng,Plant,0.6088333333333333,0.021501937897160147,3,0.6088333333333333,
+DA14,Bacteroides_xylanisolvens,Bacteroides,HAPs,Hovenia acerba polysaccharides,Hovenia acerba,Plant,0.09516666666666666,0.007960318251594383,6,0.09033333333333333,0.09999999999999999
+DA14,Bacteroides_xylanisolvens,Bacteroides,LBPs_1,Lycium barbarum polysaccharides 1,Lycium barbarum,Plant,0.09800000000000002,0.0020000000000000018,3,0.09800000000000002,
+DA14,Bacteroides_xylanisolvens,Bacteroides,LBPs_2,Lycium barbarum polysaccharides 2,Lycium barbarum,Plant,0.06,0.0060827625302982205,3,0.06,
+DA14,Bacteroides_xylanisolvens,Bacteroides,PLPs,Pueraria lobata polysaccharides,Pueraria lobata,Plant,0.0008333333333333334,0.0017224014243685084,6,0.0006666666666666666,0.001
+DA14,Bacteroides_xylanisolvens,Bacteroides,PPs,Poria polysaccharides,Poria cocos,Fungus,0.016833333333333336,0.01339278412678509,6,0.02,0.013666666666666667
+DA14,Bacteroides_xylanisolvens,Bacteroides,PQPs,Panax Quinquefolium polysaccharides,Panax quinquefolium,Plant,0.15933333333333333,0.017189143860782213,6,0.14866666666666667,0.17
+DA14,Bacteroides_xylanisolvens,Bacteroides,PSPs,Polygonatum sibiricum polysaccharides,Polygonatum sibiricum,Plant,0.23416666666666666,0.022833454987510465,6,0.217,0.25133333333333335
+DA14,Bacteroides_xylanisolvens,Bacteroides,RAPs,Rhizoma Anemarrhenae polysaccharides,Anemarrhena asphodeloides,Plant,-0.0031666666666666666,0.00611282804164052,6,-0.006333333333333333,0.0
+DA14,Bacteroides_xylanisolvens,Bacteroides,RNPs,Radix Notoginseng polysaccharides,Panax notoginseng,Plant,0.18100000000000002,0.008740709353364866,6,0.17566666666666667,0.18633333333333332
+DA14,Bacteroides_xylanisolvens,Bacteroides,RPPs,Radix Pseudostellariae polysaccharides,Pseudostellaria heterophylla,Plant,0.2333333333333333,0.019866219234335125,6,0.219,0.24766666666666667
+DA14,Bacteroides_xylanisolvens,Bacteroides,SPs,Scrophulariaceae polysaccharide,Scrophularia ningpoensis,Plant,0.36166666666666664,0.02023528271773505,6,0.347,0.37633333333333335
+DA1414,Bacteroides_faecis,Bacteroides,APs,Astragalus polysaccharides,Astragalus membranaceus,Plant,0.3096666666666667,0.015502687938977999,3,0.3096666666666667,
+DA1414,Bacteroides_faecis,Bacteroides,AdPs,Adenophora polysaccharides,Glehnia littoralis,Plant,0.44916666666666666,0.020817460620034006,6,0.4463333333333333,0.45199999999999996
+DA1414,Bacteroides_faecis,Bacteroides,AnPs,Angelica polysaccharides,Angelica sinensis,Plant,0.2585,0.017941571837495184,6,0.258,0.259
+DA1414,Bacteroides_faecis,Bacteroides,CPPs,Codonopsis pilosula polysaccharides,Codonopsis pilosula,Plant,0.34883333333333333,0.01709288350942188,6,0.3446666666666667,0.353
+DA1414,Bacteroides_faecis,Bacteroides,DPs_1,Dendrobe polysaccharides 1,Dendrobium officinale,Plant,0.06733333366666666,0.004041451884327384,3,0.06733333366666666,
+DA1414,Bacteroides_faecis,Bacteroides,DPs_2,Dendrobe polysaccharides 2,Dendrobium officinale,Plant,0.059666666666666666,0.006658328118479394,3,0.059666666666666666,
+DA1414,Bacteroides_faecis,Bacteroides,GLPs_1,Ganoderma lucidum polysaccharides 1,Ganoderma lucidum,Fungus,0.078666667,0.06238589584192889,3,0.078666667,
+DA1414,Bacteroides_faecis,Bacteroides,GLPs_2,Ganoderma lucidum polysaccharides 2,Ganoderma lucidum,Fungus,0.011666666666666665,0.005131601439446885,3,0.011666666666666665,
+DA1414,Bacteroides_faecis,Bacteroides,GPs,Ginseng polysaccharides,Panax ginseng,Plant,0.526,0.009643650760992984,3,0.526,
+DA1414,Bacteroides_faecis,Bacteroides,HAPs,Hovenia acerba polysaccharides,Hovenia acerba,Plant,0.13349999999999998,0.02509780866928426,6,0.13833333333333334,0.12866666666666668
+DA1414,Bacteroides_faecis,Bacteroides,LBPs_1,Lycium barbarum polysaccharides 1,Lycium barbarum,Plant,0.16033333366666666,0.01721433511156714,3,0.16033333366666666,
+DA1414,Bacteroides_faecis,Bacteroides,LBPs_2,Lycium barbarum polysaccharides 2,Lycium barbarum,Plant,0.07633333333333332,0.011590225767142463,3,0.07633333333333332,
+DA1414,Bacteroides_faecis,Bacteroides,PLPs,Pueraria lobata polysaccharides,Pueraria lobata,Plant,0.226,0.026107470195329153,6,0.22366666666666668,0.22833333333333336
+DA1414,Bacteroides_faecis,Bacteroides,PPs,Poria polysaccharides,Poria cocos,Fungus,0.057166666666666664,0.03321696353772672,6,0.046000000000000006,0.06833333333333333
+DA1414,Bacteroides_faecis,Bacteroides,PQPs,Panax Quinquefolium polysaccharides,Panax quinquefolium,Plant,0.28583333333333333,0.012890565025112983,6,0.28933333333333333,0.2823333333333333
+DA1414,Bacteroides_faecis,Bacteroides,PSPs,Polygonatum sibiricum polysaccharides,Polygonatum sibiricum,Plant,0.036166666666666666,0.009368386556214824,6,0.042333333333333334,0.03
+DA1414,Bacteroides_faecis,Bacteroides,RAPs,Rhizoma Anemarrhenae polysaccharides,Anemarrhena asphodeloides,Plant,0.222,0.024722459424579915,6,0.24033333333333332,0.20366666666666666
+DA1414,Bacteroides_faecis,Bacteroides,RNPs,Radix Notoginseng polysaccharides,Panax notoginseng,Plant,0.32416666666666666,0.017022534084755597,6,0.311,0.3373333333333333
+DA1414,Bacteroides_faecis,Bacteroides,RPPs,Radix Pseudostellariae polysaccharides,Pseudostellaria heterophylla,Plant,0.009833333333333333,0.002857738033247041,6,0.011000000000000001,0.008666666666666666
+DA1414,Bacteroides_faecis,Bacteroides,SPs,Scrophulariaceae polysaccharide,Scrophularia ningpoensis,Plant,0.026,0.023400854685246008,6,0.019666666666666666,0.03233333333333333
+DA1439,Bacteroides_clarus,Bacteroides,APs,Astragalus polysaccharides,Astragalus membranaceus,Plant,0.23266666666666666,0.01601041327803044,3,0.23266666666666666,
+DA1439,Bacteroides_clarus,Bacteroides,AdPs,Adenophora polysaccharides,Glehnia littoralis,Plant,0.45316666666666666,0.028840365231159373,6,0.478,0.4283333333333333
+DA1439,Bacteroides_clarus,Bacteroides,AnPs,Angelica polysaccharides,Angelica sinensis,Plant,0.19233333333333333,0.02091570382910093,6,0.21,0.17466666666666666
+DA1439,Bacteroides_clarus,Bacteroides,CPPs,Codonopsis pilosula polysaccharides,Codonopsis pilosula,Plant,0.04833333333333333,0.004366539438350086,6,0.04933333333333333,0.04733333333333333
+DA1439,Bacteroides_clarus,Bacteroides,DPs_1,Dendrobe polysaccharides 1,Dendrobium officinale,Plant,0.05833333366666666,0.002886751345948132,3,0.05833333366666666,
+DA1439,Bacteroides_clarus,Bacteroides,DPs_2,Dendrobe polysaccharides 2,Dendrobium officinale,Plant,0.057333333333333326,0.0015275252316519423,3,0.057333333333333326,
+DA1439,Bacteroides_clarus,Bacteroides,GLPs_1,Ganoderma lucidum polysaccharides 1,Ganoderma lucidum,Fungus,0.30533333366666665,0.009291573243177583,3,0.30533333366666665,
+DA1439,Bacteroides_clarus,Bacteroides,GLPs_2,Ganoderma lucidum polysaccharides 2,Ganoderma lucidum,Fungus,0.005333333333333333,0.004725815626252608,3,0.005333333333333333,
+DA1439,Bacteroides_clarus,Bacteroides,GPs,Ginseng polysaccharides,Panax ginseng,Plant,0.602,0.008544003745317542,3,0.602,
+DA1439,Bacteroides_clarus,Bacteroides,HAPs,Hovenia acerba polysaccharides,Hovenia acerba,Plant,0.14483333333333334,0.02308607083647338,6,0.14733333333333332,0.14233333333333334
+DA1439,Bacteroides_clarus,Bacteroides,LBPs_1,Lycium barbarum polysaccharides 1,Lycium barbarum,Plant,0.134666667,0.006557438524301991,3,0.134666667,
+DA1439,Bacteroides_clarus,Bacteroides,LBPs_2,Lycium barbarum polysaccharides 2,Lycium barbarum,Plant,0.06633333333333333,0.020792626898334256,3,0.06633333333333333,
+DA1439,Bacteroides_clarus,Bacteroides,PLPs,Pueraria lobata polysaccharides,Pueraria lobata,Plant,0.16083333333333333,0.024309805977561126,6,0.18200000000000002,0.1396666666666667
+DA1439,Bacteroides_clarus,Bacteroides,PPs,Poria polysaccharides,Poria cocos,Fungus,0.0705,0.024435629723827457,6,0.059,0.082
+DA1439,Bacteroides_clarus,Bacteroides,PQPs,Panax Quinquefolium polysaccharides,Panax quinquefolium,Plant,0.237,0.030587579178483537,6,0.214,0.26
+DA1439,Bacteroides_clarus,Bacteroides,PSPs,Polygonatum sibiricum polysaccharides,Polygonatum sibiricum,Plant,0.057999999999999996,0.008024961059095552,6,0.06233333333333333,0.05366666666666667
+DA1439,Bacteroides_clarus,Bacteroides,RAPs,Rhizoma Anemarrhenae polysaccharides,Anemarrhena asphodeloides,Plant,0.15866666666666665,0.012404300329590006,6,0.15533333333333332,0.162
+DA1439,Bacteroides_clarus,Bacteroides,RNPs,Radix Notoginseng polysaccharides,Panax notoginseng,Plant,0.43616666666666665,0.01783722698926789,6,0.4286666666666667,0.44366666666666665
+DA1439,Bacteroides_clarus,Bacteroides,RPPs,Radix Pseudostellariae polysaccharides,Pseudostellaria heterophylla,Plant,0.2071666666666667,0.020817460620034,6,0.22,0.19433333333333333
+DA1439,Bacteroides_clarus,Bacteroides,SPs,Scrophulariaceae polysaccharide,Scrophularia ningpoensis,Plant,0.522,0.06427441170481453,6,0.5393333333333333,0.5046666666666667
+DA1461,Bacteroides_oleiciplenus,Bacteroides,APs,Astragalus polysaccharides,Astragalus membranaceus,Plant,0.1426666666666667,0.018903262505010437,3,0.1426666666666667,
+DA1461,Bacteroides_oleiciplenus,Bacteroides,AdPs,Adenophora polysaccharides,Glehnia littoralis,Plant,0.049833333333333334,0.014985548594117822,6,0.057666666666666665,0.042
+DA1461,Bacteroides_oleiciplenus,Bacteroides,AnPs,Angelica polysaccharides,Angelica sinensis,Plant,0.11916666666666666,0.01593005545083465,6,0.11233333333333333,0.126
+DA1461,Bacteroides_oleiciplenus,Bacteroides,CPPs,Codonopsis pilosula polysaccharides,Codonopsis pilosula,Plant,0.058166666666666665,0.013804588609106272,6,0.058666666666666666,0.057666666666666665
+DA1461,Bacteroides_oleiciplenus,Bacteroides,DPs_1,Dendrobe polysaccharides 1,Dendrobium officinale,Plant,0.06833333366666666,0.0045092497528228985,3,0.06833333366666666,
+DA1461,Bacteroides_oleiciplenus,Bacteroides,DPs_2,Dendrobe polysaccharides 2,Dendrobium officinale,Plant,0.025333333333333333,0.01006644591369433,3,0.025333333333333333,
+DA1461,Bacteroides_oleiciplenus,Bacteroides,GLPs_1,Ganoderma lucidum polysaccharides 1,Ganoderma lucidum,Fungus,0.308666667,0.0017320508075688787,3,0.308666667,
+DA1461,Bacteroides_oleiciplenus,Bacteroides,GLPs_2,Ganoderma lucidum polysaccharides 2,Ganoderma lucidum,Fungus,0.051,0.01044030650891055,3,0.051,
+DA1461,Bacteroides_oleiciplenus,Bacteroides,GPs,Ginseng polysaccharides,Panax ginseng,Plant,0.61,0.008185352771872427,3,0.61,
+DA1461,Bacteroides_oleiciplenus,Bacteroides,HAPs,Hovenia acerba polysaccharides,Hovenia acerba,Plant,0.11533333333333333,0.01838114976454592,6,0.102,0.12866666666666668
+DA1461,Bacteroides_oleiciplenus,Bacteroides,LBPs_1,Lycium barbarum polysaccharides 1,Lycium barbarum,Plant,0.12533333366666666,0.015947831618540922,3,0.12533333366666666,
+DA1461,Bacteroides_oleiciplenus,Bacteroides,LBPs_2,Lycium barbarum polysaccharides 2,Lycium barbarum,Plant,0.050666666666666665,0.012897028081435401,3,0.050666666666666665,
+DA1461,Bacteroides_oleiciplenus,Bacteroides,PLPs,Pueraria lobata polysaccharides,Pueraria lobata,Plant,0.16566666666666666,0.03690347770423089,6,0.19033333333333333,0.141
+DA1461,Bacteroides_oleiciplenus,Bacteroides,PPs,Poria polysaccharides,Poria cocos,Fungus,0.2265,0.03778756409190727,6,0.204,0.249
+DA1461,Bacteroides_oleiciplenus,Bacteroides,PQPs,Panax Quinquefolium polysaccharides,Panax quinquefolium,Plant,0.24416666666666667,0.009474527252938089,6,0.23833333333333337,0.25
+DA1461,Bacteroides_oleiciplenus,Bacteroides,PSPs,Polygonatum sibiricum polysaccharides,Polygonatum sibiricum,Plant,0.3173333333333333,0.03529683649658518,6,0.34500000000000003,0.2896666666666667
+DA1461,Bacteroides_oleiciplenus,Bacteroides,RAPs,Rhizoma Anemarrhenae polysaccharides,Anemarrhena asphodeloides,Plant,0.24583333333333335,0.025639162752840967,6,0.22766666666666668,0.264
+DA1461,Bacteroides_oleiciplenus,Bacteroides,RNPs,Radix Notoginseng polysaccharides,Panax notoginseng,Plant,0.331,0.027003703449712247,6,0.32266666666666666,0.3393333333333333
+DA1461,Bacteroides_oleiciplenus,Bacteroides,RPPs,Radix Pseudostellariae polysaccharides,Pseudostellaria heterophylla,Plant,0.167,0.01708800749063506,6,0.17566666666666667,0.15833333333333333
+DA1461,Bacteroides_oleiciplenus,Bacteroides,SPs,Scrophulariaceae polysaccharide,Scrophularia ningpoensis,Plant,0.34600000000000003,0.021771541057077227,6,0.3416666666666666,0.35033333333333333
+DA1479,Bacteroides_intestinalis,Bacteroides,APs,Astragalus polysaccharides,Astragalus membranaceus,Plant,0.07233333333333333,0.01514375558880073,3,0.07233333333333333,
+DA1479,Bacteroides_intestinalis,Bacteroides,AdPs,Adenophora polysaccharides,Glehnia littoralis,Plant,0.2295,0.025477441001796084,6,0.21133333333333335,0.24766666666666667
+DA1479,Bacteroides_intestinalis,Bacteroides,AnPs,Angelica polysaccharides,Angelica sinensis,Plant,0.14333333333333334,0.0242459618630952,6,0.14400000000000002,0.14266666666666666
+DA1479,Bacteroides_intestinalis,Bacteroides,CPPs,Codonopsis pilosula polysaccharides,Codonopsis pilosula,Plant,0.054,0.00831865373723417,6,0.058666666666666666,0.04933333333333333
+DA1479,Bacteroides_intestinalis,Bacteroides,DPs_1,Dendrobe polysaccharides 1,Dendrobium officinale,Plant,0.08650000000000001,0.012529964086141675,3,0.08650000000000001,
+DA1479,Bacteroides_intestinalis,Bacteroides,DPs_2,Dendrobe polysaccharides 2,Dendrobium officinale,Plant,0.002,0.0017320508075688774,3,0.002,
+DA1479,Bacteroides_intestinalis,Bacteroides,GLPs_1,Ganoderma lucidum polysaccharides 1,Ganoderma lucidum,Fungus,0.30583333333333335,0.014977761292440663,3,0.30583333333333335,
+DA1479,Bacteroides_intestinalis,Bacteroides,GLPs_2,Ganoderma lucidum polysaccharides 2,Ganoderma lucidum,Fungus,0.01,0.013228756555322954,3,0.01,
+DA1479,Bacteroides_intestinalis,Bacteroides,GPs,Ginseng polysaccharides,Panax ginseng,Plant,0.4498333333333333,0.012858201014657287,3,0.4498333333333333,
+DA1479,Bacteroides_intestinalis,Bacteroides,HAPs,Hovenia acerba polysaccharides,Hovenia acerba,Plant,0.050499999999999996,0.00709224929059886,6,0.049666666666666665,0.051333333333333335
+DA1479,Bacteroides_intestinalis,Bacteroides,LBPs_1,Lycium barbarum polysaccharides 1,Lycium barbarum,Plant,0.10233333333333333,0.01289702808143541,3,0.10233333333333333,
+DA1479,Bacteroides_intestinalis,Bacteroides,LBPs_2,Lycium barbarum polysaccharides 2,Lycium barbarum,Plant,0.09599999999999999,0.02107130750570548,3,0.09599999999999999,
+DA1479,Bacteroides_intestinalis,Bacteroides,PLPs,Pueraria lobata polysaccharides,Pueraria lobata,Plant,0.09150000000000001,0.01009455298663591,6,0.09400000000000001,0.08900000000000001
+DA1479,Bacteroides_intestinalis,Bacteroides,PPs,Poria polysaccharides,Poria cocos,Fungus,0.25583333333333336,0.03526140477443669,6,0.254,0.25766666666666665
+DA1479,Bacteroides_intestinalis,Bacteroides,PQPs,Panax Quinquefolium polysaccharides,Panax quinquefolium,Plant,0.13433333333333333,0.027045640437354537,6,0.11166666666666668,0.157
+DA1479,Bacteroides_intestinalis,Bacteroides,PSPs,Polygonatum sibiricum polysaccharides,Polygonatum sibiricum,Plant,0.08583333333333333,0.016314615124687026,6,0.09499999999999999,0.07666666666666666
+DA1479,Bacteroides_intestinalis,Bacteroides,RAPs,Rhizoma Anemarrhenae polysaccharides,Anemarrhena asphodeloides,Plant,0.0025,0.002588435821108957,6,0.002,0.0030000000000000005
+DA1479,Bacteroides_intestinalis,Bacteroides,RNPs,Radix Notoginseng polysaccharides,Panax notoginseng,Plant,0.01633333333333333,0.012290918056299402,6,0.009333333333333334,0.02333333333333333
+DA1479,Bacteroides_intestinalis,Bacteroides,RPPs,Radix Pseudostellariae polysaccharides,Pseudostellaria heterophylla,Plant,0.038,0.005291502622129179,6,0.041666666666666664,0.034333333333333334
+DA1479,Bacteroides_intestinalis,Bacteroides,SPs,Scrophulariaceae polysaccharide,Scrophularia ningpoensis,Plant,0.5366666666666667,0.042570725465590445,6,0.5686666666666667,0.5046666666666667
+DA16,Bacteroides_thetaiotaomicron,Bacteroides,APs,Astragalus polysaccharides,Astragalus membranaceus,Plant,0.212,0.013076696830622013,3,0.212,
+DA16,Bacteroides_thetaiotaomicron,Bacteroides,AdPs,Adenophora polysaccharides,Glehnia littoralis,Plant,0.39666666666666667,0.02813301737579293,6,0.421,0.37233333333333335
+DA16,Bacteroides_thetaiotaomicron,Bacteroides,AnPs,Angelica polysaccharides,Angelica sinensis,Plant,0.23650000000000002,0.029984996248123827,6,0.22333333333333336,0.24966666666666668
+DA16,Bacteroides_thetaiotaomicron,Bacteroides,CPPs,Codonopsis pilosula polysaccharides,Codonopsis pilosula,Plant,0.0635,0.009439279633531365,6,0.06366666666666666,0.06333333333333334
+DA16,Bacteroides_thetaiotaomicron,Bacteroides,DPs_1,Dendrobe polysaccharides 1,Dendrobium officinale,Plant,0.07866666700000001,0.006244997998398403,3,0.07866666700000001,
+DA16,Bacteroides_thetaiotaomicron,Bacteroides,DPs_2,Dendrobe polysaccharides 2,Dendrobium officinale,Plant,0.054,0.006928203230275507,3,0.054,
+DA16,Bacteroides_thetaiotaomicron,Bacteroides,GLPs_1,Ganoderma lucidum polysaccharides 1,Ganoderma lucidum,Fungus,0.1273333336666667,0.004041451884327386,3,0.1273333336666667,
+DA16,Bacteroides_thetaiotaomicron,Bacteroides,GLPs_2,Ganoderma lucidum polysaccharides 2,Ganoderma lucidum,Fungus,0.03266666666666667,0.005507570547286103,3,0.03266666666666667,
+DA16,Bacteroides_thetaiotaomicron,Bacteroides,GPs,Ginseng polysaccharides,Panax ginseng,Plant,0.543,0.0036055512754640234,3,0.543,
+DA16,Bacteroides_thetaiotaomicron,Bacteroides,HAPs,Hovenia acerba polysaccharides,Hovenia acerba,Plant,0.05333333333333334,0.017840029895341173,6,0.042,0.06466666666666666
+DA16,Bacteroides_thetaiotaomicron,Bacteroides,LBPs_1,Lycium barbarum polysaccharides 1,Lycium barbarum,Plant,0.16900000033333332,0.005686240703077328,3,0.16900000033333332,
+DA16,Bacteroides_thetaiotaomicron,Bacteroides,LBPs_2,Lycium barbarum polysaccharides 2,Lycium barbarum,Plant,0.126,0.11274307074051158,3,0.126,
+DA16,Bacteroides_thetaiotaomicron,Bacteroides,PLPs,Pueraria lobata polysaccharides,Pueraria lobata,Plant,0.1345,0.03155154512856702,6,0.16266666666666665,0.10633333333333334
+DA16,Bacteroides_thetaiotaomicron,Bacteroides,PPs,Poria polysaccharides,Poria cocos,Fungus,0.11183333333333334,0.014427982071886097,6,0.123,0.10066666666666667
+DA16,Bacteroides_thetaiotaomicron,Bacteroides,PQPs,Panax Quinquefolium polysaccharides,Panax quinquefolium,Plant,0.308,0.010353743284435836,6,0.312,0.304
+DA16,Bacteroides_thetaiotaomicron,Bacteroides,PSPs,Polygonatum sibiricum polysaccharides,Polygonatum sibiricum,Plant,0.11566666666666665,0.0037771241264574116,6,0.11566666666666665,0.11566666666666668
+DA16,Bacteroides_thetaiotaomicron,Bacteroides,RAPs,Rhizoma Anemarrhenae polysaccharides,Anemarrhena asphodeloides,Plant,0.16516666666666666,0.014005951116102993,6,0.171,0.15933333333333333
+DA16,Bacteroides_thetaiotaomicron,Bacteroides,RNPs,Radix Notoginseng polysaccharides,Panax notoginseng,Plant,0.23033333333333336,0.016560998359599788,6,0.24266666666666667,0.218
+DA16,Bacteroides_thetaiotaomicron,Bacteroides,RPPs,Radix Pseudostellariae polysaccharides,Pseudostellaria heterophylla,Plant,0.007333333333333333,0.0063456021516217565,6,0.013,0.0016666666666666668
+DA16,Bacteroides_thetaiotaomicron,Bacteroides,SPs,Scrophulariaceae polysaccharide,Scrophularia ningpoensis,Plant,0.009666666666666665,0.001505545305418162,6,0.009666666666666665,0.009666666666666665
+DA173,Bacteroides_bouchesdurhonensis,Bacteroides,APs,Astragalus polysaccharides,Astragalus membranaceus,Plant,0.009,0.005291502622129181,3,0.009,
+DA173,Bacteroides_bouchesdurhonensis,Bacteroides,AdPs,Adenophora polysaccharides,Glehnia littoralis,Plant,0.06233333333333333,0.023312371536732737,6,0.07733333333333332,0.04733333333333334
+DA173,Bacteroides_bouchesdurhonensis,Bacteroides,AnPs,Angelica polysaccharides,Angelica sinensis,Plant,0.04516666666666667,0.0309542673417845,6,0.06933333333333334,0.021
+DA173,Bacteroides_bouchesdurhonensis,Bacteroides,CPPs,Codonopsis pilosula polysaccharides,Codonopsis pilosula,Plant,0.06733333333333334,0.008914407813571614,6,0.064,0.07066666666666667
+DA173,Bacteroides_bouchesdurhonensis,Bacteroides,DPs_1,Dendrobe polysaccharides 1,Dendrobium officinale,Plant,0.06733333366666666,0.02369247419188914,3,0.06733333366666666,
+DA173,Bacteroides_bouchesdurhonensis,Bacteroides,DPs_2,Dendrobe polysaccharides 2,Dendrobium officinale,Plant,0.011333333333333334,0.01026320287889377,3,0.011333333333333334,
+DA173,Bacteroides_bouchesdurhonensis,Bacteroides,GLPs_1,Ganoderma lucidum polysaccharides 1,Ganoderma lucidum,Fungus,0.08400000033333334,0.009865765724632493,3,0.08400000033333334,
+DA173,Bacteroides_bouchesdurhonensis,Bacteroides,GLPs_2,Ganoderma lucidum polysaccharides 2,Ganoderma lucidum,Fungus,0.0,0.0,3,0.0,
+DA173,Bacteroides_bouchesdurhonensis,Bacteroides,GPs,Ginseng polysaccharides,Panax ginseng,Plant,0.37966666666666665,0.012741009902410944,3,0.37966666666666665,
+DA173,Bacteroides_bouchesdurhonensis,Bacteroides,HAPs,Hovenia acerba polysaccharides,Hovenia acerba,Plant,0.11533333333333333,0.014827901627225167,6,0.11933333333333333,0.11133333333333333
+DA173,Bacteroides_bouchesdurhonensis,Bacteroides,LBPs_1,Lycium barbarum polysaccharides 1,Lycium barbarum,Plant,0.07866666700000001,0.004999999999999999,3,0.07866666700000001,
+DA173,Bacteroides_bouchesdurhonensis,Bacteroides,LBPs_2,Lycium barbarum polysaccharides 2,Lycium barbarum,Plant,0.013333333333333334,0.018929694486000914,3,0.013333333333333334,
+DA173,Bacteroides_bouchesdurhonensis,Bacteroides,PLPs,Pueraria lobata polysaccharides,Pueraria lobata,Plant,0.011666666666666667,0.011147495981908524,6,0.007333333333333333,0.016
+DA173,Bacteroides_bouchesdurhonensis,Bacteroides,PPs,Poria polysaccharides,Poria cocos,Fungus,0.013,0.009338094023943002,6,0.018666666666666665,0.007333333333333333
+DA173,Bacteroides_bouchesdurhonensis,Bacteroides,PQPs,Panax Quinquefolium polysaccharides,Panax quinquefolium,Plant,0.06766666666666667,0.02207864730155963,6,0.054333333333333324,0.081
+DA173,Bacteroides_bouchesdurhonensis,Bacteroides,PSPs,Polygonatum sibiricum polysaccharides,Polygonatum sibiricum,Plant,0.021333333333333333,0.0034448028487370176,6,0.02266666666666667,0.02
+DA173,Bacteroides_bouchesdurhonensis,Bacteroides,RAPs,Rhizoma Anemarrhenae polysaccharides,Anemarrhena asphodeloides,Plant,0.03416666666666667,0.002639444385977222,6,0.034333333333333334,0.034
+DA173,Bacteroides_bouchesdurhonensis,Bacteroides,RNPs,Radix Notoginseng polysaccharides,Panax notoginseng,Plant,0.09383333333333332,0.009432214303474379,6,0.08733333333333333,0.10033333333333333
+DA173,Bacteroides_bouchesdurhonensis,Bacteroides,RPPs,Radix Pseudostellariae polysaccharides,Pseudostellaria heterophylla,Plant,0.007666666666666666,0.00508592829940284,6,0.011666666666666667,0.0036666666666666666
+DA173,Bacteroides_bouchesdurhonensis,Bacteroides,SPs,Scrophulariaceae polysaccharide,Scrophularia ningpoensis,Plant,0.18733333333333332,0.06636163550325343,6,0.23566666666666666,0.13899999999999998
+DA183,Bacteroides_uniformis,Bacteroides,APs,Astragalus polysaccharides,Astragalus membranaceus,Plant,0.12533333333333332,0.06171169527191205,3,0.12533333333333332,
+DA183,Bacteroides_uniformis,Bacteroides,AdPs,Adenophora polysaccharides,Glehnia littoralis,Plant,0.0023333333333333335,0.0070047602861673065,6,0.005666666666666667,-0.001
+DA183,Bacteroides_uniformis,Bacteroides,AnPs,Angelica polysaccharides,Angelica sinensis,Plant,0.050833333333333335,0.02015357701914642,6,0.05366666666666667,0.04800000000000001
+DA183,Bacteroides_uniformis,Bacteroides,CPPs,Codonopsis pilosula polysaccharides,Codonopsis pilosula,Plant,0.056833333333333326,0.012056809970579554,6,0.051333333333333335,0.06233333333333333
+DA183,Bacteroides_uniformis,Bacteroides,DPs_1,Dendrobe polysaccharides 1,Dendrobium officinale,Plant,0.43416666666666665,0.03280751946327754,3,0.43416666666666665,
+DA183,Bacteroides_uniformis,Bacteroides,DPs_2,Dendrobe polysaccharides 2,Dendrobium officinale,Plant,0.399,0.02251666049839539,3,0.399,
+DA183,Bacteroides_uniformis,Bacteroides,GLPs_1,Ganoderma lucidum polysaccharides 1,Ganoderma lucidum,Fungus,0.29350000000000004,0.024879710609249428,3,0.29350000000000004,
+DA183,Bacteroides_uniformis,Bacteroides,GLPs_2,Ganoderma lucidum polysaccharides 2,Ganoderma lucidum,Fungus,0.05000000000000001,0.029461839725312473,3,0.05000000000000001,
+DA183,Bacteroides_uniformis,Bacteroides,GPs,Ginseng polysaccharides,Panax ginseng,Plant,0.47350000000000003,0.018734993995195202,3,0.47350000000000003,
+DA183,Bacteroides_uniformis,Bacteroides,HAPs,Hovenia acerba polysaccharides,Hovenia acerba,Plant,0.001,0.00447213595499958,6,-0.0030000000000000005,0.005
+DA183,Bacteroides_uniformis,Bacteroides,LBPs_1,Lycium barbarum polysaccharides 1,Lycium barbarum,Plant,0.07433333333333333,0.018009256878986798,3,0.07433333333333333,
+DA183,Bacteroides_uniformis,Bacteroides,LBPs_2,Lycium barbarum polysaccharides 2,Lycium barbarum,Plant,0.056999999999999995,0.006557438524302002,3,0.056999999999999995,
+DA183,Bacteroides_uniformis,Bacteroides,PLPs,Pueraria lobata polysaccharides,Pueraria lobata,Plant,0.003833333333333333,0.003970726214015097,6,0.004666666666666667,0.0030000000000000005
+DA183,Bacteroides_uniformis,Bacteroides,PPs,Poria polysaccharides,Poria cocos,Fungus,-0.0006666666666666666,0.0028751811537130433,6,0.0016666666666666668,-0.0030000000000000005
+DA183,Bacteroides_uniformis,Bacteroides,PQPs,Panax Quinquefolium polysaccharides,Panax quinquefolium,Plant,0.15783333333333333,0.020865441923589006,6,0.13999999999999999,0.17566666666666664
+DA183,Bacteroides_uniformis,Bacteroides,PSPs,Polygonatum sibiricum polysaccharides,Polygonatum sibiricum,Plant,0.017499999999999998,0.006833739825307954,6,0.022000000000000002,0.013
+DA183,Bacteroides_uniformis,Bacteroides,RAPs,Rhizoma Anemarrhenae polysaccharides,Anemarrhena asphodeloides,Plant,0.0595,0.009332738076256078,6,0.064,0.055
+DA183,Bacteroides_uniformis,Bacteroides,RNPs,Radix Notoginseng polysaccharides,Panax notoginseng,Plant,0.3535,0.027362382937163938,6,0.36366666666666664,0.3433333333333333
+DA183,Bacteroides_uniformis,Bacteroides,RPPs,Radix Pseudostellariae polysaccharides,Pseudostellaria heterophylla,Plant,0.0535,0.011040833301884417,6,0.05833333333333333,0.048666666666666664
+DA183,Bacteroides_uniformis,Bacteroides,SPs,Scrophulariaceae polysaccharide,Scrophularia ningpoensis,Plant,0.028499999999999998,0.017190113437671087,6,0.035666666666666666,0.021333333333333333
+DA21,Parabacteroides_merdae,Parabacteroides,APs,Astragalus polysaccharides,Astragalus membranaceus,Plant,0.16366666666666665,0.015307950004273384,3,0.16366666666666665,
+DA21,Parabacteroides_merdae,Parabacteroides,AdPs,Adenophora polysaccharides,Glehnia littoralis,Plant,0.007666666666666666,0.011570076346622209,6,0.016333333333333335,-0.001
+DA21,Parabacteroides_merdae,Parabacteroides,AnPs,Angelica polysaccharides,Angelica sinensis,Plant,-0.008333333333333333,0.009003702941938205,6,-0.004333333333333334,-0.012333333333333333
+DA21,Parabacteroides_merdae,Parabacteroides,CPPs,Codonopsis pilosula polysaccharides,Codonopsis pilosula,Plant,0.0023333333333333335,0.008382521498133283,6,0.0023333333333333335,0.0023333333333333335
+DA21,Parabacteroides_merdae,Parabacteroides,DPs_1,Dendrobe polysaccharides 1,Dendrobium officinale,Plant,0.07333333366666667,0.009291573243177566,3,0.07333333366666667,
+DA21,Parabacteroides_merdae,Parabacteroides,DPs_2,Dendrobe polysaccharides 2,Dendrobium officinale,Plant,0.0,0.0,3,0.0,
+DA21,Parabacteroides_merdae,Parabacteroides,GLPs_1,Ganoderma lucidum polysaccharides 1,Ganoderma lucidum,Fungus,0.2660000003333333,0.026652079343520874,3,0.2660000003333333,
+DA21,Parabacteroides_merdae,Parabacteroides,GLPs_2,Ganoderma lucidum polysaccharides 2,Ganoderma lucidum,Fungus,0.0016666666666666668,0.002886751345948129,3,0.0016666666666666668,
+DA21,Parabacteroides_merdae,Parabacteroides,GPs,Ginseng polysaccharides,Panax ginseng,Plant,0.30133333333333334,0.030237945256470933,3,0.30133333333333334,
+DA21,Parabacteroides_merdae,Parabacteroides,HAPs,Hovenia acerba polysaccharides,Hovenia acerba,Plant,0.0295,0.008826097665446491,6,0.024999999999999998,0.034
+DA21,Parabacteroides_merdae,Parabacteroides,LBPs_1,Lycium barbarum polysaccharides 1,Lycium barbarum,Plant,0.07333333366666667,0.01709775813764288,3,0.07333333366666667,
+DA21,Parabacteroides_merdae,Parabacteroides,LBPs_2,Lycium barbarum polysaccharides 2,Lycium barbarum,Plant,0.0,0.0,3,0.0,
+DA21,Parabacteroides_merdae,Parabacteroides,PLPs,Pueraria lobata polysaccharides,Pueraria lobata,Plant,-0.0016666666666666663,0.010289152864384251,6,0.005,-0.008333333333333333
+DA21,Parabacteroides_merdae,Parabacteroides,PPs,Poria polysaccharides,Poria cocos,Fungus,-0.004333333333333334,0.0024221202832779933,6,-0.004333333333333334,-0.004333333333333334
+DA21,Parabacteroides_merdae,Parabacteroides,PQPs,Panax Quinquefolium polysaccharides,Panax quinquefolium,Plant,-0.007666666666666666,0.0117075474232081,6,-0.015,-0.0003333333333333333
+DA21,Parabacteroides_merdae,Parabacteroides,PSPs,Polygonatum sibiricum polysaccharides,Polygonatum sibiricum,Plant,0.014833333333333332,0.012560520159080461,6,0.011333333333333334,0.018333333333333333
+DA21,Parabacteroides_merdae,Parabacteroides,RAPs,Rhizoma Anemarrhenae polysaccharides,Anemarrhena asphodeloides,Plant,0.03133333333333333,0.004082482904638632,6,0.033,0.029666666666666664
+DA21,Parabacteroides_merdae,Parabacteroides,RNPs,Radix Notoginseng polysaccharides,Panax notoginseng,Plant,0.05316666666666667,0.007386925386564205,6,0.048666666666666664,0.057666666666666665
+DA21,Parabacteroides_merdae,Parabacteroides,RPPs,Radix Pseudostellariae polysaccharides,Pseudostellaria heterophylla,Plant,-0.0008333333333333332,0.00552871293039046,6,0.0036666666666666666,-0.005333333333333333
+DA21,Parabacteroides_merdae,Parabacteroides,SPs,Scrophulariaceae polysaccharide,Scrophularia ningpoensis,Plant,0.04516666666666667,0.023301645149359448,6,0.06233333333333333,0.027999999999999997
+DA26,Bacteroides_dorei,Bacteroides,APs,Astragalus polysaccharides,Astragalus membranaceus,Plant,0.14933333333333332,0.006429100507328645,3,0.14933333333333332,
+DA26,Bacteroides_dorei,Bacteroides,AdPs,Adenophora polysaccharides,Glehnia littoralis,Plant,0.4068333333333333,0.036240401027950384,6,0.4163333333333334,0.3973333333333333
+DA26,Bacteroides_dorei,Bacteroides,AnPs,Angelica polysaccharides,Angelica sinensis,Plant,0.16466666666666666,0.03466794869424302,6,0.14,0.18933333333333335
+DA26,Bacteroides_dorei,Bacteroides,CPPs,Codonopsis pilosula polysaccharides,Codonopsis pilosula,Plant,0.1815,0.021677176937968657,6,0.17733333333333334,0.18566666666666667
+DA26,Bacteroides_dorei,Bacteroides,DPs_1,Dendrobe polysaccharides 1,Dendrobium officinale,Plant,0.16166666700000001,0.013114877048603993,3,0.16166666700000001,
+DA26,Bacteroides_dorei,Bacteroides,DPs_2,Dendrobe polysaccharides 2,Dendrobium officinale,Plant,0.0,0.0,3,0.0,
+DA26,Bacteroides_dorei,Bacteroides,GLPs_1,Ganoderma lucidum polysaccharides 1,Ganoderma lucidum,Fungus,0.035000000333333336,0.008962886439832502,3,0.035000000333333336,
+DA26,Bacteroides_dorei,Bacteroides,GLPs_2,Ganoderma lucidum polysaccharides 2,Ganoderma lucidum,Fungus,0.0,0.0,3,0.0,
+DA26,Bacteroides_dorei,Bacteroides,GPs,Ginseng polysaccharides,Panax ginseng,Plant,0.5163333333333333,0.009073771725877484,3,0.5163333333333333,
+DA26,Bacteroides_dorei,Bacteroides,HAPs,Hovenia acerba polysaccharides,Hovenia acerba,Plant,0.082,0.012743625857659192,6,0.08266666666666667,0.08133333333333333
+DA26,Bacteroides_dorei,Bacteroides,LBPs_1,Lycium barbarum polysaccharides 1,Lycium barbarum,Plant,0.08566666699999999,0.03119294792096445,3,0.08566666699999999,
+DA26,Bacteroides_dorei,Bacteroides,LBPs_2,Lycium barbarum polysaccharides 2,Lycium barbarum,Plant,0.057,0.023,3,0.057,
+DA26,Bacteroides_dorei,Bacteroides,PLPs,Pueraria lobata polysaccharides,Pueraria lobata,Plant,0.017333333333333336,0.02445131216656208,6,0.011000000000000001,0.023666666666666666
+DA26,Bacteroides_dorei,Bacteroides,PPs,Poria polysaccharides,Poria cocos,Fungus,-0.0026666666666666666,0.0020655911179772893,6,-0.002,-0.0033333333333333335
+DA26,Bacteroides_dorei,Bacteroides,PQPs,Panax Quinquefolium polysaccharides,Panax quinquefolium,Plant,0.297,0.01824280680158618,6,0.285,0.309
+DA26,Bacteroides_dorei,Bacteroides,PSPs,Polygonatum sibiricum polysaccharides,Polygonatum sibiricum,Plant,0.023000000000000003,0.0039496835316263,6,0.023333333333333334,0.02266666666666667
+DA26,Bacteroides_dorei,Bacteroides,RAPs,Rhizoma Anemarrhenae polysaccharides,Anemarrhena asphodeloides,Plant,0.1366666666666667,0.006250333324444907,6,0.13366666666666668,0.13966666666666666
+DA26,Bacteroides_dorei,Bacteroides,RNPs,Radix Notoginseng polysaccharides,Panax notoginseng,Plant,0.34850000000000003,0.019118054294305145,6,0.35966666666666663,0.3373333333333333
+DA26,Bacteroides_dorei,Bacteroides,RPPs,Radix Pseudostellariae polysaccharides,Pseudostellaria heterophylla,Plant,0.18600000000000003,0.01815488914865635,6,0.19599999999999998,0.17600000000000002
+DA26,Bacteroides_dorei,Bacteroides,SPs,Scrophulariaceae polysaccharide,Scrophularia ningpoensis,Plant,0.5241666666666667,0.06738966290661103,6,0.5286666666666667,0.5196666666666666
+DA320,Bacteroides_cellulosilyticus,Bacteroides,APs,Astragalus polysaccharides,Astragalus membranaceus,Plant,0.06233333333333333,0.007023769168568493,3,0.06233333333333333,
+DA320,Bacteroides_cellulosilyticus,Bacteroides,AdPs,Adenophora polysaccharides,Glehnia littoralis,Plant,0.09116666666666667,0.022929602409694477,6,0.109,0.07333333333333333
+DA320,Bacteroides_cellulosilyticus,Bacteroides,AnPs,Angelica polysaccharides,Angelica sinensis,Plant,0.04566666666666667,0.02634894052265986,6,0.034999999999999996,0.05633333333333334
+DA320,Bacteroides_cellulosilyticus,Bacteroides,CPPs,Codonopsis pilosula polysaccharides,Codonopsis pilosula,Plant,0.06183333333333333,0.00487510683643617,6,0.066,0.057666666666666665
+DA320,Bacteroides_cellulosilyticus,Bacteroides,DPs_1,Dendrobe polysaccharides 1,Dendrobium officinale,Plant,0.06633333366666666,0.0028867513459481333,3,0.06633333366666666,
+DA320,Bacteroides_cellulosilyticus,Bacteroides,DPs_2,Dendrobe polysaccharides 2,Dendrobium officinale,Plant,0.012000000000000002,0.019924858845171277,3,0.012000000000000002,
+DA320,Bacteroides_cellulosilyticus,Bacteroides,GLPs_1,Ganoderma lucidum polysaccharides 1,Ganoderma lucidum,Fungus,0.23466666700000002,0.02951270912674742,3,0.23466666700000002,
+DA320,Bacteroides_cellulosilyticus,Bacteroides,GLPs_2,Ganoderma lucidum polysaccharides 2,Ganoderma lucidum,Fungus,0.006000000000000001,0.008717797887081347,3,0.006000000000000001,
+DA320,Bacteroides_cellulosilyticus,Bacteroides,GPs,Ginseng polysaccharides,Panax ginseng,Plant,0.6926666666666668,0.028219378684395828,3,0.6926666666666668,
+DA320,Bacteroides_cellulosilyticus,Bacteroides,HAPs,Hovenia acerba polysaccharides,Hovenia acerba,Plant,0.10333333333333333,0.01458309523615157,6,0.10833333333333332,0.09833333333333333
+DA320,Bacteroides_cellulosilyticus,Bacteroides,LBPs_1,Lycium barbarum polysaccharides 1,Lycium barbarum,Plant,0.1630000003333333,0.016072751268321594,3,0.1630000003333333,
+DA320,Bacteroides_cellulosilyticus,Bacteroides,LBPs_2,Lycium barbarum polysaccharides 2,Lycium barbarum,Plant,0.06633333333333334,0.011060440015358042,3,0.06633333333333334,
+DA320,Bacteroides_cellulosilyticus,Bacteroides,PLPs,Pueraria lobata polysaccharides,Pueraria lobata,Plant,0.02033333333333333,0.02184185584300626,6,0.011666666666666665,0.028999999999999998
+DA320,Bacteroides_cellulosilyticus,Bacteroides,PPs,Poria polysaccharides,Poria cocos,Fungus,0.005333333333333333,0.008382521498133283,6,-0.0006666666666666666,0.011333333333333332
+DA320,Bacteroides_cellulosilyticus,Bacteroides,PQPs,Panax Quinquefolium polysaccharides,Panax quinquefolium,Plant,0.075,0.016443843832875574,6,0.06666666666666667,0.08333333333333333
+DA320,Bacteroides_cellulosilyticus,Bacteroides,PSPs,Polygonatum sibiricum polysaccharides,Polygonatum sibiricum,Plant,0.04033333333333333,0.007527726527090809,6,0.04533333333333334,0.035333333333333335
+DA320,Bacteroides_cellulosilyticus,Bacteroides,RAPs,Rhizoma Anemarrhenae polysaccharides,Anemarrhena asphodeloides,Plant,0.039,0.00846167832052247,6,0.03233333333333333,0.04566666666666667
+DA320,Bacteroides_cellulosilyticus,Bacteroides,RNPs,Radix Notoginseng polysaccharides,Panax notoginseng,Plant,0.09583333333333333,0.00870440501508671,6,0.09566666666666668,0.09600000000000002
+DA320,Bacteroides_cellulosilyticus,Bacteroides,RPPs,Radix Pseudostellariae polysaccharides,Pseudostellaria heterophylla,Plant,0.018166666666666668,0.012155931336868707,6,0.028999999999999998,0.007333333333333333
+DA320,Bacteroides_cellulosilyticus,Bacteroides,SPs,Scrophulariaceae polysaccharide,Scrophularia ningpoensis,Plant,0.19199999999999998,0.0592992411418561,6,0.23933333333333331,0.14466666666666667
+DA347,Bacteroides_finegoldii,Bacteroides,APs,Astragalus polysaccharides,Astragalus membranaceus,Plant,0.16633333333333333,0.002516611478423589,3,0.16633333333333333,
+DA347,Bacteroides_finegoldii,Bacteroides,AdPs,Adenophora polysaccharides,Glehnia littoralis,Plant,0.323,0.019949937343260015,6,0.333,0.313
+DA347,Bacteroides_finegoldii,Bacteroides,AnPs,Angelica polysaccharides,Angelica sinensis,Plant,0.293,0.042459392364940875,6,0.2886666666666667,0.29733333333333334
+DA347,Bacteroides_finegoldii,Bacteroides,CPPs,Codonopsis pilosula polysaccharides,Codonopsis pilosula,Plant,0.20350000000000001,0.028898096823147368,6,0.18899999999999997,0.21799999999999997
+DA347,Bacteroides_finegoldii,Bacteroides,DPs_1,Dendrobe polysaccharides 1,Dendrobium officinale,Plant,0.41700000033333334,0.009865765724632498,3,0.41700000033333334,
+DA347,Bacteroides_finegoldii,Bacteroides,DPs_2,Dendrobe polysaccharides 2,Dendrobium officinale,Plant,0.007,0.01044030650891055,3,0.007,
+DA347,Bacteroides_finegoldii,Bacteroides,GLPs_1,Ganoderma lucidum polysaccharides 1,Ganoderma lucidum,Fungus,0.112666667,0.006244997998398403,3,0.112666667,
+DA347,Bacteroides_finegoldii,Bacteroides,GLPs_2,Ganoderma lucidum polysaccharides 2,Ganoderma lucidum,Fungus,0.006999999999999999,0.0043588989435406735,3,0.006999999999999999,
+DA347,Bacteroides_finegoldii,Bacteroides,GPs,Ginseng polysaccharides,Panax ginseng,Plant,0.5043333333333333,0.038552993831002746,3,0.5043333333333333,
+DA347,Bacteroides_finegoldii,Bacteroides,HAPs,Hovenia acerba polysaccharides,Hovenia acerba,Plant,0.17149999999999999,0.008526429498916884,6,0.16666666666666666,0.17633333333333331
+DA347,Bacteroides_finegoldii,Bacteroides,LBPs_1,Lycium barbarum polysaccharides 1,Lycium barbarum,Plant,0.14833333366666668,0.01965536398374075,3,0.14833333366666668,
+DA347,Bacteroides_finegoldii,Bacteroides,LBPs_2,Lycium barbarum polysaccharides 2,Lycium barbarum,Plant,0.081,0.004582575694955834,3,0.081,
+DA347,Bacteroides_finegoldii,Bacteroides,PLPs,Pueraria lobata polysaccharides,Pueraria lobata,Plant,0.0085,0.01639207125411551,6,0.006000000000000001,0.011000000000000001
+DA347,Bacteroides_finegoldii,Bacteroides,PPs,Poria polysaccharides,Poria cocos,Fungus,-0.0028333333333333335,0.0019407902170679517,6,-0.0023333333333333335,-0.0033333333333333335
+DA347,Bacteroides_finegoldii,Bacteroides,PQPs,Panax Quinquefolium polysaccharides,Panax quinquefolium,Plant,0.37716666666666665,0.0266339382492839,6,0.35966666666666663,0.39466666666666667
+DA347,Bacteroides_finegoldii,Bacteroides,PSPs,Polygonatum sibiricum polysaccharides,Polygonatum sibiricum,Plant,0.4678333333333333,0.03459142475624078,6,0.44333333333333336,0.49233333333333335
+DA347,Bacteroides_finegoldii,Bacteroides,RAPs,Rhizoma Anemarrhenae polysaccharides,Anemarrhena asphodeloides,Plant,0.43483333333333335,0.043508236768072625,6,0.46900000000000003,0.40066666666666667
+DA347,Bacteroides_finegoldii,Bacteroides,RNPs,Radix Notoginseng polysaccharides,Panax notoginseng,Plant,0.18283333333333332,0.006645800679125635,6,0.17733333333333334,0.18833333333333332
+DA347,Bacteroides_finegoldii,Bacteroides,RPPs,Radix Pseudostellariae polysaccharides,Pseudostellaria heterophylla,Plant,0.14766666666666667,0.014935416521365137,6,0.15466666666666667,0.1406666666666667
+DA347,Bacteroides_finegoldii,Bacteroides,SPs,Scrophulariaceae polysaccharide,Scrophularia ningpoensis,Plant,0.17983333333333332,0.06028404985289779,6,0.13066666666666668,0.22899999999999998
+DA486,Bacteroides_fragilis,Bacteroides,APs,Astragalus polysaccharides,Astragalus membranaceus,Plant,0.044000000000000004,0.011135528725660045,3,0.044000000000000004,
+DA486,Bacteroides_fragilis,Bacteroides,AdPs,Adenophora polysaccharides,Glehnia littoralis,Plant,0.07716666666666666,0.014958832396502962,6,0.08766666666666667,0.06666666666666667
+DA486,Bacteroides_fragilis,Bacteroides,AnPs,Angelica polysaccharides,Angelica sinensis,Plant,0.16866666666666666,0.01599583279065728,6,0.15533333333333332,0.18200000000000002
+DA486,Bacteroides_fragilis,Bacteroides,CPPs,Codonopsis pilosula polysaccharides,Codonopsis pilosula,Plant,0.39366666666666666,0.04847542332632763,6,0.36000000000000004,0.42733333333333334
+DA486,Bacteroides_fragilis,Bacteroides,DPs_1,Dendrobe polysaccharides 1,Dendrobium officinale,Plant,0.060666667,0.0017320508075688737,3,0.060666667,
+DA486,Bacteroides_fragilis,Bacteroides,DPs_2,Dendrobe polysaccharides 2,Dendrobium officinale,Plant,0.0,0.0,3,0.0,
+DA486,Bacteroides_fragilis,Bacteroides,GLPs_1,Ganoderma lucidum polysaccharides 1,Ganoderma lucidum,Fungus,0.08733333366666667,0.009609023536933055,3,0.08733333366666667,
+DA486,Bacteroides_fragilis,Bacteroides,GLPs_2,Ganoderma lucidum polysaccharides 2,Ganoderma lucidum,Fungus,0.0,0.0,3,0.0,
+DA486,Bacteroides_fragilis,Bacteroides,GPs,Ginseng polysaccharides,Panax ginseng,Plant,0.17233333333333334,0.02557994005726624,3,0.17233333333333334,
+DA486,Bacteroides_fragilis,Bacteroides,HAPs,Hovenia acerba polysaccharides,Hovenia acerba,Plant,0.04666666666666667,0.009416297927883687,6,0.05433333333333334,0.039
+DA486,Bacteroides_fragilis,Bacteroides,LBPs_1,Lycium barbarum polysaccharides 1,Lycium barbarum,Plant,0.08733333366666667,0.003785938897200176,3,0.08733333366666667,
+DA486,Bacteroides_fragilis,Bacteroides,LBPs_2,Lycium barbarum polysaccharides 2,Lycium barbarum,Plant,0.0006666666666666666,0.0011547005383792516,3,0.0006666666666666666,
+DA486,Bacteroides_fragilis,Bacteroides,PLPs,Pueraria lobata polysaccharides,Pueraria lobata,Plant,-0.000833333333333333,0.010684880283216404,6,0.0016666666666666668,-0.0033333333333333327
+DA486,Bacteroides_fragilis,Bacteroides,PPs,Poria polysaccharides,Poria cocos,Fungus,0.0035,0.007368853370776216,6,0.009333333333333334,-0.0023333333333333335
+DA486,Bacteroides_fragilis,Bacteroides,PQPs,Panax Quinquefolium polysaccharides,Panax quinquefolium,Plant,0.1075,0.012911235417263519,6,0.10266666666666667,0.11233333333333334
+DA486,Bacteroides_fragilis,Bacteroides,PSPs,Polygonatum sibiricum polysaccharides,Polygonatum sibiricum,Plant,0.2866666666666667,0.030552686734011906,6,0.2896666666666667,0.2836666666666667
+DA486,Bacteroides_fragilis,Bacteroides,RAPs,Rhizoma Anemarrhenae polysaccharides,Anemarrhena asphodeloides,Plant,0.3785,0.019623964940857393,6,0.36466666666666664,0.39233333333333337
+DA486,Bacteroides_fragilis,Bacteroides,RNPs,Radix Notoginseng polysaccharides,Panax notoginseng,Plant,0.10149999999999999,0.015411035007422441,6,0.10833333333333334,0.09466666666666666
+DA486,Bacteroides_fragilis,Bacteroides,RPPs,Radix Pseudostellariae polysaccharides,Pseudostellaria heterophylla,Plant,0.021833333333333333,0.002926886855802025,6,0.020666666666666667,0.023000000000000003
+DA486,Bacteroides_fragilis,Bacteroides,SPs,Scrophulariaceae polysaccharide,Scrophularia ningpoensis,Plant,0.5348333333333334,0.05505784836575678,6,0.513,0.5566666666666666
+DA505,Bacteroides_ovatus,Bacteroides,APs,Astragalus polysaccharides,Astragalus membranaceus,Plant,0.11466666666666665,0.04563259069276403,3,0.11466666666666665,
+DA505,Bacteroides_ovatus,Bacteroides,AdPs,Adenophora polysaccharides,Glehnia littoralis,Plant,0.4093333333333333,0.01765974707255647,6,0.42133333333333334,0.39733333333333337
+DA505,Bacteroides_ovatus,Bacteroides,AnPs,Angelica polysaccharides,Angelica sinensis,Plant,0.20183333333333334,0.025198544931536553,6,0.18899999999999997,0.21466666666666667
+DA505,Bacteroides_ovatus,Bacteroides,CPPs,Codonopsis pilosula polysaccharides,Codonopsis pilosula,Plant,0.4366666666666667,0.03103975944923973,6,0.432,0.4413333333333333
+DA505,Bacteroides_ovatus,Bacteroides,DPs_1,Dendrobe polysaccharides 1,Dendrobium officinale,Plant,0.09933333366666668,0.006658328118479397,3,0.09933333366666668,
+DA505,Bacteroides_ovatus,Bacteroides,DPs_2,Dendrobe polysaccharides 2,Dendrobium officinale,Plant,0.0,0.0,3,0.0,
+DA505,Bacteroides_ovatus,Bacteroides,GLPs_1,Ganoderma lucidum polysaccharides 1,Ganoderma lucidum,Fungus,0.17433333366666667,0.00850490054811539,3,0.17433333366666667,
+DA505,Bacteroides_ovatus,Bacteroides,GLPs_2,Ganoderma lucidum polysaccharides 2,Ganoderma lucidum,Fungus,0.0,0.0,3,0.0,
+DA505,Bacteroides_ovatus,Bacteroides,GPs,Ginseng polysaccharides,Panax ginseng,Plant,0.496,0.007000000000000006,3,0.496,
+DA505,Bacteroides_ovatus,Bacteroides,HAPs,Hovenia acerba polysaccharides,Hovenia acerba,Plant,0.07583333333333332,0.006882344561751225,6,0.07966666666666666,0.072
+DA505,Bacteroides_ovatus,Bacteroides,LBPs_1,Lycium barbarum polysaccharides 1,Lycium barbarum,Plant,0.23600000033333335,0.002516611478423582,3,0.23600000033333335,
+DA505,Bacteroides_ovatus,Bacteroides,LBPs_2,Lycium barbarum polysaccharides 2,Lycium barbarum,Plant,0.078,0.013747727084867517,3,0.078,
+DA505,Bacteroides_ovatus,Bacteroides,PLPs,Pueraria lobata polysaccharides,Pueraria lobata,Plant,0.0025,0.00618869937870632,6,0.006999999999999999,-0.002
+DA505,Bacteroides_ovatus,Bacteroides,PPs,Poria polysaccharides,Poria cocos,Fungus,-0.0006666666666666666,0.0021602468994692866,6,0.0003333333333333333,-0.0016666666666666668
+DA505,Bacteroides_ovatus,Bacteroides,PQPs,Panax Quinquefolium polysaccharides,Panax quinquefolium,Plant,0.314,0.013520355024924468,6,0.3053333333333333,0.32266666666666666
+DA505,Bacteroides_ovatus,Bacteroides,PSPs,Polygonatum sibiricum polysaccharides,Polygonatum sibiricum,Plant,0.44016666666666665,0.03355840679571464,6,0.42333333333333334,0.457
+DA505,Bacteroides_ovatus,Bacteroides,RAPs,Rhizoma Anemarrhenae polysaccharides,Anemarrhena asphodeloides,Plant,0.39716666666666667,0.036701044490132256,6,0.42333333333333334,0.371
+DA505,Bacteroides_ovatus,Bacteroides,RNPs,Radix Notoginseng polysaccharides,Panax notoginseng,Plant,0.26066666666666666,0.007501111028818787,6,0.258,0.26333333333333336
+DA505,Bacteroides_ovatus,Bacteroides,RPPs,Radix Pseudostellariae polysaccharides,Pseudostellaria heterophylla,Plant,0.1688333333333333,0.015471479136354958,6,0.16666666666666666,0.171
+DA505,Bacteroides_ovatus,Bacteroides,SPs,Scrophulariaceae polysaccharide,Scrophularia ningpoensis,Plant,0.5111666666666667,0.03022857367899895,6,0.513,0.5093333333333333
+DA557,Bacteroides_fragilis,Bacteroides,APs,Astragalus polysaccharides,Astragalus membranaceus,Plant,0.064,0.04517742799230607,3,0.064,
+DA557,Bacteroides_fragilis,Bacteroides,AdPs,Adenophora polysaccharides,Glehnia littoralis,Plant,0.45133333333333336,0.017637082147188246,6,0.451,0.45166666666666666
+DA557,Bacteroides_fragilis,Bacteroides,AnPs,Angelica polysaccharides,Angelica sinensis,Plant,0.056499999999999995,0.0292010273791865,6,0.07666666666666666,0.036333333333333336
+DA557,Bacteroides_fragilis,Bacteroides,CPPs,Codonopsis pilosula polysaccharides,Codonopsis pilosula,Plant,0.3998333333333333,0.03990697516307978,6,0.43366666666666664,0.36599999999999994
+DA557,Bacteroides_fragilis,Bacteroides,DPs_1,Dendrobe polysaccharides 1,Dendrobium officinale,Plant,0.0725,0.0127671453348037,3,0.0725,
+DA557,Bacteroides_fragilis,Bacteroides,DPs_2,Dendrobe polysaccharides 2,Dendrobium officinale,Plant,0.07066666666666667,0.008082903768654755,3,0.07066666666666667,
+DA557,Bacteroides_fragilis,Bacteroides,GLPs_1,Ganoderma lucidum polysaccharides 1,Ganoderma lucidum,Fungus,0.009166666666666667,0.010503967504392487,3,0.009166666666666667,
+DA557,Bacteroides_fragilis,Bacteroides,GLPs_2,Ganoderma lucidum polysaccharides 2,Ganoderma lucidum,Fungus,0.03233333333333333,0.01361371857110809,3,0.03233333333333333,
+DA557,Bacteroides_fragilis,Bacteroides,GPs,Ginseng polysaccharides,Panax ginseng,Plant,0.5228333333333334,0.06087144924620522,3,0.5228333333333334,
+DA557,Bacteroides_fragilis,Bacteroides,HAPs,Hovenia acerba polysaccharides,Hovenia acerba,Plant,0.0005,0.0018708286933869708,6,0.0,0.001
+DA557,Bacteroides_fragilis,Bacteroides,LBPs_1,Lycium barbarum polysaccharides 1,Lycium barbarum,Plant,0.05466666666666667,0.005131601439446881,3,0.05466666666666667,
+DA557,Bacteroides_fragilis,Bacteroides,LBPs_2,Lycium barbarum polysaccharides 2,Lycium barbarum,Plant,0.034666666666666665,0.015947831618540912,3,0.034666666666666665,
+DA557,Bacteroides_fragilis,Bacteroides,PLPs,Pueraria lobata polysaccharides,Pueraria lobata,Plant,0.0031666666666666666,0.014386336109887977,6,0.008666666666666668,-0.0023333333333333335
+DA557,Bacteroides_fragilis,Bacteroides,PPs,Poria polysaccharides,Poria cocos,Fungus,0.0025,0.003271085446759225,6,0.004333333333333334,0.0006666666666666666
+DA557,Bacteroides_fragilis,Bacteroides,PQPs,Panax Quinquefolium polysaccharides,Panax quinquefolium,Plant,0.21083333333333334,0.032369224066490496,6,0.19033333333333333,0.2313333333333333
+DA557,Bacteroides_fragilis,Bacteroides,PSPs,Polygonatum sibiricum polysaccharides,Polygonatum sibiricum,Plant,0.4808333333333334,0.05325567262430048,6,0.5023333333333334,0.45933333333333337
+DA557,Bacteroides_fragilis,Bacteroides,RAPs,Rhizoma Anemarrhenae polysaccharides,Anemarrhena asphodeloides,Plant,0.4093333333333333,0.05425003840244415,6,0.4326666666666667,0.38599999999999995
+DA557,Bacteroides_fragilis,Bacteroides,RNPs,Radix Notoginseng polysaccharides,Panax notoginseng,Plant,0.3821666666666667,0.009745084230865673,6,0.389,0.3753333333333333
+DA557,Bacteroides_fragilis,Bacteroides,RPPs,Radix Pseudostellariae polysaccharides,Pseudostellaria heterophylla,Plant,0.22433333333333336,0.00708989891794423,6,0.21933333333333335,0.22933333333333336
+DA557,Bacteroides_fragilis,Bacteroides,SPs,Scrophulariaceae polysaccharide,Scrophularia ningpoensis,Plant,0.42533333333333334,0.064267150758896,6,0.4603333333333333,0.39033333333333337
+DA57,Bacteroides_vulgatus,Bacteroides,APs,Astragalus polysaccharides,Astragalus membranaceus,Plant,0.1426666666666667,0.004618802153516994,3,0.1426666666666667,
+DA57,Bacteroides_vulgatus,Bacteroides,AdPs,Adenophora polysaccharides,Glehnia littoralis,Plant,0.5428333333333334,0.05477742844152754,6,0.521,0.5646666666666667
+DA57,Bacteroides_vulgatus,Bacteroides,AnPs,Angelica polysaccharides,Angelica sinensis,Plant,0.13449999999999998,0.026097892635230147,6,0.13533333333333333,0.13366666666666668
+DA57,Bacteroides_vulgatus,Bacteroides,CPPs,Codonopsis pilosula polysaccharides,Codonopsis pilosula,Plant,0.2005,0.03167175397732182,6,0.17699999999999996,0.224
+DA57,Bacteroides_vulgatus,Bacteroides,DPs_1,Dendrobe polysaccharides 1,Dendrobium officinale,Plant,0.081666667,0.004582575694955844,3,0.081666667,
+DA57,Bacteroides_vulgatus,Bacteroides,DPs_2,Dendrobe polysaccharides 2,Dendrobium officinale,Plant,0.014,0.00888819441731559,3,0.014,
+DA57,Bacteroides_vulgatus,Bacteroides,GLPs_1,Ganoderma lucidum polysaccharides 1,Ganoderma lucidum,Fungus,0.062666667,0.015099668870541498,3,0.062666667,
+DA57,Bacteroides_vulgatus,Bacteroides,GLPs_2,Ganoderma lucidum polysaccharides 2,Ganoderma lucidum,Fungus,0.0,0.0,3,0.0,
+DA57,Bacteroides_vulgatus,Bacteroides,GPs,Ginseng polysaccharides,Panax ginseng,Plant,0.5253333333333333,0.003055050463303899,3,0.5253333333333333,
+DA57,Bacteroides_vulgatus,Bacteroides,HAPs,Hovenia acerba polysaccharides,Hovenia acerba,Plant,0.11233333333333333,0.012209286083414818,6,0.12233333333333334,0.10233333333333333
+DA57,Bacteroides_vulgatus,Bacteroides,LBPs_1,Lycium barbarum polysaccharides 1,Lycium barbarum,Plant,0.08633333366666666,0.002081665999466133,3,0.08633333366666666,
+DA57,Bacteroides_vulgatus,Bacteroides,LBPs_2,Lycium barbarum polysaccharides 2,Lycium barbarum,Plant,0.04800000000000001,0.015,3,0.04800000000000001,
+DA57,Bacteroides_vulgatus,Bacteroides,PLPs,Pueraria lobata polysaccharides,Pueraria lobata,Plant,0.0011666666666666663,0.005706721183540218,6,0.005333333333333333,-0.0030000000000000005
+DA57,Bacteroides_vulgatus,Bacteroides,PPs,Poria polysaccharides,Poria cocos,Fungus,-0.0015000000000000002,0.0018708286933869706,6,-0.0003333333333333333,-0.0026666666666666666
+DA57,Bacteroides_vulgatus,Bacteroides,PQPs,Panax Quinquefolium polysaccharides,Panax quinquefolium,Plant,0.2678333333333333,0.0168216130815884,6,0.254,0.2816666666666667
+DA57,Bacteroides_vulgatus,Bacteroides,PSPs,Polygonatum sibiricum polysaccharides,Polygonatum sibiricum,Plant,0.0605,0.004037325847637271,6,0.06233333333333333,0.058666666666666666
+DA57,Bacteroides_vulgatus,Bacteroides,RAPs,Rhizoma Anemarrhenae polysaccharides,Anemarrhena asphodeloides,Plant,0.12033333333333333,0.012468627296806445,6,0.12133333333333333,0.11933333333333333
+DA57,Bacteroides_vulgatus,Bacteroides,RNPs,Radix Notoginseng polysaccharides,Panax notoginseng,Plant,0.3855,0.0237128657061942,6,0.36766666666666664,0.4033333333333333
+DA57,Bacteroides_vulgatus,Bacteroides,RPPs,Radix Pseudostellariae polysaccharides,Pseudostellaria heterophylla,Plant,0.17716666666666667,0.019732376102909316,6,0.18799999999999997,0.16633333333333333
+DA57,Bacteroides_vulgatus,Bacteroides,SPs,Scrophulariaceae polysaccharide,Scrophularia ningpoensis,Plant,0.2818333333333333,0.01409136851645951,6,0.2853333333333333,0.2783333333333333
+DA647,Bacteroides_clarus,Bacteroides,APs,Astragalus polysaccharides,Astragalus membranaceus,Plant,0.085,0.027874719729532708,3,0.085,
+DA647,Bacteroides_clarus,Bacteroides,AdPs,Adenophora polysaccharides,Glehnia littoralis,Plant,0.005166666666666667,0.0051153364177409354,6,0.006666666666666667,0.0036666666666666666
+DA647,Bacteroides_clarus,Bacteroides,AnPs,Angelica polysaccharides,Angelica sinensis,Plant,0.12849999999999998,0.016789877903070044,6,0.13133333333333333,0.12566666666666668
+DA647,Bacteroides_clarus,Bacteroides,CPPs,Codonopsis pilosula polysaccharides,Codonopsis pilosula,Plant,0.06016666666666667,0.006306081720582657,6,0.06333333333333334,0.057
+DA647,Bacteroides_clarus,Bacteroides,DPs_1,Dendrobe polysaccharides 1,Dendrobium officinale,Plant,0.08383333333333333,0.03106981386061611,3,0.08383333333333333,
+DA647,Bacteroides_clarus,Bacteroides,DPs_2,Dendrobe polysaccharides 2,Dendrobium officinale,Plant,0.05666666666666667,0.02987194893764606,3,0.05666666666666667,
+DA647,Bacteroides_clarus,Bacteroides,GLPs_1,Ganoderma lucidum polysaccharides 1,Ganoderma lucidum,Fungus,0.057166666666666664,0.012220201853215568,3,0.057166666666666664,
+DA647,Bacteroides_clarus,Bacteroides,GLPs_2,Ganoderma lucidum polysaccharides 2,Ganoderma lucidum,Fungus,0.036,0.03148015247739439,3,0.036,
+DA647,Bacteroides_clarus,Bacteroides,GPs,Ginseng polysaccharides,Panax ginseng,Plant,0.5558333333333333,0.06069870948655608,3,0.5558333333333333,
+DA647,Bacteroides_clarus,Bacteroides,HAPs,Hovenia acerba polysaccharides,Hovenia acerba,Plant,0.03916666666666667,0.007678975626127919,6,0.033,0.04533333333333334
+DA647,Bacteroides_clarus,Bacteroides,LBPs_1,Lycium barbarum polysaccharides 1,Lycium barbarum,Plant,0.09399999999999999,0.007937253933193776,3,0.09399999999999999,
+DA647,Bacteroides_clarus,Bacteroides,LBPs_2,Lycium barbarum polysaccharides 2,Lycium barbarum,Plant,0.08733333333333333,0.011590225767142475,3,0.08733333333333333,
+DA647,Bacteroides_clarus,Bacteroides,PLPs,Pueraria lobata polysaccharides,Pueraria lobata,Plant,-0.00016666666666666666,0.002786873995477131,6,0.0016666666666666668,-0.002
+DA647,Bacteroides_clarus,Bacteroides,PPs,Poria polysaccharides,Poria cocos,Fungus,-0.0005,0.005009990019950139,6,0.0013333333333333333,-0.0023333333333333335
+DA647,Bacteroides_clarus,Bacteroides,PQPs,Panax Quinquefolium polysaccharides,Panax quinquefolium,Plant,0.1725,0.004929503017546495,6,0.169,0.17600000000000002
+DA647,Bacteroides_clarus,Bacteroides,PSPs,Polygonatum sibiricum polysaccharides,Polygonatum sibiricum,Plant,0.010166666666666666,0.0033115957885386117,6,0.012333333333333333,0.008
+DA647,Bacteroides_clarus,Bacteroides,RAPs,Rhizoma Anemarrhenae polysaccharides,Anemarrhena asphodeloides,Plant,0.0023333333333333335,0.003502380143083653,6,0.0030000000000000005,0.0016666666666666668
+DA647,Bacteroides_clarus,Bacteroides,RNPs,Radix Notoginseng polysaccharides,Panax notoginseng,Plant,0.04033333333333334,0.022312925999668148,6,0.05633333333333334,0.024333333333333335
+DA647,Bacteroides_clarus,Bacteroides,RPPs,Radix Pseudostellariae polysaccharides,Pseudostellaria heterophylla,Plant,0.03783333333333333,0.004262237284181474,6,0.04033333333333333,0.035333333333333335
+DA647,Bacteroides_clarus,Bacteroides,SPs,Scrophulariaceae polysaccharide,Scrophularia ningpoensis,Plant,0.03183333333333333,0.010553040636075778,6,0.02666666666666667,0.037
+DA672,Parabacteroides_faecis,Parabacteroides,APs,Astragalus polysaccharides,Astragalus membranaceus,Plant,0.15266666666666667,0.06300264544710271,3,0.15266666666666667,
+DA672,Parabacteroides_faecis,Parabacteroides,AdPs,Adenophora polysaccharides,Glehnia littoralis,Plant,0.033166666666666664,0.005810909280540064,6,0.030666666666666665,0.035666666666666666
+DA672,Parabacteroides_faecis,Parabacteroides,AnPs,Angelica polysaccharides,Angelica sinensis,Plant,0.15133333333333335,0.013094528119281981,6,0.14100000000000001,0.16166666666666665
+DA672,Parabacteroides_faecis,Parabacteroides,CPPs,Codonopsis pilosula polysaccharides,Codonopsis pilosula,Plant,-0.0011666666666666668,0.0023166067138525406,6,-0.0006666666666666666,-0.0016666666666666668
+DA672,Parabacteroides_faecis,Parabacteroides,DPs_1,Dendrobe polysaccharides 1,Dendrobium officinale,Plant,0.08916666666666667,0.007505553499465136,3,0.08916666666666667,
+DA672,Parabacteroides_faecis,Parabacteroides,DPs_2,Dendrobe polysaccharides 2,Dendrobium officinale,Plant,0.04566666666666667,0.01721433511156714,3,0.04566666666666667,
+DA672,Parabacteroides_faecis,Parabacteroides,GLPs_1,Ganoderma lucidum polysaccharides 1,Ganoderma lucidum,Fungus,0.13583333333333333,0.01703917055884274,3,0.13583333333333333,
+DA672,Parabacteroides_faecis,Parabacteroides,GLPs_2,Ganoderma lucidum polysaccharides 2,Ganoderma lucidum,Fungus,0.027999999999999997,0.03935733730830885,3,0.027999999999999997,
+DA672,Parabacteroides_faecis,Parabacteroides,GPs,Ginseng polysaccharides,Panax ginseng,Plant,0.24650000000000002,0.02981610303175117,3,0.24650000000000002,
+DA672,Parabacteroides_faecis,Parabacteroides,HAPs,Hovenia acerba polysaccharides,Hovenia acerba,Plant,0.017333333333333336,0.008617811013631401,6,0.01,0.02466666666666667
+DA672,Parabacteroides_faecis,Parabacteroides,LBPs_1,Lycium barbarum polysaccharides 1,Lycium barbarum,Plant,0.06666666666666667,0.00602771377334171,3,0.06666666666666667,
+DA672,Parabacteroides_faecis,Parabacteroides,LBPs_2,Lycium barbarum polysaccharides 2,Lycium barbarum,Plant,0.074,0.016093476939431077,3,0.074,
+DA672,Parabacteroides_faecis,Parabacteroides,PLPs,Pueraria lobata polysaccharides,Pueraria lobata,Plant,0.0008333333333333334,0.0029268868558020257,6,0.0003333333333333333,0.0013333333333333333
+DA672,Parabacteroides_faecis,Parabacteroides,PPs,Poria polysaccharides,Poria cocos,Fungus,0.209,0.041670133189132,6,0.17866666666666667,0.23933333333333331
+DA672,Parabacteroides_faecis,Parabacteroides,PQPs,Panax Quinquefolium polysaccharides,Panax quinquefolium,Plant,0.0005,0.004086563348340511,6,-0.002,0.0030000000000000005
+DA672,Parabacteroides_faecis,Parabacteroides,PSPs,Polygonatum sibiricum polysaccharides,Polygonatum sibiricum,Plant,0.04883333333333333,0.0017224014243685066,6,0.049999999999999996,0.04766666666666667
+DA672,Parabacteroides_faecis,Parabacteroides,RAPs,Rhizoma Anemarrhenae polysaccharides,Anemarrhena asphodeloides,Plant,0.0016666666666666668,0.004082482904638631,6,0.0003333333333333333,0.0029999999999999996
+DA672,Parabacteroides_faecis,Parabacteroides,RNPs,Radix Notoginseng polysaccharides,Panax notoginseng,Plant,0.021,0.018308467986153293,6,0.028999999999999998,0.013
+DA672,Parabacteroides_faecis,Parabacteroides,RPPs,Radix Pseudostellariae polysaccharides,Pseudostellaria heterophylla,Plant,0.03366666666666667,0.009458682078739435,6,0.041,0.026333333333333334
+DA672,Parabacteroides_faecis,Parabacteroides,SPs,Scrophulariaceae polysaccharide,Scrophularia ningpoensis,Plant,0.014333333333333332,0.0030767948691238205,6,0.011999999999999999,0.016666666666666666
+DA679,Bacteroides_caccae,Bacteroides,APs,Astragalus polysaccharides,Astragalus membranaceus,Plant,0.05833333333333333,0.05490294466905517,3,0.05833333333333333,
+DA679,Bacteroides_caccae,Bacteroides,AdPs,Adenophora polysaccharides,Glehnia littoralis,Plant,0.1745,0.01957294050468657,6,0.17200000000000001,0.17700000000000002
+DA679,Bacteroides_caccae,Bacteroides,AnPs,Angelica polysaccharides,Angelica sinensis,Plant,0.21283333333333332,0.03315066615720817,6,0.24066666666666667,0.18499999999999997
+DA679,Bacteroides_caccae,Bacteroides,CPPs,Codonopsis pilosula polysaccharides,Codonopsis pilosula,Plant,0.42816666666666664,0.03601897647999825,6,0.444,0.4123333333333334
+DA679,Bacteroides_caccae,Bacteroides,DPs_1,Dendrobe polysaccharides 1,Dendrobium officinale,Plant,0.06783333333333333,0.02482606157515391,3,0.06783333333333333,
+DA679,Bacteroides_caccae,Bacteroides,DPs_2,Dendrobe polysaccharides 2,Dendrobium officinale,Plant,0.042666666666666665,0.03743438704364389,3,0.042666666666666665,
+DA679,Bacteroides_caccae,Bacteroides,GLPs_1,Ganoderma lucidum polysaccharides 1,Ganoderma lucidum,Fungus,0.0155,0.013114877048604,3,0.0155,
+DA679,Bacteroides_caccae,Bacteroides,GLPs_2,Ganoderma lucidum polysaccharides 2,Ganoderma lucidum,Fungus,0.06833333333333334,0.021197484127446188,3,0.06833333333333334,
+DA679,Bacteroides_caccae,Bacteroides,GPs,Ginseng polysaccharides,Panax ginseng,Plant,0.16016666666666668,0.026274195198584725,3,0.16016666666666668,
+DA679,Bacteroides_caccae,Bacteroides,HAPs,Hovenia acerba polysaccharides,Hovenia acerba,Plant,0.001166666666666667,0.008035338615557323,6,-0.0023333333333333335,0.004666666666666667
+DA679,Bacteroides_caccae,Bacteroides,LBPs_1,Lycium barbarum polysaccharides 1,Lycium barbarum,Plant,0.06,0.005567764362830025,3,0.06,
+DA679,Bacteroides_caccae,Bacteroides,LBPs_2,Lycium barbarum polysaccharides 2,Lycium barbarum,Plant,0.058666666666666666,0.016258331197676265,3,0.058666666666666666,
+DA679,Bacteroides_caccae,Bacteroides,PLPs,Pueraria lobata polysaccharides,Pueraria lobata,Plant,0.011833333333333335,0.018669940189156114,6,0.001,0.02266666666666667
+DA679,Bacteroides_caccae,Bacteroides,PPs,Poria polysaccharides,Poria cocos,Fungus,-0.0015000000000000002,0.0016431676725154984,6,-0.0023333333333333335,-0.0006666666666666666
+DA679,Bacteroides_caccae,Bacteroides,PQPs,Panax Quinquefolium polysaccharides,Panax quinquefolium,Plant,0.27416666666666667,0.0347299102599858,6,0.247,0.30133333333333334
+DA679,Bacteroides_caccae,Bacteroides,PSPs,Polygonatum sibiricum polysaccharides,Polygonatum sibiricum,Plant,0.3681666666666667,0.027242736034889487,6,0.37033333333333335,0.36599999999999994
+DA679,Bacteroides_caccae,Bacteroides,RAPs,Rhizoma Anemarrhenae polysaccharides,Anemarrhena asphodeloides,Plant,0.18966666666666668,0.018543642216853375,6,0.19000000000000003,0.18933333333333335
+DA679,Bacteroides_caccae,Bacteroides,RNPs,Radix Notoginseng polysaccharides,Panax notoginseng,Plant,0.0615,0.014390969390558788,6,0.05499999999999999,0.06799999999999999
+DA679,Bacteroides_caccae,Bacteroides,RPPs,Radix Pseudostellariae polysaccharides,Pseudostellaria heterophylla,Plant,0.19616666666666668,0.014204459393678698,6,0.20366666666666666,0.18866666666666668
+DA679,Bacteroides_caccae,Bacteroides,SPs,Scrophulariaceae polysaccharide,Scrophularia ningpoensis,Plant,0.019666666666666666,0.011877148928369413,6,0.012333333333333333,0.027
+DA701,Parabacteroides_johnsonii,Parabacteroides,APs,Astragalus polysaccharides,Astragalus membranaceus,Plant,0.17033333333333334,0.0049328828623162275,3,0.17033333333333334,
+DA701,Parabacteroides_johnsonii,Parabacteroides,AdPs,Adenophora polysaccharides,Glehnia littoralis,Plant,0.003666666666666667,0.010689558768567892,6,0.009666666666666667,-0.0023333333333333335
+DA701,Parabacteroides_johnsonii,Parabacteroides,AnPs,Angelica polysaccharides,Angelica sinensis,Plant,0.007166666666666666,0.010571975532825765,6,0.005333333333333333,0.009
+DA701,Parabacteroides_johnsonii,Parabacteroides,CPPs,Codonopsis pilosula polysaccharides,Codonopsis pilosula,Plant,0.011666666666666667,0.006772493386240157,6,0.008666666666666666,0.014666666666666666
+DA701,Parabacteroides_johnsonii,Parabacteroides,DPs_1,Dendrobe polysaccharides 1,Dendrobium officinale,Plant,0.09333333366666667,0.005507570547286098,3,0.09333333366666667,
+DA701,Parabacteroides_johnsonii,Parabacteroides,DPs_2,Dendrobe polysaccharides 2,Dendrobium officinale,Plant,0.0,0.0,3,0.0,
+DA701,Parabacteroides_johnsonii,Parabacteroides,GLPs_1,Ganoderma lucidum polysaccharides 1,Ganoderma lucidum,Fungus,0.1910000003333333,0.07771958140220091,3,0.1910000003333333,
+DA701,Parabacteroides_johnsonii,Parabacteroides,GLPs_2,Ganoderma lucidum polysaccharides 2,Ganoderma lucidum,Fungus,0.002,0.0034641016151377548,3,0.002,
+DA701,Parabacteroides_johnsonii,Parabacteroides,GPs,Ginseng polysaccharides,Panax ginseng,Plant,0.11833333333333333,0.010016652800877813,3,0.11833333333333333,
+DA701,Parabacteroides_johnsonii,Parabacteroides,HAPs,Hovenia acerba polysaccharides,Hovenia acerba,Plant,0.030666666666666665,0.006772493386240155,6,0.029333333333333333,0.032
+DA701,Parabacteroides_johnsonii,Parabacteroides,LBPs_1,Lycium barbarum polysaccharides 1,Lycium barbarum,Plant,0.081666667,0.01352774925846868,3,0.081666667,
+DA701,Parabacteroides_johnsonii,Parabacteroides,LBPs_2,Lycium barbarum polysaccharides 2,Lycium barbarum,Plant,0.045000000000000005,0.009000000000000001,3,0.045000000000000005,
+DA701,Parabacteroides_johnsonii,Parabacteroides,PLPs,Pueraria lobata polysaccharides,Pueraria lobata,Plant,0.1585,0.022268812271874758,6,0.17333333333333334,0.1436666666666667
+DA701,Parabacteroides_johnsonii,Parabacteroides,PPs,Poria polysaccharides,Poria cocos,Fungus,0.0,0.005099019513592785,6,0.0013333333333333333,-0.0013333333333333333
+DA701,Parabacteroides_johnsonii,Parabacteroides,PQPs,Panax Quinquefolium polysaccharides,Panax quinquefolium,Plant,-0.011333333333333334,0.01214358541233464,6,-0.022333333333333334,-0.0003333333333333333
+DA701,Parabacteroides_johnsonii,Parabacteroides,PSPs,Polygonatum sibiricum polysaccharides,Polygonatum sibiricum,Plant,0.001,0.0023664319132398466,6,0.0030000000000000005,-0.001
+DA701,Parabacteroides_johnsonii,Parabacteroides,RAPs,Rhizoma Anemarrhenae polysaccharides,Anemarrhena asphodeloides,Plant,0.0385,0.00887130204648675,6,0.034,0.043000000000000003
+DA701,Parabacteroides_johnsonii,Parabacteroides,RNPs,Radix Notoginseng polysaccharides,Panax notoginseng,Plant,0.04716666666666667,0.007026141662866377,6,0.043666666666666666,0.050666666666666665
+DA701,Parabacteroides_johnsonii,Parabacteroides,RPPs,Radix Pseudostellariae polysaccharides,Pseudostellaria heterophylla,Plant,-0.0018333333333333333,0.008256310717667224,6,0.004333333333333334,-0.008
+DA701,Parabacteroides_johnsonii,Parabacteroides,SPs,Scrophulariaceae polysaccharide,Scrophularia ningpoensis,Plant,0.007666666666666666,0.008164965809277261,6,0.0026666666666666666,0.012666666666666666
+DA729,Parabacteroides_goldsteinii,Parabacteroides,APs,Astragalus polysaccharides,Astragalus membranaceus,Plant,0.23833333333333337,0.03650114153466071,3,0.23833333333333337,
+DA729,Parabacteroides_goldsteinii,Parabacteroides,AdPs,Adenophora polysaccharides,Glehnia littoralis,Plant,0.007166666666666666,0.003970726214015096,6,0.009,0.005333333333333333
+DA729,Parabacteroides_goldsteinii,Parabacteroides,AnPs,Angelica polysaccharides,Angelica sinensis,Plant,0.08183333333333333,0.019620567439976512,6,0.07533333333333332,0.08833333333333333
+DA729,Parabacteroides_goldsteinii,Parabacteroides,CPPs,Codonopsis pilosula polysaccharides,Codonopsis pilosula,Plant,0.14533333333333334,0.020215505600075078,6,0.1386666666666667,0.152
+DA729,Parabacteroides_goldsteinii,Parabacteroides,DPs_1,Dendrobe polysaccharides 1,Dendrobium officinale,Plant,0.09200000033333333,0.006658328118479393,3,0.09200000033333333,
+DA729,Parabacteroides_goldsteinii,Parabacteroides,DPs_2,Dendrobe polysaccharides 2,Dendrobium officinale,Plant,0.018333333333333333,0.004163331998932265,3,0.018333333333333333,
+DA729,Parabacteroides_goldsteinii,Parabacteroides,GLPs_1,Ganoderma lucidum polysaccharides 1,Ganoderma lucidum,Fungus,0.22966666700000002,0.006557438524301999,3,0.22966666700000002,
+DA729,Parabacteroides_goldsteinii,Parabacteroides,GLPs_2,Ganoderma lucidum polysaccharides 2,Ganoderma lucidum,Fungus,0.045000000000000005,0.007937253933193772,3,0.045000000000000005,
+DA729,Parabacteroides_goldsteinii,Parabacteroides,GPs,Ginseng polysaccharides,Panax ginseng,Plant,0.35266666666666663,0.006658328118479397,3,0.35266666666666663,
+DA729,Parabacteroides_goldsteinii,Parabacteroides,HAPs,Hovenia acerba polysaccharides,Hovenia acerba,Plant,0.0335,0.004636809247747852,6,0.037,0.03
+DA729,Parabacteroides_goldsteinii,Parabacteroides,LBPs_1,Lycium barbarum polysaccharides 1,Lycium barbarum,Plant,0.09500000033333333,0.005686240703077328,3,0.09500000033333333,
+DA729,Parabacteroides_goldsteinii,Parabacteroides,LBPs_2,Lycium barbarum polysaccharides 2,Lycium barbarum,Plant,0.038,0.009643650760992956,3,0.038,
+DA729,Parabacteroides_goldsteinii,Parabacteroides,PLPs,Pueraria lobata polysaccharides,Pueraria lobata,Plant,0.13816666666666666,0.02809566989175852,6,0.15866666666666665,0.11766666666666666
+DA729,Parabacteroides_goldsteinii,Parabacteroides,PPs,Poria polysaccharides,Poria cocos,Fungus,0.04599999999999999,0.017753872816937716,6,0.05399999999999999,0.038
+DA729,Parabacteroides_goldsteinii,Parabacteroides,PQPs,Panax Quinquefolium polysaccharides,Panax quinquefolium,Plant,-0.0055000000000000005,0.019826749607537796,6,-0.023333333333333334,0.012333333333333333
+DA729,Parabacteroides_goldsteinii,Parabacteroides,PSPs,Polygonatum sibiricum polysaccharides,Polygonatum sibiricum,Plant,0.0095,0.009093954035511725,6,0.014,0.005
+DA729,Parabacteroides_goldsteinii,Parabacteroides,RAPs,Rhizoma Anemarrhenae polysaccharides,Anemarrhena asphodeloides,Plant,0.17133333333333334,0.02168563272460978,6,0.15266666666666664,0.19000000000000003
+DA729,Parabacteroides_goldsteinii,Parabacteroides,RNPs,Radix Notoginseng polysaccharides,Panax notoginseng,Plant,0.104,0.012868566353716328,6,0.09400000000000001,0.11399999999999999
+DA729,Parabacteroides_goldsteinii,Parabacteroides,RPPs,Radix Pseudostellariae polysaccharides,Pseudostellaria heterophylla,Plant,-0.0018333333333333333,0.004119061381755152,6,0.0016666666666666668,-0.005333333333333333
+DA729,Parabacteroides_goldsteinii,Parabacteroides,SPs,Scrophulariaceae polysaccharide,Scrophularia ningpoensis,Plant,0.029833333333333333,0.029239813040897962,6,0.010666666666666666,0.048999999999999995
+DA816,Bacteroides_stercoris,Bacteroides,APs,Astragalus polysaccharides,Astragalus membranaceus,Plant,0.052,0.045398237851264664,3,0.052,
+DA816,Bacteroides_stercoris,Bacteroides,AdPs,Adenophora polysaccharides,Glehnia littoralis,Plant,0.2771666666666667,0.035210320456744874,6,0.3,0.25433333333333336
+DA816,Bacteroides_stercoris,Bacteroides,AnPs,Angelica polysaccharides,Angelica sinensis,Plant,0.1645,0.020617953341687444,6,0.18066666666666667,0.14833333333333334
+DA816,Bacteroides_stercoris,Bacteroides,CPPs,Codonopsis pilosula polysaccharides,Codonopsis pilosula,Plant,0.315,0.04267083312990267,6,0.289,0.341
+DA816,Bacteroides_stercoris,Bacteroides,DPs_1,Dendrobe polysaccharides 1,Dendrobium officinale,Plant,0.13483333333333333,0.025324559884296778,3,0.13483333333333333,
+DA816,Bacteroides_stercoris,Bacteroides,DPs_2,Dendrobe polysaccharides 2,Dendrobium officinale,Plant,0.07433333333333333,0.011718930554164633,3,0.07433333333333333,
+DA816,Bacteroides_stercoris,Bacteroides,GLPs_1,Ganoderma lucidum polysaccharides 1,Ganoderma lucidum,Fungus,0.0205,0.011269427669584643,3,0.0205,
+DA816,Bacteroides_stercoris,Bacteroides,GLPs_2,Ganoderma lucidum polysaccharides 2,Ganoderma lucidum,Fungus,0.050333333333333334,0.013796134724383253,3,0.050333333333333334,
+DA816,Bacteroides_stercoris,Bacteroides,GPs,Ginseng polysaccharides,Panax ginseng,Plant,0.4068333333333333,0.05147167505855368,3,0.4068333333333333,
+DA816,Bacteroides_stercoris,Bacteroides,HAPs,Hovenia acerba polysaccharides,Hovenia acerba,Plant,0.013499999999999998,0.012078907235342112,6,0.011666666666666665,0.015333333333333332
+DA816,Bacteroides_stercoris,Bacteroides,LBPs_1,Lycium barbarum polysaccharides 1,Lycium barbarum,Plant,0.17066666666666666,0.022898325994127472,3,0.17066666666666666,
+DA816,Bacteroides_stercoris,Bacteroides,LBPs_2,Lycium barbarum polysaccharides 2,Lycium barbarum,Plant,0.085,0.006244997998398395,3,0.085,
+DA816,Bacteroides_stercoris,Bacteroides,PLPs,Pueraria lobata polysaccharides,Pueraria lobata,Plant,0.019166666666666665,0.01703427916486831,6,0.033999999999999996,0.004333333333333334
+DA816,Bacteroides_stercoris,Bacteroides,PPs,Poria polysaccharides,Poria cocos,Fungus,0.0004999999999999997,0.005822370651203854,6,0.0033333333333333327,-0.0023333333333333335
+DA816,Bacteroides_stercoris,Bacteroides,PQPs,Panax Quinquefolium polysaccharides,Panax quinquefolium,Plant,0.36033333333333334,0.021960570727252677,6,0.35666666666666663,0.36400000000000005
+DA816,Bacteroides_stercoris,Bacteroides,PSPs,Polygonatum sibiricum polysaccharides,Polygonatum sibiricum,Plant,0.43566666666666665,0.03818725790976183,6,0.412,0.4593333333333333
+DA816,Bacteroides_stercoris,Bacteroides,RAPs,Rhizoma Anemarrhenae polysaccharides,Anemarrhena asphodeloides,Plant,0.2638333333333333,0.03543115389973443,6,0.264,0.26366666666666666
+DA816,Bacteroides_stercoris,Bacteroides,RNPs,Radix Notoginseng polysaccharides,Panax notoginseng,Plant,0.3416666666666666,0.02492923317446139,6,0.3516666666666666,0.33166666666666667
+DA816,Bacteroides_stercoris,Bacteroides,RPPs,Radix Pseudostellariae polysaccharides,Pseudostellaria heterophylla,Plant,0.218,0.010844353369380767,6,0.21966666666666668,0.21633333333333335
+DA816,Bacteroides_stercoris,Bacteroides,SPs,Scrophulariaceae polysaccharide,Scrophularia ningpoensis,Plant,0.013666666666666667,0.0032041639575194456,6,0.011333333333333334,0.016
+DA904,Bacteroides_faecichinchillae,Bacteroides,APs,Astragalus polysaccharides,Astragalus membranaceus,Plant,0.17766666666666664,0.07205784713224045,3,0.17766666666666664,
+DA904,Bacteroides_faecichinchillae,Bacteroides,AdPs,Adenophora polysaccharides,Glehnia littoralis,Plant,0.008,0.005727128425310541,6,0.01,0.005999999999999999
+DA904,Bacteroides_faecichinchillae,Bacteroides,AnPs,Angelica polysaccharides,Angelica sinensis,Plant,0.0375,0.009354143466934852,6,0.039,0.036
+DA904,Bacteroides_faecichinchillae,Bacteroides,CPPs,Codonopsis pilosula polysaccharides,Codonopsis pilosula,Plant,0.123,0.026525459468216567,6,0.10633333333333334,0.13966666666666666
+DA904,Bacteroides_faecichinchillae,Bacteroides,DPs_1,Dendrobe polysaccharides 1,Dendrobium officinale,Plant,0.0675,0.008185352771872451,3,0.0675,
+DA904,Bacteroides_faecichinchillae,Bacteroides,DPs_2,Dendrobe polysaccharides 2,Dendrobium officinale,Plant,0.06,0.02128379665379277,3,0.06,
+DA904,Bacteroides_faecichinchillae,Bacteroides,GLPs_1,Ganoderma lucidum polysaccharides 1,Ganoderma lucidum,Fungus,0.014833333333333336,0.01550268793897798,3,0.014833333333333336,
+DA904,Bacteroides_faecichinchillae,Bacteroides,GLPs_2,Ganoderma lucidum polysaccharides 2,Ganoderma lucidum,Fungus,0.05933333333333333,0.018175074506954117,3,0.05933333333333333,
+DA904,Bacteroides_faecichinchillae,Bacteroides,GPs,Ginseng polysaccharides,Panax ginseng,Plant,0.1085,0.016999999999999998,3,0.1085,
+DA904,Bacteroides_faecichinchillae,Bacteroides,HAPs,Hovenia acerba polysaccharides,Hovenia acerba,Plant,0.004,0.0018973665961010276,6,0.0026666666666666666,0.005333333333333333
+DA904,Bacteroides_faecichinchillae,Bacteroides,LBPs_1,Lycium barbarum polysaccharides 1,Lycium barbarum,Plant,0.06766666666666667,0.008082903768654765,3,0.06766666666666667,
+DA904,Bacteroides_faecichinchillae,Bacteroides,LBPs_2,Lycium barbarum polysaccharides 2,Lycium barbarum,Plant,0.009333333333333334,0.005773502691896258,3,0.009333333333333334,
+DA904,Bacteroides_faecichinchillae,Bacteroides,PLPs,Pueraria lobata polysaccharides,Pueraria lobata,Plant,0.011333333333333334,0.013246383154154447,6,0.011333333333333334,0.011333333333333334
+DA904,Bacteroides_faecichinchillae,Bacteroides,PPs,Poria polysaccharides,Poria cocos,Fungus,-0.004833333333333334,0.002136976056643281,6,-0.0036666666666666666,-0.006000000000000001
+DA904,Bacteroides_faecichinchillae,Bacteroides,PQPs,Panax Quinquefolium polysaccharides,Panax quinquefolium,Plant,-0.005,0.019909796583591707,6,-0.02266666666666667,0.012666666666666666
+DA904,Bacteroides_faecichinchillae,Bacteroides,PSPs,Polygonatum sibiricum polysaccharides,Polygonatum sibiricum,Plant,0.013,0.007899367063252598,6,0.016333333333333335,0.009666666666666665
+DA904,Bacteroides_faecichinchillae,Bacteroides,RAPs,Rhizoma Anemarrhenae polysaccharides,Anemarrhena asphodeloides,Plant,0.024833333333333332,0.012040210407906777,6,0.029666666666666664,0.02
+DA904,Bacteroides_faecichinchillae,Bacteroides,RNPs,Radix Notoginseng polysaccharides,Panax notoginseng,Plant,0.04933333333333334,0.012564500255349064,6,0.04666666666666667,0.052
+DA904,Bacteroides_faecichinchillae,Bacteroides,RPPs,Radix Pseudostellariae polysaccharides,Pseudostellaria heterophylla,Plant,0.07383333333333333,0.011214573851318054,6,0.07633333333333334,0.07133333333333333
+DA904,Bacteroides_faecichinchillae,Bacteroides,SPs,Scrophulariaceae polysaccharide,Scrophularia ningpoensis,Plant,0.012666666666666666,0.0021602468994692866,6,0.012333333333333333,0.013

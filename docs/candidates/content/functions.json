@@ -1,0 +1,80 @@
+[
+  {
+    "key": "profile",
+    "category": "Analysis",
+    "name": "profile",
+    "module": "graphfla.analysis",
+    "kind": "function",
+    "signature": "profile(\n    landscape,\n    *,\n    groups=None,\n    include=None,\n    exclude=None,\n    params=None,\n    n_jobs=-1,\n    seed=None,\n    time_budget=15.0,\n    on_error=\"warn\",\n    include_structure=False,\n    index=None,\n    progress=None,\n)",
+    "docstring": "Compute the whole-landscape metric profile.\n\n    Parameters\n    ----------\n    landscape : Landscape or sequence of Landscape\n        One built landscape -> a ``Series``; a list/tuple -> a ``DataFrame``,\n        one row per landscape.\n    groups : str or sequence of str, optional\n        Restrict to these metric groups (one of ``analysis.list_metrics()``'s\n        ``group`` values). Mutually exclusive with ``include``.\n    include : str or sequence of str, optional\n        Use exactly these metrics (by registry name). Mutually exclusive with\n        ``groups``.\n    exclude : str or sequence of str, optional\n        Drop these metrics from whatever ``groups`` / ``include`` selected\n        (or from the full default). Composes with either.\n    params : dict, optional\n        Per-metric keyword overrides, ``{metric_name: {kwarg: value}}``.\n    n_jobs, seed, time_budget : optional\n        Shared keywords forwarded to each metric *that accepts them*.\n    on_error : {\"warn\", \"raise\", \"ignore\"}, default \"warn\"\n        How to handle a metric that raises -- record NaN (warn/ignore) or\n        propagate.\n    include_structure : bool, default False\n        Prepend the numeric fields of :meth:`Landscape.describe` as\n        ``structure.*`` columns.\n    index : optional\n        Index for the returned ``DataFrame`` when ``landscape`` is a sequence.\n    progress : bool, optional\n        Show a live progress display on stderr -- a bar with the current metric\n        and ``n/total``, one line per finished metric with its wall-time, and a\n        closing summary -- muting the landscape's own verbose chatter while it\n        runs and deferring warnings to a footnote afterwards. Default (``None``)\n        auto-enables it in an interactive session (REPL/notebook) and stays\n        silent in scripts; pass ``True``/``False`` to force it.\n\n    Returns\n    -------\n    pandas.Series or pandas.DataFrame\n        Metric values (a flat, all-float index of metric names; structured\n        metrics flatten to dotted columns such as ``epistasis.magnitude``).\n    ",
+    "source": "graphfla/analysis/profile.py",
+    "lineno": 363,
+    "methods": [],
+    "properties": []
+  },
+  {
+    "key": "r-s-ratio",
+    "category": "Analysis",
+    "name": "r_s_ratio",
+    "module": "graphfla.analysis",
+    "kind": "function",
+    "signature": "r_s_ratio(landscape) -> float",
+    "docstring": "\n    Calculate the roughness-to-slope (r/s) ratio of a fitness landscape.\n\n    This metric quantifies the deviation from additivity by comparing the\n    root-mean-square error of the linear model fit (roughness)\n    to the mean absolute additive coefficients (slope). Higher values\n    indicate greater ruggedness and epistasis relative to the additive trend.\n\n    Calculation follows definitions used in Rough Mount Fuji models and\n    empirical landscape studies, e.g., [1]-[4].\n\n    References\n    ----------\n    [1] I. Fragata et al., \"Evolution in the light of fitness landscape\n        theory,\" Trends Ecol. Evol., vol. 34, no. 1, pp. 69-82, Jan. 2019.\n    [2] T. Aita, H. Uchiyama, T. Inaoka, M. Nakajima, T. Kokubo, and\n        Y. Husimi, \"Analysis of a local fitness landscape with a model of\n        the rough Mount Fuji-type landscape,\" Biophys. Chem., vol. 88,\n        no. 1-3, pp. 1-10, Dec. 2000.\n    [3] A. Skwara et al., \"Statistically learning the functional landscape\n        of microbial communities,\" Nat. Ecol. Evol., vol. 7, no. 11,\n        pp. 1823-1833, Nov. 2023.\n    [4] C. Bank, R. T. Hietpas, J. D. Jensen, and D. N. A. Bolon, \"A\n        systematic survey of an intragenic epistatic landscape,\" Proc. Natl.\n        Acad. Sci. USA, vol. 113, no. 50, pp. 14424-14429, Dec. 2016.\n\n    Parameters\n    ----------\n    landscape : graphfal.landscape.Landscape\n        A Landscape object instance. It must have attributes `n_vars`,\n        `data_types`, and a method `get_data()` that returns a DataFrame\n        containing the raw configurations and a 'fitness' column.\n\n    Returns\n    -------\n    float\n        The roughness-to-slope (r/s) ratio. Returns np.inf if the slope (s)\n        is zero or very close to zero. Returns np.nan if the calculation fails.\n\n    Raises\n    ------\n    ValueError\n        If the landscape object is missing required attributes/methods or if\n        data types are unsupported.\n    ",
+    "source": "graphfla/analysis/ruggedness.py",
+    "lineno": 142,
+    "methods": [],
+    "properties": []
+  },
+  {
+    "key": "classify-epistasis",
+    "category": "Analysis",
+    "name": "classify_epistasis",
+    "module": "graphfla.analysis",
+    "kind": "function",
+    "signature": "classify_epistasis(landscape, sample_cut_prob=\"auto\", seed=None, time_budget=15.0)",
+    "docstring": "\n    Calculates proportions of five epistasis types using 4-node motifs in an igraph graph.\n\n    Determines magnitude, sign, and reciprocal sign epistasis based on counts/estimates\n    of motifs 19, 52, 66. Determines positive and negative epistasis by analyzing\n    the fitness relationships within instances of these motifs.\n\n    Parameters\n    ----------\n    landscape : Landscape\n        The fitness landscape object, containing landscape.graph as an igraph.Graph\n        with a \"fitness\" vertex attribute.\n    sample_cut_prob : {\"auto\"} or float, optional\n        Controls the 4-motif search. ``\"auto\"`` (default) picks a pruning\n        probability from a runtime ladder so the call fits ``time_budget`` even\n        on large landscapes (small ones resolve to exact). ``0`` or ``None``\n        forces exact enumeration; a float in ``(0, 1]`` sets the igraph pruning\n        probability directly (higher -> faster, less accurate).\n    seed : int, optional\n        Seed for the sampling RNG, making approximate results reproducible.\n    time_budget : float, optional\n        Target wall-clock seconds for ``sample_cut_prob=\"auto\"``. Default 15.\n\n    Returns\n    -------\n    EpistasisClassification\n        A dataclass with proportion fields:\n        - ``magnitude``: The magnitude of the combined fitness effect of mutations\n        differs from the sum of their individual effects, but the direction relative to\n        single mutants or wild-type may not change sign.\n        - ``sign``: The sign of the fitness effect of at least one mutation changes depending\n        on the presence of other mutations. For example, a mutation beneficial on its own becomes\n        deleterious when combined with another specific mutation.\n        - ``reciprocal_sign``: A specific form of sign epistasis where the sign of the effect\n        of *each* mutation depends on the allele state at the other locus.\n        - ``positive``: The combined fitness effect of mutations is greater than the sum of\n        their individual effects, often referred to as synergistic epistasis.\n        - ``negative``: The combined fitness effect of mutations is less than the sum of their\n        individual effects, often referred to as antagonistic epistasis.\n\n        Fields are zero if relevant counts/instances are zero or cannot be processed.\n\n    Raises\n    ------\n    AttributeError\n        If landscape.graph is not an igraph.Graph object or does not exist.\n    ValueError\n        If sample_cut_prob is invalid, or if the fitness attribute is missing.\n    ",
+    "source": "graphfla/analysis/epistasis/motifs.py",
+    "lineno": 215,
+    "methods": [],
+    "properties": []
+  },
+  {
+    "key": "draw-fitness-distance-corr",
+    "category": "Plotting",
+    "name": "draw_fitness_distance_corr",
+    "module": "graphfla.plotting",
+    "kind": "function",
+    "signature": "draw_fitness_distance_corr(\n    landscape,\n    figsize=(10, 6),\n    show_std=True,\n    alpha_std=0.3,\n    color=\"steelblue\",\n    std_color=None,\n    save_path=None,\n    dpi=300,\n)",
+    "docstring": "\n    Visualizes fitness-distance correlation by plotting average fitness vs distance to global optimum.\n\n    Creates a line plot showing the relationship between distance to global optimum (x-axis) and\n    average fitness (y-axis), with optional standard deviation bands.\n\n    Parameters\n    ----------\n    landscape : Landscape\n        An initialized and built fitness landscape object.\n    figsize : tuple, default=(10, 6)\n        Figure size as (width, height) in inches.\n    show_std : bool, default=True\n        Whether to show standard deviation bands around the mean.\n    alpha_std : float, default=0.3\n        Transparency level for standard deviation bands (0-1).\n    color : str, default='steelblue'\n        Color for the main line plot.\n    std_color : str, optional\n        Color for standard deviation bands. If None, uses same color as main line.\n    save_path : str, optional\n        Path to save the figure. If None, figure is not saved.\n    dpi : int, default=300\n        Resolution for saved figure.\n\n    Returns\n    -------\n    fig, ax : tuple\n        Matplotlib figure and axes objects.\n\n    Raises\n    ------\n    RuntimeError\n        If the landscape object has not been built or distance to global optimum cannot be calculated.\n    ValueError\n        If insufficient data is available for plotting.\n    ",
+    "source": "graphfla/plotting/plotting.py",
+    "lineno": 177,
+    "methods": [],
+    "properties": []
+  },
+  {
+    "key": "sobol-sampling",
+    "category": "Sampling",
+    "name": "sobol_sampling",
+    "module": "graphfla.sampling",
+    "kind": "function",
+    "signature": "sobol_sampling(param_distributions, n_iter, evaluate, scramble=True, seed=None)",
+    "docstring": "\n    Perform Sobol Sampling over the given parameter distributions.\n\n    Parameters:\n    - param_distributions: dict\n        Dictionary where keys are parameter names and values are distributions or lists.\n        Distributions should be from scipy.stats with a 'ppf' method or lists for categorical variables.\n\n    - n_iter: int\n        Number of iterations/samples to draw.\n\n    - evaluate: function\n        Function that takes a configuration (dict) and returns a fitness value.\n\n    - scramble: bool, optional (default=True)\n        Whether to scramble the Sobol sequence for better uniformity.\n\n    - seed: int or None, optional (default=None)\n        Seed for the random number generator (used if scramble is True).\n\n    Returns:\n    - results_df: pandas DataFrame\n        DataFrame containing configurations and their fitness values.\n    ",
+    "source": "graphfla/sampling.py",
+    "lineno": 134,
+    "methods": [],
+    "properties": []
+  },
+  {
+    "key": "get-lon",
+    "category": "Networks",
+    "name": "get_lon",
+    "module": "graphfla.lon",
+    "kind": "function",
+    "signature": "get_lon(\n    graph: ig.Graph,\n    configs: pd.Series,\n    lo_index: List[int],\n    config_dict: Dict[Any, Any],\n    maximize: bool = True,\n    mlon: bool = True,\n    min_edge_freq: int = 3,\n    trim: int = None,\n    verbose: bool = True,\n) -> ig.Graph",
+    "docstring": "\n    Construct the local optima network (LON) of the fitness landscape.\n\n    Parameters\n    ----------\n    graph : ig.Graph\n        The igraph Graph of the landscape.\n\n    configs : pd.Series\n        Series of configurations (as tuples).\n\n    lo_index : List[int]\n        List of indices of local optima.\n\n    config_dict : Dict[Any, Any]\n        Configuration dictionary specifying variable types and max values.\n\n    maximize : bool, default=True\n        Whether the fitness is to be maximized or minimized.\n\n    mlon : bool, default=True\n        Whether to use monotonic-LON (M-LON), which will only have improving edges.\n\n    min_edge_freq : int, default=3\n        Minimal escape frequency needed to construct an edge between two local optima.\n\n    trim : int, default=None\n        The number of edges with the highest transition probability to retain for each node.\n\n    verbose : bool, default=True\n        Whether to print verbose messages.\n\n    Returns\n    -------\n    lon : ig.Graph\n        The constructed local optimum network (LON) as an igraph Graph.\n    ",
+    "source": "graphfla/lon.py",
+    "lineno": 10,
+    "methods": [],
+    "properties": []
+  }
+]

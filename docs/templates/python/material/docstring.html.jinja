@@ -1,0 +1,35 @@
+{% with autoref_hook = AutorefsHook(obj, config) %}
+{% import "api/macros.html.jinja" as api with context %}
+{% for section in docstring_sections %}
+  {% set kind = section.kind.value %}
+  {% if kind == 'text' %}
+    {% if root and config.extra.get('narrative', false) %}
+      {{ section.value|api_markup(html_id)|api_notices|convert_markdown(heading_level, html_id, autoref_hook=autoref_hook) }}
+    {% else %}
+      {{ section.value|api_markup(html_id)|convert_markdown(heading_level, html_id, autoref_hook=autoref_hook) }}
+    {% endif %}
+  {% elif kind in ['parameters', 'other parameters', 'returns', 'yields', 'receives', 'raises', 'warns', 'attributes', 'type parameters'] %}
+    {{ api.field_section(section) }}
+  {% elif kind == 'examples' %}
+    <section class="api-examples" data-api-section="examples">
+    <h4>{{ section.title or 'Examples' }}</h4>
+    {% for section_type, value in section.value %}
+      {% if section_type.value == 'examples' %}{{ value|highlight(language='pycon') }}
+      {% else %}{{ value|api_markup(html_id)|convert_markdown(heading_level, html_id, autoref_hook=autoref_hook) }}{% endif %}
+    {% endfor %}
+    </section>
+  {% elif kind == 'admonition' %}
+    <section class="api-note" data-api-section="{{ section.value.kind }}">
+      <h4>{{ section.title or section.value.kind|title }}</h4>
+      {{ section.value.contents|api_markup(html_id, section.title, config.extra.get('public_path') if root else none)|convert_markdown(heading_level, html_id, autoref_hook=autoref_hook) }}
+    </section>
+  {% elif kind == 'deprecated' %}
+    <div class="admonition warning" data-api-section="deprecated"><p class="admonition-title">Deprecated</p>
+    {{ section.value.description|api_markup(html_id)|convert_markdown(heading_level, html_id, autoref_hook=autoref_hook) }}</div>
+  {% elif kind in ['functions', 'classes', 'modules', 'type aliases'] %}
+    {% include 'docstring/' + kind|replace(' ', '_') + '.html.jinja' with context %}
+  {% else %}
+    {{ kind|api_unsupported }}
+  {% endif %}
+{% endfor %}
+{% endwith %}

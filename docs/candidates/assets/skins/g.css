@@ -1,0 +1,15 @@
+/* G — blue inputs and teal outputs; meaning encoded at the component level. */
+.md-typeset {
+  --api-input-ink: #1459a6;
+  --api-input-tint: #eef5ff;
+  --api-input-edge: #ccdff4;
+  --api-input-name-ink: #1459a6;
+  --api-input-name-fill: #eaf3ff;
+  --api-output-ink: #00685f;
+  --api-output-tint: #ebf7f3;
+  --api-output-edge: #bfdfd5;
+  --api-output-name-ink: #00685f;
+  --api-output-name-fill: #e5f5ef;
+  --api-type-ink: #4c5968;
+  --api-signature-fill: #f7faff;
+}

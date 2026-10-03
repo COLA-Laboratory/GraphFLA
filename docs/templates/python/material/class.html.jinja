@@ -1,0 +1,44 @@
+{% extends "_base/class.html.jinja" %}
+{% block contents scoped %}
+{% if config.extra.get('inline_class', false) %}
+  {% include 'api/inline_class.html.jinja' with context %}
+{% else %}
+{% set sections = class.docstring.parsed if class.docstring else [] %}
+{% set init = class.all_members.get('__init__') %}
+{% set init_sections = init.docstring.parsed if init and init.docstring else [] %}
+{% set constructor_sections = (sections + init_sections)|selectattr('kind.value', 'in', ['parameters', 'other parameters', 'raises', 'warns'])|list %}
+{% set attribute_sections = (sections + init_sections)|selectattr('kind.value', 'equalto', 'attributes')|list %}
+{% set attributes = class.attributes|filter_objects(filters=config.filters, inherited_members=config.inherited_members, keep_no_docstrings=false)|order_members(config.members_order, none)|list %}
+{% set methods = class.functions|filter_objects(filters=config.filters, inherited_members=config.inherited_members, keep_no_docstrings=true)|order_members(config.members_order, none)|list %}
+{% set notes = (sections + init_sections)|rejectattr('kind.value', 'in', ['text', 'parameters', 'other parameters', 'attributes', 'raises', 'warns'])|list + init_sections|selectattr('kind.value', 'equalto', 'text')|list %}
+{% set tabs = ['Overview'] %}
+{% if constructor_sections %}{% set tabs = tabs + ['Constructor'] %}{% endif %}
+{% if attribute_sections or attributes %}{% set tabs = tabs + ['Attributes'] %}{% endif %}
+{% if methods %}{% set tabs = tabs + ['Methods'] %}{% endif %}
+{% if notes %}{% set tabs = tabs + ['Examples & notes'] %}{% endif %}
+{% set tab_id = 'api-tabs-' + html_id|replace('.', '-') %}
+{% import 'api/tabs.html.jinja' as tabs_ui %}
+{% call(label, index) tabs_ui.render(tab_id, tabs, 'api-class-tabs') %}
+      {% if label == 'Overview' %}
+        {% with docstring_sections = sections|selectattr('kind.value', 'equalto', 'text')|list %}{% include 'docstring.html.jinja' with context %}{% endwith %}
+        {% if methods %}
+        <h3>Methods at a glance</h3>
+        <dl class="api-member-index">
+        {% for member in methods %}
+          <dt><a href="#{{ member.path }}"><code>{{ member.name }}()</code></a></dt>
+          <dd>{{ member.docstring.value.split('\n')[0] if member.docstring else '' }}</dd>
+        {% endfor %}
+        </dl>
+        {% endif %}
+      {% elif label == 'Constructor' %}
+        {% with docstring_sections = constructor_sections %}{% include 'docstring.html.jinja' with context %}{% endwith %}
+      {% elif label == 'Attributes' %}
+        {% include 'api/class_attributes.html.jinja' with context %}
+      {% elif label == 'Methods' %}
+        {% include 'api/class_methods.html.jinja' with context %}
+      {% else %}
+        {% with docstring_sections = notes %}{% include 'docstring.html.jinja' with context %}{% endwith %}
+      {% endif %}
+{% endcall %}
+{% endif %}
+{% endblock contents %}

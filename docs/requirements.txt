@@ -1,0 +1,11 @@
+mkdocs==1.6.1
+mkdocs-material==9.7.7
+mkdocstrings==0.30.1
+mkdocstrings-python==2.0.9
+griffelib==2.3.0
+mkdocs-autorefs==1.4.4
+beautifulsoup4==4.15.0
+numpydoc==1.11.0
+ruff==0.16.10
+nbconvert==7.17.1
+nbformat==5.11.1

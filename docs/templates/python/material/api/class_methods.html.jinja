@@ -1,0 +1,4 @@
+<p class="method-tools"><label>Find a method <input type="search" class="method-filter" placeholder="Method name" aria-label="Filter methods" /></label><button type="button" class="expand-methods">Expand all</button></p>
+{% with root = false, heading_level = heading_level + 1 %}
+  {% for function in methods %}{% include function|get_template with context %}{% endfor %}
+{% endwith %}

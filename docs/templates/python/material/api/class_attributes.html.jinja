@@ -1,0 +1,6 @@
+{% with docstring_sections = attribute_sections %}{% include 'docstring.html.jinja' with context %}{% endwith %}
+{% for attribute in attributes %}
+  {% with root = false, heading_level = [heading_level + 1, 6]|min %}
+    {% include attribute|get_template with context %}
+  {% endwith %}
+{% endfor %}

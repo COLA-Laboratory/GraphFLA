@@ -1,0 +1,74 @@
+source_dir: ../tutorials/datasets
+notebooks:
+  - slug: suzuki
+    title: Suzuki–Miyaura
+    notebook: 04_suzuki_landscape.ipynb
+    data: [suzuki.csv]
+    topic: Chemical reactions
+    variables: Ligand, base and solvent
+    objective: Maximise UV product-area percentage
+    icon: material/flask-outline
+  - slug: flow-semihydrogenation
+    title: Flow semihydrogenation
+    notebook: 05_flow_semihydrogenation_landscape.ipynb
+    data: [flow_semihydrogenation.csv]
+    topic: Electrochemical reactions
+    variables: Concentration, temperature and residence time
+    objective: Maximise the reported integrated index
+    icon: material/pipe-valve
+  - slug: alloy
+    title: W–Re–Os alloys
+    notebook: 06_alloy_landscape.ipynb
+    data: [wreos.csv]
+    topic: Alloy design
+    variables: Tungsten and rhenium fractions, with osmium as the remainder
+    objective: Maximise high-temperature hardness
+    icon: material/atom
+  - slug: perovskite
+    title: Perovskites
+    notebook: 07_perovskite_landscape.ipynb
+    data: [perovskites.csv]
+    topic: Materials design
+    variables: Organic ion, metal and halide
+    objective: Minimise calculated electronic band gap
+    icon: material/diamond-stone
+  - slug: microbiome
+    title: BacPUS
+    notebook: 08_microbiome_landscape.ipynb
+    data: [bacpus.csv]
+    topic: Microbial growth
+    variables: Bacterial strain and polysaccharide
+    objective: Maximise mean growth at 48 hours
+    icon: material/bacteria-outline
+  - slug: cyanimide
+    title: Cyanimide
+    notebook: 09_cyanimide_landscape.ipynb
+    data: [cyanimide.csv]
+    topic: Enzyme inhibition
+    variables: Amine and carboxylic-acid building blocks
+    objective: Maximise mUSP18 inhibition
+    icon: material/molecule
+  - slug: drug-combination
+    title: NCI-ALMANAC
+    notebook: 10_drug_combination_landscape.ipynb
+    data: [almanac.csv, almanac_doses.csv]
+    topic: Drug combinations
+    variables: Partner drug and two dose indices
+    objective: Minimise percent growth in a fixed cell-line context
+    icon: material/pill
+  - slug: neural-architecture
+    title: NAS-Bench-201
+    notebook: 11_neural_architecture_landscape.ipynb
+    data: [nasbench201.csv]
+    topic: Neural architecture search
+    variables: Operations on six architecture edges
+    objective: Maximise validation accuracy for a fixed training seed
+    icon: material/graph-outline
+  - slug: software-configuration
+    title: LLVM
+    notebook: 12_software_configuration_landscape.ipynb
+    data: [llvm.csv]
+    topic: Software configuration
+    variables: Ten Boolean compiler options
+    objective: Minimise measured compilation time
+    icon: material/code-braces

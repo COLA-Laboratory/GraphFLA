@@ -1,0 +1,27 @@
+{% extends 'markdown/index.md.j2' %}
+
+{% block markdowncell scoped %}
+{{ super() }}
+{% if loop.first %}
+[Download notebook]({{ resources.notebook_download }}){ .md-button }
+[Notebook + data]({{ resources.bundle_download }}){ .md-button }
+
+Extract the notebook and its `data/` folder together before running the examples.
+
+{% endif %}
+{% endblock markdowncell %}
+
+{% block output_group %}
+
+<div class="tutorial-output" markdown="1">
+<p class="tutorial-output-label">Output</p>
+
+{{ super() }}
+
+</div>
+
+{% endblock output_group %}
+
+{% block data_html scoped %}
+{{ output.data['text/html'] | notebook_html }}
+{% endblock data_html %}

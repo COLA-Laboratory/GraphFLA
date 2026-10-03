@@ -1,0 +1,47 @@
+/* Shared skin renderer. Each skin supplies tokens, never page-specific rules. */
+.md-typeset :is(.api-parameters, .api-other-parameters, .api-attributes, .api-raises) {
+  --api-section-ink: var(--api-input-ink);
+  --api-section-tint: var(--api-input-tint);
+  --api-section-edge: var(--api-input-edge);
+  --api-name-ink: var(--api-input-name-ink);
+  --api-name-fill: var(--api-input-name-fill);
+}
+.md-typeset .api-returns {
+  --api-section-ink: var(--api-output-ink);
+  --api-section-tint: var(--api-output-tint);
+  --api-section-edge: var(--api-output-edge);
+  --api-name-ink: var(--api-output-name-ink);
+  --api-name-fill: var(--api-output-name-fill);
+}
+.md-typeset :is(.api-parameters, .api-other-parameters, .api-attributes, .api-raises, .api-returns) {
+  border-color: var(--api-section-edge);
+}
+.md-typeset :is(.api-parameters, .api-other-parameters, .api-attributes, .api-raises, .api-returns) > .admonition-title {
+  color: var(--api-section-ink);
+  background: var(--api-section-tint);
+  border-bottom-color: var(--api-section-edge);
+  box-shadow: none;
+}
+.md-typeset :is(.api-parameters, .api-other-parameters, .api-attributes, .api-raises, .api-returns) dt {
+  border-top-color: var(--api-section-edge);
+}
+.md-typeset :is(.api-parameters, .api-other-parameters, .api-attributes, .api-raises, .api-returns) dt > code {
+  color: var(--api-name-ink);
+  background: var(--api-name-fill);
+  box-shadow: 0 0 0 .16em var(--api-name-fill);
+  border-radius: .12em;
+  font-weight: 700;
+}
+.md-typeset :is(.api-parameters, .api-other-parameters, .api-attributes, .api-raises, .api-returns) dt :is(.api-field-type, .field-type, em) {
+  color: var(--api-type-ink);
+}
+.md-typeset .api-field-type { margin-inline-start: .35em; }
+.md-typeset .api-signature {
+  border-color: var(--api-input-edge);
+  border-inline-start-color: var(--api-input-ink);
+  background: linear-gradient(110deg, var(--api-input-tint), var(--api-signature-fill) 65%);
+}
+.md-typeset .api-signature pre > code { background: transparent; }
+.md-typeset .method-detail > summary code { color: var(--api-input-ink); font-weight: 700; }
+.md-typeset .method-detail[open] { border-color: var(--api-input-edge); }
+.md-typeset .method-detail[open] > summary { background: var(--api-input-tint); border-bottom-color: var(--api-input-edge); }

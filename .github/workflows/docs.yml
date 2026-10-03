@@ -1,0 +1,23 @@
+name: Documentation infrastructure
+on:
+  pull_request:
+    paths: ['docs/**', 'tutorials/datasets/**', 'graphfla/**', '.github/workflows/docs.yml']
+  push:
+    branches: [main]
+    paths: ['docs/**', 'tutorials/datasets/**', 'graphfla/**', '.github/workflows/docs.yml']
+jobs:
+  docs:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+          cache: pip
+          cache-dependency-path: docs/requirements.txt
+      - run: python -m pip install -r docs/requirements.txt
+      - run: python docs/manage.py check
+      - uses: actions/upload-artifact@v4
+        with:
+          name: documentation-preview
+          path: docs/.build/site

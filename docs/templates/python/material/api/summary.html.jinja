@@ -1,0 +1,12 @@
+{% if layout.summary %}
+<div class="api-function-summary">
+  {{ layout.summary|api_markup(html_id)|convert_markdown(heading_level, html_id, autoref_hook=autoref_hook) }}
+</div>
+{% endif %}
+{% if layout.related %}
+<div class="api-function-related">
+  {% with docstring_sections = layout.related %}{% include 'docstring.html.jinja' with context %}{% endwith %}
+</div>
+{% endif %}
+{{ layout.notices|api_markup(html_id)|convert_markdown(heading_level, html_id, autoref_hook=autoref_hook) }}
+{% with docstring_sections = layout.deprecated %}{% include 'docstring.html.jinja' with context %}{% endwith %}
