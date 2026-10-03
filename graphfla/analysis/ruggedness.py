@@ -180,7 +180,7 @@ def r_s_ratio(landscape) -> float:
 
     See Also
     --------
-    higher_order_epistasis : Variance explained by interactions up to an order.
+    walsh_hadamard : Coefficients and variance explained through each order.
 
     Notes
     -----

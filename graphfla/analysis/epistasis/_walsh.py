@@ -214,7 +214,6 @@ def _analyze(
     max_iter=10000,
     tol=1e-4,
     n_jobs=1,
-    require_coefficients=True,
 ):
     """Build once, fit each order once, and keep the final coefficient vector."""
     landscape._check_built()
@@ -232,7 +231,7 @@ def _analyze(
             f"(n_samples={n_samples}, n_terms={n_terms}), exceeding "
             f"max_cells={max_cells:g}. Reduce max_order or increase max_cells."
         )
-    if require_coefficients and method == "ols" and n_terms > n_samples:
+    if method == "ols" and n_terms > n_samples:
         _raise_rank(n_samples, n_terms)
     splits = None
     if method == "lasso" and alpha == "cv" and n_terms > 1:
@@ -288,7 +287,7 @@ def _analyze(
                 fit_target,
                 rcond=np.finfo(float).eps * max(n_samples, width),
             )
-            if require_coefficients and width == n_terms and rank != n_terms:
+            if width == n_terms and rank != n_terms:
                 _raise_rank(n_samples, n_terms, rank)
             residual = fit_target - np.einsum("ij,j->i", fit_design[:, :width], beta)
             beta[0] += center
@@ -312,11 +311,7 @@ def _analyze(
 
     beta, rank, chosen_alpha, _ = fits[n_terms]
     identifiable = bool(rank == n_terms) if method == "ols" else None
-    fractions = (
-        _variance_fractions(beta, arities, order)
-        if identifiable is not False
-        else np.full(order + 1, np.nan)
-    )
+    fractions = _variance_fractions(beta, arities, order)
     degrees = np.fromiter((len(t) for t in terms), dtype=int, count=n_terms)
     rows = []
     previous = 0.0 if sst else np.nan
@@ -378,33 +373,31 @@ def _analyze(
         for p, a in zip(positions, alleles)
     }
     info.update(position_labels=positions_map, reference=reference)
-    coefficients = None
-    if require_coefficients:
-        with np.errstate(over="ignore", invalid="ignore"):
-            values = beta * scale
-        if not np.isfinite(values).all():
-            raise ValueError("Coefficients exceed the float64 range; rescale fitness.")
-        labels = [_allele_labels(a) for a in alleles]
-        coef_rows = []
-        for term, value in zip(terms, values):
-            label = (
-                "-".join(
-                    f"{labels[j][0]}_{positions[j]}_{labels[j][a]}" for j, a in term
-                )
-                or "WT"
+    with np.errstate(over="ignore", invalid="ignore"):
+        values = beta * scale
+    if not np.isfinite(values).all():
+        raise ValueError("Coefficients exceed the float64 range; rescale fitness.")
+    labels = [_allele_labels(a) for a in alleles]
+    coef_rows = []
+    for term, value in zip(terms, values):
+        label = (
+            "-".join(
+                f"{labels[j][0]}_{positions[j]}_{labels[j][a]}" for j, a in term
             )
-            coef_rows.append(
-                (len(term), tuple(positions[j] for j, _ in term), label, value)
-            )
-        coefficients = pd.DataFrame(
-            coef_rows, columns=["order", "positions", "term", "coefficient"]
+            or "WT"
         )
-        coefficients = coefficients.sort_values(
-            ["order", "term"], kind="stable"
-        ).reset_index(drop=True)
-        coefficients.attrs.update(
-            fit_info=info.copy(), position_labels=positions_map, reference=reference
+        coef_rows.append(
+            (len(term), tuple(positions[j] for j, _ in term), label, value)
         )
+    coefficients = pd.DataFrame(
+        coef_rows, columns=["order", "positions", "term", "coefficient"]
+    )
+    coefficients = coefficients.sort_values(
+        ["order", "term"], kind="stable"
+    ).reset_index(drop=True)
+    coefficients.attrs.update(
+        fit_info=info.copy(), position_labels=positions_map, reference=reference
+    )
     summary.attrs["fit_info"] = info.copy()
     return Bunch(coefficients=coefficients, order_summary=summary, fit_info=info)
 

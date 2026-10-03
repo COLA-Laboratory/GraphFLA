@@ -1,5 +1,11 @@
 # Integrated epistasis analysis: performance and verification
 
+Historical measurements at `63b9398`. The subsequent API cleanup removes
+`higher_order_epistasis`, including its benchmark and profile entry. Access
+`result.order_summary` directly; the measured coefficients and nested-order
+calculation remain available through `walsh_hadamard`. The counts and wrapper
+timings below describe the measured revision, not the current API inventory.
+
 2026-10-03. `walsh_hadamard` now returns coefficients, nested-order scores and
 the final model's order spectrum together. `higher_order_epistasis(result)`
 extracts the existing summary without fitting. See the

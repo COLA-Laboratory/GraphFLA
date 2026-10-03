@@ -15,7 +15,6 @@ def prepare_call(landscape, method):
     if method in {
         "gamma",
         "gamma_star",
-        "higher_order_epistasis",
         "global_idiosyncratic_index",
         "profile",
     }:

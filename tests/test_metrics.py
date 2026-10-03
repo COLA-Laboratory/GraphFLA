@@ -24,7 +24,7 @@ from graphfla.analysis import (
     autocorrelation,
     fdc,
     neighbor_fitness_correlation,
-    higher_order_epistasis,
+    walsh_hadamard,
     fitness_distribution,
     neutrality,
     global_optima_accessibility,
@@ -147,11 +147,11 @@ def test_neighbor_fit_corr_additive_is_one():
 # ----------------------------------------------------------------------
 
 
-def test_higher_order_epistasis_additive_order1_is_one():
+def test_walsh_hadamard_additive_order1_is_one():
     # Additive landscape is fully explained by main (order-1) effects.
-    assert higher_order_epistasis(onemax(4), max_order=1).r2.iloc[-1] == pytest.approx(1.0, abs=1e-6)
+    assert walsh_hadamard(onemax(4), max_order=1).order_summary.r2.iloc[-1] == pytest.approx(1.0, abs=1e-6)
     # HoC is not explainable by order-1 alone.
-    assert higher_order_epistasis(hoc_landscape(4, seed=1), max_order=1).r2.iloc[-1] < 0.99
+    assert walsh_hadamard(hoc_landscape(4, seed=1), max_order=1).order_summary.r2.iloc[-1] < 0.99
 
 
 # ----------------------------------------------------------------------

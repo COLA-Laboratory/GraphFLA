@@ -1,6 +1,6 @@
 """Epistasis analysis for fitness landscapes.
 
-Split across motifs / gamma / idiosyncrasy / higher_order / walsh_hadamard
+Split across motifs / gamma / idiosyncrasy / walsh_hadamard
 submodules; the public functions are re-exported here.
 """
 
@@ -17,7 +17,6 @@ from .idiosyncrasy import (
     diminishing_returns_index,
     increasing_costs_index,
 )
-from .higher_order import higher_order_epistasis
 from .walsh_hadamard import walsh_hadamard
 
 __all__ = [
@@ -31,6 +30,5 @@ __all__ = [
     "global_idiosyncratic_index",
     "diminishing_returns_index",
     "increasing_costs_index",
-    "higher_order_epistasis",
     "walsh_hadamard",
 ]
