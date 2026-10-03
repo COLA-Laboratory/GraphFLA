@@ -1,5 +1,7 @@
 """Integrated Walsh-Hadamard decomposition and order attribution."""
 
+from sklearn.utils import Bunch
+
 from ._walsh import _analyze
 
 
@@ -16,8 +18,8 @@ def walsh_hadamard(
     max_iter=10000,
     tol=1e-4,
     n_jobs=1,
-):
-    r"""Fit W-H coefficients and summarize contributions through each order.
+) -> Bunch:
+    r"""Return fitted Walsh-Hadamard coefficients and contributions by order.
 
     Use the multistate Walsh-Hadamard representation of Faure et al. [1]_.
     Fit terms through ``max_order`` by ordinary least squares or explicit
@@ -63,15 +65,14 @@ def walsh_hadamard(
         Number of shuffled folds when ``method="lasso", alpha="cv"``.
         Must be between 2 and the number of retained observations. The selected
         model is refitted on all observations; no held-out score is returned.
-    random_state : int, RandomState instance or None, default=0
+    random_state : int, numpy.random.RandomState or None, default=0
         Controls shuffled cross-validation folds. Pass an integer for
         reproducible splits. Used only for cross-validated Lasso.
     max_iter : int, default=10000
         Maximum coordinate-descent iterations for Lasso.
     tol : float, default=1e-4
         Positive convergence tolerance for Lasso.
-
-    n_jobs : int, default=1
+    n_jobs : int or None, default=1
         Number of parallel cross-validation jobs for Lasso. ``-1`` uses all
         available processors. Does not parallelize the sequence of orders.
 
@@ -116,7 +117,7 @@ def walsh_hadamard(
 
     Raises
     ------
-    RuntimeError
+    graphfla.exceptions.NotBuiltError
         If the landscape has not been built.
     ValueError
         If inputs or parameters are invalid, the design exceeds ``max_cells``,

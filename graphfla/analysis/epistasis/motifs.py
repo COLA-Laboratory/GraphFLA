@@ -198,11 +198,28 @@ def _calculate_pos_neg_epistasis_igraph(squares_with_roles):
 
 @dataclass(frozen=True)
 class EpistasisClassification:
-    """Proportions of the five epistasis types among 4-node motifs.
+    r"""Proportions of five epistasis types among directed four-node motifs.
 
-    ``magnitude`` + ``sign`` + ``reciprocal_sign`` partition the magnitude/sign
-    group (they sum to 1 when any motifs are found); ``positive`` and
-    ``negative`` are a separate decomposition of the same motifs.
+    Attributes
+    ----------
+    magnitude : float
+        Proportion classified as magnitude epistasis.
+    sign : float
+        Proportion classified as sign epistasis.
+    reciprocal_sign : float
+        Proportion classified as reciprocal-sign epistasis.
+    positive : float
+        Proportion classified as positive epistasis.
+    negative : float
+        Proportion classified as negative epistasis.
+
+    See Also
+    --------
+    classify_epistasis : Classification definitions and motif population.
+
+    Notes
+    -----
+    Use named attributes or ``dataclasses.asdict(result)`` to extract values.
     """
 
     magnitude: float
@@ -212,9 +229,10 @@ class EpistasisClassification:
     negative: float
 
 
-def classify_epistasis(landscape, sample_cut_prob="auto", seed=None, time_budget=15.0):
-    """
-    Calculates proportions of five epistasis types using 4-node motifs in an igraph graph.
+def classify_epistasis(
+    landscape, sample_cut_prob="auto", seed=None, time_budget=15.0
+) -> EpistasisClassification:
+    r"""Return proportions of five epistasis types among directed four-node motifs.
 
     Determines magnitude, sign, and reciprocal sign epistasis based on counts/estimates
     of motifs 19, 52, 66. Determines positive and negative epistasis by analyzing
@@ -225,33 +243,33 @@ def classify_epistasis(landscape, sample_cut_prob="auto", seed=None, time_budget
     landscape : Landscape
         The fitness landscape object, containing landscape.graph as an igraph.Graph
         with a "fitness" vertex attribute.
-    sample_cut_prob : {"auto"} or float, optional
+    sample_cut_prob : {"auto"}, float or None, default="auto"
         Controls the 4-motif search. ``"auto"`` (default) picks a pruning
-        probability from a runtime ladder so the call fits ``time_budget`` even
-        on large landscapes (small ones resolve to exact). ``0`` or ``None``
+        probability from a runtime ladder targeting ``time_budget``
+        (small landscapes resolve to exact). This is not a hard time limit. ``0`` or ``None``
         forces exact enumeration; a float in ``(0, 1]`` sets the igraph pruning
         probability directly (higher -> faster, less accurate).
-    seed : int, optional
+    seed : int or None, default=None
         Seed for the sampling RNG, making approximate results reproducible.
-    time_budget : float, optional
-        Target wall-clock seconds for ``sample_cut_prob="auto"``. Default 15.
+    time_budget : float, default=15.0
+        Target wall-clock seconds for ``sample_cut_prob="auto"``.
 
     Returns
     -------
-    EpistasisClassification
+    result : EpistasisClassification
         A dataclass with proportion fields:
         - ``magnitude``: The magnitude of the combined fitness effect of mutations
-        differs from the sum of their individual effects, but the direction relative to
-        single mutants or wild-type may not change sign.
+          differs from the sum of their individual effects, but the direction relative to
+          single mutants or wild-type may not change sign.
         - ``sign``: The sign of the fitness effect of at least one mutation changes depending
-        on the presence of other mutations. For example, a mutation beneficial on its own becomes
-        deleterious when combined with another specific mutation.
+          on the presence of other mutations. For example, a mutation beneficial on its own becomes
+          deleterious when combined with another specific mutation.
         - ``reciprocal_sign``: A specific form of sign epistasis where the sign of the effect
-        of *each* mutation depends on the allele state at the other locus.
+          of *each* mutation depends on the allele state at the other locus.
         - ``positive``: The combined fitness effect of mutations is greater than the sum of
-        their individual effects, often referred to as synergistic epistasis.
+          their individual effects, often referred to as synergistic epistasis.
         - ``negative``: The combined fitness effect of mutations is less than the sum of their
-        individual effects, often referred to as antagonistic epistasis.
+          individual effects, often referred to as antagonistic epistasis.
 
         Fields are zero if relevant counts/instances are zero or cannot be processed.
 
@@ -269,6 +287,15 @@ def classify_epistasis(landscape, sample_cut_prob="auto", seed=None, time_budget
     The relation ``gamma_star = 1 - sign - 2*reciprocal_sign`` requires exact
     counts of the same variable squares with no neutral effects; it is not an
     identity for arbitrarily filtered or sampled graphs. See :func:`gamma_star`.
+
+    Examples
+    --------
+    >>> from graphfla.landscape import BooleanLandscape
+    >>> from graphfla.analysis import classify_epistasis
+    >>> landscape = BooleanLandscape().build_from_data(
+    ...     ["00", "01", "10", "11"], [0, 1, 2, 4], verbose=False)
+    >>> classify_epistasis(landscape, sample_cut_prob=0).magnitude
+    1.0
     """
     motif_size = 4
     square_indices = {19, 52, 66}  # set for O(1) membership in callback
@@ -380,10 +407,22 @@ def classify_epistasis(landscape, sample_cut_prob="auto", seed=None, time_budget
 
 @dataclass(frozen=True)
 class ExtradimensionalBypass:
-    """Summary of extradimensional bypasses around reciprocal-sign-epistasis motifs.
+    r"""Summary of bypasses around reciprocal-sign epistasis motifs.
 
-    ``bypass_proportion`` is ``motifs_with_bypass / total_motifs``;
-    ``average_bypass_length`` is NaN when no bypass exists.
+    Attributes
+    ----------
+    bypass_proportion : float
+        Fraction of analyzed motifs with a bypass.
+    average_bypass_length : float
+        Mean bypass length among motifs with a bypass; NaN if none exist.
+    total_motifs : int
+        Number of analyzed reciprocal-sign motifs.
+    motifs_with_bypass : int
+        Number of analyzed motifs with a bypass.
+
+    See Also
+    --------
+    extradimensional_bypass : Bypass definition and sampling controls.
     """
 
     bypass_proportion: float
@@ -392,9 +431,10 @@ class ExtradimensionalBypass:
     motifs_with_bypass: int
 
 
-def extradimensional_bypass(landscape, sample_cut_prob="auto", seed=None, time_budget=15.0):
-    """
-    Analyzes extradimensional bypasses in reciprocal sign epistasis motifs.
+def extradimensional_bypass(
+    landscape, sample_cut_prob="auto", seed=None, time_budget=15.0
+) -> ExtradimensionalBypass:
+    r"""Return a summary of bypasses around reciprocal-sign epistasis motifs.
 
     For each motif representing reciprocal sign epistasis (type 19), this function
     identifies whether accessible evolutionary paths exist that bypass the direct
@@ -407,20 +447,20 @@ def extradimensional_bypass(landscape, sample_cut_prob="auto", seed=None, time_b
     landscape : Landscape
         The fitness landscape object, containing landscape.graph as an igraph.Graph
         with a "fitness" vertex attribute.
-    sample_cut_prob : {"auto"} or float, optional
+    sample_cut_prob : {"auto"}, float or None, default="auto"
         Controls the 4-motif search. ``"auto"`` (default) picks a pruning
-        probability from a runtime ladder so the call fits ``time_budget`` even
-        on large landscapes (small ones resolve to exact). ``0`` or ``None``
+        probability from a runtime ladder targeting ``time_budget``
+        (small landscapes resolve to exact). This is not a hard time limit. ``0`` or ``None``
         forces exact enumeration; a float in ``(0, 1]`` sets the igraph pruning
         probability directly (higher -> faster, less accurate).
-    seed : int, optional
+    seed : int or None, default=None
         Seed for the sampling RNG, making approximate results reproducible.
-    time_budget : float, optional
-        Target wall-clock seconds for ``sample_cut_prob="auto"``. Default 15.
+    time_budget : float, default=15.0
+        Target wall-clock seconds for ``sample_cut_prob="auto"``.
 
     Returns
     -------
-    ExtradimensionalBypass
+    result : ExtradimensionalBypass
         A dataclass with attributes:
 
         - ``bypass_proportion`` : proportion of reciprocal-sign-epistasis motifs
@@ -443,6 +483,15 @@ def extradimensional_bypass(landscape, sample_cut_prob="auto", seed=None, time_b
     have higher fitness than both single mutants (aB, Ab). This creates a fitness valley
     that prevents direct evolutionary access between ab and AB. Extradimensional bypasses
     are indirect paths through the broader fitness landscape that circumvent this valley.
+
+    Examples
+    --------
+    >>> from graphfla.landscape import BooleanLandscape
+    >>> from graphfla.analysis import extradimensional_bypass
+    >>> landscape = BooleanLandscape().build_from_data(
+    ...     ["00", "01", "10", "11"], [0, 1, 2, 4], verbose=False)
+    >>> extradimensional_bypass(landscape, sample_cut_prob=0).bypass_proportion
+    0.0
     """
 
     # --- Validate Input ---

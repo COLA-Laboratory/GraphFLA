@@ -23,7 +23,7 @@ import time
 import warnings
 from contextlib import contextmanager
 from dataclasses import asdict, dataclass, is_dataclass
-from typing import Optional
+from typing import Optional, Union
 
 import numpy as np
 import pandas as pd
@@ -409,39 +409,46 @@ def profile(
     include_structure=False,
     index=None,
     progress=None,
-):
-    """Compute the whole-landscape metric profile.
+) -> Union[pd.Series, pd.DataFrame]:
+    r"""Return a metric profile for one or more landscapes.
 
     Parameters
     ----------
-    landscape : Landscape or sequence of Landscape
+    landscape : Landscape, list of Landscape or tuple of Landscape
         One built landscape -> a ``Series``; a list/tuple -> a ``DataFrame``,
         one row per landscape.
-    groups : str or sequence of str, optional
+    groups : str, sequence of str or None, default=None
         Restrict to these metric groups (one of ``analysis.list_metrics()``'s
         ``group`` values). Mutually exclusive with ``include``.
-    include : str or sequence of str, optional
+    include : str, sequence of str or None, default=None
         Use exactly these metrics (by registry name). Mutually exclusive with
         ``groups``. The legacy EE name is accepted with a FutureWarning;
         its output column is ``evolvability_enhancing_fraction``.
-    exclude : str or sequence of str, optional
+    exclude : str, sequence of str or None, default=None
         Drop these metrics from whatever ``groups`` / ``include`` selected
         (or from the full default). Composes with either.
-    params : dict, optional
+    params : dict or None, default=None
         Per-metric keyword overrides, ``{metric_name: {kwarg: value}}``.
         EE accepts ``fdr`` and ``effect_type``. Legacy ``epsilon`` and
         ``auto_calculate`` options require calling the old function directly.
-    n_jobs, seed, time_budget : optional
-        Shared keywords forwarded to each metric *that accepts them*.
-    on_error : {"warn", "raise", "ignore"}, default "warn"
+    n_jobs : int or None, default=-1
+        Worker count forwarded to metrics that accept it. ``-1`` uses all
+        available CPUs; per-metric ``params`` take precedence.
+    seed : int or None, default=None
+        Random seed forwarded to metrics that accept it. An integer makes
+        their sampling reproducible; per-metric ``params`` take precedence.
+    time_budget : float, default=15.0
+        Target seconds for automatic motif sampling. This is not a timeout
+        for the full profile; per-metric ``params`` take precedence.
+    on_error : {"warn", "raise", "ignore"}, default="warn"
         How to handle a metric that raises -- record NaN (warn/ignore) or
         propagate.
-    include_structure : bool, default False
+    include_structure : bool, default=False
         Prepend the numeric fields of :meth:`Landscape.describe` as
         ``structure.*`` columns.
-    index : optional
+    index : array-like or None, default=None
         Index for the returned ``DataFrame`` when ``landscape`` is a sequence.
-    progress : bool, optional
+    progress : bool or None, default=None
         Show a live progress display on stderr -- a bar with the current metric
         and ``n/total``, one line per finished metric with its wall-time, and a
         closing summary -- muting the landscape's own verbose chatter while it
@@ -451,9 +458,19 @@ def profile(
 
     Returns
     -------
-    pandas.Series or pandas.DataFrame
-        Metric values (a flat, all-float index of metric names; structured
-        metrics flatten to dotted columns such as ``epistasis.magnitude``).
+    values : pandas.Series or pandas.DataFrame
+        Float metric values indexed by name for one landscape, or one row per
+        landscape for a list or tuple. Structured metrics expand into dotted
+        names such as ``epistasis.magnitude``. Undefined or failed values are NaN.
+
+    Examples
+    --------
+    >>> from graphfla.landscape import BooleanLandscape
+    >>> from graphfla.analysis import profile
+    >>> landscape = BooleanLandscape().build_from_data(
+    ...     ["00", "01", "10", "11"], [0, 1, 2, 4], verbose=False)
+    >>> profile(landscape, include=["local_optima_ratio"], progress=False).to_dict()
+    {'local_optima_ratio': 0.25}
     """
     if on_error not in ("warn", "raise", "ignore"):
         raise ValueError("on_error must be 'warn', 'raise', or 'ignore'")
@@ -509,12 +526,28 @@ def profile(
     return pd.Series(out, dtype=float)
 
 
-def list_metrics():
-    """Return the default metric portfolio as a DataFrame (for discoverability).
+def list_metrics() -> pd.DataFrame:
+    r"""Return metadata for the metrics available through profile.
 
-    Columns: ``group``, ``kind`` (scalar / struct), the output ``columns`` each
-    metric contributes, and which shared kwargs (``n_jobs`` / ``seed`` /
-    ``time_budget``) it accepts.
+    Returns
+    -------
+    metrics : pandas.DataFrame
+        One row per registered metric, indexed by its public function name.
+        Columns are ``group``, ``kind`` ("scalar" or "struct"), ``columns``
+        (comma-separated profile output names), and the boolean flags ``n_jobs``,
+        ``seed`` and ``time_budget`` indicating accepted shared parameters.
+        Functions requiring a mutation, position or target, and variable-length
+        result tables, are not part of this registry.
+
+    See Also
+    --------
+    profile : Compute the selected metrics for one or more landscapes.
+
+    Examples
+    --------
+    >>> from graphfla.analysis import list_metrics
+    >>> list_metrics().loc["neutrality", "group"]
+    'robustness'
     """
     rows = []
     for m in _REGISTRY:

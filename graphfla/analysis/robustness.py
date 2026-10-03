@@ -12,6 +12,21 @@ import logging
 
 logger = logging.getLogger(__name__)
 
+_MUTATION_EFFECT_COLUMNS = [
+    "mutation_from", "mutation_to", "median_abs_effect", "mean_effect",
+    "p_value", "significant", "position",
+]
+
+
+def _mutation_effect_frame(rows):
+    """Keep the mutation summary schema and numeric dtypes on empty results."""
+    return pd.DataFrame(rows, columns=_MUTATION_EFFECT_COLUMNS).astype({
+        "median_abs_effect": float,
+        "mean_effect": float,
+        "p_value": float,
+        "significant": bool,
+    })
+
 
 def _row_group_ids(M):
     """Dense 0-based id per distinct row of a small-int matrix: fast int64 mixed-
@@ -86,6 +101,7 @@ def _mutation_effects_for_position(X, f_arr, f_std, position, test_type):
             "mean_effect": mean_effect,
             "p_value": p_value,
             "significant": significant,
+            "position": position,
         }))
     return results
 
@@ -114,7 +130,7 @@ def _ee_fraction(statistics, effect_type="all"):
 def evolvability_enhancing_fraction(
     landscape, *, fdr=0.01, effect_type="all"
 ) -> float:
-    """Return the fraction of evolvability-enhancing directed mutations.
+    r"""Return the fraction of evolvability-enhancing directed mutations.
 
     A mutation is evolvability-enhancing (EE) when the increase in mean
     non-focal neighbor fitness significantly exceeds the larger of zero and
@@ -198,7 +214,7 @@ def evolvability_enhancing_fraction(
 
 
 def evolvability_effects(landscape, *, fdr=0.01) -> pd.DataFrame:
-    """Return EE statistics for each directed one-site mutation.
+    r"""Return EE statistics for each directed one-site mutation.
 
     Each row represents a change between two configurations in a particular
     background. The reverse change occupies a separate row. Exclude all
@@ -309,8 +325,10 @@ def evolvability_effects(landscape, *, fdr=0.01) -> pd.DataFrame:
     )
 
 
-def evolvability_enhancing_mutations(landscape, epsilon=0, auto_calculate=True):
-    """Return the EE fraction through the deprecated compatibility interface.
+def evolvability_enhancing_mutations(
+    landscape, epsilon=0, auto_calculate=True
+) -> float:
+    r"""Return the EE fraction through the deprecated compatibility interface.
 
     Use :func:`evolvability_enhancing_fraction` for new analyses. This entry
     retains its original parameters and neighbor-cache preparation behavior.
@@ -381,28 +399,36 @@ def evolvability_enhancing_mutations(landscape, epsilon=0, auto_calculate=True):
 
 
 def neutrality(landscape, threshold: float = 0.01) -> float:
-    """
-    Calculate the neutrality index of the landscape using an igraph-based graph.
-    It assesses the proportion of neighbors with fitness values within a given threshold,
-    indicating the presence of neutral areas in the landscape.
+    r"""Return the fraction of neighbor pairs within a fitness-difference threshold.
 
-    When the landscape has a plateau layer (``epsilon > 0``), neutral neighbors
+    When the landscape has retained neutral adjacency, neutral neighbors
     stored during construction are included alongside the graph-based neighbors.
     This ensures that equal-fitness pairs — which have no directed edge — are
     still counted toward the neutrality metric.
 
     Parameters
     ----------
-    landscape : object
-        An object which contains an igraph.Graph in its 'graph' attribute. It is assumed
-        that each vertex of the graph has a 'fitness' attribute.
+    landscape : Landscape
+        Built fitness landscape, including any retained neutral adjacency.
     threshold : float, default=0.01
-        The fitness difference threshold for neighbors to be considered neutral.
+        Maximum absolute fitness difference counted as neutral, in input fitness
+        units. This analysis threshold is independent of construction epsilon.
 
     Returns
     -------
-    neutrality : float
-        The neutrality index, ranging from 0 to 1. A higher value indicates more neutrality.
+    fraction : float
+        Fraction in [0, 1] of represented neighbor pairs satisfying the threshold.
+        Graph and retained neutral neighbors are combined without double-counting
+        an adjacency. Returns NaN if there are no neighbor pairs.
+
+    Examples
+    --------
+    >>> from graphfla.landscape import BooleanLandscape
+    >>> from graphfla.analysis import neutrality
+    >>> landscape = BooleanLandscape().build_from_data(
+    ...     ["00", "01", "10", "11"], [0, 1, 2, 4], verbose=False)
+    >>> neutrality(landscape, threshold=1.0)
+    0.25
     """
     g = landscape.graph
     neutral_nn = getattr(landscape, '_neutral_neighbors', None) or {}
@@ -434,33 +460,47 @@ def neutrality(landscape, threshold: float = 0.01) -> float:
 def single_mutation_effects(
     landscape, position: str, test_type: str = "positive"
 ) -> pd.DataFrame:
-    """
-    Assess the fitness effects of all possible mutations at a single position across all genetic backgrounds.
+    r"""Return fitness-effect summaries for allele pairs at one position.
 
     Parameters
     ----------
     landscape : Landscape
-        The Landscape object containing the data and graph.
+        Built fitness landscape.
 
     position : str
-        The name of the position (variable) to assess mutations for.
+        Configuration-column label from ``landscape.data_types``, not a
+        positional column index.
 
-    test_type : str, default='positive'
+    test_type : {"positive", "negative"}, default="positive"
         The type of significance test to perform. Must be 'positive' or
         'negative', i.e. whether a majority of backgrounds show a fitness
         increase or a decrease under the mutation.
 
     Returns
     -------
-    pd.DataFrame
-        A DataFrame containing mutation pairs, median absolute fitness effect,
-        mean fitness effect, p-values, and significance flags.
+    effects : pandas.DataFrame
+        One row per unordered pair of observed alleles, oriented from the earlier
+        to the later sorted allele. Columns are ``mutation_from``, ``mutation_to``,
+        ``median_abs_effect`` (median absolute effect divided by landscape sample
+        SD), ``mean_effect`` (signed, in fitness units), ``p_value`` (one-sided
+        binomial test), ``significant`` (p < 0.05), and ``position`` (column label).
+        An empty result retains these columns; missing matched backgrounds give
+        NaN statistics and ``significant=False``.
 
     Notes
     -----
     Effects are signed as ``mutation_to`` minus ``mutation_from`` in each shared
     genetic background, the same convention as
     :func:`~graphfla.analysis.fitness_effect_distribution`.
+
+    Examples
+    --------
+    >>> from graphfla.landscape import BooleanLandscape
+    >>> from graphfla.analysis import single_mutation_effects
+    >>> landscape = BooleanLandscape().build_from_data(
+    ...     ["00", "01", "10", "11"], [0, 1, 2, 4], verbose=False)
+    >>> single_mutation_effects(landscape, "bit_0").mean_effect.tolist()
+    [2.5]
     """
 
     if test_type not in ("positive", "negative"):
@@ -474,37 +514,45 @@ def single_mutation_effects(
     results = _mutation_effects_for_position(
         X, f.to_numpy(), f.std(), position, test_type
     )
-    return pd.DataFrame(results)
+    return _mutation_effect_frame(results)
 
 
 def all_mutation_effects(
     landscape, test_type: str = "positive"
 ) -> pd.DataFrame:
-    """
-    Assess the fitness effects of all possible mutations across all positions in the landscape.
+    r"""Return fitness-effect summaries for allele pairs at every position.
 
     Parameters
     ----------
     landscape : Landscape
-        The Landscape object containing the data and graph.
+        Built fitness landscape.
 
-    test_type : str, default='positive'
+    test_type : {"positive", "negative"}, default="positive"
         The type of significance test to perform. Must be 'positive' or
         'negative', i.e. whether a majority of backgrounds show a fitness
         increase or a decrease under the mutation.
 
     Returns
     -------
-    pd.DataFrame
-        A DataFrame containing, for each position and mutation pair, the median
-        absolute fitness effect, mean fitness effect, p-values, and significance
-        flags.
+    effects : pandas.DataFrame
+        One row per allele pair per variable position, in configuration-column
+        order, with a RangeIndex. Columns and pair orientation are the same as
+        :func:`single_mutation_effects`, including ``position``. An empty result
+        retains the same schema.
 
     Notes
     -----
-    Effects are signed as ``mutation_to`` minus ``mutation_from`` in each shared
-    genetic background, the same convention as
-    :func:`~graphfla.analysis.fitness_effect_distribution`.
+    Effects use the same signed target-minus-source convention and tests as
+    :func:`single_mutation_effects`; optimization direction does not reverse them.
+
+    Examples
+    --------
+    >>> from graphfla.landscape import BooleanLandscape
+    >>> from graphfla.analysis import all_mutation_effects
+    >>> landscape = BooleanLandscape().build_from_data(
+    ...     ["00", "01", "10", "11"], [0, 1, 2, 4], verbose=False)
+    >>> all_mutation_effects(landscape)[["position", "mean_effect"]].to_dict("list")
+    {'position': ['bit_0', 'bit_1'], 'mean_effect': [2.5, 1.5]}
     """
 
     if test_type not in ("positive", "negative"):
@@ -518,10 +566,9 @@ def all_mutation_effects(
     # Compute the shared data once and run positions serially: each position's
     # vectorised computation is cheap, and the old per-position joblib fan-out
     # pickled the whole landscape per worker (net-negative; see ANALYSIS bench).
-    frames = [
-        pd.DataFrame(
-            _mutation_effects_for_position(X, f_arr, f_std, position, test_type)
-        )
+    results = [
+        row
         for position in X.columns
+        for row in _mutation_effects_for_position(X, f_arr, f_std, position, test_type)
     ]
-    return pd.concat(frames, ignore_index=True)
+    return _mutation_effect_frame(results)

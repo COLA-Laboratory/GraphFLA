@@ -5,6 +5,35 @@ returned statistic are marked, because downstream analyses depend on them.
 
 ## Unreleased
 
+### Analysis API consistency
+
+- All public analysis functions now have explicit return annotations and
+  consistent NumPy-style parameter and result documentation. Existing metric
+  names, positional arguments, defaults and literature definitions remain.
+  Examples use small, self-contained landscapes and explicit random seeds.
+- `idiosyncratic_index` accepts keyword-only `seed=None`, matching the global
+  index's local RandomState convention. Existing calls retain their behavior.
+- `single_mutation_effects` and `all_mutation_effects` append a `position`
+  column identifying each row's configuration variable. The original six
+  columns retain their order and values. Both functions preserve their column
+  schema and numeric dtypes when the result is empty.
+- `mean_distance_to_global_optimum` now honors an explicit `distance_func`
+  even when default distances are cached. Calls without a custom function
+  continue to reuse the cache; custom calculations do not overwrite it.
+- Corrected descriptions of fitness-distribution units, gradient normalization,
+  signed fitness-flattening trends, plateau counts and path sampling. These
+  documentation corrections do not change metric calculations.
+
+### Changed — pooled fitness trends
+
+- The completed DRI/ICI fixes are integrated: `diminishing_returns_index` and
+  `increasing_costs_index` follow the pooled-edge definition in Huang et al.
+  (2025), Appendix C.3.2, instead of correlating node-level mean effects.
+  Returned values can therefore change. Minimization uses negated fitness;
+  numerical scaling and undefined-result handling are also corrected.
+  Method names, defaults and scalar returns are retained. See
+  `validation/FITNESS_TRENDS_REVIEW.md` for the evidence and scope.
+
 ### Changed — integrated epistasis order analysis
 
 - `walsh_hadamard` now returns a sklearn `Bunch` with `.coefficients`,
