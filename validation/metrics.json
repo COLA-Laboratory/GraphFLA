@@ -94,9 +94,10 @@
       "candidate_study_ids": [
         "Poelwijk2016",
         "PoelwijkSR19",
-        "PhillipsLMDCJCMWD21"
+        "PhillipsLMDCJCMWD21",
+        "Faure2024"
       ],
-      "literature_next_action": "Verify exact basis/normalization and author coefficients before promotion; seek another complete landscape.",
+      "literature_next_action": "Verify Faure Table 1 and pinned author matrices; keep OLS, regularized estimates and author pipeline claims separate.",
       "review_status": "partial; see tests/VALIDATION.md and case records"
     },
     {

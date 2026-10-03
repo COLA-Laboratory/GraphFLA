@@ -5,6 +5,29 @@ returned statistic are marked, because downstream analyses depend on them.
 
 ## Unreleased
 
+### Changed — Walsh-Hadamard coefficients
+
+- `walsh_hadamard` preserves original one-based positions after invariant-site
+  removal and uses real allele labels for all discrete variable types. Reserved
+  label delimiters are escaped; categorical inputs with 47 or more states no
+  longer collide with the internal encoding. Corrected labels may change joins.
+- Default OLS now raises `ValueError` when coefficients cannot be uniquely
+  fitted. Incomplete data remains supported when the chosen design has full
+  column rank. `max_order=0` fits only a constant; the legacy `WT` row denotes
+  the model's uniform product-space mean, not reference fitness.
+- Explicit `method="lasso"` supports a positive `alpha` or `alpha="cv"`, with
+  `cv`, `random_state`, `max_iter` and `tol` controls. The constant is unpenalized
+  and features are not standardized. This differs from the cited author's
+  penalized-constant analysis pipeline; no automatic estimator switching occurs.
+  The four output columns are retained, with fitting/reference metadata in
+  DataFrame attributes. Save attributes separately when exporting to CSV.
+- The dense design is built directly in blocks, with model-size checks before
+  term enumeration. `max_cells` now includes all columns and defaults to `1e7`
+  rather than `1e9`; solver workspace is additional. Dedicated literature tests
+  reproduce Faure et al. (2024) Table 1 and independently check multistate
+  transforms, pinned author matrices and a bounded Lasso procedure. See
+  `validation/WALSH_HADAMARD_REVIEW.md` for evidence and interpretation limits.
+
 ### Validation and performance
 
 - Literature tests now run separately with `python -m validation.tests`, with

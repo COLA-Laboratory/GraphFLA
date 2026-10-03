@@ -19,7 +19,7 @@ import time
 
 REPO = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(REPO))
-from tools._resource_guard import ResourceLimitError, run_guarded
+from tools._resource_guard import ResourceLimitError, run_guarded  # noqa: E402
 
 THREADS = dict.fromkeys(
     [
@@ -31,7 +31,7 @@ THREADS = dict.fromkeys(
     ],
     "1",
 )
-SNAPSHOT_METRICS = {"ee", "gamma", "gamma_star", "r_s_ratio"}
+SNAPSHOT_METRICS = {"ee", "gamma", "gamma_star", "r_s_ratio", "walsh_hadamard"}
 
 
 def worker(args):
@@ -48,9 +48,12 @@ def worker(args):
     module = None
     if args.baseline_kernel:
         spec = importlib.util.spec_from_file_location(
-            "ee_baseline" if args.metric == "ee" else
-            "graphfla.analysis._r_s_baseline" if args.metric == "r_s_ratio" else
-            "graphfla.analysis.epistasis._gamma_baseline", args.baseline_kernel
+            "ee_baseline"
+            if args.metric == "ee"
+            else "graphfla.analysis._r_s_baseline"
+            if args.metric == "r_s_ratio"
+            else "graphfla.analysis.epistasis._gamma_baseline",
+            args.baseline_kernel,
         )
         module = importlib.util.module_from_spec(spec)
         spec.loader.exec_module(module)
@@ -69,6 +72,19 @@ def worker(args):
         calls = {args.metric: lambda: getattr(module, args.metric)(landscape, n_jobs=1)}
     if module is not None and args.metric == "r_s_ratio":
         calls = {args.metric: lambda: module.r_s_ratio(landscape)}
+    if args.metric == "walsh_hadamard":
+        from graphfla.analysis import walsh_hadamard
+        from benchmarks.analysis.walsh_hadamard import fit_options
+
+        options = fit_options(args.walsh_method)
+        if module is not None:
+            calls = {
+                args.metric: lambda: module.walsh_hadamard(
+                    landscape, max_order=2, max_cells=1e6
+                )
+            }
+        else:
+            calls = {args.metric: lambda: walsh_hadamard(landscape, **options)}
     results = {}
     for name, call in calls.items():
         call()  # Untimed warmup; construction is also outside the timer.
@@ -98,7 +114,38 @@ def worker(args):
         arrays["fraction"] = np.asarray(ee.evolvability_enhancing_fraction(landscape))
         np.savez_compressed(args.snapshot, **arrays)
     elif args.snapshot and args.metric in {"gamma", "gamma_star", "r_s_ratio"}:
-        np.savez_compressed(args.snapshot, **{args.metric: np.asarray(calls[args.metric]())})
+        np.savez_compressed(
+            args.snapshot, **{args.metric: np.asarray(calls[args.metric]())}
+        )
+    elif args.snapshot and args.metric == "walsh_hadamard":
+        table = calls[args.metric]()
+        if module is not None and landscape.kind != "boolean":
+            # Legacy labels are artificial factor codes. Decode with the exact
+            # input factorization before comparing all corrected labels/values.
+            data = landscape.get_data()[list(landscape.data_types)]
+            labels = [pd.unique(data[c]) for c in data]
+
+            def decode(term):
+                if term == "WT":
+                    return term
+                parts = []
+                for mutation in term.split("-"):
+                    source, pos, target = mutation.split("_")
+                    states = labels[int(pos) - 1]
+                    parts.append(
+                        f"{states[ord(source) - 49]}_{pos}_{states[ord(target) - 49]}"
+                    )
+                return "-".join(parts)
+
+            table["term"] = table.term.map(decode)
+        table = table.sort_values(["order", "term"])
+        np.savez_compressed(
+            args.snapshot,
+            order=table.order.to_numpy(),
+            positions=np.array([repr(x) for x in table.positions]),
+            term=table.term.to_numpy(dtype=str),
+            coefficient=table.coefficient.to_numpy(),
+        )
     input_digest = hashlib.sha256(landscape.get_data().to_json(orient="split").encode())
     input_digest.update(np.asarray(landscape.graph.vs["fitness"]).tobytes())
     input_digest.update(repr(landscape.graph.get_edgelist()).encode())
@@ -158,11 +205,14 @@ def main():
     parser.add_argument(
         "--baseline-kernel",
         type=Path,
-        help="Trusted local EE, gamma or r/s module; never downloads code",
+        help="Trusted local metric module for a supported snapshot metric; never downloads code",
     )
     parser.add_argument("--worker", action="store_true", help=argparse.SUPPRESS)
     parser.add_argument("--case", help=argparse.SUPPRESS)
     parser.add_argument("--snapshot", type=Path, help=argparse.SUPPRESS)
+    parser.add_argument(
+        "--walsh-method", choices=["ols", "lasso", "lasso_cv"], default="ols"
+    )
     args = parser.parse_args()
     from benchmarks.analysis import METRIC_MODULES
     from benchmarks.analysis._workloads import cases_for_metric
@@ -180,9 +230,17 @@ def main():
             "64..4096 MiB process-tree RSS"
         )
     if args.compare and args.metric not in SNAPSHOT_METRICS:
-        parser.error("Output-equivalence comparison supports ee, gamma, gamma_star and r_s_ratio")
+        parser.error(
+            "Output-equivalence comparison requires a supported snapshot metric"
+        )
     if args.baseline_kernel and args.metric not in SNAPSHOT_METRICS:
-        parser.error("--baseline-kernel applies only to EE, gamma or r/s metrics")
+        parser.error("--baseline-kernel requires a supported snapshot metric")
+    if (
+        args.baseline_kernel
+        and args.metric == "walsh_hadamard"
+        and args.walsh_method != "ols"
+    ):
+        parser.error("The legacy Walsh baseline supports only OLS")
     if args.worker:
         if args.case not in cases_for_metric(args.metric):
             parser.error("Worker case is not registered for the selected metric")
@@ -199,8 +257,12 @@ def main():
     snapshots.mkdir()
     baseline = json.loads(args.compare.read_text()) if args.compare else None
     source = args.baseline_kernel or REPO / (
-        "graphfla/analysis/epistasis/gamma.py" if args.metric in {"gamma", "gamma_star"}
-        else "graphfla/analysis/_roughness.py" if args.metric == "r_s_ratio"
+        "graphfla/analysis/epistasis/gamma.py"
+        if args.metric in {"gamma", "gamma_star"}
+        else "graphfla/analysis/epistasis/walsh_hadamard.py"
+        if args.metric == "walsh_hadamard"
+        else "graphfla/analysis/_roughness.py"
+        if args.metric == "r_s_ratio"
         else "graphfla/analysis/_evolvability.py"
     )
     protocol = [
@@ -209,6 +271,8 @@ def main():
         REPO / "benchmarks/analysis/_shared.py",
         REPO / "tools/_resource_guard.py",
     ]
+    if args.metric == "walsh_hadamard":
+        protocol.append(REPO / "benchmarks/analysis/walsh_hadamard.py")
     protocol_hashes = {
         str(p.relative_to(REPO)): hashlib.sha256(p.read_bytes()).hexdigest()
         for p in protocol
@@ -220,6 +284,7 @@ def main():
     report = {
         "schema_version": 1,
         "metric": args.metric,
+        "walsh_method": args.walsh_method if args.metric == "walsh_hadamard" else None,
         "python": sys.version,
         "platform": platform.platform(),
         "host_id": hashlib.sha256(platform.node().encode()).hexdigest(),
@@ -245,6 +310,7 @@ def main():
             "host_id",
             "thread_environment",
             "metric",
+            "walsh_method",
             "protocol_sha256",
             "processes",
             "repeats",
@@ -273,6 +339,8 @@ def main():
             ]
             if index == 0 and args.metric in SNAPSHOT_METRICS:
                 cmd.extend(["--snapshot", str(snapshot)])
+            if args.metric == "walsh_hadamard":
+                cmd.extend(["--walsh-method", args.walsh_method])
             if args.baseline_kernel:
                 cmd.extend(["--baseline-kernel", str(args.baseline_kernel.resolve())])
             try:

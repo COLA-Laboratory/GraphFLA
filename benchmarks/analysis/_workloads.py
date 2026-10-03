@@ -40,6 +40,11 @@ RS_CASES = [
     "sparse-boolean-12", "long-boolean-72", "ordinal-8x3", "mixed-4x3",
 ]
 
+WALSH_CASES = [
+    "boolean-6", "boolean-10", "categorical-3x3", "categorical-4x4",
+    "sparse-boolean-12", "ordinal-4x3", "mixed-4x3",
+]
+
 
 def cases_for_metric(metric):
     if metric == "ee":
@@ -50,6 +55,8 @@ def cases_for_metric(metric):
         return GAMMA_CASES
     if metric == "r_s_ratio":
         return RS_CASES
+    if metric == "walsh_hadamard":
+        return WALSH_CASES
     return SMALL_CASES
 
 

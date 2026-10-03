@@ -164,3 +164,20 @@ this contract. A different author estimator needs a separate author-result
 case even if its rounded value equals the public result. A data-only test view
 may avoid graph construction for edge-independent metrics, provided every
 observation is retained and the adapter and preprocessing are disclosed.
+
+## Transform coefficients and regularized models
+
+Faure's W-H tests illustrate coefficient-level validation. Compare the entire
+coefficient table aligned by original position and allele, including zeros and
+the constant. Keep normalization, reference states, full-space background
+weights and order truncation explicit. A truncated or incomplete fit is not
+a direct measurement of the full transform. A matching prediction or overall
+R² alone cannot validate individual coefficients.
+
+For regularized estimates, record the objective, feature scaling, intercept
+penalty, alpha grid, fold assignment, seed and refit population. Check analytic
+solutions or optimality conditions as well as an author replay. GraphFLA's
+unpenalized constant differs from Faure's author scripts; the centered complete
+fixture is deliberately a condition where both agree. The paper's full sparse
+model experiment is not claimed as reproduced. See the
+[coefficient-model template](templates/test_coefficient_model.py.template).

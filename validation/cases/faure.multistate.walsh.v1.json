@@ -1,0 +1,63 @@
+{
+  "schema_version": 1,
+  "kind": "case",
+  "revision": 1,
+  "study_id": "Faure2024",
+  "metric_ids": [
+    "walsh"
+  ],
+  "definition_match": "yes",
+  "sources": [
+    {
+      "url": "https://doi.org/10.1371/journal.pcbi.1012132",
+      "locator": "Faure et al. (2024), Eqs. (9), (12), (23)-(25); Table 1; Methods: Lasso regression models."
+    },
+    {
+      "url": "https://github.com/lehner-lab/whmatrixextms/tree/daabe62d0a8256e2333be8818324413daf723486",
+      "locator": "whmatrixextms-benchmarking.ipynb: H_matrix_recursive, H_matrix, V_matrix; whmatrixextms.py fit_lasso (fit_intercept=False)."
+    }
+  ],
+  "id": "faure.multistate.walsh.v1",
+  "evidence_tier": "independent_equation",
+  "scope": "All 24 coefficients for a hand-specified 2x3x4 nonbiological landscape from independent background finite differences.",
+  "preprocessing": "Uniform observed Cartesian product; fitness as supplied, maximize=True, epsilon=0; no imputation, transformations, duplicates, sample weighting or measurement-error propagation; graph nodes verified unchanged. Reference is first observation. No RNG in OLS. Full order=3; integer-polynomial row scores centered by their mean, fixed in synthetic.json.",
+  "expected": {
+    "WT": -1.0547118733938987e-15,
+    "0_3_1": 3.5000000000000004,
+    "0_3_2": 4.833333333333334,
+    "0_3_3": 4.000000000000001,
+    "0_2_1": -1.8749999999999996,
+    "0_2_1-0_3_1": -34.5,
+    "0_2_1-0_3_2": -22.499999999999996,
+    "0_2_1-0_3_3": -10.5,
+    "0_2_2": 1.6250000000000018,
+    "0_2_2-0_3_1": -22.500000000000004,
+    "0_2_2-0_3_2": -14.0,
+    "0_2_2-0_3_3": -21.000000000000004,
+    "0_1_1": 5.666666666666666,
+    "0_1_1-0_3_1": 4.999999999999998,
+    "0_1_1-0_3_2": -0.3333333333333335,
+    "0_1_1-0_3_3": 4.666666666666666,
+    "0_1_1-0_2_1": -3.25,
+    "0_1_1-0_2_1-0_3_1": -31.0,
+    "0_1_1-0_2_1-0_3_2": -31.0,
+    "0_1_1-0_2_1-0_3_3": -31.0,
+    "0_1_1-0_2_2": -14.249999999999998,
+    "0_1_1-0_2_2-0_3_1": 31.0,
+    "0_1_1-0_2_2-0_3_2": 0.0,
+    "0_1_1-0_2_2-0_3_3": 0.0
+  },
+  "comparison": {
+    "kind": "absolute",
+    "tolerance": 2e-12,
+    "justification": "Conservative float64 budget for small forward transforms and least squares; expected generated without production helpers."
+  },
+  "inputs": [
+    {
+      "root": "repo",
+      "path": "tests/fixtures/literature/faure2024/synthetic.json",
+      "sha256": "617d147928bc80b91527c61b55060b0b9be63651b4184949758bc842d2e6d629"
+    }
+  ],
+  "pytest_node": "validation/tests/test_walsh_hadamard.py::test_mixed_state_background_differences"
+}

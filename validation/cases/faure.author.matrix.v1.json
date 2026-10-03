@@ -1,0 +1,51 @@
+{
+  "schema_version": 1,
+  "kind": "case",
+  "revision": 1,
+  "study_id": "Faure2024",
+  "metric_ids": [
+    "walsh"
+  ],
+  "definition_match": "yes",
+  "sources": [
+    {
+      "url": "https://doi.org/10.1371/journal.pcbi.1012132",
+      "locator": "Faure et al. (2024), Eqs. (9), (12), (23)-(25); Table 1; Methods: Lasso regression models."
+    },
+    {
+      "url": "https://github.com/lehner-lab/whmatrixextms/tree/daabe62d0a8256e2333be8818324413daf723486",
+      "locator": "whmatrixextms-benchmarking.ipynb: H_matrix_recursive, H_matrix, V_matrix; whmatrixextms.py fit_lasso (fit_intercept=False)."
+    }
+  ],
+  "id": "faure.author.matrix.v1",
+  "evidence_tier": "author_artifact_numeric",
+  "scope": "Pinned author matrix functions agree entrywise with independent finite differences and public fitted coefficients on full and incomplete mixed-state designs.",
+  "preprocessing": "Uniform observed Cartesian product; fitness as supplied, maximize=True, epsilon=0; no imputation, transformations, duplicates, sample weighting or measurement-error propagation; graph nodes verified unchanged. Reference is first observation. No RNG in OLS. Same 2x3x4 fixture; compare forward, inverse and truncated inverse matrices. Remove final row for incomplete max_order=2. No regularization.",
+  "expected": {
+    "max_design_error": 0.0,
+    "max_coefficient_error": 0.0
+  },
+  "comparison": {
+    "kind": "absolute",
+    "tolerance": 2e-12,
+    "justification": "Float64 agreement across independent finite differences, unmodified pinned author functions and GraphFLA; not a paper figure reproduction."
+  },
+  "inputs": [
+    {
+      "root": "repo",
+      "path": "tests/fixtures/literature/faure2024/synthetic.json",
+      "sha256": "617d147928bc80b91527c61b55060b0b9be63651b4184949758bc842d2e6d629"
+    },
+    {
+      "root": "repo",
+      "path": "tests/fixtures/literature/faure2024/author_matrices.py",
+      "sha256": "f6c53609e1c614116c21ef49eecbebc5ed8dff84a67090daa9b15cc616884557"
+    },
+    {
+      "root": "repo",
+      "path": "tests/fixtures/literature/faure2024/LICENSE.author",
+      "sha256": "834781c9e20867eebacf2728c4d853d35eeb103e12b16153412bce3bfac9bb9c"
+    }
+  ],
+  "pytest_node": "validation/tests/test_walsh_hadamard.py::test_author_matrices_and_incomplete_fit"
+}
