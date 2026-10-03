@@ -191,3 +191,13 @@ rejected experiments too. Stop after three consecutive distinct hypotheses fail
 to improve meaningful workloads, or when the remaining cost requires an API or
 scientific change outside scope. This is a practical stopping rule, not proof of
 a theoretical performance ceiling.
+
+## Returns and costs
+
+`analysis.diminishing_returns_index` and `analysis.increasing_costs_index` each
+cover six fixed inputs (64–16,384 configurations, at most 258,048 edges) and all
+three statistics. The bounded runner accepts `--trend-method pearson|spearman|regression`
+for either metric and rejects comparisons across statistic choices. Pearson and
+OLS use bounded edge blocks; exact Spearman needs O(E) rank storage. See
+[FITNESS_TRENDS_RESULTS.md](FITNESS_TRENDS_RESULTS.md) for measurements and the
+explicit runtime/memory tradeoff against an equivalent pooled-edge reference.

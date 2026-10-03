@@ -38,3 +38,7 @@ For transform coefficients and regularized models, use
 [test_coefficient_model.py.template](test_coefficient_model.py.template).
 It separates printed coefficients, direct-transform oracles, author replay and
 regularized estimates, with explicit intercept/basis/CV conventions.
+
+`test_fitness_trend.py.template` separates an edge-population API check from a
+per-mutation production-kernel paper result. Use it for regressions whose
+aggregation, response units or sign selection differ across studies.

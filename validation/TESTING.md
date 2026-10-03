@@ -190,3 +190,22 @@ truncation, and that complete-grid full-order OLS agrees when it should. Record
 whether nested models are refitted, which folds/alpha policy are shared, and
 whether scores use training or independent evaluation data. Reuse of an existing
 result must not invoke a second fit. See `EPISTASIS_ORDER_REVIEW.md`.
+
+## Fitness trends and changes of statistical population
+
+The [fitness-trend template](templates/test_fitness_trend.py.template) separates
+public edge pooling from per-mutation numerical-kernel validation. Specify the
+units of both background and response: `Wmut/Wbg - 1` against `Wbg` is not the
+same regression as `log(Wmut)-log(Wbg)` against `log(Wbg)`. Record whether sign
+selection applies per transition or per mutation, whether zero/reversing effects
+remain, and whether reverse directions are pooled. State each observation's
+weight. Counts reproduced after selecting precomputed author labels validate
+those labels' distribution, not a regression implementation.
+
+Johnson 2019 counts exercise the production moment accumulator on measured
+per-mutation effects; they do not certify GraphFLA's pooled DRI/ICI definition.
+Papkou tests exercise both public metrics on the full archived author graph,
+with raw and clipped fitness in different cases. Their coefficients are
+independent targets, since Fig. S22 prints no slope/r. The archived plotting
+input is not available, so neither variant is labelled a coefficient replay.
+Never select a transform because it makes a target agree.
