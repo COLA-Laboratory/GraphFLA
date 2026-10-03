@@ -1,134 +1,127 @@
-"""Higher-order epistasis via a regression R^2 decomposition."""
+"""Compatibility access to the integrated Walsh-Hadamard order summary."""
 
-import numpy as np
-
-from .._utils import _pythonize
 import logging
+import warnings
+
+from sklearn.utils import Bunch
+
+from ._walsh import _analyze, _positive_integer
 
 logger = logging.getLogger(__name__)
 
 
-def higher_order_epistasis(landscape, order=2, verbose=False, n_jobs=1):
-    """
-    Calculates the fraction of variance in fitness that can be explained
-    by interactions between variables up to the specified order using polynomial regression.
+def higher_order_epistasis(
+    landscape, max_order=None, verbose=False, n_jobs=1, *, order=None, **kwargs
+):
+    """Return cumulative and incremental fit quality through each order.
+
+    Pass the result of :func:`walsh_hadamard` to reuse its summary without
+    encoding or fitting again. Passing a landscape uses the same fitting
+    pipeline, without constructing a coefficient table.
 
     Parameters
     ----------
-    landscape : Landscape
-        The fitness landscape object to analyze.
-    order : int, optional
-        The maximum order of polynomial features to consider. This controls the degree
-        of the polynomial, where an order of k allows for modeling interactions between
-        up to k variables. Must be between 1 and the total number of variables in the landscape.
-        Default is 2 (quadratic terms and pairwise interactions).
-    verbose : bool, optional
-        Whether to print progress information. Default is False.
-    n_jobs : int, optional
-        Number of CPU cores used by the underlying linear regression. Default is 1.
+    landscape : Landscape or sklearn.utils.Bunch
+        Built landscape or the result returned by :func:`walsh_hadamard`.
+    max_order : int or None, default=None
+        Maximum order to report. None uses two for a landscape, or all computed
+        orders for an existing result. Zero reports only the constant baseline.
+        For a result, cannot exceed its computed maximum; filtering does not
+        change that result's highest-order model variance spectrum.
+    verbose : bool, default=False
+        Log that a landscape is being fitted. Kept for call compatibility.
+    n_jobs : int, default=1
+        Parallel Lasso CV jobs when fitting a landscape. An existing result
+        requires the default because no fitting takes place.
+    order : int or None, default=None
+        Deprecated alias for ``max_order``. Do not supply both names.
+    **kwargs : dict
+        Fitting options forwarded to the Walsh-Hadamard pipeline: ``method``,
+        ``alpha``, ``cv``, ``random_state``, ``max_cells``, ``chunk_size``,
+        ``max_iter`` and ``tol``. Not accepted with an existing result.
 
     Returns
     -------
-    float
-        The R² score representing the fraction of variance explained by
-        polynomial terms up to the specified order. Values closer to 1.0 indicate
-        stronger epistasis of the given order.
+    order_summary : pandas.DataFrame
+        The same order-summary schema documented by :func:`walsh_hadamard`.
+        ``r2`` is cumulative training fit; ``delta_r2`` is the gain over the
+        preceding order. These are not held-out scores. The order-zero row is
+        the constant baseline. Constant fitness gives NaN R-squared values.
+        For rank-deficient OLS, fitted values and scores are still returned,
+        but the unidentified model variance fractions are NaN. No coefficients
+        are returned by this function.
+
+    Raises
+    ------
+    ValueError
+        If parameters or data are invalid, the resource limit is exceeded, or
+        fitting options are supplied with an existing result.
+
+    Warns
+    -----
+    FutureWarning
+        If the deprecated ``order`` keyword is used.
+    UserWarning
+        If fitness is constant and R-squared is undefined.
+
+    See Also
+    --------
+    walsh_hadamard : Compute coefficients and this summary together.
 
     Notes
     -----
-    This function uses polynomial regression with degree=order to model interactions
-    up to the specified order. The resulting R² score indicates how well these
-    interactions explain the observed fitness values.
+    Nested models are refitted using one shared design. OLS scores depend on
+    the fitted interaction space, not its choice of reference basis. Adding
+    order k measures improvement conditional on all lower orders; it does not
+    establish causal interaction or statistical significance. Lasso gains may
+    be negative. Its CV selects penalties, not an out-of-sample R-squared.
 
-    A high R² score suggests that most of the fitness variance can be
-    explained by considering interactions up to the specified order,
-    indicating strong epistatic effects of that order in the landscape.
-
+    Examples
+    --------
+    >>> from graphfla.landscape import BooleanLandscape
+    >>> from graphfla.analysis import walsh_hadamard, higher_order_epistasis
+    >>> landscape = BooleanLandscape().build_from_data(
+    ...     ["00", "01", "10", "11"], [0., 1., 1., 2.], verbose=False
+    ... )
+    >>> result = walsh_hadamard(landscape)
+    >>> summary = higher_order_epistasis(result)  # no second fit
+    >>> summary.delta_r2.round(6).tolist()
+    [0.0, 1.0, 0.0]
     """
-    try:
-        from sklearn.preprocessing import PolynomialFeatures, OneHotEncoder
-        from sklearn.linear_model import LinearRegression
-        from sklearn.metrics import r2_score
-    except ImportError:
-        raise ImportError(
-            "This function requires scikit-learn. "
-            "Please install it with 'pip install scikit-learn'."
+    if order is not None:
+        if max_order is not None:
+            raise ValueError("Specify only max_order; order is a deprecated alias.")
+        warnings.warn(
+            "The order parameter is deprecated; use max_order instead.",
+            FutureWarning,
+            stacklevel=2,
         )
-
-    landscape._check_built()
-
-    if landscape.configs is None or len(landscape.configs) == 0:
-        raise ValueError("Landscape has no configuration data.")
-
-    if not isinstance(order, int):
-        raise TypeError(f"Order must be an integer, got {type(order).__name__}")
-
-    if order < 1:
-        raise ValueError(f"Order must be at least 1, got {order}")
-
-    if order > landscape.n_vars:
-        raise ValueError(
-            f"Order cannot exceed the number of variables in the landscape "
-            f"({landscape.n_vars}), got {order}"
-        )
-
-    if verbose:
-        logger.info(f"Calculating order-{order} epistasis using polynomial regression...")
-
-    X = np.vstack(landscape.configs.values)
-    y = np.array(landscape.graph.vs["fitness"])
-
-    # Boolean is already 0/1; other types need one-hot with a reference level
-    # dropped for a numerically stable design matrix.
-    if verbose:
-        logger.info(f"Encoding {X.shape[1]} variables...")
-
-    if landscape.kind == "boolean":
-        X_encoded = np.asarray(X, dtype=np.float64)
-    else:
-        encoder = OneHotEncoder(
-            sparse_output=False,
-            drop="first",
-            dtype=np.float64,
-        )
-        try:
-            X_encoded = encoder.fit_transform(X)
-        except Exception as e:
-            raise ValueError(f"Failed to one-hot encode configurations: {e}") from e
-
-    if verbose:
-        logger.info(f"Encoded data shape: {X_encoded.shape}")
-        logger.info(f"Creating polynomial features of degree {order}...")
-
-    # Use interaction-only features and let LinearRegression handle the intercept.
-    poly = PolynomialFeatures(
-        degree=order,
-        include_bias=False,
-        interaction_only=True,
-    )
-    model = LinearRegression(n_jobs=n_jobs)
-
-    try:
-        if verbose:
-            logger.info(f"Fitting polynomial regression model...")
-        X_poly = poly.fit_transform(X_encoded)
-        model.fit(X_poly, y)
-        # Manual dot instead of np.matmul: Accelerate (macOS arm64) emits
-        # spurious RuntimeWarnings on finite inputs.
-        coefficients = np.asarray(model.coef_, dtype=np.float64).reshape(-1)
-        y_pred = (
-            np.sum(
-                np.asarray(X_poly, dtype=np.float64) * coefficients,
-                axis=1,
-                dtype=np.float64,
+        max_order = order
+    if (
+        isinstance(landscape, Bunch)
+        and {"coefficients", "order_summary", "fit_info"} <= landscape.keys()
+    ):
+        if kwargs or n_jobs != 1:
+            raise ValueError(
+                "Fitting parameters cannot be changed when passing an existing result."
             )
-            + float(model.intercept_)
-        )
-        r2 = r2_score(y, y_pred)
-    except Exception as e:
-        raise RuntimeError(f"Error fitting polynomial regression model: {e}") from e
-
+        computed = landscape.fit_info["max_order"]
+        maximum = computed if max_order is None else max_order
+        _positive_integer(maximum, "max_order", minimum=0)
+        if maximum > computed:
+            raise ValueError(
+                f"max_order={maximum} exceeds the computed maximum {computed}."
+            )
+        return landscape.order_summary.loc[
+            landscape.order_summary.order <= maximum
+        ].copy()
     if verbose:
-        logger.info(f"Order-{order} epistasis R² score: {r2:.4f}")
-
-    return _pythonize(r2)
+        logger.info("Fitting nested Walsh-Hadamard models.")
+    result = _analyze(
+        landscape,
+        max_order=2 if max_order is None else max_order,
+        n_jobs=n_jobs,
+        require_coefficients=False,
+        **kwargs,
+    )
+    return result.order_summary

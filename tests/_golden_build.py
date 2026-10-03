@@ -134,14 +134,14 @@ def extract(e, seed=0):
     for o in (1, 2, 3):
         if o <= ls.n_vars:
             try:
-                ho[str(o)] = higher_order_epistasis(ls, order=o)
+                ho[str(o)] = higher_order_epistasis(ls, max_order=o).r2.iloc[-1]
             except Exception as ex:
                 ho[str(o)] = f"ERR:{type(ex).__name__}"
     out["higher_order"] = ho
     if e["kind"] == "boolean":
         def walsh_maxabs():
             with contextlib.redirect_stdout(io.StringIO()):
-                c = walsh_hadamard(ls, max_order=2)
+                c = walsh_hadamard(ls, max_order=2).coefficients
             out = {}
             for o in (0, 1, 2):
                 col = c.loc[c["order"] == o, "coefficient"]

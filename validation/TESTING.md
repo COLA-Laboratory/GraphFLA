@@ -181,3 +181,12 @@ unpenalized constant differs from Faure's author scripts; the centered complete
 fixture is deliberately a condition where both agree. The paper's full sparse
 model experiment is not claimed as reproduced. See the
 [coefficient-model template](templates/test_coefficient_model.py.template).
+
+For integrated order summaries, freeze and test the full vector of cumulative
+scores, sequential gains and the fixed highest-order model spectrum separately.
+A model-variance fraction has the fitted model as denominator; an incremental
+R-squared uses observed-data SST. Test that they differ under shrinkage or
+truncation, and that complete-grid full-order OLS agrees when it should. Record
+whether nested models are refitted, which folds/alpha policy are shared, and
+whether scores use training or independent evaluation data. Reuse of an existing
+result must not invoke a second fit. See `EPISTASIS_ORDER_REVIEW.md`.

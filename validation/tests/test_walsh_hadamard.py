@@ -75,7 +75,7 @@ def test_table1_published_coefficients(literature_inputs):
     land = DNALandscape().build_from_data(
         sequences, frame.fitness, epsilon=0, verbose=False
     )
-    result = walsh_hadamard(land, max_order=2)
+    result = walsh_hadamard(land, max_order=2).coefficients
     assert_case_matches("faure.table1.walsh.v1", coefficients(result))
     assert {p for positions in result.positions for p in positions} == {6, 66}
     assert len(result) == land.n_configs == 9
@@ -103,7 +103,7 @@ def test_mixed_state_background_differences(synthetic):
     states, T = transform(arities)
     expected = dict(zip(map(label, states), map(float, T @ y)))
     assert_case_matches("faure.multistate.walsh.v1", expected)
-    actual = walsh_hadamard(landscape(X, y), max_order=3)
+    actual = walsh_hadamard(landscape(X, y), max_order=3).coefficients
     assert_case_matches("faure.multistate.walsh.v1", coefficients(actual))
     assert coefficients(actual) == pytest.approx(expected, abs=2e-12)
 
@@ -133,7 +133,9 @@ def test_author_matrices_and_incomplete_fit(synthetic, author):
     columns = [states.index(t) for t in terms]
     selected = author_design[:-1, columns]
     reference = np.linalg.lstsq(selected, y[:-1], rcond=None)[0]
-    actual = coefficients(walsh_hadamard(landscape(X[:-1], y[:-1]), max_order=2))
+    actual = coefficients(
+        walsh_hadamard(landscape(X[:-1], y[:-1]), max_order=2).coefficients
+    )
     errors = np.array([actual[label(t)] for t in terms]) - reference
     assert_case_matches(
         "faure.author.matrix.v1",
@@ -163,7 +165,7 @@ def test_author_lasso_on_centered_complete_design(synthetic, author):
             alpha=0.05,
             max_iter=100000,
             tol=1e-12,
-        )
+        ).coefficients
     )
     assert_case_matches("faure.author.lasso.v1", actual)
     coefs = np.array([actual[label(t)] for t in X])

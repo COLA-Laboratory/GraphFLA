@@ -1,0 +1,54 @@
+{
+  "schema_version": 1,
+  "kind": "case",
+  "id": "faure.lasso.order_summary.v1",
+  "revision": 1,
+  "study_id": "Faure2024",
+  "metric_ids": [
+    "walsh",
+    "higher_order"
+  ],
+  "evidence_tier": "independent_equation",
+  "definition_match": "yes",
+  "scope": "Order-wise model spectrum and separately refitted cumulative/incremental training R2; independent extension of Faure equations, not a published figure target.",
+  "preprocessing": "Full uniform product [2, 3, 4]; reference is state zero; fitness as supplied. Max order 3; Lasso alpha=0.05, unpenalized intercept, no feature scaling, tol=1e-12, max_iter=100000; no CV or held-out assessment. The forward finite-difference operator is numerically inverted to create the independent design. Model variance uses explicit full-grid predictions by order, not squared raw coefficients.",
+  "sources": [
+    {
+      "url": "https://doi.org/10.1371/journal.pcbi.1012132",
+      "locator": "Eqs. (9), (12), (23)-(25), Table 1 and Methods; the derived profile/spectrum is an independent-equation check."
+    }
+  ],
+  "expected": {
+    "r2": [
+      0.0,
+      0.15973857297476712,
+      0.688254100407717,
+      0.9414336857878635
+    ],
+    "delta_r2": [
+      0.0,
+      0.15973857297476712,
+      0.5285155274329498,
+      0.2531795853801465
+    ],
+    "model_variance_fraction": [
+      0.0,
+      0.1959792193978876,
+      0.5783997606618967,
+      0.2256210199402156
+    ]
+  },
+  "comparison": {
+    "kind": "absolute",
+    "tolerance": 2e-09,
+    "justification": "Small dense independent finite-difference/inverse-design solves; Lasso budget also covers coordinate-descent order differences. Frozen before production comparison."
+  },
+  "inputs": [
+    {
+      "root": "repo",
+      "path": "tests/fixtures/literature/faure2024/synthetic.json",
+      "sha256": "617d147928bc80b91527c61b55060b0b9be63651b4184949758bc842d2e6d629"
+    }
+  ],
+  "pytest_node": "validation/tests/test_epistasis_orders.py::test_independent_order_summary"
+}

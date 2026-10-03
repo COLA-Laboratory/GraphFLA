@@ -83,6 +83,22 @@ def worker(args):
                     landscape, max_order=2, max_cells=1e6
                 )
             }
+            if args.baseline_higher:
+                spec = importlib.util.spec_from_file_location(
+                    "graphfla.analysis.epistasis._higher_baseline", args.baseline_higher
+                )
+                higher = importlib.util.module_from_spec(spec)
+                spec.loader.exec_module(higher)
+
+                def separate_calls():
+                    table = module.walsh_hadamard(landscape, max_order=2, max_cells=1e6)
+                    table.attrs["order_r2"] = [0.0] + [
+                        higher.higher_order_epistasis(landscape, order=k, n_jobs=1)
+                        for k in (1, 2)
+                    ]
+                    return table
+
+                calls = {args.metric: separate_calls}
         else:
             calls = {args.metric: lambda: walsh_hadamard(landscape, **options)}
     results = {}
@@ -119,7 +135,21 @@ def worker(args):
         )
     elif args.snapshot and args.metric == "walsh_hadamard":
         table = calls[args.metric]()
-        if module is not None and landscape.kind != "boolean":
+        extra = {}
+        if args.order_summary:
+            scores = (
+                table.attrs["order_r2"]
+                if isinstance(table, pd.DataFrame)
+                else table.order_summary.r2.to_numpy()
+            )
+            extra["r2"] = np.asarray(scores, dtype=float)
+        if not isinstance(table, pd.DataFrame):
+            table = table.coefficients
+        if (
+            module is not None
+            and landscape.kind != "boolean"
+            and args.baseline_labels == "legacy"
+        ):
             # Legacy labels are artificial factor codes. Decode with the exact
             # input factorization before comparing all corrected labels/values.
             data = landscape.get_data()[list(landscape.data_types)]
@@ -145,6 +175,7 @@ def worker(args):
             positions=np.array([repr(x) for x in table.positions]),
             term=table.term.to_numpy(dtype=str),
             coefficient=table.coefficient.to_numpy(),
+            **extra,
         )
     input_digest = hashlib.sha256(landscape.get_data().to_json(orient="split").encode())
     input_digest.update(np.asarray(landscape.graph.vs["fitness"]).tobytes())
@@ -213,6 +244,19 @@ def main():
     parser.add_argument(
         "--walsh-method", choices=["ols", "lasso", "lasso_cv"], default="ols"
     )
+    parser.add_argument(
+        "--order-summary",
+        action="store_true",
+        help="Compare W-H coefficients and nested R2 together",
+    )
+    parser.add_argument(
+        "--baseline-higher",
+        type=Path,
+        help="Trusted legacy higher-order module for separate-call comparison",
+    )
+    parser.add_argument(
+        "--baseline-labels", choices=["legacy", "original"], default="legacy"
+    )
     args = parser.parse_args()
     from benchmarks.analysis import METRIC_MODULES
     from benchmarks.analysis._workloads import cases_for_metric
@@ -235,6 +279,12 @@ def main():
         )
     if args.baseline_kernel and args.metric not in SNAPSHOT_METRICS:
         parser.error("--baseline-kernel requires a supported snapshot metric")
+    if args.order_summary and args.metric != "walsh_hadamard":
+        parser.error("--order-summary applies only to walsh_hadamard")
+    if args.baseline_higher and not (args.order_summary and args.baseline_kernel):
+        parser.error("--baseline-higher requires --order-summary and --baseline-kernel")
+    if args.order_summary and args.baseline_kernel and not args.baseline_higher:
+        parser.error("The legacy summary baseline requires --baseline-higher")
     if (
         args.baseline_kernel
         and args.metric == "walsh_hadamard"
@@ -285,6 +335,13 @@ def main():
         "schema_version": 1,
         "metric": args.metric,
         "walsh_method": args.walsh_method if args.metric == "walsh_hadamard" else None,
+        "order_summary": args.order_summary,
+        "baseline_higher_sha256": hashlib.sha256(
+            args.baseline_higher.read_bytes()
+        ).hexdigest()
+        if args.baseline_higher
+        else None,
+        "baseline_labels": args.baseline_labels if args.baseline_kernel else None,
         "python": sys.version,
         "platform": platform.platform(),
         "host_id": hashlib.sha256(platform.node().encode()).hexdigest(),
@@ -311,6 +368,7 @@ def main():
             "thread_environment",
             "metric",
             "walsh_method",
+            "order_summary",
             "protocol_sha256",
             "processes",
             "repeats",
@@ -341,6 +399,13 @@ def main():
                 cmd.extend(["--snapshot", str(snapshot)])
             if args.metric == "walsh_hadamard":
                 cmd.extend(["--walsh-method", args.walsh_method])
+                if args.order_summary:
+                    cmd.append("--order-summary")
+                if args.baseline_higher:
+                    cmd.extend(
+                        ["--baseline-higher", str(args.baseline_higher.resolve())]
+                    )
+                cmd.extend(["--baseline-labels", args.baseline_labels])
             if args.baseline_kernel:
                 cmd.extend(["--baseline-kernel", str(args.baseline_kernel.resolve())])
             try:

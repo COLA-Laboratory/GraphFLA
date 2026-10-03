@@ -5,8 +5,9 @@
 runs the whole-landscape analysis metrics and returns a tidy ``pandas`` object:
 a ``Series`` for one landscape, a ``DataFrame`` (one row each) for several.
 
-Only metrics that need *just the landscape* and return a scalar or a fixed-field
-struct are included; drill-down metrics (those needing a ``mutation`` / ``position``
+Metrics that need *just the landscape* and provide a scalar or a fixed-field
+summary are included. The ``higher_order_epistasis`` column extracts the final
+cumulative R-squared from its order table. Drill-down metrics (needing ``mutation`` / ``position``
 / ``lo``, or returning a variable-length table) are intentionally left out -- call
 those functions directly. Selection is via ``groups`` or ``include`` (pick the base
 set) and ``exclude`` (a filter that composes with either); ``params`` overrides
@@ -160,6 +161,10 @@ def _columns_for(m):
 
 
 def _flatten(m, value):
+    # Keep the established scalar profile column while the direct API exposes
+    # every nested order. No extra fit or coefficient calculation is requested.
+    if m.name == "higher_order_epistasis" and isinstance(value, pd.DataFrame):
+        value = float(value["r2"].iloc[-1])
     cols = _columns_for(m)
     if value is None:                              # failed or skipped
         return {c: np.nan for c in cols}

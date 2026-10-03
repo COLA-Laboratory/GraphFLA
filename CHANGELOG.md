@@ -5,6 +5,26 @@ returned statistic are marked, because downstream analyses depend on them.
 
 ## Unreleased
 
+### Changed — integrated epistasis order analysis
+
+- `walsh_hadamard` now returns a sklearn `Bunch` with `.coefficients`,
+  `.order_summary` and `.fit_info`. Existing DataFrame consumers should use
+  `.coefficients`. One design is shared by all nested orders; the highest-order
+  solution is reused. Tall OLS problems share an augmented QR compression.
+- The order summary reports cumulative training `r2`, additional `delta_r2`,
+  RMSE, model dimensions/rank and per-fit alpha. It separately reports the
+  highest-order model's exact uniform-product variance fractions, accounting
+  for multistate covariance, and Lasso nonzero counts. These model fractions
+  are not automatically observed-data R-squared contributions. Constant fitness
+  gives NaN R-squared/increments; negative Lasso increments are preserved.
+- `higher_order_epistasis(result)` extracts that summary without refitting.
+  Passing a landscape uses the same pipeline and returns a table instead of
+  the former scalar. `max_order` replaces the deprecated `order` keyword.
+  `profile()` preserves its existing scalar column using the final R-squared.
+  The score-only route permits rank-deficient OLS predictions but does not
+  report an unidentified variance spectrum. W-H coefficient requests still
+  reject nonidentifiable OLS fits. See `validation/EPISTASIS_ORDER_REVIEW.md`.
+
 ### Changed — Walsh-Hadamard coefficients
 
 - `walsh_hadamard` preserves original one-based positions after invariant-site
@@ -19,8 +39,8 @@ returned statistic are marked, because downstream analyses depend on them.
   `cv`, `random_state`, `max_iter` and `tol` controls. The constant is unpenalized
   and features are not standardized. This differs from the cited author's
   penalized-constant analysis pipeline; no automatic estimator switching occurs.
-  The four output columns are retained, with fitting/reference metadata in
-  DataFrame attributes. Save attributes separately when exporting to CSV.
+  The coefficient table retains four columns, with fitting/reference metadata
+  in DataFrame attributes. Save attributes separately when exporting to CSV.
 - The dense design is built directly in blocks, with model-size checks before
   term enumeration. `max_cells` now includes all columns and defaults to `1e7`
   rather than `1e9`; solver workspace is additional. Dedicated literature tests
