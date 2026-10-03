@@ -1,0 +1,32 @@
+"""REPLACE: reference, DOI, exact result/equation locator.
+
+Use the existing TESTING.md contract and case.json template. Pin raw and derived
+inputs, transformations, mutation orientation, sign selection, aggregation and
+units of BOTH axes. Do not manufacture genotype fitness from measured effects.
+"""
+import pytest
+from validation.testing import assert_case_matches
+
+
+@pytest.mark.literature_case("REPLACE_EDGE_CASE", role="independent_check")
+def test_public_edge_population(literature_inputs):
+    # Match the exact retained graph; compare edge keys and effects before fits.
+    # Independently construct (source fitness, improvement) for beneficial
+    # transitions and (target fitness, same positive gap) for reversed costs.
+    # Check all returned statistics, not merely their sign or a rounded mean.
+    inputs = literature_inputs
+    public, independent = compute_public_and_independent(inputs)
+    assert_case_matches("REPLACE_EDGE_CASE", independent)
+    assert_case_matches("REPLACE_EDGE_CASE", public)
+
+
+@pytest.mark.literature_case("REPLACE_MUTATION_CASE", role="paper_result")
+def test_per_mutation_kernel_result(literature_inputs):
+    # Use this separate claim only when the production kernel is exercised.
+    # Keep all signed effects for each fixed directed mutation, including sign
+    # reversals. Record the paper's minimum n, mean/reference classification,
+    # weights, shared-error treatment and multiple-testing rule explicitly.
+    # A pass validates this numerical subroutine, NOT the public edge pooling.
+    observed, all_fits = fit_each_mutation(literature_inputs)
+    assert_case_matches("REPLACE_MUTATION_CASE", observed)
+    compare_each_fit_to_independent_equations(all_fits)

@@ -7,10 +7,10 @@ from typing import Literal
 
 import numpy as np
 import pandas as pd
-from scipy.stats import spearmanr, pearsonr
 from joblib import Parallel, delayed
 
-from .._utils import _pythonize, _pack_rows
+from .._utils import _pack_rows
+from ._fitness_trends import _edge_fitness_trend
 
 
 def _validate_min_pairs(min_pairs):
@@ -326,258 +326,160 @@ def diminishing_returns_index(
     landscape,
     method: Literal["pearson", "spearman", "regression"] = "pearson",
 ) -> float:
-    """Measures diminishing returns epistasis in a fitness landscape.
-
-    Diminishing returns epistasis occurs when the fitness benefit of new
-    beneficial mutations decreases as the background fitness increases. This
-    function quantifies this trend by calculating the correlation between the
-    fitness of each genotype (node) and the average fitness improvement
-    provided by its direct successors (fitter one-mutant neighbors). A
-    significant negative correlation indicates diminishing returns.
+    """Return the pooled trend of beneficial effects with background fitness.
 
     Parameters
     ----------
     landscape : Landscape
-        An initialized and built fitness landscape object. The landscape graph
-        must have a 'fitness' attribute for each node.
-    method : {'pearson', 'spearman', 'regression'}, default='pearson'
-        The method used to calculate the diminishing returns index.
-        'pearson' for Pearson correlation coefficient,
-        'spearman' for Spearman rank correlation coefficient,
-        'regression' for the slope of a linear regression.
+        Built landscape with a directed graph of improving transitions and
+        finite node fitness. Use a one-step neighborhood for mutation-level
+        interpretation. The graph's retained edges determine the population;
+        construction filters and missing configurations are not undone.
+    method : {"pearson", "spearman", "regression"}, default="pearson"
+        Pearson correlation, Spearman correlation with average ranks for ties,
+        or the ordinary least-squares slope with an intercept. Each edge has
+        equal weight. Effects are differences on the supplied fitness scale.
 
     Returns
     -------
-    correlation_or_slope : float
-        For 'pearson' or 'spearman': The correlation coefficient between node fitness
-        and average successor fitness improvement.
-        For 'regression': The slope of the linear regression.
-        Returns NaN if calculation is not possible.
+    index : float
+        Trend between starting fitness and the positive improvement for each
+        retained edge. Negative values describe smaller gains on better
+        backgrounds. Fitness is negated for minimization, so the interpretation
+        is unchanged. Returns NaN for fewer than two eligible edges or constant
+        starting fitness. A constant effect gives NaN for correlation and zero
+        for regression. No significance test or p-value is returned.
 
     Raises
     ------
     RuntimeError
-        If the landscape object has not been built.
+        If the landscape has not been built.
     ValueError
-        If the graph is missing or the 'fitness' attribute is not found.
-        If the correlation method is invalid.
+        If method is invalid, the graph or fitness is missing, fitness is
+        nonfinite, or the graph is undirected or contains worsening edges.
+
+    Warns
+    -----
+    UserWarning
+        If the requested statistic is undefined.
+
+    See Also
+    --------
+    increasing_costs_index : Trend of reverse-mutation cost with fitness.
+
+    Notes
+    -----
+    For each stored improving edge u -> v, correlate q(u) with q(v) - q(u),
+    where q = fitness for maximization and q = -fitness for minimization.
+    Zero-effect edges are excluded. This pools individual transitions [1]_,
+    rather than averaging effects per node or tracking a fixed mutation across
+    backgrounds. Edge attributes such as ``delta_fit`` are not used.
+
+    The result is descriptive: effect-sign selection, differing mutation
+    composition (even in an additive landscape) and shared measurement error
+    can produce a trend without demonstrating mutation-specific global
+    epistasis. Fitness transformations can change it. Pearson and regression
+    take O(V + E) time and O(V + B)
+    auxiliary memory with fixed block size B; exact Spearman requires O(E)
+    additional memory and O(E log E) time.
+
+    References
+    ----------
+    .. [1] Huang, M., Zhou, S. and Li, K. (2025). Augmenting Biological Fitness
+       Prediction Benchmarks with Landscapes Features from GraphFLA. NeurIPS 38,
+       Appendix C.3.2. https://doi.org/10.52202/085713-1180.
+    .. [2] Papkou, A. et al. (2023). A rugged yet easily navigable fitness
+       landscape. Science 382, eadh3860, Fig. S22.
+       https://doi.org/10.1126/science.adh3860.
+
+    Examples
+    --------
+    >>> from graphfla.landscape import BooleanLandscape
+    >>> from graphfla.analysis import diminishing_returns_index
+    >>> landscape = BooleanLandscape().build_from_data(
+    ...     ["00", "01", "10", "11"], [0., 2., 3., 4.],
+    ...     epsilon=0, verbose=False
+    ... )
+    >>> round(diminishing_returns_index(landscape, method="regression"), 3)
+    -0.444
     """
-    landscape._check_built()
-    if landscape.graph is None or "fitness" not in landscape.graph.vs.attributes():
-        raise ValueError(
-            "Landscape graph or node 'fitness' attribute not found."
-            " Landscape must be built first."
-        )
-
-    # Mean improvement toward the optimum across each node's improving out-edges.
-    # `delta_fit` is |Δfitness| -- the positive improvement magnitude on every
-    # improving edge (both maximize and minimize) -- so the per-node mean is simply
-    # the delta_fit-weighted out-strength / out-degree: one C-level pass, no
-    # edge-list materialisation (fast and memory-light). Fallback recomputes from
-    # fitness via the sparse adjacency when delta_fit is absent. NaN = local optima.
-    fitness = np.asarray(landscape.graph.vs["fitness"], dtype=float)
-    node_fitnesses = fitness
-    outdeg = np.asarray(landscape.graph.outdegree(), dtype=float)
-    nodes_with_successors = int(np.count_nonzero(outdeg > 0))
-
-    # Checked before the improvements are computed: with fewer than two such
-    # nodes the correlation is undefined anyway, and the sparse-adjacency
-    # fallback below cannot be built on an edgeless graph (fully neutral input).
-    if nodes_with_successors < 2:
-        warnings.warn(
-            "Not enough nodes with successors to calculate correlation for diminishing returns.",
-            UserWarning,
-        )
-        return np.nan
-
-    if "delta_fit" in landscape.graph.es.attributes():
-        per_node = np.asarray(
-            landscape.graph.strength(mode="out", weights="delta_fit"), dtype=float
-        )
-        with np.errstate(invalid="ignore", divide="ignore"):
-            avg_successor_improvement = np.where(outdeg > 0, per_node / outdeg, np.nan)
-    else:
-        mean_succ_fit = landscape.graph.get_adjacency_sparse().dot(fitness)
-        with np.errstate(invalid="ignore", divide="ignore"):
-            mean_succ_fit = np.where(outdeg > 0, mean_succ_fit / outdeg, np.nan)
-        avg_successor_improvement = (
-            mean_succ_fit - fitness if landscape.maximize
-            else fitness - mean_succ_fit
-        )
-
-    node_fitnesses_series = pd.Series(node_fitnesses)
-    avg_improvement_series = pd.Series(avg_successor_improvement)
-
-    mask = ~avg_improvement_series.isna()
-    if mask.sum() < 2:
-        warnings.warn(
-            "Not enough valid data points after NaN omission to calculate correlation.",
-            UserWarning,
-        )
-        return np.nan
-    node_fitnesses = node_fitnesses_series[mask]
-    avg_improvement = avg_improvement_series[mask]
-
-    if method == "pearson":
-        corr_func = pearsonr
-    elif method == "spearman":
-        corr_func = spearmanr
-    elif method == "regression":
-        try:
-            X = np.array(node_fitnesses).reshape(-1, 1)
-            y = np.array(avg_improvement)
-
-            X_with_const = np.column_stack((np.ones(X.shape[0]), X))  # add intercept
-
-            beta, residuals, rank, s = np.linalg.lstsq(X_with_const, y, rcond=None)
-            slope = beta[1]
-
-            n = len(X)
-            if n <= 2:
-                return slope
-
-            y_pred = X_with_const.dot(beta)
-            residual_SS = np.sum((y - y_pred) ** 2)
-            X_mean = np.mean(X)
-            X_var = np.sum((X.reshape(-1) - X_mean) ** 2)
-
-            if X_var == 0:
-                return slope
-
-            return slope
-        except Exception as e:
-            warnings.warn(f"Could not calculate regression: {e}", UserWarning)
-            return np.nan
-    else:
-        raise ValueError("Method must be 'pearson', 'spearman', or 'regression'")
-
-    try:
-        correlation, _ = corr_func(node_fitnesses, avg_improvement)
-        return _pythonize(correlation)
-    except Exception as e:
-        warnings.warn(f"Could not calculate correlation: {e}", UserWarning)
-        return np.nan
+    return _edge_fitness_trend(landscape, method, costs=False)
 
 
 def increasing_costs_index(
     landscape,
     method: Literal["pearson", "spearman", "regression"] = "pearson",
 ) -> float:
-    """Measures increasing cost epistasis in a fitness landscape.
-
-    Increasing cost epistasis occurs when the fitness cost (reduction) of
-    deleterious mutations increases as the background fitness increases. This
-    function quantifies this trend by calculating the correlation between the
-    fitness of each genotype (node) and the average fitness cost incurred
-    by mutations leading *to* that node from its direct predecessors (less fit
-    one-mutant neighbors). A significant positive correlation indicates
-    increasing cost.
+    """Return the pooled trend of deleterious cost with background fitness.
 
     Parameters
     ----------
     landscape : Landscape
-        An initialized and built fitness landscape object. The landscape graph
-        must have a 'fitness' attribute for each node.
-    method : {'pearson', 'spearman', 'regression'}, default='pearson'
-        The method used to calculate the increasing costs index.
-        'pearson' for Pearson correlation coefficient,
-        'spearman' for Spearman rank correlation coefficient,
-        'regression' for the slope of a linear regression.
+        Built landscape with a directed graph of improving transitions and
+        finite node fitness. Reverse each retained edge to represent a worsening
+        move. A mutation-level interpretation requires a reversible, one-step
+        neighborhood. Construction filters and missing configurations remain
+        part of the input population.
+    method : {"pearson", "spearman", "regression"}, default="pearson"
+        Pearson correlation, Spearman correlation with average ranks for ties,
+        or the ordinary least-squares slope with an intercept. Each reverse
+        transition has equal weight; its cost is a positive fitness difference.
 
     Returns
     -------
-    correlation_or_slope : float
-        For 'pearson' or 'spearman': The correlation coefficient between node fitness
-        and average predecessor fitness cost.
-        For 'regression': The slope of the linear regression.
-        Returns NaN if calculation is not possible.
+    index : float
+        Trend between the better endpoint's fitness and the cost of moving to
+        its worse neighbor. Positive values describe larger costs on better
+        backgrounds. Fitness is negated for minimization. Returns NaN for fewer
+        than two eligible edges or constant background fitness. A constant cost
+        gives NaN for correlation and zero for regression. No significance test
+        or p-value is returned.
 
     Raises
     ------
     RuntimeError
-        If the landscape object has not been built.
+        If the landscape has not been built.
     ValueError
-        If the graph is missing or the 'fitness' attribute is not found.
-        If the correlation method is invalid.
+        If method is invalid, the graph or fitness is missing, fitness is
+        nonfinite, or the graph is undirected or contains worsening edges.
+
+    Warns
+    -----
+    UserWarning
+        If the requested statistic is undefined.
+
+    See Also
+    --------
+    diminishing_returns_index : Corresponding beneficial-effect trend and
+        shared interpretation and resource limits.
+
+    Notes
+    -----
+    For each stored improving edge u -> v, correlate q(v) with q(v) - q(u),
+    using the same oriented fitness and edge population as
+    ``diminishing_returns_index``. Zero-effect edges are excluded. This is the
+    pooled cost convention of [1]_; it is not the distribution of
+    mutation-specific regressions studied by Johnson et al. [2]_. Its sign
+    alone does not establish global epistasis or statistical significance.
+
+    References
+    ----------
+    .. [1] Huang, M., Zhou, S. and Li, K. (2025). Augmenting Biological Fitness
+       Prediction Benchmarks with Landscapes Features from GraphFLA. NeurIPS 38,
+       Appendix C.3.2. https://doi.org/10.52202/085713-1180.
+    .. [2] Johnson, M. S. et al. (2019). Higher-fitness yeast genotypes are less
+       robust to deleterious mutations. Science 366, 490-493, Figs. 3-4.
+       https://doi.org/10.1126/science.aay4199.
+
+    Examples
+    --------
+    >>> from graphfla.landscape import BooleanLandscape
+    >>> from graphfla.analysis import increasing_costs_index
+    >>> landscape = BooleanLandscape().build_from_data(
+    ...     ["00", "01", "10", "11"], [0., 2., 3., 4.],
+    ...     epsilon=0, verbose=False
+    ... )
+    >>> round(increasing_costs_index(landscape, method="regression"), 3)
+    -0.364
     """
-    landscape._check_built()
-    if landscape.graph is None or "fitness" not in landscape.graph.vs.attributes():
-        raise ValueError(
-            "Landscape graph or node 'fitness' attribute not found."
-            " Landscape must be built first."
-        )
-
-    # Mirror of diminishing_returns_index over IN-edges: mean cost across each
-    # node's improving predecessors. delta_fit is the positive cost magnitude on
-    # every improving edge, so the per-node mean is the delta_fit-weighted
-    # in-strength / in-degree (fast, memory-light). Fallback via the transposed
-    # sparse adjacency when delta_fit is absent. NaN for source nodes.
-    fitness = np.asarray(landscape.graph.vs["fitness"], dtype=float)
-    node_fitnesses = fitness
-    indeg = np.asarray(landscape.graph.indegree(), dtype=float)
-    nodes_with_predecessors = int(np.count_nonzero(indeg > 0))
-
-    # Checked before the costs are computed, for the same reason as in
-    # ``diminishing_returns_index``.
-    if nodes_with_predecessors < 2:
-        warnings.warn(
-            "Not enough nodes with predecessors to calculate correlation for increasing cost.",
-            UserWarning,
-        )
-        return np.nan
-
-    if "delta_fit" in landscape.graph.es.attributes():
-        per_node = np.asarray(
-            landscape.graph.strength(mode="in", weights="delta_fit"), dtype=float
-        )
-        with np.errstate(invalid="ignore", divide="ignore"):
-            avg_predecessor_cost = np.where(indeg > 0, per_node / indeg, np.nan)
-    else:
-        mean_pred_fit = landscape.graph.get_adjacency_sparse().T.dot(fitness)
-        with np.errstate(invalid="ignore", divide="ignore"):
-            mean_pred_fit = np.where(indeg > 0, mean_pred_fit / indeg, np.nan)
-        avg_predecessor_cost = (
-            fitness - mean_pred_fit if landscape.maximize
-            else mean_pred_fit - fitness
-        )
-
-    node_fitnesses_series = pd.Series(node_fitnesses)
-    avg_cost_series = pd.Series(avg_predecessor_cost)
-
-    mask = ~avg_cost_series.isna()
-    if mask.sum() < 2:
-        warnings.warn(
-            "Not enough valid data points after NaN omission to calculate correlation.",
-            UserWarning,
-        )
-        return np.nan
-    node_fitnesses = node_fitnesses_series[mask]
-    avg_cost = avg_cost_series[mask]
-
-    if method == "pearson":
-        corr_func = pearsonr
-    elif method == "spearman":
-        corr_func = spearmanr
-    elif method == "regression":
-        try:
-            X = np.array(node_fitnesses).reshape(-1, 1)
-            y = np.array(avg_cost)
-
-            X_with_const = np.column_stack((np.ones(X.shape[0]), X))  # add intercept
-
-            beta, residuals, rank, s = np.linalg.lstsq(X_with_const, y, rcond=None)
-            slope = beta[1]
-
-            return slope
-        except Exception as e:
-            warnings.warn(f"Could not calculate regression: {e}", UserWarning)
-            return np.nan
-    else:
-        raise ValueError("Method must be 'pearson', 'spearman', or 'regression'")
-
-    try:
-        correlation, _ = corr_func(node_fitnesses, avg_cost)
-        return _pythonize(correlation)
-    except Exception as e:
-        warnings.warn(f"Could not calculate correlation: {e}", UserWarning)
-        return np.nan
+    return _edge_fitness_trend(landscape, method, costs=True)

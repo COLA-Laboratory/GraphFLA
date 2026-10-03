@@ -51,6 +51,8 @@ def dicteq(a, b, atol=1e-6):
 # reference-key -> (graphfla getter, comparison)
 # ----------------------------------------------------------------------
 def _cls(name): return lambda ex: ex.get("classify", {}).get(name)
+# Historical DRI/ICI entries encode node means. Their bytes remain in the
+# archive; test_fitness_trends.py checks the corrected edge estimand independently.
 SPEC = {
     "n_configs": (lambda ex: ex["n_configs"], "exact"),
     "n_edges": (lambda ex: ex["n_edges"], "exact"),
@@ -77,8 +79,6 @@ SPEC = {
     "fitness_distance_corr": (lambda ex: ex["fitness_distance_corr"], "float"),
     "neutrality": (lambda ex: ex["neutrality"], "float"),
     "evol_enhance_mutations": (lambda ex: ex["evol_enhance_mutations"], "float"),
-    "diminishing_returns_index": (lambda ex: ex["diminishing_returns_index"], "float"),
-    "increasing_costs_index": (lambda ex: ex["increasing_costs_index"], "float"),
     "higher_order": (lambda ex: ex["higher_order"], "dict"),
     "magnitude": (_cls("magnitude epistasis"), "float"),
     "sign": (_cls("sign epistasis"), "float"),

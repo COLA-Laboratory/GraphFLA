@@ -93,3 +93,11 @@ def test_gamma_workload_bounds_and_selection(case):
             import_module(f"benchmarks.analysis.{method}").Benchmark.params
             == GAMMA_CASES
         )
+
+
+@pytest.mark.parametrize('method', ['diminishing_returns_index','increasing_costs_index'])
+def test_fitness_trend_benchmark_scope(method):
+    from benchmarks.analysis._workloads import TREND_CASES
+    benchmark = import_module(f'benchmarks.analysis.{method}').Benchmark
+    assert cases_for_metric(method) == TREND_CASES
+    assert benchmark.params == [TREND_CASES, ['pearson','spearman','regression']]
