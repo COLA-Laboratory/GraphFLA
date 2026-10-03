@@ -25,10 +25,14 @@ encodings or parser inputs. Reserved delimiters in labels are escaped.
 
 Full-order OLS on the complete product equals the direct transform. Incomplete
 or truncated fits estimate coefficients of the chosen model; even a unique fit
-does not prove recovery of a true full-space coefficient. Multistate bases
-are not orthogonal, so simply truncating full-transform coefficients generally
-differs from fitting a truncated model. No unobserved states are guessed and
-no construction-filtered genotypes are recovered by this metric.
+does not prove recovery of a true full-space coefficient. Under the uniform
+complete Cartesian population, different orders of this centered product basis
+are orthogonal as groups, although alternate-allele columns within a group need
+not be orthogonal. Full-data OLS truncation therefore agrees with refitting
+through that order. This equivalence does not generally hold on an incomplete
+or differently weighted population, or when regularization is retuned. No
+unobserved states are guessed and no construction-filtered genotypes are
+recovered by this metric.
 
 ## Estimator behavior
 
