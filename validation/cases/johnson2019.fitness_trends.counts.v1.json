@@ -1,0 +1,44 @@
+{
+  "schema_version": 1,
+  "kind": "case",
+  "revision": 1,
+  "metric_ids": [
+    "returns_costs"
+  ],
+  "definition_match": "yes",
+  "id": "johnson2019.fitness_trends.counts.v1",
+  "study_id": "Johnson2019",
+  "evidence_tier": "published_numeric",
+  "scope": "Reproduce the per-mutation OLS count summary using the production centered-moment kernel. This does not validate the public pooled DRI/ICI aggregation; no synthetic genotype graph is constructed.",
+  "preprocessing": "eLife 76491 Supplementary file 1 BYxRM_s/BYxRM_x joined by Sample, Type=Experiment in data_by_mutation. Keep each mutation with >=50 finite paired backgrounds. Equal weights; s is the author per-generation selection coefficient, X the supplied background fitness. Use both signs of s without edge-sign filtering; OLS with intercept, two-sided t-test with n-2 degrees of freedom, uncorrected p<0.05. Beneficial/deleterious classification uses sign of mean s. No imputation, uncertainty weighting, FDR, RNG, or transformation.",
+  "sources": [
+    {
+      "url": "https://doi.org/10.1126/science.aay4199",
+      "locator": "Results paragraph beginning We find that at least one; Fig. 4 A-B: 80 measured in >=50 segregants, 64 fitness-model cases, 58 negative, 48 deleterious on average; six opposite trends."
+    },
+    {
+      "url": "https://doi.org/10.7554/eLife.76491",
+      "locator": "Supplementary file 1 version 2, BYxRM_x, BYxRM_s and data_by_mutation.Type; copyright CC-BY-4.0; source and conversion hashes in fixture manifest."
+    }
+  ],
+  "expected": {
+    "mutations": 80,
+    "significant": 64,
+    "negative": 58,
+    "positive": 6,
+    "increasing_cost": 48
+  },
+  "comparison": {
+    "kind": "exact",
+    "tolerance": 0,
+    "justification": "Integer counts explicitly reported by Johnson et al. 2019."
+  },
+  "inputs": [
+    {
+      "root": "repo",
+      "path": "tests/fixtures/fitness_trends/johnson2019.csv.gz",
+      "sha256": "947ed16dece61f170859d6d82501cf7c565ff70a0a88fc0ce23eded05d23b46b"
+    }
+  ],
+  "pytest_node": "validation/tests/test_fitness_trends.py::test_johnson_published_per_mutation_counts"
+}

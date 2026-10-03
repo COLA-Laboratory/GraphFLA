@@ -1,0 +1,54 @@
+{
+  "schema_version": 1,
+  "kind": "case",
+  "revision": 1,
+  "metric_ids": [
+    "returns_costs"
+  ],
+  "definition_match": "yes",
+  "id": "papkou.fitness_trends.raw.v1",
+  "study_id": "PapkouRM23",
+  "evidence_tier": "independent_equation",
+  "scope": "All 135178 vertices and 324044 edges of the archived author graph. Independent pooled-edge statistics on raw fitness, not a reproduction of an unprinted Fig. S22 coefficient. The exact plotting input is unavailable; preprocessing variants are deliberately separate.",
+  "preprocessing": "Read full measured unrounded fitness fixture, align by exact sequence to the archived directed edge list, retain largest author component exactly. Use original measured m values, without the author graph-weight floor. For DRI use source fitness, for ICI use target fitness and reverse the edge; response is positive target minus source. Each edge has equal weight; Pearson, average-tie-rank Spearman, OLS with intercept. No subsampling, log conversion, inference test, RNG, missing values or zero edges.",
+  "sources": [
+    {
+      "url": "https://doi.org/10.1126/science.adh3860",
+      "locator": "Supplementary Fig. S22 B-C, p.42: individual beneficial effects vs background and OLS line; N=324044, no printed slope/r. Graph convention: supplementary network methods pp.14-15."
+    },
+    {
+      "url": "https://doi.org/10.5281/zenodo.8228920",
+      "locator": "in_data/fitness_data_wt.rds; computation_find_reciprocal_epistasis/graph_largest_component.ncol; lib/import_data.R; 00.make_graph_object/01.script.ipynb. Existing fixture manifest pins source hashes."
+    },
+    {
+      "url": "https://doi.org/10.52202/085713-1180",
+      "locator": "Appendix C.3.2 pooled DRI/ICI definition; independent SciPy vector fits in validation/fitness_trends.py supply numeric targets, not GraphFLA outputs."
+    }
+  ],
+  "expected": {
+    "returns_pearson": -0.4764872794862923,
+    "returns_spearman": -0.5586519704101283,
+    "returns_regression": -0.4329207418839225,
+    "costs_pearson": 0.44106950881493207,
+    "costs_spearman": 0.336647069501473,
+    "costs_regression": 0.4090788349618218
+  },
+  "comparison": {
+    "kind": "absolute",
+    "tolerance": 2e-12,
+    "justification": "Independent centered vector regression/ranks vs blocked accumulation over 324044 floating-point measurements; tolerance covers reduction roundoff, not biological uncertainty."
+  },
+  "inputs": [
+    {
+      "root": "repo",
+      "path": "tests/fixtures/papkou2023/fitness.csv.gz",
+      "sha256": "d822597860e8a12182789c431cb5489021fb057dcf103210318febf563e93a97"
+    },
+    {
+      "root": "repo",
+      "path": "tests/fixtures/papkou2023/edges.ncol.gz",
+      "sha256": "fe1e632b9f0ad901060dd4e590fd03140b23b954cbce830ef45cba1e057cea2e"
+    }
+  ],
+  "pytest_node": "validation/tests/test_fitness_trends.py::test_papkou_edge_statistics"
+}

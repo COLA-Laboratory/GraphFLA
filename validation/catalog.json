@@ -1289,7 +1289,7 @@
       "aliases": [
         "Doud2024"
       ],
-      "title": "Competition-driven eco-evolutionary feedback reshapes bacteriophage lambda\u2019s fitness landscape and enables speciation",
+      "title": "Competition-driven eco-evolutionary feedback reshapes bacteriophage lambda’s fitness landscape and enables speciation",
       "doi": null,
       "year": 2024,
       "origin": "supplied",
@@ -2743,6 +2743,26 @@
       "dossier": "papers/faure2024",
       "measured_variants": null,
       "theoretical_variants": null
+    },
+    {
+      "id": "Johnson2019",
+      "title": "Higher-fitness yeast genotypes are less robust to deleterious mutations",
+      "doi": "10.1126/science.aay4199",
+      "year": 2019,
+      "origin": "metric_search",
+      "state": "triaged",
+      "aliases": [],
+      "next_action": "Maintain the cited returns/costs tests; interpretation limits in FITNESS_TRENDS_REVIEW.md."
+    },
+    {
+      "id": "HuangZhouLi2025",
+      "title": "Augmenting Biological Fitness Prediction Benchmarks with Landscapes Features from GraphFLA",
+      "doi": "10.52202/085713-1180",
+      "year": 2025,
+      "origin": "metric_search",
+      "state": "triaged",
+      "aliases": [],
+      "next_action": "Maintain the cited returns/costs tests; interpretation limits in FITNESS_TRENDS_REVIEW.md."
     }
   ]
 }

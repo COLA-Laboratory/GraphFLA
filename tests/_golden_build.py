@@ -14,7 +14,6 @@ from graphfla.analysis import (
     fdc, neighbor_fitness_correlation, basin_fitness_correlation, fitness_flattening_index,
     gamma, gamma_star, classify_epistasis,
     walsh_hadamard, global_idiosyncratic_index, extradimensional_bypass,
-    diminishing_returns_index, increasing_costs_index,
     global_optima_accessibility, mean_path_length_to_local_optima,
     mean_distance_to_global_optimum, neutrality, evolvability_enhancing_fraction,
 )
@@ -162,8 +161,6 @@ def extract(e, seed=0):
     _try(out, "neutrality", lambda: neutrality(ls))
     _try(out, "evol_enhance_mutations", lambda: evolvability_enhancing_fraction(ls))
     # --- diminishing / increasing ---
-    _try(out, "diminishing_returns_index", lambda: diminishing_returns_index(ls))
-    _try(out, "increasing_costs_index", lambda: increasing_costs_index(ls))
     return out
 
 

@@ -31,7 +31,8 @@ THREADS = dict.fromkeys(
     ],
     "1",
 )
-SNAPSHOT_METRICS = {"ee", "gamma", "gamma_star", "r_s_ratio", "walsh_hadamard"}
+TREND_METRICS = {"diminishing_returns_index", "increasing_costs_index"}
+SNAPSHOT_METRICS = TREND_METRICS | {"ee", "gamma", "gamma_star", "r_s_ratio", "walsh_hadamard"}
 
 
 def worker(args):
@@ -101,6 +102,12 @@ def worker(args):
                 calls = {args.metric: separate_calls}
         else:
             calls = {args.metric: lambda: walsh_hadamard(landscape, **options)}
+    if args.metric in TREND_METRICS:
+        from graphfla import analysis
+        implementation = module if module is not None else analysis
+        calls = {args.metric: lambda: getattr(implementation, args.metric)(
+            landscape, method=args.trend_method
+        )}
     results = {}
     for name, call in calls.items():
         call()  # Untimed warmup; construction is also outside the timer.
@@ -129,7 +136,7 @@ def worker(args):
                 arrays[col] = table[col].to_numpy()
         arrays["fraction"] = np.asarray(ee.evolvability_enhancing_fraction(landscape))
         np.savez_compressed(args.snapshot, **arrays)
-    elif args.snapshot and args.metric in {"gamma", "gamma_star", "r_s_ratio"}:
+    elif args.snapshot and args.metric in ({"gamma", "gamma_star", "r_s_ratio"} | TREND_METRICS):
         np.savez_compressed(
             args.snapshot, **{args.metric: np.asarray(calls[args.metric]())}
         )
@@ -238,6 +245,7 @@ def main():
         type=Path,
         help="Trusted local metric module for a supported snapshot metric; never downloads code",
     )
+    parser.add_argument("--trend-method", choices=["pearson", "spearman", "regression"], default="pearson")
     parser.add_argument("--worker", action="store_true", help=argparse.SUPPRESS)
     parser.add_argument("--case", help=argparse.SUPPRESS)
     parser.add_argument("--snapshot", type=Path, help=argparse.SUPPRESS)
@@ -306,8 +314,13 @@ def main():
     output.parent.mkdir(parents=True, exist_ok=True)
     snapshots.mkdir()
     baseline = json.loads(args.compare.read_text()) if args.compare else None
+    if baseline and args.metric in TREND_METRICS:
+        if baseline.get("trend_method") != args.trend_method:
+            raise ValueError("Trend statistic mismatch")
     source = args.baseline_kernel or REPO / (
-        "graphfla/analysis/epistasis/gamma.py"
+        "graphfla/analysis/epistasis/_fitness_trends.py"
+        if args.metric in TREND_METRICS
+        else "graphfla/analysis/epistasis/gamma.py"
         if args.metric in {"gamma", "gamma_star"}
         else "graphfla/analysis/epistasis/walsh_hadamard.py"
         if args.metric == "walsh_hadamard"
@@ -342,6 +355,7 @@ def main():
         if args.baseline_higher
         else None,
         "baseline_labels": args.baseline_labels if args.baseline_kernel else None,
+        "trend_method": args.trend_method if args.metric in TREND_METRICS else None,
         "python": sys.version,
         "platform": platform.platform(),
         "host_id": hashlib.sha256(platform.node().encode()).hexdigest(),
@@ -406,6 +420,8 @@ def main():
                         ["--baseline-higher", str(args.baseline_higher.resolve())]
                     )
                 cmd.extend(["--baseline-labels", args.baseline_labels])
+            if args.metric in TREND_METRICS:
+                cmd.extend(["--trend-method", args.trend_method])
             if args.baseline_kernel:
                 cmd.extend(["--baseline-kernel", str(args.baseline_kernel.resolve())])
             try:
