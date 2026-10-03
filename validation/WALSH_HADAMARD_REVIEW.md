@@ -1,5 +1,10 @@
 # Walsh-Hadamard calculation and evidence review
 
+The initial coefficient-only API described here was subsequently extended to
+return coefficients and an integrated order summary. See
+[EPISTASIS_ORDER_REVIEW.md](EPISTASIS_ORDER_REVIEW.md) for the current result
+structure, shared fitting and spectrum conventions. Initial evidence is retained.
+
 Scope approved 2026-10-03: correct labels, general discrete-state computation,
 rank handling and resource use; add explicit OLS/Lasso selection and optional
 cross-validation, without changing the surrounding analysis architecture.
@@ -88,7 +93,7 @@ is reduced from 1e9 to 1e7 (80 MB for the design alone), now counting all terms,
 including the constant and first-order columns. It is not a process RSS bound.
 The existing bounded benchmark runner supplies independent time/RSS watchdogs.
 
-The public name and four output columns remain. New method/alpha/CV/solver
+The public name and four coefficient-table columns remain. New method/alpha/CV/solver
 parameters are keyword-only. max_order=0 now genuinely fits just a constant.
 WT remains the historical label for that constant, not reference fitness.
 DataFrame attrs carry fit information, original column labels and reference

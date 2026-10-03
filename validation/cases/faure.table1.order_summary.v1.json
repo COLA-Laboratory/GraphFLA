@@ -1,0 +1,51 @@
+{
+  "schema_version": 1,
+  "kind": "case",
+  "id": "faure.table1.order_summary.v1",
+  "revision": 1,
+  "study_id": "Faure2024",
+  "metric_ids": [
+    "walsh",
+    "higher_order"
+  ],
+  "evidence_tier": "independent_equation",
+  "definition_match": "yes",
+  "scope": "Order-wise model spectrum and separately refitted cumulative/incremental training R2; independent extension of Faure equations, not a published figure target.",
+  "preprocessing": "Full uniform product [3, 3]; reference is state zero; fitness as supplied. Max order 2; OLS. The forward finite-difference operator is numerically inverted to create the independent design. Model variance uses explicit full-grid predictions by order, not squared raw coefficients.",
+  "sources": [
+    {
+      "url": "https://doi.org/10.1371/journal.pcbi.1012132",
+      "locator": "Eqs. (9), (12), (23)-(25), Table 1 and Methods; the derived profile/spectrum is an independent-equation check."
+    }
+  ],
+  "expected": {
+    "r2": [
+      0.0,
+      0.3905306784394992,
+      1.0
+    ],
+    "delta_r2": [
+      0.0,
+      0.3905306784394992,
+      0.6094693215605008
+    ],
+    "model_variance_fraction": [
+      0.0,
+      0.39053067843949757,
+      0.6094693215605025
+    ]
+  },
+  "comparison": {
+    "kind": "absolute",
+    "tolerance": 2e-12,
+    "justification": "Small dense independent finite-difference/inverse-design solves; Lasso budget also covers coordinate-descent order differences. Frozen before production comparison."
+  },
+  "inputs": [
+    {
+      "root": "repo",
+      "path": "tests/fixtures/literature/faure2024/table1.csv",
+      "sha256": "5b783d8e19c1f613c234b81c9a6b64041cc664a4735daa38ff1c82fe8b4a2f51"
+    }
+  ],
+  "pytest_node": "validation/tests/test_epistasis_orders.py::test_independent_order_summary"
+}

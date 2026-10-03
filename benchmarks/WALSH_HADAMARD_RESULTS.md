@@ -1,5 +1,9 @@
 # Walsh-Hadamard performance and test audit
 
+This records the initial coefficient-only implementation at `050776d`.
+The later integrated coefficient/order-summary measurements are documented in
+[EPISTASIS_ORDER_RESULTS.md](EPISTASIS_ORDER_RESULTS.md).
+
 2026-10-03. The optimized inverse design preserves Faure's background-average
 normalization, using direct products of centered state indicators. OLS and
 explicit Lasso/CV have separate scientific contracts; see

@@ -146,7 +146,7 @@ def test_phillips_author_regression_outputs(antigen, order):
     landscape = BooleanLandscape().build_from_data(
         frame.sequences, frame.fitness, verbose=False
     )
-    _assert_published(case_id, float(higher_order_epistasis(landscape, order=order)))
+    _assert_published(case_id, float(higher_order_epistasis(landscape, max_order=order).r2.iloc[-1]))
 
 
 @pytest.mark.literature_case("bank.reia_peaks.v1", role="paper_result")
