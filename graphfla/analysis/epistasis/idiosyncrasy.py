@@ -118,8 +118,8 @@ def _idiosyncratic_ratio(effect_sd, n_pairs, fitness_pool, rng):
     return float(effect_sd / control_sd)
 
 
-def idiosyncratic_index(landscape, mutation, min_pairs: int = 3):
-    r"""Estimate a mutation's idiosyncratic index from matched backgrounds.
+def idiosyncratic_index(landscape, mutation, min_pairs: int = 3, *, seed=None) -> float:
+    r"""Return a mutation's idiosyncratic index from matched backgrounds.
 
     The index compares the standard deviation of one mutation's effects with
     that of an equally sized sample of random genotype-pair differences [1]_.
@@ -142,6 +142,10 @@ def idiosyncratic_index(landscape, mutation, min_pairs: int = 3):
         matching backgrounds are used when this threshold is met. The control
         then contains the same number of random pairs. This threshold is a
         GraphFLA estimation guard, not a cutoff specified in [1]_.
+    seed : int or None, default=None
+        Seed for a local NumPy RandomState. An integer reproduces the control
+        sample for the same ordered input; None starts a fresh random stream.
+        NumPy's global RNG state is not modified.
 
     Returns
     -------
@@ -153,11 +157,11 @@ def idiosyncratic_index(landscape, mutation, min_pairs: int = 3):
 
     Raises
     ------
-    RuntimeError
+    graphfla.exceptions.NotBuiltError
         If the landscape has not been built.
     ValueError
-        If ``min_pairs`` is invalid, the mutation uses an unknown position or
-        allele, or source and target are equal. Also raised for missing
+        If ``min_pairs`` or seed is invalid, the mutation uses an unknown
+        position or allele, or source and target are equal. Also raised for missing
         configuration values, duplicate configurations, or nonfinite fitness.
 
     Warns
@@ -177,8 +181,8 @@ def idiosyncratic_index(landscape, mutation, min_pairs: int = 3):
     sampling both endpoints independently with replacement. Both SDs use
     ``ddof=0``; matching does not depend on graph edges.
 
-    Each call draws a fresh local random stream, so results can differ. Fitness
-    is used as supplied. The index measures background dependence, including
+    With ``seed=None``, results can differ across calls. Fitness is used as
+    supplied. The index measures background dependence, including
     variation that can arise from a nonlinear global fitness map.
 
     References
@@ -197,11 +201,12 @@ def idiosyncratic_index(landscape, mutation, min_pairs: int = 3):
     >>> landscape = BooleanLandscape().build_from_data(
     ...     sequences, fitness, epsilon=0, verbose=False
     ... )
-    >>> value = idiosyncratic_index(landscape, (0, "bit_0", 1))
-    >>> isinstance(value, float)
-    True
+    >>> value = idiosyncratic_index(landscape, (0, "bit_0", 1), seed=0)
+    >>> round(value, 3)
+    0.308
     """
     _validate_min_pairs(min_pairs)
+    rng = np.random.RandomState(seed)
     A, pos, B = mutation
     X, Xcodes, f, labels = _idiosyncratic_data(landscape)
     if pos not in X.columns:
@@ -219,12 +224,14 @@ def idiosyncratic_index(landscape, mutation, min_pairs: int = 3):
         if (aa, bb) == (a, b):
             if n < min_pairs:
                 return float("nan")
-            return _idiosyncratic_ratio(effect_sd, n, f, np.random.RandomState())
+            return _idiosyncratic_ratio(effect_sd, n, f, rng)
     return float("nan")
 
 
-def global_idiosyncratic_index(landscape, n_jobs=-1, seed=None, min_pairs: int = 3):
-    r"""Estimate the mean idiosyncratic index across directed mutations.
+def global_idiosyncratic_index(
+    landscape, n_jobs=-1, seed=None, min_pairs: int = 3
+) -> float:
+    r"""Return the mean idiosyncratic index across directed mutations.
 
     Apply the SD ratio defined by Lyons et al. [1]_ to each eligible directed
     mutation and return their arithmetic mean. Every mutation receives equal
@@ -237,10 +244,10 @@ def global_idiosyncratic_index(landscape, n_jobs=-1, seed=None, min_pairs: int =
         Mutation effects and random controls both use the genotypes retained
         in ``landscape.get_data()``. Apply the intended fitness transformation
         and population selection before constructing the landscape.
-    n_jobs : int, default=-1
+    n_jobs : int or None, default=-1
         Number of parallel jobs for background matching. -1 uses all available
         cores; 1 runs serially. This does not change a fixed-seed result.
-    seed : int, default=None
+    seed : int or None, default=None
         Seed for a local NumPy RandomState. An integer reproduces the result for
         the same ordered input and parameters. None starts a fresh random stream.
         NumPy's global RNG state is not modified.
@@ -260,7 +267,7 @@ def global_idiosyncratic_index(landscape, n_jobs=-1, seed=None, min_pairs: int =
 
     Raises
     ------
-    RuntimeError
+    graphfla.exceptions.NotBuiltError
         If the landscape has not been built.
     ValueError
         If ``min_pairs`` or the random seed is invalid, or configurations are
@@ -326,7 +333,7 @@ def diminishing_returns_index(
     landscape,
     method: Literal["pearson", "spearman", "regression"] = "pearson",
 ) -> float:
-    """Return the pooled trend of beneficial effects with background fitness.
+    r"""Return the pooled trend of beneficial effects with background fitness.
 
     Parameters
     ----------
@@ -410,7 +417,7 @@ def increasing_costs_index(
     landscape,
     method: Literal["pearson", "spearman", "regression"] = "pearson",
 ) -> float:
-    """Return the pooled trend of deleterious cost with background fitness.
+    r"""Return the pooled trend of deleterious cost with background fitness.
 
     Parameters
     ----------

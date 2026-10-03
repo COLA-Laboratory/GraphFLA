@@ -11,10 +11,10 @@ import logging
 logger = logging.getLogger(__name__)
 
 
-def neighbor_fitness_correlation(landscape, auto_calculate=True, method="pearson"):
-    """
-    Calculates the correlation between a configuration's fitness and the mean fitness
-    of its neighbors across the fitness landscape.
+def neighbor_fitness_correlation(
+    landscape, auto_calculate=True, method="pearson"
+) -> float:
+    r"""Return the correlation between fitness and mean neighbor fitness.
 
     This metric quantifies the extent to which fitter configurations tend to have
     neighbors with higher fitness values. A strong positive correlation suggests that
@@ -23,38 +23,42 @@ def neighbor_fitness_correlation(landscape, auto_calculate=True, method="pearson
 
     Parameters
     ----------
-    landscape : BaseLandscape
-        The fitness landscape object.
+    landscape : Landscape
+        Built fitness landscape.
     auto_calculate : bool, default=True
-        If True, automatically computes neighbour fitness (via the
-        landscape's .neighbor_fitness property) if needed.
-        If False, raises an exception when neighbor fitness metrics are missing.
-    method : str, default='pearson'
-        The correlation method to use. Options are:
-        - 'pearson': Standard correlation coefficient
-        - 'spearman': Rank correlation
-        - 'kendall': Kendall Tau correlation
+        Compute missing neighbor-fitness attributes through
+        ``landscape.neighbor_fitness``. If False, require the cached attributes.
+    method : {"pearson", "spearman", "kendall"}, default="pearson"
+        Correlation coefficient to calculate.
 
     Returns
     -------
-    float
-        The correlation coefficient between fitness and mean neighbor fitness.
-        Returns NaN if no valid data is available.
+    correlation : float
+        Correlation between fitness and mean neighbor fitness in [-1, 1].
+        Configurations with missing values are excluded; return NaN if none
+        remain or the correlation is undefined.
 
     Raises
     ------
     RuntimeError
         If auto_calculate=False and neighbor fitness metrics haven't been calculated.
     ValueError
-        If an invalid correlation method is specified.
+        If the method is invalid or Pearson correlation has fewer than two
+        valid fitness/neighbor-fitness pairs.
 
     Notes
     -----
-    - Nodes with no neighbors (and thus NaN mean_neighbor_fit) are excluded
-    - A positive correlation suggests that fitter configurations tend to exist in
-      higher-fitness regions of the landscape
-    - A negative correlation suggests the opposite pattern
-    - No correlation suggests random distribution of fitness across the landscape
+    Positive correlation means fitter configurations tend to have fitter
+    neighbors; negative correlation indicates the opposite association.
+
+    Examples
+    --------
+    >>> from graphfla.landscape import BooleanLandscape
+    >>> from graphfla.analysis import neighbor_fitness_correlation
+    >>> landscape = BooleanLandscape().build_from_data(
+    ...     ["00", "01", "10", "11"], [0, 1, 2, 4], verbose=False)
+    >>> round(neighbor_fitness_correlation(landscape), 3)
+    -0.169
     """
     landscape._check_built()
 
@@ -106,22 +110,37 @@ def fdc(
     landscape,
     method: str = "spearman",
 ) -> float:
-    """
-    Calculate the fitness distance correlation (FDC) of a landscape. This metric assesses how likely it is
-    to encounter higher fitness values when moving closer to the global optimum.
+    r"""Return the correlation between fitness and distance to the global optimum.
 
     Parameters
     ----------
-    method : str, one of {"spearman", "pearson"}, default="spearman"
-        The correlation measure used to assess FDC.
+    landscape : Landscape
+        Built fitness landscape. Distances to its selected global optimum are
+        computed lazily when absent.
+    method : {"spearman", "pearson"}, default="spearman"
+        Correlation coefficient to calculate.
 
     Returns
     -------
-    float
-        The FDC value, ranging from -1 to 1. A value close to 1 indicates a
-        positive correlation between fitness and distance to the global optimum
-        (and a strongly negative value the usual "easy" gradient-toward-optimum
-        structure under maximization).
+    correlation : float
+        Correlation in [-1, 1], or NaN when undefined. Under maximization,
+        a negative correlation means fitness tends to increase toward the
+        selected global optimum.
+
+    Raises
+    ------
+    ValueError
+        If the method is invalid or Pearson correlation has fewer than two
+        configurations.
+
+    Examples
+    --------
+    >>> from graphfla.landscape import BooleanLandscape
+    >>> from graphfla.analysis import fdc
+    >>> landscape = BooleanLandscape().build_from_data(
+    ...     ["00", "01", "10", "11"], [0, 1, 2, 4], verbose=False)
+    >>> round(fdc(landscape), 3)
+    -0.949
     """
 
     if "dist_go" not in landscape.graph.vs.attributes():
@@ -150,23 +169,33 @@ def fdc(
 def fitness_flattening_index(
     landscape, min_len: int = 3, method: str = "spearman"
 ) -> float:
-    """
-    Calculate the fitness flattening index (FFI) of the landscape. It assesses whether the
-    landscape tends to be flatter around the global optimum by evaluating adaptive paths.
+    r"""Return the mean fitness-increment trend along greedy adaptive paths.
 
     Parameters
     ----------
+    landscape : Landscape
+        Built fitness landscape.
     min_len : int, default=3
-        Minimum length of an adaptive path for it to be considered.
-
-    method : str, one of {"spearman", "pearson"}, default="spearman"
-        The correlation measure used to assess FFI.
+        Minimum number of configurations, including the starting configuration,
+        in a greedy path. Only paths ending at the selected global optimum count.
+    method : {"spearman", "pearson"}, default="spearman"
+        Correlation coefficient to calculate.
 
     Returns
     -------
-    float
-        The FFI value, ranging from -1 to 1, where a value close to 1 indicates
-        a flatter landscape around the global optimum.
+    index : float
+        Mean correlation of step index with successive signed fitness changes.
+        Under maximization, a negative value means gains tend to decrease along
+        paths. Returns NaN if no eligible path has a defined correlation.
+
+    Examples
+    --------
+    >>> from graphfla.landscape import BooleanLandscape
+    >>> from graphfla.analysis import fitness_flattening_index
+    >>> landscape = BooleanLandscape().build_from_data(
+    ...     ["00", "01", "10", "11"], [0, 3, 2, 4], verbose=False)
+    >>> round(fitness_flattening_index(landscape), 3)
+    -1.0
     """
 
     def check_diminishing_differences(data, method):
@@ -202,22 +231,37 @@ def fitness_flattening_index(
     return _pythonize(ffi)
 
 
-def basin_fitness_correlation(landscape, method: str = "spearman"):
-    """
-    Calculate the correlation between the size of the basin of attraction and the fitness of local optima.
+def basin_fitness_correlation(landscape, method: str = "spearman") -> float:
+    r"""Return the correlation between greedy basin size and local-optimum fitness.
 
     Parameters
     ----------
     landscape : Landscape
-        The fitness landscape object.
+        Built fitness landscape.
 
-    method : str, one of {"spearman", "pearson"}, default="spearman"
+    method : {"spearman", "pearson"}, default="spearman"
         The correlation measure to use.
 
     Returns
     -------
-    float
-        The correlation coefficient between basin size and local-optimum fitness.
+    correlation : float
+        Correlation between greedy basin size and local-optimum fitness in
+        [-1, 1], or NaN when undefined. Basins are computed lazily when absent.
+
+    Raises
+    ------
+    ValueError
+        If the method is invalid or Pearson correlation has fewer than two
+        local optima.
+
+    Examples
+    --------
+    >>> from graphfla.landscape import BooleanLandscape
+    >>> from graphfla.analysis import basin_fitness_correlation
+    >>> landscape = BooleanLandscape().build_from_data(
+    ...     ["00", "01", "10", "11"], [0, 3, 2, 1], verbose=False)
+    >>> round(basin_fitness_correlation(landscape), 3)
+    1.0
     """
     if "size_basin_greedy" not in landscape.graph.vs.attributes():
         if landscape.verbose:

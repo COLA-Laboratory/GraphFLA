@@ -61,20 +61,15 @@ def test_seed_is_effective_parallel_stable_and_local(categorical):
     np.testing.assert_array_equal(before[1], after[1])
 
 
-def test_single_mutation_labels_and_reverse_use_correct_backgrounds(
-    categorical, monkeypatch
-):
-    import graphfla.analysis.epistasis.idiosyncrasy as module
-
+def test_single_mutation_labels_and_reverse_use_correct_backgrounds(categorical):
     rng_class = np.random.RandomState
     fitness = categorical.get_data().fitness.to_numpy()
     pairs = rng_class(7).choice(fitness, (4, 2), replace=True)
     expected = np.std([2, 7, 1, 5]) / np.std(pairs[:, 1] - pairs[:, 0])
-    monkeypatch.setattr(module.np.random, "RandomState", lambda: rng_class(7))
-    assert idiosyncratic_index(categorical, ("A", "site_9", "C")) == pytest.approx(
+    assert idiosyncratic_index(categorical, ("A", "site_9", "C"), seed=7) == pytest.approx(
         expected
     )
-    assert idiosyncratic_index(categorical, ("C", "site_9", "A")) == pytest.approx(
+    assert idiosyncratic_index(categorical, ("C", "site_9", "A"), seed=7) == pytest.approx(
         expected
     )
 
@@ -252,6 +247,9 @@ def test_two_backgrounds_can_give_a_defined_single_mutation_index(monkeypatch):
     import graphfla.analysis.epistasis.idiosyncrasy as module
 
     class FixedControl:
+        def __init__(self, seed=None):
+            pass
+
         def choice(self, pool, size, replace):
             assert size == (2, 2) and replace
             return pool[[[0, 1], [0, 3]]]

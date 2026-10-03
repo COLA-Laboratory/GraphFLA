@@ -236,8 +236,8 @@ def _gamma_statistics(landscape, n_jobs=-1, *, statistic=None):
     }
 
 
-def gamma(landscape, n_jobs=-1):
-    """Measure the correlation of mutation effects across neighboring backgrounds.
+def gamma(landscape, n_jobs=-1) -> float:
+    r"""Return the correlation of mutation effects across neighboring backgrounds.
 
     Parameters
     ----------
@@ -262,7 +262,7 @@ def gamma(landscape, n_jobs=-1):
 
     Raises
     ------
-    NotBuiltError
+    graphfla.exceptions.NotBuiltError
         If the landscape has not been built.
     ValueError
         If the graph lacks fitness values, or the worker count is invalid.
@@ -309,8 +309,8 @@ def gamma(landscape, n_jobs=-1):
     return _pythonize(stats["gamma"])
 
 
-def gamma_star(landscape, n_jobs=-1):
-    """Measure the correlation of mutation-effect signs across backgrounds.
+def gamma_star(landscape, n_jobs=-1) -> float:
+    r"""Return the correlation of mutation-effect signs across backgrounds.
 
     Parameters
     ----------
@@ -333,7 +333,7 @@ def gamma_star(landscape, n_jobs=-1):
 
     Raises
     ------
-    NotBuiltError
+    graphfla.exceptions.NotBuiltError
         If the landscape has not been built.
     ValueError
         If the graph lacks fitness values, or the worker count is invalid.

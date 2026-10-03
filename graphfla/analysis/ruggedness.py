@@ -2,6 +2,7 @@ import numpy as np
 import pandas as pd
 
 import random
+from typing import Optional
 
 from ..algorithms import RandomWalk, SearchCache
 from ._roughness import roughness_slope_ratio
@@ -12,19 +13,28 @@ from ._utils import _pythonize
 
 
 def local_optima_ratio(landscape) -> float:
-    """
-    The most intuitive measure of landscape ruggedness. It is based on the ratio
-    of the number of local optima to the total number of configurations in the landscape.
+    r"""Return the number of local-optimum plateaus per configuration.
 
     Parameters
     ----------
     landscape : Landscape
-        The fitness landscape object.
+        Built fitness landscape.
 
     Returns
     -------
-    float
-        The ruggedness index, ranging from 0 to 1.
+    ratio : float
+        ``landscape.n_lo / landscape.n_configs``, or NaN on an empty landscape.
+        The numerator counts local-optimum plateaus, whereas the denominator
+        counts configurations. A multi-member peak plateau counts once.
+
+    Examples
+    --------
+    >>> from graphfla.landscape import BooleanLandscape
+    >>> from graphfla.analysis import local_optima_ratio
+    >>> landscape = BooleanLandscape().build_from_data(
+    ...     ["00", "01", "10", "11"], [0, 1, 2, 4], verbose=False)
+    >>> local_optima_ratio(landscape)
+    0.25
     """
 
     n_lo = landscape.n_lo
@@ -42,41 +52,43 @@ def autocorrelation(
     walk_length: int = 20,
     walk_times: int = 1000,
     lag: int = 1,
-    seed: int = None,
+    seed: Optional[int] = None,
 ) -> float:
-    """
-    A measure of landscape ruggedness. It operates by calculating the autocorrelation of
-    fitness values over multiple random walks on a graph.
+    r"""Return the pooled fitness autocorrelation along random walks.
 
-    Parameters:
+    Parameters
     ----------
     landscape : Landscape
-        The fitness landscape object.
-
+        Built fitness landscape.
     walk_length : int, default=20
-        The length of each random walk.
-
+        Maximum number of visited configurations, including the starting node.
     walk_times : int, default=1000
-        The number of random walks to perform.
-
+        Number of random walks, each starting at a uniformly sampled node.
     lag : int, default=1
-        The distance lag used for calculating autocorrelation.
+        Separation between fitness observations along a walk.
+    seed : int or None, default=None
+        Seed for local random walks. An integer makes the sample reproducible;
+        None uses the global Python ``random`` state.
 
-    seed : int, optional
-        Seed for a local RNG, making the set of random walks reproducible. If
-        None (default), the global ``random`` state is used.
-
-    References:
-    ----------
-    [1] E. Weinberger, "Correlated and Uncorrelated Fitness Landscapes and How to Tell
-        the Difference", Biol. Cybern. 63, 325-336 (1990).
-
-    Returns:
+    Returns
     -------
-    float
-        The lag-``lag`` autocorrelation of fitness, pooled across all random
-        walks under a single grand mean. Returns NaN if no walk yields more
-        than ``lag`` steps.
+    correlation : float
+        Lagged fitness correlation pooled under one grand mean. Returns NaN if
+        no walk has more than ``lag`` observations or pooled variance is zero.
+
+    References
+    ----------
+    .. [1] E. Weinberger, "Correlated and Uncorrelated Fitness Landscapes and How
+       to Tell the Difference", Biol. Cybern. 63, 325-336 (1990).
+
+    Examples
+    --------
+    >>> from graphfla.landscape import BooleanLandscape
+    >>> from graphfla.analysis import autocorrelation
+    >>> landscape = BooleanLandscape().build_from_data(
+    ...     ["00", "01", "10", "11"], [0, 1, 2, 4], verbose=False)
+    >>> round(autocorrelation(landscape, walk_times=8, seed=0), 3)
+    -0.082
     """
     # Pool lagged products under one grand mean: per-walk centering biases the
     # estimate toward zero; pooling is the unbiased estimator (Weinberger 1990).
@@ -105,19 +117,28 @@ def autocorrelation(
 
 
 def gradient_intensity(landscape) -> float:
-    """
-    Calculate the gradient intensity of the landscape using igraph. It is
-    defined as the average absolute fitness difference (delta_fit) across all edges.
+    r"""Return the mean absolute edge fitness change divided by mean fitness.
 
     Parameters
     ----------
     landscape : Landscape
-        The fitness landscape object.
+        Built fitness landscape.
 
     Returns
     -------
-    float
-        The gradient intensity.
+    intensity : float
+        Mean absolute ``delta_fit`` over graph edges, divided by mean fitness.
+        Missing edge ``delta_fit`` attributes contribute zero. Returns NaN if
+        there are no edges or mean fitness is zero. The sign follows mean fitness.
+
+    Examples
+    --------
+    >>> from graphfla.landscape import BooleanLandscape
+    >>> from graphfla.analysis import gradient_intensity
+    >>> landscape = BooleanLandscape().build_from_data(
+    ...     ["00", "01", "10", "11"], [0, 1, 2, 4], verbose=False)
+    >>> round(gradient_intensity(landscape), 3)
+    1.143
     """
 
     graph = landscape.graph
@@ -166,7 +187,7 @@ def r_s_ratio(landscape) -> float:
 
     Raises
     ------
-    RuntimeError
+    graphfla.exceptions.NotBuiltError
         If the landscape has not been built.
     ValueError
         If a variable type is unsupported or an objective value is nonfinite.

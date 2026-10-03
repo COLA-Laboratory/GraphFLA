@@ -48,8 +48,7 @@ def _validate_local_optima(landscape, lo_indices: List[int]) -> None:
 def local_optima_accessibility(
     landscape, lo: Union[int, List[int]]
 ) -> pd.DataFrame:
-    """
-    Calculate the accessibility of one or more specified local optima (LOs).
+    r"""Return accessibility fractions for the requested local optima.
 
     This metric represents the fraction of configurations in the landscape
     that can reach the specified local optimum (or optima) via any monotonic,
@@ -63,19 +62,19 @@ def local_optima_accessibility(
     Parameters
     ----------
     landscape : Landscape
-        The fitness landscape object.
-    lo : int or list[int]
+        Built fitness landscape.
+    lo : int or list of int
         Index of the local optimum to analyze, or a list of indices when analyzing
         multiple local optima.
 
     Returns
     -------
-    pandas.DataFrame
+    accessibility : pandas.DataFrame
         One row per requested local optimum, with columns:
 
         - ``local_optimum`` : the local-optimum node index.
         - ``accessibility`` : the fraction of configurations able to reach it
-          monotonically (between 0.0 and 1.0).
+          monotonically (between 0.0 and 1.0), including the target itself.
 
         A single ``lo`` yields a one-row frame (no scalar-vs-list polymorphism).
 
@@ -87,6 +86,15 @@ def local_optima_accessibility(
         If any provided index is not a local optimum.
     TypeError
         If lo is not an int or a list of ints.
+
+    Examples
+    --------
+    >>> from graphfla.landscape import BooleanLandscape
+    >>> from graphfla.analysis import local_optima_accessibility
+    >>> landscape = BooleanLandscape().build_from_data(
+    ...     ["00", "01", "10", "11"], [0, 1, 2, 4], verbose=False)
+    >>> local_optima_accessibility(landscape, lo=3).accessibility.tolist()
+    [1.0]
     """
     if landscape.graph is None:
         raise RuntimeError("Graph not initialized. Cannot calculate accessibility.")
@@ -118,18 +126,22 @@ def local_optima_accessibility(
 
 
 def global_optima_accessibility(landscape) -> float:
-    """
-    Calculate the accessibility of the global optimum (GO).
+    r"""Return the fraction of configurations that can reach the global optimum.
 
     This metric represents the fraction of configurations in the landscape
     that can reach the global optimum via any monotonic, fitness-improving path.
 
-    This function relies on `local_optima_accessibility` by passing the
-    global optimum index.
+    Use :func:`local_optima_accessibility` with the selected global-optimum
+    index; the target itself counts as reachable.
+
+    Parameters
+    ----------
+    landscape : Landscape
+        Built fitness landscape.
 
     Returns
     -------
-    float
+    fraction : float
         The fraction of configurations able to reach the global optimum
         monotonically (value between 0.0 and 1.0).
 
@@ -137,6 +149,15 @@ def global_optima_accessibility(landscape) -> float:
     ------
     RuntimeError
         If the global optimum has not been determined or the graph is not initialized.
+
+    Examples
+    --------
+    >>> from graphfla.landscape import BooleanLandscape
+    >>> from graphfla.analysis import global_optima_accessibility
+    >>> landscape = BooleanLandscape().build_from_data(
+    ...     ["00", "01", "10", "11"], [0, 1, 2, 4], verbose=False)
+    >>> global_optima_accessibility(landscape)
+    1.0
     """
     if landscape.graph is None:
         raise RuntimeError("Graph not initialized. Cannot calculate accessibility.")
@@ -159,13 +180,12 @@ def global_optima_accessibility(landscape) -> float:
 
 def mean_path_length_to_local_optima(
     landscape,
-    lo: Union[int, List[int]] = None,
+    lo: Optional[Union[int, List[int]]] = None,
     accessible: bool = True,
     n_samples: Optional[Union[int, float]] = None,
     seed: Optional[int] = None,
 ) -> pd.DataFrame:
-    """
-    Calculate the mean and variance of the shortest path lengths from configurations to local optima.
+    r"""Return mean and variance of shortest path lengths to local optima.
 
     This function computes the shortest path length from each configuration to the specified local optima.
     If accessible=True, only monotonically fitness-improving paths are considered (using OUT mode in distances).
@@ -177,22 +197,27 @@ def mean_path_length_to_local_optima(
     Parameters
     ----------
     landscape : Landscape
-        The fitness landscape object.
-    lo : int or list[int], optional
+        Built fitness landscape.
+    lo : int, list of int or None, default=None
         Index of the local optimum to analyze, or a list of indices when analyzing
         multiple local optima. If None, uses the global optimum.
     accessible : bool, default=True
         If True, only consider monotonically accessible (fitness-improving) paths.
-        If False, consider any path regardless of fitness changes.
-    n_samples : int or float, optional
+        If False, ignore the direction of existing graph edges. Retained
+        neutral pairs are not added as path edges.
+    n_samples : int, float or None, default=None
         If provided, use sampling to approximate the results:
-        - If float between 0 and 1: Sample this fraction of configurations.
-        - If int > 1: Sample this specific number of configurations.
+        - If float in (0, 1]: Sample this fraction of configurations.
+        - If positive int: Sample at most this many configurations.
         - If None: Compute for all configurations (with warning for large landscapes).
+    seed : int or None, default=None
+        Seed for sampling configurations. An integer makes the sample
+        reproducible; None uses the global Python ``random`` state.
+        Ignored when ``n_samples=None``.
 
     Returns
     -------
-    pandas.DataFrame
+    path_lengths : pandas.DataFrame
         One row per target local optimum, with columns ``local_optimum``,
         ``mean`` and ``variance`` of the shortest path lengths to it. When
         ``lo`` is None the single row is the global optimum. Infinite distances
@@ -207,6 +232,15 @@ def mean_path_length_to_local_optima(
         If n_samples is invalid or any provided index is not a local optimum.
     TypeError
         If lo is not an int, a list of ints, or None.
+
+    Examples
+    --------
+    >>> from graphfla.landscape import BooleanLandscape
+    >>> from graphfla.analysis import mean_path_length_to_local_optima
+    >>> landscape = BooleanLandscape().build_from_data(
+    ...     ["00", "01", "10", "11"], [0, 1, 2, 4], verbose=False)
+    >>> mean_path_length_to_local_optima(landscape, lo=3)["mean"].tolist()
+    [1.0]
     """
     if landscape.graph is None:
         raise RuntimeError("Graph not initialized. Cannot calculate path lengths.")
@@ -303,28 +337,32 @@ def mean_path_length_to_global_optimum(
     n_samples: Optional[Union[int, float]] = None,
     seed: Optional[int] = None,
 ) -> float:
-    """
-    Calculate the mean and variance of the shortest path lengths from configurations to the global optimum.
+    r"""Return the mean shortest path length to the global optimum.
 
     This function computes the shortest path length from each configuration to the global optimum.
-    It is a convenience wrapper around the more general `path_lengths` function.
+    It extracts the mean returned by :func:`mean_path_length_to_local_optima`.
 
     Parameters
     ----------
     landscape : Landscape
-        The fitness landscape object.
+        Built fitness landscape.
     accessible : bool, default=True
         If True, only consider monotonically accessible (fitness-improving) paths.
-        If False, consider any path regardless of fitness changes.
-    n_samples : int or float, optional
+        If False, ignore the direction of existing graph edges. Retained
+        neutral pairs are not added as path edges.
+    n_samples : int, float or None, default=None
         If provided, use sampling to approximate the results:
-        - If float between 0 and 1: Sample this fraction of configurations.
-        - If int > 1: Sample this specific number of configurations.
+        - If float in (0, 1]: Sample this fraction of configurations.
+        - If positive int: Sample at most this many configurations.
         - If None: Compute for all configurations (with warning for large landscapes).
+    seed : int or None, default=None
+        Seed for sampling configurations. An integer makes the sample
+        reproducible; None uses the global Python ``random`` state.
+        Ignored when ``n_samples=None``.
 
     Returns
     -------
-    float
+    mean_length : float
         The mean shortest path length to the global optimum. Infinite distances are
         excluded from the calculation.
 
@@ -334,6 +372,15 @@ def mean_path_length_to_global_optimum(
         If the graph is not initialized or the global optimum is not determined.
     ValueError
         If n_samples is invalid.
+
+    Examples
+    --------
+    >>> from graphfla.landscape import BooleanLandscape
+    >>> from graphfla.analysis import mean_path_length_to_global_optimum
+    >>> landscape = BooleanLandscape().build_from_data(
+    ...     ["00", "01", "10", "11"], [0, 1, 2, 4], verbose=False)
+    >>> mean_path_length_to_global_optimum(landscape)
+    1.0
     """
     if landscape.graph is None:
         raise RuntimeError("Graph not initialized. Cannot calculate path lengths.")
@@ -363,23 +410,24 @@ def mean_path_length_to_global_optimum(
 def mean_distance_to_local_optima(
     landscape, lo: Union[int, List[int]], distance_func: Optional[Callable] = None
 ) -> pd.DataFrame:
-    """
-    Calculate the mean distance from all configurations to one or more specified local optima.
+    r"""Return mean configuration distances to the requested local optima.
 
     Parameters
     ----------
     landscape : Landscape
-        The fitness landscape object.
-    lo : int or list[int]
+        Built fitness landscape.
+    lo : int or list of int
         Index of the local optimum to analyze, or a list of indices when analyzing
         multiple local optima.
-    distance_func : callable, optional
-        A function to calculate distances between configurations. If None, uses the
-        default distance metric from the landscape based on its type.
+    distance_func : callable or None, default=None
+        Callable ``distance_func(configs, target, data_types)`` returning one
+        distance per row of the encoded configuration array. If None, use
+        the landscape default distance metric. The target contributes zero
+        for standard distance functions.
 
     Returns
     -------
-    pandas.DataFrame
+    distances : pandas.DataFrame
         One row per requested local optimum, with columns ``local_optimum`` and
         ``mean_distance`` (the mean distance from all configurations to it). A
         single ``lo`` yields a one-row frame (no scalar-vs-list polymorphism).
@@ -392,6 +440,15 @@ def mean_distance_to_local_optima(
         If any provided index is not a local optimum.
     TypeError
         If lo is not an int or a list of ints.
+
+    Examples
+    --------
+    >>> from graphfla.landscape import BooleanLandscape
+    >>> from graphfla.analysis import mean_distance_to_local_optima
+    >>> landscape = BooleanLandscape().build_from_data(
+    ...     ["00", "01", "10", "11"], [0, 1, 2, 4], verbose=False)
+    >>> mean_distance_to_local_optima(landscape, lo=3).mean_distance.tolist()
+    [1.0]
     """
     if landscape.graph is None:
         raise RuntimeError("Graph not initialized. Cannot calculate distances.")
@@ -420,24 +477,24 @@ def mean_distance_to_local_optima(
 
 
 def mean_distance_to_global_optimum(landscape, distance_func: Optional[Callable] = None) -> float:
-    """
-    Calculate the mean distance from all configurations to the global optimum.
+    r"""Return the mean configuration distance to the global optimum.
 
-    This function first checks if distances to the global optimum have already been
-    calculated and stored as 'dist_go' in the graph's vertex attributes. If not, it
-    calculates these distances using the provided or default distance function.
+    Reuse cached ``dist_go`` values only when ``distance_func=None``. An
+    explicit callable is always evaluated and does not replace the cache.
 
     Parameters
     ----------
     landscape : Landscape
-        The fitness landscape object.
-    distance_func : callable, optional
-        A function to calculate distances between configurations. If None, uses the
-        default distance metric from the landscape based on its type.
+        Built fitness landscape.
+    distance_func : callable or None, default=None
+        Callable ``distance_func(configs, target, data_types)`` returning one
+        distance per row of the encoded configuration array. If None, use
+        the landscape default distance metric. The target contributes zero
+        for standard distance functions.
 
     Returns
     -------
-    float
+    mean_distance : float
         The mean distance from all configurations to the global optimum.
 
     Raises
@@ -445,12 +502,21 @@ def mean_distance_to_global_optimum(landscape, distance_func: Optional[Callable]
     RuntimeError
         If the graph is not initialized, required attributes are missing, or the
         global optimum has not been determined.
+
+    Examples
+    --------
+    >>> from graphfla.landscape import BooleanLandscape
+    >>> from graphfla.analysis import mean_distance_to_global_optimum
+    >>> landscape = BooleanLandscape().build_from_data(
+    ...     ["00", "01", "10", "11"], [0, 1, 2, 4], verbose=False)
+    >>> mean_distance_to_global_optimum(landscape)
+    1.0
     """
     if landscape.graph is None:
         raise RuntimeError("Graph not initialized. Cannot calculate distances.")
 
-    # Reuse cached dist_go if present.
-    if "dist_go" in landscape.graph.vs.attributes():
+    # A cached default distance must not override an explicit distance function.
+    if distance_func is None and "dist_go" in landscape.graph.vs.attributes():
         distances = landscape.graph.vs["dist_go"]
         return _pythonize(np.mean(distances))
 

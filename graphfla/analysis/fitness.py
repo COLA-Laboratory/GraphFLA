@@ -3,37 +3,33 @@ import numpy as np
 import scipy.stats as stats
 from scipy.stats import cauchy
 
-from typing import Dict, Any
+from typing import Dict, List
 
 
 from ._utils import _pythonize
 
 
-def fitness_distribution(landscape) -> Dict[str, Any]:
-    """
-    Calculate unitless statistics about the fitness distribution of the landscape.
+def fitness_distribution(landscape) -> Dict[str, float]:
+    r"""Return descriptive statistics of the retained fitness distribution.
 
-    This function computes various statistics that characterize the shape and properties
-    of the fitness distribution across all configurations in the landscape. The statistics
-    are chosen to be unitless (scale-invariant) to allow meaningful comparisons across
-    different landscapes with varying fitness scales.
+    Summarize fitness across the configurations retained in the landscape.
+    The fitted Cauchy location is in fitness units; the other summaries are
+    dimensionless, but need not be invariant to shifts or nonlinear transforms.
 
     Parameters
     ----------
     landscape : Landscape
-        The fitness landscape object.
+        Built fitness landscape.
 
     Returns
     -------
-    Dict[str, Any]
-        A dictionary containing the following statistics:
-        - 'skewness': Measure of asymmetry of the fitness distribution
-        - 'kurtosis': Measure of "tailedness" of the fitness distribution
-        - 'cv': Coefficient of variation (ratio of std dev to mean)
-        - 'quartile_coefficient': Interquartile range divided by median (IQR/median)
-        - 'median_mean_ratio': Ratio of median to mean
-        - 'relative_range': Range divided by median
-        - 'cauchy_loc': Location parameter (center) of the fitted Cauchy distribution
+    statistics : dict of str to float
+        Keys are ``skewness``, ``kurtosis`` (Pearson convention, normal=3),
+        ``cv`` (sample SD divided by absolute mean), ``quartile_coefficient``
+        (IQR divided by absolute median), ``median_mean_ratio``, ``relative_range``
+        (range divided by absolute median), and ``cauchy_loc`` (fitted location).
+        Undefined summaries, including ratios with a zero denominator, are NaN.
+        An empty landscape returns the same keys with NaN values.
 
     Raises
     ------
@@ -42,12 +38,18 @@ def fitness_distribution(landscape) -> Dict[str, Any]:
 
     Notes
     -----
-    - Skewness > 0 indicates right-skewed distribution (tail on right)
-    - Skewness < 0 indicates left-skewed distribution (tail on left)
-    - Kurtosis > 3 indicates heavy tails and peaked distribution
-    - Kurtosis < 3 indicates light tails and flat distribution
-    - Higher CV indicates greater relative dispersion
-    - Cauchy location parameter represents the center/peak of the fitted Cauchy distribution
+    Positive skewness indicates a longer right tail; negative skewness a
+    longer left tail. Pearson kurtosis is 3 for a normal distribution. Cauchy
+    location describes the fitted center and is not scale-invariant.
+
+    Examples
+    --------
+    >>> from graphfla.landscape import BooleanLandscape
+    >>> from graphfla.analysis import fitness_distribution
+    >>> landscape = BooleanLandscape().build_from_data(
+    ...     ["00", "01", "10", "11"], [0, 1, 2, 4], verbose=False)
+    >>> round(fitness_distribution(landscape)["median_mean_ratio"], 3)
+    0.857
     """
     if landscape.graph is None:
         raise RuntimeError(
@@ -109,40 +111,43 @@ def fitness_distribution(landscape) -> Dict[str, Any]:
     })
 
 
-def fitness_effect_distribution(landscape, mutation):
-    """
-    Calculates the distribution of fitness effects for a specific mutation
-    across all possible genetic backgrounds.
+def fitness_effect_distribution(landscape, mutation) -> List[float]:
+    r"""Return fitness effects of one mutation across matching backgrounds.
 
-    This function measures how the effect of a specific mutation varies
-    depending on the genetic context (background) in which it occurs.
-    It returns a list of fitness differences caused by the mutation
-    in each background where both the original and mutated genotypes exist.
+    Use each retained background in which both source and target alleles
+    are observed. Effects are target fitness minus source fitness, without
+    changing sign for minimization.
 
     Parameters
     ----------
     landscape : Landscape
-        The fitness landscape object.
-    mutation : tuple(A, pos, B)
-        A tuple containing:
-        - A: The original variable value (allele) at the given position.
-        - pos: The position in the configuration where the mutation occurs.
-        - B: The new variable value (allele) after the mutation.
+        Built fitness landscape.
+    mutation : tuple of (source, position, target)
+        Allele substitution to evaluate. ``position`` is a configuration-column
+        label from ``landscape.data_types``, not a positional column index.
 
     Returns
     -------
-    list
-        A list of fitness effect values for the mutation across different
-        genetic backgrounds. Each value represents the fitness difference
-        between a genotype with mutation B and the corresponding genotype
-        with allele A at the specified position.
+    effects : list of float
+        Target-minus-source fitness differences, one per matching background.
+        Return an empty list if no backgrounds match. A single-position
+        landscape has one shared empty background.
 
     Raises
     ------
     ValueError
         If the specified alleles don't exist at the given position.
-    RuntimeError
+    graphfla.exceptions.NotBuiltError
         If the landscape has not been built.
+
+    Examples
+    --------
+    >>> from graphfla.landscape import BooleanLandscape
+    >>> from graphfla.analysis import fitness_effect_distribution
+    >>> landscape = BooleanLandscape().build_from_data(
+    ...     ["00", "01", "10", "11"], [0, 1, 2, 4], verbose=False)
+    >>> fitness_effect_distribution(landscape, (0, "bit_0", 1))
+    [2.0, 3.0]
     """
     landscape._check_built()
 
