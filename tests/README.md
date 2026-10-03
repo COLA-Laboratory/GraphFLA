@@ -13,6 +13,7 @@ Empirical literature tests, including the full Papkou graph, run separately:
 | `test_ee_mutations.py` | Independent equations, categorical focal exclusion, BH families, edge cases and public EE API |
 | `test_literature_contract.py` | Evidence roles, citations, hash failures, collection filters and JUnit provenance |
 | `test_utilities_contracts.py` | Distances, rule combinations, Cartesian sampling and graph walks |
+| `test_problems.py` | All synthetic problems: input contracts, random-state isolation, lazy enumeration and independent objective checks |
 | `test_benchmark_contracts.py` | Complete public analysis inventory, callable benchmark parameters, pinned DMS checksums and input dimensions |
 | Existing metric/profile/golden suites | Retained numerical and API regression coverage; separate literature-validation work remains independent |
 

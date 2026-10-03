@@ -1,319 +1,383 @@
+"""Binary fitness landscape models."""
+
 import math
+from numbers import Integral
+from typing import Optional, Sequence, Union
+
 import numpy as np
 
-from .base_problem import OptimizationProblem
+from .base_problem import OptimizationProblem, _validate_real
 
 
 class NK(OptimizationProblem):
-    """
-    NK model for fitness landscapes.
-
-    This class represents an NK landscape, a model used to study the complexity of
-    adaptive landscapes based on interactions among components.
+    """NK landscape with random interaction partners and fitness contributions.
 
     Parameters
     ----------
     n : int
-        The number of variables (genes) in the problem.
+        Number of binary variables. Must be positive.
     k : int
-        The number of interacting components (genes) for each variable. Must be < n.
+        Number of other variables contributing to each variable's fitness
+        component. Must satisfy ``0 <= k < n``.
     exponent : float, default=1.0
-        An exponent used to transform the final fitness value.
-    seed : int or None, optional
-        Seed for the random number generator.
+        Finite power applied to the mean fitness contribution. Positive values
+        preserve fitness ordering; zero gives constant fitness and negative
+        values reverse ordering (undefined if the mean contribution is zero).
+    seed : int or None, default=None
+        Seed for the instance's random number generator. An integer gives
+        reproducible values for the same evaluation order. None uses
+        system-provided randomness.
+
+    Attributes
+    ----------
+    dependence : list of tuple of int
+        For each variable, its own index and k distinct random partner indices,
+        sorted in ascending order.
+    values : dict
+        Cached contributions in [0, 1). Keys are internal integer encodings
+        of variable/background pairs; use evaluate to access fitness values.
+
+    Notes
+    -----
+    Fitness is the mean of n independent uniform contributions, raised to
+    ``exponent``. Contributions are sampled on first access and then cached;
+    the seed and evaluation order together determine the realized landscape.
+    With k=0 and exponent=1, the model is additive. At most
+    ``n * 2**(k + 1)`` contributions are cached.
+
+    Examples
+    --------
+    >>> from graphfla.problems import NK
+    >>> problem = NK(n=3, k=1, seed=0)
+    >>> fitness = problem.evaluate([0, 1, 0])
+    >>> 0.0 <= fitness < 1.0
+    True
+    >>> problem.evaluate([0, 1, 0]) == fitness
+    True
     """
 
-    def __init__(self, n, k, exponent=1.0, seed=None):
-        """
-        Initialize the NK model with given parameters.
-        """
+    def __init__(
+        self, n: int, k: int, exponent: float = 1.0, seed: Optional[int] = None
+    ) -> None:
         super().__init__(n, seed)
-        if not 0 <= k < n:
-            raise ValueError("k must be non-negative and less than n.")
-        self.k = k
-        self.exponent = float(exponent)
-
+        if isinstance(k, (bool, np.bool_)) or not isinstance(k, Integral):
+            raise TypeError("k must be an integer.")
+        if not 0 <= k < self.n:
+            raise ValueError("k must satisfy 0 <= k < n.")
+        self.k = int(k)
+        self.exponent = _validate_real(exponent, "exponent")
         self.dependence = [
-            tuple(sorted([i] + self.rng.sample(list(set(self.variables) - {i}), k)))
+            tuple(
+                sorted([i] + self.rng.sample(list(set(self.variables) - {i}), self.k))
+            )
             for i in self.variables
         ]
-
-        # Lazy/sparse fitness contribution table, filled during evaluation.
+        self._dependence_masks = [
+            sum(1 << j for j in indices) for indices in self.dependence
+        ]
         self.values = {}
 
-    def evaluate(self, config):
-        """
-        Evaluate the fitness of a configuration in the NK model.
+    def _binary_string_to_config(self, s: str) -> str:
+        """Keep enumerated inputs compact for the encoded NK evaluator."""
+        return s
+
+    def evaluate(self, config: Union[str, Sequence[int]]) -> float:
+        """Return the fitness of one configuration.
 
         Parameters
         ----------
-        config : tuple or list
-            A binary configuration representing a potential solution.
+        config : str or array-like of shape (n,)
+            Binary string of length n, or variable values encoded as 0/1 or booleans.
 
         Returns
         -------
-        float
-            The fitness value of the configuration.
+        fitness : float
+            Mean fitness contribution raised to ``exponent``.
+
+        Raises
+        ------
+        ValueError
+            If config does not contain n binary values.
         """
-        config = tuple(config)  # hashable key
-        if len(config) != self.n:
-            raise ValueError(
-                f"Configuration length {len(config)} does not match problem dimension {self.n}"
-            )
-
+        if isinstance(config, str):
+            self._validate_binary_string(config)
+            encoded = int(config[::-1], 2)
+        else:
+            config = self._validate_config(config)
+            encoded = sum(value << j for j, value in enumerate(config))
         total_value = 0.0
-        for i in self.variables:
-            # Key = variable index plus its dependent sub-configuration.
-            dependent_indices = self.dependence[i]
-            key_elements = (i,) + tuple(config[j] for j in dependent_indices)
-
-            if key_elements not in self.values:
-                self.values[key_elements] = self.rng.random()
-
-            total_value += self.values[key_elements]
-
-        normalized_value = total_value / self.n
-
-        if self.exponent != 1.0:
-            # max(0, ...) guards against domain errors on negative bases.
-            normalized_value = math.pow(max(0.0, normalized_value), self.exponent)
-
-        return normalized_value
+        for i, mask in enumerate(self._dependence_masks):
+            # Pack the background and focal index without allocating k-bit tuples.
+            key = (encoded & mask) * self.n + i
+            value = self.values.get(key)
+            if value is None:
+                value = self.rng.random()
+                self.values[key] = value
+            total_value += value
+        mean_value = total_value / self.n
+        return (
+            math.pow(mean_value, self.exponent) if self.exponent != 1.0 else mean_value
+        )
 
 
 class RoughMountFuji(OptimizationProblem):
-    """
-    Rough Mount Fuji (RMF) model for fitness landscapes.
-
-    This model combines a smooth fitness component (additive) with a rugged
-    (random) component, creating a landscape with controlled ruggedness.
+    """Weighted additive and random binary fitness landscape.
 
     Parameters
     ----------
     n : int
-        The number of variables in the optimization problem.
+        Number of binary variables. Must be positive.
     alpha : float, default=0.5
-        The ruggedness parameter that determines the balance between the smooth
-        and rugged components. Must be between 0 (smoothest) and 1 (most rugged).
-    seed : int or None, optional
-        Seed for the random number generator.
+        Weight of the random component, in [0, 1]. Zero gives an additive
+        landscape and one gives a House of Cards landscape.
+    seed : int or None, default=None
+        Seed for the instance's random number generator. An integer gives
+        reproducible values for the same evaluation order. None uses
+        system-provided randomness.
+
+    Attributes
+    ----------
+    smooth_contribution : ndarray of shape (n,)
+        Additive coefficients drawn independently and uniformly from [-1, 1].
+    random_values : dict
+        Cached independent uniform values in [0, 1), keyed by configuration.
+
+    See Also
+    --------
+    HoC : Purely random special case with alpha=1.
+    Additive : Additive model with a contribution for each binary state.
+
+    Notes
+    -----
+    Fitness is ``(1 - alpha) * sum(w[i] * config[i]) + alpha * u(config)``.
+    The additive sum is not normalized by n, so alpha is a mixing weight,
+    not a fraction of fitness variance. Random values are drawn on first
+    access and cached; evaluation order affects the realization for a fixed seed.
+
+    Examples
+    --------
+    >>> from graphfla.problems import RoughMountFuji
+    >>> problem = RoughMountFuji(n=3, alpha=0.0, seed=0)
+    >>> problem.evaluate([0, 0, 0])
+    0.0
+    >>> round(problem.evaluate([1, 0, 0]), 4)
+    0.6888
     """
 
-    def __init__(self, n, alpha=0.5, seed=None):
-        """
-        Initialize the RMF model with the given number of variables,
-        ruggedness parameter, and seed.
-        """
+    def __init__(self, n: int, alpha: float = 0.5, seed: Optional[int] = None) -> None:
         super().__init__(n, seed)
+        alpha = _validate_real(alpha, "alpha")
         if not 0.0 <= alpha <= 1.0:
-            raise ValueError("alpha must be between 0.0 and 1.0.")
+            raise ValueError("alpha must be in [0, 1].")
         self.alpha = alpha
-
         self.smooth_contribution = np.array(
-            [self.rng.uniform(-1.0, 1.0) for _ in range(n)]
+            [self.rng.uniform(-1.0, 1.0) for _ in self.variables]
         )
-
-        # Lazy rugged-component cache, filled during evaluation.
         self.random_values = {}
 
-    def evaluate(self, config):
-        """
-        Evaluate the fitness of a configuration in the RMF model.
-
-        The fitness is computed as a weighted sum of the smooth and rugged components.
+    def evaluate(self, config: Union[str, Sequence[int]]) -> float:
+        """Return the fitness of one configuration.
 
         Parameters
         ----------
-        config : tuple or list
-            A binary configuration representing a potential solution.
+        config : str or array-like of shape (n,)
+            Binary string of length n, or variable values encoded as 0/1 or booleans.
 
         Returns
         -------
-        float
-            The fitness value of the configuration.
+        fitness : float
+            Weighted sum of additive and random components.
+
+        Raises
+        ------
+        ValueError
+            If config does not contain n binary values.
         """
-        config_tuple = tuple(config)  # hashable key
-        if len(config_tuple) != self.n:
-            raise ValueError(
-                f"Configuration length {len(config_tuple)} does not match problem dimension {self.n}"
-            )
-
+        config = self._validate_config(config)
         smooth_value = sum(
-            self.smooth_contribution[i] * config_tuple[i] for i in self.variables
+            self.smooth_contribution[i] * config[i] for i in self.variables
         )
-
-        if config_tuple not in self.random_values:
-            self.random_values[config_tuple] = self.rng.random()
-        rugged_value = self.random_values[config_tuple]
-
-        # alpha interpolates smooth vs. rugged contributions.
-        fitness = (1.0 - self.alpha) * smooth_value + self.alpha * rugged_value
-
-        return fitness
+        if config not in self.random_values:
+            self.random_values[config] = self.rng.random()
+        return float(
+            (1.0 - self.alpha) * smooth_value + self.alpha * self.random_values[config]
+        )
 
 
 class HoC(RoughMountFuji):
-    """
-    House of Cards (HoC) model for fitness landscapes.
-
-    This model represents a purely random fitness landscape where each configuration
-    is assigned a random fitness value independently of others. It is implemented
-    as a special case of the Rough Mount Fuji (RMF) model where the ruggedness
-    parameter alpha is 1.0.
+    """House of Cards landscape with independent random fitness values.
 
     Parameters
     ----------
     n : int
-        The number of variables in the optimization problem.
-    seed : int or None, optional
-        Seed for the random number generator.
+        Number of binary variables. Must be positive.
+    seed : int or None, default=None
+        Seed for the instance's random number generator. An integer gives
+        reproducible values for the same evaluation order. None uses
+        system-provided randomness.
+
+    Attributes
+    ----------
+    random_values : dict
+        Cached independent uniform values in [0, 1), keyed by configuration.
+
+    See Also
+    --------
+    RoughMountFuji : Mixture of additive and random fitness components.
+
+    Notes
+    -----
+    This is RoughMountFuji with alpha=1, including its initial random draws.
+    Fitness is drawn once per configuration, not once per evaluation; the seed
+    and order of first visits together determine the realization.
+
+    Examples
+    --------
+    >>> from graphfla.problems import HoC
+    >>> problem = HoC(n=3, seed=0)
+    >>> round(problem.evaluate([0, 1, 0]), 4)
+    0.2589
+    >>> problem.evaluate([0, 1, 0]) == problem.evaluate((False, True, False))
+    True
     """
 
-    def __init__(self, n, seed=None):
-        """
-        Initialize the HoC model with the given number of variables and seed.
-        """
-        # alpha=1.0 makes RMF purely random (smooth part vanishes).
+    def __init__(self, n: int, seed: Optional[int] = None) -> None:
         super().__init__(n, alpha=1.0, seed=seed)
 
-    def evaluate(self, config):
-        """
-        Evaluate the fitness of a configuration in the HoC model.
-
-        The fitness is purely random for each configuration. This overrides the RMF
-        evaluate slightly for clarity, although RMF with alpha=1.0 would yield
-        the same result (smooth part becomes zero).
+    def evaluate(self, config: Union[str, Sequence[int]]) -> float:
+        """Return the fitness of one configuration.
 
         Parameters
         ----------
-        config : tuple or list
-            A binary configuration representing a potential solution.
+        config : str or array-like of shape (n,)
+            Binary string of length n, or variable values encoded as 0/1 or booleans.
 
         Returns
         -------
-        float
-            The random fitness value of the configuration.
+        fitness : float
+            Cached uniform random value in [0, 1).
+
+        Raises
+        ------
+        ValueError
+            If config does not contain n binary values.
         """
-        config_tuple = tuple(config)  # hashable key
-        if len(config_tuple) != self.n:
-            raise ValueError(
-                f"Configuration length {len(config_tuple)} does not match problem dimension {self.n}"
-            )
-
-        if config_tuple not in self.random_values:
-            self.random_values[config_tuple] = self.rng.random()
-
-        return self.random_values[config_tuple]
+        config = self._validate_config(config)
+        if config not in self.random_values:
+            self.random_values[config] = self.rng.random()
+        return self.random_values[config]
 
 
 class Additive(OptimizationProblem):
-    """
-    Additive model for fitness landscapes.
-
-    This model represents a fitness landscape where the fitness of a configuration
-    is the sum of independent contributions from each variable depending on its value (0 or 1).
+    """Binary landscape with independent contributions from each variable.
 
     Parameters
     ----------
     n : int
-        The number of variables in the optimization problem.
-    seed : int or None, optional
-        Seed for the random number generator.
+        Number of binary variables. Must be positive.
+    seed : int or None, default=None
+        Seed for the instance's random number generator. An integer gives
+        reproducible contributions, sampled at construction. None uses
+        system-provided randomness.
+
+    Attributes
+    ----------
+    contributions : list of tuple of float
+        Two independent uniform values in [0, 1) per variable, one for each
+        binary state. Fitness is their sum, without normalization by n.
+
+    Examples
+    --------
+    >>> from graphfla.problems import Additive
+    >>> problem = Additive(n=2, seed=0)
+    >>> round(problem.evaluate([0, 1]), 4)
+    1.1033
+    >>> X, f = problem.get_data()
+    >>> len(X), len(f)
+    (4, 4)
     """
 
-    def __init__(self, n, seed=None):
-        """
-        Initialize the Additive model with the given number of variables and seed.
-        """
+    def __init__(self, n: int, seed: Optional[int] = None) -> None:
         super().__init__(n, seed)
-        # Per-variable contributions: [(contrib_for_0, contrib_for_1), ...].
         self.contributions = [
             (self.rng.random(), self.rng.random()) for _ in self.variables
         ]
 
-    def evaluate(self, config):
-        """
-        Evaluate the fitness of a configuration in the Additive model.
-
-        The fitness is computed as the sum of independent contributions of each variable.
+    def evaluate(self, config: Union[str, Sequence[int]]) -> float:
+        """Return the fitness of one configuration.
 
         Parameters
         ----------
-        config : tuple or list
-            A binary configuration representing a potential solution.
+        config : str or array-like of shape (n,)
+            Binary string of length n, or variable values encoded as 0/1 or booleans.
 
         Returns
         -------
-        float
-            The fitness value of the configuration.
+        fitness : float
+            Sum of the selected per-variable contributions, in [0, n).
+
+        Raises
+        ------
+        ValueError
+            If config does not contain n binary values.
         """
-        config_tuple = tuple(config)
-        if len(config_tuple) != self.n:
-            raise ValueError(
-                f"Configuration length {len(config_tuple)} does not match problem dimension {self.n}"
-            )
-
-        fitness = sum(self.contributions[i][config_tuple[i]] for i in self.variables)
-
-        return fitness
+        config = self._validate_config(config)
+        return sum(self.contributions[i][config[i]] for i in self.variables)
 
 
 class Eggbox(OptimizationProblem):
-    """
-    Eggbox model for fitness landscapes.
-
-    This model represents a fitness landscape with regularly spaced peaks and valleys,
-    resembling the structure of an egg carton. Fitness depends only on the sum of
-    the elements in the configuration. This problem has no random components.
+    """Periodic binary landscape determined by the number of selected bits.
 
     Parameters
     ----------
     n : int
-        The number of variables in the optimization problem.
-    frequency : float, default=1.0
-        The frequency of the peaks and troughs in the landscape. Higher frequency
-        means more peaks within the range of possible sums (0 to n).
-    seed : int or None, optional
-        Seed for the random number generator. (Note: This problem is deterministic,
-        but the parameter is included for consistency with the base class).
+        Number of binary variables. Must be positive.
+    frequency : float, default=0.5
+        Positive, finite frequency in ``sin(pi * frequency * sum(config))**2``.
+        A half-integer frequency gives alternating peaks and valleys; integer
+        frequencies give zero fitness in exact arithmetic. Higher frequencies
+        need not produce more peaks on the discrete binary space.
+    seed : int or None, default=None
+        Accepted for consistency with other problems; fitness is deterministic
+        and independent of seed.
+
+    Examples
+    --------
+    >>> from graphfla.problems import Eggbox
+    >>> problem = Eggbox(n=3)
+    >>> [round(problem.evaluate(x), 4) for x in ([0, 0, 0], [0, 0, 1])]
+    [0.0, 1.0]
     """
 
-    def __init__(self, n, frequency=1.0, seed=None):
-        """
-        Initialize the Eggbox model with the given number of variables and frequency.
-        """
-        # seed is unused here; passed only for base-class consistency.
+    def __init__(
+        self, n: int, frequency: float = 0.5, seed: Optional[int] = None
+    ) -> None:
         super().__init__(n, seed)
+        frequency = _validate_real(frequency, "frequency")
         if frequency <= 0:
-            raise ValueError("Frequency must be positive.")
-        self.frequency = float(frequency)
+            raise ValueError("frequency must be positive.")
+        self.frequency = frequency
 
-    def evaluate(self, config):
-        """
-        Evaluate the fitness of a configuration in the Eggbox model.
-
-        The fitness is determined based on the sum of the variables and a sine function,
-        creating a periodic landscape with alternating peaks and valleys.
+    def evaluate(self, config: Union[str, Sequence[int]]) -> float:
+        """Return the fitness of one configuration.
 
         Parameters
         ----------
-        config : tuple or list
-            A binary configuration representing a potential solution.
+        config : str or array-like of shape (n,)
+            Binary string of length n, or variable values encoded as 0/1 or booleans.
 
         Returns
         -------
-        float
-            The fitness value of the configuration.
+        fitness : float
+            Squared sine of pi times frequency times the number of ones,
+            in [0, 1].
+
+        Raises
+        ------
+        ValueError
+            If config does not contain n binary values.
         """
-        config_tuple = tuple(config)
-        if len(config_tuple) != self.n:
-            raise ValueError(
-                f"Configuration length {len(config_tuple)} does not match problem dimension {self.n}"
-            )
-
-        sum_of_elements = sum(config_tuple)
-
-        # sin**2 keeps fitness non-negative; argument scales with frequency and sum.
-        argument = self.frequency * float(sum_of_elements) * math.pi
-        fitness = math.sin(argument) ** 2
-        return fitness
+        config = self._validate_config(config)
+        # Reduce the phase first to preserve exact zeros and avoid large arguments.
+        phase = ((self.frequency % 1.0) * sum(config)) % 1.0
+        return math.sin(math.pi * phase) ** 2
