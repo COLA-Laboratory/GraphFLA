@@ -1,32 +1,19 @@
-"""One-call landscape metric profile -- the computed-metric analog of
-:meth:`graphfla.landscape.Landscape.describe`.
-
-``describe()`` reports cheap structural facts (sizes, optima counts); ``profile()``
-runs the whole-landscape analysis metrics and returns a tidy ``pandas`` object:
-a ``Series`` for one landscape, a ``DataFrame`` (one row each) for several.
-
-Metrics that need *just the landscape* and provide a scalar or a fixed-field
-summary are included. Drill-down metrics (needing ``mutation`` / ``position`` /
-``lo``, or returning a variable-length table) are intentionally left out -- call
-those functions directly. Selection is via ``groups`` or ``include`` (pick the base
-set) and ``exclude`` (a filter that composes with either); ``params`` overrides
-per-metric kwargs. Stochastic/parallel metrics receive shared ``seed`` / ``n_jobs``
-/ ``time_budget`` automatically, but only if their signature accepts them.
-"""
+"""Compute selected landscape metrics as a Series or a table."""
 
 from __future__ import annotations
 
 import inspect
 import logging
 import sys
-import time
 import warnings
 from contextlib import contextmanager
-from dataclasses import asdict, dataclass, is_dataclass
+from dataclasses import dataclass
 from typing import Optional, Union
 
 import numpy as np
 import pandas as pd
+
+from .._progress import track
 
 from .correlation import (
     basin_fitness_correlation,
@@ -60,163 +47,152 @@ from .epistasis import (
 
 @dataclass(frozen=True)
 class _Metric:
-    """Registry entry. ``prefix`` set => structured (dataclass/dict) return."""
+    """Registry entry. ``prefix`` set => dictionary return."""
 
     name: str
     fn: object
     group: str
-    prefix: Optional[str] = None          # column namespace for structured returns
-    fields: Optional[tuple] = None        # which subkeys to keep (structured only)
-    rename: Optional[dict] = None         # optional {subkey: short column name}
+    prefix: Optional[str] = None  # column namespace for structured returns
+    fields: Optional[tuple] = None  # which subkeys to keep (structured only)
+    rename: Optional[dict] = None  # optional {subkey: short column name}
 
 
 # The default portfolio: every whole-landscape, scalar-or-fixed-struct metric.
 # Grouped by source module; order here is the order columns appear in the output.
 _REGISTRY = (
-    _Metric("fitness_distribution", fitness_distribution, "fitness", prefix="fitness",
-            fields=("skewness", "kurtosis", "cv", "quartile_coefficient",
-                    "median_mean_ratio", "relative_range", "cauchy_loc")),
-
+    _Metric(
+        "fitness_distribution",
+        fitness_distribution,
+        "fitness",
+        prefix="fitness",
+        fields=(
+            "skewness",
+            "kurtosis",
+            "cv",
+            "quartile_coefficient",
+            "median_mean_ratio",
+            "relative_range",
+            "cauchy_loc",
+        ),
+    ),
     _Metric("local_optima_ratio", local_optima_ratio, "ruggedness"),
     _Metric("gradient_intensity", gradient_intensity, "ruggedness"),
     _Metric("autocorrelation", autocorrelation, "ruggedness"),
     _Metric("r_s_ratio", r_s_ratio, "ruggedness"),
-
     _Metric("neutrality", neutrality, "robustness"),
-    _Metric("evolvability_enhancing_fraction", evolvability_enhancing_fraction, "robustness"),
-
+    _Metric(
+        "evolvability_enhancing_fraction", evolvability_enhancing_fraction, "robustness"
+    ),
     _Metric("fdc", fdc, "correlation"),
     _Metric("basin_fitness_correlation", basin_fitness_correlation, "correlation"),
-    _Metric("neighbor_fitness_correlation", neighbor_fitness_correlation, "correlation"),
+    _Metric(
+        "neighbor_fitness_correlation", neighbor_fitness_correlation, "correlation"
+    ),
     _Metric("fitness_flattening_index", fitness_flattening_index, "correlation"),
-
     _Metric("global_optima_accessibility", global_optima_accessibility, "navigability"),
-    _Metric("mean_path_length_to_global_optimum", mean_path_length_to_global_optimum,
-            "navigability"),
-    _Metric("mean_distance_to_global_optimum", mean_distance_to_global_optimum, "navigability"),
-
+    _Metric(
+        "mean_path_length_to_global_optimum",
+        mean_path_length_to_global_optimum,
+        "navigability",
+    ),
+    _Metric(
+        "mean_distance_to_global_optimum",
+        mean_distance_to_global_optimum,
+        "navigability",
+    ),
     _Metric("gamma", gamma, "epistasis"),
     _Metric("gamma_star", gamma_star, "epistasis"),
     _Metric("global_idiosyncratic_index", global_idiosyncratic_index, "epistasis"),
     _Metric("diminishing_returns_index", diminishing_returns_index, "epistasis"),
     _Metric("increasing_costs_index", increasing_costs_index, "epistasis"),
-    _Metric("classify_epistasis", classify_epistasis, "epistasis", prefix="epistasis",
-            fields=("magnitude", "sign", "reciprocal_sign", "positive", "negative")),
-    _Metric("extradimensional_bypass", extradimensional_bypass, "epistasis", prefix="bypass",
-            fields=("bypass_proportion", "average_bypass_length"),
-            rename={"bypass_proportion": "proportion", "average_bypass_length": "avg_length"}),
+    _Metric(
+        "classify_epistasis",
+        classify_epistasis,
+        "epistasis",
+        prefix="epistasis",
+        fields=("magnitude", "sign", "reciprocal_sign", "positive", "negative"),
+    ),
+    _Metric(
+        "extradimensional_bypass",
+        extradimensional_bypass,
+        "epistasis",
+        prefix="bypass",
+        fields=("bypass_proportion", "average_bypass_length"),
+        rename={
+            "bypass_proportion": "proportion",
+            "average_bypass_length": "avg_length",
+        },
+    ),
 )
 
 _BY_NAME = {m.name: m for m in _REGISTRY}
 _GROUPS = tuple(dict.fromkeys(m.group for m in _REGISTRY))
-_EE_OLD_NAME = "evolvability_enhancing_mutations"
-_EE_NAME = "evolvability_enhancing_fraction"
 
 
-def _resolve_ee_alias(name):
-    if name == _EE_OLD_NAME:
-        warnings.warn(
-            f"The profile metric {_EE_OLD_NAME!r} is deprecated; use {_EE_NAME!r}. "
-            "The output column uses the new name.",
-            FutureWarning,
-            stacklevel=4,
-        )
-        return _EE_NAME
-    return name
-
-
-def _ee_profile_params(params):
-    """Migrate the old metric key without silently discarding legacy options."""
-    params = dict(params or {})
-    if _EE_OLD_NAME in params:
-        if _EE_NAME in params:
-            raise ValueError("Pass EE parameters under only one metric name.")
-        legacy = params.pop(_EE_OLD_NAME)
-        if set(legacy) & {"epsilon", "auto_calculate"}:
-            raise ValueError(
-                "profile uses evolvability_enhancing_fraction with fdr and "
-                "effect_type. Call evolvability_enhancing_mutations directly "
-                "if legacy epsilon or auto_calculate behavior is required."
-            )
-        params[_resolve_ee_alias(_EE_OLD_NAME)] = legacy
-    return params
-
-
-def _as_float(v):
+def _as_float(value):
     try:
-        return float(v)
+        return float(value)
     except (TypeError, ValueError):
         return np.nan
 
 
-def _columns_for(m):
-    """Output column names for a metric -- known up front, even when it fails."""
-    if m.prefix is None:
-        return (m.name,)
-    rn = m.rename or {}
-    return tuple(f"{m.prefix}.{rn.get(k, k)}" for k in m.fields)
+def _columns_for(metric):
+    if metric.prefix is None:
+        return (metric.name,)
+    rename = metric.rename or {}
+    return tuple(f"{metric.prefix}.{rename.get(k, k)}" for k in metric.fields)
 
 
-def _flatten(m, value):
-    cols = _columns_for(m)
-    if value is None:                              # failed or skipped
-        return {c: np.nan for c in cols}
-    if m.prefix is None:                           # scalar
-        return {m.name: _as_float(value)}
-    data = asdict(value) if is_dataclass(value) else dict(value)
-    rn = m.rename or {}
-    return {f"{m.prefix}.{rn.get(k, k)}": _as_float(data.get(k)) for k in m.fields}
+def _flatten(metric, value):
+    if value is None:
+        return {column: np.nan for column in _columns_for(metric)}
+    if metric.prefix is None:
+        return {metric.name: _as_float(value)}
+    return dict(
+        zip(_columns_for(metric), (_as_float(value.get(k)) for k in metric.fields))
+    )
 
 
-def _shared_kwargs(fn, **shared):
-    params = inspect.signature(fn).parameters
-    return {k: v for k, v in shared.items() if k in params}
-
-
-def _select(groups, include, exclude):
-    if include is not None and groups is not None:
-        raise ValueError("pass at most one of `groups` or `include`, not both")
-    if include is not None:
-        include = [include] if isinstance(include, str) else list(include)
-        include = [_resolve_ee_alias(n) for n in include]
-        unknown = [n for n in include if n not in _BY_NAME]
-        if unknown:
+def _select(metrics):
+    if metrics is None:
+        return list(_REGISTRY)
+    names = [metrics] if isinstance(metrics, str) else list(metrics)
+    selected = {}
+    for name in names:
+        if name in _BY_NAME:
+            selected[name] = _BY_NAME[name]
+        elif name in _GROUPS:
+            selected.update((m.name, m) for m in _REGISTRY if m.group == name)
+        else:
             raise ValueError(
-                f"unknown metric name(s) in include: {unknown}; see analysis.list_metrics()"
+                f"Unknown metric or group {name!r}. Groups: {list(_GROUPS)}. "
+                f"Metrics: {list(_BY_NAME)}."
             )
-        base = []
-        for name in include:
-            if name == _EE_NAME and any(m.name == _EE_NAME for m in base):
-                continue
-            base.append(_BY_NAME[name])
-    elif groups is not None:
-        groups = [groups] if isinstance(groups, str) else list(groups)
-        unknown = [g for g in groups if g not in _GROUPS]
-        if unknown:
-            raise ValueError(f"unknown group(s): {unknown}; valid groups are {list(_GROUPS)}")
-        gset = set(groups)
-        base = [m for m in _REGISTRY if m.group in gset]
-    else:
-        base = list(_REGISTRY)
-    if exclude:
-        exclude = [exclude] if isinstance(exclude, str) else list(exclude)
-        exclude = [_resolve_ee_alias(n) for n in exclude]
-        unknown = [n for n in exclude if n not in _BY_NAME]
-        if unknown:
-            raise ValueError(f"unknown metric name(s) in exclude: {unknown}")
-        eset = set(exclude)
-        base = [m for m in base if m.name not in eset]
-    return base
+    return list(selected.values())
 
 
-# --------------------------------------------------------------------------- #
-# progress reporting
-# --------------------------------------------------------------------------- #
+def _validate_params(params):
+    if params is None:
+        return {}
+    if not isinstance(params, dict):
+        raise TypeError("params must be a dictionary of metric parameter dictionaries.")
+    for name, options in params.items():
+        if name not in _BY_NAME:
+            raise ValueError(f"Unknown metric in params: {name!r}.")
+        if not isinstance(options, dict):
+            raise TypeError(f"params[{name!r}] must be a dictionary.")
+        allowed = set(inspect.signature(_BY_NAME[name].fn).parameters) - {"landscape"}
+        unknown = set(options) - allowed
+        if unknown:
+            raise ValueError(f"Unknown parameter(s) for {name!r}: {sorted(unknown)}.")
+    return params
+
+
 def _interactive_default():
     """Auto-enable the display only in a REPL/notebook, never in plain scripts."""
-    if hasattr(sys, "ps1"):                       # standard interactive interpreter
+    if hasattr(sys, "ps1"):  # standard interactive interpreter
         return True
-    ipy = sys.modules.get("IPython")              # an already-running notebook/kernel
+    ipy = sys.modules.get("IPython")  # an already-running notebook/kernel
     if ipy is None:
         return False
     try:
@@ -227,13 +203,6 @@ def _interactive_default():
 
 def _resolve_show(progress):
     return _interactive_default() if progress is None else bool(progress)
-
-
-def _fmt_secs(s):
-    if s < 60:
-        return f"{s:.1f}s"
-    m, rem = divmod(s, 60)
-    return f"{int(m)}m{rem:04.1f}s"
 
 
 def _replay_warnings(console, caught):
@@ -289,179 +258,88 @@ def _muted_landscapes(landscapes, enabled):
         _replay_warnings(None, list(caught))
 
 
-class _ProfileReporter:
-    """Pretty per-metric progress for :func:`profile` on a single landscape.
-
-    When enabled it renders one rich bar that names the metric in flight and
-    logs each finished metric with its wall-time, while (a) muting the
-    landscape's own verbose logging/bars for the duration -- ours replaces them
-    -- and (b) holding warnings back to a tidy footnote after the bar instead of
-    letting them slice through it. When disabled (the default in scripts and
-    tests) every method is a no-op, so profiling behaves exactly as before.
-    """
-
-    def __init__(self, landscape, total, *, enabled):
-        self.landscape = landscape
-        self.total = total
-        self.enabled = enabled
-        self._bar = self._task = self._console = None
-        self._t0 = self._t_start = None
-        self._saved_verbose = self._saved_level = None
-        self._wctx = self._caught = None
-
-    def __enter__(self):
-        if not self.enabled:
-            return self
-        try:
-            self._start_bar()
-        except Exception:
-            self.enabled = False                  # rich absent -> act like progress off
-            return self
-        self._saved_verbose = getattr(self.landscape, "verbose", None)
-        if self._saved_verbose:
-            try:
-                self.landscape.verbose = False
-            except Exception:
-                self._saved_verbose = None
-        glog = logging.getLogger("graphfla")
-        self._saved_level = glog.level
-        if glog.level < logging.WARNING:
-            glog.setLevel(logging.WARNING)
-        self._wctx = warnings.catch_warnings(record=True)
-        self._caught = self._wctx.__enter__()
-        warnings.simplefilter("always")
-        warnings.filterwarnings("ignore", message=r".*ipywidgets.*")
-        self._t_start = time.perf_counter()
-        return self
-
-    def _start_bar(self):
-        from rich.console import Console
-        from rich.progress import (
-            BarColumn,
-            MofNCompleteColumn,
-            Progress,
-            SpinnerColumn,
-            TextColumn,
-            TimeElapsedColumn,
-        )
-
-        self._console = Console(stderr=True, highlight=False)
-        self._bar = Progress(
-            SpinnerColumn(),
-            TextColumn("[bold cyan]profile[/] [dim]{task.fields[cur]}[/]"),
-            BarColumn(bar_width=24),
-            MofNCompleteColumn(),
-            TextColumn("·"),
-            TimeElapsedColumn(),
-            console=self._console,
-            transient=True,
-        )
-        self._bar.start()
-        self._task = self._bar.add_task("", total=self.total, cur="")
-
-    def start(self, name):
-        if not self.enabled:
-            return
-        self._t0 = time.perf_counter()
-        self._bar.update(self._task, cur=name)
-
-    def finish(self, name, ok=True):
-        if not self.enabled:
-            return
-        dt = time.perf_counter() - (self._t0 or time.perf_counter())
-        mark = "[green]✓[/]" if ok else "[red]✗[/]"
-        self._console.print(f"  {mark} {name:<36}[dim]{_fmt_secs(dt)}[/]")
-        self._bar.advance(self._task)
-
-    def __exit__(self, exc_type, exc, tb):
-        if not self.enabled:
-            return False
-        self._bar.stop()
-        if exc_type is None:
-            total = _fmt_secs(time.perf_counter() - self._t_start)
-            self._console.print(
-                f"[green]✓[/] profiled [bold]{self.total}[/] features in [bold]{total}[/]"
-            )
-        if self._saved_verbose:
-            try:
-                self.landscape.verbose = self._saved_verbose
-            except Exception:
-                pass
-        logging.getLogger("graphfla").setLevel(self._saved_level)
-        caught = list(self._caught or [])
-        self._wctx.__exit__(exc_type, exc, tb)
-        if exc_type is None:
-            _replay_warnings(self._console, caught)
-        return False
-
-
 def profile(
     landscape,
     *,
-    groups=None,
-    include=None,
-    exclude=None,
+    metrics=None,
     params=None,
-    n_jobs=-1,
     seed=None,
-    time_budget=15.0,
-    on_error="warn",
-    include_structure=False,
-    index=None,
+    n_jobs=-1,
     progress=None,
 ) -> Union[pd.Series, pd.DataFrame]:
-    r"""Return a metric profile for one or more landscapes.
+    r"""Return selected analysis metrics for one or more landscapes.
 
     Parameters
     ----------
     landscape : Landscape, list of Landscape or tuple of Landscape
-        One built landscape -> a ``Series``; a list/tuple -> a ``DataFrame``,
-        one row per landscape.
-    groups : str, sequence of str or None, default=None
-        Restrict to these metric groups (one of ``analysis.list_metrics()``'s
-        ``group`` values). Mutually exclusive with ``include``.
-    include : str, sequence of str or None, default=None
-        Use exactly these metrics (by registry name). Mutually exclusive with
-        ``groups``. The legacy EE name is accepted with a FutureWarning;
-        its output column is ``evolvability_enhancing_fraction``.
-    exclude : str, sequence of str or None, default=None
-        Drop these metrics from whatever ``groups`` / ``include`` selected
-        (or from the full default). Composes with either.
+        One built landscape returns a Series. A list or tuple returns a
+        DataFrame with one row per landscape, in input order.
+    metrics : str, sequence of str or None, default=None
+        Metrics to compute. Pass a group name, a function name, or a list
+        mixing both; for example, ``"ruggedness"``, ``["fdc", "gamma"]``,
+        or ``["ruggedness", "gamma"]``. None computes all 21 metrics.
+        Available groups and their function names are:
+
+        - ``"fitness"``: ``fitness_distribution``.
+        - ``"ruggedness"``: ``local_optima_ratio``, ``gradient_intensity``,
+          ``autocorrelation``, ``r_s_ratio``.
+        - ``"robustness"``: ``neutrality``, ``evolvability_enhancing_fraction``.
+        - ``"correlation"``: ``fdc``, ``basin_fitness_correlation``,
+          ``neighbor_fitness_correlation``, ``fitness_flattening_index``.
+        - ``"navigability"``: ``global_optima_accessibility``,
+          ``mean_path_length_to_global_optimum``,
+          ``mean_distance_to_global_optimum``.
+        - ``"epistasis"``: ``gamma``, ``gamma_star``,
+          ``global_idiosyncratic_index``, ``diminishing_returns_index``,
+          ``increasing_costs_index``, ``classify_epistasis``,
+          ``extradimensional_bypass``.
+
+        Groups expand in the order listed above; repeated metrics are computed
+        once, at their first position. An empty list selects no metrics.
+        Use function names here, not output fields such as
+        ``"epistasis.magnitude"``. Functions returning variable-length tables
+        or requiring a mutation, position or target must be called directly.
     params : dict or None, default=None
-        Per-metric keyword overrides, ``{metric_name: {kwarg: value}}``.
-        EE accepts ``fdr`` and ``effect_type``. Legacy ``epsilon`` and
-        ``auto_calculate`` options require calling the old function directly.
-    n_jobs : int or None, default=-1
-        Worker count forwarded to metrics that accept it. ``-1`` uses all
-        available CPUs; per-metric ``params`` take precedence.
+        Optional settings for individual metrics, keyed by function name.
+        For example, ``{"autocorrelation": {"walk_length": 50},
+        "neutrality": {"threshold": 0.05}}``. These settings override shared
+        seed and n_jobs values. Use ``{"classify_epistasis":
+        {"sample_cut_prob": 0}}`` for exact motif enumeration, or set that
+        function's ``time_budget`` here to control automatic sampling.
+        None uses each function's defaults. Settings for unselected metrics
+        are not used; unknown function or parameter names raise ValueError.
     seed : int or None, default=None
-        Random seed forwarded to metrics that accept it. An integer makes
-        their sampling reproducible; per-metric ``params`` take precedence.
-    time_budget : float, default=15.0
-        Target seconds for automatic motif sampling. This is not a timeout
-        for the full profile; per-metric ``params`` take precedence.
-    on_error : {"warn", "raise", "ignore"}, default="warn"
-        How to handle a metric that raises -- record NaN (warn/ignore) or
-        propagate.
-    include_structure : bool, default=False
-        Prepend the numeric fields of :meth:`Landscape.describe` as
-        ``structure.*`` columns.
-    index : array-like or None, default=None
-        Index for the returned ``DataFrame`` when ``landscape`` is a sequence.
+        Shared random seed for metrics that sample. An integer makes sampling
+        reproducible; None leaves each function's default randomness in place.
+    n_jobs : int or None, default=-1
+        Worker count for metrics that support parallel computation. Use -1
+        for all available CPUs or 1 for serial execution. Landscapes themselves
+        are processed sequentially.
     progress : bool or None, default=None
-        Show a live progress display on stderr -- a bar with the current metric
-        and ``n/total``, one line per finished metric with its wall-time, and a
-        closing summary -- muting the landscape's own verbose chatter while it
-        runs and deferring warnings to a footnote afterwards. Default (``None``)
-        auto-enables it in an interactive session (REPL/notebook) and stays
-        silent in scripts; pass ``True``/``False`` to force it.
+        Show a progress bar on stderr. None shows it in interactive sessions
+        and notebooks, and hides it in scripts. True or False forces the choice.
 
     Returns
     -------
     values : pandas.Series or pandas.DataFrame
-        Float metric values indexed by name for one landscape, or one row per
-        landscape for a list or tuple. Structured metrics expand into dotted
-        names such as ``epistasis.magnitude``. Undefined or failed values are NaN.
+        Float results, with function names as labels for scalar metrics.
+        Dictionary results expand into columns: ``fitness.<statistic>``,
+        ``epistasis.<type>``, ``bypass.proportion`` and ``bypass.avg_length``.
+        A DataFrame uses a default integer index; assign its index after the
+        call if labels are needed. Undefined results are NaN. A metric that
+        fails produces NaN and a warning, while the remaining metrics continue.
+
+    Raises
+    ------
+    ValueError
+        If a metric, group or parameter name is unknown.
+    TypeError
+        If params or one of its values is not a dictionary.
+
+    See Also
+    --------
+    list_metrics : Inspect available metrics and their output column names.
+    graphfla.landscape.Landscape.describe : Read structural counts and properties.
 
     Examples
     --------
@@ -469,60 +347,57 @@ def profile(
     >>> from graphfla.analysis import profile
     >>> landscape = BooleanLandscape().build_from_data(
     ...     ["00", "01", "10", "11"], [0, 1, 2, 4], verbose=False)
-    >>> profile(landscape, include=["local_optima_ratio"], progress=False).to_dict()
+    >>> profile(landscape, metrics="local_optima_ratio", progress=False).to_dict()
     {'local_optima_ratio': 0.25}
+    >>> selected = profile(landscape, metrics=["fdc", "gamma"],
+    ...                    n_jobs=1, progress=False)
+    >>> selected.index.tolist()
+    ['fdc', 'gamma']
+    >>> profile(landscape, metrics="neutrality",
+    ...         params={"neutrality": {"threshold": 1.0}}, progress=False).to_dict()
+    {'neutrality': 0.25}
     """
-    if on_error not in ("warn", "raise", "ignore"):
-        raise ValueError("on_error must be 'warn', 'raise', or 'ignore'")
-    params = _ee_profile_params(params)
-
+    selected = _select(metrics)
+    params = _validate_params(params)
+    show = _resolve_show(progress)
     if isinstance(landscape, (list, tuple)):
-        show = _resolve_show(progress)
-        seq = landscape
-        if show:
-            from .._progress import track  # top-level helper; imports no graphfla code
-            seq = track(landscape, description="profile landscapes",
-                        total=len(landscape), verbose=True)
+        columns = [column for metric in selected for column in _columns_for(metric)]
         with _muted_landscapes(landscape, show):
             rows = [
                 profile(
-                    ls, groups=groups, include=include, exclude=exclude, params=params,
-                    n_jobs=n_jobs, seed=seed, time_budget=time_budget, on_error=on_error,
-                    include_structure=include_structure, progress=False,
+                    item,
+                    metrics=[m.name for m in selected],
+                    params=params,
+                    seed=seed,
+                    n_jobs=n_jobs,
+                    progress=False,
                 )
-                for ls in seq
+                for item in track(
+                    landscape, description="profile landscapes", verbose=show
+                )
             ]
-        df = pd.DataFrame(rows)
-        if index is not None:
-            df.index = index
-        return df
+        return pd.DataFrame(rows, columns=columns, dtype=float)
 
-    metrics = _select(groups, include, exclude)
     out = {}
-    if include_structure:
-        for k, v in landscape.describe().items():
-            if not isinstance(v, bool) and isinstance(v, (int, float)):
-                out[f"structure.{k}"] = float(v)
-    with _ProfileReporter(landscape, len(metrics), enabled=_resolve_show(progress)) as rep:
-        for m in metrics:
-            rep.start(m.name)
-            kwargs = _shared_kwargs(m.fn, n_jobs=n_jobs, seed=seed, time_budget=time_budget)
-            kwargs.update(params.get(m.name, {}))
-            ok = True
+    with _muted_landscapes([landscape], show):
+        for metric in track(selected, description="profile metrics", verbose=show):
+            accepted = inspect.signature(metric.fn).parameters
+            kwargs = {
+                k: v
+                for k, v in {"seed": seed, "n_jobs": n_jobs}.items()
+                if k in accepted
+            }
+            kwargs.update(params.get(metric.name, {}))
             try:
-                value = m.fn(landscape, **kwargs)
-            except Exception as e:  # noqa: BLE001 -- one bad metric must not sink the profile
-                if on_error == "raise":
-                    raise
-                if on_error == "warn":
-                    warnings.warn(
-                        f"profile: metric {m.name!r} failed ({type(e).__name__}: {e}); "
-                        f"recording NaN.",
-                        stacklevel=2,
-                    )
-                value, ok = None, False
-            rep.finish(m.name, ok=ok)
-            out.update(_flatten(m, value))
+                value = metric.fn(landscape, **kwargs)
+            except Exception as exc:
+                warnings.warn(
+                    f"profile: metric {metric.name!r} failed "
+                    f"({type(exc).__name__}: {exc}); recording NaN.",
+                    stacklevel=2,
+                )
+                value = None
+            out.update(_flatten(metric, value))
     return pd.Series(out, dtype=float)
 
 
@@ -533,9 +408,9 @@ def list_metrics() -> pd.DataFrame:
     -------
     metrics : pandas.DataFrame
         One row per registered metric, indexed by its public function name.
-        Columns are ``group``, ``kind`` ("scalar" or "struct"), ``columns``
+        Columns are ``group``, ``kind`` ("scalar" or "dict"), ``columns``
         (comma-separated profile output names), and the boolean flags ``n_jobs``,
-        ``seed`` and ``time_budget`` indicating accepted shared parameters.
+        ``seed`` and ``time_budget`` indicating which parameters each function accepts.
         Functions requiring a mutation, position or target, and variable-length
         result tables, are not part of this registry.
 
@@ -552,13 +427,15 @@ def list_metrics() -> pd.DataFrame:
     rows = []
     for m in _REGISTRY:
         sig = inspect.signature(m.fn).parameters
-        rows.append({
-            "metric": m.name,
-            "group": m.group,
-            "kind": "scalar" if m.prefix is None else "struct",
-            "columns": ", ".join(_columns_for(m)),
-            "n_jobs": "n_jobs" in sig,
-            "seed": "seed" in sig,
-            "time_budget": "time_budget" in sig,
-        })
+        rows.append(
+            {
+                "metric": m.name,
+                "group": m.group,
+                "kind": "scalar" if m.prefix is None else "dict",
+                "columns": ", ".join(_columns_for(m)),
+                "n_jobs": "n_jobs" in sig,
+                "seed": "seed" in sig,
+                "time_budget": "time_budget" in sig,
+            }
+        )
     return pd.DataFrame(rows).set_index("metric")

@@ -8,7 +8,7 @@ import numpy as np
 import pandas as pd
 from sklearn.linear_model import Lasso, LassoCV
 from sklearn.model_selection import KFold
-from sklearn.utils import Bunch, check_random_state
+from sklearn.utils import check_random_state
 
 
 def _positive_integer(value, name, minimum=1):
@@ -384,7 +384,7 @@ def _analyze(
             "-".join(
                 f"{labels[j][0]}_{positions[j]}_{labels[j][a]}" for j, a in term
             )
-            or "WT"
+            or "intercept"
         )
         coef_rows.append(
             (len(term), tuple(positions[j] for j, _ in term), label, value)
@@ -399,7 +399,7 @@ def _analyze(
         fit_info=info.copy(), position_labels=positions_map, reference=reference
     )
     summary.attrs["fit_info"] = info.copy()
-    return Bunch(coefficients=coefficients, order_summary=summary, fit_info=info)
+    return dict(coefficients=coefficients, order_summary=summary, fit_info=info)
 
 
 def _variance_fractions(coefficients, arities, max_order):

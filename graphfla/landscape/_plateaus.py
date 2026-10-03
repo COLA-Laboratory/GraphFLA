@@ -62,7 +62,7 @@ def build_plateaus(landscape, neutral_pairs):
 
     # Only multi-member components are plateaus. SciPy's component labels aren't
     # ordered by first-member, so assign plateau ids by ascending smallest-node
-    # index to reproduce the legacy 0..n-1 scan order.
+    # index to preserve ascending vertex order.
     comp_sizes = np.bincount(membership, minlength=n_configs)
     multi_ids = np.nonzero(comp_sizes > 1)[0]
 
@@ -82,7 +82,7 @@ def build_plateaus(landscape, neutral_pairs):
     node_to_plateau = comp_to_plateau[membership]
 
     # Group nodes by plateau id. in_plateau_nodes is ascending; a stable sort by
-    # plateau id keeps each group's nodes sorted (matching legacy sorted(members)).
+    # plateau id keeps each group's nodes sorted.
     in_plateau_nodes = np.nonzero(node_to_plateau >= 0)[0]
     member_pids = node_to_plateau[in_plateau_nodes]
     order = np.argsort(member_pids, kind="stable")

@@ -38,18 +38,10 @@ def configs_series_from_array(
 ) -> pd.Series:
     """Build the per-row configuration tuple ``Series`` from the numeric matrix.
 
-    The result is *byte-for-byte* what :func:`encode_data` historically produced
-    eagerly: an ``object`` ``Series`` whose values are ``tuple`` objects of plain
-    Python ``int`` (one element per encoded variable), indexed by ``index``
-    (the caller's encoded-frame index; defaults to a ``RangeIndex``).
-
-    Construction mirrors the previous in-line code exactly -- a single C-level
-    ``ndarray.tolist()`` followed by ``map(tuple, ...)`` -- so the tuples and
-    their element types match for every landscape type (boolean / sequence /
-    ordinal share this path). It is factored out here so the ``Series`` can be
-    produced *lazily*, on first access, rather than always during construction:
-    the numeric ``configs_array`` (not this tuple ``Series``) is what every
-    neighbour-construction strategy consumes, so most builds never need it.
+    Values are tuples of Python integers, with one element per encoded
+    variable. The index is taken from the encoded frame, or defaults to a
+    RangeIndex. Materialize this Series only when a caller needs tuple-valued
+    configurations; graph construction uses the numeric array directly.
     """
     config_objects = np.fromiter(
         map(tuple, configs_array.tolist()),

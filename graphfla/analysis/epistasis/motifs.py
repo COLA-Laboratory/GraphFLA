@@ -8,7 +8,7 @@ import contextlib
 import random
 import warnings
 from collections import defaultdict
-from dataclasses import dataclass
+from typing import Dict, Union
 
 import numpy as np
 import igraph as ig
@@ -196,42 +196,9 @@ def _calculate_pos_neg_epistasis_igraph(squares_with_roles):
     })
 
 
-@dataclass(frozen=True)
-class EpistasisClassification:
-    r"""Proportions of five epistasis types among directed four-node motifs.
-
-    Attributes
-    ----------
-    magnitude : float
-        Proportion classified as magnitude epistasis.
-    sign : float
-        Proportion classified as sign epistasis.
-    reciprocal_sign : float
-        Proportion classified as reciprocal-sign epistasis.
-    positive : float
-        Proportion classified as positive epistasis.
-    negative : float
-        Proportion classified as negative epistasis.
-
-    See Also
-    --------
-    classify_epistasis : Classification definitions and motif population.
-
-    Notes
-    -----
-    Use named attributes or ``dataclasses.asdict(result)`` to extract values.
-    """
-
-    magnitude: float
-    sign: float
-    reciprocal_sign: float
-    positive: float
-    negative: float
-
-
 def classify_epistasis(
     landscape, sample_cut_prob="auto", seed=None, time_budget=15.0
-) -> EpistasisClassification:
+) -> Dict[str, float]:
     r"""Return proportions of five epistasis types among directed four-node motifs.
 
     Determines magnitude, sign, and reciprocal sign epistasis based on counts/estimates
@@ -256,8 +223,9 @@ def classify_epistasis(
 
     Returns
     -------
-    result : EpistasisClassification
-        A dataclass with proportion fields:
+    result : dict of str to float
+        Proportions keyed by epistasis type:
+
         - ``magnitude``: The magnitude of the combined fitness effect of mutations
           differs from the sum of their individual effects, but the direction relative to
           single mutants or wild-type may not change sign.
@@ -271,7 +239,7 @@ def classify_epistasis(
         - ``negative``: The combined fitness effect of mutations is less than the sum of their
           individual effects, often referred to as antagonistic epistasis.
 
-        Fields are zero if relevant counts/instances are zero or cannot be processed.
+        Values are zero if relevant counts/instances are zero or cannot be processed.
 
     Raises
     ------
@@ -294,7 +262,7 @@ def classify_epistasis(
     >>> from graphfla.analysis import classify_epistasis
     >>> landscape = BooleanLandscape().build_from_data(
     ...     ["00", "01", "10", "11"], [0, 1, 2, 4], verbose=False)
-    >>> classify_epistasis(landscape, sample_cut_prob=0).magnitude
+    >>> classify_epistasis(landscape, sample_cut_prob=0)["magnitude"]
     1.0
     """
     motif_size = 4
@@ -396,7 +364,7 @@ def classify_epistasis(
             pos_neg_props = _calculate_pos_neg_epistasis_igraph(squares_with_roles)
 
     # --- Step 6: Combine Results ---
-    return EpistasisClassification(
+    return dict(
         magnitude=float(mag_sign_recip_props["magnitude epistasis"]),
         sign=float(mag_sign_recip_props["sign epistasis"]),
         reciprocal_sign=float(mag_sign_recip_props["reciprocal sign epistasis"]),
@@ -405,35 +373,9 @@ def classify_epistasis(
     )
 
 
-@dataclass(frozen=True)
-class ExtradimensionalBypass:
-    r"""Summary of bypasses around reciprocal-sign epistasis motifs.
-
-    Attributes
-    ----------
-    bypass_proportion : float
-        Fraction of analyzed motifs with a bypass.
-    average_bypass_length : float
-        Mean bypass length among motifs with a bypass; NaN if none exist.
-    total_motifs : int
-        Number of analyzed reciprocal-sign motifs.
-    motifs_with_bypass : int
-        Number of analyzed motifs with a bypass.
-
-    See Also
-    --------
-    extradimensional_bypass : Bypass definition and sampling controls.
-    """
-
-    bypass_proportion: float
-    average_bypass_length: float
-    total_motifs: int
-    motifs_with_bypass: int
-
-
 def extradimensional_bypass(
     landscape, sample_cut_prob="auto", seed=None, time_budget=15.0
-) -> ExtradimensionalBypass:
+) -> Dict[str, Union[float, int]]:
     r"""Return a summary of bypasses around reciprocal-sign epistasis motifs.
 
     For each motif representing reciprocal sign epistasis (type 19), this function
@@ -460,15 +402,15 @@ def extradimensional_bypass(
 
     Returns
     -------
-    result : ExtradimensionalBypass
-        A dataclass with attributes:
+    result : dict
+        Summary with the following keys:
 
         - ``bypass_proportion`` : proportion of reciprocal-sign-epistasis motifs
           for which an extradimensional bypass exists (float between 0 and 1).
         - ``average_bypass_length`` : average length of extradimensional bypasses
           for motifs where such bypasses exist; NaN if none exist.
-        - ``total_motifs`` : total number of type-19 motifs analyzed.
-        - ``motifs_with_bypass`` : number of motifs that have a bypass.
+        - ``total_motifs`` : integer total number of type-19 motifs analyzed.
+        - ``motifs_with_bypass`` : integer number of motifs that have a bypass.
 
     Raises
     ------
@@ -490,7 +432,7 @@ def extradimensional_bypass(
     >>> from graphfla.analysis import extradimensional_bypass
     >>> landscape = BooleanLandscape().build_from_data(
     ...     ["00", "01", "10", "11"], [0, 1, 2, 4], verbose=False)
-    >>> extradimensional_bypass(landscape, sample_cut_prob=0).bypass_proportion
+    >>> extradimensional_bypass(landscape, sample_cut_prob=0)["bypass_proportion"]
     0.0
     """
 
@@ -518,7 +460,7 @@ def extradimensional_bypass(
         raise RuntimeError(f"Failed to find motif instances: {e}") from e
 
     if not motif_19_instances:
-        return ExtradimensionalBypass(
+        return dict(
             bypass_proportion=0.0,
             average_bypass_length=float("nan"),
             total_motifs=0,
@@ -569,7 +511,7 @@ def extradimensional_bypass(
     bypass_proportion = motifs_with_bypass / total_motifs if total_motifs > 0 else 0.0
     average_bypass_length = np.mean(bypass_lengths) if bypass_lengths else np.nan
 
-    return ExtradimensionalBypass(
+    return dict(
         bypass_proportion=float(bypass_proportion),
         average_bypass_length=float(average_bypass_length),
         total_motifs=int(total_motifs),

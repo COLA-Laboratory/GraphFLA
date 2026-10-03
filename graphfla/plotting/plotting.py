@@ -579,7 +579,7 @@ def draw_adaptive_walk(
         if verbose > 0 and (i + 1) % max(1, n_walks // 10) == 0:
             print(f"Completed {i + 1}/{n_walks} walks")
 
-        trace = climber.run(start_node).path
+        trace = climber.run(start_node)['path']
 
         walk_fitness = [landscape.graph.vs[node]["fitness"] for node in trace]
         walk_steps = list(range(1, len(trace) + 1))  # 1-based step index

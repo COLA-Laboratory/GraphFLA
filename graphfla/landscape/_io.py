@@ -139,9 +139,7 @@ class _IOMixin:
             instance.data_types = None
 
         # --- configs reconstruction ---
-        # Preferred path: re-encode from the feature-column vertex attributes
-        # _build_graph always writes, avoiding the huge configs_data string the
-        # old format produced for large landscapes.
+        # Re-encode the feature columns written by _build_graph.
         instance.configs = None
         instance._configs_array = None
         instance.config_dict = None
@@ -172,40 +170,11 @@ class _IOMixin:
                 instance._configs_array = None
                 instance.config_dict = None
 
-        # Legacy fallback: parse the old single-string configs_data attribute
-        # (only present in GraphML files saved before this refactor).
-        if instance.configs is None and "configs_data" in graph.attributes():
-            try:
-                raw = ast.literal_eval(graph["configs_data"])
-                parsed: dict = {}
-                for idx_str, config_str in raw.items():
-                    try:
-                        parsed[int(idx_str)] = ast.literal_eval(config_str)
-                    except Exception:
-                        warnings.warn(
-                            f"Could not parse config entry: {idx_str}", RuntimeWarning
-                        )
-                instance.configs = pd.Series(parsed)
-            except Exception as e:
-                warnings.warn(
-                    f"Could not parse legacy configs_data: {e}", RuntimeWarning
-                )
-                instance.configs = None
-
         if instance.configs is None:
             warnings.warn(
                 "No configs data found in graph. Some analyses may be limited.",
                 RuntimeWarning,
             )
-
-        # config_dict fallback from legacy attribute if reconstruction did not provide it
-        if instance.config_dict is None and "config_dict_data" in graph.attributes():
-            try:
-                instance.config_dict = ast.literal_eval(graph["config_dict_data"])
-            except Exception:
-                warnings.warn(
-                    "Could not parse config_dict from graph attributes.", RuntimeWarning
-                )
 
         # Infer basic properties (n_configs, n_edges, n_vars)
         instance._n_configs, instance._n_edges, instance.n_vars = infer_graph_properties(
@@ -217,21 +186,6 @@ class _IOMixin:
 
         # Restore subclass convenience attributes by landscape kind.
         restore_kind = instance.kind
-        if (
-            not isinstance(restore_kind, str) or restore_kind in ("", "default")
-        ) and "landscape_class" in graph.attributes():
-            # Legacy graphs predating landscape_kind: infer from class name.
-            legacy_class = graph["landscape_class"]
-            if legacy_class in (
-                "SequenceLandscape",
-                "DNALandscape",
-                "RNALandscape",
-                "ProteinLandscape",
-            ):
-                restore_kind = "sequence"
-            elif legacy_class == "BooleanLandscape":
-                restore_kind = "boolean"
-
         if instance.n_vars is not None and isinstance(restore_kind, str):
             if restore_kind in ("sequence", "dna", "rna", "protein"):
                 instance.sequence_length = instance.n_vars
@@ -307,16 +261,10 @@ class _IOMixin:
         # Essential landscape attributes saved as graph attributes
         graph_copy["maximize"] = self.maximize
         graph_copy["epsilon"] = str(self.epsilon)
-        graph_copy["landscape_class"] = self.__class__.__name__
         graph_copy["landscape_type"] = self._strategy_key
         graph_copy["landscape_kind"] = self.kind
 
-        # Configs are preserved implicitly via the feature-column vertex
-        # attributes _build_graph writes, so no separate configs_data attribute
-        # is needed.
-
-        if self.config_dict is not None:
-            graph_copy["config_dict_data"] = str(self.config_dict)
+        # Feature-column vertex attributes preserve the configurations.
 
         if self.data_types is not None:
             graph_copy["data_types_data"] = str(self.data_types)

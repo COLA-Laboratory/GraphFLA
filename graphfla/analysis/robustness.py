@@ -1,6 +1,5 @@
 from scipy.stats import binomtest
 from itertools import combinations
-from numbers import Real
 import warnings
 
 import numpy as np
@@ -8,9 +7,6 @@ import pandas as pd
 
 from ._utils import _pythonize, _pack_rows
 from ._evolvability import _landscape_ee_statistics, _validate_fdr
-import logging
-
-logger = logging.getLogger(__name__)
 
 _MUTATION_EFFECT_COLUMNS = [
     "mutation_from", "mutation_to", "median_abs_effect", "mean_effect",
@@ -324,78 +320,6 @@ def evolvability_effects(landscape, *, fdr=0.01) -> pd.DataFrame:
         ["source_id", "target_id"], ignore_index=True
     )
 
-
-def evolvability_enhancing_mutations(
-    landscape, epsilon=0, auto_calculate=True
-) -> float:
-    r"""Return the EE fraction through the deprecated compatibility interface.
-
-    Use :func:`evolvability_enhancing_fraction` for new analyses. This entry
-    retains its original parameters and neighbor-cache preparation behavior.
-
-    Parameters
-    ----------
-    landscape : Landscape
-        Built landscape satisfying the requirements of
-        :func:`evolvability_enhancing_fraction`.
-    epsilon : float, default=0
-        Finite, nonnegative minimum excess above the EE criterion, in fitness
-        units. Nonzero values are a legacy extension of the paper's definition.
-    auto_calculate : bool, default=True
-        Prepare missing ``landscape.neighbor_fitness`` attributes. If False,
-        raise RuntimeError when those attributes are absent.
-
-    Returns
-    -------
-    fraction : float
-        Combined EE count over all ordered neighbor pairs at fixed FDR 0.01.
-        Return NaN with a warning if no pair is testable.
-
-    Raises
-    ------
-    graphfla.exceptions.NotBuiltError
-        If the landscape has not been built.
-    ValueError
-        If epsilon or the landscape inputs are invalid.
-    RuntimeError
-        If ``auto_calculate=False`` and neighbor-fitness attributes are absent.
-
-    Warns
-    -----
-    FutureWarning
-        On each call, directing callers to the new scalar interface.
-    RuntimeWarning
-        If no pair is testable.
-
-    See Also
-    --------
-    evolvability_enhancing_fraction : Scalar interface with fdr and effect_type.
-    evolvability_effects : Per-mutation evidence and classification.
-    """
-    warnings.warn(
-        "evolvability_enhancing_mutations is deprecated; use "
-        "evolvability_enhancing_fraction instead.",
-        FutureWarning,
-        stacklevel=2,
-    )
-    landscape._check_built()
-    if (not isinstance(epsilon, Real) or isinstance(epsilon, (bool, np.bool_))
-            or not np.isfinite(epsilon) or epsilon < 0):
-        raise ValueError("epsilon must be finite and nonnegative.")
-
-    if "delta_mean_neighbor_fit" not in landscape.graph.es.attributes():
-        if auto_calculate:
-            if landscape.verbose:
-                logger.info("Neighbor fitness metrics not found. Computing them...")
-            landscape.neighbor_fitness  # lazily computes mean/delta neighbor fitness
-        else:
-            raise RuntimeError(
-                "Neighbor fitness metrics haven't been calculated. "
-                "Either access landscape.neighbor_fitness first "
-                "or set auto_calculate=True."
-            )
-
-    return _ee_fraction(_landscape_ee_statistics(landscape, epsilon))
 
 
 def neutrality(landscape, threshold: float = 0.01) -> float:

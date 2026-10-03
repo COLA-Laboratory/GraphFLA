@@ -42,7 +42,7 @@ def test_independent_order_summary(case_id, literature_inputs):
             max_order=3, method="lasso", alpha=0.05, max_iter=100000, tol=1e-12
         )
     result = walsh_hadamard(landscape, **options)
-    table = result.order_summary
+    table = result['order_summary']
     fields = ["r2", "delta_r2", "model_variance_fraction"]
     assert_case_matches(case_id, {key: table[key].tolist() for key in fields})
     if options.get("method") == "lasso":

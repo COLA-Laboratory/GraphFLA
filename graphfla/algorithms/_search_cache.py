@@ -4,23 +4,10 @@ import numpy as np
 class SearchCache:
     """Precomputed read-only data for fast repeated traversal of a static graph.
 
-    The trajectory walks (:class:`HillClimb`, :class:`RandomWalk`) are called
-    many times over the same landscape graph -- once per starting
-    node, often for tens or hundreds of thousands of nodes. The original
-    implementations read fitness through igraph's per-vertex Python attribute
-    API (``graph.vs[i]["fitness"]``), which builds a ``Vertex`` proxy object and
-    does a dict lookup *for every neighbour, every step, every call*. That
-    per-successor proxy access dominates best-improvement cost.
-
-    ``SearchCache`` hoists the per-vertex fitness vector into a single
-    contiguous ``float64`` array once, so a best-improvement move becomes an
-    O(degree) array gather (``max(succ, key=fitness.__getitem__)``) instead of
-    one proxy lookup per neighbour. Construction is O(V) and costs only a few
-    milliseconds even on the largest landscapes, so it does NOT introduce a
-    crossover batch size below which it loses -- build it once and reuse it
-    across the whole batch. The graph is retained for neighbour queries
-    (``graph.neighbors``), whose order matches ``get_adjlist`` exactly, so
-    best-improvement tie-breaks and stochastic RNG draws stay byte-identical.
+    Store the graph and its fitness values once, then reuse the cache across
+    HillClimb and RandomWalk instances. Neighbors are queried from the graph;
+    fitness lookup uses cached Python and NumPy arrays. Rebuild the cache if
+    the graph or its fitness values change.
 
     Parameters
     ----------

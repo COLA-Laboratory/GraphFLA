@@ -76,7 +76,7 @@ def test_public_build_profile_and_binary_label_reversal(maximize):
     assert actual == pytest.approx(1 / 8)
     reverse = BooleanLandscape().build_from_data(1 - X, y, verbose=False)
     assert analysis.r_s_ratio(reverse) == pytest.approx(actual)
-    assert analysis.profile(land, include=["r_s_ratio"])["r_s_ratio"] == pytest.approx(
+    assert analysis.profile(land, metrics=["r_s_ratio"])["r_s_ratio"] == pytest.approx(
         actual
     )
     assert "r_s_ratio" in analysis.list_metrics().index

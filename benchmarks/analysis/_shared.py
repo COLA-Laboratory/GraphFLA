@@ -55,8 +55,7 @@ def prepare_call(landscape, method):
             kwargs["mutation"] = (alleles[0], position, alleles[1])
     if method == "profile":
         kwargs.update(
-            include=["local_optima_ratio", "gradient_intensity", "fdc"],
-            on_error="raise",
+            metrics=["local_optima_ratio", "gradient_intensity", "fdc"],
         )
     return partial(getattr(A, method), landscape, **kwargs)
 

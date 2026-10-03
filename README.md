@@ -99,8 +99,8 @@ from graphfla import analysis
 metrics = analysis.profile(landscape)
 print(metrics["gamma"], metrics["fdc"], metrics["epistasis.magnitude"])
 
-# restrict to groups (or `include=[...]` specific metrics, `exclude=[...]` to drop some)
-analysis.profile(landscape, groups=["ruggedness", "epistasis"])
+# select groups, individual function names, or a mixture of both
+analysis.profile(landscape, metrics=["ruggedness", "epistasis"])
 
 # compare several landscapes side by side -> DataFrame, one row each.
 # here, a panel of NK landscapes with increasing ruggedness (k):
@@ -109,7 +109,8 @@ from graphfla.landscape import BooleanLandscape
 
 panel = [BooleanLandscape().build_from_data(*NK(n=8, k=k, seed=0).get_data(), verbose=False)
          for k in (0, 2, 4)]
-analysis.profile(panel, index=["NK k=0", "NK k=2", "NK k=4"])
+profiles = analysis.profile(panel, seed=0)
+profiles.index = ["NK k=0", "NK k=2", "NK k=4"]
 
 analysis.list_metrics()   # discover what's available
 ```
@@ -155,7 +156,7 @@ landscape.build_from_data(complex_search_space, f, data_types=data_types, verbos
 
 ## Landscape Analysis Features
 
-`GraphFLA` ships 20+ landscape-level metrics spanning the major aspects of landscape topography. Grab the whole portfolio in one call with `analysis.profile()`, restrict it with `profile(..., groups=[...])` (the group tokens are the section headers below), or call any function on its own. The collapsible tables below catalog every landscape-level metric — expand the aspect you care about.
+`GraphFLA` ships 20+ landscape-level metrics spanning the major aspects of landscape topography. Grab the whole portfolio in one call with `analysis.profile()`, restrict it with `profile(..., metrics=[...])` (the group tokens are the section headers below), or call any function on its own. The collapsible tables below catalog every landscape-level metric — expand the aspect you care about.
 
 > Mutation- and position-specific tools (`fitness_effect_distribution`, `idiosyncratic_index`, `single_mutation_effects`) characterize a single element rather than the whole landscape and are not listed here.
 

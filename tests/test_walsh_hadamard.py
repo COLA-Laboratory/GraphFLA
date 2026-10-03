@@ -32,7 +32,7 @@ def keyed_coefficients(table):
 
 
 def term_label(term):
-    return "-".join(f"0_{j + 1}_{a}" for j, a in enumerate(term) if a) or "WT"
+    return "-".join(f"0_{j + 1}_{a}" for j, a in enumerate(term) if a) or "intercept"
 
 
 @pytest.mark.parametrize("arities", [(2, 2), (3, 3), (2, 3, 4)])
@@ -40,7 +40,7 @@ def test_complete_transform_matches_background_differences(arities):
     X, T = transform(arities)
     y = np.random.default_rng(42).normal(size=len(X))
     actual = keyed_coefficients(
-        walsh_hadamard(table_landscape(X, y), len(arities)).coefficients
+        walsh_hadamard(table_landscape(X, y), len(arities))['coefficients']
     )
     expected = dict(zip(map(term_label, X), T @ y))
     assert actual == pytest.approx(expected, abs=2e-13)
@@ -50,9 +50,9 @@ def test_original_sequence_positions_survive_invariant_removal():
     land = DNALandscape().build_from_data(
         ["GAC", "GCC"], [0, 3], epsilon=0, verbose=False
     )
-    table = walsh_hadamard(land).coefficients
+    table = walsh_hadamard(land)['coefficients']
     assert table.positions.tolist() == [(), (2,)]
-    assert keyed_coefficients(table) == pytest.approx({"WT": 1.5, "A_2_C": 3})
+    assert keyed_coefficients(table) == pytest.approx({"intercept": 1.5, "A_2_C": 3})
 
 
 def test_original_categorical_labels_and_invariant_columns():
@@ -60,17 +60,17 @@ def test_original_categorical_labels_and_invariant_columns():
     land = Landscape().build_from_data(
         X, [0, 2, 7], data_types=dict.fromkeys(X, "categorical"), verbose=False
     )
-    actual = walsh_hadamard(land).coefficients
+    actual = walsh_hadamard(land)['coefficients']
     assert actual.positions.tolist() == [(), (2,), (2,)]
     assert keyed_coefficients(actual) == pytest.approx(
-        {"WT": 3, "iron_2_copper": 2, "iron_2_gold": 7}
+        {"intercept": 3, "iron_2_copper": 2, "iron_2_gold": 7}
     )
 
 
 def test_large_alphabet_and_delimiters_do_not_control_computation():
     labels = [f"state_{i}-x%" for i in range(64)]
     land = table_landscape({"component": labels}, np.arange(64) ** 2)
-    actual = walsh_hadamard(land, max_order=1).coefficients
+    actual = walsh_hadamard(land, max_order=1)['coefficients']
     assert len(actual) == 64 and actual.term.is_unique
     assert actual.positions.tolist().count((1,)) == 63
     assert actual.set_index("term").loc[
@@ -86,7 +86,7 @@ def test_incomplete_identifiable_fit_matches_inverse_oracle(max_order):
     terms, design = regression_design([2, 3, 2], X, max_order)
     coefs = np.linalg.lstsq(design, y, rcond=None)[0]
     actual = keyed_coefficients(
-        walsh_hadamard(table_landscape(X, y), max_order).coefficients
+        walsh_hadamard(table_landscape(X, y), max_order)['coefficients']
     )
     assert actual == pytest.approx(dict(zip(map(term_label, terms), coefs)), abs=2e-13)
 
@@ -94,13 +94,13 @@ def test_incomplete_identifiable_fit_matches_inverse_oracle(max_order):
 def test_underdetermined_fit_raises_with_counts():
     land = table_landscape([[0, 0], [0, 1], [1, 0]], [0, 1, 2])
     with pytest.raises(ValueError, match="n_samples=3.*n_terms=4"):
-        walsh_hadamard(land).coefficients
+        walsh_hadamard(land)['coefficients']
 
 
 def test_rank_deficiency_is_detected_even_with_enough_observations():
     X = [(a, a, b) for a, b in product(range(2), range(3))]
     with pytest.raises(ValueError, match="rank=.*n_terms=5"):
-        walsh_hadamard(table_landscape(X, np.arange(6)), max_order=1).coefficients
+        walsh_hadamard(table_landscape(X, np.arange(6)), max_order=1)['coefficients']
 
 
 def test_lasso_matches_closed_form_soft_threshold_and_unpenalized_mean():
@@ -109,11 +109,11 @@ def test_lasso_matches_closed_form_soft_threshold_and_unpenalized_mean():
     y = 7 + 4 * z[:, 0] - 2 * z[:, 1] + 8 * z[:, 0] * z[:, 1]
     actual = walsh_hadamard(
         table_landscape(X, y), method="lasso", alpha=0.1, tol=1e-12
-    ).coefficients
+    )['coefficients']
     # Complete binary W-H features are orthogonal. Each slope is soft-thresholded
     # by alpha / mean(feature**2), giving thresholds 0.4 and 1.6 by order.
     expected = {
-        "WT": 7,
+        "intercept": 7,
         "0_1_1": 3.6,
         "0_2_1": -1.6,
         "0_3_1": 0,
@@ -126,7 +126,7 @@ def test_lasso_matches_closed_form_soft_threshold_and_unpenalized_mean():
 
 def test_lasso_accepts_underdetermined_input_without_claiming_identifiability():
     land = table_landscape([[0, 0], [0, 1], [1, 0]], [0, 1, 2])
-    actual = walsh_hadamard(land, method="lasso", alpha=0.01).coefficients
+    actual = walsh_hadamard(land, method="lasso", alpha=0.01)['coefficients']
     assert np.isfinite(actual.coefficient).all()
     assert actual.attrs["fit_info"]["method"] == "lasso"
     assert actual.attrs["fit_info"]["rank"] is None
@@ -135,7 +135,7 @@ def test_lasso_accepts_underdetermined_input_without_claiming_identifiability():
 def test_allocation_guard_precedes_term_enumeration():
     land = table_landscape(np.eye(72, dtype=int), np.arange(72))
     with pytest.raises(ValueError, match="max_cells"):
-        walsh_hadamard(land, max_order=36, max_cells=1000).coefficients
+        walsh_hadamard(land, max_order=36, max_cells=1000)['coefficients']
 
 
 @pytest.mark.parametrize("maximize", [False, True])
@@ -143,8 +143,8 @@ def test_boolean_zero_reference_and_fitness_direction(maximize):
     land = BooleanLandscape(maximize=maximize).build_from_data(
         ["11", "10", "01", "00"], [5, 2, 3, 0], verbose=False
     )
-    assert keyed_coefficients(walsh_hadamard(land).coefficients) == pytest.approx(
-        {"WT": 2.5, "0_1_1": 2, "0_2_1": 3, "0_1_1-0_2_1": 0}, abs=1e-13
+    assert keyed_coefficients(walsh_hadamard(land)['coefficients']) == pytest.approx(
+        {"intercept": 2.5, "0_1_1": 2, "0_2_1": 3, "0_1_1-0_2_1": 0}, abs=1e-13
     )
 
 
@@ -155,9 +155,9 @@ def test_fitness_units_and_offset(scale, method):
     y = 8 + 4 * (X[:, 0] - 0.5) + 8 * (X[:, 0] - 0.5) * (X[:, 1] - 0.5)
     result = walsh_hadamard(
         table_landscape(X, y * scale), method=method, alpha=0.1 * scale, tol=1e-12
-    ).coefficients
+    )['coefficients']
     values = {k: v / scale for k, v in keyed_coefficients(result).items()}
-    assert values["WT"] == pytest.approx(8)
+    assert values["intercept"] == pytest.approx(8)
     assert values["0_1_1"] == pytest.approx(4 if method == "ols" else 3.6)
     assert values["0_1_1-0_2_1"] == pytest.approx(8 if method == "ols" else 6.4)
 
@@ -170,7 +170,7 @@ def test_constant_fitness_and_zero_order(method, alpha):
     for order in (0, 2, 99):
         result = walsh_hadamard(
             table_landscape(X, [3.5] * 8), order, method=method, alpha=alpha
-        ).coefficients
+        )['coefficients']
         assert result.loc[result.order == 0, "coefficient"].item() == pytest.approx(3.5)
         assert np.allclose(result.loc[result.order > 0, "coefficient"], 0, atol=1e-14)
 
@@ -215,12 +215,12 @@ def test_cv_selection_matches_explicit_fold_search_on_independent_design():
         cv=3,
         random_state=17,
         tol=1e-11,
-    ).coefficients
+    )['coefficients']
     assert actual.attrs["fit_info"]["alpha"] == pytest.approx(chosen)
     assert keyed_coefficients(actual) == pytest.approx(expected, abs=1e-8)
     repeated = walsh_hadamard(
         table_landscape(X, y), method="lasso", cv=3, random_state=17, tol=1e-11
-    ).coefficients
+    )['coefficients']
     pd.testing.assert_frame_equal(actual, repeated)
 
 
@@ -233,8 +233,8 @@ def test_chunking_mixed_variables_and_unused_categories():
     y = np.random.default_rng(0).normal(size=len(X))
     kinds = {"mode": "categorical", "level": "ordinal", "on": "boolean"}
     land = Landscape().build_from_data(X, y, data_types=kinds, verbose=False)
-    small = walsh_hadamard(land, chunk_size=1).coefficients
-    large = walsh_hadamard(land, chunk_size=1000).coefficients
+    small = walsh_hadamard(land, chunk_size=1)['coefficients']
+    large = walsh_hadamard(land, chunk_size=1000)['coefficients']
     pd.testing.assert_frame_equal(small, large)
     assert len(small) == 14  # 1 + (2+2+1) + (4+2+2).
     assert small.attrs["reference"] == {1: "a", 2: 1, 3: False}
@@ -242,8 +242,8 @@ def test_chunking_mixed_variables_and_unused_categories():
     # Numeric spacing of ordinal labels does not alter this discrete basis.
     remapped = X.copy()
     remapped["level"] = remapped.level.map({1: "a", 5: "b", 50: "c"})
-    numeric = walsh_hadamard(table_landscape(X, y, kinds=kinds)).coefficients
-    text = walsh_hadamard(table_landscape(remapped, y, kinds=kinds)).coefficients
+    numeric = walsh_hadamard(table_landscape(X, y, kinds=kinds))['coefficients']
+    text = walsh_hadamard(table_landscape(remapped, y, kinds=kinds))['coefficients']
     expected = {
         key.replace("1_2_50", "a_2_c").replace("1_2_5", "a_2_b"): value
         for key, value in keyed_coefficients(numeric).items()
@@ -254,10 +254,10 @@ def test_chunking_mixed_variables_and_unused_categories():
 def test_mixed_type_alleles_have_distinct_labels():
     result = walsh_hadamard(
         table_landscape({"x": [0, 1, "1"]}, [0, 2, 3]), max_order=1
-    ).coefficients
+    )['coefficients']
     assert result.term.is_unique
     assert keyed_coefficients(result) == pytest.approx(
-        {"WT": 5 / 3, "0_1_int:1": 2, "0_1_str:1": 3}
+        {"intercept": 5 / 3, "0_1_int:1": 2, "0_1_str:1": 3}
     )
 
 
@@ -267,7 +267,7 @@ def test_invariant_graph_column_and_graph_round_trip(tmp_path):
     land.to_graph(str(path))
     restored = DNALandscape.build_from_graph(str(path), verbose=False)
     pd.testing.assert_frame_equal(
-        walsh_hadamard(land).coefficients, walsh_hadamard(restored).coefficients
+        walsh_hadamard(land)['coefficients'], walsh_hadamard(restored)['coefficients']
     )
 
 
@@ -293,7 +293,7 @@ def test_invariant_graph_column_and_graph_round_trip(tmp_path):
 def test_invalid_parameters(kwargs, match):
     land = table_landscape(list(product([0, 1], repeat=2)), [0, 1, 2, 4])
     with pytest.raises(ValueError, match=match):
-        walsh_hadamard(land, **kwargs).coefficients
+        walsh_hadamard(land, **kwargs)['coefficients']
 
 
 @pytest.mark.parametrize(
@@ -307,16 +307,16 @@ def test_invalid_parameters(kwargs, match):
 )
 def test_invalid_data(X, y, match):
     with pytest.raises(ValueError, match=match):
-        walsh_hadamard(table_landscape(X, y)).coefficients
+        walsh_hadamard(table_landscape(X, y))['coefficients']
 
 
 def test_unbuilt_and_missing_metadata():
     with pytest.raises(RuntimeError):
-        walsh_hadamard(BooleanLandscape()).coefficients
+        walsh_hadamard(BooleanLandscape())['coefficients']
     land = table_landscape([[0], [1]], [0, 1])
     land.data_types = None
     with pytest.raises(ValueError, match="columns"):
-        walsh_hadamard(land).coefficients
+        walsh_hadamard(land)['coefficients']
 
 
 def test_lasso_convergence_warning_is_not_hidden():
@@ -327,7 +327,7 @@ def test_lasso_convergence_warning_is_not_hidden():
     with pytest.warns(ConvergenceWarning):
         walsh_hadamard(
             table_landscape(X, y), method="lasso", alpha=1e-6, max_iter=1, tol=1e-15
-        ).coefficients
+        )['coefficients']
 
 
 def test_long_low_order_space_does_not_multiply_all_state_counts():
@@ -338,29 +338,29 @@ def test_long_low_order_space_does_not_multiply_all_state_counts():
             X, X.sum(axis=1), kind="boolean", kinds=dict.fromkeys(range(72), "boolean")
         ),
         max_order=1,
-    ).coefficients
+    )['coefficients']
     assert result.loc[result.order == 0, "coefficient"].item() == pytest.approx(36)
     assert np.allclose(result.loc[result.order == 1, "coefficient"], 1)
 
 
 def test_coefficients_outside_float64_raise_instead_of_returning_infinity():
     with pytest.raises(ValueError, match="float64"):
-        walsh_hadamard(table_landscape([[0], [1]], [-1e308, 1e308])).coefficients
+        walsh_hadamard(table_landscape([[0], [1]], [-1e308, 1e308]))['coefficients']
 
 
 def test_extreme_lasso_penalties_have_explicit_behavior():
     land = table_landscape([[0], [1]], [0, 1e-300])
-    result = walsh_hadamard(land, method="lasso", alpha=1e300).coefficients
+    result = walsh_hadamard(land, method="lasso", alpha=1e300)['coefficients']
     assert result.loc[result.order == 1, "coefficient"].item() == 0
     land = table_landscape([[0], [1]], [0, 1e300])
     with pytest.raises(ValueError, match="alpha is too small"):
-        walsh_hadamard(land, method="lasso", alpha=1e-300).coefficients
+        walsh_hadamard(land, method="lasso", alpha=1e-300)['coefficients']
 
 
 def test_additive_model_has_exact_main_effects_and_zero_interactions():
     X = list(product(range(3), range(2), range(2)))
     y = [2 * a + 3 * b - 4 * c for a, b, c in X]
-    table = walsh_hadamard(table_landscape(X, y)).coefficients
+    table = walsh_hadamard(table_landscape(X, y))['coefficients']
     expected = {term: 0.0 for term in table.term}
-    expected.update({"WT": 1.5, "0_1_1": 2, "0_1_2": 4, "0_2_1": 3, "0_3_1": -4})
+    expected.update({"intercept": 1.5, "0_1_1": 2, "0_1_2": 4, "0_2_1": 3, "0_3_1": -4})
     assert keyed_coefficients(table) == pytest.approx(expected, abs=1e-13)

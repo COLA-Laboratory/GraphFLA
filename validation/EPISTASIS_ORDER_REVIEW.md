@@ -3,15 +3,14 @@
 2026-10-03. This extends the coefficient implementation reviewed in
 [WALSH_HADAMARD_REVIEW.md](WALSH_HADAMARD_REVIEW.md). The user authorized a
 single canonical call returning coefficients and order summaries, with shared
-computation and sklearn-style result access. No website content is changed.
+computation and plain dictionary results. No website content is changed.
 
 ## One result and one fitting pipeline
 
-`walsh_hadamard` returns a `sklearn.utils.Bunch`: `coefficients` is the final
+`walsh_hadamard` returns a dictionary: `coefficients` is the final
 coefficient table; `order_summary` contains the nested-fit curve and final-model
 spectrum; `fit_info` states the estimator, references and evaluation conventions.
-This deliberately changes the public return type from a DataFrame. Existing
-coefficient consumers use `result.coefficients`.
+Access the coefficient table as `result["coefficients"]`.
 
 The internal pipeline encodes retained observations once, counts and allocates
 one ordered design, then uses column views for each order. It fits the highest
@@ -26,13 +25,13 @@ alpha separately per order is intentional, as is preserving negative fit gains.
 Invariant columns are excluded before term or spectrum-support enumeration;
 counting a tiny model must not permit combinatorial loops over constant sites.
 
-Read `result.order_summary` directly; it is already computed and stored.
+Read `result["order_summary"]` directly; it is already computed and stored.
 Tests check one design build and exactly one fit for each requested nonconstant
 order in the main pipeline. At the user's request, `higher_order_epistasis`
 has been removed entirely, including its module, public exports, benchmark
 and `profile()` / `list_metrics()` entry. There is no compatibility alias or
 separate score-only fitting branch. Migrate calls to
-`walsh_hadamard(landscape, max_order=k).order_summary`; the former scalar score
+`walsh_hadamard(landscape, max_order=k)["order_summary"]`; the former scalar score
 is the last row's `r2`. A removal test checks public imports and registry behavior.
 
 ## What each quantity measures

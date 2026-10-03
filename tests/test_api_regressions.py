@@ -96,9 +96,9 @@ def test_ordinal_default_strategy_and_hamming_warning():
 def test_random_walk_seed_reproducible():
     ls = onemax(5)
     cache = SearchCache(ls.graph)
-    w1 = RandomWalk(cache, length=60, seed=42).run(0).path
-    w2 = RandomWalk(cache, length=60, seed=42).run(0).path
-    w3 = RandomWalk(cache, length=60, seed=7).run(0).path
+    w1 = RandomWalk(cache, length=60, seed=42).run(0)['path']
+    w2 = RandomWalk(cache, length=60, seed=42).run(0)['path']
+    w3 = RandomWalk(cache, length=60, seed=7).run(0)['path']
     assert np.array_equal(w1, w2)        # same seed -> identical walk
     assert not np.array_equal(w1, w3)    # different seed -> different walk
 

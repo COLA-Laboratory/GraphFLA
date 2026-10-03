@@ -189,7 +189,7 @@ def test_profile_matches_direct_calls():
         ["00", "01", "10", "11"], [0.0, 2.0, 3.0, 4.0], verbose=False
     )
     names = [f.__name__ for f in FUNCTIONS]
-    result = A.profile(ls, include=names, on_error="raise")
+    result = A.profile(ls, metrics=names)
     for fn in FUNCTIONS:
         assert result[fn.__name__] == fn(ls)
 

@@ -21,8 +21,14 @@ SYNTHETIC_CASES = [
 ]
 
 
+def _assert_recorded_coefficients(case_id, values):
+    # Frozen evidence records call the constant term WT; the public API uses intercept.
+    observed = {"WT" if key == "intercept" else key: value for key, value in values.items()}
+    assert_case_matches(case_id, observed)
+
+
 def label(term):
-    return "-".join(f"0_{j + 1}_{a}" for j, a in enumerate(term) if a) or "WT"
+    return "-".join(f"0_{j + 1}_{a}" for j, a in enumerate(term) if a) or "intercept"
 
 
 def coefficients(table):
@@ -75,14 +81,14 @@ def test_table1_published_coefficients(literature_inputs):
     land = DNALandscape().build_from_data(
         sequences, frame.fitness, epsilon=0, verbose=False
     )
-    result = walsh_hadamard(land, max_order=2).coefficients
-    assert_case_matches("faure.table1.walsh.v1", coefficients(result))
+    result = walsh_hadamard(land, max_order=2)['coefficients']
+    _assert_recorded_coefficients("faure.table1.walsh.v1", coefficients(result))
     assert {p for positions in result.positions for p in positions} == {6, 66}
     assert len(result) == land.n_configs == 9
     _, T = transform([3, 3])
     expected = T @ frame.fitness.to_numpy()
     names = [
-        "WT",
+        "intercept",
         "C_66_A",
         "C_66_T",
         "G_6_A",
@@ -102,9 +108,9 @@ def test_mixed_state_background_differences(synthetic):
     arities, X, y = synthetic
     states, T = transform(arities)
     expected = dict(zip(map(label, states), map(float, T @ y)))
-    assert_case_matches("faure.multistate.walsh.v1", expected)
-    actual = walsh_hadamard(landscape(X, y), max_order=3).coefficients
-    assert_case_matches("faure.multistate.walsh.v1", coefficients(actual))
+    _assert_recorded_coefficients("faure.multistate.walsh.v1", expected)
+    actual = walsh_hadamard(landscape(X, y), max_order=3)['coefficients']
+    _assert_recorded_coefficients("faure.multistate.walsh.v1", coefficients(actual))
     assert coefficients(actual) == pytest.approx(expected, abs=2e-12)
 
 
@@ -134,10 +140,10 @@ def test_author_matrices_and_incomplete_fit(synthetic, author):
     selected = author_design[:-1, columns]
     reference = np.linalg.lstsq(selected, y[:-1], rcond=None)[0]
     actual = coefficients(
-        walsh_hadamard(landscape(X[:-1], y[:-1]), max_order=2).coefficients
+        walsh_hadamard(landscape(X[:-1], y[:-1]), max_order=2)['coefficients']
     )
     errors = np.array([actual[label(t)] for t in terms]) - reference
-    assert_case_matches(
+    _assert_recorded_coefficients(
         "faure.author.matrix.v1",
         {
             "max_design_error": float(np.max(abs(selected - D))),
@@ -154,7 +160,7 @@ def test_author_lasso_on_centered_complete_design(synthetic, author):
         strings, strings, num_states=arities, invert=True
     ) @ author.V_matrix(strings, num_states=arities, invert=True)
     model = Lasso(alpha=0.05, fit_intercept=False, max_iter=100000, tol=1e-12).fit(D, y)
-    assert_case_matches(
+    _assert_recorded_coefficients(
         "faure.author.lasso.v1", dict(zip(map(label, X), map(float, model.coef_)))
     )
     actual = coefficients(
@@ -165,9 +171,9 @@ def test_author_lasso_on_centered_complete_design(synthetic, author):
             alpha=0.05,
             max_iter=100000,
             tol=1e-12,
-        ).coefficients
+        )['coefficients']
     )
-    assert_case_matches("faure.author.lasso.v1", actual)
+    _assert_recorded_coefficients("faure.author.lasso.v1", actual)
     coefs = np.array([actual[label(t)] for t in X])
     gradient = D.T @ (D @ coefs - y) / len(y)
     assert abs(gradient[0]) < 1e-10

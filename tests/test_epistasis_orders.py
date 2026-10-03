@@ -6,7 +6,6 @@ import importlib
 import numpy as np
 import pandas as pd
 import pytest
-from sklearn.utils import Bunch
 
 from graphfla.analysis import walsh_hadamard
 from graphfla.landscape import BooleanLandscape, Landscape
@@ -25,7 +24,7 @@ def build(X, y):
 
 
 def label(term):
-    return "-".join(f"0_{i + 1}_{a}" for i, a in enumerate(term) if a) or "WT"
+    return "-".join(f"0_{i + 1}_{a}" for i, a in enumerate(term) if a) or "intercept"
 
 
 def test_known_binary_variance_spectrum_and_cumulative_gains():
@@ -33,8 +32,8 @@ def test_known_binary_variance_spectrum_and_cumulative_gains():
     z = 2 * X - 1
     y = 5 + z[:, 0] + 2 * z[:, 0] * z[:, 1] + 3 * z.prod(axis=1)
     result = walsh_hadamard(build(X, y), max_order=3)
-    assert isinstance(result, Bunch)
-    summary = result.order_summary
+    assert type(result) is dict
+    summary = result['order_summary']
     assert summary.order.tolist() == [0, 1, 2, 3]
     assert summary.r2.tolist() == pytest.approx([0, 1 / 14, 5 / 14, 1])
     assert summary.delta_r2.tolist() == pytest.approx([0, 1 / 14, 4 / 14, 9 / 14])
@@ -59,9 +58,9 @@ def test_multistate_spectrum_matches_independent_full_space_predictions(arities)
     ]
     result = walsh_hadamard(build(X, y), max_order=len(arities))
     np.testing.assert_allclose(
-        result.order_summary.model_variance_fraction, expected, atol=1e-13
+        result['order_summary'].model_variance_fraction, expected, atol=1e-13
     )
-    np.testing.assert_allclose(result.order_summary.delta_r2, expected, atol=1e-13)
+    np.testing.assert_allclose(result['order_summary'].delta_r2, expected, atol=1e-13)
 
 
 def test_incomplete_profile_refits_instead_of_dropping_full_model_terms():
@@ -74,9 +73,9 @@ def test_incomplete_profile_refits_instead_of_dropping_full_model_terms():
         _, D = regression_design([3, 2, 2], X, k)
         beta = np.linalg.lstsq(D, y, rcond=None)[0]
         expected.append(1 - np.sum((y - D @ beta) ** 2) / np.sum((y - y.mean()) ** 2))
-    np.testing.assert_allclose(result.order_summary.r2, expected, atol=1e-13)
+    np.testing.assert_allclose(result['order_summary'].r2, expected, atol=1e-13)
     terms, D = regression_design([3, 2, 2], X, 1)
-    coefs = result.coefficients.set_index("term").coefficient
+    coefs = result['coefficients'].set_index("term").coefficient
     dropped_prediction = D @ np.array([coefs[label(t)] for t in terms])
     dropped_r2 = 1 - np.sum((y - dropped_prediction) ** 2) / np.sum((y - y.mean()) ** 2)
     assert abs(dropped_r2 - expected[1]) > 1e-5
@@ -84,7 +83,7 @@ def test_incomplete_profile_refits_instead_of_dropping_full_model_terms():
 
 def test_lasso_model_variance_is_not_labeled_observed_explained_variance():
     result = walsh_hadamard(build([[0], [1]], [-1, 1]), method="lasso", alpha=0.25)
-    row = result.order_summary.iloc[-1]
+    row = result['order_summary'].iloc[-1]
     assert row.r2 == pytest.approx(0.75)
     assert row.delta_r2 == pytest.approx(0.75)
     assert row.model_variance_fraction == pytest.approx(1)
@@ -120,19 +119,19 @@ def test_underdetermined_orders_require_explicit_regularization():
     with pytest.raises(ValueError, match="underdetermined"):
         walsh_hadamard(land)
     result = walsh_hadamard(land, method="lasso", alpha=0.01)
-    assert result.fit_info["method"] == "lasso"
-    assert np.isfinite(result.order_summary.r2).all()
-    assert result.order_summary["rank"].isna().all()
+    assert result['fit_info']["method"] == "lasso"
+    assert np.isfinite(result['order_summary'].r2).all()
+    assert result['order_summary']["rank"].isna().all()
 
 
 def test_constant_landscape_has_no_defined_variance_fractions():
     X = list(product(range(2), repeat=2))
     with pytest.warns(UserWarning, match="constant"):
         result = walsh_hadamard(build(X, [3] * 4))
-    assert result.order_summary.r2.isna().all()
-    assert result.order_summary.delta_r2.isna().all()
-    assert result.order_summary.model_variance_fraction.isna().all()
-    assert np.all(result.order_summary.rmse == 0)
+    assert result['order_summary'].r2.isna().all()
+    assert result['order_summary'].delta_r2.isna().all()
+    assert result['order_summary'].model_variance_fraction.isna().all()
+    assert np.all(result['order_summary'].rmse == 0)
 
 
 def test_tree_depth_gains_do_not_measure_interaction_order():
@@ -141,7 +140,7 @@ def test_tree_depth_gains_do_not_measure_interaction_order():
     X = np.array(list(product(range(2), repeat=4)))
     y = X.sum(axis=1)  # Purely additive: exactly zero order >=2.
     land = BooleanLandscape().build_from_data(X, y, verbose=False)
-    summary = walsh_hadamard(land, max_order=4).order_summary
+    summary = walsh_hadamard(land, max_order=4)['order_summary']
     np.testing.assert_allclose(summary.delta_r2, [0, 1, 0, 0, 0], atol=1e-13)
     scores = [
         DecisionTreeRegressor(max_depth=k, random_state=0).fit(X, y).score(X, y)
@@ -162,7 +161,7 @@ def test_truncated_model_spectrum_has_its_own_denominator_and_reuses_qr(monkeypa
     X = np.array(list(product(range(2), repeat=6)))
     z = 2 * X - 1
     y = 2 * z[:, 0] + 3 * z[:, 0] * z[:, 1] + 4 * z[:, 0] * z[:, 1] * z[:, 2]
-    summary = walsh_hadamard(build(X, y), max_order=2).order_summary
+    summary = walsh_hadamard(build(X, y), max_order=2)['order_summary']
     np.testing.assert_allclose(summary.delta_r2, [0, 4 / 29, 9 / 29], atol=1e-13)
     np.testing.assert_allclose(
         summary.model_variance_fraction, [0, 4 / 13, 9 / 13], atol=1e-13
@@ -177,12 +176,12 @@ def test_order_fractions_are_stable_in_extreme_fitness_units(scale):
     y = scale * (2 * z[:, 0] + 3 * z[:, 0] * z[:, 1])
     result = walsh_hadamard(build(X, y))
     np.testing.assert_allclose(
-        result.order_summary.delta_r2, [0, 4 / 13, 9 / 13], atol=1e-13
+        result['order_summary'].delta_r2, [0, 4 / 13, 9 / 13], atol=1e-13
     )
     np.testing.assert_allclose(
-        result.order_summary.model_variance_fraction, [0, 4 / 13, 9 / 13], atol=1e-13
+        result['order_summary'].model_variance_fraction, [0, 4 / 13, 9 / 13], atol=1e-13
     )
-    assert np.isfinite(result.order_summary.rmse).all()
+    assert np.isfinite(result['order_summary'].rmse).all()
 
 
 def test_lasso_cv_uses_the_same_folds_at_every_order(monkeypatch):
@@ -204,7 +203,7 @@ def test_lasso_cv_uses_the_same_folds_at_every_order(monkeypatch):
         random_state=None,
     )
     assert len(splits) == 3 and all(s is splits[0] for s in splits)
-    assert result.order_summary.alpha.iloc[1:].gt(0).all()
+    assert result['order_summary'].alpha.iloc[1:].gt(0).all()
 
 
 def test_walsh_rejects_zero_parallel_jobs():
@@ -232,9 +231,9 @@ def test_regularized_negative_gain_matches_independent_refits():
             max_iter=10000,
         ).fit(features, y)
         reference.append(model.score(features, y))
-    np.testing.assert_allclose(result.order_summary.r2, reference, atol=1e-9)
-    assert result.order_summary.delta_r2.iloc[-1] < -0.1
-    assert result.order_summary.delta_r2.iloc[-1] == pytest.approx(
+    np.testing.assert_allclose(result['order_summary'].r2, reference, atol=1e-9)
+    assert result['order_summary'].delta_r2.iloc[-1] < -0.1
+    assert result['order_summary'].delta_r2.iloc[-1] == pytest.approx(
         reference[-1] - reference[-2], abs=1e-9
     )
 
@@ -255,8 +254,8 @@ def test_invariant_imported_columns_do_not_trigger_combinatorial_work(monkeypatc
     # Imported/filtered graphs may retain metadata for now-invariant variables.
     land.data_types = dict.fromkeys([f"x{i}" for i in range(34)], "categorical")
     result = walsh_hadamard(land, max_order=17)
-    assert result.fit_info["max_order"] == 2
-    assert len(result.coefficients) == 4
+    assert result['fit_info']["max_order"] == 2
+    assert len(result['coefficients']) == 4
 
 
 def test_ols_order_spectrum_is_invariant_to_multistate_reference_change():
@@ -265,12 +264,12 @@ def test_ols_order_spectrum_is_invariant_to_multistate_reference_change():
     original = walsh_hadamard(build(X, y))
     perm = np.r_[len(X) - 1, np.arange(len(X) - 1)]
     reordered = walsh_hadamard(build(X[perm], y[perm]))
-    assert original.fit_info["reference"] != reordered.fit_info["reference"]
+    assert original['fit_info']["reference"] != reordered['fit_info']["reference"]
     np.testing.assert_allclose(
-        original.order_summary.model_variance_fraction,
-        reordered.order_summary.model_variance_fraction,
+        original['order_summary'].model_variance_fraction,
+        reordered['order_summary'].model_variance_fraction,
         atol=1e-13,
     )
     np.testing.assert_allclose(
-        original.order_summary.delta_r2, reordered.order_summary.delta_r2, atol=1e-13
+        original['order_summary'].delta_r2, reordered['order_summary'].delta_r2, atol=1e-13
     )

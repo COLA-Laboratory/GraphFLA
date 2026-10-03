@@ -99,8 +99,8 @@ def autocorrelation(
         random_node = rand.randrange(0, landscape.n_configs)
         walk_seed = rand.getrandbits(32) if seed is not None else None
         result = RandomWalk(cache, length=walk_length, seed=walk_seed).run(random_node)
-        if len(result.path) > lag:
-            series.append(cache.fitness[result.path].astype(float))
+        if len(result['path']) > lag:
+            series.append(cache.fitness[result['path']].astype(float))
 
     if not series:
         return _pythonize(np.nan)

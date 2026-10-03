@@ -71,10 +71,10 @@ def test_hillclimb_reaches_onemax_peak_via_only_improving_edges(strategy):
     walker = HillClimb(SearchCache(ls.graph), strategy=strategy, seed=8)
     for start in range(16):
         result = walker.run(start)
-        assert result.final == 15
-        assert result.path[0] == start
-        assert result.n_steps == 4 - X[start].sum()
-        for a, b in zip(result.path[:-1], result.path[1:]):
+        assert result['final'] == 15
+        assert result['path'][0] == start
+        assert result['n_steps'] == 4 - X[start].sum()
+        for a, b in zip(result['path'][:-1], result['path'][1:]):
             assert ls.graph.get_eid(int(a), int(b), error=False) >= 0
 
 
@@ -82,5 +82,29 @@ def test_random_walk_stays_on_mutational_neighbors():
     X = np.array(list(product([0, 1], repeat=3)))
     ls = BooleanLandscape().build_from_data(X, X.sum(axis=1), verbose=False)
     result = RandomWalk(SearchCache(ls.graph), length=20, seed=0).run(0)
-    for a, b in zip(result.path[:-1], result.path[1:]):
+    for a, b in zip(result['path'][:-1], result['path'][1:]):
         assert np.count_nonzero(X[a] != X[b]) == 1
+
+
+@pytest.mark.parametrize('walker_name', ['RandomWalk', 'HillClimb'])
+def test_walk_dictionary_includes_isolated_start(walker_name):
+    import igraph as ig
+    from graphfla import algorithms
+
+    graph = ig.Graph(n=1, directed=True)
+    graph.vs['fitness'] = [1.0]
+    cache = algorithms.SearchCache(graph)
+    result = getattr(algorithms, walker_name)(cache).run(0)
+    assert type(result) is dict
+    assert set(result) == {'path', 'final', 'n_steps'}
+    np.testing.assert_array_equal(result['path'], [0])
+    assert result['final'] == 0 and result['n_steps'] == 0
+
+
+@pytest.mark.parametrize('length', [0, -1, 1.5, True])
+def test_random_walk_requires_positive_integer_length(length):
+    from _landscapes import onemax
+    from graphfla.algorithms import SearchCache, RandomWalk
+    cache = SearchCache(onemax(2).graph)
+    with pytest.raises(ValueError, match='positive integer'):
+        RandomWalk(cache, length=length)

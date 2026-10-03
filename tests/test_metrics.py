@@ -70,14 +70,14 @@ def test_classify_epistasis_pure_squares():
         (RECIPROCAL_SQUARE, "reciprocal_sign"),
     ]:
         res = classify_epistasis(from_map(square, 2))
-        assert getattr(res, field) == pytest.approx(1.0)
+        assert res[field] == pytest.approx(1.0)
 
 
 def test_classify_epistasis_additive_all_magnitude():
     res = classify_epistasis(onemax(4))
-    assert res.magnitude == pytest.approx(1.0)
-    assert res.sign == pytest.approx(0.0)
-    assert res.reciprocal_sign == pytest.approx(0.0)
+    assert res['magnitude'] == pytest.approx(1.0)
+    assert res['sign'] == pytest.approx(0.0)
+    assert res['reciprocal_sign'] == pytest.approx(0.0)
 
 
 # ----------------------------------------------------------------------
@@ -149,9 +149,9 @@ def test_neighbor_fit_corr_additive_is_one():
 
 def test_walsh_hadamard_additive_order1_is_one():
     # Additive landscape is fully explained by main (order-1) effects.
-    assert walsh_hadamard(onemax(4), max_order=1).order_summary.r2.iloc[-1] == pytest.approx(1.0, abs=1e-6)
+    assert walsh_hadamard(onemax(4), max_order=1)['order_summary'].r2.iloc[-1] == pytest.approx(1.0, abs=1e-6)
     # HoC is not explainable by order-1 alone.
-    assert walsh_hadamard(hoc_landscape(4, seed=1), max_order=1).order_summary.r2.iloc[-1] < 0.99
+    assert walsh_hadamard(hoc_landscape(4, seed=1), max_order=1)['order_summary'].r2.iloc[-1] < 0.99
 
 
 # ----------------------------------------------------------------------

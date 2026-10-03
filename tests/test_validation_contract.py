@@ -87,9 +87,8 @@ def test_every_public_analysis_function_has_a_literature_review_plan():
             for target in node.targets
         )
     )
-    data_classes = {"EpistasisClassification", "ExtradimensionalBypass"}
     planned = {name for metric in metrics["metrics"] for name in metric["functions"]}
-    assert set(exports) - data_classes <= planned
+    assert set(exports) <= planned
 
 
 def test_result_snapshot_survives_rerunning_a_working_file(tmp_path, trial):
