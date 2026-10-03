@@ -121,13 +121,16 @@
         "diminishing_returns_index",
         "increasing_costs_index"
       ],
-      "provenance": "unconfirmed",
-      "synthetic_plan": "Explicit background/effect correlations, sign selection and constant-effect degeneracies.",
+      "provenance": "adapted",
+      "synthetic_plan": "Independent edge-wise Pearson/Spearman/OLS; orientation, sign selection, filtering, degenerate and extreme-unit cases; additive-mixture counterexample.",
       "candidate_study_ids": [
+        "HuangZhouLi2025",
+        "PapkouRM23",
+        "Johnson2019",
         "Lyons2020"
       ],
-      "literature_next_action": "Confirm exact aggregate-index and ceiling-normalization provenance; do not substitute biological context for a definition.",
-      "review_status": "partial; see tests/VALIDATION.md and case records"
+      "literature_next_action": "Retain paper vs per-mutation-kernel vs independent edge-fit boundaries; exact Papkou Fig. S22 plotting input and Khan raw download remain unresolved.",
+      "review_status": "Pooled-edge definition of Huang et al. C.3.2; Johnson 80/64/58/6/48 counts via production moments; Papkou full author graph 6 statistics on each of raw/clipped fitness independently checked. See FITNESS_TRENDS_REVIEW.md."
     },
     {
       "id": "ee",

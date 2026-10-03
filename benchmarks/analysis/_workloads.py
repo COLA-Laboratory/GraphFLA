@@ -16,6 +16,10 @@ EE_CASES = [
     "sparse-boolean-12",
     "ordinal-8x3",
 ]
+TREND_CASES = [
+    "boolean-6", "boolean-14", "categorical-4x5", "categorical-64x2",
+    "sparse-boolean-12", "ordinal-8x3",
+]
 SMALL_CASES = ["boolean-6", "categorical-3x3"]
 IDIOSYNCRASY_CASES = [
     "boolean-6",
@@ -47,6 +51,8 @@ WALSH_CASES = [
 
 
 def cases_for_metric(metric):
+    if metric in {"diminishing_returns_index", "increasing_costs_index"}:
+        return TREND_CASES
     if metric == "ee":
         return EE_CASES
     if metric in {"idiosyncratic_index", "global_idiosyncratic_index"}:

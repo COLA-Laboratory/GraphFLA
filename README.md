@@ -181,8 +181,8 @@ landscape.build_from_data(complex_search_space, f, data_types=data_types, verbos
 | `classify_epistasis` | Fraction of pairwise interactions of each type: magnitude, sign, reciprocal-sign, positive, negative | [0, 1] | — (composition) |
 | `higher_order_epistasis` | Per-order R² and incremental fit gains; `profile()` uses the final R² | R² ≤ 1 | better fit through that order |
 | `global_idiosyncratic_index` | How context-dependent (idiosyncratic) mutation effects are | [0, 1] | more idiosyncratic |
-| `diminishing_returns_index` | Diminishing-returns epistasis (background fitness vs. gains) | [-1, 1] | weaker diminishing returns |
-| `increasing_costs_index` | Increasing-costs epistasis (background fitness vs. costs) | [-1, 1] | stronger increasing costs |
+| `diminishing_returns_index` | Pooled background fitness vs. beneficial gains | [-1, 1] | more positive gain trend |
+| `increasing_costs_index` | Pooled background fitness vs. deleterious costs | [-1, 1] | more positive cost trend |
 | `extradimensional_bypass` | Reciprocal-sign motifs bypassed via extra dimensions (proportion, avg. length) | [0, 1] | more bypasses → more navigable |
 | `walsh_hadamard` † | Coefficients, nested fit gains and model variance spectrum | — | returns coefficients and order-summary tables |
 

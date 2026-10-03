@@ -99,3 +99,20 @@ def test_gamma_worker_snapshots_the_selected_baseline(tmp_path, metric):
     with np.load(snapshot, allow_pickle=False) as values:
         assert values.files == [metric]
         assert values[metric].shape == () and values[metric].item() == 0.25
+
+
+@pytest.mark.parametrize('metric', ['diminishing_returns_index','increasing_costs_index'])
+@pytest.mark.parametrize('statistic', ['pearson','spearman','regression'])
+def test_trend_worker_uses_requested_statistic_and_baseline(tmp_path,metric,statistic):
+    import numpy as np
+    from types import SimpleNamespace
+    from tools.benchmark_analysis import worker
+    baseline=tmp_path/'trend.py'
+    baseline.write_text(f'def {metric}(landscape, method):\n'
+                        '    return {"pearson":0.1,"spearman":0.2,"regression":0.3}[method]\n')
+    snapshot=tmp_path/'value.npz'
+    report=worker(SimpleNamespace(baseline_kernel=baseline,metric=metric,
+        trend_method=statistic,case='boolean-6',repeats=1,snapshot=snapshot))
+    assert set(report['samples_seconds']) == {metric}
+    with np.load(snapshot,allow_pickle=False) as values:
+        assert values[metric].item() == {'pearson':.1,'spearman':.2,'regression':.3}[statistic]

@@ -1,0 +1,11 @@
+{
+  "source_url": "https://cdn.elifesciences.org/articles/76491/elife-76491-supp1-v2.xlsx",
+  "source_sha256": "532d1763ccc814a40bad406ad9cc5e5e5a59e1918d71b47df45cafe8643c3d00",
+  "license": "CC-BY-4.0",
+  "license_source": "https://api.elifesciences.org/articles/76491 (copyright)",
+  "attribution": "Milo S. Johnson and Michael M. Desai, eLife 11:e76491 (2022), Supplementary file 1, republishing Johnson et al., Science 366:490-493 (2019) data.",
+  "derived_sha256": "947ed16dece61f170859d6d82501cf7c565ff70a0a88fc0ce23eded05d23b46b",
+  "rows": 10645,
+  "mutations": 91,
+  "conversion": "BYxRM_s experimental insertions selected using data_by_mutation.Type; inner join BYxRM_x on Sample; retain finite paired s/Fitness; select Edge,Sample,Fitness,s; sort; CSV float roundtrip; gzip mtime=0. No >=50 filter applied until test."
+}
