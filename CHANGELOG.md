@@ -5,6 +5,34 @@ returned statistic are marked, because downstream analyses depend on them.
 
 ## Unreleased
 
+### Synthetic problem APIs and performance
+
+- All eight concrete problem classes and their base class now document input
+  encodings, parameter ranges, objective direction, result types and randomness
+  consistently, with runnable examples. Constructors reject invalid dimensions,
+  seeds and non-finite parameters; evaluation rejects nonbinary configurations
+  before drawing random values. Existing class and parameter names are retained.
+- `evaluate` accepts binary strings as well as numeric or Boolean sequences, so
+  configurations returned by `get_data()` can be evaluated directly. New
+  `iter_data()` yields `(configuration, fitness)` pairs without materializing
+  output lists; random model caches can still grow during iteration.
+- NK uses compact integer contribution-cache keys and a fast string evaluation
+  path. The previous tuple keys of `NK.values` are internal and have changed;
+  use `evaluate` to access fitness. Random draw order and seeded fitness values
+  are preserved. A cold N=15 generation benchmark covers K=0, 2, 7 and 14.
+- `Eggbox` defaults to `frequency=0.5`, giving alternating zero/one fitness on
+  neighboring binary configurations. The old default of 1.0 was theoretically
+  flat. Explicit frequencies retain their formula; phase reduction removes
+  spurious nonzero valleys at integer phases and avoids argument overflow.
+- `get_data()` propagates errors instead of printing and returning empty lists.
+  Max3Sat rejects requests exceeding the number of distinct clauses and always
+  generates the requested feasible count; zero-clause instances remain valid.
+  NumberPartitioning rejects a bit precision below one with a clear error.
+- RoughMountFuji consistently returns Python `float`; NumberPartitioning and
+  Max3Sat preserve exact Python `int` results. Knapsack retains its
+  `capacity_ratio` attribute and documents its actual weight-value generation
+  rule rather than describing `correlation` as a target correlation coefficient.
+
 ### Analysis API consistency
 
 - All public analysis functions now have explicit return annotations and

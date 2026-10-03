@@ -1,9 +1,4 @@
-# graphfla/problems/__init__.py
-
-
-"""
-Classes for generating black-box optimization problems.
-"""
+"""Synthetic binary maximization problems with evaluation and enumeration APIs."""
 
 from .base_problem import OptimizationProblem
 from .biological import NK, RoughMountFuji, Eggbox, Additive, HoC

@@ -82,6 +82,19 @@ class Problems:
         self.problem.get_data()
 
 
+class NKGeneration:
+    """Cold enumeration, including contribution-cache allocation, at N=15."""
+
+    params = [0, 2, 7, 14]
+    param_names = ["k"]
+
+    def time_get_data(self, k):
+        problems.NK(n=15, k=k, seed=0).get_data()
+
+    def peakmem_get_data(self, k):
+        problems.NK(n=15, k=k, seed=0).get_data()
+
+
 class Filtering:
     def setup(self):
         self.X, self.fitness = random_ordinal(20, 3)
