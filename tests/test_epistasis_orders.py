@@ -1,4 +1,4 @@
-"""Order attribution, integrated results and reuse without a second fit."""
+"""Order attribution and shared computation in the integrated W-H result."""
 
 from itertools import product
 import importlib
@@ -8,7 +8,7 @@ import pandas as pd
 import pytest
 from sklearn.utils import Bunch
 
-from graphfla.analysis import higher_order_epistasis, profile, walsh_hadamard
+from graphfla.analysis import walsh_hadamard
 from graphfla.landscape import BooleanLandscape, Landscape
 from validation.oracles.walsh import regression_design, transform
 
@@ -91,27 +91,6 @@ def test_lasso_model_variance_is_not_labeled_observed_explained_variance():
     assert row.n_nonzero == 1
 
 
-def test_existing_result_is_reused_without_encoding_or_fitting(monkeypatch):
-    X = np.array(list(product(range(2), repeat=3)))
-    result = walsh_hadamard(build(X, X.sum(axis=1)), max_order=3)
-
-    def unexpected(*args, **kwargs):
-        raise AssertionError("A cached result must not trigger a fit")
-
-    monkeypatch.setattr(np.linalg, "lstsq", unexpected)
-    core = importlib.import_module("graphfla.analysis.epistasis._walsh")
-    monkeypatch.setattr(core, "_encode_input", unexpected)
-    pd.testing.assert_frame_equal(higher_order_epistasis(result), result.order_summary)
-    short = higher_order_epistasis(result, max_order=1)
-    assert short.order.tolist() == [0, 1]
-    short.loc[0, "r2"] = 123
-    assert result.order_summary.r2.iloc[0] == 0
-    with pytest.raises(ValueError, match="computed"):
-        higher_order_epistasis(result, max_order=4)
-    with pytest.raises(ValueError, match="Fitting parameters"):
-        higher_order_epistasis(result, method="lasso")
-
-
 def test_design_and_highest_order_are_not_computed_twice(monkeypatch):
     core = importlib.import_module("graphfla.analysis.epistasis._walsh")
     original = core._design_matrix
@@ -136,14 +115,14 @@ def test_design_and_highest_order_are_not_computed_twice(monkeypatch):
     assert sorted(fits) == [5, 11, 15]
 
 
-def test_score_only_compatibility_allows_rank_deficient_predictions():
+def test_underdetermined_orders_require_explicit_regularization():
     land = build([[0, 0], [0, 1], [1, 0]], [0, 1, 2])
     with pytest.raises(ValueError, match="underdetermined"):
         walsh_hadamard(land)
-    result = higher_order_epistasis(land)
-    assert result.r2.iloc[-1] == pytest.approx(1)
-    assert result.model_variance_fraction.isna().all()
-    assert result.iloc[-1]["rank"] < result.iloc[-1].n_terms
+    result = walsh_hadamard(land, method="lasso", alpha=0.01)
+    assert result.fit_info["method"] == "lasso"
+    assert np.isfinite(result.order_summary.r2).all()
+    assert result.order_summary["rank"].isna().all()
 
 
 def test_constant_landscape_has_no_defined_variance_fractions():
@@ -156,29 +135,13 @@ def test_constant_landscape_has_no_defined_variance_fractions():
     assert np.all(result.order_summary.rmse == 0)
 
 
-def test_legacy_order_keyword_and_profile_scalar_contract():
-    X = np.array(list(product(range(2), repeat=3)))
-    land = build(X, X.sum(axis=1) + 3 * X[:, 0] * X[:, 1])
-    expected = higher_order_epistasis(land, max_order=1)
-    with pytest.warns(FutureWarning, match="order"):
-        actual = higher_order_epistasis(land, order=1)
-    pd.testing.assert_frame_equal(actual, expected)
-    p = profile(
-        land,
-        include=["higher_order_epistasis"],
-        params={"higher_order_epistasis": {"max_order": 1}},
-        on_error="raise",
-    )
-    assert p.iloc[0] == pytest.approx(expected.r2.iloc[-1])
-
-
 def test_tree_depth_gains_do_not_measure_interaction_order():
     from sklearn.tree import DecisionTreeRegressor
 
     X = np.array(list(product(range(2), repeat=4)))
     y = X.sum(axis=1)  # Purely additive: exactly zero order >=2.
     land = BooleanLandscape().build_from_data(X, y, verbose=False)
-    summary = higher_order_epistasis(land, max_order=4)
+    summary = walsh_hadamard(land, max_order=4).order_summary
     np.testing.assert_allclose(summary.delta_r2, [0, 1, 0, 0, 0], atol=1e-13)
     scores = [
         DecisionTreeRegressor(max_depth=k, random_state=0).fit(X, y).score(X, y)
@@ -244,10 +207,8 @@ def test_lasso_cv_uses_the_same_folds_at_every_order(monkeypatch):
     assert result.order_summary.alpha.iloc[1:].gt(0).all()
 
 
-def test_compatibility_rejects_ambiguous_order_names_and_bad_jobs():
+def test_walsh_rejects_zero_parallel_jobs():
     land = build([[0], [1]], [0, 1])
-    with pytest.raises(ValueError, match="only max_order"):
-        higher_order_epistasis(land, max_order=1, order=1)
     with pytest.raises(ValueError, match="n_jobs"):
         walsh_hadamard(land, n_jobs=0)
 

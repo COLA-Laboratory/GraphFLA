@@ -72,17 +72,17 @@
     {
       "id": "higher_order",
       "functions": [
-        "higher_order_epistasis"
+        "walsh_hadamard"
       ],
       "provenance": "adapted",
-      "synthetic_plan": "Known orthogonal components and incomplete/rank-deficient designs; in-sample residual R2.",
+      "synthetic_plan": "Known orthogonal components and incomplete identifiable designs; cumulative and incremental training R2 from walsh_hadamard.order_summary.",
       "candidate_study_ids": [
         "PhillipsLMDCJCMWD21",
         "KuoJCCLHWC20",
         "PoelwijkSR19"
       ],
       "literature_next_action": "Distinguish OLS, conditional means, LASSO, held-out R2 and squared correlation in every new paper.",
-      "review_status": "partial; see tests/VALIDATION.md and case records"
+      "review_status": "Public higher_order_epistasis removed 2026-10-03; this historical family now maps to walsh_hadamard.order_summary. Existing case IDs and targets are preserved."
     },
     {
       "id": "walsh",

@@ -70,7 +70,7 @@ to recompute.
   `mean_path_lengths_go`, `mean_dist_go`), robustness (`neutrality`,
   `evol_enhance_mutations`), `fitness_distribution.*`, and epistasis
   (`diminishing_returns_index`, `increasing_costs_index`, `classify_epistasis.*`,
-  `extradimensional_bypass.*`, `higher_order_epistasis`, `global_idiosyncratic_index`,
+  `extradimensional_bypass.*`, `global_idiosyncratic_index`,
   `gamma_statistic`, `gamma_star`).
 * **Model performance**: zero-shot (`zs_*`) and supervised (`sup_*`) Spearman per model.
 

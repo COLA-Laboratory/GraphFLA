@@ -1,6 +1,6 @@
 """Analysis benchmarks, selectable by metric; no all-metric default runner."""
 
-from ._shared import prepare_call
+from ._shared import prepare_call as prepare_call
 
 METRIC_MODULES = {
     "all_mutation_effects": "all_mutation_effects",
@@ -20,7 +20,6 @@ METRIC_MODULES = {
     "global_idiosyncratic_index": "global_idiosyncratic_index",
     "global_optima_accessibility": "global_optima_accessibility",
     "gradient_intensity": "gradient_intensity",
-    "higher_order_epistasis": "higher_order_epistasis",
     "idiosyncratic_index": "idiosyncratic_index",
     "increasing_costs_index": "increasing_costs_index",
     "list_metrics": "list_metrics",

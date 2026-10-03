@@ -5,7 +5,7 @@ from pathlib import Path
 import pandas as pd
 import pytest
 
-from graphfla.analysis import classify_epistasis, higher_order_epistasis
+from graphfla.analysis import classify_epistasis, walsh_hadamard
 from graphfla.landscape import BooleanLandscape, DNALandscape, ProteinLandscape
 from validation.contract import load_definitions, matches, verify_artifact
 
@@ -146,7 +146,7 @@ def test_phillips_author_regression_outputs(antigen, order):
     landscape = BooleanLandscape().build_from_data(
         frame.sequences, frame.fitness, verbose=False
     )
-    _assert_published(case_id, float(higher_order_epistasis(landscape, max_order=order).r2.iloc[-1]))
+    _assert_published(case_id, float(walsh_hadamard(landscape, max_order=order).order_summary.r2.iloc[-1]))
 
 
 @pytest.mark.literature_case("bank.reia_peaks.v1", role="paper_result")

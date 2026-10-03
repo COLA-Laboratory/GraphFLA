@@ -6,7 +6,7 @@ import numpy as np
 import pandas as pd
 import pytest
 
-from graphfla.analysis import higher_order_epistasis, walsh_hadamard
+from graphfla.analysis import walsh_hadamard
 from graphfla.landscape import DNALandscape, Landscape
 from validation.testing import assert_case_matches
 
@@ -45,8 +45,6 @@ def test_independent_order_summary(case_id, literature_inputs):
     table = result.order_summary
     fields = ["r2", "delta_r2", "model_variance_fraction"]
     assert_case_matches(case_id, {key: table[key].tolist() for key in fields})
-    pd.testing.assert_frame_equal(higher_order_epistasis(result), table)
-    pd.testing.assert_frame_equal(higher_order_epistasis(landscape, **options), table)
     if options.get("method") == "lasso":
         # The spectrum's denominator is fitted-model variance, whereas R2 gains
         # are measured against observed fitness variance and include shrinkage.

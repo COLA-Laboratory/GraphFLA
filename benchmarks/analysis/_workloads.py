@@ -55,7 +55,7 @@ def cases_for_metric(metric):
         return GAMMA_CASES
     if metric == "r_s_ratio":
         return RS_CASES
-    if metric in {"walsh_hadamard", "higher_order_epistasis"}:
+    if metric == "walsh_hadamard":
         return WALSH_CASES
     return SMALL_CASES
 

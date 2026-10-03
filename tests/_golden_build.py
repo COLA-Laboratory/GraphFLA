@@ -12,7 +12,7 @@ from graphfla.landscape import (
 from graphfla.analysis import (
     local_optima_ratio, autocorrelation, r_s_ratio, gradient_intensity,
     fdc, neighbor_fitness_correlation, basin_fitness_correlation, fitness_flattening_index,
-    gamma, gamma_star, classify_epistasis, higher_order_epistasis,
+    gamma, gamma_star, classify_epistasis,
     walsh_hadamard, global_idiosyncratic_index, extradimensional_bypass,
     diminishing_returns_index, increasing_costs_index,
     global_optima_accessibility, mean_path_length_to_local_optima,
@@ -129,15 +129,12 @@ def extract(e, seed=0):
         }
 
     _try(out, "bypass", _bypass)
-    # --- higher-order / walsh ---
-    ho = {}
-    for o in (1, 2, 3):
-        if o <= ls.n_vars:
-            try:
-                ho[str(o)] = higher_order_epistasis(ls, max_order=o).r2.iloc[-1]
-            except Exception as ex:
-                ho[str(o)] = f"ERR:{type(ex).__name__}"
-    out["higher_order"] = ho
+    # Preserve the frozen order-score keys while using the canonical W-H API.
+    def order_scores():
+        summary = walsh_hadamard(ls, max_order=min(3, ls.n_vars)).order_summary
+        return {str(row.order): row.r2 for row in summary.itertuples() if row.order}
+
+    _try(out, "higher_order", order_scores)
     if e["kind"] == "boolean":
         def walsh_maxabs():
             with contextlib.redirect_stdout(io.StringIO()):

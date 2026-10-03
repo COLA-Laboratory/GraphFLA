@@ -6,9 +6,8 @@ runs the whole-landscape analysis metrics and returns a tidy ``pandas`` object:
 a ``Series`` for one landscape, a ``DataFrame`` (one row each) for several.
 
 Metrics that need *just the landscape* and provide a scalar or a fixed-field
-summary are included. The ``higher_order_epistasis`` column extracts the final
-cumulative R-squared from its order table. Drill-down metrics (needing ``mutation`` / ``position``
-/ ``lo``, or returning a variable-length table) are intentionally left out -- call
+summary are included. Drill-down metrics (needing ``mutation`` / ``position`` /
+``lo``, or returning a variable-length table) are intentionally left out -- call
 those functions directly. Selection is via ``groups`` or ``include`` (pick the base
 set) and ``exclude`` (a filter that composes with either); ``params`` overrides
 per-metric kwargs. Stochastic/parallel metrics receive shared ``seed`` / ``n_jobs``
@@ -55,7 +54,6 @@ from .epistasis import (
     gamma,
     gamma_star,
     global_idiosyncratic_index,
-    higher_order_epistasis,
     increasing_costs_index,
 )
 
@@ -99,7 +97,6 @@ _REGISTRY = (
 
     _Metric("gamma", gamma, "epistasis"),
     _Metric("gamma_star", gamma_star, "epistasis"),
-    _Metric("higher_order_epistasis", higher_order_epistasis, "epistasis"),
     _Metric("global_idiosyncratic_index", global_idiosyncratic_index, "epistasis"),
     _Metric("diminishing_returns_index", diminishing_returns_index, "epistasis"),
     _Metric("increasing_costs_index", increasing_costs_index, "epistasis"),
@@ -161,10 +158,6 @@ def _columns_for(m):
 
 
 def _flatten(m, value):
-    # Keep the established scalar profile column while the direct API exposes
-    # every nested order. No extra fit or coefficient calculation is requested.
-    if m.name == "higher_order_epistasis" and isinstance(value, pd.DataFrame):
-        value = float(value["r2"].iloc[-1])
     cols = _columns_for(m)
     if value is None:                              # failed or skipped
         return {c: np.nan for c in cols}

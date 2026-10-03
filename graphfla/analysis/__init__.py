@@ -34,7 +34,6 @@ from .robustness import (
     evolvability_effects,
 )
 from .epistasis import (
-    higher_order_epistasis,
     classify_epistasis,
     EpistasisClassification,
     idiosyncratic_index,
@@ -50,7 +49,6 @@ from .epistasis import (
 from .profile import profile, list_metrics
 
 __all__ = [
-    "higher_order_epistasis",
     "fdc",
     "fitness_flattening_index",
     "basin_fitness_correlation",

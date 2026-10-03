@@ -26,14 +26,14 @@ alpha separately per order is intentional, as is preserving negative fit gains.
 Invariant columns are excluded before term or spectrum-support enumeration;
 counting a tiny model must not permit combinatorial loops over constant sites.
 
-`higher_order_epistasis(result)` simply returns a copy of the small summary.
-Tests prohibit encoding or solving on this route and check one design build
-and exactly one fit for each requested nonconstant order in the main pipeline.
-Passing a landscape retains a score-only compatibility route through the same
-internal code, without building coefficient labels/tables. It is not a separate
-polynomial or tree estimator. The old `order` keyword is deprecated in favor
-of `max_order`; `profile()` preserves its existing scalar field by extracting
-the final cumulative R-squared.
+Read `result.order_summary` directly; it is already computed and stored.
+Tests check one design build and exactly one fit for each requested nonconstant
+order in the main pipeline. At the user's request, `higher_order_epistasis`
+has been removed entirely, including its module, public exports, benchmark
+and `profile()` / `list_metrics()` entry. There is no compatibility alias or
+separate score-only fitting branch. Migrate calls to
+`walsh_hadamard(landscape, max_order=k).order_summary`; the former scalar score
+is the last row's `r2`. A removal test checks public imports and registry behavior.
 
 ## What each quantity measures
 
@@ -66,11 +66,10 @@ model variance from explained-data variance. The table therefore keeps these
 columns distinct. Nonzero counts concern exact orders in the highest-order
 Lasso solution; they are not significance claims and are NA for OLS.
 
-Rank-deficient OLS may still have unique predictions on observed rows. The
-coefficient API raises, as before. The score-only compatibility call reports
-valid fitted scores, rank and model size, but leaves the unidentified model
-spectrum NaN rather than presenting arbitrary minimum-norm effects. The default
-coefficient API never silently changes to a regularized estimator.
+Rank-deficient OLS may still have unique predictions on observed rows, but its
+coefficients do not define a unique decomposition. The unified API therefore
+raises, as before, and never silently changes to a regularized estimator.
+Users can explicitly select Lasso to estimate such a model.
 
 ## Why tree depth is not interaction order
 
@@ -100,6 +99,6 @@ claimed published numerical results. All previous case fingerprints remain.
 Basic tests additionally check analytic spectra, incomplete-data refitting,
 common CV splits, negative regularized gains against an independent design,
 multistate reference invariance, QR residual preservation, constant/zero-order
-models, scale changes, rank semantics, compatibility, memory guards and reuse.
+models, scale changes, rank semantics, API removal, memory guards and reuse.
 The paper's large Figure 2/Papkou full pipelines and external predictive R2
 remain outside this validation claim.

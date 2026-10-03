@@ -126,10 +126,25 @@ def test_profile_include_structure():
 
 def test_list_metrics_shape():
     lm = list_metrics()
-    assert len(lm) == 22
+    assert len(lm) == 21
     assert {"group", "kind", "columns", "n_jobs", "seed", "time_budget"}.issubset(lm.columns)
     assert lm.loc["classify_epistasis", "time_budget"]
     assert lm.loc["autocorrelation", "seed"]
+
+
+def test_removed_higher_order_api_is_not_exported_or_registered():
+    import importlib.util
+
+    from graphfla.analysis import epistasis
+
+    name = "higher_order_epistasis"
+    assert not hasattr(A, name) and name not in A.__all__
+    assert not hasattr(epistasis, name) and name not in epistasis.__all__
+    assert importlib.util.find_spec("graphfla.analysis.epistasis.higher_order") is None
+    assert name not in list_metrics().index
+    assert name not in profile(onemax(3), groups="epistasis", seed=0).index
+    with pytest.raises(ValueError, match="unknown"):
+        profile(onemax(3), include=[name])
 
 
 def test_profile_ee_parameters_and_single_canonical_registry_entry():

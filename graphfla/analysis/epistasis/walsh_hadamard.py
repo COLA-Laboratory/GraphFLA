@@ -131,10 +131,6 @@ def walsh_hadamard(
     sklearn.exceptions.ConvergenceWarning
         If Lasso does not converge within ``max_iter`` iterations.
 
-    See Also
-    --------
-    higher_order_epistasis : Extract this summary without refitting a result.
-
     Notes
     -----
     Use observed allele 0 as reference for Boolean variables and the first retained
@@ -172,6 +168,8 @@ def walsh_hadamard(
     >>> regularized = walsh_hadamard(landscape, method="lasso", alpha=0.1)
     >>> regularized.fit_info["alpha"]
     0.1
+    >>> result.order_summary.order.tolist()
+    [0, 1, 2]
     """
     return _analyze(
         landscape,
@@ -185,5 +183,4 @@ def walsh_hadamard(
         max_iter=max_iter,
         tol=tol,
         n_jobs=n_jobs,
-        require_coefficients=True,
     )

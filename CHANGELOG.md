@@ -17,13 +17,13 @@ returned statistic are marked, because downstream analyses depend on them.
   for multistate covariance, and Lasso nonzero counts. These model fractions
   are not automatically observed-data R-squared contributions. Constant fitness
   gives NaN R-squared/increments; negative Lasso increments are preserved.
-- `higher_order_epistasis(result)` extracts that summary without refitting.
-  Passing a landscape uses the same pipeline and returns a table instead of
-  the former scalar. `max_order` replaces the deprecated `order` keyword.
-  `profile()` preserves its existing scalar column using the final R-squared.
-  The score-only route permits rank-deficient OLS predictions but does not
-  report an unidentified variance spectrum. W-H coefficient requests still
-  reject nonidentifiable OLS fits. See `validation/EPISTASIS_ORDER_REVIEW.md`.
+- `higher_order_epistasis` and its module have been removed, including their
+  public exports, benchmark entry and `profile()` / `list_metrics()` entry.
+  Use `walsh_hadamard(landscape, max_order=k).order_summary`; read an existing
+  result's `.order_summary` directly. No compatibility alias remains. The
+  score-only fitting branch has also been removed; nonidentifiable OLS fits
+  raise, and regularization requires explicit `method="lasso"`.
+  See `validation/EPISTASIS_ORDER_REVIEW.md`.
 
 ### Changed — Walsh-Hadamard coefficients
 
