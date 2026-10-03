@@ -1,0 +1,13 @@
+{% import "api/macros.html.jinja" as api with context %}
+{% set obj = function %}
+{% set html_id = function.path %}
+<div class="doc doc-object doc-function" data-api-path="{{ html_id }}">
+  {% filter heading(heading_level, id=html_id, role="method" if function.parent.is_class else "function", hidden=True, toc_label=function.name, skip_inventory=config.skip_local_inventory) %}{{ function.name }}{% endfilter %}
+  {% if not root %}<details class="method-detail"><summary><code>{{ function.name }}()</code></summary>{% endif %}
+  {% if not root and function.is_alias and function.canonical_path.rsplit('.', 1)[0] != function.parent.canonical_path %}
+    <p class="api-meta">Inherited from <code>{{ function.canonical_path.rsplit('.', 2)[-2] }}</code></p>
+  {% endif %}
+  {{ api.signature(function, config.extra.get('public_path', function.path) if root else function.name) }}
+  {% include "api/function_sections.html.jinja" with context %}
+  {% if not root %}</details>{% endif %}
+</div>

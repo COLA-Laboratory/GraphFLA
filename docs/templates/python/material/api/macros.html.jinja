@@ -1,0 +1,25 @@
+{% macro signature(function, name) %}
+  {% if function.overloads and config.show_overloads %}
+    {% for overload in function.overloads %}
+      {% filter format_signature(overload, config.line_length, annotations=True, crossrefs=False) %}{{ name }}{% endfilter %}
+    {% endfor %}
+  {% endif %}
+  {% filter format_signature(function, config.line_length, crossrefs=False) %}{{ name }}{% endfilter %}
+{% endmacro %}
+
+{% macro field_section(section) %}
+  {% set kind = section.kind.value|replace(' ', '-') %}
+  <div class="admonition api-fields api-{{ kind }}{% if kind == 'yields' %} api-returns{% endif %}" data-api-section="{{ kind }}">
+    <p class="admonition-title">{{ section.title or section.kind.value|title }}</p>
+    <dl>
+    {% for item in section.value %}
+      <dt>
+        <code class="api-field-name">{{ (item.name if item.name else item.annotation)|e }}</code>
+        {% if item.name and item.annotation %}<span class="api-field-type"> : {{ item.annotation|e }}</span>{% endif %}
+        {% if kind in ['parameters', 'other-parameters'] and item.default is defined and item.default is not none %}<span class="api-field-type">, default={{ item.default|e }}</span>{% endif %}
+      </dt>
+      <dd>{{ item.description|api_markup(html_id)|convert_markdown(heading_level, html_id, autoref_hook=autoref_hook) }}</dd>
+    {% endfor %}
+    </dl>
+  </div>
+{% endmacro %}

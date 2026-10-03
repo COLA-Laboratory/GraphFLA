@@ -1,0 +1,70 @@
+{
+  "package_revision": "d7b244db91be286ad3abeb622235c58084751328",
+  "scope": [
+    "graphfla.landscape",
+    "graphfla.analysis"
+  ],
+  "narrative_sources": [
+    {
+      "source": "walsh-hadamard/doc-epistasis-walsh-hadamard.md",
+      "destination": "analysis/epistasis.md",
+      "sha256": "2b6611cdccb02dcf8ad3e33412f1ae3dcde9ee5e8664e62f0c32530638d0e4dc"
+    },
+    {
+      "source": "dr-ic/doc-epistasis-global-returns-costs.md",
+      "destination": "analysis/epistasis.md",
+      "sha256": "b871866a7e35145c9b4ac6b1ed62b3f344c7347ffcba977822e905de83f5ddd0"
+    },
+    {
+      "source": "gamma/doc-epistasis-gamma.md",
+      "destination": "analysis/epistasis.md",
+      "sha256": "2ac651cdea364907668bf5b83ea19766c83c41d9b2d002fd9edb8bb507fc5eb1"
+    },
+    {
+      "source": "idiosyncrasy/doc-epistasis-idiosyncrasy.md",
+      "destination": "analysis/epistasis.md",
+      "sha256": "56faa96001a1482c8dbbdb38e41b0ea776563a054c5176f0303d75290bb6687f"
+    },
+    {
+      "source": "r-s-ratio/doc-epistasis-r-s-ratio.md",
+      "destination": "analysis/ruggedness.md",
+      "sha256": "83fd0e58a90079d19d4dc05365e4b95ca3672ff2c4f18f541c60b2563460cf17"
+    },
+    {
+      "source": "ee-mutations/doc-epistasis-ee-mutations.md",
+      "destination": "includes/ee-mutations.md",
+      "sha256": "834dff9343c43f5cbb4160ec92d46bc934bf696c3b44177a6964a029f7484231",
+      "used_by": [
+        "analysis/robustness.md",
+        "analysis/navigability.md"
+      ]
+    }
+  ],
+  "examples": "API examples are rendered directly from source; the obsolete hand-copied epistasis example was removed.",
+  "introduction_policy": "Use finalized replacement introductions where available; retain existing introductions otherwise.",
+  "preserved_introduction_checks": [
+    {
+      "page": "analysis/robustness.md",
+      "section": "Neutrality",
+      "unchanged": true
+    },
+    {
+      "page": "analysis/robustness.md",
+      "section": "Mutational Robustness",
+      "unchanged": true
+    },
+    {
+      "page": "analysis/ruggedness.md",
+      "section": "Local Optima",
+      "unchanged": true
+    },
+    {
+      "page": "analysis/ruggedness.md",
+      "section": "Gradient Intensity",
+      "unchanged": true
+    }
+  ],
+  "excluded_superseded_drafts": [
+    "epistasis-order-summary/doc-epistasis-higher-order.md"
+  ]
+}

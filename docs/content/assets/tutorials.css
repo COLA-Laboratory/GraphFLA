@@ -1,0 +1,23 @@
+/* Saved notebook results share Material's typography without notebook UI chrome. */
+.md-typeset .tutorial-output {
+  border-inline-start: 2px solid var(--md-default-fg-color--lightest);
+  margin: -.35em 0 1.5em;
+  padding: .5em 0 .3em 1em;
+  min-width: 0;
+  overflow-x: auto;
+}
+.md-typeset .tutorial-output-label {
+  color: var(--md-default-fg-color--light);
+  font-size: .75em;
+  font-weight: 600;
+  margin: 0 0 .4em;
+}
+.md-typeset .tutorial-output pre { margin-block: .4em; }
+.md-typeset .tutorial-output pre > code { background: transparent; }
+.md-typeset .tutorial-output table {
+  margin-block: .4em;
+  white-space: nowrap;
+}
+.md-typeset .tutorial-output table td,
+.md-typeset .tutorial-output table th { text-align: right; }
+.md-typeset .tutorial-output table th:first-child { text-align: left; }

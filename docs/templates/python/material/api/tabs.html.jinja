@@ -1,0 +1,16 @@
+{# Material's native tab markup, shared by classes and function sections. #}
+{% macro render(tab_id, labels, component) %}
+<div class="tabbed-set tabbed-alternate {{ component }}" data-tabs="{{ tab_id }}:{{ labels|length }}">
+  {% for label in labels %}
+  <input type="radio" id="{{ tab_id }}-{{ loop.index }}" name="{{ tab_id }}" {% if loop.first %}checked="checked"{% endif %} />
+  {% endfor %}
+  <div class="tabbed-labels">
+    {% for label in labels %}<label for="{{ tab_id }}-{{ loop.index }}">{{ label }}</label>{% endfor %}
+  </div>
+  <div class="tabbed-content">
+    {% for label in labels %}
+    <div class="tabbed-block">{{ caller(label, loop.index0) }}</div>
+    {% endfor %}
+  </div>
+</div>
+{% endmacro %}

@@ -1,0 +1,72 @@
+/* Layout studies share the original black/purple Material palette. */
+:root { --md-text-font: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; --md-code-font: "SFMono-Regular", Consolas, monospace; }
+.md-grid { max-width: 68rem; }
+.md-content { max-width: 47rem; }
+.md-typeset { font-size: .78rem; line-height: 1.65; }
+.md-typeset h1 { color: var(--md-default-fg-color); font-weight: 600; letter-spacing: -.025em; margin-bottom: .65em; }
+.md-typeset h2 { font-size: 1.25em; font-weight: 650; margin-top: 2.25em; }
+.md-typeset h3 { font-size: 1.06em; font-weight: 650; }
+.md-typeset h4 { font-size: .93em; font-weight: 650; color: var(--md-default-fg-color--light); }
+.md-content__inner { padding-top: .75rem; }
+.md-typeset .api-meta { color: var(--md-default-fg-color--light); font-size: .65rem; letter-spacing: .02em; margin-bottom: .4rem; }
+.api-meta span { margin: 0 .3rem; }
+.api-meta code { background: transparent; font-size: 1em; }
+.md-typeset pre { margin-top: .75rem; margin-bottom: 1.3rem; }
+.md-typeset pre > code { font-size: .68rem; line-height: 1.8; padding: .85rem 1rem; white-space: pre-wrap; overflow-wrap: anywhere; }
+.md-typeset .api-jumps { display: flex; flex-wrap: wrap; gap: 1.2rem; border-bottom: 1px solid var(--md-default-fg-color--lightest); padding: .3rem 0 .75rem; font-size: .7rem; }
+.md-typeset .member-index dl, .md-typeset .section-links dl { margin-top: .5rem; }
+.md-typeset .member-index dt { float: left; clear: left; width: 37%; padding: .4rem .75rem .4rem 0; margin: 0; line-height: 1.5; }
+.md-typeset .member-index dd { margin: 0 0 0 37%; padding: .4rem 0; line-height: 1.5; min-height: 2rem; }
+.member-index { border-top: 1px solid var(--md-default-fg-color--lightest); border-bottom: 1px solid var(--md-default-fg-color--lightest); font-size: .7rem; }
+.member-index::after { content: ""; display: block; clear: both; }
+.member-index code { background: transparent; padding: 0; overflow-wrap: anywhere; }
+.md-typeset dl dt { margin-top: 1.1rem; font-weight: 650; }
+.md-typeset dl dd { margin-top: .3rem; margin-left: 1rem; }
+.field-type { color: var(--md-default-fg-color--light); font-size: .9em; font-weight: 400; overflow-wrap: anywhere; }
+.md-typeset dl .field-type { margin-left: .55rem; }
+.field-table-wrap { width: 100%; margin: .7rem 0 1.5rem; }
+.md-typeset table.field-table:not([class~=highlight]) { display: table; table-layout: fixed; width: 100%; border: 0; border-top: 1px solid var(--md-default-fg-color--lightest); border-bottom: 1px solid var(--md-default-fg-color--lightest); box-shadow: none; border-radius: 0; font-size: .71rem; }
+.md-typeset .field-table th { background: var(--md-code-bg-color); font-size: .64rem; color: var(--md-default-fg-color--light); padding: .55rem .65rem; }
+.md-typeset .field-table th:first-child { width: 33%; }
+.md-typeset .field-table td { padding: .7rem .65rem; border-top: 1px solid var(--md-default-fg-color--lightest); overflow-wrap: anywhere; vertical-align: top; }
+.field-table td p:first-child { margin-top: 0; }
+.field-table td p:last-child { margin-bottom: 0; }
+.field-table .field-type { display: block; margin-top: .35rem; }
+.field-table code { white-space: normal; overflow-wrap: anywhere; }
+.md-typeset .section-links { border-top: 1px solid var(--md-default-fg-color--lightest); border-bottom: 1px solid var(--md-default-fg-color--lightest); margin: 1rem 0; padding: .25rem 0; }
+.section-links dt { font-weight: 650; }
+.section-links dd { color: var(--md-default-fg-color--light); font-size: .7rem; }
+.md-typeset .method-detail { background: transparent; border: 1px solid var(--md-default-fg-color--lightest); box-shadow: none; border-radius: .2rem; font-size: inherit; padding: 0 1rem; margin: .7rem 0; }
+.method-detail { scroll-margin-top: 4rem; }
+.md-typeset .method-detail > summary { background: transparent; padding: .8rem 2rem .8rem 1rem; margin: 0 -1rem; display: block; }
+.md-typeset .method-detail > summary::before { display: none; }
+.md-typeset .method-detail > summary code { background: transparent; padding: 0; font-size: .72rem; }
+.md-typeset .method-detail > summary span { display: block; color: var(--md-default-fg-color--light); font-size: .68rem; font-weight: 400; margin-top: .3rem; }
+.method-tools { display: flex; justify-content: space-between; align-items: end; gap: 1rem; margin: 1rem 0; font-size: .67rem; }
+.method-tools label { display: block; flex: 1; color: var(--md-default-fg-color--light); }
+.method-tools input { display: block; width: 100%; margin-top: .3rem; border: 1px solid var(--md-default-fg-color--lightest); padding: .5rem; border-radius: .15rem; background: var(--md-default-bg-color); }
+.method-tools button { padding: .5rem .65rem; border: 1px solid var(--md-default-fg-color--lightest); border-radius: .15rem; cursor: pointer; }
+.method-tools button:hover { border-color: var(--md-accent-fg-color); color: var(--md-accent-fg-color); }
+.md-typeset .tabbed-labels > label { font-size: .69rem; padding-left: .8rem; padding-right: .8rem; }
+.source-note { font-size: .62rem; color: var(--md-default-fg-color--light); overflow-wrap: anywhere; }
+.member-anchor, .md-typeset [id] { scroll-margin-top: 4rem; }
+.md-sidebar__inner { font-size: .69rem; }
+@media (max-width: 700px) {
+  .md-typeset .member-index dt { float: none; width: auto; padding-bottom: 0; }
+  .md-typeset .member-index dd { margin-left: 0; padding-top: .1rem; padding-bottom: .75rem; }
+  .md-typeset dl dt .field-type { display: block; margin: .3rem 0 0; }
+  .md-typeset .field-table th:first-child { width: 40%; }
+  .md-typeset .field-table td { padding: .6rem .45rem; }
+  .md-typeset h1 { font-size: 1.7em; overflow-wrap: anywhere; }
+}
+@media (max-width: 520px) {
+  .md-typeset .field-table thead { display: none; }
+  .md-typeset .field-table tr { display: block; border-top: 1px solid var(--md-default-fg-color--lightest); }
+  .md-typeset .field-table td { display: block; width: 100%; border-top: 0; padding: .6rem .35rem; }
+  .md-typeset .field-table td + td { padding-top: 0; }
+}
+@media print {
+  .method-tools { display: none; }
+  .md-typeset .tabbed-block { display: block !important; }
+  .md-typeset details > * { display: block !important; }
+}

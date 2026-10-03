@@ -1,0 +1,151 @@
+/* API components only. Material owns fonts, content width and global rhythm. */
+.md-typeset .api-signature {
+  border: 1px solid var(--md-default-fg-color--lightest);
+  border-inline-start: 3px solid var(--md-accent-fg-color);
+  border-radius: .3rem;
+  background: var(--md-code-bg-color);
+  margin-block: 1.2em;
+  overflow: hidden;
+  position: relative;
+  box-shadow: 0 2px 8px rgb(25 45 70 / 6%);
+}
+.md-typeset .api-signature pre { margin: 0; }
+.md-typeset .api-signature pre > code {
+  padding: 1.1em 3.1rem 1.1em 1.25em;
+  background: transparent;
+  line-height: 1.7;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+.md-typeset .api-signature .api-sig-name {
+  color: var(--api-input-ink, var(--md-accent-fg-color));
+  font-weight: 700;
+}
+.md-typeset .api-signature .api-sig-module {
+  color: var(--api-type-ink, var(--md-default-fg-color--light));
+  font-weight: 400;
+}
+.md-typeset .api-signature .api-sig-keyword {
+  color: var(--md-default-fg-color--light);
+  font-weight: 400;
+}
+.md-typeset .api-signature .api-sig-return,
+.md-typeset .api-signature .api-sig-return span {
+  color: var(--api-output-ink, var(--md-code-hl-name-color));
+}
+.md-typeset .api-signature button[data-clipboard-target] {
+  color: var(--api-input-ink, var(--md-accent-fg-color));
+  opacity: .8;
+  background-color: var(--md-default-bg-color);
+  border: 1px solid var(--api-input-edge, var(--md-default-fg-color--lightest));
+  border-radius: .2rem;
+}
+.md-typeset .api-signature button[data-clipboard-target]:is(:hover, :focus-visible) {
+  opacity: 1;
+  border-color: currentColor;
+}
+.md-typeset :is(.api-parameters, .api-other-parameters, .api-returns, .api-raises, .api-attributes) {
+  /* Shared root-relative inset: a smaller title font must not shrink its bleed. */
+  --api-panel-inset: .8rem;
+  border: 1px solid var(--md-default-fg-color--lightest);
+  border-radius: .2rem;
+  box-shadow: none;
+  background: transparent;
+  font-size: inherit;
+  padding-inline: var(--api-panel-inset);
+  margin-block: 1em;
+  overflow: hidden;
+}
+.md-typeset :is(.api-parameters, .api-other-parameters, .api-returns, .api-raises, .api-attributes) > .admonition-title {
+  background: var(--md-code-bg-color);
+  border-bottom: 1px solid var(--md-default-fg-color--lightest);
+  padding: .65em var(--api-panel-inset);
+  margin-inline: calc(-1 * var(--api-panel-inset));
+  border-radius: 0;
+  font-size: .85em;
+}
+.md-typeset :is(.api-parameters, .api-other-parameters, .api-returns, .api-raises, .api-attributes) > .admonition-title::before {
+  display: none;
+}
+.md-typeset :is(.api-parameters, .api-other-parameters, .api-returns, .api-raises, .api-attributes) dl {
+  margin-block: .75em 1em;
+}
+.md-typeset :is(.api-parameters, .api-other-parameters, .api-returns, .api-raises, .api-attributes) dt {
+  border-top: 1px solid var(--md-default-fg-color--lightest);
+  padding-top: .8em;
+  margin-top: .8em;
+  font-weight: 600;
+  overflow-wrap: anywhere;
+}
+.md-typeset :is(.api-parameters, .api-other-parameters, .api-returns, .api-raises, .api-attributes) dt:first-child {
+  border-top: 0;
+  padding-top: 0;
+  margin-top: 0;
+}
+.md-typeset :is(.api-parameters, .api-other-parameters, .api-returns, .api-raises, .api-attributes) dt :is(em, .field-type, .api-field-type) {
+  color: var(--md-default-fg-color--light);
+  font-style: normal;
+  font-weight: normal;
+}
+.md-typeset .api-field-name { background: transparent; padding: 0; }
+.md-typeset :is(.api-parameters, .api-other-parameters, .api-returns, .api-raises, .api-attributes) dd {
+  margin: .35em 0 0;
+}
+.md-typeset :is(.api-parameters, .api-other-parameters, .api-returns, .api-raises, .api-attributes) dd > p:first-child { margin-top: 0; }
+.md-typeset .api-meta, .md-typeset .source-note {
+  color: var(--md-default-fg-color--light);
+  font-size: .8em;
+  overflow-wrap: anywhere;
+}
+.md-typeset .api-meta code { background: transparent; }
+.md-typeset .field-type { margin-inline-start: .5em; }
+.md-typeset .method-detail {
+  background: transparent;
+  border: 1px solid var(--md-default-fg-color--lightest);
+  border-radius: .2rem;
+  box-shadow: none;
+  font-size: inherit;
+  padding-inline: 1em;
+  scroll-margin-top: 4rem;
+}
+.md-typeset .method-detail > summary {
+  background: transparent;
+  margin-inline: -1em;
+  padding: .8em 2.5em .8em 1em;
+}
+.md-typeset .method-detail > summary::before { display: none; }
+.md-typeset .method-detail > summary code { background: transparent; }
+.md-typeset .method-detail > summary span {
+  display: block;
+  color: var(--md-default-fg-color--light);
+  font-size: .85em;
+  font-weight: normal;
+  margin-top: .35em;
+}
+.md-typeset .method-detail[open] > summary { border-bottom: 1px solid var(--md-default-fg-color--lightest); }
+.md-typeset .method-tools { display: flex; gap: 1em; align-items: end; }
+.md-typeset .method-tools label { flex: 1; font-size: .85em; color: var(--md-default-fg-color--light); }
+.md-typeset .method-tools input {
+  display: block;
+  width: 100%;
+  border: 1px solid var(--md-default-fg-color--lightest);
+  border-radius: .2rem;
+  padding: .6em .75em;
+  margin-top: .35em;
+  color: var(--md-default-fg-color);
+  background: var(--md-default-bg-color);
+}
+.md-typeset .method-tools button {
+  padding: .6em .75em;
+  font-size: .85em;
+  border: 1px solid var(--md-default-fg-color--lightest);
+  border-radius: .2rem;
+  cursor: pointer;
+}
+.md-typeset .method-tools button:hover { color: var(--md-accent-fg-color); border-color: currentColor; }
+.md-typeset .member-anchor { scroll-margin-top: 4rem; }
+@media print {
+  .md-typeset .method-tools { display: none; }
+  .md-typeset .tabbed-block { display: block !important; }
+  .md-typeset .method-detail > * { display: block !important; }
+}

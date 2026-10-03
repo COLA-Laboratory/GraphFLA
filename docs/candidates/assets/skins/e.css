@@ -1,0 +1,15 @@
+/* E — violet names and a restrained lavender surface. */
+.md-typeset {
+  --api-input-ink: #6030a0;
+  --api-input-tint: #f5f0fb;
+  --api-input-edge: #e1d4ef;
+  --api-input-name-ink: #62229b;
+  --api-input-name-fill: #f3eafb;
+  --api-output-ink: #6030a0;
+  --api-output-tint: #f5f0fb;
+  --api-output-edge: #e1d4ef;
+  --api-output-name-ink: #62229b;
+  --api-output-name-fill: #f3eafb;
+  --api-type-ink: #57515f;
+  --api-signature-fill: #faf8fd;
+}

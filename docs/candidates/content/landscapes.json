@@ -1,0 +1,304 @@
+[
+  {
+    "key": "landscape",
+    "category": "Landscapes",
+    "name": "Landscape",
+    "module": "graphfla.landscape",
+    "kind": "class",
+    "signature": "Landscape(kind: str = 'default', maximize: bool = True, input_handler: Optional[InputHandler] = None, neighbor_generator: Optional[NeighborGenerator] = None, strategy_key: Optional[str] = None)",
+    "docstring": "Class implementing the fitness landscape object.\n\n    This class provides a foundational structure for fitness landscapes,\n    conceptualized as a mapping from a genotype (configuration) space to\n    a fitness value. It typically represents the landscape as a directed graph\n    where nodes are genotypes and edges connect mutational neighbors, pointing\n    towards fitter variants.\n\n    The landscape can be either constructed from raw data (using `build_from_data()`) or\n    leveraging existing graph (using `build_from_graph()`).\n\n    After construction:\n    - The graph object representing the landscape can be accessed via `Landscape.graph`.\n    - Tabular information about the configurations can be obtained with `get_data()`.\n    - Basic landscape properties are available via `describe()`.\n    - Other methods in the `graphfla.analysis` and `graphfla.plotting` modules can be\n      used for advanced analysis and visualization.\n\n    Parameters\n    ----------\n    type : str, default='default'\n        The type of landscape to create. This determines the input-preparation and\n        neighbor generation strategies used. Options include 'boolean', 'dna',\n        'rna', 'protein', or 'default' for general landscapes.\n    maximize : bool, default=True\n        Determines the optimization direction. If True, the landscape seeks\n        higher fitness values (peaks are optima). If False, it seeks lower\n        fitness values (valleys are optima).\n\n    Attributes\n    ----------\n    graph : ig.Graph or None\n        The directed ig.Graph representing the fitness landscape. Nodes represent\n        configurations (genotypes) and edges connect neighboring configurations,\n        typically pointing from lower to higher fitness if `maximize` is True.\n        Each node usually has a 'fitness' attribute. Populated after calling\n        `build_from_data` or `build_from_graph`. Fitness difference between\n        neighboring nodes is stored in the edge attribute 'delta_fit'.\n    configs : pandas.Series or None\n        A pandas Series mapping node indices (int) to their corresponding\n        configuration representation (often a tuple). This represents the\n        genotypes in the landscape. Populated after calling `build_from_data`\n        or when loading a graph via `build_from_graph` if the file contains\n        configs data.\n    config_dict : dict or None\n        A dictionary describing the encoding scheme for configuration variables.\n        Keys are typically integer indices of variables, and values are\n        dictionaries specifying properties like 'type' (e.g., 'boolean',\n        'categorical') and 'max' (maximum encoded value). Populated after\n        calling `build_from_data`.\n    data_types : dict or None\n        A dictionary specifying the data type for each variable in the\n        configuration space (e.g., {'var_0': 'boolean', 'var_1': 'categorical'}).\n        Validated and stored during `build_from_data`. Required for certain distance\n        calculations.\n    n_configs : int or None\n        The total number of configurations (nodes) in the landscape graph.\n        Populated after calling `build_from_data` or `build_from_graph`.\n    n_vars : int or None\n        The number of variables (dimensions) defining a configuration in the\n        genotype space. Populated after calling `build_from_data` or inferred\n        by `build_from_graph`.\n    n_edges : int or None\n        The total number of directed edges (connections) in the landscape graph.\n        Populated after calling `build_from_data` or `build_from_graph`.\n    n_lo : int or None\n        The number of distinct local optima (plateau-aware): each neutral\n        plateau-LO counts once, plus every single-point LO. This is the\n        \"number of local optima\". Populated after graph analysis.\n    n_lo_members : int or None\n        The total number of local-optimum *member nodes* (every member of\n        every plateau-LO plus single-point LOs); equals ``len(lo_index)``.\n        For a landscape with no neutral plateaus this equals ``n_lo``.\n        Populated after graph analysis.\n    lo_index : list[int] or None\n        A sorted list of all node indices that are local optima\n        (plateau-aware); its length is ``n_lo_members``. Populated after\n        graph analysis.\n    go_index : int or None\n        The node index of the global optimum (the configuration with the\n        highest or lowest fitness). Populated after graph analysis.\n    go : dict or None\n        A dictionary containing the attributes (including 'fitness') of the\n        global optimum node. Populated after graph analysis.\n    lon : ig.graph or None\n        The Local Optima Network (LON) graph, if calculated via `get_lon`.\n        Nodes in the LON are local optima from the main landscape graph, and\n        edges represent accessibility between their basins (Ochoa 2021).\n    has_lon : bool\n        Flag indicating whether the LON has been calculated and stored in the\n        `lon` attribute.\n    maximize : bool\n        Indicates whether the objective is to maximize (True) or minimize\n        (False) the fitness values. Set during `build_from_data` or `build_from_graph`.\n    epsilon : float\n        Neutrality threshold. Neighbors with ``|fitness_a - fitness_b| <= epsilon``\n        are classified as neutral rather than improving/worsening. When\n        ``epsilon > 0``, a plateau layer is constructed and downstream analyses\n        become plateau-aware. Defaults to 0.\n    plateaus : dict or None\n        Mapping from 0-based plateau ID to the list of member node indices.\n        Only multi-member plateaus are stored; singleton nodes have\n        ``plateau_id = -1``.  Populated when ``epsilon > 0`` and neutral\n        pairs exist.\n    n_plateau : int or None\n        The number of neutral plateaus (multi-member connected components of\n        neutral neighbors). Populated when ``epsilon > 0`` and neutral pairs\n        exist; 0 when no plateaus; None before construction.\n    plateau_lo_index : list[int] or None\n        Plateau IDs (0-based) whose plateaus are local optima. Does not\n        include single-point LOs.\n    n_plateau_lo : int or None\n        ``len(plateau_lo_index)``.\n    verbose : bool\n        The verbosity level set during initialization or construction.\n    _is_built : bool\n        Internal flag indicating if the landscape has been populated via\n        `build_from_data` or `build_from_graph`.\n\n\n    References\n    ----------\n    .. [Wright 1932] Wright, S. The roles of mutation, inbreeding,\n       crossbreeding and selection in evolution. Proceedings Sixth\n       International Congress Genetics 1, 356-366 (1932).\n\n    .. [Papkou 2023] Papkou, A. et al. A rugged yet easily navigable\n       fitness landscape. Science 382, eadh3860 (2023).\n\n    .. [Li 2016] Li, C. et al. The fitness landscape of a tRNA gene.\n       Science 352, 837-840 (2016).\n\n    .. [Puchta 2016] Puchta, O. et al. Network of epistatic interactions\n       within a yeast snoRNA. Science 352, 840-844 (2016).\n\n    .. [Poelwijk 2007] Poelwijk, F. J. et al. Empirical fitness landscapes\n       reveal accessible evolutionary paths. Nature 445, 383-386 (2007).\n\n    .. [Carneiro 2010] Carneiro, M. & Hartl, D. L. Adaptive landscapes and\n       protein evolution. PNAS 107, 1747-1751 (2010).\n\n    .. [Ochoa 2021] Ochoa, G. et al. Local optima networks: A survey.\n       Journal of Heuristics 27, 79-134 (2021).\n\n    Examples\n    --------\n    >>> import pandas as pd\n    >>> import numpy as np\n    >>> X_data = pd.DataFrame({'var_0': [0, 0, 1, 1], 'var_1': [0, 1, 0, 1]})\n    >>> f_data = pd.Series([1.0, 2.0, 3.0, 2.5])\n\n    >>> landscape = BooleanLandscape().build_from_data(X_data, f_data, verbose=False)\n    >>> landscape.describe()[\"n_lo\"]\n    1\n    >>> repr(landscape)\n    'BooleanLandscape(maximize=True)'\n    >>> print(f\"Number of configurations: {landscape.n_configs}\")\n    Number of configurations: 4\n    >>> print(f\"Global optimum fitness: {landscape.go['fitness']}\")  \n    Global optimum fitness: 3.0\n    ",
+    "source": "graphfla/landscape/landscape.py",
+    "lineno": 45,
+    "methods": [
+      {
+        "name": "get_params",
+        "signature": "get_params() -> Dict[str, Any]",
+        "docstring": "Return the constructor parameters as a dict.\n\n        Useful for introspection and reconstruction: ``type(ls)(**ls.get_params())``\n        yields a fresh, unbuilt landscape with the same configuration.\n        ",
+        "source": "graphfla/landscape/landscape.py",
+        "lineno": 498
+      },
+      {
+        "name": "register_input_handler",
+        "signature": "register_input_handler(data_type: str, handler: InputHandler) -> None",
+        "docstring": "Register a custom input handler for a data type on this instance.",
+        "source": "graphfla/landscape/landscape.py",
+        "lineno": 536
+      },
+      {
+        "name": "register_neighbor_generator",
+        "signature": "register_neighbor_generator(data_type: str, generator: NeighborGenerator) -> None",
+        "docstring": "Register a custom neighbor generator for a data type on this instance.",
+        "source": "graphfla/landscape/landscape.py",
+        "lineno": 542
+      },
+      {
+        "name": "build_from_data",
+        "signature": "build_from_data(X: Any, f: Union[pd.Series, list, np.ndarray], data_types: Optional[Dict[str, str]] = None, epsilon: float = 0, tau: Optional[float] = None, filter_mode: str = 'any', n_edit: int = 1, neighborhood_strategy: Optional[str] = None, verbose: Optional[bool] = True) -> 'Landscape'",
+        "docstring": "Construct the landscape graph and properties from configuration data.\n\n        This method takes genotype-phenotype data (configurations `X` and their\n        corresponding fitness values `f`) and builds the underlying graph\n        structure of the fitness landscape. Nodes represent configurations, and\n        edges connect neighbors based on the specified edit distance (`n_edit`).\n        It then determines the basic landscape properties (local optima and the\n        global optimum). More expensive analyses — basins of attraction,\n        accessible paths, distance-to-optimum and neighbour fitness — are computed\n        lazily on first access via the ``.basins`` / ``.accessible_paths`` /\n        ``.dist_to_go`` / ``.neighbor_fitness`` properties.\n\n        This method populates the core attributes of the `Landscape` instance.\n\n        Parameters\n        ----------\n        X : pandas.DataFrame or numpy.ndarray or a list of strings \n            The configuration data, where each row represents a genotype or\n            configuration, and columns represent variables or sites.\n            Column names are converted to strings and must remain unique.\n            Names used for landscape attributes, such as 'fitness',\n            'out_degree' and 'is_lo', are reserved.\n        f : pandas.Series, list, or numpy.ndarray\n            The fitness values corresponding to each configuration in `X`. Must\n            have the same length as `X`. Values are normalized to float64 before\n            fitness arithmetic.\n        data_types : dict[str, str], optional\n            A dictionary specifying the type of each variable (column in `X` if\n            DataFrame, or inferred column index if ndarray). Keys must match\n            column names/indices, and values must be one of 'boolean',\n            'categorical', or 'ordinal'. This information is crucial for\n            determining neighborhood relationships and calculating distances.\n            Optional: the typed landscape subclasses (``BooleanLandscape``,\n            ``OrdinalLandscape``, ``DNALandscape``/``RNALandscape``/\n            ``ProteinLandscape``) auto-detect it. Supply it explicitly for a\n            generic ``Landscape(kind=\"default\")`` with heterogeneous (mixed)\n            columns.\n        epsilon : float, default=0\n            Neutrality threshold. Neighboring configurations whose absolute\n            fitness difference is ``<= epsilon`` are treated as neutral\n            (equal-fitness) rather than strictly improving/worsening. When\n            ``epsilon > 0``, a plateau layer is constructed: neutral neighbors\n            are grouped into plateaus via connected components, and downstream\n            analyses (local optima, basins, accessible paths) become\n            plateau-aware. A higher epsilon produces a smoother landscape with\n            fewer, larger local optima; ``epsilon=0`` preserves strict-inequality\n            behavior (the default).\n        tau : float, optional\n            Functional threshold. Configurations whose fitness is above\n            (when ``maximize=True``) or below (when ``maximize=False``) this\n            value are considered \"functional\". Used together with\n            ``filter_mode`` to focus the landscape on biologically or\n            practically relevant regions.\n        filter_mode : str, default='any'\n            How to apply the functional threshold ``tau``. Options:\n\n            - ``'any'``: Pre-construction filter. Remove non-functional\n              configurations before building the graph. If maximize: keep\n              fitness >= tau; if minimize: keep fitness <= tau.\n            - ``'both'``: Post-construction filter. Keep all configurations,\n              but remove edges where both endpoints are non-functional\n              (both < tau when maximize, both > tau when minimize). Preserves\n              transitions between functional and non-functional regions.\n        n_edit : int, default=1\n            The edit distance defining the neighborhood. For ``pairwise`` and\n            ``broadcast`` strategies, an undirected neighbor pair is kept when\n            Hamming distance is positive and ``<= n_edit``. The ``active``\n            strategy uses type-specific generators, which only support\n            ``n_edit=1`` for boolean, sequence, and default landscapes (use\n            ``pairwise`` or ``broadcast`` for multi-edit Hamming graphs).\n        neighborhood_strategy : str, optional\n            Strategy for identifying neighboring configurations. When ``None``\n            (the default), the class default is used\n            (:attr:`_default_neighborhood_strategy` — ``'auto'`` for most\n            landscapes, ``'active'`` for ordinal). On ordinal (or mixed\n            landscapes containing an ordinal variable), ``'auto'`` resolves to\n            ``'active'`` and the Hamming-based ``'pairwise'``/``'broadcast'``\n            strategies emit a warning, because they ignore the ±1-step ordinal\n            adjacency. Options:\n\n            - ``'auto'``: Automatically selects the fastest strategy based on\n              dataset size, sequence length, and alphabet size. Uses\n              ``'pairwise'`` when the full distance matrix fits in memory\n              (~4 GiB), falls back to ``'broadcast'`` when vectorized\n              per-config distances are cheaper than candidate generation, and\n              defaults to ``'active'`` otherwise.\n            - ``'active'``: For each configuration, enumerates all possible\n              single-edit (or ``n_edit``-edit) mutant neighbors and checks\n              whether they exist in the dataset via hash lookup. Efficient for\n              dense datasets where most proposed neighbors are present.\n            - ``'pairwise'``: Computes the full pairwise Hamming distance\n              matrix using ``scipy.spatial.distance.pdist``. Very fast for\n              small-to-moderate datasets (up to ~25 000 configurations) thanks\n              to highly optimized C code. Memory usage scales as\n              ``O(n_configs^2)``.\n            - ``'broadcast'``: For each configuration, computes its Hamming\n              distance to all other configurations using vectorized NumPy\n              operations. Suitable for large datasets with long sequences and\n              sparse sampling, where the ``'active'`` strategy would waste\n              time generating candidates that don't exist and ``'pairwise'``\n              would exceed memory limits.\n        verbose : bool, optional\n            If provided, overrides the instance's verbosity setting for this\n            method call. Controls printed output during the build process.\n\n        Returns\n        -------\n        Landscape\n            The populated instance itself (``self``), to support method\n            chaining (e.g. ``BooleanLandscape().build_from_data(X, f)``).\n\n        Raises\n        ------\n        RuntimeError\n            If the `build_from_data` or `build_from_graph` method has already been called\n            on this instance. Create a new instance to rebuild.\n        ValueError\n            If input data `X`, `f`, or `data_types` are invalid (e.g., mismatched\n            lengths, empty data, invalid types in `data_types`), or if the\n            construction process fails (e.g., resulting graph is empty).\n        TypeError\n            If input types are incorrect (e.g., `data_types` is not a dict).\n\n        Notes\n        -----\n        The construction process involves several steps:\n        1. Resolve the type-specific preparation and neighbor-generation strategies.\n        2. Apply the optional pre-construction fitness filter.\n        3. Prepare the raw input based on the landscape type.\n        4. Warn on missing values (no automatic row drops); drop duplicate\n           configurations; encode step errors if NaNs remain.\n        5. Encode the data and cache configuration metadata.\n        6. Construct the core directed landscape graph.\n        7. Apply post-construction pruning and remap cached metadata.\n        8. Build neutral plateaus and analyze derived landscape properties.\n        ",
+        "source": "graphfla/landscape/landscape.py",
+        "lineno": 549
+      },
+      {
+        "name": "get_data",
+        "signature": "get_data(lo_only: bool = False, include_pagerank: bool = False) -> pd.DataFrame",
+        "docstring": "Extracts landscape data as a pandas DataFrame.\n\n        Returns a DataFrame where rows correspond to configurations (nodes)\n        and columns correspond to their attributes (e.g., fitness, degree,\n        basin information, original features). Feature columns appear in the\n        original input order.\n\n        Parameters\n        ----------\n        lo_only : bool, default=False\n            If True, returns data only for the configurations identified as\n            local optima. If the Local Optima Network (LON) has been computed\n            (see `get_lon`), data from the LON graph is returned. Otherwise,\n            it returns data from the main graph filtered for local optima nodes.\n            If False, returns data for all configurations in the main graph.\n\n        include_pagerank : bool, default=False\n            If True, compute (if needed) and include a ``pagerank`` column.\n            PageRank is otherwise omitted -- it is an optional, comparatively\n            expensive centrality that most callers do not need, so ``get_data``\n            no longer triggers it as a hidden side effect.\n\n        Returns\n        -------\n        pandas.DataFrame\n            A DataFrame containing the attributes of the landscape nodes.\n            Index corresponds to the node indices.\n\n        Raises\n        ------\n        RuntimeError\n            If the landscape has not been built (via `build_from_data` or\n            `build_from_graph`) before calling this method.\n            If `lo_only=True` and the LON graph (`self.lon`) is unexpectedly\n            None despite `self.has_lon` being True.\n        ",
+        "source": "graphfla/landscape/landscape.py",
+        "lineno": 799
+      },
+      {
+        "name": "get_lon",
+        "signature": "get_lon(mlon: bool = True, min_edge_freq: int = 3, trim: Optional[int] = None, verbose: Optional[bool] = None) -> ig.Graph",
+        "docstring": "Constructs and returns the Local Optima Network (LON).\n\n        The LON is a coarse-grained representation of the fitness landscape\n        where nodes are the local optima of the original landscape, and edges\n        represent the possibility of transitions between their basins of\n        attraction, typically weighted by the fitness difference or distance\n        between the optima. This method requires the landscape graph to be\n        built and local optima to be identified.\n\n        The landscape's own graph, configurations, optima and ``config_dict``\n        are supplied automatically; the parameters below control the LON itself\n        and are forwarded to :func:`graphfla.lon.get_lon`.\n\n        Parameters\n        ----------\n        mlon : bool, default=True\n            If True, also build the monotonic LON (edges restricted to\n            non-worsening transitions).\n        min_edge_freq : int, default=3\n            Keep a LON edge only when the number of basin transitions between\n            two optima is strictly greater than this threshold.\n        trim : int, optional\n            If given, keep only the ``trim`` strongest outgoing edges per node.\n        verbose : bool, optional\n            Verbosity override; defaults to the landscape's own ``verbose``.\n\n        Returns\n        -------\n        ig.Graph\n            The constructed Local Optima Network graph. The graph is also stored\n            in the `self.lon` attribute, and `self.has_lon` is set to True.\n\n        Raises\n        ------\n        RuntimeError\n            If the landscape has not been built, or if essential attributes\n            (`graph`, `configs`, `lo_index`, `config_dict`) required for LON\n            construction are missing.\n        ",
+        "source": "graphfla/landscape/landscape.py",
+        "lineno": 947
+      },
+      {
+        "name": "describe",
+        "signature": "describe() -> Dict[str, Any]",
+        "docstring": "Return a structured summary of the landscape as a dict.\n\n        Unlike a printed summary, the returned mapping is composable and\n        testable -- callers can log it, assert on it, or render it. For a quick\n        human-readable view use ``print(landscape)`` (see :meth:`__str__`).\n\n        Returns\n        -------\n        dict\n            ``class``, ``kind``, ``built``, ``maximize`` and ``epsilon`` are\n            always present. When built, size/optima fields (``n_vars``,\n            ``n_configs``, ``n_edges``, ``n_lo``, ``go_index``), the calculation\n            flags, and -- if a plateau layer exists -- the plateau counts are\n            added.\n        ",
+        "source": "graphfla/landscape/landscape.py",
+        "lineno": 1070
+      },
+      {
+        "name": "build_from_graph",
+        "signature": "build_from_graph(filepath: str, *, verbose: bool = True) -> 'Landscape'",
+        "docstring": "Construct a landscape from a saved graph file.\n\n        This class method creates a new landscape instance by loading a previously\n        saved graph, avoiding the need to reconstruct the landscape from original\n        configuration data. This is significantly faster than building from scratch.\n\n        Parameters\n        ----------\n        filepath : str\n            Path to the saved graph file (.graphml).\n        verbose : bool, default=True\n            Controls verbosity of output during loading and analysis.\n\n        Returns\n        -------\n        Landscape\n            A new instance populated with the graph and inferred properties.\n\n        Raises\n        ------\n        ValueError\n            If the file cannot be read or doesn't contain valid graph data.\n        FileNotFoundError\n            If the specified file doesn't exist.\n\n        Notes\n        -----\n        This method will:\n        1. Load the saved graph structure and attributes\n        2. Infer essential landscape properties from the graph\n        3. Recalculate local optima and global optimum from the graph structure\n\n        Previously computed attributes (basins, accessible paths, distances,\n        neighbor fitness) are preserved from the saved graph if present.\n\n        Some specialized attributes from subclasses (like sequence_length in\n        SequenceLandscape) will be inferred where possible.\n\n        Only load GraphML from trusted sources: embedded configuration metadata\n        is parsed with :func:`ast.literal_eval` (safe against arbitrary code\n        execution, but not a substitute for validating untrusted files).\n        ",
+        "source": "graphfla/landscape/_io.py",
+        "lineno": 34,
+        "inherited_from": "_IOMixin"
+      },
+      {
+        "name": "to_graph",
+        "signature": "to_graph(filepath: str) -> None",
+        "docstring": "Save the landscape graph and essential attributes to a file.\n\n        This method serializes the landscape's graph structure and relevant\n        attributes to a GraphML file, which can later be loaded using `build_from_graph`.\n        This allows efficient storage and sharing of landscapes without requiring\n        re-construction from scratch.\n\n        Parameters\n        ----------\n        filepath : str\n            The path where the graph file will be saved. If the file doesn't end\n            with '.graphml', this extension will be added automatically.\n\n        Raises\n        ------\n        NotBuiltError\n            If the landscape has not been built.\n        ValueError\n            If the graph cannot be saved to the specified path.\n\n        Notes\n        -----\n        The GraphML format preserves the graph structure and all vertex/edge attributes.\n        In addition to the graph itself, essential landscape attributes like `maximize`\n        and `epsilon` are stored as graph attributes.\n        ",
+        "source": "graphfla/landscape/_io.py",
+        "lineno": 270,
+        "inherited_from": "_IOMixin"
+      }
+    ],
+    "properties": [
+      {
+        "name": "n_configs",
+        "signature": "n_configs()",
+        "docstring": "Number of configurations (nodes). Derived from the graph once built\n        (single source of truth); falls back to the working count during\n        construction, before ``self.graph`` exists.",
+        "source": "graphfla/landscape/landscape.py",
+        "lineno": 317
+      },
+      {
+        "name": "n_edges",
+        "signature": "n_edges()",
+        "docstring": "Number of directed edges. Derived from the graph once built (single\n        source of truth); falls back to the working count during construction.",
+        "source": "graphfla/landscape/landscape.py",
+        "lineno": 326
+      },
+      {
+        "name": "shape",
+        "signature": "shape()",
+        "docstring": "Return the shape ``(n_configs, n_edges)`` of the landscape graph.",
+        "source": "graphfla/landscape/landscape.py",
+        "lineno": 334
+      },
+      {
+        "name": "configs",
+        "signature": "configs() -> Optional[pd.Series]",
+        "docstring": "Per-node configuration tuple ``Series`` (built lazily, then cached).\n\n        The numeric ``_configs_array`` is the source of truth and is what graph\n        construction consumes; this tuple ``Series`` is a downstream artifact\n        used only by analyses that need per-node configuration tuples.  It is\n        materialised from ``_configs_array`` on first access -- builds that never\n        read ``configs`` (the common construction-only path) skip the cost\n        entirely.  Returns ``None`` only when neither the cached ``Series`` nor a\n        numeric array is available (e.g. an unbuilt landscape, or a graph load\n        from which configurations could not be reconstructed).\n\n        Note: a ``landscape.configs is None`` check materialises the ``Series``\n        if ``_configs_array`` is present; this matches the previous eager\n        attribute (which was always present) and is intended -- every caller that\n        performs such a check goes on to use the configurations.\n        ",
+        "source": "graphfla/landscape/landscape.py",
+        "lineno": 342
+      },
+      {
+        "name": "basins",
+        "signature": "basins() -> pd.Series",
+        "docstring": "Per-node greedy basin size (``size_basin_greedy``), computed lazily.",
+        "source": "graphfla/landscape/landscape.py",
+        "lineno": 381
+      },
+      {
+        "name": "accessible_paths",
+        "signature": "accessible_paths() -> pd.Series",
+        "docstring": "Per-node accessible-basin size (``size_basin_accessible``), computed lazily.",
+        "source": "graphfla/landscape/landscape.py",
+        "lineno": 389
+      },
+      {
+        "name": "dist_to_go",
+        "signature": "dist_to_go() -> pd.Series",
+        "docstring": "Per-node configuration distance to the nearest global optimum\n        (``dist_go``), computed lazily.",
+        "source": "graphfla/landscape/landscape.py",
+        "lineno": 399
+      },
+      {
+        "name": "neighbor_fitness",
+        "signature": "neighbor_fitness() -> pd.Series",
+        "docstring": "Per-node mean neighbour fitness (``mean_neighbor_fit``), computed lazily.",
+        "source": "graphfla/landscape/landscape.py",
+        "lineno": 410
+      },
+      {
+        "name": "pagerank",
+        "signature": "pagerank() -> pd.Series",
+        "docstring": "Per-node PageRank centrality, computed lazily.\n\n        PageRank is not used by any landscape metric; it is only an optional,\n        descriptive node attribute. To keep it off the construction critical\n        path (where it was the single dominant cost) it is computed on first\n        access here -- producing values identical to the eager computation\n        (weighted by ``delta_fit`` when present, ``directed=True``).",
+        "source": "graphfla/landscape/landscape.py",
+        "lineno": 418
+      }
+    ]
+  },
+  {
+    "key": "protein-landscape",
+    "category": "Landscapes",
+    "name": "ProteinLandscape",
+    "module": "graphfla.landscape",
+    "kind": "class",
+    "signature": "ProteinLandscape(maximize: bool = True)",
+    "docstring": "A specialized landscape class for protein sequence configuration spaces.\n\n    This class represents fitness landscapes where each configuration is a protein sequence\n    using the standard protein alphabet (20 amino acids).\n\n    Parameters\n    ----------\n    maximize : bool, default=True\n        Determines the optimization direction. If True, the landscape seeks\n        higher fitness values. If False, it seeks lower values.\n    ",
+    "source": "graphfla/landscape/protein.py",
+    "lineno": 7,
+    "methods": [
+      {
+        "name": "build_from_data",
+        "signature": "build_from_data(X, f, **kwargs)",
+        "docstring": "Build the landscape, inferring the alphabet from *X* when it was not\n        supplied at construction (see :class:`SequenceLandscape`).",
+        "source": "graphfla/landscape/sequence.py",
+        "lineno": 77,
+        "inherited_from": "SequenceLandscape"
+      },
+      {
+        "name": "get_params",
+        "signature": "get_params() -> Dict[str, Any]",
+        "docstring": "Return the constructor parameters as a dict.\n\n        Useful for introspection and reconstruction: ``type(ls)(**ls.get_params())``\n        yields a fresh, unbuilt landscape with the same configuration.\n        ",
+        "source": "graphfla/landscape/landscape.py",
+        "lineno": 498,
+        "inherited_from": "Landscape"
+      },
+      {
+        "name": "register_input_handler",
+        "signature": "register_input_handler(data_type: str, handler: InputHandler) -> None",
+        "docstring": "Register a custom input handler for a data type on this instance.",
+        "source": "graphfla/landscape/landscape.py",
+        "lineno": 536,
+        "inherited_from": "Landscape"
+      },
+      {
+        "name": "register_neighbor_generator",
+        "signature": "register_neighbor_generator(data_type: str, generator: NeighborGenerator) -> None",
+        "docstring": "Register a custom neighbor generator for a data type on this instance.",
+        "source": "graphfla/landscape/landscape.py",
+        "lineno": 542,
+        "inherited_from": "Landscape"
+      },
+      {
+        "name": "get_data",
+        "signature": "get_data(lo_only: bool = False, include_pagerank: bool = False) -> pd.DataFrame",
+        "docstring": "Extracts landscape data as a pandas DataFrame.\n\n        Returns a DataFrame where rows correspond to configurations (nodes)\n        and columns correspond to their attributes (e.g., fitness, degree,\n        basin information, original features). Feature columns appear in the\n        original input order.\n\n        Parameters\n        ----------\n        lo_only : bool, default=False\n            If True, returns data only for the configurations identified as\n            local optima. If the Local Optima Network (LON) has been computed\n            (see `get_lon`), data from the LON graph is returned. Otherwise,\n            it returns data from the main graph filtered for local optima nodes.\n            If False, returns data for all configurations in the main graph.\n\n        include_pagerank : bool, default=False\n            If True, compute (if needed) and include a ``pagerank`` column.\n            PageRank is otherwise omitted -- it is an optional, comparatively\n            expensive centrality that most callers do not need, so ``get_data``\n            no longer triggers it as a hidden side effect.\n\n        Returns\n        -------\n        pandas.DataFrame\n            A DataFrame containing the attributes of the landscape nodes.\n            Index corresponds to the node indices.\n\n        Raises\n        ------\n        RuntimeError\n            If the landscape has not been built (via `build_from_data` or\n            `build_from_graph`) before calling this method.\n            If `lo_only=True` and the LON graph (`self.lon`) is unexpectedly\n            None despite `self.has_lon` being True.\n        ",
+        "source": "graphfla/landscape/landscape.py",
+        "lineno": 799,
+        "inherited_from": "Landscape"
+      },
+      {
+        "name": "get_lon",
+        "signature": "get_lon(mlon: bool = True, min_edge_freq: int = 3, trim: Optional[int] = None, verbose: Optional[bool] = None) -> ig.Graph",
+        "docstring": "Constructs and returns the Local Optima Network (LON).\n\n        The LON is a coarse-grained representation of the fitness landscape\n        where nodes are the local optima of the original landscape, and edges\n        represent the possibility of transitions between their basins of\n        attraction, typically weighted by the fitness difference or distance\n        between the optima. This method requires the landscape graph to be\n        built and local optima to be identified.\n\n        The landscape's own graph, configurations, optima and ``config_dict``\n        are supplied automatically; the parameters below control the LON itself\n        and are forwarded to :func:`graphfla.lon.get_lon`.\n\n        Parameters\n        ----------\n        mlon : bool, default=True\n            If True, also build the monotonic LON (edges restricted to\n            non-worsening transitions).\n        min_edge_freq : int, default=3\n            Keep a LON edge only when the number of basin transitions between\n            two optima is strictly greater than this threshold.\n        trim : int, optional\n            If given, keep only the ``trim`` strongest outgoing edges per node.\n        verbose : bool, optional\n            Verbosity override; defaults to the landscape's own ``verbose``.\n\n        Returns\n        -------\n        ig.Graph\n            The constructed Local Optima Network graph. The graph is also stored\n            in the `self.lon` attribute, and `self.has_lon` is set to True.\n\n        Raises\n        ------\n        RuntimeError\n            If the landscape has not been built, or if essential attributes\n            (`graph`, `configs`, `lo_index`, `config_dict`) required for LON\n            construction are missing.\n        ",
+        "source": "graphfla/landscape/landscape.py",
+        "lineno": 947,
+        "inherited_from": "Landscape"
+      },
+      {
+        "name": "describe",
+        "signature": "describe() -> Dict[str, Any]",
+        "docstring": "Return a structured summary of the landscape as a dict.\n\n        Unlike a printed summary, the returned mapping is composable and\n        testable -- callers can log it, assert on it, or render it. For a quick\n        human-readable view use ``print(landscape)`` (see :meth:`__str__`).\n\n        Returns\n        -------\n        dict\n            ``class``, ``kind``, ``built``, ``maximize`` and ``epsilon`` are\n            always present. When built, size/optima fields (``n_vars``,\n            ``n_configs``, ``n_edges``, ``n_lo``, ``go_index``), the calculation\n            flags, and -- if a plateau layer exists -- the plateau counts are\n            added.\n        ",
+        "source": "graphfla/landscape/landscape.py",
+        "lineno": 1070,
+        "inherited_from": "Landscape"
+      },
+      {
+        "name": "build_from_graph",
+        "signature": "build_from_graph(filepath: str, *, verbose: bool = True) -> 'Landscape'",
+        "docstring": "Construct a landscape from a saved graph file.\n\n        This class method creates a new landscape instance by loading a previously\n        saved graph, avoiding the need to reconstruct the landscape from original\n        configuration data. This is significantly faster than building from scratch.\n\n        Parameters\n        ----------\n        filepath : str\n            Path to the saved graph file (.graphml).\n        verbose : bool, default=True\n            Controls verbosity of output during loading and analysis.\n\n        Returns\n        -------\n        Landscape\n            A new instance populated with the graph and inferred properties.\n\n        Raises\n        ------\n        ValueError\n            If the file cannot be read or doesn't contain valid graph data.\n        FileNotFoundError\n            If the specified file doesn't exist.\n\n        Notes\n        -----\n        This method will:\n        1. Load the saved graph structure and attributes\n        2. Infer essential landscape properties from the graph\n        3. Recalculate local optima and global optimum from the graph structure\n\n        Previously computed attributes (basins, accessible paths, distances,\n        neighbor fitness) are preserved from the saved graph if present.\n\n        Some specialized attributes from subclasses (like sequence_length in\n        SequenceLandscape) will be inferred where possible.\n\n        Only load GraphML from trusted sources: embedded configuration metadata\n        is parsed with :func:`ast.literal_eval` (safe against arbitrary code\n        execution, but not a substitute for validating untrusted files).\n        ",
+        "source": "graphfla/landscape/_io.py",
+        "lineno": 34,
+        "inherited_from": "_IOMixin"
+      },
+      {
+        "name": "to_graph",
+        "signature": "to_graph(filepath: str) -> None",
+        "docstring": "Save the landscape graph and essential attributes to a file.\n\n        This method serializes the landscape's graph structure and relevant\n        attributes to a GraphML file, which can later be loaded using `build_from_graph`.\n        This allows efficient storage and sharing of landscapes without requiring\n        re-construction from scratch.\n\n        Parameters\n        ----------\n        filepath : str\n            The path where the graph file will be saved. If the file doesn't end\n            with '.graphml', this extension will be added automatically.\n\n        Raises\n        ------\n        NotBuiltError\n            If the landscape has not been built.\n        ValueError\n            If the graph cannot be saved to the specified path.\n\n        Notes\n        -----\n        The GraphML format preserves the graph structure and all vertex/edge attributes.\n        In addition to the graph itself, essential landscape attributes like `maximize`\n        and `epsilon` are stored as graph attributes.\n        ",
+        "source": "graphfla/landscape/_io.py",
+        "lineno": 270,
+        "inherited_from": "_IOMixin"
+      }
+    ],
+    "properties": [
+      {
+        "name": "n_configs",
+        "signature": "n_configs()",
+        "docstring": "Number of configurations (nodes). Derived from the graph once built\n        (single source of truth); falls back to the working count during\n        construction, before ``self.graph`` exists.",
+        "source": "graphfla/landscape/landscape.py",
+        "lineno": 317,
+        "inherited_from": "Landscape"
+      },
+      {
+        "name": "n_edges",
+        "signature": "n_edges()",
+        "docstring": "Number of directed edges. Derived from the graph once built (single\n        source of truth); falls back to the working count during construction.",
+        "source": "graphfla/landscape/landscape.py",
+        "lineno": 326,
+        "inherited_from": "Landscape"
+      },
+      {
+        "name": "shape",
+        "signature": "shape()",
+        "docstring": "Return the shape ``(n_configs, n_edges)`` of the landscape graph.",
+        "source": "graphfla/landscape/landscape.py",
+        "lineno": 334,
+        "inherited_from": "Landscape"
+      },
+      {
+        "name": "configs",
+        "signature": "configs() -> Optional[pd.Series]",
+        "docstring": "Per-node configuration tuple ``Series`` (built lazily, then cached).\n\n        The numeric ``_configs_array`` is the source of truth and is what graph\n        construction consumes; this tuple ``Series`` is a downstream artifact\n        used only by analyses that need per-node configuration tuples.  It is\n        materialised from ``_configs_array`` on first access -- builds that never\n        read ``configs`` (the common construction-only path) skip the cost\n        entirely.  Returns ``None`` only when neither the cached ``Series`` nor a\n        numeric array is available (e.g. an unbuilt landscape, or a graph load\n        from which configurations could not be reconstructed).\n\n        Note: a ``landscape.configs is None`` check materialises the ``Series``\n        if ``_configs_array`` is present; this matches the previous eager\n        attribute (which was always present) and is intended -- every caller that\n        performs such a check goes on to use the configurations.\n        ",
+        "source": "graphfla/landscape/landscape.py",
+        "lineno": 342,
+        "inherited_from": "Landscape"
+      },
+      {
+        "name": "basins",
+        "signature": "basins() -> pd.Series",
+        "docstring": "Per-node greedy basin size (``size_basin_greedy``), computed lazily.",
+        "source": "graphfla/landscape/landscape.py",
+        "lineno": 381,
+        "inherited_from": "Landscape"
+      },
+      {
+        "name": "accessible_paths",
+        "signature": "accessible_paths() -> pd.Series",
+        "docstring": "Per-node accessible-basin size (``size_basin_accessible``), computed lazily.",
+        "source": "graphfla/landscape/landscape.py",
+        "lineno": 389,
+        "inherited_from": "Landscape"
+      },
+      {
+        "name": "dist_to_go",
+        "signature": "dist_to_go() -> pd.Series",
+        "docstring": "Per-node configuration distance to the nearest global optimum\n        (``dist_go``), computed lazily.",
+        "source": "graphfla/landscape/landscape.py",
+        "lineno": 399,
+        "inherited_from": "Landscape"
+      },
+      {
+        "name": "neighbor_fitness",
+        "signature": "neighbor_fitness() -> pd.Series",
+        "docstring": "Per-node mean neighbour fitness (``mean_neighbor_fit``), computed lazily.",
+        "source": "graphfla/landscape/landscape.py",
+        "lineno": 410,
+        "inherited_from": "Landscape"
+      },
+      {
+        "name": "pagerank",
+        "signature": "pagerank() -> pd.Series",
+        "docstring": "Per-node PageRank centrality, computed lazily.\n\n        PageRank is not used by any landscape metric; it is only an optional,\n        descriptive node attribute. To keep it off the construction critical\n        path (where it was the single dominant cost) it is computed on first\n        access here -- producing values identical to the eager computation\n        (weighted by ``delta_fit`` when present, ``directed=True``).",
+        "source": "graphfla/landscape/landscape.py",
+        "lineno": 418,
+        "inherited_from": "Landscape"
+      }
+    ]
+  }
+]

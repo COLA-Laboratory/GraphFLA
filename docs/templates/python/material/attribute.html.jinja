@@ -1,0 +1,13 @@
+{# Keep mkdocstrings anchors/inventory and docstrings; render each name only once. #}
+{% extends "_base/attribute.html.jinja" %}
+{% block heading scoped %}
+  <code class="api-field-name">{{ attribute_name|e }}</code>
+  {% if attribute.annotation and config.show_signature_annotations %}
+    <span class="api-attribute-type">: <code>{{ attribute.annotation|e }}</code></span>
+  {% endif %}
+  {% if config.show_attribute_values and attribute.value is not none %}
+    <span class="api-attribute-type">= <code>{{ attribute.value|e }}</code></span>
+  {% endif %}
+{% endblock heading %}
+{% block labels %}{% endblock labels %}
+{% block signature %}{% endblock signature %}

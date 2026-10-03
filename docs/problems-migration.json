@@ -1,0 +1,70 @@
+{
+  "source_sha256": "6bb0316f9a722348e729a0793c4a3c6b742c46feedc9fea1b3a4fcdf7e7dbc92",
+  "source_description": "Original website docs/api/problems.md",
+  "package_revision": "23d39d806b0a9bb75278611262d3a921f1079417",
+  "pages": [
+    "content/problems.md",
+    "content/problems/combinatorial.md"
+  ],
+  "introductions": [
+    {
+      "api": "graphfla.problems.OptimizationProblem",
+      "introduction_sha256": "9fbb9018f5d31dc168a4997dd15f197b0929d0f5678c3c88a369ea02da52428c",
+      "words": 32,
+      "page": "content/problems.md"
+    },
+    {
+      "api": "graphfla.problems.NK",
+      "introduction_sha256": "23a05a918bc972754ce6b5d29ab15b3019020b20cc0ad8ed092b8d9a5a152967",
+      "words": 109,
+      "page": "content/problems.md"
+    },
+    {
+      "api": "graphfla.problems.RoughMountFuji",
+      "introduction_sha256": "e78d1cde2605ea7a31369da1c10ff250d3e76d2fb8d0071aae0cecb0aa3e168a",
+      "words": 93,
+      "page": "content/problems.md"
+    },
+    {
+      "api": "graphfla.problems.HoC",
+      "introduction_sha256": "39e653ecd19831ad5a8fa7f741c5625308562208ba577f61aee4350872b0fa93",
+      "words": 58,
+      "page": "content/problems.md"
+    },
+    {
+      "api": "graphfla.problems.Additive",
+      "introduction_sha256": "31742aee2ea784227c68ea6e0eea457cadaee3450060b774e9ba9b3f46e95909",
+      "words": 62,
+      "page": "content/problems.md"
+    },
+    {
+      "api": "graphfla.problems.Eggbox",
+      "introduction_sha256": "694f0f2e47266149addee730318b0e73ef03ac959d8a58e282daa7bf26b4b0d3",
+      "words": 65,
+      "page": "content/problems.md"
+    },
+    {
+      "api": "graphfla.problems.Max3Sat",
+      "introduction_sha256": "96d581b80092e02960515f45ee0a5e2e4c73542deaf61bdebdfae69f69620f2e",
+      "words": 69,
+      "page": "content/problems/combinatorial.md"
+    },
+    {
+      "api": "graphfla.problems.Knapsack",
+      "introduction_sha256": "fa962519c126e8309163b0af510c1730dd1854aadcac49cdf2208342742eaeed",
+      "words": 67,
+      "page": "content/problems/combinatorial.md"
+    },
+    {
+      "api": "graphfla.problems.NumberPartitioning",
+      "introduction_sha256": "34efd70b8f208dbd0f651068287e57a0f9c4657e66360fbeb9bcfd1afb272979",
+      "words": 58,
+      "page": "content/problems/combinatorial.md"
+    }
+  ],
+  "example_updates": [
+    "lo_ratio -> local_optima_ratio",
+    "fitness_distance_corr -> fdc",
+    "use current sampling API and explicit seed"
+  ]
+}

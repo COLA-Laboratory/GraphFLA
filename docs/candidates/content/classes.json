@@ -1,0 +1,143 @@
+[
+  {
+    "key": "nk",
+    "category": "Problems",
+    "name": "NK",
+    "module": "graphfla.problems",
+    "kind": "class",
+    "signature": "NK(n, k, exponent=1.0, seed=None)",
+    "docstring": "\n    NK model for fitness landscapes.\n\n    This class represents an NK landscape, a model used to study the complexity of\n    adaptive landscapes based on interactions among components.\n\n    Parameters\n    ----------\n    n : int\n        The number of variables (genes) in the problem.\n    k : int\n        The number of interacting components (genes) for each variable. Must be < n.\n    exponent : float, default=1.0\n        An exponent used to transform the final fitness value.\n    seed : int or None, optional\n        Seed for the random number generator.\n    ",
+    "source": "graphfla/problems/biological.py",
+    "lineno": 7,
+    "methods": [
+      {
+        "name": "evaluate",
+        "signature": "evaluate(config)",
+        "docstring": "\n        Evaluate the fitness of a configuration in the NK model.\n\n        Parameters\n        ----------\n        config : tuple or list\n            A binary configuration representing a potential solution.\n\n        Returns\n        -------\n        float\n            The fitness value of the configuration.\n        ",
+        "source": "graphfla/problems/biological.py",
+        "lineno": 44
+      },
+      {
+        "name": "get_data",
+        "signature": "get_data()",
+        "docstring": "\n        Generate configurations and their fitness values.\n\n        Warning: This method evaluates *all* possible configurations.\n        For problems with a large search space (e.g., high-dimensional binary problems),\n        this can be extremely computationally expensive and memory-intensive.\n        Use with caution for large 'n'.\n\n        Returns\n        -------\n        tuple of (list[str], list[float])\n            X: List of binary strings (e.g., [\"0000000000\", \"0000000001\", ...]).\n            f: List of fitness values corresponding to each configuration.\n        ",
+        "source": "graphfla/problems/base_problem.py",
+        "lineno": 71,
+        "inherited_from": "OptimizationProblem"
+      }
+    ],
+    "properties": []
+  },
+  {
+    "key": "optimization-problem",
+    "category": "Problems",
+    "name": "OptimizationProblem",
+    "module": "graphfla.problems",
+    "kind": "class",
+    "signature": "OptimizationProblem(n, seed=None)",
+    "docstring": "\n    Base class for defining optimization problems.\n\n    This class provides a framework for representing optimization problems\n    and includes methods for evaluating solutions and generating data for analysis.\n    Subclasses should implement specific optimization problem behavior.\n\n    Parameters\n    ----------\n    n : int\n        The number of variables in the optimization problem.\n    seed : int or None, optional\n        Seed for the random number generator to ensure reproducibility.\n        If None, the generator is initialized without a specific seed.\n    ",
+    "source": "graphfla/problems/base_problem.py",
+    "lineno": 4,
+    "methods": [
+      {
+        "name": "evaluate",
+        "signature": "evaluate(config)",
+        "docstring": "\n        Evaluate the fitness of a given configuration.\n\n        This method should be implemented by subclasses to define the\n        specific evaluation criteria for the optimization problem.\n\n        Parameters\n        ----------\n        config : tuple or list\n            A configuration representing a potential solution.\n            Using tuples is generally preferred for hashability (e.g., dictionary keys).\n\n        Raises\n        ------\n        NotImplementedError\n            If the method is not implemented in a subclass.\n        ",
+        "source": "graphfla/problems/base_problem.py",
+        "lineno": 33
+      },
+      {
+        "name": "get_data",
+        "signature": "get_data()",
+        "docstring": "\n        Generate configurations and their fitness values.\n\n        Warning: This method evaluates *all* possible configurations.\n        For problems with a large search space (e.g., high-dimensional binary problems),\n        this can be extremely computationally expensive and memory-intensive.\n        Use with caution for large 'n'.\n\n        Returns\n        -------\n        tuple of (list[str], list[float])\n            X: List of binary strings (e.g., [\"0000000000\", \"0000000001\", ...]).\n            f: List of fitness values corresponding to each configuration.\n        ",
+        "source": "graphfla/problems/base_problem.py",
+        "lineno": 71
+      }
+    ],
+    "properties": []
+  },
+  {
+    "key": "hill-climb",
+    "category": "Algorithms",
+    "name": "HillClimb",
+    "module": "graphfla.algorithms",
+    "kind": "class",
+    "signature": "HillClimb(cache: SearchCache, *, strategy: str = 'best-improvement', seed: Optional[int] = None)",
+    "docstring": "Greedy adaptive walk that follows improving (out-) edges to a local optimum.\n\n    Parameters\n    ----------\n    cache : SearchCache\n    strategy : {\"best-improvement\", \"first-improvement\"}, default=\"best-improvement\"\n        ``best-improvement`` always moves to the highest-fitness improving\n        neighbour; ``first-improvement`` picks a uniformly random improving\n        neighbour. Every out-edge strictly increases fitness, so the climb is\n        monotone and never revisits a node.\n    seed : int, optional\n        Reproducibility for ``first-improvement`` (ignored by best-improvement).\n    ",
+    "source": "graphfla/algorithms/walk.py",
+    "lineno": 85,
+    "methods": [
+      {
+        "name": "run",
+        "signature": "run(start: int)",
+        "docstring": "Climb to a local optimum, recording the full visited path.",
+        "source": "graphfla/algorithms/walk.py",
+        "lineno": 114
+      },
+      {
+        "name": "descend",
+        "signature": "descend(start: int)",
+        "docstring": "Endpoint-only climb returning ``(final_node, n_steps)``.\n\n        The fast path for batch basin computation: identical traversal to\n        :meth:`run` but without materialising the visited path, so it carries no\n        per-node list/array allocation. (The loop is duplicated rather than\n        shared to keep this hot path allocation-free.)\n        ",
+        "source": "graphfla/algorithms/walk.py",
+        "lineno": 133
+      }
+    ],
+    "properties": []
+  },
+  {
+    "key": "landscape-filter",
+    "category": "Filters",
+    "name": "LandscapeFilter",
+    "module": "graphfla",
+    "kind": "class",
+    "signature": "LandscapeFilter(rules: List[Dict[str, Any]], combine_with: str = 'and')",
+    "docstring": "Filter for landscape data based on user-defined rules.\n\n    This class allows filtering configurations (X) and fitness values (f)\n    based on various criteria. It can be used both during landscape construction\n    by passing to the `from_data` method or after retrieving data via `get_data()`.\n\n    Parameters\n    ----------\n    rules : list of dicts\n        A list of filtering rules, each defined as a dictionary with:\n        - 'column': The column name to filter on (use 'fitness' for f)\n        - 'operation': The filtering operation ('>', '<', '>=', '<=', '==', '!=', 'in', 'not_in', 'contains', 'custom')\n        - 'value': The threshold/reference value for the operation\n        - 'function': For 'custom' operation, a callable taking a Series and returning a boolean mask\n\n    combine_with : str, default='and'\n        How to combine multiple rules: 'and' (all must pass) or 'or' (at least one must pass)\n\n    Examples\n    --------\n    >>> # Filter for fitness > 0.7\n    >>> fitness_filter = LandscapeFilter.fitness_threshold(0.7)\n    >>>\n    >>> # Pass filter directly to from_data\n    >>> landscape = Landscape.from_data(X, f, data_types=\"boolean\", filter=fitness_filter)\n    ",
+    "source": "graphfla/filters.py",
+    "lineno": 6,
+    "methods": [
+      {
+        "name": "apply",
+        "signature": "apply(data: Union[pd.DataFrame, pd.Series])",
+        "docstring": "Apply the filter rules to the provided data.\n\n        Parameters\n        ----------\n        data : DataFrame or Series\n            The data to filter, either configurations with fitness (DataFrame)\n            or just fitness values (Series)\n\n        Returns\n        -------\n        DataFrame or Series\n            Filtered data of the same type as the input\n        ",
+        "source": "graphfla/filters.py",
+        "lineno": 83
+      },
+      {
+        "name": "filter_data",
+        "signature": "filter_data(X: Union[pd.DataFrame, np.ndarray], f: Union[pd.Series, List, np.ndarray])",
+        "docstring": "Filter data for landscape construction.\n\n        Parameters\n        ----------\n        X : DataFrame or array-like\n            Configuration data\n        f : Series or array-like\n            Fitness values\n\n        Returns\n        -------\n        X_filtered : DataFrame\n            Filtered configuration data\n        f_filtered : Series\n            Filtered fitness values\n        ",
+        "source": "graphfla/filters.py",
+        "lineno": 165
+      },
+      {
+        "name": "fitness_threshold",
+        "signature": "fitness_threshold(threshold: float, operation: str = '>', combine_with: str = 'and')",
+        "docstring": "Create a filter for fitness values based on a threshold.\n\n        Parameters\n        ----------\n        threshold : float\n            The fitness threshold value\n        operation : str, default='>'\n            The comparison operation: '>', '<', '>=', '<=', '==', '!='\n        combine_with : str, default='and'\n            How to combine with other rules\n\n        Returns\n        -------\n        LandscapeFilter\n            A filter configured with the threshold rule\n        ",
+        "source": "graphfla/filters.py",
+        "lineno": 201
+      },
+      {
+        "name": "config_values",
+        "signature": "config_values(column: str, allowed_values: Union[List, Set], include: bool = True, combine_with: str = 'and')",
+        "docstring": "Create a filter for configuration values.\n\n        Parameters\n        ----------\n        column : str\n            The column name to filter on\n        allowed_values : list or set\n            The values to include or exclude\n        include : bool, default=True\n            If True, include rows where column is in allowed_values\n            If False, exclude rows where column is in allowed_values\n        combine_with : str, default='and'\n            How to combine with other rules\n\n        Returns\n        -------\n        LandscapeFilter\n            A filter configured with the configuration value rule\n        ",
+        "source": "graphfla/filters.py",
+        "lineno": 224
+      },
+      {
+        "name": "custom_filter",
+        "signature": "custom_filter(column: str, filter_function: Callable[[pd.Series], pd.Series], combine_with: str = 'and')",
+        "docstring": "Create a filter with a custom filtering function.\n\n        Parameters\n        ----------\n        column : str\n            The column name to filter on\n        filter_function : callable\n            A function that takes a Series and returns a boolean Series\n        combine_with : str, default='and'\n            How to combine with other rules\n\n        Returns\n        -------\n        LandscapeFilter\n            A filter configured with the custom function\n        ",
+        "source": "graphfla/filters.py",
+        "lineno": 255
+      },
+      {
+        "name": "combine_filters",
+        "signature": "combine_filters(*filters: 'LandscapeFilter', combine_with: str = 'and')",
+        "docstring": "Combine multiple filters into a single filter.\n\n        Parameters\n        ----------\n        *filters : LandscapeFilter\n            The filters to combine\n        combine_with : str, default='and'\n            How to combine the filters\n\n        Returns\n        -------\n        LandscapeFilter\n            A new filter that combines all the rules from the input filters\n        ",
+        "source": "graphfla/filters.py",
+        "lineno": 281
+      }
+    ],
+    "properties": []
+  }
+]

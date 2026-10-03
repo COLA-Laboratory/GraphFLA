@@ -1,0 +1,901 @@
+screener,panel,cell_line,anchor_nsc,anchor_name,partner_nsc,partner_name,anchor_dose_index,anchor_concentration,anchor_concentration_unit,partner_dose_index,partner_concentration,partner_concentration_unit,mean_percent_growth,n_raw_observations,sd_percent_growth,n_studies,n_plates,study_id,plate_id
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,740,Methotrexate,1,1.00E-10,M,1,1.00E-08,M,67.971,1,,1,1,1307AC23,509
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,740,Methotrexate,1,1.00E-10,M,2,1.00E-07,M,17.19,1,,1,1,1307AC23,508
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,740,Methotrexate,1,1.00E-10,M,3,1.00E-06,M,16.23,1,,1,1,1307AC23,507
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,740,Methotrexate,2,1.00E-09,M,1,1.00E-08,M,81.874,1,,1,1,1307AC23,509
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,740,Methotrexate,2,1.00E-09,M,2,1.00E-07,M,15.997,1,,1,1,1307AC23,508
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,740,Methotrexate,2,1.00E-09,M,3,1.00E-06,M,18.061,1,,1,1,1307AC23,507
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,740,Methotrexate,3,1.00E-08,M,1,1.00E-08,M,88.995,1,,1,1,1307AC23,509
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,740,Methotrexate,3,1.00E-08,M,2,1.00E-07,M,24.038,1,,1,1,1307AC23,508
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,740,Methotrexate,3,1.00E-08,M,3,1.00E-06,M,19.531,1,,1,1,1307AC23,507
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,750,Busulfan,1,1.00E-10,M,1,5.00E-08,M,103.446,1,,1,1,1306AC10,7932
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,750,Busulfan,1,1.00E-10,M,2,5.00E-07,M,101.194,1,,1,1,1306AC10,7931
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,750,Busulfan,1,1.00E-10,M,3,5.00E-06,M,102.929,1,,1,1,1306AC10,7930
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,750,Busulfan,2,1.00E-09,M,1,5.00E-08,M,104.494,1,,1,1,1306AC10,7932
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,750,Busulfan,2,1.00E-09,M,2,5.00E-07,M,104.818,1,,1,1,1306AC10,7931
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,750,Busulfan,2,1.00E-09,M,3,5.00E-06,M,104.073,1,,1,1,1306AC10,7930
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,750,Busulfan,3,1.00E-08,M,1,5.00E-08,M,82.432,1,,1,1,1306AC10,7932
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,750,Busulfan,3,1.00E-08,M,2,5.00E-07,M,89.787,1,,1,1,1306AC10,7931
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,750,Busulfan,3,1.00E-08,M,3,5.00E-06,M,87.593,1,,1,1,1306AC10,7930
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,752,Thioguanine,1,1.00E-10,M,1,3.00E-08,M,98.339,1,,1,1,1307AC23,518
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,752,Thioguanine,1,1.00E-10,M,2,3.00E-07,M,92.211,1,,1,1,1307AC23,517
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,752,Thioguanine,1,1.00E-10,M,3,3.00E-06,M,18.093,1,,1,1,1307AC23,516
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,752,Thioguanine,2,1.00E-09,M,1,3.00E-08,M,100.461,1,,1,1,1307AC23,518
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,752,Thioguanine,2,1.00E-09,M,2,3.00E-07,M,95.382,1,,1,1,1307AC23,517
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,752,Thioguanine,2,1.00E-09,M,3,3.00E-06,M,17.698,1,,1,1,1307AC23,516
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,752,Thioguanine,3,1.00E-08,M,1,3.00E-08,M,79.083,1,,1,1,1307AC23,518
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,752,Thioguanine,3,1.00E-08,M,2,3.00E-07,M,75.0,1,,1,1,1307AC23,517
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,752,Thioguanine,3,1.00E-08,M,3,3.00E-06,M,18.306,1,,1,1,1307AC23,516
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,755,Mercaptopurine,1,1.00E-10,M,1,5.00E-08,M,99.752,1,,1,1,1307AC23,537
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,755,Mercaptopurine,1,1.00E-10,M,2,5.00E-07,M,97.165,1,,1,1,1307AC23,536
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,755,Mercaptopurine,1,1.00E-10,M,3,5.00E-06,M,33.074,1,,1,1,1307AC23,535
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,755,Mercaptopurine,2,1.00E-09,M,1,5.00E-08,M,102.132,1,,1,1,1307AC23,537
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,755,Mercaptopurine,2,1.00E-09,M,2,5.00E-07,M,100.27,1,,1,1,1307AC23,536
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,755,Mercaptopurine,2,1.00E-09,M,3,5.00E-06,M,31.621,1,,1,1,1307AC23,535
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,755,Mercaptopurine,3,1.00E-08,M,1,5.00E-08,M,91.225,1,,1,1,1307AC23,537
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,755,Mercaptopurine,3,1.00E-08,M,2,5.00E-07,M,87.878,1,,1,1,1307AC23,536
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,755,Mercaptopurine,3,1.00E-08,M,3,5.00E-06,M,33.153,1,,1,1,1307AC23,535
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,762,Mechlorethamine hydrochloride,1,1.00E-10,M,1,1.00E-07,M,101.787,1,,1,1,1307AC36,7908
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,762,Mechlorethamine hydrochloride,1,1.00E-10,M,2,1.00E-06,M,92.07,1,,1,1,1307AC36,7907
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,762,Mechlorethamine hydrochloride,1,1.00E-10,M,3,1.00E-05,M,9.856,1,,1,1,1307AC36,7906
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,762,Mechlorethamine hydrochloride,2,1.00E-09,M,1,1.00E-07,M,102.446,1,,1,1,1307AC36,7908
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,762,Mechlorethamine hydrochloride,2,1.00E-09,M,2,1.00E-06,M,87.909,1,,1,1,1307AC36,7907
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,762,Mechlorethamine hydrochloride,2,1.00E-09,M,3,1.00E-05,M,6.837,1,,1,1,1307AC36,7906
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,762,Mechlorethamine hydrochloride,3,1.00E-08,M,1,1.00E-07,M,91.891,1,,1,1,1307AC36,7908
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,762,Mechlorethamine hydrochloride,3,1.00E-08,M,2,1.00E-06,M,71.119,1,,1,1,1307AC36,7907
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,762,Mechlorethamine hydrochloride,3,1.00E-08,M,3,1.00E-05,M,9.4,1,,1,1,1307AC36,7906
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,1390,Allopurinol,1,1.00E-10,M,1,1.00E-06,M,100.391,1,,1,1,1306AC00,2822
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,1390,Allopurinol,1,1.00E-10,M,2,1.00E-05,M,99.192,1,,1,1,1306AC00,2821
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,1390,Allopurinol,1,1.00E-10,M,3,1.00E-04,M,81.839,1,,1,1,1306AC00,2820
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,1390,Allopurinol,2,1.00E-09,M,1,1.00E-06,M,100.449,1,,1,1,1306AC00,2822
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,1390,Allopurinol,2,1.00E-09,M,2,1.00E-05,M,99.856,1,,1,1,1306AC00,2821
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,1390,Allopurinol,2,1.00E-09,M,3,1.00E-04,M,85.912,1,,1,1,1306AC00,2820
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,1390,Allopurinol,3,1.00E-08,M,1,1.00E-06,M,74.786,1,,1,1,1306AC00,2822
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,1390,Allopurinol,3,1.00E-08,M,2,1.00E-05,M,67.35,1,,1,1,1306AC00,2821
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,1390,Allopurinol,3,1.00E-08,M,3,1.00E-04,M,57.567,1,,1,1,1306AC00,2820
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,3053,Dactinomycin,1,1.00E-10,M,1,1.00E-10,M,99.61,1,,1,1,1307AC23,532
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,3053,Dactinomycin,1,1.00E-10,M,2,1.00E-09,M,78.1,1,,1,1,1307AC23,531
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,3053,Dactinomycin,1,1.00E-10,M,3,1.00E-08,M,40.975,1,,1,1,1307AC23,530
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,3053,Dactinomycin,2,1.00E-09,M,1,1.00E-10,M,102.3,1,,1,1,1307AC23,532
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,3053,Dactinomycin,2,1.00E-09,M,2,1.00E-09,M,79.443,1,,1,1,1307AC23,531
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,3053,Dactinomycin,2,1.00E-09,M,3,1.00E-08,M,40.323,1,,1,1,1307AC23,530
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,3053,Dactinomycin,3,1.00E-08,M,1,1.00E-10,M,92.266,1,,1,1,1307AC23,532
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,3053,Dactinomycin,3,1.00E-08,M,2,1.00E-09,M,68.086,1,,1,1,1307AC23,531
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,3053,Dactinomycin,3,1.00E-08,M,3,1.00E-08,M,33.646,1,,1,1,1307AC23,530
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,3088,Chlorambucil,1,1.00E-10,M,1,1.00E-07,M,97.92,1,,1,1,1307AC42,2899
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,3088,Chlorambucil,1,1.00E-10,M,2,1.00E-06,M,100.316,1,,1,1,1307AC42,2898
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,3088,Chlorambucil,1,1.00E-10,M,3,1.00E-05,M,51.163,1,,1,1,1307AC42,2897
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,3088,Chlorambucil,2,1.00E-09,M,1,1.00E-07,M,95.88,1,,1,1,1307AC42,2899
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,3088,Chlorambucil,2,1.00E-09,M,2,1.00E-06,M,99.921,1,,1,1,1307AC42,2898
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,3088,Chlorambucil,2,1.00E-09,M,3,1.00E-05,M,45.606,1,,1,1,1307AC42,2897
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,3088,Chlorambucil,3,1.00E-08,M,1,1.00E-07,M,92.551,1,,1,1,1307AC42,2899
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,3088,Chlorambucil,3,1.00E-08,M,2,1.00E-06,M,90.329,1,,1,1,1307AC42,2898
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,3088,Chlorambucil,3,1.00E-08,M,3,1.00E-05,M,36.219,1,,1,1,1307AC42,2897
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,6396,Thiotepa,1,1.00E-10,M,1,3.00E-07,M,99.083,1,,1,1,1306AC00,2813
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,6396,Thiotepa,1,1.00E-10,M,2,3.00E-06,M,99.17,1,,1,1,1306AC00,2812
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,6396,Thiotepa,1,1.00E-10,M,3,3.00E-05,M,39.001,1,,1,1,1306AC00,2811
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,6396,Thiotepa,2,1.00E-09,M,1,3.00E-07,M,104.248,1,,1,1,1306AC00,2813
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,6396,Thiotepa,2,1.00E-09,M,2,3.00E-06,M,100.861,1,,1,1,1306AC00,2812
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,6396,Thiotepa,2,1.00E-09,M,3,3.00E-05,M,28.775,1,,1,1,1306AC00,2811
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,6396,Thiotepa,3,1.00E-08,M,1,3.00E-07,M,68.704,1,,1,1,1306AC00,2813
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,6396,Thiotepa,3,1.00E-08,M,2,3.00E-06,M,73.713,1,,1,1,1306AC00,2812
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,6396,Thiotepa,3,1.00E-08,M,3,3.00E-05,M,38.496,1,,1,1,1306AC00,2811
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,8806,Melphalan,1,1.00E-10,M,1,1.00E-07,M,100.026,1,,1,1,1307AC23,523
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,8806,Melphalan,1,1.00E-10,M,2,1.00E-06,M,99.645,1,,1,1,1307AC23,522
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,8806,Melphalan,1,1.00E-10,M,3,1.00E-05,M,59.795,1,,1,1,1307AC23,521
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,8806,Melphalan,2,1.00E-09,M,1,1.00E-07,M,105.073,1,,1,1,1307AC23,523
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,8806,Melphalan,2,1.00E-09,M,2,1.00E-06,M,104.585,1,,1,1,1307AC23,522
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,8806,Melphalan,2,1.00E-09,M,3,1.00E-05,M,61.072,1,,1,1,1307AC23,521
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,8806,Melphalan,3,1.00E-08,M,1,1.00E-07,M,96.592,1,,1,1,1307AC23,523
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,8806,Melphalan,3,1.00E-08,M,2,1.00E-06,M,89.082,1,,1,1,1307AC23,522
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,8806,Melphalan,3,1.00E-08,M,3,1.00E-05,M,49.687,1,,1,1,1307AC23,521
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,9706,Triethylenemelamine,1,1.00E-10,M,1,1.00E-07,M,105.164,1,,1,1,1307AC31,3570
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,9706,Triethylenemelamine,1,1.00E-10,M,2,1.00E-06,M,85.166,1,,1,1,1307AC31,3569
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,9706,Triethylenemelamine,1,1.00E-10,M,3,1.00E-05,M,-7.426,1,,1,1,1307AC31,3568
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,9706,Triethylenemelamine,2,1.00E-09,M,1,1.00E-07,M,102.499,1,,1,1,1307AC31,3570
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,9706,Triethylenemelamine,2,1.00E-09,M,2,1.00E-06,M,92.609,1,,1,1,1307AC31,3569
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,9706,Triethylenemelamine,2,1.00E-09,M,3,1.00E-05,M,-8.581,1,,1,1,1307AC31,3568
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,9706,Triethylenemelamine,3,1.00E-08,M,1,1.00E-07,M,89.506,1,,1,1,1307AC31,3570
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,9706,Triethylenemelamine,3,1.00E-08,M,2,1.00E-06,M,71.507,1,,1,1,1307AC31,3569
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,9706,Triethylenemelamine,3,1.00E-08,M,3,1.00E-05,M,4.491,1,,1,1,1307AC31,3568
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,13875,Altretamine,1,1.00E-10,M,1,3.00E-08,M,101.506,1,,1,1,1307AC36,7902
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,13875,Altretamine,1,1.00E-10,M,2,3.00E-07,M,105.022,1,,1,1,1307AC36,7901
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,13875,Altretamine,1,1.00E-10,M,3,3.00E-06,M,103.761,1,,1,1,1307AC36,7900
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,13875,Altretamine,2,1.00E-09,M,1,3.00E-08,M,102.141,1,,1,1,1307AC36,7902
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,13875,Altretamine,2,1.00E-09,M,2,3.00E-07,M,107.862,1,,1,1,1307AC36,7901
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,13875,Altretamine,2,1.00E-09,M,3,3.00E-06,M,104.804,1,,1,1,1307AC36,7900
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,13875,Altretamine,3,1.00E-08,M,1,3.00E-08,M,91.753,1,,1,1,1307AC36,7902
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,13875,Altretamine,3,1.00E-08,M,2,3.00E-07,M,92.539,1,,1,1,1307AC36,7901
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,13875,Altretamine,3,1.00E-08,M,3,3.00E-06,M,91.518,1,,1,1,1307AC36,7900
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,14229,Quinacrine hydrochloride,1,1.00E-10,M,1,3.00E-08,M,99.128,1,,1,1,1309AC53,2365
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,14229,Quinacrine hydrochloride,1,1.00E-10,M,2,3.00E-07,M,98.252,1,,1,1,1309AC53,2364
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,14229,Quinacrine hydrochloride,1,1.00E-10,M,3,3.00E-06,M,80.307,1,,1,1,1309AC53,2363
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,14229,Quinacrine hydrochloride,2,1.00E-09,M,1,3.00E-08,M,98.809,1,,1,1,1309AC53,2365
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,14229,Quinacrine hydrochloride,2,1.00E-09,M,2,3.00E-07,M,97.945,1,,1,1,1309AC53,2364
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,14229,Quinacrine hydrochloride,2,1.00E-09,M,3,3.00E-06,M,83.597,1,,1,1,1309AC53,2363
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,14229,Quinacrine hydrochloride,3,1.00E-08,M,1,3.00E-08,M,67.984,1,,1,1,1309AC53,2365
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,14229,Quinacrine hydrochloride,3,1.00E-08,M,2,3.00E-07,M,75.038,1,,1,1,1309AC53,2364
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,14229,Quinacrine hydrochloride,3,1.00E-08,M,3,3.00E-06,M,69.246,1,,1,1,1309AC53,2363
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,18509,Aminolevulinic acid hydrochloride,1,1.00E-10,M,1,1.00E-06,M,104.666,1,,1,1,1305AC94,8164
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,18509,Aminolevulinic acid hydrochloride,1,1.00E-10,M,2,1.00E-05,M,103.211,1,,1,1,1305AC94,8163
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,18509,Aminolevulinic acid hydrochloride,1,1.00E-10,M,3,1.00E-04,M,98.866,1,,1,1,1305AC94,8162
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,18509,Aminolevulinic acid hydrochloride,2,1.00E-09,M,1,1.00E-06,M,104.584,1,,1,1,1305AC94,8164
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,18509,Aminolevulinic acid hydrochloride,2,1.00E-09,M,2,1.00E-05,M,106.41,1,,1,1,1305AC94,8163
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,18509,Aminolevulinic acid hydrochloride,2,1.00E-09,M,3,1.00E-04,M,101.291,1,,1,1,1305AC94,8162
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,18509,Aminolevulinic acid hydrochloride,3,1.00E-08,M,1,1.00E-06,M,84.212,1,,1,1,1305AC94,8164
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,18509,Aminolevulinic acid hydrochloride,3,1.00E-08,M,2,1.00E-05,M,91.341,1,,1,1,1305AC94,8163
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,18509,Aminolevulinic acid hydrochloride,3,1.00E-08,M,3,1.00E-04,M,84.318,1,,1,1,1305AC94,8162
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,19893,Fluorouracil,1,1.00E-10,M,1,1.00E-06,M,92.915,1,,1,1,1305AC99,9915
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,19893,Fluorouracil,1,1.00E-10,M,2,1.00E-05,M,59.819,1,,1,1,1305AC99,9914
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,19893,Fluorouracil,1,1.00E-10,M,3,1.00E-04,M,45.031,1,,1,1,1305AC99,9913
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,19893,Fluorouracil,2,1.00E-09,M,1,1.00E-06,M,96.848,1,,1,1,1305AC99,9915
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,19893,Fluorouracil,2,1.00E-09,M,2,1.00E-05,M,61.51,1,,1,1,1305AC99,9914
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,19893,Fluorouracil,2,1.00E-09,M,3,1.00E-04,M,48.965,1,,1,1,1305AC99,9913
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,19893,Fluorouracil,3,1.00E-08,M,1,1.00E-06,M,67.547,1,,1,1,1305AC99,9915
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,19893,Fluorouracil,3,1.00E-08,M,2,1.00E-05,M,52.714,1,,1,1,1305AC99,9914
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,19893,Fluorouracil,3,1.00E-08,M,3,1.00E-04,M,44.331,1,,1,1,1305AC99,9913
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,24559,Plicamycin,1,1.00E-10,M,1,1.00E-09,M,102.682,1,,1,1,1307AC23,526
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,24559,Plicamycin,1,1.00E-10,M,2,1.00E-08,M,94.218,1,,1,1,1307AC23,525
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,24559,Plicamycin,1,1.00E-10,M,3,1.00E-07,M,26.897,1,,1,1,1307AC23,524
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,24559,Plicamycin,2,1.00E-09,M,1,1.00E-09,M,105.283,1,,1,1,1307AC23,526
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,24559,Plicamycin,2,1.00E-09,M,2,1.00E-08,M,98.926,1,,1,1,1307AC23,525
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,24559,Plicamycin,2,1.00E-09,M,3,1.00E-07,M,32.621,1,,1,1,1307AC23,524
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,24559,Plicamycin,3,1.00E-08,M,1,1.00E-09,M,87.369,1,,1,1,1307AC23,526
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,24559,Plicamycin,3,1.00E-08,M,2,1.00E-08,M,84.103,1,,1,1,1307AC23,525
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,24559,Plicamycin,3,1.00E-08,M,3,1.00E-07,M,21.022,1,,1,1,1307AC23,524
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,25154,Pipobroman,1,1.00E-10,M,1,1.00E-06,M,101.729,1,,1,1,1307AC23,543
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,25154,Pipobroman,1,1.00E-10,M,2,1.00E-05,M,101.84,1,,1,1,1307AC23,542
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,25154,Pipobroman,1,1.00E-10,M,3,1.00E-04,M,52.691,1,,1,1,1307AC23,541
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,25154,Pipobroman,2,1.00E-09,M,1,1.00E-06,M,102.612,1,,1,1,1307AC23,543
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,25154,Pipobroman,2,1.00E-09,M,2,1.00E-05,M,101.213,1,,1,1,1307AC23,542
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,25154,Pipobroman,2,1.00E-09,M,3,1.00E-04,M,52.563,1,,1,1,1307AC23,541
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,25154,Pipobroman,3,1.00E-08,M,1,1.00E-06,M,93.527,1,,1,1,1307AC23,543
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,25154,Pipobroman,3,1.00E-08,M,2,1.00E-05,M,94.56,1,,1,1,1307AC23,542
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,25154,Pipobroman,3,1.00E-08,M,3,1.00E-04,M,55.414,1,,1,1,1307AC23,541
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,26271,Cyclophosphamide,1,1.00E-10,M,1,1.00E-06,M,99.562,1,,1,1,1307AC23,512
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,26271,Cyclophosphamide,1,1.00E-10,M,2,1.00E-05,M,97.823,1,,1,1,1307AC23,511
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,26271,Cyclophosphamide,1,1.00E-10,M,3,1.00E-04,M,94.923,1,,1,1,1307AC23,510
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,26271,Cyclophosphamide,2,1.00E-09,M,1,1.00E-06,M,100.058,1,,1,1,1307AC23,512
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,26271,Cyclophosphamide,2,1.00E-09,M,2,1.00E-05,M,99.322,1,,1,1,1307AC23,511
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,26271,Cyclophosphamide,2,1.00E-09,M,3,1.00E-04,M,103.249,1,,1,1,1307AC23,510
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,26271,Cyclophosphamide,3,1.00E-08,M,1,1.00E-06,M,84.209,1,,1,1,1307AC23,512
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,26271,Cyclophosphamide,3,1.00E-08,M,2,1.00E-05,M,84.157,1,,1,1,1307AC23,511
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,26271,Cyclophosphamide,3,1.00E-08,M,3,1.00E-04,M,82.594,1,,1,1,1307AC23,510
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,26980,Mitomycin,1,1.00E-10,M,1,1.00E-08,M,102.141,1,,1,1,1305AC99,9904
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,26980,Mitomycin,1,1.00E-10,M,2,1.00E-07,M,101.262,1,,1,1,1305AC99,9903
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,26980,Mitomycin,1,1.00E-10,M,3,1.00E-06,M,52.922,1,,1,1,1305AC99,9902
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,26980,Mitomycin,2,1.00E-09,M,1,1.00E-08,M,107.996,1,,1,1,1305AC99,9904
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,26980,Mitomycin,2,1.00E-09,M,2,1.00E-07,M,103.638,1,,1,1,1305AC99,9903
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,26980,Mitomycin,2,1.00E-09,M,3,1.00E-06,M,46.979,1,,1,1,1305AC99,9902
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,26980,Mitomycin,3,1.00E-08,M,1,1.00E-08,M,78.829,1,,1,1,1305AC99,9904
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,26980,Mitomycin,3,1.00E-08,M,2,1.00E-07,M,73.239,1,,1,1,1305AC99,9903
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,26980,Mitomycin,3,1.00E-08,M,3,1.00E-06,M,51.082,1,,1,1,1305AC99,9902
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,27640,Floxuridine,1,1.00E-10,M,1,1.00E-08,M,98.929,1,,1,1,1305AC99,9898
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,27640,Floxuridine,1,1.00E-10,M,2,1.00E-07,M,52.227,1,,1,1,1305AC99,9897
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,27640,Floxuridine,1,1.00E-10,M,3,1.00E-06,M,8.896,1,,1,1,1305AC99,9896
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,27640,Floxuridine,2,1.00E-09,M,1,1.00E-08,M,102.214,1,,1,1,1305AC99,9898
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,27640,Floxuridine,2,1.00E-09,M,2,1.00E-07,M,46.627,1,,1,1,1305AC99,9897
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,27640,Floxuridine,2,1.00E-09,M,3,1.00E-06,M,11.638,1,,1,1,1305AC99,9896
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,27640,Floxuridine,3,1.00E-08,M,1,1.00E-08,M,76.046,1,,1,1,1305AC99,9898
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,27640,Floxuridine,3,1.00E-08,M,2,1.00E-07,M,52.517,1,,1,1,1305AC99,9897
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,27640,Floxuridine,3,1.00E-08,M,3,1.00E-06,M,21.321,1,,1,1,1305AC99,9896
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,32065,Hydroxyurea,1,1.00E-10,M,1,1.00E-06,M,97.708,1,,1,1,1306AC00,2804
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,32065,Hydroxyurea,1,1.00E-10,M,2,1.00E-05,M,100.015,1,,1,1,1306AC00,2803
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,32065,Hydroxyurea,1,1.00E-10,M,3,1.00E-04,M,76.367,1,,1,1,1306AC00,2802
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,32065,Hydroxyurea,2,1.00E-09,M,1,1.00E-06,M,103.537,1,,1,1,1306AC00,2804
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,32065,Hydroxyurea,2,1.00E-09,M,2,1.00E-05,M,101.901,1,,1,1,1306AC00,2803
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,32065,Hydroxyurea,2,1.00E-09,M,3,1.00E-04,M,78.067,1,,1,1,1306AC00,2802
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,32065,Hydroxyurea,3,1.00E-08,M,1,1.00E-06,M,79.966,1,,1,1,1306AC00,2804
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,32065,Hydroxyurea,3,1.00E-08,M,2,1.00E-05,M,81.265,1,,1,1,1306AC00,2803
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,32065,Hydroxyurea,3,1.00E-08,M,3,1.00E-04,M,65.231,1,,1,1,1306AC00,2802
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,34462,Uracil mustard,1,1.00E-10,M,1,1.00E-06,M,104.113,1,,1,1,1306AC10,7952
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,34462,Uracil mustard,1,1.00E-10,M,2,1.00E-05,M,32.037,1,,1,1,1306AC10,7951
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,34462,Uracil mustard,1,1.00E-10,M,3,1.00E-04,M,-56.907,1,,1,1,1306AC10,7950
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,34462,Uracil mustard,2,1.00E-09,M,1,1.00E-06,M,104.007,1,,1,1,1306AC10,7952
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,34462,Uracil mustard,2,1.00E-09,M,2,1.00E-05,M,30.732,1,,1,1,1306AC10,7951
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,34462,Uracil mustard,2,1.00E-09,M,3,1.00E-04,M,-62.103,1,,1,1,1306AC10,7950
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,34462,Uracil mustard,3,1.00E-08,M,1,1.00E-06,M,85.253,1,,1,1,1306AC10,7952
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,34462,Uracil mustard,3,1.00E-08,M,2,1.00E-05,M,32.635,1,,1,1,1306AC10,7951
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,34462,Uracil mustard,3,1.00E-08,M,3,1.00E-04,M,-65.403,1,,1,1,1306AC10,7950
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,38721,Mitotane,1,1.00E-10,M,1,3.00E-07,M,99.819,1,,1,1,1309AC53,2359
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,38721,Mitotane,1,1.00E-10,M,2,3.00E-06,M,95.901,1,,1,1,1309AC53,2358
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,38721,Mitotane,1,1.00E-10,M,3,3.00E-05,M,52.756,1,,1,1,1309AC53,2357
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,38721,Mitotane,2,1.00E-09,M,1,3.00E-07,M,106.443,1,,1,1,1309AC53,2359
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,38721,Mitotane,2,1.00E-09,M,2,3.00E-06,M,98.851,1,,1,1,1309AC53,2358
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,38721,Mitotane,2,1.00E-09,M,3,3.00E-05,M,52.426,1,,1,1,1309AC53,2357
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,38721,Mitotane,3,1.00E-08,M,1,3.00E-07,M,68.776,1,,1,1,1309AC53,2359
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,38721,Mitotane,3,1.00E-08,M,2,3.00E-06,M,68.665,1,,1,1,1309AC53,2358
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,38721,Mitotane,3,1.00E-08,M,3,3.00E-05,M,42.211,1,,1,1,1309AC53,2357
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,45388,Dacarbazine,1,1.00E-10,M,1,3.00E-07,M,102.202,1,,1,1,1306AC00,2828
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,45388,Dacarbazine,1,1.00E-10,M,2,3.00E-06,M,100.116,1,,1,1,1306AC00,2827
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,45388,Dacarbazine,1,1.00E-10,M,3,3.00E-05,M,68.766,1,,1,1,1306AC00,2826
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,45388,Dacarbazine,2,1.00E-09,M,1,3.00E-07,M,100.832,1,,1,1,1306AC00,2828
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,45388,Dacarbazine,2,1.00E-09,M,2,3.00E-06,M,101.334,1,,1,1,1306AC00,2827
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,45388,Dacarbazine,2,1.00E-09,M,3,3.00E-05,M,70.856,1,,1,1,1306AC00,2826
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,45388,Dacarbazine,3,1.00E-08,M,1,3.00E-07,M,81.284,1,,1,1,1306AC00,2828
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,45388,Dacarbazine,3,1.00E-08,M,2,3.00E-06,M,78.712,1,,1,1,1306AC00,2827
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,45388,Dacarbazine,3,1.00E-08,M,3,3.00E-05,M,54.891,1,,1,1,1306AC00,2826
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,45923,Methoxsalen,1,1.00E-10,M,1,1.00E-08,M,103.652,1,,1,1,1307AC36,7916
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,45923,Methoxsalen,1,1.00E-10,M,2,1.00E-07,M,101.729,1,,1,1,1307AC36,7915
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,45923,Methoxsalen,1,1.00E-10,M,3,1.00E-06,M,100.373,1,,1,1,1307AC36,7914
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,45923,Methoxsalen,2,1.00E-09,M,1,1.00E-08,M,102.988,1,,1,1,1307AC36,7916
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,45923,Methoxsalen,2,1.00E-09,M,2,1.00E-07,M,105.503,1,,1,1,1307AC36,7915
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,45923,Methoxsalen,2,1.00E-09,M,3,1.00E-06,M,98.752,1,,1,1,1307AC36,7914
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,45923,Methoxsalen,3,1.00E-08,M,1,1.00E-08,M,91.588,1,,1,1,1307AC36,7916
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,45923,Methoxsalen,3,1.00E-08,M,2,1.00E-07,M,92.517,1,,1,1,1307AC36,7915
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,45923,Methoxsalen,3,1.00E-08,M,3,1.00E-06,M,93.553,1,,1,1,1307AC36,7914
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,49842,Vinblastine sulfate,1,1.00E-10,M,1,1.00E-10,M,99.698,1,,1,1,1308AC47,9429
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,49842,Vinblastine sulfate,1,1.00E-10,M,2,1.00E-09,M,96.247,1,,1,1,1308AC47,9428
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,49842,Vinblastine sulfate,1,1.00E-10,M,3,1.00E-08,M,67.131,1,,1,1,1308AC47,9427
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,49842,Vinblastine sulfate,2,1.00E-09,M,1,1.00E-10,M,96.764,1,,1,1,1308AC47,9429
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,49842,Vinblastine sulfate,2,1.00E-09,M,2,1.00E-09,M,96.301,1,,1,1,1308AC47,9428
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,49842,Vinblastine sulfate,2,1.00E-09,M,3,1.00E-08,M,63.835,1,,1,1,1308AC47,9427
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,49842,Vinblastine sulfate,3,1.00E-08,M,1,1.00E-10,M,86.701,1,,1,1,1308AC47,9429
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,49842,Vinblastine sulfate,3,1.00E-08,M,2,1.00E-09,M,79.563,1,,1,1,1308AC47,9428
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,49842,Vinblastine sulfate,3,1.00E-08,M,3,1.00E-08,M,62.736,1,,1,1,1308AC47,9427
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,63878,Cytarabine hydrochloride,1,1.00E-10,M,1,1.00E-07,M,91.85,1,,1,1,1305AC94,8175
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,63878,Cytarabine hydrochloride,1,1.00E-10,M,2,1.00E-06,M,48.7,1,,1,1,1305AC94,8174
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,63878,Cytarabine hydrochloride,1,1.00E-10,M,3,1.00E-05,M,20.245,1,,1,1,1305AC94,8173
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,63878,Cytarabine hydrochloride,2,1.00E-09,M,1,1.00E-07,M,95.1,1,,1,1,1305AC94,8175
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,63878,Cytarabine hydrochloride,2,1.00E-09,M,2,1.00E-06,M,54.509,1,,1,1,1305AC94,8174
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,63878,Cytarabine hydrochloride,2,1.00E-09,M,3,1.00E-05,M,20.839,1,,1,1,1305AC94,8173
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,63878,Cytarabine hydrochloride,3,1.00E-08,M,1,1.00E-07,M,79.179,1,,1,1,1305AC94,8175
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,63878,Cytarabine hydrochloride,3,1.00E-08,M,2,1.00E-06,M,42.732,1,,1,1,1305AC94,8174
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,63878,Cytarabine hydrochloride,3,1.00E-08,M,3,1.00E-05,M,17.637,1,,1,1,1305AC94,8173
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,66847,Thalidomide,1,1.00E-10,M,1,1.00E-07,M,101.217,1,,1,1,1306AC10,7955
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,66847,Thalidomide,1,1.00E-10,M,2,1.00E-06,M,98.51,1,,1,1,1306AC10,7954
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,66847,Thalidomide,1,1.00E-10,M,3,1.00E-05,M,103.635,1,,1,1,1306AC10,7953
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,66847,Thalidomide,2,1.00E-09,M,1,1.00E-07,M,103.816,1,,1,1,1306AC10,7955
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,66847,Thalidomide,2,1.00E-09,M,2,1.00E-06,M,103.262,1,,1,1,1306AC10,7954
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,66847,Thalidomide,2,1.00E-09,M,3,1.00E-05,M,102.09,1,,1,1,1306AC10,7953
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,66847,Thalidomide,3,1.00E-08,M,1,1.00E-07,M,82.494,1,,1,1,1306AC10,7955
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,66847,Thalidomide,3,1.00E-08,M,2,1.00E-06,M,78.91,1,,1,1,1306AC10,7954
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,66847,Thalidomide,3,1.00E-08,M,3,1.00E-05,M,84.729,1,,1,1,1306AC10,7953
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,67574,Vincristine sulfate,1,1.00E-10,M,1,1.00E-10,M,97.585,1,,1,1,1307AC42,2882
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,67574,Vincristine sulfate,1,1.00E-10,M,2,1.00E-09,M,102.06,1,,1,1,1307AC42,2881
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,67574,Vincristine sulfate,1,1.00E-10,M,3,1.00E-08,M,82.284,1,,1,1,1307AC42,2880
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,67574,Vincristine sulfate,2,1.00E-09,M,1,1.00E-10,M,96.839,1,,1,1,1307AC42,2882
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,67574,Vincristine sulfate,2,1.00E-09,M,2,1.00E-09,M,97.364,1,,1,1,1307AC42,2881
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,67574,Vincristine sulfate,2,1.00E-09,M,3,1.00E-08,M,81.49,1,,1,1,1307AC42,2880
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,67574,Vincristine sulfate,3,1.00E-08,M,1,1.00E-10,M,80.966,1,,1,1,1307AC42,2882
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,67574,Vincristine sulfate,3,1.00E-08,M,2,1.00E-09,M,81.089,1,,1,1,1307AC42,2881
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,67574,Vincristine sulfate,3,1.00E-08,M,3,1.00E-08,M,64.567,1,,1,1,1307AC42,2880
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,71423,Megestrol acetate,1,1.00E-10,M,1,1.00E-07,M,100.645,1,,1,1,1307AC42,2893
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,71423,Megestrol acetate,1,1.00E-10,M,2,1.00E-06,M,100.771,1,,1,1,1307AC42,2892
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,71423,Megestrol acetate,1,1.00E-10,M,3,1.00E-05,M,101.053,1,,1,1,1307AC42,2891
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,71423,Megestrol acetate,2,1.00E-09,M,1,1.00E-07,M,97.903,1,,1,1,1307AC42,2893
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,71423,Megestrol acetate,2,1.00E-09,M,2,1.00E-06,M,98.459,1,,1,1,1307AC42,2892
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,71423,Megestrol acetate,2,1.00E-09,M,3,1.00E-05,M,97.989,1,,1,1,1307AC42,2891
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,71423,Megestrol acetate,3,1.00E-08,M,1,1.00E-07,M,77.07,1,,1,1,1307AC42,2893
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,71423,Megestrol acetate,3,1.00E-08,M,2,1.00E-06,M,73.161,1,,1,1,1307AC42,2892
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,71423,Megestrol acetate,3,1.00E-08,M,3,1.00E-05,M,73.889,1,,1,1,1307AC42,2891
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,77213,Procarbazine hydrochloride,1,1.00E-10,M,1,3.00E-08,M,103.257,1,,1,1,1307AC31,3559
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,77213,Procarbazine hydrochloride,1,1.00E-10,M,2,3.00E-07,M,100.336,1,,1,1,1307AC31,3558
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,77213,Procarbazine hydrochloride,1,1.00E-10,M,3,3.00E-06,M,100.908,1,,1,1,1307AC31,3557
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,77213,Procarbazine hydrochloride,2,1.00E-09,M,1,3.00E-08,M,106.372,1,,1,1,1307AC31,3559
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,77213,Procarbazine hydrochloride,2,1.00E-09,M,2,3.00E-07,M,103.473,1,,1,1,1307AC31,3558
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,77213,Procarbazine hydrochloride,2,1.00E-09,M,3,3.00E-06,M,104.031,1,,1,1,1307AC31,3557
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,77213,Procarbazine hydrochloride,3,1.00E-08,M,1,3.00E-08,M,83.716,1,,1,1,1307AC31,3559
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,77213,Procarbazine hydrochloride,3,1.00E-08,M,2,3.00E-07,M,85.742,1,,1,1,1307AC31,3558
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,77213,Procarbazine hydrochloride,3,1.00E-08,M,3,3.00E-06,M,87.085,1,,1,1,1307AC31,3557
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,79037,Lomustine,1,1.00E-10,M,1,1.00E-07,M,103.945,1,,1,1,1307AC36,7919
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,79037,Lomustine,1,1.00E-10,M,2,1.00E-06,M,102.966,1,,1,1,1307AC36,7918
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,79037,Lomustine,1,1.00E-10,M,3,1.00E-05,M,97.024,1,,1,1,1307AC36,7917
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,79037,Lomustine,2,1.00E-09,M,1,1.00E-07,M,107.621,1,,1,1,1307AC36,7919
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,79037,Lomustine,2,1.00E-09,M,2,1.00E-06,M,104.435,1,,1,1,1307AC36,7918
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,79037,Lomustine,2,1.00E-09,M,3,1.00E-05,M,95.404,1,,1,1,1307AC36,7917
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,79037,Lomustine,3,1.00E-08,M,1,1.00E-07,M,92.125,1,,1,1,1307AC36,7919
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,79037,Lomustine,3,1.00E-08,M,2,1.00E-06,M,93.775,1,,1,1,1307AC36,7918
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,79037,Lomustine,3,1.00E-08,M,3,1.00E-05,M,90.25,1,,1,1,1307AC36,7917
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,82151,Daunorubicin hydrochloride,1,1.00E-10,M,1,1.00E-09,M,99.153,1,,1,1,1307AC31,3556
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,82151,Daunorubicin hydrochloride,1,1.00E-10,M,2,1.00E-08,M,100.798,1,,1,1,1307AC31,3555
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,82151,Daunorubicin hydrochloride,1,1.00E-10,M,3,1.00E-07,M,46.529,1,,1,1,1307AC31,3554
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,82151,Daunorubicin hydrochloride,2,1.00E-09,M,1,1.00E-09,M,100.678,1,,1,1,1307AC31,3556
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,82151,Daunorubicin hydrochloride,2,1.00E-09,M,2,1.00E-08,M,103.768,1,,1,1,1307AC31,3555
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,82151,Daunorubicin hydrochloride,2,1.00E-09,M,3,1.00E-07,M,43.145,1,,1,1,1307AC31,3554
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,82151,Daunorubicin hydrochloride,3,1.00E-08,M,1,1.00E-09,M,89.808,1,,1,1,1307AC31,3556
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,82151,Daunorubicin hydrochloride,3,1.00E-08,M,2,1.00E-08,M,86.595,1,,1,1,1307AC31,3555
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,82151,Daunorubicin hydrochloride,3,1.00E-08,M,3,1.00E-07,M,22.433,1,,1,1,1307AC31,3554
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,85998,Streptozocin,1,1.00E-10,M,1,1.00E-05,M,102.769,1,,1,1,1305AC94,8169
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,85998,Streptozocin,1,1.00E-10,M,2,1.00E-04,M,99.52,1,,1,1,1305AC94,8168
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,85998,Streptozocin,1,1.00E-10,M,3,1.00E-03,M,98.028,1,,1,1,1305AC94,8167
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,85998,Streptozocin,2,1.00E-09,M,1,1.00E-05,M,104.564,1,,1,1,1305AC94,8169
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,85998,Streptozocin,2,1.00E-09,M,2,1.00E-04,M,100.027,1,,1,1,1305AC94,8168
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,85998,Streptozocin,2,1.00E-09,M,3,1.00E-03,M,95.738,1,,1,1,1305AC94,8167
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,85998,Streptozocin,3,1.00E-08,M,1,1.00E-05,M,87.359,1,,1,1,1305AC94,8169
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,85998,Streptozocin,3,1.00E-08,M,2,1.00E-04,M,84.632,1,,1,1,1305AC94,8168
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,85998,Streptozocin,3,1.00E-08,M,3,1.00E-03,M,84.264,1,,1,1,1305AC94,8167
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,92859,Arsenic trioxide,1,1.00E-10,M,1,1.00E-07,M,101.941,1,,1,1,1306AC10,7941
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,92859,Arsenic trioxide,1,1.00E-10,M,2,1.00E-06,M,102.558,1,,1,1,1306AC10,7940
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,92859,Arsenic trioxide,1,1.00E-10,M,3,1.00E-05,M,104.858,1,,1,1,1306AC10,7939
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,92859,Arsenic trioxide,2,1.00E-09,M,1,1.00E-07,M,102.263,1,,1,1,1306AC10,7941
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,92859,Arsenic trioxide,2,1.00E-09,M,2,1.00E-06,M,104.709,1,,1,1,1306AC10,7940
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,92859,Arsenic trioxide,2,1.00E-09,M,3,1.00E-05,M,106.269,1,,1,1,1306AC10,7939
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,92859,Arsenic trioxide,3,1.00E-08,M,1,1.00E-07,M,84.322,1,,1,1,1306AC10,7941
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,92859,Arsenic trioxide,3,1.00E-08,M,2,1.00E-06,M,88.076,1,,1,1,1306AC10,7940
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,92859,Arsenic trioxide,3,1.00E-08,M,3,1.00E-05,M,89.498,1,,1,1,1306AC10,7939
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,102816,Azacitidine,1,1.00E-10,M,1,3.00E-08,M,104.417,1,,1,1,1305AC99,9895
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,102816,Azacitidine,1,1.00E-10,M,2,3.00E-07,M,96.518,1,,1,1,1305AC99,9894
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,102816,Azacitidine,1,1.00E-10,M,3,3.00E-06,M,34.568,1,,1,1,1305AC99,9893
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,102816,Azacitidine,2,1.00E-09,M,1,3.00E-08,M,102.086,1,,1,1,1305AC99,9895
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,102816,Azacitidine,2,1.00E-09,M,2,3.00E-07,M,96.26,1,,1,1,1305AC99,9894
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,102816,Azacitidine,2,1.00E-09,M,3,3.00E-06,M,35.639,1,,1,1,1305AC99,9893
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,102816,Azacitidine,3,1.00E-08,M,1,3.00E-08,M,70.307,1,,1,1,1305AC99,9895
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,102816,Azacitidine,3,1.00E-08,M,2,3.00E-07,M,65.167,1,,1,1,1305AC99,9894
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,102816,Azacitidine,3,1.00E-08,M,3,3.00E-06,M,28.455,1,,1,1,1305AC99,9893
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,105014,Cladribine,1,1.00E-10,M,1,1.00E-08,M,102.744,1,,1,1,1306AC10,7935
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,105014,Cladribine,1,1.00E-10,M,2,1.00E-07,M,100.27,1,,1,1,1306AC10,7934
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,105014,Cladribine,1,1.00E-10,M,3,1.00E-06,M,74.76,1,,1,1,1306AC10,7933
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,105014,Cladribine,2,1.00E-09,M,1,1.00E-08,M,102.42,1,,1,1,1306AC10,7935
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,105014,Cladribine,2,1.00E-09,M,2,1.00E-07,M,102.15,1,,1,1,1306AC10,7934
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,105014,Cladribine,2,1.00E-09,M,3,1.00E-06,M,70.448,1,,1,1,1306AC10,7933
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,105014,Cladribine,3,1.00E-08,M,1,1.00E-08,M,85.007,1,,1,1,1306AC10,7935
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,105014,Cladribine,3,1.00E-08,M,2,1.00E-07,M,79.516,1,,1,1,1306AC10,7934
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,105014,Cladribine,3,1.00E-08,M,3,1.00E-06,M,69.02,1,,1,1,1306AC10,7933
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,109724,Ifosfamide,1,1.00E-10,M,1,4.00E-06,M,101.09,1,,1,1,1307AC23,515
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,109724,Ifosfamide,1,1.00E-10,M,2,4.00E-05,M,99.951,1,,1,1,1307AC23,514
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,109724,Ifosfamide,1,1.00E-10,M,3,4.00E-04,M,100.093,1,,1,1,1307AC23,513
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,109724,Ifosfamide,2,1.00E-09,M,1,4.00E-06,M,101.817,1,,1,1,1307AC23,515
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,109724,Ifosfamide,2,1.00E-09,M,2,4.00E-05,M,104.372,1,,1,1,1307AC23,514
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,109724,Ifosfamide,2,1.00E-09,M,3,4.00E-04,M,101.33,1,,1,1,1307AC23,513
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,109724,Ifosfamide,3,1.00E-08,M,1,4.00E-06,M,82.762,1,,1,1,1307AC23,515
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,109724,Ifosfamide,3,1.00E-08,M,2,4.00E-05,M,81.586,1,,1,1,1307AC23,514
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,109724,Ifosfamide,3,1.00E-08,M,3,4.00E-04,M,79.517,1,,1,1,1307AC23,513
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,119875,Cisplatin,1,1.00E-10,M,1,1.00E-07,M,105.256,1,,1,1,1305AC94,8158
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,119875,Cisplatin,1,1.00E-10,M,2,1.00E-06,M,104.179,1,,1,1,1305AC94,8157
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,119875,Cisplatin,1,1.00E-10,M,3,1.00E-05,M,99.882,1,,1,1,1305AC94,8156
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,119875,Cisplatin,2,1.00E-09,M,1,1.00E-07,M,107.295,1,,1,1,1305AC94,8158
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,119875,Cisplatin,2,1.00E-09,M,2,1.00E-06,M,106.007,1,,1,1,1305AC94,8157
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,119875,Cisplatin,2,1.00E-09,M,3,1.00E-05,M,103.003,1,,1,1,1305AC94,8156
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,119875,Cisplatin,3,1.00E-08,M,1,1.00E-07,M,88.389,1,,1,1,1305AC94,8158
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,119875,Cisplatin,3,1.00E-08,M,2,1.00E-06,M,93.311,1,,1,1,1305AC94,8157
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,119875,Cisplatin,3,1.00E-08,M,3,1.00E-05,M,85.98,1,,1,1,1305AC94,8156
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,122758,Tretinoin,1,1.00E-10,M,1,1.00E-08,M,96.982,1,,1,1,1308AC52,1888
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,122758,Tretinoin,1,1.00E-10,M,2,1.00E-07,M,97.104,1,,1,1,1308AC52,1887
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,122758,Tretinoin,1,1.00E-10,M,3,1.00E-06,M,99.0,1,,1,1,1308AC52,1886
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,122758,Tretinoin,2,1.00E-09,M,1,1.00E-08,M,96.489,1,,1,1,1308AC52,1888
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,122758,Tretinoin,2,1.00E-09,M,2,1.00E-07,M,101.095,1,,1,1,1308AC52,1887
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,122758,Tretinoin,2,1.00E-09,M,3,1.00E-06,M,100.936,1,,1,1,1308AC52,1886
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,122758,Tretinoin,3,1.00E-08,M,1,1.00E-08,M,61.195,1,,1,1,1308AC52,1888
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,122758,Tretinoin,3,1.00E-08,M,2,1.00E-07,M,63.916,1,,1,1,1308AC52,1887
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,122758,Tretinoin,3,1.00E-08,M,3,1.00E-06,M,70.338,1,,1,1,1308AC52,1886
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,122819,Teniposide,1,1.00E-10,M,1,1.00E-08,M,100.03,1,,1,1,1307AC39,1080
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,122819,Teniposide,1,1.00E-10,M,2,1.00E-07,M,69.449,1,,1,1,1307AC39,1079
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,122819,Teniposide,1,1.00E-10,M,3,1.00E-06,M,-25.431,1,,1,1,1307AC39,1078
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,122819,Teniposide,2,1.00E-09,M,1,1.00E-08,M,102.687,1,,1,1,1307AC39,1080
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,122819,Teniposide,2,1.00E-09,M,2,1.00E-07,M,75.358,1,,1,1,1307AC39,1079
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,122819,Teniposide,2,1.00E-09,M,3,1.00E-06,M,-3.448,1,,1,1,1307AC39,1078
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,122819,Teniposide,3,1.00E-08,M,1,1.00E-08,M,78.889,1,,1,1,1307AC39,1080
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,122819,Teniposide,3,1.00E-08,M,2,1.00E-07,M,55.803,1,,1,1,1307AC39,1079
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,122819,Teniposide,3,1.00E-08,M,3,1.00E-06,M,-20.187,1,,1,1,1307AC39,1078
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,123127,Doxorubicin hydrochloride,1,1.00E-10,M,1,2.50E-09,M,101.24,1,,1,1,1307AC23,529
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,123127,Doxorubicin hydrochloride,1,1.00E-10,M,2,2.50E-08,M,94.698,1,,1,1,1307AC23,528
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,123127,Doxorubicin hydrochloride,1,1.00E-10,M,3,2.50E-07,M,23.46,1,,1,1,1307AC23,527
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,123127,Doxorubicin hydrochloride,2,1.00E-09,M,1,2.50E-09,M,103.771,1,,1,1,1307AC23,529
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,123127,Doxorubicin hydrochloride,2,1.00E-09,M,2,2.50E-08,M,97.303,1,,1,1,1307AC23,528
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,123127,Doxorubicin hydrochloride,2,1.00E-09,M,3,2.50E-07,M,22.787,1,,1,1,1307AC23,527
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,123127,Doxorubicin hydrochloride,3,1.00E-08,M,1,2.50E-09,M,89.066,1,,1,1,1307AC23,529
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,123127,Doxorubicin hydrochloride,3,1.00E-08,M,2,2.50E-08,M,81.779,1,,1,1,1307AC23,528
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,123127,Doxorubicin hydrochloride,3,1.00E-08,M,3,2.50E-07,M,19.172,1,,1,1,1307AC23,527
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,125066,Bleomycin sulfate,1,1.00E-10,M,1,1.00E-08,M,100.403,1,,1,1,1305AC94,8155
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,125066,Bleomycin sulfate,1,1.00E-10,M,2,1.00E-07,M,94.214,1,,1,1,1305AC94,8154
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,125066,Bleomycin sulfate,1,1.00E-10,M,3,1.00E-06,M,64.28,1,,1,1,1305AC94,8153
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,125066,Bleomycin sulfate,2,1.00E-09,M,1,1.00E-08,M,101.125,1,,1,1,1305AC94,8155
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,125066,Bleomycin sulfate,2,1.00E-09,M,2,1.00E-07,M,92.988,1,,1,1,1305AC94,8154
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,125066,Bleomycin sulfate,2,1.00E-09,M,3,1.00E-06,M,65.399,1,,1,1,1305AC94,8153
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,125066,Bleomycin sulfate,3,1.00E-08,M,1,1.00E-08,M,78.205,1,,1,1,1305AC94,8155
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,125066,Bleomycin sulfate,3,1.00E-08,M,2,1.00E-07,M,73.764,1,,1,1,1305AC94,8154
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,125066,Bleomycin sulfate,3,1.00E-08,M,3,1.00E-06,M,55.832,1,,1,1,1305AC94,8153
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,125973,Paclitaxel,1,1.00E-10,M,1,1.00E-09,M,95.164,1,,1,1,1307AC42,2879
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,125973,Paclitaxel,1,1.00E-10,M,2,1.00E-08,M,77.267,1,,1,1,1307AC42,2878
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,125973,Paclitaxel,1,1.00E-10,M,3,1.00E-07,M,34.875,1,,1,1,1307AC42,2877
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,125973,Paclitaxel,2,1.00E-09,M,1,1.00E-09,M,89.772,1,,1,1,1307AC42,2879
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,125973,Paclitaxel,2,1.00E-09,M,2,1.00E-08,M,73.167,1,,1,1,1307AC42,2878
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,125973,Paclitaxel,2,1.00E-09,M,3,1.00E-07,M,32.067,1,,1,1,1307AC42,2877
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,125973,Paclitaxel,3,1.00E-08,M,1,1.00E-09,M,73.708,1,,1,1,1307AC42,2879
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,125973,Paclitaxel,3,1.00E-08,M,2,1.00E-08,M,60.612,1,,1,1,1307AC42,2878
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,125973,Paclitaxel,3,1.00E-08,M,3,1.00E-07,M,43.545,1,,1,1,1307AC42,2877
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,127716,Decitabine,1,1.00E-10,M,1,3.00E-08,M,100.642,1,,1,1,1305AC99,9918
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,127716,Decitabine,1,1.00E-10,M,2,3.00E-07,M,99.835,1,,1,1,1305AC99,9917
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,127716,Decitabine,1,1.00E-10,M,3,3.00E-06,M,90.172,1,,1,1,1305AC99,9916
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,127716,Decitabine,2,1.00E-09,M,1,3.00E-08,M,101.0,1,,1,1,1305AC99,9918
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,127716,Decitabine,2,1.00E-09,M,2,3.00E-07,M,100.585,1,,1,1,1305AC99,9917
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,127716,Decitabine,2,1.00E-09,M,3,3.00E-06,M,91.932,1,,1,1,1305AC99,9916
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,127716,Decitabine,3,1.00E-08,M,1,3.00E-08,M,79.427,1,,1,1,1305AC99,9918
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,127716,Decitabine,3,1.00E-08,M,2,3.00E-07,M,74.734,1,,1,1,1305AC99,9917
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,127716,Decitabine,3,1.00E-08,M,3,3.00E-06,M,66.388,1,,1,1,1305AC99,9916
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,138783,bendamustine hydrochloride,1,1.00E-10,M,1,3.00E-07,M,102.89,1,,1,1,1308AC47,9406
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,138783,bendamustine hydrochloride,1,1.00E-10,M,2,3.00E-06,M,100.316,1,,1,1,1308AC47,9405
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,138783,bendamustine hydrochloride,1,1.00E-10,M,3,3.00E-05,M,101.224,1,,1,1,1308AC47,9404
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,138783,bendamustine hydrochloride,2,1.00E-09,M,1,3.00E-07,M,97.162,1,,1,1,1308AC47,9406
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,138783,bendamustine hydrochloride,2,1.00E-09,M,2,3.00E-06,M,96.839,1,,1,1,1308AC47,9405
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,138783,bendamustine hydrochloride,2,1.00E-09,M,3,3.00E-05,M,97.43,1,,1,1,1308AC47,9404
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,138783,bendamustine hydrochloride,3,1.00E-08,M,1,3.00E-07,M,83.17,1,,1,1,1308AC47,9406
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,138783,bendamustine hydrochloride,3,1.00E-08,M,2,3.00E-06,M,82.06,1,,1,1,1308AC47,9405
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,138783,bendamustine hydrochloride,3,1.00E-08,M,3,3.00E-05,M,86.076,1,,1,1,1308AC47,9404
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,141540,Etoposide,1,1.00E-10,M,1,1.00E-07,M,102.747,1,,1,1,1307AC31,3553
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,141540,Etoposide,1,1.00E-10,M,2,1.00E-06,M,77.673,1,,1,1,1307AC31,3552
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,141540,Etoposide,1,1.00E-10,M,3,1.00E-05,M,-15.677,1,,1,1,1307AC31,3551
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,141540,Etoposide,2,1.00E-09,M,1,1.00E-07,M,102.487,1,,1,1,1307AC31,3553
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,141540,Etoposide,2,1.00E-09,M,2,1.00E-06,M,85.807,1,,1,1,1307AC31,3552
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,141540,Etoposide,2,1.00E-09,M,3,1.00E-05,M,-15.292,1,,1,1,1307AC31,3551
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,141540,Etoposide,3,1.00E-08,M,1,1.00E-07,M,87.102,1,,1,1,1307AC31,3553
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,141540,Etoposide,3,1.00E-08,M,2,1.00E-06,M,62.675,1,,1,1,1307AC31,3552
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,141540,Etoposide,3,1.00E-08,M,3,1.00E-05,M,-13.586,1,,1,1,1307AC31,3551
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,169780,Dexrazoxane,1,1.00E-10,M,1,1.00E-06,M,101.226,1,,1,1,1305AC94,8172
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,169780,Dexrazoxane,1,1.00E-10,M,2,1.00E-05,M,101.85,1,,1,1,1305AC94,8171
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,169780,Dexrazoxane,1,1.00E-10,M,3,1.00E-04,M,85.276,1,,1,1,1305AC94,8170
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,169780,Dexrazoxane,2,1.00E-09,M,1,1.00E-06,M,100.562,1,,1,1,1305AC94,8172
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,169780,Dexrazoxane,2,1.00E-09,M,2,1.00E-05,M,101.47,1,,1,1,1305AC94,8171
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,169780,Dexrazoxane,2,1.00E-09,M,3,1.00E-04,M,87.563,1,,1,1,1305AC94,8170
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,169780,Dexrazoxane,3,1.00E-08,M,1,1.00E-06,M,81.992,1,,1,1,1305AC94,8172
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,169780,Dexrazoxane,3,1.00E-08,M,2,1.00E-05,M,84.11,1,,1,1,1305AC94,8171
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,169780,Dexrazoxane,3,1.00E-08,M,3,1.00E-04,M,75.322,1,,1,1,1305AC94,8170
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,180973,Tamoxifen citrate,1,1.00E-10,M,1,1.00E-08,M,102.389,1,,1,1,1307AC39,1086
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,180973,Tamoxifen citrate,1,1.00E-10,M,2,1.00E-07,M,97.52,1,,1,1,1307AC39,1085
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,180973,Tamoxifen citrate,1,1.00E-10,M,3,1.00E-06,M,96.783,1,,1,1,1307AC39,1084
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,180973,Tamoxifen citrate,2,1.00E-09,M,1,1.00E-08,M,105.205,1,,1,1,1307AC39,1086
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,180973,Tamoxifen citrate,2,1.00E-09,M,2,1.00E-07,M,102.196,1,,1,1,1307AC39,1085
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,180973,Tamoxifen citrate,2,1.00E-09,M,3,1.00E-06,M,97.917,1,,1,1,1307AC39,1084
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,180973,Tamoxifen citrate,3,1.00E-08,M,1,1.00E-08,M,72.81,1,,1,1,1307AC39,1086
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,180973,Tamoxifen citrate,3,1.00E-08,M,2,1.00E-07,M,75.046,1,,1,1,1307AC39,1085
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,180973,Tamoxifen citrate,3,1.00E-08,M,3,1.00E-06,M,61.55,1,,1,1,1307AC39,1084
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,218321,Pentostatin,1,1.00E-10,M,1,1.00E-07,M,103.962,1,,1,1,1305AC94,8178
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,218321,Pentostatin,1,1.00E-10,M,2,1.00E-06,M,101.226,1,,1,1,1305AC94,8177
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,218321,Pentostatin,1,1.00E-10,M,3,1.00E-05,M,103.834,1,,1,1,1305AC94,8176
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,218321,Pentostatin,2,1.00E-09,M,1,1.00E-07,M,107.005,1,,1,1,1305AC94,8178
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,218321,Pentostatin,2,1.00E-09,M,2,1.00E-06,M,106.33,1,,1,1,1305AC94,8177
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,218321,Pentostatin,2,1.00E-09,M,3,1.00E-05,M,102.239,1,,1,1,1305AC94,8176
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,218321,Pentostatin,3,1.00E-08,M,1,1.00E-07,M,95.887,1,,1,1,1305AC94,8178
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,218321,Pentostatin,3,1.00E-08,M,2,1.00E-06,M,85.239,1,,1,1,1305AC94,8177
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,218321,Pentostatin,3,1.00E-08,M,3,1.00E-05,M,85.306,1,,1,1,1305AC94,8176
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,226080,Sirolimus,1,1.00E-10,M,1,1.00E-10,M,78.018,1,,1,1,1309AC53,2373
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,226080,Sirolimus,1,1.00E-10,M,2,1.00E-09,M,52.13,1,,1,1,1309AC53,2372
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,226080,Sirolimus,1,1.00E-10,M,3,1.00E-08,M,45.437,1,,1,1,1309AC53,2371
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,226080,Sirolimus,2,1.00E-09,M,1,1.00E-10,M,82.091,1,,1,1,1309AC53,2373
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,226080,Sirolimus,2,1.00E-09,M,2,1.00E-09,M,51.422,1,,1,1,1309AC53,2372
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,226080,Sirolimus,2,1.00E-09,M,3,1.00E-08,M,47.758,1,,1,1,1309AC53,2371
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,226080,Sirolimus,3,1.00E-08,M,1,1.00E-10,M,53.006,1,,1,1,1309AC53,2373
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,226080,Sirolimus,3,1.00E-08,M,2,1.00E-09,M,43.088,1,,1,1,1309AC53,2372
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,226080,Sirolimus,3,1.00E-08,M,3,1.00E-08,M,40.986,1,,1,1,1309AC53,2371
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,241240,Carboplatin,1,1.00E-10,M,1,1.00E-06,M,98.827,1,,1,1,1306AC00,2819
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,241240,Carboplatin,1,1.00E-10,M,2,1.00E-05,M,101.024,1,,1,1,1306AC00,2818
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,241240,Carboplatin,1,1.00E-10,M,3,1.00E-04,M,45.405,1,,1,1,1306AC00,2817
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,241240,Carboplatin,2,1.00E-09,M,1,1.00E-06,M,101.918,1,,1,1,1306AC00,2819
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,241240,Carboplatin,2,1.00E-09,M,2,1.00E-05,M,103.639,1,,1,1,1306AC00,2818
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,241240,Carboplatin,2,1.00E-09,M,3,1.00E-04,M,43.132,1,,1,1,1306AC00,2817
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,241240,Carboplatin,3,1.00E-08,M,1,1.00E-06,M,73.011,1,,1,1,1306AC00,2819
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,241240,Carboplatin,3,1.00E-08,M,2,1.00E-05,M,74.723,1,,1,1,1306AC00,2818
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,241240,Carboplatin,3,1.00E-08,M,3,1.00E-04,M,42.855,1,,1,1,1306AC00,2817
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,246131,Valrubicin,1,1.00E-10,M,1,1.00E-09,M,96.447,1,,1,1,1307AC42,2876
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,246131,Valrubicin,1,1.00E-10,M,2,1.00E-08,M,100.513,1,,1,1,1307AC42,2875
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,246131,Valrubicin,1,1.00E-10,M,3,1.00E-07,M,95.584,1,,1,1,1307AC42,2874
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,246131,Valrubicin,2,1.00E-09,M,1,1.00E-09,M,94.448,1,,1,1,1307AC42,2876
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,246131,Valrubicin,2,1.00E-09,M,2,1.00E-08,M,95.8,1,,1,1,1307AC42,2875
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,246131,Valrubicin,2,1.00E-09,M,3,1.00E-07,M,93.088,1,,1,1,1307AC42,2874
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,246131,Valrubicin,3,1.00E-08,M,1,1.00E-09,M,81.237,1,,1,1,1307AC42,2876
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,246131,Valrubicin,3,1.00E-08,M,2,1.00E-08,M,82.844,1,,1,1,1307AC42,2875
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,246131,Valrubicin,3,1.00E-08,M,3,1.00E-07,M,72.463,1,,1,1,1307AC42,2874
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,266046,Oxaliplatin,1,1.00E-10,M,1,5.00E-08,M,103.312,1,,1,1,1305AC94,8161
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,266046,Oxaliplatin,1,1.00E-10,M,2,5.00E-07,M,99.499,1,,1,1,1305AC94,8160
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,266046,Oxaliplatin,1,1.00E-10,M,3,5.00E-06,M,71.376,1,,1,1,1305AC94,8159
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,266046,Oxaliplatin,2,1.00E-09,M,1,5.00E-08,M,103.363,1,,1,1,1305AC94,8161
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,266046,Oxaliplatin,2,1.00E-09,M,2,5.00E-07,M,102.48,1,,1,1,1305AC94,8160
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,266046,Oxaliplatin,2,1.00E-09,M,3,5.00E-06,M,73.574,1,,1,1,1305AC94,8159
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,266046,Oxaliplatin,3,1.00E-08,M,1,5.00E-08,M,86.29,1,,1,1,1305AC94,8161
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,266046,Oxaliplatin,3,1.00E-08,M,2,5.00E-07,M,85.967,1,,1,1,1305AC94,8160
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,266046,Oxaliplatin,3,1.00E-08,M,3,5.00E-06,M,60.884,1,,1,1,1305AC94,8159
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,279836,Mitoxantrone,1,1.00E-10,M,1,1.00E-09,M,100.726,1,,1,1,1306AC10,7949
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,279836,Mitoxantrone,1,1.00E-10,M,2,1.00E-08,M,88.782,1,,1,1,1306AC10,7948
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,279836,Mitoxantrone,1,1.00E-10,M,3,1.00E-07,M,6.532,1,,1,1,1306AC10,7947
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,279836,Mitoxantrone,2,1.00E-09,M,1,1.00E-09,M,102.095,1,,1,1,1306AC10,7949
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,279836,Mitoxantrone,2,1.00E-09,M,2,1.00E-08,M,85.452,1,,1,1,1306AC10,7948
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,279836,Mitoxantrone,2,1.00E-09,M,3,1.00E-07,M,0.11,1,,1,1,1306AC10,7947
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,279836,Mitoxantrone,3,1.00E-08,M,1,1.00E-09,M,84.274,1,,1,1,1306AC10,7949
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,279836,Mitoxantrone,3,1.00E-08,M,2,1.00E-08,M,79.75,1,,1,1,1306AC10,7948
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,279836,Mitoxantrone,3,1.00E-08,M,3,1.00E-07,M,1.461,1,,1,1,1306AC10,7947
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,296961,Amifostine,1,1.00E-10,M,1,1.00E-06,M,99.074,1,,1,1,1306AC00,2810
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,296961,Amifostine,1,1.00E-10,M,2,1.00E-05,M,101.649,1,,1,1,1306AC00,2809
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,296961,Amifostine,1,1.00E-10,M,3,1.00E-04,M,98.29,1,,1,1,1306AC00,2808
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,296961,Amifostine,2,1.00E-09,M,1,1.00E-06,M,99.164,1,,1,1,1306AC00,2810
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,296961,Amifostine,2,1.00E-09,M,2,1.00E-05,M,99.777,1,,1,1,1306AC00,2809
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,296961,Amifostine,2,1.00E-09,M,3,1.00E-04,M,97.198,1,,1,1,1306AC00,2808
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,296961,Amifostine,3,1.00E-08,M,1,1.00E-06,M,79.689,1,,1,1,1306AC00,2810
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,296961,Amifostine,3,1.00E-08,M,2,1.00E-05,M,75.858,1,,1,1,1306AC00,2809
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,296961,Amifostine,3,1.00E-08,M,3,1.00E-04,M,72.625,1,,1,1,1306AC00,2808
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,362856,Temozolomide,1,1.00E-10,M,1,1.00E-06,M,100.827,1,,1,1,1306AC10,7946
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,362856,Temozolomide,1,1.00E-10,M,2,1.00E-05,M,100.925,1,,1,1,1306AC10,7945
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,362856,Temozolomide,1,1.00E-10,M,3,1.00E-04,M,87.423,1,,1,1,1306AC10,7944
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,362856,Temozolomide,2,1.00E-09,M,1,1.00E-06,M,104.592,1,,1,1,1306AC10,7946
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,362856,Temozolomide,2,1.00E-09,M,2,1.00E-05,M,100.27,1,,1,1,1306AC10,7945
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,362856,Temozolomide,2,1.00E-09,M,3,1.00E-04,M,87.628,1,,1,1,1306AC10,7944
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,362856,Temozolomide,3,1.00E-08,M,1,1.00E-06,M,85.568,1,,1,1,1306AC10,7946
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,362856,Temozolomide,3,1.00E-08,M,2,1.00E-05,M,83.198,1,,1,1,1306AC10,7945
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,362856,Temozolomide,3,1.00E-08,M,3,1.00E-04,M,77.706,1,,1,1,1306AC10,7944
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,369100,Imiquimod,1,1.00E-10,M,1,5.00E-09,M,103.788,1,,1,1,1307AC39,1089
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,369100,Imiquimod,1,1.00E-10,M,2,5.00E-08,M,101.969,1,,1,1,1307AC39,1088
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,369100,Imiquimod,1,1.00E-10,M,3,5.00E-07,M,104.577,1,,1,1,1307AC39,1087
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,369100,Imiquimod,2,1.00E-09,M,1,5.00E-09,M,107.948,1,,1,1,1307AC39,1089
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,369100,Imiquimod,2,1.00E-09,M,2,5.00E-08,M,103.619,1,,1,1,1307AC39,1088
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,369100,Imiquimod,2,1.00E-09,M,3,5.00E-07,M,106.505,1,,1,1,1307AC39,1087
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,369100,Imiquimod,3,1.00E-08,M,1,5.00E-09,M,80.534,1,,1,1,1307AC39,1089
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,369100,Imiquimod,3,1.00E-08,M,2,5.00E-08,M,66.271,1,,1,1,1307AC39,1088
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,369100,Imiquimod,3,1.00E-08,M,3,5.00E-07,M,75.187,1,,1,1,1307AC39,1087
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,409962,Carmustine,1,1.00E-10,M,1,5.00E-07,M,103.745,1,,1,1,1307AC31,3567
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,409962,Carmustine,1,1.00E-10,M,2,5.00E-06,M,101.77,1,,1,1,1307AC31,3566
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,409962,Carmustine,1,1.00E-10,M,3,5.00E-05,M,29.405,1,,1,1,1307AC31,3565
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,409962,Carmustine,2,1.00E-09,M,1,5.00E-07,M,103.93,1,,1,1,1307AC31,3567
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,409962,Carmustine,2,1.00E-09,M,2,5.00E-06,M,100.826,1,,1,1,1307AC31,3566
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,409962,Carmustine,2,1.00E-09,M,3,5.00E-05,M,30.438,1,,1,1,1307AC31,3565
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,409962,Carmustine,3,1.00E-08,M,1,5.00E-07,M,87.257,1,,1,1,1307AC31,3567
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,409962,Carmustine,3,1.00E-08,M,2,5.00E-06,M,83.943,1,,1,1,1307AC31,3566
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,409962,Carmustine,3,1.00E-08,M,3,5.00E-05,M,30.825,1,,1,1,1307AC31,3565
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,606869,Clofarabine,1,1.00E-10,M,1,7.00E-09,M,105.761,1,,1,1,1306AC10,7938
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,606869,Clofarabine,1,1.00E-10,M,2,7.00E-08,M,84.758,1,,1,1,1306AC10,7937
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,606869,Clofarabine,1,1.00E-10,M,3,7.00E-07,M,8.763,1,,1,1,1306AC10,7936
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,606869,Clofarabine,2,1.00E-09,M,1,7.00E-09,M,103.614,1,,1,1,1306AC10,7938
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,606869,Clofarabine,2,1.00E-09,M,2,7.00E-08,M,86.486,1,,1,1,1306AC10,7937
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,606869,Clofarabine,2,1.00E-09,M,3,7.00E-07,M,1.532,1,,1,1,1306AC10,7936
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,606869,Clofarabine,3,1.00E-08,M,1,7.00E-09,M,92.418,1,,1,1,1306AC10,7938
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,606869,Clofarabine,3,1.00E-08,M,2,7.00E-08,M,76.828,1,,1,1,1306AC10,7937
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,606869,Clofarabine,3,1.00E-08,M,3,7.00E-07,M,7.312,1,,1,1,1306AC10,7936
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,608210,Vinorelbine tartrate,1,1.00E-10,M,1,1.00E-09,M,102.161,1,,1,1,1305AC99,9901
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,608210,Vinorelbine tartrate,1,1.00E-10,M,2,1.00E-08,M,105.774,1,,1,1,1305AC99,9900
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,608210,Vinorelbine tartrate,1,1.00E-10,M,3,1.00E-07,M,96.144,1,,1,1,1305AC99,9899
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,608210,Vinorelbine tartrate,2,1.00E-09,M,1,1.00E-09,M,103.501,1,,1,1,1305AC99,9901
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,608210,Vinorelbine tartrate,2,1.00E-09,M,2,1.00E-08,M,101.564,1,,1,1,1305AC99,9900
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,608210,Vinorelbine tartrate,2,1.00E-09,M,3,1.00E-07,M,96.144,1,,1,1,1305AC99,9899
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,608210,Vinorelbine tartrate,3,1.00E-08,M,1,1.00E-09,M,99.371,1,,1,1,1305AC99,9901
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,608210,Vinorelbine tartrate,3,1.00E-08,M,2,1.00E-08,M,94.811,1,,1,1,1305AC99,9900
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,608210,Vinorelbine tartrate,3,1.00E-08,M,3,1.00E-07,M,75.812,1,,1,1,1305AC99,9899
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,609699,Topotecan hydrochloride,1,1.00E-10,M,1,1.00E-09,M,103.58,1,,1,1,1307AC36,7899
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,609699,Topotecan hydrochloride,1,1.00E-10,M,2,1.00E-08,M,102.057,1,,1,1,1307AC36,7898
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,609699,Topotecan hydrochloride,1,1.00E-10,M,3,1.00E-07,M,0.219,1,,1,1,1307AC36,7897
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,609699,Topotecan hydrochloride,2,1.00E-09,M,1,1.00E-09,M,104.52,1,,1,1,1307AC36,7899
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,609699,Topotecan hydrochloride,2,1.00E-09,M,2,1.00E-08,M,101.063,1,,1,1,1307AC36,7898
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,609699,Topotecan hydrochloride,2,1.00E-09,M,3,1.00E-07,M,0.109,1,,1,1,1307AC36,7897
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,609699,Topotecan hydrochloride,3,1.00E-08,M,1,1.00E-09,M,97.028,1,,1,1,1307AC36,7899
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,609699,Topotecan hydrochloride,3,1.00E-08,M,2,1.00E-08,M,92.56,1,,1,1,1307AC36,7898
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,609699,Topotecan hydrochloride,3,1.00E-08,M,3,1.00E-07,M,9.907,1,,1,1,1307AC36,7897
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,613327,Gemcitabine hydrochloride,1,1.00E-10,M,1,1.00E-09,M,105.829,1,,1,1,1306AC00,2807
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,613327,Gemcitabine hydrochloride,1,1.00E-10,M,2,1.00E-08,M,37.639,1,,1,1,1306AC00,2806
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,613327,Gemcitabine hydrochloride,1,1.00E-10,M,3,1.00E-07,M,0.899,1,,1,1,1306AC00,2805
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,613327,Gemcitabine hydrochloride,2,1.00E-09,M,1,1.00E-09,M,102.394,1,,1,1,1306AC00,2807
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,613327,Gemcitabine hydrochloride,2,1.00E-09,M,2,1.00E-08,M,36.508,1,,1,1,1306AC00,2806
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,613327,Gemcitabine hydrochloride,2,1.00E-09,M,3,1.00E-07,M,-5.976,1,,1,1,1306AC00,2805
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,613327,Gemcitabine hydrochloride,3,1.00E-08,M,1,1.00E-09,M,72.527,1,,1,1,1306AC00,2807
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,613327,Gemcitabine hydrochloride,3,1.00E-08,M,2,1.00E-08,M,35.764,1,,1,1,1306AC00,2806
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,613327,Gemcitabine hydrochloride,3,1.00E-08,M,3,1.00E-07,M,9.382,1,,1,1,1306AC00,2805
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,628503,Docetaxel,1,1.00E-10,M,1,1.00E-10,M,100.12,1,,1,1,1307AC39,1083
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,628503,Docetaxel,1,1.00E-10,M,2,1.00E-09,M,94.293,1,,1,1,1307AC39,1082
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,628503,Docetaxel,1,1.00E-10,M,3,1.00E-08,M,49.818,1,,1,1,1307AC39,1081
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,628503,Docetaxel,2,1.00E-09,M,1,1.00E-10,M,103.635,1,,1,1,1307AC39,1083
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,628503,Docetaxel,2,1.00E-09,M,2,1.00E-09,M,97.27,1,,1,1,1307AC39,1082
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,628503,Docetaxel,2,1.00E-09,M,3,1.00E-08,M,54.634,1,,1,1,1307AC39,1081
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,628503,Docetaxel,3,1.00E-08,M,1,1.00E-10,M,65.185,1,,1,1,1307AC39,1083
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,628503,Docetaxel,3,1.00E-08,M,2,1.00E-09,M,62.062,1,,1,1,1307AC39,1082
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,628503,Docetaxel,3,1.00E-08,M,3,1.00E-08,M,54.452,1,,1,1,1307AC39,1081
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,673596,SN-38,1,1.00E-10,M,1,1.00E-09,M,102.182,1,,1,1,1307AC36,7922
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,673596,SN-38,1,1.00E-10,M,2,1.00E-08,M,1.899,1,,1,1,1307AC36,7921
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,673596,SN-38,1,1.00E-10,M,3,1.00E-07,M,-23.448,1,,1,1,1307AC36,7920
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,673596,SN-38,2,1.00E-09,M,1,1.00E-09,M,107.205,1,,1,1,1307AC36,7922
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,673596,SN-38,2,1.00E-09,M,2,1.00E-08,M,1.005,1,,1,1,1307AC36,7921
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,673596,SN-38,2,1.00E-09,M,3,1.00E-07,M,-26.445,1,,1,1,1307AC36,7920
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,673596,SN-38,3,1.00E-08,M,1,1.00E-09,M,99.3,1,,1,1,1307AC36,7922
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,673596,SN-38,3,1.00E-08,M,2,1.00E-08,M,2.234,1,,1,1,1307AC36,7921
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,673596,SN-38,3,1.00E-08,M,3,1.00E-07,M,-14.454,1,,1,1,1307AC36,7920
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,681239,Bortezomib,1,1.00E-10,M,1,1.00E-09,M,104.581,1,,1,1,1307AC36,7913
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,681239,Bortezomib,1,1.00E-10,M,2,1.00E-08,M,40.83,1,,1,1,1307AC36,7912
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,681239,Bortezomib,1,1.00E-10,M,3,1.00E-07,M,-23.448,1,,1,1,1307AC36,7911
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,681239,Bortezomib,2,1.00E-09,M,1,1.00E-09,M,105.518,1,,1,1,1307AC36,7913
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,681239,Bortezomib,2,1.00E-09,M,2,1.00E-08,M,42.876,1,,1,1,1307AC36,7912
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,681239,Bortezomib,2,1.00E-09,M,3,1.00E-07,M,-25.161,1,,1,1,1307AC36,7911
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,681239,Bortezomib,3,1.00E-08,M,1,1.00E-09,M,88.287,1,,1,1,1307AC36,7913
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,681239,Bortezomib,3,1.00E-08,M,2,1.00E-08,M,42.553,1,,1,1,1307AC36,7912
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,681239,Bortezomib,3,1.00E-08,M,3,1.00E-07,M,-14.829,1,,1,1,1307AC36,7911
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,686673,Nelarabine,1,1.00E-10,M,1,1.00E-06,M,101.071,1,,1,1,1305AC99,9909
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,686673,Nelarabine,1,1.00E-10,M,2,1.00E-05,M,103.849,1,,1,1,1305AC99,9908
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,686673,Nelarabine,1,1.00E-10,M,3,1.00E-04,M,101.377,1,,1,1,1305AC99,9907
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,686673,Nelarabine,2,1.00E-09,M,1,1.00E-06,M,103.011,1,,1,1,1305AC99,9909
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,686673,Nelarabine,2,1.00E-09,M,2,1.00E-05,M,107.306,1,,1,1,1305AC99,9908
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,686673,Nelarabine,2,1.00E-09,M,3,1.00E-04,M,101.191,1,,1,1,1305AC99,9907
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,686673,Nelarabine,3,1.00E-08,M,1,1.00E-06,M,79.328,1,,1,1,1305AC99,9909
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,686673,Nelarabine,3,1.00E-08,M,2,1.00E-05,M,79.497,1,,1,1,1305AC99,9908
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,686673,Nelarabine,3,1.00E-08,M,3,1.00E-04,M,77.951,1,,1,1,1305AC99,9907
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,698037,Pemetrexed Disodium ,1,1.00E-10,M,1,1.00E-06,M,31.076,1,,1,1,1307AC31,3562
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,698037,Pemetrexed Disodium ,1,1.00E-10,M,2,1.00E-05,M,33.487,1,,1,1,1307AC31,3561
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,698037,Pemetrexed Disodium ,1,1.00E-10,M,3,1.00E-04,M,29.289,1,,1,1,1307AC31,3560
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,698037,Pemetrexed Disodium ,2,1.00E-09,M,1,1.00E-06,M,33.801,1,,1,1,1307AC31,3562
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,698037,Pemetrexed Disodium ,2,1.00E-09,M,2,1.00E-05,M,36.388,1,,1,1,1307AC31,3561
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,698037,Pemetrexed Disodium ,2,1.00E-09,M,3,1.00E-04,M,31.225,1,,1,1,1307AC31,3560
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,698037,Pemetrexed Disodium ,3,1.00E-08,M,1,1.00E-06,M,32.992,1,,1,1,1307AC31,3562
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,698037,Pemetrexed Disodium ,3,1.00E-08,M,2,1.00E-05,M,34.964,1,,1,1,1307AC31,3561
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,698037,Pemetrexed Disodium ,3,1.00E-08,M,3,1.00E-04,M,29.794,1,,1,1,1307AC31,3560
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,701852,Vorinostat,1,1.00E-10,M,1,2.00E-08,M,102.128,1,,1,1,1307AC36,7905
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,701852,Vorinostat,1,1.00E-10,M,2,2.00E-07,M,100.813,1,,1,1,1307AC36,7904
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,701852,Vorinostat,1,1.00E-10,M,3,2.00E-06,M,79.972,1,,1,1,1307AC36,7903
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,701852,Vorinostat,2,1.00E-09,M,1,2.00E-08,M,105.931,1,,1,1,1307AC36,7905
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,701852,Vorinostat,2,1.00E-09,M,2,2.00E-07,M,102.942,1,,1,1,1307AC36,7904
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,701852,Vorinostat,2,1.00E-09,M,3,2.00E-06,M,78.178,1,,1,1,1307AC36,7903
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,701852,Vorinostat,3,1.00E-08,M,1,2.00E-08,M,89.728,1,,1,1,1307AC36,7905
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,701852,Vorinostat,3,1.00E-08,M,2,2.00E-07,M,78.145,1,,1,1,1307AC36,7904
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,701852,Vorinostat,3,1.00E-08,M,3,2.00E-06,M,41.598,1,,1,1,1307AC36,7903
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,702294,Estramustine phosphate sodium,1,1.00E-10,M,1,1.00E-06,M,99.198,1,,1,1,1308AC52,1885
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,702294,Estramustine phosphate sodium,1,1.00E-10,M,2,1.00E-05,M,102.099,1,,1,1,1308AC52,1884
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,702294,Estramustine phosphate sodium,1,1.00E-10,M,3,1.00E-04,M,32.127,1,,1,1,1308AC52,1883
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,702294,Estramustine phosphate sodium,2,1.00E-09,M,1,1.00E-06,M,95.895,1,,1,1,1308AC52,1885
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,702294,Estramustine phosphate sodium,2,1.00E-09,M,2,1.00E-05,M,99.169,1,,1,1,1308AC52,1884
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,702294,Estramustine phosphate sodium,2,1.00E-09,M,3,1.00E-04,M,51.317,1,,1,1,1308AC52,1883
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,702294,Estramustine phosphate sodium,3,1.00E-08,M,1,1.00E-06,M,69.339,1,,1,1,1308AC52,1885
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,702294,Estramustine phosphate sodium,3,1.00E-08,M,2,1.00E-05,M,77.088,1,,1,1,1308AC52,1884
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,702294,Estramustine phosphate sodium,3,1.00E-08,M,3,1.00E-04,M,33.729,1,,1,1,1308AC52,1883
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,707389,,1,1.00E-10,M,1,1.00E-10,M,101.489,1,,1,1,1307AC23,540
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,707389,,1,1.00E-10,M,2,1.00E-09,M,98.731,1,,1,1,1307AC23,539
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,707389,,1,1.00E-10,M,3,1.00E-08,M,83.452,1,,1,1,1307AC23,538
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,707389,,2,1.00E-09,M,1,1.00E-10,M,103.677,1,,1,1,1307AC23,540
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,707389,,2,1.00E-09,M,2,1.00E-09,M,97.684,1,,1,1,1307AC23,539
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,707389,,2,1.00E-09,M,3,1.00E-08,M,85.264,1,,1,1,1307AC23,538
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,707389,,3,1.00E-08,M,1,1.00E-10,M,88.942,1,,1,1,1307AC23,540
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,707389,,3,1.00E-08,M,2,1.00E-09,M,88.447,1,,1,1,1307AC23,539
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,707389,,3,1.00E-08,M,3,1.00E-08,M,83.425,1,,1,1,1307AC23,538
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,712807,Capecitabine,1,1.00E-10,M,1,1.00E-07,M,101.484,1,,1,1,1307AC23,546
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,712807,Capecitabine,1,1.00E-10,M,2,1.00E-06,M,102.561,1,,1,1,1307AC23,545
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,712807,Capecitabine,1,1.00E-10,M,3,1.00E-05,M,103.614,1,,1,1,1307AC23,544
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,712807,Capecitabine,2,1.00E-09,M,1,1.00E-07,M,101.375,1,,1,1,1307AC23,546
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,712807,Capecitabine,2,1.00E-09,M,2,1.00E-06,M,102.693,1,,1,1,1307AC23,545
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,712807,Capecitabine,2,1.00E-09,M,3,1.00E-05,M,102.379,1,,1,1,1307AC23,544
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,712807,Capecitabine,3,1.00E-08,M,1,1.00E-07,M,90.402,1,,1,1,1307AC23,546
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,712807,Capecitabine,3,1.00E-08,M,2,1.00E-06,M,91.42,1,,1,1,1307AC23,545
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,712807,Capecitabine,3,1.00E-08,M,3,1.00E-05,M,88.952,1,,1,1,1307AC23,544
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,713563,Exemestane,1,1.00E-10,M,1,1.00E-09,M,97.623,1,,1,1,1307AC42,2896
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,713563,Exemestane,1,1.00E-10,M,2,1.00E-08,M,98.29,1,,1,1,1307AC42,2895
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,713563,Exemestane,1,1.00E-10,M,3,1.00E-07,M,98.376,1,,1,1,1307AC42,2894
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,713563,Exemestane,2,1.00E-09,M,1,1.00E-09,M,94.649,1,,1,1,1307AC42,2896
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,713563,Exemestane,2,1.00E-09,M,2,1.00E-08,M,94.526,1,,1,1,1307AC42,2895
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,713563,Exemestane,2,1.00E-09,M,3,1.00E-07,M,94.617,1,,1,1,1307AC42,2894
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,713563,Exemestane,3,1.00E-08,M,1,1.00E-09,M,79.141,1,,1,1,1307AC42,2896
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,713563,Exemestane,3,1.00E-08,M,2,1.00E-08,M,74.698,1,,1,1,1307AC42,2895
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,713563,Exemestane,3,1.00E-08,M,3,1.00E-07,M,75.097,1,,1,1,1307AC42,2894
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,715055,Gefitinib,1,1.00E-10,M,1,1.00E-08,M,98.912,1,,1,1,1308AC47,9415
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,715055,Gefitinib,1,1.00E-10,M,2,1.00E-07,M,93.637,1,,1,1,1308AC47,9414
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,715055,Gefitinib,1,1.00E-10,M,3,1.00E-06,M,97.149,1,,1,1,1308AC47,9413
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,715055,Gefitinib,2,1.00E-09,M,1,1.00E-08,M,97.32,1,,1,1,1308AC47,9415
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,715055,Gefitinib,2,1.00E-09,M,2,1.00E-07,M,92.093,1,,1,1,1308AC47,9414
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,715055,Gefitinib,2,1.00E-09,M,3,1.00E-06,M,91.56,1,,1,1,1308AC47,9413
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,715055,Gefitinib,3,1.00E-08,M,1,1.00E-08,M,86.283,1,,1,1,1308AC47,9415
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,715055,Gefitinib,3,1.00E-08,M,2,1.00E-07,M,81.842,1,,1,1,1308AC47,9414
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,715055,Gefitinib,3,1.00E-08,M,3,1.00E-06,M,75.411,1,,1,1,1308AC47,9413
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,718781,Erlotinib hydrochloride,1,1.00E-10,M,1,1.00E-07,M,85.85,1,,1,1,1308AC52,1874
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,718781,Erlotinib hydrochloride,1,1.00E-10,M,2,1.00E-06,M,86.865,1,,1,1,1308AC52,1873
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,718781,Erlotinib hydrochloride,1,1.00E-10,M,3,1.00E-05,M,54.172,1,,1,1,1308AC52,1872
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,718781,Erlotinib hydrochloride,2,1.00E-09,M,1,1.00E-07,M,90.567,1,,1,1,1308AC52,1874
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,718781,Erlotinib hydrochloride,2,1.00E-09,M,2,1.00E-06,M,84.316,1,,1,1,1308AC52,1873
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,718781,Erlotinib hydrochloride,2,1.00E-09,M,3,1.00E-05,M,52.883,1,,1,1,1308AC52,1872
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,718781,Erlotinib hydrochloride,3,1.00E-08,M,1,1.00E-07,M,63.251,1,,1,1,1308AC52,1874
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,718781,Erlotinib hydrochloride,3,1.00E-08,M,2,1.00E-06,M,54.104,1,,1,1,1308AC52,1873
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,718781,Erlotinib hydrochloride,3,1.00E-08,M,3,1.00E-05,M,36.228,1,,1,1,1308AC52,1872
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,719276,Fulvestrant,1,1.00E-10,M,1,1.00E-09,M,99.92,1,,1,1,1309AC53,2382
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,719276,Fulvestrant,1,1.00E-10,M,2,1.00E-08,M,101.217,1,,1,1,1309AC53,2381
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,719276,Fulvestrant,1,1.00E-10,M,3,1.00E-07,M,106.831,1,,1,1,1309AC53,2380
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,719276,Fulvestrant,2,1.00E-09,M,1,1.00E-09,M,100.43,1,,1,1,1309AC53,2382
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,719276,Fulvestrant,2,1.00E-09,M,2,1.00E-08,M,101.904,1,,1,1,1309AC53,2381
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,719276,Fulvestrant,2,1.00E-09,M,3,1.00E-07,M,96.686,1,,1,1,1309AC53,2380
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,719276,Fulvestrant,3,1.00E-08,M,1,1.00E-09,M,66.486,1,,1,1,1309AC53,2382
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,719276,Fulvestrant,3,1.00E-08,M,2,1.00E-08,M,70.787,1,,1,1,1309AC53,2381
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,719276,Fulvestrant,3,1.00E-08,M,3,1.00E-07,M,64.011,1,,1,1,1309AC53,2380
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,719344,Arimidex,1,1.00E-10,M,1,3.00E-10,M,100.304,1,,1,1,1307AC39,1100
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,719344,Arimidex,1,1.00E-10,M,2,3.00E-09,M,100.29,1,,1,1,1307AC39,1099
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,719344,Arimidex,1,1.00E-10,M,3,3.00E-08,M,100.675,1,,1,1,1307AC39,1098
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,719344,Arimidex,2,1.00E-09,M,1,3.00E-10,M,108.399,1,,1,1,1307AC39,1100
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,719344,Arimidex,2,1.00E-09,M,2,3.00E-09,M,103.977,1,,1,1,1307AC39,1099
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,719344,Arimidex,2,1.00E-09,M,3,3.00E-08,M,106.81,1,,1,1,1307AC39,1098
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,719344,Arimidex,3,1.00E-08,M,1,3.00E-10,M,74.65,1,,1,1,1307AC39,1100
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,719344,Arimidex,3,1.00E-08,M,2,3.00E-09,M,71.614,1,,1,1,1307AC39,1099
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,719344,Arimidex,3,1.00E-08,M,3,3.00E-08,M,77.37,1,,1,1,1307AC39,1098
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,719345,Letrozole,1,1.00E-10,M,1,1.00E-08,M,102.56,1,,1,1,1307AC39,1094
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,719345,Letrozole,1,1.00E-10,M,2,1.00E-07,M,104.377,1,,1,1,1307AC39,1093
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,719345,Letrozole,1,1.00E-10,M,3,1.00E-06,M,98.949,1,,1,1,1307AC39,1092
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,719345,Letrozole,2,1.00E-09,M,1,1.00E-08,M,104.257,1,,1,1,1307AC39,1094
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,719345,Letrozole,2,1.00E-09,M,2,1.00E-07,M,104.313,1,,1,1,1307AC39,1093
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,719345,Letrozole,2,1.00E-09,M,3,1.00E-06,M,103.245,1,,1,1,1307AC39,1092
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,719345,Letrozole,3,1.00E-08,M,1,1.00E-08,M,62.597,1,,1,1,1307AC39,1094
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,719345,Letrozole,3,1.00E-08,M,2,1.00E-07,M,63.781,1,,1,1,1307AC39,1093
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,719345,Letrozole,3,1.00E-08,M,3,1.00E-06,M,54.914,1,,1,1,1307AC39,1092
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,719627,Celecoxib,1,1.00E-10,M,1,3.00E-07,M,101.604,1,,1,1,1308AC52,1865
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,719627,Celecoxib,1,1.00E-10,M,2,3.00E-06,M,100.315,1,,1,1,1308AC52,1864
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,719627,Celecoxib,1,1.00E-10,M,3,3.00E-05,M,51.807,1,,1,1,1308AC52,1863
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,719627,Celecoxib,2,1.00E-09,M,1,3.00E-07,M,99.24,1,,1,1,1308AC52,1865
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,719627,Celecoxib,2,1.00E-09,M,2,3.00E-06,M,101.079,1,,1,1,1308AC52,1864
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,719627,Celecoxib,2,1.00E-09,M,3,3.00E-05,M,57.065,1,,1,1,1308AC52,1863
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,719627,Celecoxib,3,1.00E-08,M,1,3.00E-07,M,69.887,1,,1,1,1308AC52,1865
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,719627,Celecoxib,3,1.00E-08,M,2,3.00E-06,M,67.441,1,,1,1,1308AC52,1864
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,719627,Celecoxib,3,1.00E-08,M,3,3.00E-05,M,44.919,1,,1,1,1308AC52,1863
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,721517,Zoledronic acid,1,1.00E-10,M,1,1.00E-07,M,103.125,1,,1,1,1305AC99,9912
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,721517,Zoledronic acid,1,1.00E-10,M,2,1.00E-06,M,104.367,1,,1,1,1305AC99,9911
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,721517,Zoledronic acid,1,1.00E-10,M,3,1.00E-05,M,88.851,1,,1,1,1305AC99,9910
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,721517,Zoledronic acid,2,1.00E-09,M,1,1.00E-07,M,102.538,1,,1,1,1305AC99,9912
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,721517,Zoledronic acid,2,1.00E-09,M,2,1.00E-06,M,105.981,1,,1,1,1305AC99,9911
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,721517,Zoledronic acid,2,1.00E-09,M,3,1.00E-05,M,88.825,1,,1,1,1305AC99,9910
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,721517,Zoledronic acid,3,1.00E-08,M,1,1.00E-07,M,80.153,1,,1,1,1305AC99,9912
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,721517,Zoledronic acid,3,1.00E-08,M,2,1.00E-06,M,80.79,1,,1,1,1305AC99,9911
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,721517,Zoledronic acid,3,1.00E-08,M,3,1.00E-05,M,71.284,1,,1,1,1305AC99,9910
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,732517,Dasatinib,1,1.00E-10,M,1,1.00E-09,M,97.008,1,,1,1,1307AC42,2890
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,732517,Dasatinib,1,1.00E-10,M,2,1.00E-08,M,68.743,1,,1,1,1307AC42,2889
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,732517,Dasatinib,1,1.00E-10,M,3,1.00E-07,M,35.188,1,,1,1,1307AC42,2888
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,732517,Dasatinib,2,1.00E-09,M,1,1.00E-09,M,93.196,1,,1,1,1307AC42,2890
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,732517,Dasatinib,2,1.00E-09,M,2,1.00E-08,M,67.535,1,,1,1,1307AC42,2889
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,732517,Dasatinib,2,1.00E-09,M,3,1.00E-07,M,34.676,1,,1,1,1307AC42,2888
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,732517,Dasatinib,3,1.00E-08,M,1,1.00E-09,M,82.738,1,,1,1,1307AC42,2890
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,732517,Dasatinib,3,1.00E-08,M,2,1.00E-08,M,57.116,1,,1,1,1307AC42,2889
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,732517,Dasatinib,3,1.00E-08,M,3,1.00E-07,M,24.491,1,,1,1,1307AC42,2888
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,733504,Everolimus,1,1.00E-10,M,1,5.00E-10,M,61.156,1,,1,1,1309AC53,2368
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,733504,Everolimus,1,1.00E-10,M,2,5.00E-09,M,50.306,1,,1,1,1309AC53,2367
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,733504,Everolimus,1,1.00E-10,M,3,5.00E-08,M,48.057,1,,1,1,1309AC53,2366
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,733504,Everolimus,2,1.00E-09,M,1,5.00E-10,M,61.034,1,,1,1,1309AC53,2368
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,733504,Everolimus,2,1.00E-09,M,2,5.00E-09,M,51.232,1,,1,1,1309AC53,2367
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,733504,Everolimus,2,1.00E-09,M,3,5.00E-08,M,50.007,1,,1,1,1309AC53,2366
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,733504,Everolimus,3,1.00E-08,M,1,5.00E-10,M,43.404,1,,1,1,1309AC53,2368
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,733504,Everolimus,3,1.00E-08,M,2,5.00E-09,M,38.686,1,,1,1,1309AC53,2367
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,733504,Everolimus,3,1.00E-08,M,3,5.00E-08,M,37.763,1,,1,1,1309AC53,2366
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,737754,,1,1.00E-10,M,1,5.00E-07,M,100.684,1,,1,1,1308AC47,9409
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,737754,,1,1.00E-10,M,2,5.00E-06,M,95.424,1,,1,1,1308AC47,9408
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,737754,,1,1.00E-10,M,3,5.00E-05,M,-39.956,1,,1,1,1308AC47,9407
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,737754,,2,1.00E-09,M,1,5.00E-07,M,100.309,1,,1,1,1308AC47,9409
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,737754,,2,1.00E-09,M,2,5.00E-06,M,94.564,1,,1,1,1308AC47,9408
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,737754,,2,1.00E-09,M,3,5.00E-05,M,-21.698,1,,1,1,1308AC47,9407
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,737754,,3,1.00E-08,M,1,5.00E-07,M,78.755,1,,1,1,1308AC47,9409
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,737754,,3,1.00E-08,M,2,5.00E-06,M,82.206,1,,1,1,1308AC47,9408
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,737754,,3,1.00E-08,M,3,5.00E-05,M,-23.418,1,,1,1,1308AC47,9407
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,743414,Imatinib mesylate,1,1.00E-10,M,1,5.00E-08,M,99.415,1,,1,1,1308AC47,9420
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,743414,Imatinib mesylate,1,1.00E-10,M,2,5.00E-07,M,100.977,1,,1,1,1308AC47,9419
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,743414,Imatinib mesylate,1,1.00E-10,M,3,5.00E-06,M,103.429,1,,1,1,1308AC47,9418
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,743414,Imatinib mesylate,2,1.00E-09,M,1,5.00E-08,M,97.701,1,,1,1,1308AC47,9420
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,743414,Imatinib mesylate,2,1.00E-09,M,2,5.00E-07,M,99.96,1,,1,1,1308AC47,9419
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,743414,Imatinib mesylate,2,1.00E-09,M,3,5.00E-06,M,101.812,1,,1,1,1308AC47,9418
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,743414,Imatinib mesylate,3,1.00E-08,M,1,5.00E-08,M,86.6,1,,1,1,1308AC47,9420
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,743414,Imatinib mesylate,3,1.00E-08,M,2,5.00E-07,M,87.696,1,,1,1,1308AC47,9419
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,743414,Imatinib mesylate,3,1.00E-08,M,3,5.00E-06,M,87.938,1,,1,1,1308AC47,9418
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,745750,Lapatinib ditosylate,1,1.00E-10,M,1,3.00E-08,M,95.625,1,,1,1,1309AC53,2362
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,745750,Lapatinib ditosylate,1,1.00E-10,M,2,3.00E-07,M,91.657,1,,1,1,1309AC53,2361
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,745750,Lapatinib ditosylate,1,1.00E-10,M,3,3.00E-06,M,66.277,1,,1,1,1309AC53,2360
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,745750,Lapatinib ditosylate,2,1.00E-09,M,1,3.00E-08,M,96.838,1,,1,1,1309AC53,2362
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,745750,Lapatinib ditosylate,2,1.00E-09,M,2,3.00E-07,M,94.768,1,,1,1,1309AC53,2361
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,745750,Lapatinib ditosylate,2,1.00E-09,M,3,3.00E-06,M,66.217,1,,1,1,1309AC53,2360
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,745750,Lapatinib ditosylate,3,1.00E-08,M,1,3.00E-08,M,68.458,1,,1,1,1309AC53,2362
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,745750,Lapatinib ditosylate,3,1.00E-08,M,2,3.00E-07,M,66.548,1,,1,1,1309AC53,2361
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,745750,Lapatinib ditosylate,3,1.00E-08,M,3,3.00E-06,M,49.985,1,,1,1,1309AC53,2360
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,747599,Nilotinib,1,1.00E-10,M,1,1.00E-08,M,104.304,1,,1,1,1308AC52,1879
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,747599,Nilotinib,1,1.00E-10,M,2,1.00E-07,M,118.257,1,,1,1,1308AC52,1878
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,747599,Nilotinib,1,1.00E-10,M,3,1.00E-06,M,116.071,1,,1,1,1308AC52,1877
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,747599,Nilotinib,2,1.00E-09,M,1,1.00E-08,M,104.174,1,,1,1,1308AC52,1879
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,747599,Nilotinib,2,1.00E-09,M,2,1.00E-07,M,117.497,1,,1,1,1308AC52,1878
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,747599,Nilotinib,2,1.00E-09,M,3,1.00E-06,M,115.651,1,,1,1,1308AC52,1877
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,747599,Nilotinib,3,1.00E-08,M,1,1.00E-08,M,69.19,1,,1,1,1308AC52,1879
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,747599,Nilotinib,3,1.00E-08,M,2,1.00E-07,M,76.176,1,,1,1,1308AC52,1878
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,747599,Nilotinib,3,1.00E-08,M,3,1.00E-06,M,76.961,1,,1,1,1308AC52,1877
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,747971,Sorafenib tosylate,1,1.00E-10,M,1,1.00E-07,M,107.39,1,,1,1,1308AC47,9412
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,747971,Sorafenib tosylate,1,1.00E-10,M,2,1.00E-06,M,107.49,1,,1,1,1308AC47,9411
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,747971,Sorafenib tosylate,1,1.00E-10,M,3,1.00E-05,M,14.313,1,,1,1,1308AC47,9410
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,747971,Sorafenib tosylate,2,1.00E-09,M,1,1.00E-07,M,105.436,1,,1,1,1308AC47,9412
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,747971,Sorafenib tosylate,2,1.00E-09,M,2,1.00E-06,M,105.799,1,,1,1,1308AC47,9411
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,747971,Sorafenib tosylate,2,1.00E-09,M,3,1.00E-05,M,14.367,1,,1,1,1308AC47,9410
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,747971,Sorafenib tosylate,3,1.00E-08,M,1,1.00E-07,M,80.804,1,,1,1,1308AC47,9412
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,747971,Sorafenib tosylate,3,1.00E-08,M,2,1.00E-06,M,80.376,1,,1,1,1308AC47,9411
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,747971,Sorafenib tosylate,3,1.00E-08,M,3,1.00E-05,M,13.825,1,,1,1,1308AC47,9410
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,747972,Lenalidomide,1,1.00E-10,M,1,1.00E-08,M,100.059,1,,1,1,1306AC00,2825
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,747972,Lenalidomide,1,1.00E-10,M,2,1.00E-07,M,103.057,1,,1,1,1306AC00,2824
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,747972,Lenalidomide,1,1.00E-10,M,3,1.00E-06,M,100.48,1,,1,1,1306AC00,2823
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,747972,Lenalidomide,2,1.00E-09,M,1,1.00E-08,M,103.357,1,,1,1,1306AC00,2825
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,747972,Lenalidomide,2,1.00E-09,M,2,1.00E-07,M,104.886,1,,1,1,1306AC00,2824
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,747972,Lenalidomide,2,1.00E-09,M,3,1.00E-06,M,98.307,1,,1,1,1306AC00,2823
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,747972,Lenalidomide,3,1.00E-08,M,1,1.00E-08,M,75.412,1,,1,1,1306AC00,2825
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,747972,Lenalidomide,3,1.00E-08,M,2,1.00E-07,M,78.029,1,,1,1,1306AC00,2824
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,747972,Lenalidomide,3,1.00E-08,M,3,1.00E-06,M,77.659,1,,1,1,1306AC00,2823
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,747973,Ixabepilone,1,1.00E-10,M,1,1.00E-12,M,101.308,1,,1,1,1309AC53,2379
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,747973,Ixabepilone,1,1.00E-10,M,2,1.00E-11,M,101.604,1,,1,1,1309AC53,2378
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,747973,Ixabepilone,1,1.00E-10,M,3,1.00E-10,M,99.269,1,,1,1,1309AC53,2377
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,747973,Ixabepilone,2,1.00E-09,M,1,1.00E-12,M,102.491,1,,1,1,1309AC53,2379
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,747973,Ixabepilone,2,1.00E-09,M,2,1.00E-11,M,103.764,1,,1,1,1309AC53,2378
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,747973,Ixabepilone,2,1.00E-09,M,3,1.00E-10,M,100.159,1,,1,1,1309AC53,2377
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,747973,Ixabepilone,3,1.00E-08,M,1,1.00E-12,M,64.061,1,,1,1,1309AC53,2379
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,747973,Ixabepilone,3,1.00E-08,M,2,1.00E-11,M,67.541,1,,1,1,1309AC53,2378
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,747973,Ixabepilone,3,1.00E-08,M,3,1.00E-10,M,63.943,1,,1,1,1309AC53,2377
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,747974,Raloxifene hydrochloride,1,1.00E-10,M,1,1.00E-10,M,102.407,1,,1,1,1309AC53,2376
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,747974,Raloxifene hydrochloride,1,1.00E-10,M,2,1.00E-09,M,98.818,1,,1,1,1309AC53,2375
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,747974,Raloxifene hydrochloride,1,1.00E-10,M,3,1.00E-08,M,95.598,1,,1,1,1309AC53,2374
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,747974,Raloxifene hydrochloride,2,1.00E-09,M,1,1.00E-10,M,100.404,1,,1,1,1309AC53,2376
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,747974,Raloxifene hydrochloride,2,1.00E-09,M,2,1.00E-09,M,98.507,1,,1,1,1309AC53,2375
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,747974,Raloxifene hydrochloride,2,1.00E-09,M,3,1.00E-08,M,97.308,1,,1,1,1309AC53,2374
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,747974,Raloxifene hydrochloride,3,1.00E-08,M,1,1.00E-10,M,66.491,1,,1,1,1309AC53,2376
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,747974,Raloxifene hydrochloride,3,1.00E-08,M,2,1.00E-09,M,73.779,1,,1,1,1309AC53,2375
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,747974,Raloxifene hydrochloride,3,1.00E-08,M,3,1.00E-08,M,62.445,1,,1,1,1309AC53,2374
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,749226,Abiraterone,1,1.00E-10,M,1,5.00E-08,M,100.615,1,,1,1,1308AC47,9423
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,749226,Abiraterone,1,1.00E-10,M,2,5.00E-07,M,102.212,1,,1,1,1308AC47,9422
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,749226,Abiraterone,1,1.00E-10,M,3,5.00E-06,M,90.829,1,,1,1,1308AC47,9421
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,749226,Abiraterone,2,1.00E-09,M,1,5.00E-08,M,97.635,1,,1,1,1308AC47,9423
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,749226,Abiraterone,2,1.00E-09,M,2,5.00E-07,M,99.649,1,,1,1,1308AC47,9422
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,749226,Abiraterone,2,1.00E-09,M,3,5.00E-06,M,87.267,1,,1,1,1308AC47,9421
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,749226,Abiraterone,3,1.00E-08,M,1,5.00E-08,M,84.074,1,,1,1,1308AC47,9423
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,749226,Abiraterone,3,1.00E-08,M,2,5.00E-07,M,87.456,1,,1,1,1308AC47,9422
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,749226,Abiraterone,3,1.00E-08,M,3,5.00E-06,M,66.863,1,,1,1,1308AC47,9421
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,750690,Sunitinib (free base),1,1.00E-10,M,1,1.00E-08,M,102.368,1,,1,1,1307AC39,1103
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,750690,Sunitinib (free base),1,1.00E-10,M,2,1.00E-07,M,100.227,1,,1,1,1307AC39,1102
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,750690,Sunitinib (free base),1,1.00E-10,M,3,1.00E-06,M,88.606,1,,1,1,1307AC39,1101
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,750690,Sunitinib (free base),2,1.00E-09,M,1,1.00E-08,M,103.936,1,,1,1,1307AC39,1103
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,750690,Sunitinib (free base),2,1.00E-09,M,2,1.00E-07,M,104.611,1,,1,1,1307AC39,1102
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,750690,Sunitinib (free base),2,1.00E-09,M,3,1.00E-06,M,91.753,1,,1,1,1307AC39,1101
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,750690,Sunitinib (free base),3,1.00E-08,M,1,1.00E-08,M,69.649,1,,1,1,1307AC39,1103
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,750690,Sunitinib (free base),3,1.00E-08,M,2,1.00E-07,M,72.441,1,,1,1,1307AC39,1102
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,750690,Sunitinib (free base),3,1.00E-08,M,3,1.00E-06,M,67.548,1,,1,1,1307AC39,1101
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,754143,Depsipeptide,1,1.00E-10,M,1,1.00E-09,M,100.427,1,,1,1,1307AC31,3573
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,754143,Depsipeptide,1,1.00E-10,M,2,1.00E-08,M,30.841,1,,1,1,1307AC31,3572
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,754143,Depsipeptide,1,1.00E-10,M,3,1.00E-07,M,14.406,1,,1,1,1307AC31,3571
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,754143,Depsipeptide,2,1.00E-09,M,1,1.00E-09,M,103.942,1,,1,1,1307AC31,3573
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,754143,Depsipeptide,2,1.00E-09,M,2,1.00E-08,M,29.601,1,,1,1,1307AC31,3572
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,754143,Depsipeptide,2,1.00E-09,M,3,1.00E-07,M,13.236,1,,1,1,1307AC31,3571
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,754143,Depsipeptide,3,1.00E-08,M,1,1.00E-09,M,82.849,1,,1,1,1307AC31,3573
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,754143,Depsipeptide,3,1.00E-08,M,2,1.00E-08,M,4.727,1,,1,1,1307AC31,3572
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,754143,Depsipeptide,3,1.00E-08,M,3,1.00E-07,M,-18.592,1,,1,1,1307AC31,3571
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,754230,pralatrexate,1,1.00E-10,M,1,1.00E-09,M,84.96,1,,1,1,1307AC31,3576
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,754230,pralatrexate,1,1.00E-10,M,2,1.00E-08,M,19.379,1,,1,1,1307AC31,3575
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,754230,pralatrexate,1,1.00E-10,M,3,1.00E-07,M,14.471,1,,1,1,1307AC31,3574
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,754230,pralatrexate,2,1.00E-09,M,1,1.00E-09,M,86.266,1,,1,1,1307AC31,3576
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,754230,pralatrexate,2,1.00E-09,M,2,1.00E-08,M,18.06,1,,1,1,1307AC31,3575
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,754230,pralatrexate,2,1.00E-09,M,3,1.00E-07,M,13.277,1,,1,1,1307AC31,3574
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,754230,pralatrexate,3,1.00E-08,M,1,1.00E-09,M,80.1,1,,1,1,1307AC31,3576
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,754230,pralatrexate,3,1.00E-08,M,2,1.00E-08,M,19.172,1,,1,1,1307AC31,3575
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,754230,pralatrexate,3,1.00E-08,M,3,1.00E-07,M,15.283,1,,1,1,1307AC31,3574
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,755986,Vismodegib,1,1.00E-10,M,1,3.00E-07,M,100.77,1,,1,1,1308AC47,9426
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,755986,Vismodegib,1,1.00E-10,M,2,3.00E-06,M,100.014,1,,1,1,1308AC47,9425
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,755986,Vismodegib,1,1.00E-10,M,3,3.00E-05,M,98.217,1,,1,1,1308AC47,9424
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,755986,Vismodegib,2,1.00E-09,M,1,3.00E-07,M,95.712,1,,1,1,1308AC47,9426
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,755986,Vismodegib,2,1.00E-09,M,2,3.00E-06,M,101.446,1,,1,1,1308AC47,9425
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,755986,Vismodegib,2,1.00E-09,M,3,3.00E-05,M,94.116,1,,1,1,1308AC47,9424
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,755986,Vismodegib,3,1.00E-08,M,1,3.00E-07,M,84.799,1,,1,1,1308AC47,9426
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,755986,Vismodegib,3,1.00E-08,M,2,3.00E-06,M,84.093,1,,1,1,1308AC47,9425
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,755986,Vismodegib,3,1.00E-08,M,3,3.00E-05,M,77.096,1,,1,1,1308AC47,9424
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,756645,PF-2341066,1,1.00E-10,M,1,1.00E-08,M,106.131,1,,1,1,1308AC52,1868
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,756645,PF-2341066,1,1.00E-10,M,2,1.00E-07,M,101.413,1,,1,1,1308AC52,1867
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,756645,PF-2341066,1,1.00E-10,M,3,1.00E-06,M,103.825,1,,1,1,1308AC52,1866
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,756645,PF-2341066,2,1.00E-09,M,1,1.00E-08,M,100.201,1,,1,1,1308AC52,1868
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,756645,PF-2341066,2,1.00E-09,M,2,1.00E-07,M,99.269,1,,1,1,1308AC52,1867
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,756645,PF-2341066,2,1.00E-09,M,3,1.00E-06,M,104.289,1,,1,1,1308AC52,1866
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,756645,PF-2341066,3,1.00E-08,M,1,1.00E-08,M,74.037,1,,1,1,1308AC52,1868
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,756645,PF-2341066,3,1.00E-08,M,2,1.00E-07,M,81.858,1,,1,1,1308AC52,1867
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,756645,PF-2341066,3,1.00E-08,M,3,1.00E-06,M,70.918,1,,1,1,1308AC52,1866
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,757441,AG-013736,1,1.00E-10,M,1,1.00E-08,M,98.235,1,,1,1,1308AC52,1871
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,757441,AG-013736,1,1.00E-10,M,2,1.00E-07,M,96.531,1,,1,1,1308AC52,1870
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,757441,AG-013736,1,1.00E-10,M,3,1.00E-06,M,95.104,1,,1,1,1308AC52,1869
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,757441,AG-013736,2,1.00E-09,M,1,1.00E-08,M,100.577,1,,1,1,1308AC52,1871
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,757441,AG-013736,2,1.00E-09,M,2,1.00E-07,M,94.723,1,,1,1,1308AC52,1870
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,757441,AG-013736,2,1.00E-09,M,3,1.00E-06,M,99.366,1,,1,1,1308AC52,1869
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,757441,AG-013736,3,1.00E-08,M,1,1.00E-08,M,64.766,1,,1,1,1308AC52,1871
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,757441,AG-013736,3,1.00E-08,M,2,1.00E-07,M,77.528,1,,1,1,1308AC52,1870
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,757441,AG-013736,3,1.00E-08,M,3,1.00E-06,M,70.588,1,,1,1,1308AC52,1869
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,760766,Vandetanib,1,1.00E-10,M,1,2.00E-08,M,96.188,1,,1,1,1308AC52,1882
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,760766,Vandetanib,1,1.00E-10,M,2,2.00E-07,M,88.668,1,,1,1,1308AC52,1881
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,760766,Vandetanib,1,1.00E-10,M,3,2.00E-06,M,60.772,1,,1,1,1308AC52,1880
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,760766,Vandetanib,2,1.00E-09,M,1,2.00E-08,M,99.559,1,,1,1,1308AC52,1882
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,760766,Vandetanib,2,1.00E-09,M,2,2.00E-07,M,88.122,1,,1,1,1308AC52,1881
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,760766,Vandetanib,2,1.00E-09,M,3,2.00E-06,M,59.572,1,,1,1,1308AC52,1880
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,760766,Vandetanib,3,1.00E-08,M,1,2.00E-08,M,76.276,1,,1,1,1308AC52,1882
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,760766,Vandetanib,3,1.00E-08,M,2,2.00E-07,M,66.164,1,,1,1,1308AC52,1881
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,760766,Vandetanib,3,1.00E-08,M,3,2.00E-06,M,45.36,1,,1,1,1308AC52,1880
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,761432,Cabazitaxel,1,1.00E-10,M,1,1.00E-09,M,84.537,1,,1,1,1307AC42,2885
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,761432,Cabazitaxel,1,1.00E-10,M,2,1.00E-08,M,61.757,1,,1,1,1307AC42,2884
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,761432,Cabazitaxel,1,1.00E-10,M,3,1.00E-07,M,59.468,1,,1,1,1307AC42,2883
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,761432,Cabazitaxel,2,1.00E-09,M,1,1.00E-09,M,82.019,1,,1,1,1307AC42,2885
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,761432,Cabazitaxel,2,1.00E-09,M,2,1.00E-08,M,61.31,1,,1,1,1307AC42,2884
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,761432,Cabazitaxel,2,1.00E-09,M,3,1.00E-07,M,57.057,1,,1,1,1307AC42,2883
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,761432,Cabazitaxel,3,1.00E-08,M,1,1.00E-09,M,70.598,1,,1,1,1307AC42,2885
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,761432,Cabazitaxel,3,1.00E-08,M,2,1.00E-08,M,63.098,1,,1,1,1307AC42,2884
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,761432,Cabazitaxel,3,1.00E-08,M,3,1.00E-07,M,58.263,1,,1,1,1307AC42,2883
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,763371,,1,1.00E-10,M,1,1.00E-07,M,98.636,1,,1,1,1307AC39,1097
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,763371,,1,1.00E-10,M,2,1.00E-06,M,96.211,1,,1,1,1307AC39,1096
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,763371,,1,1.00E-10,M,3,1.00E-05,M,72.221,1,,1,1,1307AC39,1095
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,763371,,2,1.00E-09,M,1,1.00E-07,M,100.148,1,,1,1,1307AC39,1097
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,763371,,2,1.00E-09,M,2,1.00E-06,M,100.457,1,,1,1,1307AC39,1096
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,763371,,2,1.00E-09,M,3,1.00E-05,M,76.363,1,,1,1,1307AC39,1095
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,763371,,3,1.00E-08,M,1,1.00E-07,M,73.614,1,,1,1,1307AC39,1097
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,763371,,3,1.00E-08,M,2,1.00E-06,M,71.443,1,,1,1,1307AC39,1096
+1A,Renal Cancer,786-0,256439,Idarubicin hydrochloride,763371,,3,1.00E-08,M,3,1.00E-05,M,48.462,1,,1,1,1307AC39,1095
