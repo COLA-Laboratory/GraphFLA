@@ -5,6 +5,26 @@ returned statistic are marked, because downstream analyses depend on them.
 
 ## Unreleased
 
+### First-release API
+
+- Fixed-field analysis and walk results are plain dictionaries. Use
+  `classify_epistasis(...)["magnitude"]`,
+  `extradimensional_bypass(...)["bypass_proportion"]`,
+  `walsh_hadamard(...)["coefficients"]`, and `walker.run(start)["path"]`.
+  The result classes and their exports are removed. Walsh's constant row is
+  labeled `intercept` and denotes the uniform product-space mean.
+- `profile(landscape, *, metrics=None, params=None, seed=None, n_jobs=-1,
+  progress=None)` accepts group names and function names through one selector.
+  Its docstring lists every choice. Per-metric settings use `params`; a failed
+  computation warns and returns NaN. Progress uses the common library display.
+- EE exposes `evolvability_enhancing_fraction` and `evolvability_effects`.
+  Obsolete wrappers, aliases and their extra threshold/cache options are removed.
+  GraphML configurations are reconstructed from saved feature columns and
+  current metadata; obsolete serialized-configuration fallbacks are removed.
+- Random walks include an isolated starting node in their returned path and
+  reject nonpositive lengths. Both walk methods return `path`, `final` and
+  `n_steps` in the result dictionary.
+
 ### Synthetic problem APIs and performance
 
 - All eight concrete problem classes and their base class now document input
@@ -64,9 +84,8 @@ returned statistic are marked, because downstream analyses depend on them.
 
 ### Changed — integrated epistasis order analysis
 
-- `walsh_hadamard` now returns a sklearn `Bunch` with `.coefficients`,
-  `.order_summary` and `.fit_info`. Existing DataFrame consumers should use
-  `.coefficients`. One design is shared by all nested orders; the highest-order
+- `walsh_hadamard` returns a dictionary with `coefficients`, `order_summary`
+  and `fit_info`. One design is shared by all nested orders; the highest-order
   solution is reused. Tall OLS problems share an augmented QR compression.
 - The order summary reports cumulative training `r2`, additional `delta_r2`,
   RMSE, model dimensions/rank and per-fit alpha. It separately reports the
@@ -76,8 +95,8 @@ returned statistic are marked, because downstream analyses depend on them.
   gives NaN R-squared/increments; negative Lasso increments are preserved.
 - `higher_order_epistasis` and its module have been removed, including their
   public exports, benchmark entry and `profile()` / `list_metrics()` entry.
-  Use `walsh_hadamard(landscape, max_order=k).order_summary`; read an existing
-  result's `.order_summary` directly. No compatibility alias remains. The
+  Use `walsh_hadamard(landscape, max_order=k)["order_summary"]`; read an existing
+  result's `["order_summary"]` directly. No compatibility alias remains. The
   score-only fitting branch has also been removed; nonidentifiable OLS fits
   raise, and regularization requires explicit `method="lasso"`.
   See `validation/EPISTASIS_ORDER_REVIEW.md`.
@@ -90,7 +109,7 @@ returned statistic are marked, because downstream analyses depend on them.
   longer collide with the internal encoding. Corrected labels may change joins.
 - Default OLS now raises `ValueError` when coefficients cannot be uniquely
   fitted. Incomplete data remains supported when the chosen design has full
-  column rank. `max_order=0` fits only a constant; the legacy `WT` row denotes
+  column rank. `max_order=0` fits only a constant; the `intercept` row denotes
   the model's uniform product-space mean, not reference fitness.
 - Explicit `method="lasso"` supports a positive `alpha` or `alpha="cv"`, with
   `cv`, `random_state`, `max_iter` and `tol` controls. The constant is unpenalized
@@ -127,18 +146,12 @@ returned statistic are marked, because downstream analyses depend on them.
 - `evolvability_effects(landscape, *, fdr=0.01)` returns one row per directed
   mutation, including original position/allele labels, raw and BH adjusted
   p-values, and nullable EE decisions for insufficient neighborhoods.
-- `evolvability_enhancing_mutations` remains available with a FutureWarning
-  and its legacy `epsilon`/`auto_calculate` behavior. New entry points neither
-  require nor populate the unrestricted neighbor-fitness cache.
-- `profile()` and `list_metrics()` use the canonical scalar name and column.
-  The old name in include/exclude or parameter keys warns and resolves to the
-  new name; including both names computes EE once. Legacy profile overrides
-  for `epsilon`/`auto_calculate` raise an explicit migration error instead of
-  being silently ignored. Use the old function directly for those options.
+- `profile()` and `list_metrics()` use `evolvability_enhancing_fraction`.
+  These functions do not populate the unrestricted neighbor-fitness cache.
 
 ### Changed — affects returned values
 
-- `evolvability_enhancing_mutations` now excludes the focal site, tests
+- `evolvability_enhancing_fraction` excludes the focal site, tests
   `delta_mean > max(0, delta_fitness)` with two-sided t tests and BH FDR 0.01,
   and counts both mutation directions over represented ordered neighbor pairs.
   Additive landscapes now return zero. The t-test variance uses both

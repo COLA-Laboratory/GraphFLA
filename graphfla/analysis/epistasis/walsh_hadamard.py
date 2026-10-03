@@ -1,6 +1,8 @@
 """Integrated Walsh-Hadamard decomposition and order attribution."""
 
-from sklearn.utils import Bunch
+from typing import Dict, Union
+
+import pandas as pd
 
 from ._walsh import _analyze
 
@@ -18,7 +20,7 @@ def walsh_hadamard(
     max_iter=10000,
     tol=1e-4,
     n_jobs=1,
-) -> Bunch:
+) -> Dict[str, Union[pd.DataFrame, dict]]:
     r"""Return fitted Walsh-Hadamard coefficients and contributions by order.
 
     Use the multistate Walsh-Hadamard representation of Faure et al. [1]_.
@@ -78,9 +80,9 @@ def walsh_hadamard(
 
     Returns
     -------
-    result : sklearn.utils.Bunch
-        Result with ``coefficients``, ``order_summary`` and ``fit_info``.
-        ``result.coefficients`` is a DataFrame sorted by ``(order, term)`` with:
+    result : dict
+        Dictionary with ``coefficients``, ``order_summary`` and ``fit_info``.
+        ``result["coefficients"]`` is a DataFrame sorted by ``(order, term)`` with:
 
         - ``order``: number of interacting variables.
         - ``positions``: tuple of one-based original feature positions.
@@ -89,9 +91,9 @@ def walsh_hadamard(
           percent-escaped; ordinary sequence labels are unchanged.
         - ``coefficient``: fitted effect in fitness units.
 
-        The order-zero row retains the legacy label ``WT``. It is the model's
+        The order-zero row is labeled ``intercept``. It is the model's
         uniform full-space mean, not the reference configuration's fitness.
-        ``result.order_summary`` has one row per order from zero through the
+        ``result["order_summary"]`` has one row per order from zero through the
         effective maximum, with columns:
 
         - ``order``: maximum order in the corresponding nested fit.
@@ -110,7 +112,7 @@ def walsh_hadamard(
         R-squared and its increments are NaN for constant fitness. Model
         variance fractions are NaN for a constant fitted model. Negative
         regularized R-squared increments are retained, not clipped.
-        ``result.fit_info`` records the estimator, dimensions, final rank and
+        ``result["fit_info"]`` records the estimator, dimensions, final rank and
         alpha, reference alleles, original column names and scoring conventions.
         The same metadata is attached to both tables; save it separately when
         exporting to formats such as CSV.
@@ -163,13 +165,13 @@ def walsh_hadamard(
     ...     ["00", "01", "10", "11"], [10., 13., 12., 20.], verbose=False
     ... )
     >>> result = walsh_hadamard(landscape)
-    >>> coefficients = result.coefficients
+    >>> coefficients = result["coefficients"]
     >>> round(float(coefficients.set_index("term").loc["0_1_1-0_2_1", "coefficient"]), 6)
     5.0
     >>> regularized = walsh_hadamard(landscape, method="lasso", alpha=0.1)
-    >>> regularized.fit_info["alpha"]
+    >>> regularized["fit_info"]["alpha"]
     0.1
-    >>> result.order_summary.order.tolist()
+    >>> result["order_summary"].order.tolist()
     [0, 1, 2]
     """
     return _analyze(

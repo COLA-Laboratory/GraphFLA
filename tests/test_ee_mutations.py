@@ -7,7 +7,7 @@ import pandas as pd
 import pytest
 
 from graphfla.analysis import (
-    evolvability_enhancing_mutations, evolvability_enhancing_fraction,
+    evolvability_enhancing_fraction,
     evolvability_effects,
 )
 from graphfla.analysis._evolvability import (
@@ -65,8 +65,6 @@ def test_strict_excess_and_epsilon_are_not_pvalues():
     X, f, pairs = two_stars(effect=100)
     assert not _ee_statistics(X, f, pairs).ee.any()
     X, f, pairs = two_stars(effect=1)
-    assert _ee_statistics(X, f, pairs, epsilon=98).ee.sum() == 1
-    assert _ee_statistics(X, f, pairs, epsilon=99).ee.sum() == 0
 
 
 def test_exclude_entire_multiallelic_site():
@@ -145,13 +143,6 @@ def test_scale_offset_minimize_permutation_and_cache_independence():
     assert table.ee.sum() == 1 and len(table) == 26
 
 
-@pytest.mark.parametrize("epsilon", [-1, np.inf, np.nan, "bad", 1j, True, [0]])
-def test_invalid_epsilon(epsilon):
-    X, f, _ = two_stars()
-    ls = BooleanLandscape().build_from_data(X, f, epsilon=.001, verbose=False)
-    with pytest.warns(FutureWarning), pytest.raises(ValueError, match="epsilon"):
-        evolvability_enhancing_mutations(ls, epsilon=epsilon)
-
 
 def test_invalid_inputs():
     X, f, pairs = two_stars()
@@ -170,7 +161,7 @@ def test_invalid_inputs():
     ls = BooleanLandscape().build_from_data(X, f, epsilon=.001, verbose=False)
     ls.data_types = None
     with pytest.raises(ValueError, match="Configuration columns"):
-        _landscape_ee_statistics(ls, 0)
+        _landscape_ee_statistics(ls)
 
 
 def test_no_neighbor_pairs():
@@ -252,18 +243,6 @@ def test_labels_join_to_nonbiological_configuration_data_and_empty_schema():
     with pytest.warns(RuntimeWarning, match="No testable EE"):
         assert np.isnan(evolvability_enhancing_fraction(ls))
 
-
-def test_legacy_parameters_keep_their_behavior_with_migration_warning():
-    X, f, _ = two_stars()
-    ls = BooleanLandscape().build_from_data(X, f, epsilon=.001, verbose=False)
-    with pytest.warns(FutureWarning), pytest.raises(RuntimeError, match="haven't been calculated"):
-        evolvability_enhancing_mutations(ls, auto_calculate=False)
-    with pytest.warns(FutureWarning, match="evolvability_enhancing_fraction"):
-        old = evolvability_enhancing_mutations(ls)
-    assert old == evolvability_enhancing_fraction(ls)
-    assert "delta_mean_neighbor_fit" in ls.graph.es.attributes()
-    with pytest.warns(FutureWarning):
-        assert evolvability_enhancing_mutations(ls, epsilon=99, auto_calculate=False) == 0
 
 
 @pytest.mark.parametrize("function", [evolvability_enhancing_fraction, evolvability_effects])

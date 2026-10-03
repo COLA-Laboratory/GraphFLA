@@ -102,13 +102,13 @@ def test_motif_identity_only_for_same_tie_free_population():
     tied = build([0, 0, 1, 2])
     motifs = A.classify_epistasis(tied, sample_cut_prob=0)
     assert A.gamma_star(tied, n_jobs=1) == pytest.approx(2 / 3)
-    assert 1 - motifs.sign - 2 * motifs.reciprocal_sign == 1
+    assert 1 - motifs['sign'] - 2 * motifs['reciprocal_sign'] == 1
     variants = list(product([0, 1], repeat=4))
     fitness = np.random.default_rng(1).permutation(16)
     landscape = build(fitness, variants)
     motifs = A.classify_epistasis(landscape, sample_cut_prob=0)
     assert A.gamma_star(landscape, n_jobs=1) == pytest.approx(
-        1 - motifs.sign - 2 * motifs.reciprocal_sign
+        1 - motifs['sign'] - 2 * motifs['reciprocal_sign']
     )
 
 
@@ -235,7 +235,7 @@ def test_relabeling_reordering_affine_units_and_profile(metric):
     assert type(actual) is float
     assert actual == pytest.approx(expected)
     result = A.profile(
-        after, include=[metric.__name__], params={metric.__name__: {"n_jobs": 1}}
+        after, metrics=[metric.__name__], params={metric.__name__: {"n_jobs": 1}}
     )
     assert list(result.index) == [metric.__name__]
     assert result.iloc[0] == actual

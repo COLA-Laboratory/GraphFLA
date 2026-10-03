@@ -147,11 +147,11 @@ def worker(args):
             scores = (
                 table.attrs["order_r2"]
                 if isinstance(table, pd.DataFrame)
-                else table.order_summary.r2.to_numpy()
+                else table['order_summary'].r2.to_numpy()
             )
             extra["r2"] = np.asarray(scores, dtype=float)
         if not isinstance(table, pd.DataFrame):
-            table = table.coefficients
+            table = table['coefficients']
         if (
             module is not None
             and landscape.kind != "boolean"
@@ -175,6 +175,10 @@ def worker(args):
                 return "-".join(parts)
 
             table["term"] = table.term.map(decode)
+        if module is not None:
+            # Compare the constant coefficient under one label across source snapshots.
+            table = table.copy()
+            table.loc[table["order"] == 0, "term"] = "intercept"
         table = table.sort_values(["order", "term"])
         np.savez_compressed(
             args.snapshot,

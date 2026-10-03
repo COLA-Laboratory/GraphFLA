@@ -160,9 +160,9 @@ Its row count is the scalar denominator. No cache preparation is required.
 FDR is validated as finite and strictly between zero and one. Tests compare
 several FDR settings with the independent oracle, ensure scalar/table agreement
 for every effect class, and exercise nonbiological categorical labels. The
-default results above are unchanged. `profile()` registers only the new scalar
-name; old selectors resolve with a warning and cannot cause duplicate EE work.
-The old direct function retains its legacy parameters with a FutureWarning.
+default results above are unchanged. `profile()` registers only
+`evolvability_enhancing_fraction`. The public interfaces are the scalar and table
+functions listed above.
 
 The public algorithm is the same for biological and nonbiological landscapes.
 Neighbor heterogeneity and repeated-measurement noise are distinct statistical

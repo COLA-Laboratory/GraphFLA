@@ -352,9 +352,7 @@ class Landscape(_IOMixin, _BuildMixin):
         from which configurations could not be reconstructed).
 
         Note: a ``landscape.configs is None`` check materialises the ``Series``
-        if ``_configs_array`` is present; this matches the previous eager
-        attribute (which was always present) and is intended -- every caller that
-        performs such a check goes on to use the configurations.
+        if ``_configs_array`` is present.
         """
         if self._configs is not None:
             return self._configs

@@ -105,39 +105,28 @@ def extract(e, seed=0):
     # --- classify + bypass ---
     def _classify():
         c = classify_epistasis(ls)
-        # Translate the EpistasisClassification dataclass back to the frozen
+        # Map result keys to the frozen
         # golden key labels (values unchanged).
         return {
-            "magnitude epistasis": c.magnitude,
-            "sign epistasis": c.sign,
-            "reciprocal sign epistasis": c.reciprocal_sign,
-            "positive epistasis": c.positive,
-            "negative epistasis": c.negative,
+            "magnitude epistasis": c['magnitude'],
+            "sign epistasis": c['sign'],
+            "reciprocal sign epistasis": c['reciprocal_sign'],
+            "positive epistasis": c['positive'],
+            "negative epistasis": c['negative'],
         }
 
     _try(out, "classify", _classify)
-    def _bypass():
-        # extradimensional_bypass now returns an ExtradimensionalBypass dataclass;
-        # translate back to the frozen dict labels (values unchanged).
-        b = extradimensional_bypass(ls)
-        return {
-            "bypass_proportion": b.bypass_proportion,
-            "average_bypass_length": b.average_bypass_length,
-            "total_motifs": b.total_motifs,
-            "motifs_with_bypass": b.motifs_with_bypass,
-        }
-
-    _try(out, "bypass", _bypass)
+    _try(out, "bypass", lambda: extradimensional_bypass(ls))
     # Preserve the frozen order-score keys while using the canonical W-H API.
     def order_scores():
-        summary = walsh_hadamard(ls, max_order=min(3, ls.n_vars)).order_summary
+        summary = walsh_hadamard(ls, max_order=min(3, ls.n_vars))['order_summary']
         return {str(row.order): row.r2 for row in summary.itertuples() if row.order}
 
     _try(out, "higher_order", order_scores)
     if e["kind"] == "boolean":
         def walsh_maxabs():
             with contextlib.redirect_stdout(io.StringIO()):
-                c = walsh_hadamard(ls, max_order=2).coefficients
+                c = walsh_hadamard(ls, max_order=2)['coefficients']
             out = {}
             for o in (0, 1, 2):
                 col = c.loc[c["order"] == o, "coefficient"]

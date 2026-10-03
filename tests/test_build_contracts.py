@@ -436,3 +436,37 @@ def test_fitness_arithmetic_is_independent_of_input_dtype(
 def test_complex_fitness_is_rejected():
     with pytest.raises(ValueError, match="real"):
         BooleanLandscape().build_from_data(["0", "1"], [1 + 2j, 3 + 4j], verbose=False)
+
+
+def test_graphml_uses_current_configuration_metadata(tmp_path):
+    import igraph as ig
+
+    landscape = BooleanLandscape().build_from_data(
+        ['00', '01', '10', '11'], [0, 1, 2, 4], verbose=False,
+    )
+    path = str(tmp_path / 'current.graphml')
+    landscape.to_graph(path)
+    saved = ig.Graph.Read_GraphML(path)
+    assert {'data_types_data', 'landscape_type', 'landscape_kind'} <= set(saved.attributes())
+    assert not {'configs_data', 'config_dict_data', 'landscape_class'} & set(saved.attributes())
+    restored = Landscape.build_from_graph(path, verbose=False)
+    np.testing.assert_array_equal(restored._configs_array, landscape._configs_array)
+    assert restored.config_dict == landscape.config_dict
+    assert restored.bit_length == 2
+
+
+def test_graphml_does_not_reconstruct_obsolete_configuration_fields(tmp_path):
+    import igraph as ig
+
+    graph = ig.Graph(n=2, edges=[(0, 1)], directed=True)
+    graph.vs['fitness'] = [0.0, 1.0]
+    graph['maximize'] = True
+    graph['configs_data'] = "{'0': '(0,)', '1': '(1,)'}"
+    graph['config_dict_data'] = "{0: {0: 0, 1: 1}}"
+    graph['landscape_class'] = 'BooleanLandscape'
+    path = str(tmp_path / 'unsupported-metadata.graphml')
+    graph.write_graphml(path)
+    with pytest.warns(RuntimeWarning, match='No configs data'):
+        restored = Landscape.build_from_graph(path, verbose=False)
+    assert restored.configs is None and restored.config_dict is None
+    assert not hasattr(restored, 'bit_length')

@@ -1,4 +1,7 @@
-"""Tests for analysis.profile() and the classify/bypass auto sample_cut_prob."""
+"""Profile selection, dictionaries, and automatic motif sampling."""
+
+import inspect
+import importlib
 
 import numpy as np
 import pandas as pd
@@ -11,183 +14,206 @@ from graphfla.analysis.epistasis.motifs import (
     _motif_cost,
     _resolve_cut_prob,
 )
-
 from _landscapes import hoc_landscape, nk_landscape, onemax
 
 
-# --------------------------------------------------------------------------- #
-# profile() -- output shape & contents
-# --------------------------------------------------------------------------- #
-def test_profile_returns_float_series_with_expected_metrics():
-    s = profile(nk_landscape(6, 2, seed=0), seed=0)
-    assert isinstance(s, pd.Series)
-    assert s.dtype == float
-    for col in (
-        "gamma", "fdc", "neutrality", "evolvability_enhancing_fraction",
-        "fitness.skewness", "epistasis.magnitude", "bypass.proportion",
-    ):
-        assert col in s.index
+def test_profile_defaults_cover_the_documented_portfolio():
+    result = profile(nk_landscape(6, 2, seed=0), seed=0, progress=False)
+    table = list_metrics()
+    expected = [c.strip() for names in table["columns"] for c in names.split(",")]
+    assert isinstance(result, pd.Series) and result.dtype == float
+    assert result.index.tolist() == expected
+    assert len(table) == 21
+    # Keep the self-contained choices in the docstring in sync with the registry.
+    doc = inspect.getdoc(profile)
+    assert all(f"``{name}``" in doc for name in table.index)
+    assert all(f'``"{group}"``' in doc for group in table.group.unique())
 
 
-def test_profile_columns_match_registry():
-    s = profile(onemax(5), seed=0)
-    expected = set()
-    for cols in list_metrics()["columns"]:
-        expected.update(c.strip() for c in cols.split(","))
-    assert set(s.index) == expected
+def test_profile_selects_mixed_groups_and_metrics_once_in_input_order():
+    result = profile(onemax(4), metrics=["fdc", "ruggedness", "fdc"], seed=0)
+    assert result.index.tolist() == [
+        "fdc",
+        "local_optima_ratio",
+        "gradient_intensity",
+        "autocorrelation",
+        "r_s_ratio",
+    ]
+    assert profile(onemax(3), metrics="fdc").index.tolist() == ["fdc"]
+    assert profile(onemax(3), metrics=[]).empty
 
 
-# --------------------------------------------------------------------------- #
-# profile() -- selection semantics (groups XOR include, exclude composes)
-# --------------------------------------------------------------------------- #
-def test_profile_groups_restrict_to_group():
-    s = profile(nk_landscape(6, 2, seed=1), groups="epistasis", seed=0)
-    lm = list_metrics()
-    epi = set()
-    for cols in lm[lm["group"] == "epistasis"]["columns"]:
-        epi.update(c.strip() for c in cols.split(","))
-    assert set(s.index) == epi
+def test_profile_group_expands_dictionary_output_fields():
+    result = profile(onemax(4), metrics="epistasis", seed=0)
+    table = list_metrics().query("group == 'epistasis'")
+    expected = [c.strip() for names in table["columns"] for c in names.split(",")]
+    assert result.index.tolist() == expected
+    assert result["epistasis.magnitude"] == 1.0
 
 
-def test_profile_include_is_exact_set():
-    s = profile(onemax(5), include=["fdc", "gamma"], seed=0)
-    assert list(s.index) == ["fdc", "gamma"]
+@pytest.mark.parametrize(
+    "name",
+    [
+        "nope",
+        "epistasis.magnitude",
+        "walsh_hadamard",
+        "evolvability_enhancing_mutations",
+    ],
+)
+def test_profile_unknown_choices_are_rejected(name):
+    with pytest.raises(ValueError, match="Unknown metric or group"):
+        profile(onemax(3), metrics=name)
 
 
-def test_profile_exclude_composes_with_groups():
-    s = profile(
-        nk_landscape(6, 2, seed=2),
-        groups="epistasis",
-        exclude=["classify_epistasis", "extradimensional_bypass"],
-        seed=0,
+@pytest.mark.parametrize(
+    "kwargs",
+    [
+        {"include": ["fdc"]},
+        {"exclude": ["fdc"]},
+        {"groups": "epistasis"},
+        {"index": ["name"]},
+        {"include_structure": True},
+        {"time_budget": 2},
+        {"on_error": "raise"},
+    ],
+)
+def test_profile_has_no_obsolete_keyword_entry_points(kwargs):
+    with pytest.raises(TypeError, match="unexpected keyword"):
+        profile(onemax(3), **kwargs)
+
+
+def test_profile_metric_params_override_values_and_shared_controls():
+    landscape = hoc_landscape(5, seed=3)
+    result = profile(
+        landscape,
+        metrics=["neutrality", "autocorrelation"],
+        seed=1,
+        params={
+            "neutrality": {"threshold": 1e9},
+            "autocorrelation": {"seed": 7, "walk_times": 10},
+        },
     )
-    assert "gamma" in s.index
-    assert "epistasis.magnitude" not in s.index
-    assert "bypass.proportion" not in s.index
+    assert result["neutrality"] == 1.0
+    assert result["autocorrelation"] == A.autocorrelation(
+        landscape, seed=7, walk_times=10
+    )
+    exact = profile(
+        landscape,
+        metrics="classify_epistasis",
+        params={"classify_epistasis": {"sample_cut_prob": 0}},
+    )
+    assert (
+        exact["epistasis.sign"]
+        == A.classify_epistasis(landscape, sample_cut_prob=0)["sign"]
+    )
 
 
-def test_profile_groups_and_include_conflict():
-    with pytest.raises(ValueError):
-        profile(onemax(4), groups="epistasis", include=["fdc"])
+@pytest.mark.parametrize(
+    "params,error",
+    [
+        ([], TypeError),
+        ({"fdc": []}, TypeError),
+        ({"missing": {}}, ValueError),
+        ({"evolvability_enhancing_mutations": {}}, ValueError),
+        ({"evolvability_enhancing_fraction": {"epsilon": 0}}, ValueError),
+        ({"fdc": {"typo": 2}}, ValueError),
+    ],
+)
+def test_profile_settings_fail_early(params, error):
+    with pytest.raises(error):
+        profile(onemax(3), metrics="fdc", params=params)
 
 
-@pytest.mark.parametrize("kw", [{"groups": "nope"}, {"include": ["nope"]}, {"exclude": ["nope"]}])
-def test_profile_unknown_names_raise(kw):
-    with pytest.raises(ValueError):
-        profile(onemax(4), **kw)
-
-
-# --------------------------------------------------------------------------- #
-# profile() -- params, error handling, structure, multi-landscape
-# --------------------------------------------------------------------------- #
-def test_profile_params_override_changes_value():
-    ls = hoc_landscape(6, seed=3)
-    base = profile(ls, include=["neutrality"])["neutrality"]
-    wide = profile(ls, include=["neutrality"], params={"neutrality": {"threshold": 1e9}})
-    assert wide["neutrality"] != base  # a huge threshold makes ~everything neutral
-
-
-def test_profile_on_error_warn_isolates_failure():
-    with pytest.warns(UserWarning):
-        s = profile(
-            onemax(5), include=["gamma", "fdc"],
-            params={"gamma": {"n_jobs": "bad"}}, on_error="warn",
+def test_profile_warns_and_continues_after_a_metric_failure():
+    with pytest.warns(UserWarning, match="metric 'gamma' failed"):
+        result = profile(
+            onemax(4), metrics=["gamma", "fdc"], params={"gamma": {"n_jobs": "bad"}}
         )
-    assert np.isnan(s["gamma"])
-    assert np.isfinite(s["fdc"])
+    assert np.isnan(result["gamma"]) and np.isfinite(result["fdc"])
 
 
-def test_profile_on_error_raise_propagates():
-    with pytest.raises(Exception):
-        profile(
-            onemax(5), include=["gamma"],
-            params={"gamma": {"n_jobs": "bad"}}, on_error="raise",
-        )
+def test_profile_multiple_and_empty_landscapes_have_stable_columns():
+    landscapes = [onemax(3), hoc_landscape(3, seed=1)]
+    result = profile(landscapes, metrics=["fdc", "gamma"], seed=0)
+    assert isinstance(result, pd.DataFrame)
+    assert result.index.tolist() == [0, 1]
+    assert result.columns.tolist() == ["fdc", "gamma"]
+    pd.testing.assert_series_equal(
+        result.iloc[0],
+        profile(landscapes[0], metrics=["fdc", "gamma"], seed=0),
+        check_names=False,
+    )
+    empty = profile([], metrics=["fdc", "gamma"])
+    assert empty.empty and empty.columns.tolist() == ["fdc", "gamma"]
 
 
-def test_profile_bad_on_error_rejected():
-    with pytest.raises(ValueError):
-        profile(onemax(4), on_error="boom")
+def test_progress_does_not_change_results_or_landscape_verbosity(capsys):
+    landscape = onemax(3)
+    original_verbose = landscape.verbose
+    quiet = profile(landscape, metrics=["fdc", "gamma"], progress=False)
+    shown = profile(landscape, metrics=["fdc", "gamma"], progress=True)
+    pd.testing.assert_series_equal(quiet, shown)
+    assert landscape.verbose == original_verbose
+    assert capsys.readouterr().out == ""
 
 
-def test_profile_multiple_landscapes_dataframe():
-    lss = [onemax(4), hoc_landscape(4, seed=1), nk_landscape(4, 1, seed=2)]
-    df = profile(lss, index=["a", "b", "c"], include=["fdc", "gamma"], seed=0)
-    assert isinstance(df, pd.DataFrame)
-    assert list(df.index) == ["a", "b", "c"]
-    assert list(df.columns) == ["fdc", "gamma"]
+def test_epistasis_results_are_plain_dictionaries():
+    landscape = onemax(3)
+    classification = A.classify_epistasis(landscape, sample_cut_prob=0)
+    assert type(classification) is dict
+    assert set(classification) == {
+        "magnitude",
+        "sign",
+        "reciprocal_sign",
+        "positive",
+        "negative",
+    }
+    assert all(type(value) is float for value in classification.values())
+    bypass = A.extradimensional_bypass(landscape, sample_cut_prob=0)
+    assert type(bypass) is dict
+    assert set(bypass) == {
+        "bypass_proportion",
+        "average_bypass_length",
+        "total_motifs",
+        "motifs_with_bypass",
+    }
+    assert type(bypass["total_motifs"]) is int
+    assert np.isnan(bypass["average_bypass_length"])
 
 
-def test_profile_include_structure():
-    ls = onemax(5)
-    s = profile(ls, include=["fdc"], include_structure=True)
-    assert s["structure.n_configs"] == ls.n_configs
+def test_removed_results_and_ee_wrapper_are_absent():
+    for module_name, names in [
+        (
+            "graphfla.analysis",
+            [
+                "EpistasisClassification",
+                "ExtradimensionalBypass",
+                "evolvability_enhancing_mutations",
+                "higher_order_epistasis",
+            ],
+        ),
+        (
+            "graphfla.analysis.epistasis",
+            ["EpistasisClassification", "ExtradimensionalBypass"],
+        ),
+        (
+            "graphfla.analysis.epistasis.motifs",
+            ["EpistasisClassification", "ExtradimensionalBypass"],
+        ),
+        ("graphfla.analysis.robustness", ["evolvability_enhancing_mutations"]),
+        ("graphfla.algorithms", ["WalkResult"]),
+        ("graphfla.algorithms.walk", ["WalkResult"]),
+    ]:
+        module = importlib.import_module(module_name)
+        assert all(not hasattr(module, name) for name in names)
 
 
-def test_list_metrics_shape():
-    lm = list_metrics()
-    assert len(lm) == 21
-    assert {"group", "kind", "columns", "n_jobs", "seed", "time_budget"}.issubset(lm.columns)
-    assert lm.loc["classify_epistasis", "time_budget"]
-    assert lm.loc["autocorrelation", "seed"]
-
-
-def test_removed_higher_order_api_is_not_exported_or_registered():
-    import importlib.util
-
-    from graphfla.analysis import epistasis
-
-    name = "higher_order_epistasis"
-    assert not hasattr(A, name) and name not in A.__all__
-    assert not hasattr(epistasis, name) and name not in epistasis.__all__
-    assert importlib.util.find_spec("graphfla.analysis.epistasis.higher_order") is None
-    assert name not in list_metrics().index
-    assert name not in profile(onemax(3), groups="epistasis", seed=0).index
-    with pytest.raises(ValueError, match="unknown"):
-        profile(onemax(3), include=[name])
-
-
-def test_profile_ee_parameters_and_single_canonical_registry_entry():
+def test_profile_ee_uses_current_parameters():
+    landscape = hoc_landscape(4, seed=2)
     name = "evolvability_enhancing_fraction"
-    ls = hoc_landscape(4, seed=2)
-    options = {"fdr": .9, "effect_type": "beneficial"}
-    result = profile(ls, include=name, params={name: options}, on_error="raise")
-    assert result[name] == A.evolvability_enhancing_fraction(ls, **options)
-    metrics = list_metrics()
-    assert name in metrics.index
-    assert "evolvability_enhancing_mutations" not in metrics.index
-    assert "evolvability_effects" not in metrics.index
-
-
-def test_profile_ee_legacy_selection_uses_one_canonical_column(monkeypatch):
-    import graphfla.analysis.robustness as robustness
-    original = robustness._landscape_ee_statistics
-    calls = []
-
-    def counted(*args, **kwargs):
-        calls.append(1)
-        return original(*args, **kwargs)
-
-    monkeypatch.setattr(robustness, "_landscape_ee_statistics", counted)
-    old, new = "evolvability_enhancing_mutations", "evolvability_enhancing_fraction"
-    with pytest.warns(FutureWarning, match="new name"):
-        result = profile(onemax(4), include=[old, new], on_error="raise")
-    assert result.index.tolist() == [new] and len(calls) == 1
-    with pytest.warns(FutureWarning):
-        excluded = profile(onemax(4), groups="robustness", exclude=old)
-    assert excluded.index.tolist() == ["neutrality"]
-    with pytest.warns(FutureWarning):
-        renamed = profile(onemax(4), include=new, params={old: {"fdr": .02}})
-    assert renamed.index.tolist() == [new]
-
-
-def test_profile_does_not_silently_ignore_legacy_ee_parameters():
-    old, new = "evolvability_enhancing_mutations", "evolvability_enhancing_fraction"
-    ls = onemax(4)
-    with pytest.raises(ValueError, match="legacy epsilon"):
-        profile(ls, include=new, params={old: {"epsilon": .1}})
-    with pytest.raises(ValueError, match="only one metric name"):
-        profile(ls, include=new, params={old: {}, new: {}})
+    options = {"fdr": 0.9, "effect_type": "beneficial"}
+    result = profile(landscape, metrics=name, params={name: options})
+    assert result[name] == A.evolvability_enhancing_fraction(landscape, **options)
 
 
 # --------------------------------------------------------------------------- #
@@ -213,12 +239,12 @@ def test_classify_invalid_cut_prob(bad):
 
 def test_bypass_auto_small_equals_exact():
     ls = nk_landscape(6, 2, seed=1)
-    a = A.extradimensional_bypass(ls)                       # auto -> exact on small
-    b = A.extradimensional_bypass(ls, sample_cut_prob=0)    # explicit exact
+    a = A.extradimensional_bypass(ls)  # auto -> exact on small
+    b = A.extradimensional_bypass(ls, sample_cut_prob=0)  # explicit exact
     # compare the deterministic fields (average_bypass_length may be NaN != NaN)
-    assert a.bypass_proportion == b.bypass_proportion
-    assert a.total_motifs == b.total_motifs
-    assert a.motifs_with_bypass == b.motifs_with_bypass
+    assert a["bypass_proportion"] == b["bypass_proportion"]
+    assert a["total_motifs"] == b["total_motifs"]
+    assert a["motifs_with_bypass"] == b["motifs_with_bypass"]
 
 
 # --------------------------------------------------------------------------- #
@@ -242,7 +268,7 @@ class _StubLS:
 
 def _ls_with_cost(P):
     # n=2 => P = 2*e**2 / 2 = e**2
-    return _StubLS(2, int(round(P ** 0.5)))
+    return _StubLS(2, int(round(P**0.5)))
 
 
 @pytest.mark.parametrize(
@@ -264,7 +290,7 @@ def test_auto_cut_prob_floor_warns_when_too_large():
 def test_auto_cut_prob_scales_with_time_budget():
     ls = _ls_with_cost(1e7)
     assert _auto_cut_prob(ls, 15.0) == 0.25  # tight budget -> more pruning
-    assert _auto_cut_prob(ls, 60.0) == 0.0   # generous budget -> exact
+    assert _auto_cut_prob(ls, 60.0) == 0.0  # generous budget -> exact
 
 
 def test_resolve_cut_prob_modes():

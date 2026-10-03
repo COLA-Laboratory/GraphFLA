@@ -36,7 +36,5 @@ METRIC_MODULES = {
     "single_mutation_effects": "single_mutation_effects",
     "walsh_hadamard": "walsh_hadamard",
 }
-EXCLUDED_METHODS = {
-    "evolvability_enhancing_mutations": "Deprecated EE compatibility wrapper; canonical EE benchmarks cover the shared calculation."
-}
+EXCLUDED_METHODS = {}
 METHODS = tuple(METRIC_MODULES)

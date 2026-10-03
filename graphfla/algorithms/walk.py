@@ -1,16 +1,10 @@
-"""Unified trajectory walks over a built landscape graph.
-
-All walks share one contract: construct a walker bound to a :class:`SearchCache`
-(plus walk-specific options), then call ``walker.run(start)`` to get a
-:class:`WalkResult`. Building the walker once and reusing it across a batch of
-start nodes keeps the per-node cost identical to the old free functions (the
-object is constructed per *walk batch*, never per *step*).
-"""
+"""Reusable graph walkers returning path and endpoint data as dictionaries."""
 
 from __future__ import annotations
 
 import random
-from typing import Optional
+from typing import Dict, Optional, Union
+from numbers import Integral
 
 import numpy as np
 
@@ -18,40 +12,6 @@ from ._search_cache import SearchCache
 from ..exceptions import InvalidParameterError
 
 _STRATEGIES = ("best-improvement", "first-improvement")
-
-
-class WalkResult:
-    """The outcome of a single walk.
-
-    Attributes
-    ----------
-    path : np.ndarray
-        Visited node ids, including the start node, in visitation order.
-
-    Notes
-    -----
-    A plain ``__slots__`` class (not a dataclass) because walks are constructed
-    in tight per-node batches and ``frozen`` dataclass ``__init__`` (which routes
-    every field through ``object.__setattr__``) shows up in those hot loops.
-    """
-
-    __slots__ = ("path",)
-
-    def __init__(self, path: np.ndarray):
-        self.path = path
-
-    @property
-    def final(self) -> int:
-        """The last node visited."""
-        return int(self.path[-1])
-
-    @property
-    def n_steps(self) -> int:
-        """Number of moves taken (``len(path) - 1``)."""
-        return int(len(self.path) - 1)
-
-    def __repr__(self) -> str:
-        return f"WalkResult(n_steps={self.n_steps}, final={self.final})"
 
 
 class Walk:
@@ -63,16 +23,17 @@ class Walk:
         Precomputed graph + hoisted fitness vector. Build once and reuse.
     seed : int, optional
         Seed for this walk's random choices. ``None`` (default) uses the global
-        ``random`` state, preserving the historical, unseeded behaviour.
+        ``random`` state.
     """
 
     def __init__(self, cache: SearchCache, *, seed: Optional[int] = None):
         self.cache = cache
-        # seed=None -> the process-global `random` module (historical behaviour);
-        # an explicit seed -> a private, reproducible generator.
+        # An explicit seed isolates the walk from process-global random state.
         self._rng = random.Random(seed) if seed is not None else random
 
-    def run(self, start: int) -> WalkResult:  # pragma: no cover - abstract
+    def run(
+        self, start: int
+    ) -> Dict[str, Union[np.ndarray, int]]:  # pragma: no cover - abstract
         raise NotImplementedError
 
     def _check_start(self, start: int) -> None:
@@ -111,8 +72,22 @@ class HillClimb(Walk):
             )
         self.strategy = strategy
 
-    def run(self, start: int) -> WalkResult:
-        """Climb to a local optimum, recording the full visited path."""
+    def run(self, start: int) -> Dict[str, Union[np.ndarray, int]]:
+        """Return the path to a local optimum and its endpoint.
+
+        Parameters
+        ----------
+        start : int
+            Zero-based index of the starting node.
+
+        Returns
+        -------
+        result : dict
+            ``path`` is an integer ndarray of visited node indices, including
+            start. ``final`` is the last node (int), and ``n_steps`` is the
+            number of edges traversed (int).
+        """
+        self._check_start(start)
         g = self.cache.graph
         fit_get = self.cache.fitness_list.__getitem__
         best = self.strategy == "best-improvement"
@@ -128,7 +103,11 @@ class HillClimb(Walk):
                 max(successors, key=fit_get) if best else self._rng.choice(successors)
             )
             path.append(current)
-        return WalkResult(np.asarray(path, dtype=np.int64))
+        return {
+            "path": np.asarray(path, dtype=np.int64),
+            "final": int(current),
+            "n_steps": len(path) - 1,
+        }
 
     def descend(self, start: int) -> tuple:
         """Endpoint-only climb returning ``(final_node, n_steps)``.
@@ -179,10 +158,31 @@ class RandomWalk(Walk):
         seed: Optional[int] = None,
     ):
         super().__init__(cache, seed=seed)
-        self.length = length
+        if (
+            isinstance(length, (bool, np.bool_))
+            or not isinstance(length, Integral)
+            or length < 1
+        ):
+            raise InvalidParameterError("length must be a positive integer.")
+        self.length = int(length)
         self.neutral_neighbors = neutral_neighbors
 
-    def run(self, start: int) -> WalkResult:
+    def run(self, start: int) -> Dict[str, Union[np.ndarray, int]]:
+        """Return a random path and its endpoint.
+
+        Parameters
+        ----------
+        start : int
+            Zero-based index of the starting node.
+
+        Returns
+        -------
+        result : dict
+            ``path`` is an integer ndarray containing at most length visited
+            nodes, including start. ``final`` is the last node (int), and
+            ``n_steps`` is the number of edges traversed (int). An isolated
+            start returns a one-node path with zero steps.
+        """
         self._check_start(start)
         g = self.cache.graph
         nodes = np.empty(self.length, dtype=np.int64)
@@ -193,8 +193,8 @@ class RandomWalk(Walk):
             neighbors = g.neighbors(node, mode="all")
             if self.neutral_neighbors and node in self.neutral_neighbors:
                 neighbors = list(set(neighbors) | set(self.neutral_neighbors[node]))
+            cnt += 1
             if not neighbors:
                 break
             node = self._rng.choice(neighbors)
-            cnt += 1
-        return WalkResult(nodes[:cnt])
+        return {"path": nodes[:cnt], "final": int(nodes[cnt - 1]), "n_steps": cnt - 1}

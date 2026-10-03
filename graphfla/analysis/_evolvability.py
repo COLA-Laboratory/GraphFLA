@@ -113,7 +113,7 @@ def _ee_pvalues(difference, variance, n):
 
 
 def _ee_statistics(
-    configs, fitness, pairs, *, fitness_variance=None, epsilon=0, fdr=0.01
+    configs, fitness, pairs, *, fitness_variance=None, fdr=0.01
 ):
     """Classify both orientations of represented, undirected one-site pairs.
 
@@ -159,7 +159,7 @@ def _ee_statistics(
     ])
     roundoff = 8 * np.finfo(float).eps * scale
     excess = delta_mean - np.maximum(0, delta_fitness)
-    ee = reject & (excess > epsilon + roundoff)
+    ee = reject & (excess > roundoff)
     return pd.DataFrame({
         "source": source, "target": target, "position": position,
         "delta_fitness": delta_fitness, "delta_neighbor_fitness": delta_mean,
@@ -173,7 +173,7 @@ def _ee_statistics(
     })
 
 
-def _landscape_ee_statistics(landscape, epsilon=0, *, fdr=0.01):
+def _landscape_ee_statistics(landscape, *, fdr=0.01):
     """Use graph relations, including retained neutral adjacency, exactly once."""
     data = landscape.get_data()
     if landscape.data_types is None:
@@ -188,7 +188,7 @@ def _landscape_ee_statistics(landscape, epsilon=0, *, fdr=0.01):
     pairs = {tuple(sorted(edge)) for edge in landscape.graph.get_edgelist()}
     for u, neighbors in (getattr(landscape, "_neutral_neighbors", None) or {}).items():
         pairs.update(tuple(sorted((u, v))) for v in neighbors)
-    statistics = _ee_statistics(configs, f, sorted(pairs), epsilon=epsilon, fdr=fdr)
+    statistics = _ee_statistics(configs, f, sorted(pairs), fdr=fdr)
     source = statistics["source"].to_numpy()
     target = statistics["target"].to_numpy()
     positions = statistics["position"].to_numpy()

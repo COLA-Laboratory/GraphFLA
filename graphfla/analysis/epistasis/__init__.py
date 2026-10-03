@@ -6,9 +6,7 @@ submodules; the public functions are re-exported here.
 
 from .motifs import (
     classify_epistasis,
-    EpistasisClassification,
     extradimensional_bypass,
-    ExtradimensionalBypass,
 )
 from .gamma import gamma, gamma_star
 from .idiosyncrasy import (
@@ -21,9 +19,7 @@ from .walsh_hadamard import walsh_hadamard
 
 __all__ = [
     "classify_epistasis",
-    "EpistasisClassification",
     "extradimensional_bypass",
-    "ExtradimensionalBypass",
     "gamma",
     "gamma_star",
     "idiosyncratic_index",

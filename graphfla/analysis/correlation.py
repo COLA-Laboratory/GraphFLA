@@ -221,8 +221,8 @@ def fitness_flattening_index(
     climber = HillClimb(cache)
     for i in data.index:
         result = climber.run(i)
-        trace = result.path
-        if len(trace) >= min_len and result.final == landscape.go_index:
+        trace = result['path']
+        if len(trace) >= min_len and result['final'] == landscape.go_index:
             fitnesses = fitness.loc[trace]
             ffi, _ = check_diminishing_differences(fitnesses, method)
             ffi_list.append(ffi)

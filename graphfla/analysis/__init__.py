@@ -29,13 +29,11 @@ from .robustness import (
     neutrality,
     single_mutation_effects,
     all_mutation_effects,
-    evolvability_enhancing_mutations,
     evolvability_enhancing_fraction,
     evolvability_effects,
 )
 from .epistasis import (
     classify_epistasis,
-    EpistasisClassification,
     idiosyncratic_index,
     global_idiosyncratic_index,
     diminishing_returns_index,
@@ -44,7 +42,6 @@ from .epistasis import (
     gamma_star,
     walsh_hadamard,
     extradimensional_bypass,
-    ExtradimensionalBypass,
 )
 from .profile import profile, list_metrics
 
@@ -59,7 +56,6 @@ __all__ = [
     "autocorrelation",
     "r_s_ratio",
     "gradient_intensity",
-    "evolvability_enhancing_mutations",
     "evolvability_enhancing_fraction",
     "evolvability_effects",
     "classify_epistasis",
@@ -71,8 +67,6 @@ __all__ = [
     "gamma_star",
     "walsh_hadamard",
     "extradimensional_bypass",
-    "EpistasisClassification",
-    "ExtradimensionalBypass",
     "global_optima_accessibility",
     "local_optima_accessibility",
     "mean_distance_to_local_optima",

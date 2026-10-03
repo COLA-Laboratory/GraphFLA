@@ -29,8 +29,8 @@ def test_higher_order_variance_is_invariant_to_fitness_units(scale, offset):
     landscape = BooleanLandscape().build_from_data(
         variants, scale * fitness + offset, verbose=False
     )
-    assert A.walsh_hadamard(landscape, max_order=1).order_summary.r2.iloc[-1] == pytest.approx(56 / 65)
-    assert A.walsh_hadamard(landscape, max_order=2).order_summary.r2.iloc[-1] == pytest.approx(1)
+    assert A.walsh_hadamard(landscape, max_order=1)['order_summary'].r2.iloc[-1] == pytest.approx(56 / 65)
+    assert A.walsh_hadamard(landscape, max_order=2)['order_summary'].r2.iloc[-1] == pytest.approx(1)
 
 
 @pytest.mark.parametrize("order", [1, 2, 3])
@@ -39,7 +39,7 @@ def test_higher_order_variance_from_orthogonal_components(order):
     z = 2 * variants - 1
     fitness = z[:, 0] + 2 * z[:, 0] * z[:, 1] + 3 * np.prod(z, axis=1)
     landscape = BooleanLandscape().build_from_data(variants, fitness, verbose=False)
-    assert A.walsh_hadamard(landscape, max_order=order).order_summary.r2.iloc[-1] == pytest.approx(
+    assert A.walsh_hadamard(landscape, max_order=order)['order_summary'].r2.iloc[-1] == pytest.approx(
         sum(i * i for i in range(1, order + 1)) / 14
     )
 
