@@ -44,7 +44,9 @@ jobs:
 
     - name: Smoke-test the EE benchmark only
       if: matrix.python-version == '3.13'
-      run: python -m asv run --python=same --quick --dry-run -b '^analysis.ee\.' --show-stderr
+      run: |
+        python -m asv machine --yes
+        python -m asv run --python=same --quick --dry-run -b '^analysis.ee\.' --show-stderr
 
     - name: Save coverage
       uses: actions/upload-artifact@v4

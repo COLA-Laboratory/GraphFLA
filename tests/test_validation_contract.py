@@ -1,6 +1,7 @@
 """Protect evidence identity, truthful result labels and resumable history."""
 
 import ast
+import hashlib
 import json
 from concurrent.futures import ThreadPoolExecutor
 from copy import deepcopy
@@ -11,6 +12,7 @@ import pytest
 from validation.contract import (
     ContractError,
     append_event,
+    file_digest,
     fingerprint,
     load_definitions,
     load_events,
@@ -25,6 +27,15 @@ from validation.contract import (
 )
 
 REPO = Path(__file__).resolve().parents[1]
+
+
+@pytest.mark.parametrize(
+    "payload", [b"", bytes(range(256)) * 8193], ids=["empty", "multi-chunk"]
+)
+def test_file_digest_matches_sha256(tmp_path, payload):
+    path = tmp_path / "artifact.bin"
+    path.write_bytes(payload)
+    assert file_digest(path) == hashlib.sha256(payload).hexdigest()
 
 
 @pytest.fixture
