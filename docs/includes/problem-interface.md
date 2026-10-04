@@ -1,5 +1,4 @@
-All problems inherit from a common [`OptimizationProblem`][graphfla.problems.OptimizationProblem] base class, so the calling pattern is uniform: instantiate, optionally call `evaluate(config)` on individual configurations, or call `get_data()` to enumerate all $2^n$ binary configurations and their fitnesses for downstream landscape construction.
+Every problem is a subclass of [`OptimizationProblem`][graphfla.problems.OptimizationProblem] and is used the same way. Create an instance, then call `evaluate(config)` for a single configuration, or `get_data()` to enumerate all $2^n$ binary configurations with their fitness values. The output of `get_data()` can be passed directly to `BooleanLandscape.build_from_data`. Higher fitness is better for every problem.
 
-!!! warning "Computational cost of `get_data()`"
-    `get_data()` enumerates every one of $2^n$ binary configurations. The output has $2^n$ rows — fine for $n \lesssim 20$, prohibitive much beyond that. For large `n`, evaluate individual configurations on demand with `evaluate()` instead.
-
+!!! warning "Cost of full enumeration"
+    `get_data()` returns $2^n$ rows, which is practical up to about $n = 20$. For larger $n$, evaluate configurations individually with `evaluate()`, or stream them with `iter_data()`.

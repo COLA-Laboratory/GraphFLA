@@ -1,5 +1,6 @@
 """Notebook rendering preserves saved evidence and never executes code on build."""
 
+import re
 import sys
 import tempfile
 import unittest
@@ -125,3 +126,24 @@ class NotebookRendering(unittest.TestCase):
         self.catalog["notebooks"][0]["data"] = []
         with self.assertRaisesRegex(ValueError, "data manifest"):
             add_tutorials(Files([]), self.config, self.catalog)
+
+
+class ColabSetup(unittest.TestCase):
+    def test_install_and_data_pins_match_the_package_version(self):
+        root = Path(__file__).resolve().parents[2]
+        version = re.search(
+            r'^__version__ = "([^"]+)"',
+            (root / "graphfla/__init__.py").read_text(),
+            re.M,
+        ).group(1)
+        for path in sorted((root / "tutorials/datasets").glob("*.ipynb")):
+            code = "\n".join(
+                c.source
+                for c in nbformat.read(path, as_version=4).cells
+                if c.cell_type == "code"
+            )
+            with self.subTest(notebook=path.name):
+                self.assertEqual(re.findall(r"graphfla==([\w.]+)", code), [version])
+                self.assertEqual(
+                    re.findall(r"/GraphFLA/v([\w.]+)/tutorials/", code), [version]
+                )
