@@ -45,9 +45,10 @@ function_links:
   evolvability_enhancing_fraction: analysis/robustness/#graphfla.analysis.robustness.evolvability_enhancing_fraction
 hero:
   title: Understand the *fitness landscape* of your optimization problem.
-  lede: 'A fitness landscape relates the candidates in a design space, such as protein variants or reaction conditions,
-    to their measured performance. GraphFLA builds this landscape from your data and quantifies its structure: how
-    many peaks it has, how strongly variables interact, and whether stepwise improvement can reach the best candidate.'
+  lede: A fitness landscape maps the candidates in a design space, such as protein variants or reaction conditions,
+    to their measured performance. GraphFLA builds this landscape from your data and characterizes its topography,
+    revealing what makes a problem easy or hard to model and to optimize. These insights help you develop better
+    predictive models and search algorithms.
   action:
     label: Get started
     href: '#start'
@@ -82,7 +83,7 @@ hero:
     href: datasets
 how:
   eyebrow: How it works
-  title: Build a landscape, then measure its topography.
+  title: Analyze fitness landscapes as graphs.
   catalogue:
     label: Browse the datasets
     href: datasets
@@ -368,10 +369,9 @@ how:
   demo_note: Illustrative data and profiles
 metrics:
   eyebrow: What you can measure
-  title: A holistic picture of your landscape's topography.
-  intro: GraphFLA provides more than 20 landscape features, each implemented from established studies in evolutionary
-    biology and optimization. They cover four complementary aspects of topography, so you can explore your problem
-    from every angle and understand it fully.
+  title: A holistic picture of your landscape, with 20+ features across four aspects.
+  intro: Each feature is implemented from established studies in evolutionary biology and optimization. Together
+    they let you explore your problem from complementary angles and understand it fully.
   cards:
   - title: Ruggedness
     question: Is the landscape smooth or rugged?
@@ -459,8 +459,8 @@ metrics:
 start:
   eyebrow: Quick start
   title: From raw data to landscape analysis in a few lines.
-  lede: Load your dataset, specify the variables and the objective, and build the landscape. The same steps apply
-    to laboratory measurements, simulations and model evaluations.
+  lede: Simply load your dataset, specify the variables and the objective, and build the landscape. The same steps
+    apply to laboratory measurements, simulations and model evaluations.
   links:
   - label: Try a worked tutorial
     href: tutorials
@@ -494,10 +494,9 @@ start:
       note: 20 amino acids
 performance:
   eyebrow: Performance
-  title: Scales to millions of candidates.
-  intro: Every stage of landscape construction has been optimized in detail, so GraphFLA handles datasets with millions
-    of entries on a single machine. The comparison below measures construction time and peak memory against a naive
-    implementation that compares all pairs of candidates.
+  title: Scales to millions of candidates on a single machine.
+  intro: Every stage of landscape construction has been optimized in detail. The comparison below measures construction
+    time and peak memory against a naive implementation that compares all pairs of candidates.
   headline:
     speedup: faster construction at {configurations} candidates
     memory_saved: lower peak memory on the same build
@@ -514,9 +513,6 @@ performance:
   x_title: candidates
   footnote: Complete binary landscapes with 8 to 20 variables. Apple M4 Pro, Python 3.9, single thread. Peak memory
     includes Python and its dependencies. The baseline is a nested Python loop with a dense distance matrix.
-  link:
-    label: Benchmark setup and all results
-    href: benchmarks
 cases:
   eyebrow: Case studies
   title: Applicable to any combinatorial optimization problem.
@@ -630,16 +626,16 @@ footer:
     href: pypi
 insights:
   eyebrow: Why landscape topography matters
-  title: Linking landscape topography to model performance and optimization outcomes.
-  intro: 'Landscape features can help explain why a predictive model or a search method works well on some problems
-    but not on others. The example below uses protein datasets: compare each feature with the accuracy of zero-shot
-    predictors and with the results of simulated directed evolution.'
+  title: Landscape features help interpret model performance and optimization outcomes.
+  intro: Landscape features help explain why a predictive model or a search method works well on some problems but
+    not on others. In the protein datasets below, compare each feature with the accuracy of zero-shot predictors
+    and with the results of simulated directed evolution.
   feature_label: Landscape feature
   publication_label: Read the study
   legend: Linear fit
   hint: Each point is a deep mutational scanning (DMS) dataset. Hover over or select a point to see its source study.
-  source_label: Data and sources
-  source_href: insights-sources/
+  source_label: Read more in our NeurIPS 2025 (Spotlight) paper
+  source_href: https://papers.neurips.cc/paper_files/paper/2025/hash/323fcf83a0f26c7c04eae0d91125d518-Abstract-Datasets_and_Benchmarks_Track.html
   charts:
     proteingym:
       title: Zero-shot prediction

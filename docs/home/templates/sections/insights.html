@@ -40,7 +40,7 @@
       </article>
     {% endfor %}
     </div>
-    <div class="gfl-insights__footer"><p>{{ insights.hint }}</p><a class="gfl-link" href="{{ insights.source_href | href }}">{{ insights.source_label }} {{ ui.arrow('') }}</a></div>
+    <div class="gfl-insights__footer"><p>{{ insights.hint }}</p>{{ ui.link({"label": insights.source_label, "href": insights.source_href}) }}</div>
   </div>
 </section>
 {% endif %}

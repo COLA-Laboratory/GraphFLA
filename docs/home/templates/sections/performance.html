@@ -15,7 +15,7 @@
     </div>
     <div class="gfl-performance__foot">
       <p class="gfl-note">{{ performance.footnote }}</p>
-      {{ ui.link(performance.link) }}
+      {% if performance.link is defined %}{{ ui.link(performance.link) }}{% endif %}
     </div>
   </div>
 </section>

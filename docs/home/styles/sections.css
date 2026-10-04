@@ -280,11 +280,17 @@
 }
 
 .gfl-metric__body {
+  flex: 1;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
   gap: var(--gfl-space-3);
   padding: var(--gfl-space-5) var(--gfl-space-6) var(--gfl-space-3);
+}
+
+/* Functions and link sit at the bottom, so they line up across cards of one row. */
+.gfl-metric__body .gfl-chips {
+  margin-top: auto;
 }
 
 .gfl-metric__question {

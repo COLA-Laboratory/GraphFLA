@@ -45,7 +45,7 @@
 }
 
 .gfl-section__intro {
-  flex: 0 1 380px;
+  flex: 0 1 520px;
   font-size: var(--gfl-text-md);
   color: var(--gfl-color-text-muted);
   text-wrap: pretty;
