@@ -1,7 +1,7 @@
 {% import "macros.html" as ui with context %}
+<h1 class="gfl-heading gfl-heading--1 gfl-hero__title">{{ hero.title | inline }}</h1>
 <div class="gfl-hero">
   <div class="gfl-hero__copy">
-    <h1 class="gfl-heading gfl-heading--1">{{ hero.title | inline }}</h1>
     <p class="gfl-lede">{{ hero.lede }}</p>
     <div class="gfl-actions">
       {{ ui.button(hero.action) }}

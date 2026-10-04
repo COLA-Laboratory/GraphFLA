@@ -57,12 +57,17 @@
 
 /* Hero ---------------------------------------------------------------------- */
 
+/* The title spans the full width so it stays short, above the copy and figure. */
+.gfl-hero__title {
+  padding-top: var(--gfl-space-14);
+}
+
 .gfl-hero {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
   gap: var(--gfl-space-10);
-  padding-block: var(--gfl-space-14) var(--gfl-space-12);
+  padding-block: var(--gfl-space-8) var(--gfl-space-12);
 }
 
 .gfl-hero__copy {
