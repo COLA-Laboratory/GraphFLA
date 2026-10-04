@@ -1,12 +1,11 @@
 """Assemble what the landing-page templates render: site copy joined with the data it describes."""
 import csv
 import json
-import math
 from html import escape
 from pathlib import Path
 
 import yaml
-from charts import Series, format_duration, line_chart
+from charts import Series, format_bytes, format_duration, line_chart
 from catalogue import inventory
 from insight_data import load_insights
 from markupsafe import Markup
@@ -102,42 +101,45 @@ def benchmark(spec):
     largest = rows[-1]
     columns = [f"{row['configurations']:,}" for row in rows]
 
-    def series(measure, scale=1):
-        return [Series(spec["series"][method], tuple(row[method][measure] / scale for row in rows),
+    def series(measure):
+        return [Series(spec["series"][method], tuple(row[method][measure] for row in rows),
                        emphasis=method == "graphfla") for method in ("naive", "graphfla")]
 
-    seconds, mebibytes = series("seconds"), series("peak_rss_bytes", 2 ** 20)
+    seconds, peak = series("seconds"), series("peak_rss_bytes")
     time, memory = spec["charts"]["time"], spec["charts"]["memory"]
     charts = [
         {**time, "svg": Markup(line_chart(
-            columns, seconds, _decade_ticks(seconds), format_duration, log=True, x_title=spec["x_title"],
-            title=f"{time['title']} against number of configurations, {time['unit']}"))},
+            columns, seconds, _ticks(seconds, TIME_TICKS), format_duration, log=True, x_title=spec["x_title"],
+            title=f"{time['title']} against number of {spec['x_title']}, {time['unit']}"))},
         {**memory, "svg": Markup(line_chart(
-            columns, mebibytes, _hundred_ticks(mebibytes), lambda value: f"{value:.0f}", x_title=spec["x_title"],
-            title=f"{memory['title']} in {memory['unit']} against number of configurations"))},
+            columns, peak, _ticks(peak, MEMORY_TICKS), format_bytes, log=True, x_title=spec["x_title"],
+            title=f"{memory['title']} against number of {spec['x_title']}, {memory['unit']}"))},
     ]
     stats = [
-        {"value": f"{largest['speedup']:.0f}×",
+        {"value": f"{largest['speedup']:,.0f}×",
          "label": spec["headline"]["speedup"].format(configurations=columns[-1])},
-        {"value": f"{largest['peak_rss_reduction']:.0%}", "label": spec["headline"]["memory_saved"]},
+        {"value": f"{largest['peak_rss_ratio']:,.0f}×", "label": spec["headline"]["memory_saved"]},
     ]
     legend = [{"swatch": "line", "tone": "accent", "label": spec["series"]["graphfla"]},
               {"swatch": "line", "tone": "data-mid", "label": spec["series"]["naive"]}]
     return {"stats": stats, "legend": legend, "charts": charts}
 
 
-def _decade_ticks(series):
-    """Powers of ten, in seconds, enclosing every value."""
+# Gridlines at readable units. Each chart spans its values plus one gridline below, which
+# keeps labels under the lowest points clear of the x axis.
+TIME_TICKS = [(1e-4, "0.1 ms"), (1e-3, "1 ms"), (1.0, "1 s"), (60.0, "1 min"), (3600.0, "1 h"), (86400.0, "1 day"),
+              (604800.0, "1 week")]
+MEMORY_TICKS = [(2.0 ** 20 * 10 ** k, f"{10 ** k} MiB") for k in (1, 2)] + [
+    (2.0 ** 30 * 10 ** k, f"{10 ** k} GiB") for k in range(3)] + [
+    (2.0 ** 40 * 10 ** k, f"{10 ** k} TiB") for k in range(3)]
+
+
+def _ticks(series, candidates):
+    """Return the candidate gridlines from one below the smallest value to just above the largest."""
     values = [value for item in series for value in item.values]
-    low, high = math.floor(math.log10(min(values))), math.ceil(math.log10(max(values)))
-    return [(10.0 ** k, format_duration(10.0 ** k).replace(".0 ", " ").replace(".00 ", " "))
-            for k in range(low, high + 1)]
-
-
-def _hundred_ticks(series):
-    """Multiples of one hundred from zero to just above the largest value."""
-    top = math.ceil(max(value for item in series for value in item.values) / 100)
-    return [(100.0 * k, str(100 * k)) for k in range(top + 1)]
+    first = max(k for k, (tick, _) in enumerate(candidates) if tick <= min(values)) - 1
+    last = min(k for k, (tick, _) in enumerate(candidates) if tick >= max(values))
+    return candidates[first:last + 1]
 
 
 def case_cards(base_url, stories):

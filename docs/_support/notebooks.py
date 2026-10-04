@@ -15,6 +15,7 @@ from nbconvert import MarkdownExporter
 from notebook_sources import source_hash
 
 HERE = Path(__file__).resolve().parent
+COLAB_BADGE = "https://colab.research.google.com/assets/colab-badge.svg"
 
 
 def clean_output_html(html):
@@ -89,6 +90,7 @@ def add_tutorials(files, config, catalog):
             "output_files_dir": "assets/" + item["slug"],
             "notebook_download": "downloads/" + path.name,
             "bundle_download": "downloads/" + item["slug"] + ".zip",
+            "colab": item.get("colab"),
         }
         markdown, resources = exporter.from_notebook_node(nb, resources=resources)
         # Site-facing titles describe the task; the executed notebook stays intact.
@@ -136,8 +138,11 @@ def add_tutorials(files, config, catalog):
                 content=archive.getvalue(),
             )
         )
+        colab = (
+            f"[![Open In Colab]({COLAB_BADGE})]({item['colab']})" if item.get("colab") else ""
+        )
         rows.append(
-            f"| [{item['title']}]({item['slug']}.md) | {item.get('study', item['topic'])} | {item['variables']} | {item['objective']} |"
+            f"| [{item['title']}]({item['slug']}.md) | {item.get('study', item['topic'])} | {item['variables']} | {item['objective']} | {colab} |"
         )
         report.append(
             {
@@ -155,9 +160,9 @@ def add_tutorials(files, config, catalog):
         "Explore GraphFLA with nine datasets, from chemical reactions and materials to "
         "neural architectures and compiler settings. Each tutorial takes you from "
         "preparing the data to building a landscape and interpreting its analysis.\n\n"
-        "Choose an optimization problem below. Every page includes Python code, saved results, and "
-        "a downloadable notebook with its data.\n\n"
-        "| Tutorial | Study / dataset | Variables | Objective |\n| --- | --- | --- | --- |\n"
+        "Choose an optimization problem below. Every page includes Python code, saved results, "
+        "a downloadable notebook with its data, and a link to run it in Google Colab.\n\n"
+        "| Tutorial | Study / dataset | Variables | Objective | Colab |\n| --- | --- | --- | --- | --- |\n"
         + "\n".join(rows)
         + "\n"
     )

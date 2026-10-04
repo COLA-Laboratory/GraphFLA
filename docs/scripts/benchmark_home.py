@@ -6,6 +6,10 @@ attributes, topology filtering, plateau handling and local-optima detection.
 The naive method checks each unordered pair once in Python, writes symmetric
 Hamming distances to a float64 N-by-N array, then extracts distance-one edges.
 It represents this particular simple implementation, not all pairwise methods.
+
+GraphFLA is measured at every size. The naive method is measured only while
+its dense matrix fits comfortably in memory; larger sizes use a cost model
+fitted to the largest measured size and validated on the smaller ones.
 """
 import argparse
 import hashlib
@@ -21,6 +25,12 @@ import time
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT))
 OUTPUT = ROOT / 'docs/content/assets/benchmarks/construction.json'
+
+GRAPHFLA_BITS = (8, 10, 12, 13, 14, 16, 18, 20)
+NAIVE_BITS = (8, 10, 12, 13, 14)
+SUMMARY_BITS = (8, 12, 16, 20)
+# Per-worker limits: (wall seconds, process-tree RSS bytes).
+LIMITS = {'graphfla': (600, 8 * 1024**3), 'naive': (300, 3 * 1024**3)}
 
 
 def naive_edges(**kw):
@@ -46,7 +56,7 @@ def naive_edges(**kw):
     return EdgeResult(edges, deltas, [])
 
 
-def worker(bits, method):
+def worker(bits, method, digest):
     import gc
     import resource
     import numpy as np
@@ -68,30 +78,48 @@ def worker(bits, method):
     peak = resource.getrusage(resource.RUSAGE_SELF).ru_maxrss
     if sys.platform != 'darwin':
         peak *= 1024
-    # Canonicalize graph output only after timing and RSS capture.
-    g = landscape.graph
-    canonical = {
-        'vertices': {name: g.vs[name] for name in sorted(g.vs.attributes())},
-        'edges': sorted((int(a), int(b), float(d)) for (a,b),d in zip(g.get_edgelist(),g.es['delta_fit'])),
-        'shape': landscape.shape,
-        'optima': landscape.n_lo,
-    }
     assert landscape.n_configs == n
     assert landscape.n_edges == n * bits // 2
     result = dict(bits=bits, configurations=n, method=method, seconds=elapsed,
                   peak_rss_bytes=int(peak), shape=landscape.shape,
                   input_sha256=hashlib.sha256(X.tobytes()+f.tobytes()).hexdigest(),
-                  graph_sha256=hashlib.sha256(json.dumps(canonical,sort_keys=True,default=lambda value: value.item()).encode()).hexdigest(),
                   versions={'numpy':np.__version__,'pandas':pd.__version__,'igraph':igraph.__version__})
+    if digest:
+        # Canonicalize graph output only after timing and RSS capture.
+        g = landscape.graph
+        canonical = {
+            'vertices': {name: g.vs[name] for name in sorted(g.vs.attributes())},
+            'edges': sorted((int(a), int(b), float(d)) for (a,b),d in zip(g.get_edgelist(),g.es['delta_fit'])),
+            'shape': landscape.shape,
+            'optima': landscape.n_lo,
+        }
+        result['graph_sha256'] = hashlib.sha256(json.dumps(canonical,sort_keys=True,default=lambda value: value.item()).encode()).hexdigest()
     print(json.dumps(result))
 
 
-def run(sizes, repeats, output):
+def naive_model(measured):
+    """Fit naive cost to the largest measured size and check it on the others.
+
+    Time scales with the pairwise Hamming work, N(N-1)/2 pairs of `bits`
+    comparisons. Memory is GraphFLA's peak plus the dense float64 matrix.
+    """
+    work = lambda row: row['configurations'] * (row['configurations'] - 1) / 2 * row['bits']
+    anchor = measured[-1]
+    per_comparison = anchor['naive']['seconds'] / work(anchor)
+    seconds = lambda row: per_comparison * work(row)
+    peak = lambda row: row['graphfla']['peak_rss_bytes'] + 8 * row['configurations'] ** 2
+    validation = [{'configurations': row['configurations'],
+                   'seconds_relative_error': seconds(row) / row['naive']['seconds'] - 1,
+                   'peak_rss_relative_error': peak(row) / row['naive']['peak_rss_bytes'] - 1}
+                  for row in measured[:-1]]
+    return seconds, peak, {'seconds_per_comparison': per_comparison, 'anchor_configurations': anchor['configurations'],
+                           'validation': validation}
+
+
+def run(repeats, output):
     from tools._resource_guard import run_guarded
-    if any(b not in (8,10,12) for b in sizes) or not 1 <= repeats <= 3:
-        raise ValueError('Bounded workloads: 8, 10 or 12 bits; at most three processes per method.')
     env = {**os.environ, **dict.fromkeys(['OMP_NUM_THREADS','OPENBLAS_NUM_THREADS','MKL_NUM_THREADS','VECLIB_MAXIMUM_THREADS','NUMEXPR_NUM_THREADS'],'1'), 'PYTHONHASHSEED':'0'}
-    report = dict(date='2026-10-04',python=platform.python_version(),platform=platform.platform(),
+    report = dict(date=time.strftime('%Y-%m-%d'),python=platform.python_version(),platform=platform.platform(),
                   machine=platform.machine(),processor=subprocess.check_output(['sysctl','-n','machdep.cpu.brand_string'],text=True).strip(),
                   source_revision=subprocess.check_output(['git','rev-parse','HEAD'],cwd=ROOT,text=True).strip(),
                   script_sha256=hashlib.sha256(Path(__file__).read_bytes()).hexdigest(),
@@ -100,30 +128,56 @@ def run(sizes, repeats, output):
                             'seed':20261004,'processes_per_method':repeats,'timed_builds_per_process':1,
                             'setup':'same imports and 16-row warmup; input generation outside timing',
                             'memory':'peak process RSS, including Python, dependencies, inputs and build',
-                            'timeout_seconds':45,'memory_limit_bytes':768*1024**2},runs=[],summary=[])
+                            'graphfla_bits':list(GRAPHFLA_BITS),'naive_measured_bits':list(NAIVE_BITS),
+                            'limits':{method:{'timeout_seconds':t,'memory_limit_bytes':m} for method,(t,m) in LIMITS.items()}},
+                  runs=[],measured=[])
     output.parent.mkdir(parents=True,exist_ok=True)
-    for bits in sizes:
-        runs=[]
+
+    def measure(bits, method, digest):
+        timeout, memory = LIMITS[method]
+        done = run_guarded([sys.executable,str(Path(__file__).resolve()),'--worker','--bits',str(bits),'--method',method]
+                           + (['--digest'] if digest else []),
+                           cwd=ROOT,timeout=timeout,memory_bytes=memory,env=env)
+        result = json.loads(done.stdout)
+        result['monitored_tree_peak_rss_bytes'] = done.monitored_peak_rss_bytes
+        report['runs'].append(result)
+        print(f'{bits} bits {method}: {result["seconds"]:.4f}s, {result["peak_rss_bytes"]/1024**2:.1f} MiB',flush=True)
+        output.write_text(json.dumps(report,indent=2)+'\n')
+        return result
+
+    rows = {}
+    for bits in GRAPHFLA_BITS:
+        both = bits in NAIVE_BITS
+        methods = ('graphfla','naive') if both else ('graphfla',)
+        runs = []
         for repeat in range(repeats):
             # Alternate order to reduce systematic thermal/order effects.
-            for method in (('graphfla','naive') if repeat%2==0 else ('naive','graphfla')):
-                done=run_guarded([sys.executable,str(Path(__file__).resolve()),'--worker','--bits',str(bits),'--method',method],cwd=ROOT,timeout=45,memory_bytes=768*1024**2,env=env)
-                result=json.loads(done.stdout)
-                result['monitored_tree_peak_rss_bytes']=done.monitored_peak_rss_bytes
-                runs.append(result)
-                report['runs'].append(result)
-                print(f'{bits} bits {method}: {result["seconds"]:.4f}s, {result["peak_rss_bytes"]/1024**2:.1f} MiB',flush=True)
-        assert len({r['graph_sha256'] for r in runs})==1, 'Graph outputs differ'
+            for method in (methods if repeat%2==0 else methods[::-1]):
+                runs.append(measure(bits, method, digest=both))
         assert len({r['input_sha256'] for r in runs})==1, 'Inputs differ'
-        row={'configurations':2**bits,'bits':bits,'edges':runs[0]['shape'][1],'dense_matrix_bytes':(2**bits)**2*8,'outputs_equal':True}
-        for method in ('graphfla','naive'):
-            selected=[r for r in runs if r['method']==method]
-            row[method]={key:statistics.median(r[key] for r in selected) for key in ('seconds','peak_rss_bytes')}
-            row[method]['seconds_range']=[min(r['seconds'] for r in selected),max(r['seconds'] for r in selected)]
-        row['speedup']=row['naive']['seconds']/row['graphfla']['seconds']
-        row['peak_rss_reduction']=1-row['graphfla']['peak_rss_bytes']/row['naive']['peak_rss_bytes']
-        report['summary'].append(row)
-        output.write_text(json.dumps(report,indent=2)+'\n')
+        if both:
+            assert len({r['graph_sha256'] for r in runs})==1, 'Graph outputs differ'
+        row = {'configurations':2**bits,'bits':bits,'edges':runs[0]['shape'][1],'dense_matrix_bytes':(2**bits)**2*8}
+        for method in methods:
+            selected = [r for r in runs if r['method']==method]
+            row[method] = {key:statistics.median(r[key] for r in selected) for key in ('seconds','peak_rss_bytes')}
+            row[method]['seconds_range'] = [min(r['seconds'] for r in selected),max(r['seconds'] for r in selected)]
+            row[method]['measured'] = True
+        rows[bits] = row
+
+    seconds, peak, model = naive_model([rows[bits] for bits in NAIVE_BITS])
+    report['naive_model'] = model
+    report['measured'] = [rows[bits] for bits in GRAPHFLA_BITS]
+    summary = []
+    for bits in SUMMARY_BITS:
+        row = dict(rows[bits])
+        if 'naive' not in row:
+            row['naive'] = {'seconds': seconds(row), 'peak_rss_bytes': peak(row), 'measured': False}
+        row['speedup'] = row['naive']['seconds'] / row['graphfla']['seconds']
+        row['peak_rss_ratio'] = row['naive']['peak_rss_bytes'] / row['graphfla']['peak_rss_bytes']
+        summary.append(row)
+    report['summary'] = summary
+    output.write_text(json.dumps(report,indent=2)+'\n')
     print('Saved',output,flush=True)
 
 
@@ -132,11 +186,11 @@ if __name__=='__main__':
     parser.add_argument('--worker',action='store_true')
     parser.add_argument('--bits',type=int,default=8)
     parser.add_argument('--method',choices=['graphfla','naive'],default='graphfla')
-    parser.add_argument('--sizes',type=int,nargs='+',default=[8,10,12])
+    parser.add_argument('--digest',action='store_true')
     parser.add_argument('--repeats',type=int,default=3)
     parser.add_argument('--output',type=Path,default=OUTPUT)
     args=parser.parse_args()
     if args.worker:
-        worker(args.bits,args.method)
+        worker(args.bits,args.method,args.digest)
     else:
-        run(args.sizes,args.repeats,args.output)
+        run(args.repeats,args.output)

@@ -3,10 +3,14 @@
 {% block markdowncell scoped %}
 {{ super() }}
 {% if loop.first %}
+{% if resources.colab %}
+[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)]({{ resources.colab }})
+
+{% endif %}
 [Download notebook]({{ resources.notebook_download }}){ .md-button }
 [Notebook + data]({{ resources.bundle_download }}){ .md-button }
 
-Extract the notebook and its `data/` folder together before running the examples.
+Run the notebook in Google Colab, or download it to run locally. It downloads its data when no `data/` folder is beside it.
 
 {% endif %}
 {% endblock markdowncell %}

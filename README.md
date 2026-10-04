@@ -25,9 +25,7 @@
 
 This is also the official code & data repository for the **NeurIPS 2025 (Spotlight)** paper "Augmenting Biological Fitness Prediction Benchmarks with Landscapes Features from GraphFLA". 
 
-Feel free to explore examples in Google Colab!
-
-[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/1zRsU6V0iNucXmeSXqRtwnbaipWfxFGKA?usp=sharing)
+Every [tutorial](#tutorials) can be run directly in Google Colab.
 
 ## Key Features
 - **Versatility:** applicable to arbitrary discrete, combinatorial sequence-fitness data, ranging from biomolecules like DNA, RNA, and protein, to functional units like genes, to complex ecological communities.
@@ -156,19 +154,19 @@ landscape.build_from_data(complex_search_space, f, data_types=data_types, verbos
 
 ## Tutorials
 
-These nine notebooks include worked code and saved outputs, with their [input data](tutorials/datasets/data/) alongside them.
+These nine notebooks include worked code and saved outputs, with their [input data](tutorials/datasets/data/) alongside them. Each one also opens in Google Colab, where it installs GraphFLA and downloads its data.
 
-| Dataset | Application |
-|---|---|
-| [Suzuki–Miyaura](tutorials/datasets/04_suzuki_landscape.ipynb) | Chemical reaction conditions |
-| [Flow semihydrogenation](tutorials/datasets/05_flow_semihydrogenation_landscape.ipynb) | Electrochemical process settings |
-| [W–Re–Os alloys](tutorials/datasets/06_alloy_landscape.ipynb) | Alloy composition |
-| [Perovskites](tutorials/datasets/07_perovskite_landscape.ipynb) | Material constituent choices |
-| [BacPUS](tutorials/datasets/08_microbiome_landscape.ipynb) | Bacterial strain–substrate combinations |
-| [Cyanimide](tutorials/datasets/09_cyanimide_landscape.ipynb) | Chemical building blocks and enzyme inhibition |
-| [NCI-ALMANAC](tutorials/datasets/10_drug_combination_landscape.ipynb) | Drug combinations and doses |
-| [NAS-Bench-201](tutorials/datasets/11_neural_architecture_landscape.ipynb) | Neural architecture choices |
-| [LLVM](tutorials/datasets/12_software_configuration_landscape.ipynb) | Compiler configuration |
+| Dataset | Application | Colab |
+|---|---|---|
+| [Suzuki–Miyaura](tutorials/datasets/04_suzuki_landscape.ipynb) | Chemical reaction conditions | [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/17ef8wR3DNM8URikhJm73YeziTgoqTeVQ) |
+| [Flow semihydrogenation](tutorials/datasets/05_flow_semihydrogenation_landscape.ipynb) | Electrochemical process settings | [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/1YpJbji2XZU_lNHMSkxYQj7Yp7om8tiZM) |
+| [W–Re–Os alloys](tutorials/datasets/06_alloy_landscape.ipynb) | Alloy composition | [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/1Q8ieoHAUOKkCfjSyYGwFCCyvZBx9zCq-) |
+| [Perovskites](tutorials/datasets/07_perovskite_landscape.ipynb) | Material constituent choices | [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/1rlJXgnu62rxqt-1840Uf8FztUhlyqOjm) |
+| [BacPUS](tutorials/datasets/08_microbiome_landscape.ipynb) | Bacterial strain–substrate combinations | [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/1Ujin6GvhBEpSsN6XzF8INGO0GIVdAMTc) |
+| [Cyanimide](tutorials/datasets/09_cyanimide_landscape.ipynb) | Chemical building blocks and enzyme inhibition | [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/1SY-iF_iLClT_B43OwtSlbxhX2XOkHpki) |
+| [NCI-ALMANAC](tutorials/datasets/10_drug_combination_landscape.ipynb) | Drug combinations and doses | [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/1460Ai_tDeyFMfEoHCRs65k0NeChd3BFV) |
+| [NAS-Bench-201](tutorials/datasets/11_neural_architecture_landscape.ipynb) | Neural architecture choices | [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/11Cr2t_8ojP0T6D1jXQuCrDO-Qnb0p3lV) |
+| [LLVM](tutorials/datasets/12_software_configuration_landscape.ipynb) | Compiler configuration | [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/1-pxEz0Wpg7M1xXp99RdrQ59XH-lBU37P) |
 
 ## Landscape Analysis Features
 

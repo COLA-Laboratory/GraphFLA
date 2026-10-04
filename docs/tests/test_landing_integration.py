@@ -98,4 +98,4 @@ class LandingIntegration(unittest.TestCase):
         locations = {item["location"] for item in search}
         self.assertIn("tutorials/", locations)
         self.assertIn("analysis/profile/", locations)
-        self.assertTrue(any("Reveal the" in item["text"] for item in search if item["location"] == ""))
+        self.assertTrue(any("Understand the" in item["text"] for item in search if item["location"] == ""))

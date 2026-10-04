@@ -1,6 +1,6 @@
 meta:
   title: GraphFLA
-  description: Understand the structure of discrete optimization problems with graph-based landscape analysis.
+  description: Fitness landscape analysis for combinatorial optimization problems in Python.
 links:
   home: ./
   github: https://github.com/COLA-Laboratory/GraphFLA
@@ -44,54 +44,56 @@ function_links:
   neutrality: analysis/robustness/#graphfla.analysis.robustness.neutrality
   evolvability_enhancing_fraction: analysis/robustness/#graphfla.analysis.robustness.evolvability_enhancing_fraction
 hero:
-  title: Reveal the *structure* of your optimization problem.
-  lede: Turn data on discrete choices and their outcomes into a map of your optimization problem. Understand local
-    optima, interactions between variables, and routes to better-performing designs.
+  title: Understand the *fitness landscape* of your optimization problem.
+  lede: 'A fitness landscape relates the candidates in a design space, such as protein variants or reaction conditions,
+    to their measured performance. GraphFLA builds this landscape from your data and quantifies its structure: how
+    many peaks it has, how strongly variables interact, and whether stepwise improvement can reach the best candidate.'
   action:
     label: Get started
     href: '#start'
   figure:
     name: hero
-    alt: An illustrative optimization landscape with curved improving paths, one reaching the best outcome and two
-      ending at local optima.
+    alt: An illustrative fitness landscape with improving paths, one reaching the global optimum and two ending
+      at local optima.
     labels:
-      global_peak: Best outcome
+      global_peak: Global optimum
       local_peak_east: Local optimum
       local_peak_west: Local optimum
-      height_axis: objective value
-      floor_axis: design choices
+      height_axis: fitness
+      floor_axis: design space
     legend:
     - swatch: line
       tone: accent
-      label: improving path to the best outcome
+      label: improving path to the global optimum
     - swatch: line
       tone: mark
-      label: paths ending at local optima
+      label: improving paths ending at local optima
   stats:
   - value: 20+
-    label: metrics covering four aspects of landscape structure
+    label: measures of landscape structure
   - value: '7'
-    label: classes for categorical, ordinal, sequence and mixed data
+    label: landscape types for sequences, categorical, ordinal and mixed data
   - value: '8'
-    label: test-problem generators
+    label: model landscapes and benchmark problems
   - value: '9'
-    label: worked tutorials with code and data
+    label: step-by-step tutorials on published data
   - value: '179'
-    label: datasets and experimental collections across diverse domains
+    label: curated datasets from biology, chemistry and materials science
     href: datasets
 how:
   eyebrow: How it works
-  title: Turn experimental data into topographic insight.
+  title: Build a landscape, then measure its topography.
   catalogue:
-    label: Explore the dataset collection
+    label: Browse the datasets
     href: datasets
   steps:
-  - title: Start with your data
-    text: One row per configuration. Columns describe the choices and the observed outcome.
-  - title: Map the landscape
-    text: GraphFLA connects neighboring configurations and places their outcomes on the graph.
-  - title: Interpret its structure
-    text: Quantify local optima, variation, near-equal outcomes and interactions between variables.
+  - title: Provide your data
+    text: A table of tested candidates, with one column for each variable and one for the measured property.
+  - title: Build the landscape
+    text: GraphFLA links candidates that are adjacent in the design space, e.g., protein variants that differ by
+      one amino-acid substitution, or reaction conditions that differ by one solvent.
+  - title: Analyze its topography
+    text: Quantify peaks, ruggedness, neutrality and variable interactions.
   panels:
   - Your data
   - GraphFLA
@@ -101,14 +103,14 @@ how:
     graph: Neighbor graph
   reports:
     peaks: Local optima
-    rs: Roughness / slope
-    autocorrelation: Neighbor similarity
-    neutrality: Near-equal outcomes
+    rs: Roughness
+    autocorrelation: Autocorrelation
+    neutrality: Neutrality
     interactions: Variable interactions
     parts:
-    - Same direction
-    - One reversal
-    - Two reversals
+    - Magnitude
+    - Sign
+    - Reciprocal sign
   scenarios:
   - id: protein
     label: Protein engineering
@@ -366,14 +368,15 @@ how:
   demo_note: Illustrative data and profiles
 metrics:
   eyebrow: What you can measure
-  title: Understand your problem from four complementary perspectives.
-  intro: Build a comprehensive picture of your optimization problem with four groups of complementary metrics. Use
-    them individually or summarize them in one profile.
+  title: A holistic picture of your landscape's topography.
+  intro: GraphFLA provides more than 20 landscape features, each implemented from established studies in evolutionary
+    biology and optimization. They cover four complementary aspects of topography, so you can explore your problem
+    from every angle and understand it fully.
   cards:
   - title: Ruggedness
-    question: Local optima and variation in performance.
-    text: Quantify local optima and how sharply performance changes between nearby designs. Distinguish smooth trends
-      from irregular regions that complicate optimization.
+    question: Is the landscape smooth or rugged?
+    text: A rugged landscape has many local peaks and abrupt changes in fitness between neighbors. Ruggedness makes
+      it more likely that stepwise improvement stops short of the best candidate.
     functions:
     - local_optima_ratio
     - r_s_ratio
@@ -389,9 +392,10 @@ metrics:
         smooth: 'smooth: one peak'
         rugged: 'rugged: many local peaks'
   - title: Interactions
-    question: The effect of one variable depends on others.
-    text: Measure whether changing one variable has a consistent effect or depends on the surrounding choices, including
-      interactions involving several variables.
+    question: Do the variables act independently?
+    text: Variables interact when the effect of changing one depends on the values of others, known as epistasis
+      in biology. Interactions that reverse the direction of an effect can block improving paths and create multiple
+      peaks.
     functions:
     - gamma
     - classify_epistasis
@@ -402,18 +406,18 @@ metrics:
       href: epistasis
     figure:
       name: epistasis
-      alt: The same step across the landscape climbs toward a peak in one place and descends from a peak in another.
+      alt: The same change increases fitness in one part of the landscape and decreases it in another.
       legend:
       - swatch: line
         tone: accent
-        label: a change that improves the outcome here
+        label: a change that increases fitness here
       - swatch: line
         tone: mark
-        label: the same change worsens it there
+        label: the same change decreases it there
   - title: Navigability
-    question: Access to better outcomes through local changes.
-    text: Measure how often improving steps can reach the best observed outcome, how long those paths are, and whether
-      distance helps guide the search.
+    question: Can local search find the global optimum?
+    text: 'Navigability describes how easily a search that accepts only improvements reaches the global optimum:
+      from how many starting points, in how many steps, and whether fitness rises steadily towards it.'
     functions:
     - global_optima_accessibility
     - mean_path_length_to_global_optimum
@@ -423,19 +427,18 @@ metrics:
       href: navigability
     figure:
       name: navigability
-      alt: 'Improving search paths on a three-peaked landscape: two reach the global peak, three stop on lower local
-        peaks.'
+      alt: 'Improving paths on a landscape with three peaks: two reach the global optimum, three stop at local optima.'
       legend:
       - swatch: line
         tone: accent
-        label: reaches the global peak
+        label: reaches the global optimum
       - swatch: line
         tone: mark
-        label: trapped on a local peak
+        label: stops at a local optimum
   - title: Neutrality
-    question: Regions where changes have little effect.
-    text: Measure the share of neighboring choices whose objective values differ by less than a specified tolerance.
-      Identify flat regions that can slow or redirect a search.
+    question: How much of the landscape is flat?
+    text: Neutral changes leave fitness essentially unchanged. Large flat regions can stall a search, but they also
+      connect distant candidates of equal quality.
     functions:
     - neutrality
     - evolvability_enhancing_fraction
@@ -444,20 +447,20 @@ metrics:
       href: neutrality
     figure:
       name: neutrality
-      alt: Variants on a flat plateau share the same objective value and form a neutral network; one further step
-        leaves the plateau for a higher peak.
+      alt: Candidates on a plateau share the same fitness and form a neutral network; one further step leaves the
+        plateau for a higher peak.
       legend:
       - swatch: dots
         tone: mark
-        label: near-equal outcomes
+        label: neutral neighbors
       - swatch: line
         tone: accent
-        label: a change that opens a better region
+        label: a step to higher fitness
 start:
   eyebrow: Quick start
-  title: From a data table to analysis in a few lines.
-  lede: Load your results, identify the variables and objective, and build a landscape. The same workflow applies
-    to experimental measurements, simulation outputs and model evaluations.
+  title: From raw data to landscape analysis in a few lines.
+  lede: Load your dataset, specify the variables and the objective, and build the landscape. The same steps apply
+    to laboratory measurements, simulations and model evaluations.
   links:
   - label: Try a worked tutorial
     href: tutorials
@@ -472,15 +475,15 @@ start:
       \ to maximize\n\nlandscape = Landscape(maximize=True).build_from_data(\n    X, f, data_types={c: \"categorical\"\
       \ for c in X},\n    verbose=False,\n)\nanalysis.profile(landscape, seed=42)\n"
   classes:
-    title: Seven landscape classes, one API
-    text: Pick the class that matches your data.
+    title: Seven landscape classes
+    text: Choose the class that matches your data.
     entries:
     - name: Landscape
       note: any mix of column types
     - name: SequenceLandscape
       note: shared alphabet
     - name: BooleanLandscape
-      note: bit-strings
+      note: binary variables
     - name: OrdinalLandscape
       note: ordered levels
     - name: DNALandscape
@@ -491,12 +494,13 @@ start:
       note: 20 amino acids
 performance:
   eyebrow: Performance
-  title: Scale to larger datasets with efficient construction.
-  intro: Spend less time building the graph and more time studying your problem. The comparison below measures construction
-    time and total process memory against a naive all-pairs implementation.
+  title: Scales to millions of candidates.
+  intro: Every stage of landscape construction has been optimized in detail, so GraphFLA handles datasets with millions
+    of entries on a single machine. The comparison below measures construction time and peak memory against a naive
+    implementation that compares all pairs of candidates.
   headline:
-    speedup: faster construction at {configurations} configurations
-    memory_saved: less peak memory on the same build
+    speedup: faster construction at {configurations} candidates
+    memory_saved: lower peak memory on the same build
   series:
     graphfla: GraphFLA
     naive: Naive all-pairs
@@ -506,78 +510,76 @@ performance:
       unit: log scale
     memory:
       title: Peak memory
-      unit: MiB
-  x_title: configurations
-  footnote: Complete binary landscapes with 8, 10 and 12 variables. Apple M4 Pro, Python 3.9, single thread; median
-    of three fresh processes. Peak memory includes Python and its dependencies. The baseline is a nested Python
-    loop with a dense distance matrix.
+      unit: log scale
+  x_title: candidates
+  footnote: Complete binary landscapes with 8 to 20 variables. Apple M4 Pro, Python 3.9, single thread. Peak memory
+    includes Python and its dependencies. The baseline is a nested Python loop with a dense distance matrix.
   link:
     label: Benchmark setup and all results
     href: benchmarks
 cases:
   eyebrow: Case studies
-  title: One framework for optimization across domains.
-  intro: Apply the same graph-based analysis to experiments, simulations and software systems. These worked examples
-    show how different variables and objectives fit a common workflow.
+  title: Applicable to any combinatorial optimization problem.
+  intro: GraphFLA makes no assumption about what the variables or the objective represent. The same analysis applies
+    to amino acids and reaction conditions, alloy compositions and neural architectures, drug doses and compiler
+    flags.
   stories:
     suzuki:
       title: Chemical reaction optimization
       subtitle: Suzuki–Miyaura coupling
       unit: reaction conditions
-      description: Vary ligand, base and solvent choices for a fixed pair of reactants. Compare how alternative
-        reaction conditions affect the amount of target product detected by UV.
+      description: Ligand, base and solvent combinations for one pair of reactants, scored by the UV signal of the
+        coupling product.
     flow-semihydrogenation:
       title: Reaction process optimization
       subtitle: Electrochemical flow hydrogenation
       unit: operating conditions
-      description: Vary concentration, temperature and time in the reactor. Evaluate how these settings jointly
-        affect selectivity for the desired product and the efficiency of electrical current use.
+      description: Concentration, temperature and residence time in an electrochemical flow reactor, scored by a
+        combined measure of selectivity and current efficiency.
     alloy:
       title: Alloy composition optimization
       subtitle: Tungsten–rhenium–osmium alloys
       unit: alloy compositions
-      description: Vary tungsten, rhenium and osmium proportions to optimize hardness at 1,000 °C. Examine how exchanging
-        small amounts of one metal for another changes the result.
+      description: Tungsten, rhenium and osmium fractions of an alloy, scored by hardness at 1,000 °C.
     perovskite:
       title: Materials design
       subtitle: Hybrid perovskites · ABX₃
       unit: crystal compositions
-      description: Choose the organic ion, metal and halide that make up a crystal. Compare these component choices
-        to identify compositions with a lower calculated electronic band gap.
+      description: Organic ion, metal and halide of a hybrid perovskite crystal, scored by its calculated electronic
+        band gap.
     microbiome:
       title: Microbial growth optimization
       subtitle: BacPUS · Gut bacteria and polysaccharides
       unit: strain–substrate pairs
-      description: Select a bacterial strain and a polysaccharide nutrient source. Compare their combinations to
-        identify conditions that support greater growth after 48 hours.
+      description: Pairs of gut bacterial strains and polysaccharide nutrient sources, scored by growth after 48
+        hours.
     cyanimide:
       title: Enzyme inhibitor discovery
       subtitle: Cyanimide library · Mouse USP18
       unit: building-block pairs
-      description: Combine amine and carboxylic-acid building blocks to generate candidate inhibitors. Compare the
-        resulting reaction mixtures for inhibition of the mouse USP18 enzyme.
+      description: Amine and carboxylic-acid building blocks combined into candidate inhibitors, scored by inhibition
+        of the mouse USP18 enzyme.
     drug-combination:
       title: Drug combination optimization
       subtitle: NCI-ALMANAC · Cancer cell assays
       unit: drug–dose combinations
-      description: Choose a partner for a fixed anticancer drug and vary both doses. Compare combinations by their
-        effect on cancer-cell growth in a laboratory assay.
+      description: A partner drug for a fixed anticancer drug and the doses of both, scored by their effect on cancer-cell
+        growth.
     neural-architecture:
       title: Neural architecture search
       subtitle: NAS-Bench-201 · CIFAR-10
       unit: network architectures
-      description: Choose an operation for each of six connections in a neural-network cell. Compare image-classification
-        accuracy across architectures trained under the same conditions.
+      description: The operation on each of six connections in a neural-network cell, scored by image-classification
+        accuracy.
     software-configuration:
       title: Software configuration tuning
       subtitle: LLVM · Compiler flags
       unit: compiler configurations
-      description: Enable or disable ten compiler options in different combinations. Compare compilation times for
-        a fixed workload to understand which settings and interactions improve performance.
+      description: Ten LLVM compiler options switched on or off, scored by compilation time for a fixed workload.
 closing:
-  title: Understand the structure of *your own problem*.
+  title: Analyze *your own* data.
   action:
-    label: Start your analysis
+    label: Get started
     href: '#start'
   link:
     label: Source on GitHub
@@ -627,13 +629,15 @@ footer:
   - label: PyPI
     href: pypi
 insights:
-  eyebrow: Why landscape features matter
-  title: Make sense of prediction and optimization.
-  intro: Explore how protein landscape structure relates to model accuracy and directed-evolution outcomes.
+  eyebrow: Why landscape topography matters
+  title: Linking landscape topography to model performance and optimization outcomes.
+  intro: 'Landscape features can help explain why a predictive model or a search method works well on some problems
+    but not on others. The example below uses protein datasets: compare each feature with the accuracy of zero-shot
+    predictors and with the results of simulated directed evolution.'
   feature_label: Landscape feature
   publication_label: Read the study
   legend: Linear fit
-  hint: Each point is a DMS dataset. Hover or select a point to explore its study.
+  hint: Each point is a deep mutational scanning (DMS) dataset. Hover over or select a point to see its source study.
   source_label: Data and sources
   source_href: insights-sources/
   charts:
@@ -651,5 +655,5 @@ insights:
       outcome_label: Search strategy
       y_label: Best fitness percentile
       accessible_description: Each point is a protein landscape. Select a feature and a search strategy to compare
-        optimization outcomes within a shared evaluation cap. Use arrow keys to move between points and Enter to read the associated
-        publication.
+        optimization outcomes within a shared evaluation cap. Use arrow keys to move between points and Enter to
+        read the associated publication.

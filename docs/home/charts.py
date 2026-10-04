@@ -32,11 +32,22 @@ class Series:
 
 
 def format_duration(seconds):
-    """Format seconds as ``3.3 ms``, ``303 ms`` or ``5.18 s``."""
+    """Format seconds as ``3.3 ms``, ``303 ms``, ``5.18 s``, ``1.5 min``, ``2.0 h`` or ``6.2 days``."""
+    for unit, size in (("days", 86400), ("h", 3600), ("min", 60)):
+        if seconds >= size:
+            return f"{seconds / size:.1f} {unit}"
     if seconds >= 1:
         return f"{seconds:.2f} s"
     milliseconds = seconds * 1000
     return f"{milliseconds:.1f} ms" if milliseconds < 10 else f"{milliseconds:.0f} ms"
+
+
+def format_bytes(size):
+    """Format bytes in binary units as ``280 MiB``, ``2.4 GiB`` or ``8.0 TiB``."""
+    for unit, scale in (("TiB", 2 ** 40), ("GiB", 2 ** 30)):
+        if size >= scale:
+            return f"{size / scale:.1f} {unit}"
+    return f"{size / 2 ** 20:.0f} MiB"
 
 
 def line_chart(columns, series, ticks, format_value, *, log=False, x_title, title, both="both"):

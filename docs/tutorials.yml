@@ -3,6 +3,7 @@ notebooks:
 - slug: suzuki
   title: Chemical reaction optimization
   notebook: 04_suzuki_landscape.ipynb
+  colab: https://colab.research.google.com/drive/17ef8wR3DNM8URikhJm73YeziTgoqTeVQ
   data:
   - suzuki.csv
   topic: Chemical reactions
@@ -13,6 +14,7 @@ notebooks:
 - slug: flow-semihydrogenation
   title: Reaction process optimization
   notebook: 05_flow_semihydrogenation_landscape.ipynb
+  colab: https://colab.research.google.com/drive/1YpJbji2XZU_lNHMSkxYQj7Yp7om8tiZM
   data:
   - flow_semihydrogenation.csv
   topic: Electrochemical reactions
@@ -23,6 +25,7 @@ notebooks:
 - slug: alloy
   title: Alloy composition optimization
   notebook: 06_alloy_landscape.ipynb
+  colab: https://colab.research.google.com/drive/1Q8ieoHAUOKkCfjSyYGwFCCyvZBx9zCq-
   data:
   - wreos.csv
   topic: Alloy design
@@ -33,6 +36,7 @@ notebooks:
 - slug: perovskite
   title: Materials design
   notebook: 07_perovskite_landscape.ipynb
+  colab: https://colab.research.google.com/drive/1rlJXgnu62rxqt-1840Uf8FztUhlyqOjm
   data:
   - perovskites.csv
   data_has_header: false
@@ -44,6 +48,7 @@ notebooks:
 - slug: microbiome
   title: Microbial growth optimization
   notebook: 08_microbiome_landscape.ipynb
+  colab: https://colab.research.google.com/drive/1Ujin6GvhBEpSsN6XzF8INGO0GIVdAMTc
   data:
   - bacpus.csv
   topic: Microbial growth
@@ -54,6 +59,7 @@ notebooks:
 - slug: cyanimide
   title: Enzyme inhibitor discovery
   notebook: 09_cyanimide_landscape.ipynb
+  colab: https://colab.research.google.com/drive/1SY-iF_iLClT_B43OwtSlbxhX2XOkHpki
   data:
   - cyanimide.csv
   topic: Enzyme inhibition
@@ -64,6 +70,7 @@ notebooks:
 - slug: drug-combination
   title: Drug combination optimization
   notebook: 10_drug_combination_landscape.ipynb
+  colab: https://colab.research.google.com/drive/1460Ai_tDeyFMfEoHCRs65k0NeChd3BFV
   data:
   - almanac.csv
   - almanac_doses.csv
@@ -75,6 +82,7 @@ notebooks:
 - slug: neural-architecture
   title: Neural architecture search
   notebook: 11_neural_architecture_landscape.ipynb
+  colab: https://colab.research.google.com/drive/11Cr2t_8ojP0T6D1jXQuCrDO-Qnb0p3lV
   data:
   - nasbench201.csv
   topic: Neural architecture search
@@ -85,6 +93,7 @@ notebooks:
 - slug: software-configuration
   title: Software configuration tuning
   notebook: 12_software_configuration_landscape.ipynb
+  colab: https://colab.research.google.com/drive/1-pxEz0Wpg7M1xXp99RdrQ59XH-lBU37P
   data:
   - llvm.csv
   topic: Software configuration
