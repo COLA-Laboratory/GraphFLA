@@ -1,0 +1,20 @@
+{% import "macros.html" as ui with context %}
+<section class="gfl-section" id="metrics">
+  <div class="gfl-container gfl-section__inner">
+    {{ ui.section_head(metrics) }}
+    <div class="gfl-metrics">
+      {% for card in metrics.cards %}
+      <article class="gfl-card gfl-metric">
+        <div class="gfl-metric__media">{{ ui.figure(card.figure, legend_over=card.figure.legend is defined) }}</div>
+        <div class="gfl-metric__body">
+          <h3 class="gfl-heading gfl-heading--3">{{ card.title }}</h3>
+          <p class="gfl-metric__question">{{ card.question }}</p>
+          <p class="gfl-metric__text">{{ card.text }}</p>
+          {{ ui.chips(card.functions) }}
+          {{ ui.link(card.link) }}
+        </div>
+      </article>
+      {% endfor %}
+    </div>
+  </div>
+</section>

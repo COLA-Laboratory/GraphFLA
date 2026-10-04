@@ -4,16 +4,60 @@ The active website is `docs/mkdocs.yml` + `docs/content/`. It uses the selected
 G styling, class tabs with expandable methods, and continuous analysis articles.
 `docs/candidates/` is an archive of design prototypes, not a build dependency.
 
-The current integration covers **all 7 public Landscape classes, 30 Analysis
+The current integration covers **all 7 public Landscape classes, 31 Analysis
 functions, and all 9 Problems classes** from package revision
-`c64262b28bf0f7f547c22010843a7b2a48953f1b`. The website intentionally omits
-`profile` and `list_metrics`; the Landscape Profiles page is removed. Result
+`c64262b28bf0f7f547c22010843a7b2a48953f1b`. `profile` has its own page, `analysis/profile.md`; the website intentionally
+omits `list_metrics`. Result
 types pages and the deleted EE entry are also removed. Analysis results use the
 current source's ordinary dictionary contracts.
 Landscapes, Analysis and Problems are in the active navigation; other old
 template samples are excluded from builds.
 Nine dataset tutorials are also available, generated from the canonical
 executed notebooks in `tutorials/datasets/`. Their catalog is `docs/tutorials.yml`.
+Catalog `title` names the optimization problem in navigation, the tutorial index
+and the page heading; `study` identifies the dataset or experimental system beneath
+it. The website applies this title hierarchy during rendering and preserves the
+executed notebook and its downloads byte for byte.
+
+The site root uses the landing page maintained in `home/`; read
+[`home/README.md`](home/README.md) for its content, design tokens and figures.
+`content/index.md` selects `overrides/landing.html`, which extends Material's
+`main.html` and replaces only the homepage content and footer. The native
+header, search, sticky navigation and mobile drawer belong to the same theme
+on the homepage, tutorials and API pages. `overrides/partials/tabs.html` places
+the shared navigation inside Material's header: Home, Metrics, Case studies,
+Tutorials and API reference. Metrics and Case studies link to the corresponding
+homepage sections, including from nested documentation pages. The repository
+link uses Material's native `repo_url` / `repo_name` slot beside search.
+
+`_support/landing.py` renders the homepage before search indexing, generates
+assets under `assets/home/`, and resolves shared navigation URLs for every page.
+API pages share one sidebar group containing Landscapes, Problems and Analysis.
+Function chips link to exact API anchors, checked during every full site check.
+`home/scripts/home.js` preserves old root-level Landscape bookmarks. Page motion
+uses browser-native CSS smooth scrolling and respects reduced-motion preferences.
+A normal build creates the complete site without a separate homepage build.
+
+The homepage includes five illustrative scenarios: protein engineering, chemistry,
+materials, software tuning and hyperparameter search. Compact demo tables and example
+profiles live in `home/content.yml`; `home/figures/examples.py` reuses the original
+authored three-peak surface. The separately downloadable, reproducible data examples
+are described in `content/demo-methods.md`. `home/catalogue.py` generates the Datasets
+page and its counts from the repository data collection.
+
+The interactive prediction/optimization panels use real prepared research results
+under `home/insights/`, separately from the illustrative workflow demos. They ship
+with a pinned local D3 runtime and no server-side prediction or training. See
+`home/README.md` for the data boundary and `content/insights-sources.md` for provenance.
+
+The homepage's construction comparison is an independently recorded, bounded
+run of `docs/scripts/benchmark_home.py`. Its naive baseline uses Python pairwise
+Hamming comparisons and a dense float64 matrix inside the same full construction
+pipeline. Each worker is limited to 45 seconds and 768 MiB; input and graph hashes
+are compared. `content/benchmarks.md` explains the protocol and all workload
+results. The downloaded script and raw JSON live in `content/assets/benchmarks/`.
+Do not substitute old-version comparisons or theoretical allocation sizes for
+the recorded runtime and peak-process RSS measurements.
 
 Problems retains the original model introductions in two continuous articles:
 Biological Models and Combinatorial Problems. `problems-migration.json` records
@@ -45,12 +89,13 @@ python3.13 -m venv .venv-docs
 ```
 
 Open <http://127.0.0.1:8818/>. Saving source docstrings, Markdown, templates or CSS
-rebuilds the preview. Restart `serve` after editing Python build hooks in
-`docs/_support/`, because MkDocs caches hook modules during a server session.
+rebuilds the preview, including homepage copy, styles, icons and templates.
+Restart `serve` after editing Python build modules in `docs/_support/` or
+`docs/home/`, because MkDocs caches Python modules during a server session.
 
 ```sh
 .venv-docs/bin/python docs/manage.py build  # strict build into docs/.build/site
-.venv-docs/bin/python docs/manage.py check  # contracts, strict build, local links
+.venv-docs/bin/python docs/manage.py check  # contracts, strict build, local links and assets
 ```
 
 These commands also work from another directory when invoked with the absolute
@@ -171,6 +216,8 @@ in Markdown.
 
 | Concern | Single place to edit |
 | --- | --- |
+| Homepage and global header integration | `_support/landing.py`, `overrides/`, `home/` |
+| Material shell styling | `content/assets/site.css` |
 | Theme, navigation, global extraction defaults | `mkdocs.yml` |
 | G colors, signature panels, field names and borders | `content/assets/api.css` |
 | Class tabs and method disclosures | `templates/python/material/class.html.jinja`, `function.html.jinja` |
@@ -225,7 +272,7 @@ Build outputs include:
 `extra.api_modules` in `mkdocs.yml` names the modules whose complete public
 `__all__` must be documented. A missing public API fails the build; keep these
 checks enabled when adding or removing exports. `extra.api_omissions` records
-the two deliberately excluded Profiles APIs with their scope reason. The build
+the deliberately excluded `list_metrics` with its scope reason. The build
 report separates these from missing APIs and rejects stale exclusions or an
 excluded API that is still rendered. This is independent of the advisory
 content-quality report.

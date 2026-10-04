@@ -1,5 +1,6 @@
 docs/site/
 docs/.build/
+docs/home/dist/
 docs/candidates/.build/
 docs/candidates/.generated/
 docs/candidates/.logs/

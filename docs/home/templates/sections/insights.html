@@ -1,0 +1,46 @@
+{% import "macros.html" as ui with context %}
+{% if insights.panels %}
+<section class="gfl-section" id="insights">
+  <div class="gfl-container gfl-section__inner">
+    {{ ui.section_head(insights) }}
+    <div class="gfl-insights">
+    {% for panel in insights.panels %}
+      {% set copy = insights.charts[panel.id] %}
+      <article class="gfl-card gfl-insight" data-insight="{{ panel.id }}">
+        <div class="gfl-insight__heading">
+          <h3 class="gfl-heading gfl-heading--3" id="{{ panel.id }}-title">{{ copy.title }}</h3>
+          <p>{{ copy.description }}</p>
+        </div>
+        <div class="gfl-insight__controls">
+          <label>{{ insights.feature_label }}<select data-feature aria-label="{{ copy.title }} landscape feature">{% for item in panel.features %}<option value="{{ item.key }}"{% if item.key == panel.default_feature %} selected{% endif %}>{{ item.label }}</option>{% endfor %}</select></label>
+          <label>{{ copy.outcome_label }}<select data-outcome aria-label="{{ copy.title }} {{ copy.outcome_label | lower }}">{% for item in panel.outcomes %}<option value="{{ item.key }}"{% if item.key == panel.default_outcome %} selected{% endif %}>{{ item.label }}</option>{% endfor %}</select></label>
+        </div>
+        <div class="gfl-insight__canvas">
+          <svg class="gfl-insight__plot" viewBox="0 0 560 400" role="group" aria-labelledby="{{ panel.id }}-title {{ panel.id }}-description">
+            <desc id="{{ panel.id }}-description">{{ copy.accessible_description }}</desc>
+            <defs><clipPath id="{{ panel.id }}-clip"><rect x="68" y="32" width="468" height="300"/></clipPath></defs>
+            <g class="gfl-insight__grid"></g>
+            <g class="gfl-insight__axis" data-axis="x"></g>
+            <g class="gfl-insight__axis" data-axis="y"></g>
+            <g clip-path="url(#{{ panel.id }}-clip)"><path class="gfl-insight__fit"></path><g class="gfl-insight__points"></g></g>
+            <text class="gfl-insight__label" data-label="x" x="302" y="383" text-anchor="middle"></text>
+            <text class="gfl-insight__label" data-label="y" x="18" y="184" text-anchor="middle" transform="rotate(-90 18 184)">{{ copy.y_label }}</text>
+            <text class="gfl-insight__empty" x="302" y="180" text-anchor="middle"></text>
+          </svg>
+          <div class="gfl-insight__detail" role="region" aria-label="Dataset publication" hidden>
+            <button type="button" data-close aria-label="Close dataset details">×</button>
+            <p class="gfl-insight__dataset" data-dataset></p>
+            <p class="gfl-insight__values" data-values></p>
+            <p class="gfl-insight__paper" data-paper></p>
+            <p class="gfl-insight__journal" data-journal></p>
+            <a class="gfl-link" data-publication target="_blank" rel="noopener noreferrer">{{ insights.publication_label }} {{ ui.arrow('https://doi.org') }}</a>
+          </div>
+        </div>
+        <div class="gfl-insight__footer"><span data-count aria-live="polite"></span><span>{{ insights.legend }}</span></div>
+      </article>
+    {% endfor %}
+    </div>
+    <div class="gfl-insights__footer"><p>{{ insights.hint }}</p><a class="gfl-link" href="{{ insights.source_href | href }}">{{ insights.source_label }} {{ ui.arrow('') }}</a></div>
+  </div>
+</section>
+{% endif %}

@@ -1,0 +1,9 @@
+<svg class="gfl-icon" viewBox="0 0 48 48" aria-hidden="true">
+<path class="gfl-icon__soft" d="M6 12 H17 M6 24 H14 M6 36 H17"/>
+<rect class="gfl-icon__accent" x="23" y="7" width="19" height="10" rx="5"/>
+<circle class="gfl-icon__knock" cx="37" cy="12" r="3"/>
+<rect x="23" y="19" width="19" height="10" rx="5"/>
+<circle class="gfl-icon__solid" cx="28" cy="24" r="2.6"/>
+<rect class="gfl-icon__accent" x="23" y="31" width="19" height="10" rx="5"/>
+<circle class="gfl-icon__knock" cx="37" cy="36" r="3"/>
+</svg>

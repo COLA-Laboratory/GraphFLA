@@ -1,0 +1,30 @@
+{% import "macros.html" as ui with context %}
+<section class="gfl-section" id="start">
+  <div class="gfl-container gfl-section__inner">
+    <div class="gfl-start">
+      <div class="gfl-start__copy">
+        <p class="gfl-eyebrow">{{ start.eyebrow }}</p>
+        <h2 class="gfl-heading gfl-heading--2">{{ start.title }}</h2>
+        <p class="gfl-lede">{{ start.lede }}</p>
+        {{ ui.command(install) }}
+        <div class="gfl-actions gfl-actions--links">
+          {% for item in start.links %}
+          {{ ui.link(item) }}
+          {% endfor %}
+        </div>
+      </div>
+      {{ ui.code_panel(start.code) }}
+    </div>
+    <div class="gfl-classes">
+      <div class="gfl-classes__head">
+        <h3 class="gfl-heading gfl-heading--3">{{ start.classes.title }}</h3>
+        <p class="gfl-classes__text">{{ start.classes.text | inline }}</p>
+      </div>
+      <ul class="gfl-classes__list">
+        {% for entry in start.classes.entries %}
+        <li class="gfl-card gfl-class"><code class="gfl-class__name">{{ entry.name }}</code><span class="gfl-note">{{ entry.note }}</span></li>
+        {% endfor %}
+      </ul>
+    </div>
+  </div>
+</section>

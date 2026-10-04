@@ -1,0 +1,21 @@
+{% import "macros.html" as ui with context %}
+<section class="gfl-section" id="performance">
+  <div class="gfl-container gfl-section__inner">
+    {{ ui.section_head(performance) }}
+    <div class="gfl-performance">
+      <div class="gfl-performance__summary">
+        {% for item in performance.stats %}
+        {{ ui.stat(item, display=loop.first) }}
+        {% endfor %}
+        {{ ui.legend(performance.legend, "column") }}
+      </div>
+      {% for chart in performance.charts %}
+      {{ ui.chart_card(chart) }}
+      {% endfor %}
+    </div>
+    <div class="gfl-performance__foot">
+      <p class="gfl-note">{{ performance.footnote }}</p>
+      {{ ui.link(performance.link) }}
+    </div>
+  </div>
+</section>

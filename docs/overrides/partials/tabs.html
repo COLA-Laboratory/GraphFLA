@@ -1,0 +1,6 @@
+{# Material's native sticky header hosts the same global navigation on every page. #}
+{% if global_navigation is defined %}
+<div class="gfl-site-navigation">
+  <div class="gfl-container">{{ global_navigation | safe }}</div>
+</div>
+{% endif %}

@@ -1,0 +1,596 @@
+/* Reusable components. Every colour, size and space comes from tokens.css. */
+
+/* Page frame -------------------------------------------------------------- */
+
+.gfl-container {
+  max-width: calc(var(--gfl-page-width) + 2 * var(--gfl-gutter));
+  margin-inline: auto;
+  padding-inline: var(--gfl-gutter);
+}
+
+.gfl-section {
+  border-top: 1px solid var(--gfl-color-line);
+}
+
+.gfl-section--lead {
+  border-top: 0;
+}
+
+.gfl-section--dotted {
+  background-image: radial-gradient(var(--gfl-color-line) 1px, transparent 1px);
+  background-size: 28px 28px;
+}
+
+.gfl-section__inner {
+  display: flex;
+  flex-direction: column;
+  gap: var(--gfl-space-12);
+  padding-block: var(--gfl-section-pad);
+}
+
+.gfl-section__head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--gfl-space-5) var(--gfl-space-12);
+}
+
+.gfl-section__titles {
+  flex: 1 1 480px;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--gfl-space-3);
+}
+
+.gfl-section__intro {
+  flex: 0 1 380px;
+  font-size: var(--gfl-text-md);
+  color: var(--gfl-color-text-muted);
+  text-wrap: pretty;
+}
+
+/* Text ---------------------------------------------------------------------- */
+
+.gfl-heading {
+  font-family: var(--gfl-font-display);
+  font-weight: 700;
+  text-wrap: balance;
+}
+
+.gfl-heading--1 {
+  font-size: var(--gfl-text-h1);
+  line-height: var(--gfl-leading-tight);
+  letter-spacing: var(--gfl-tracking-tight);
+}
+
+.gfl-heading--2 {
+  font-size: var(--gfl-text-h2);
+  line-height: var(--gfl-leading-tight);
+  letter-spacing: var(--gfl-tracking-tight);
+}
+
+.gfl-heading--3 {
+  font-size: var(--gfl-text-h3);
+  line-height: var(--gfl-leading-snug);
+  letter-spacing: var(--gfl-tracking-snug);
+}
+
+.gfl-eyebrow {
+  font-size: var(--gfl-text-md);
+  font-weight: 600;
+  color: var(--gfl-color-text-muted);
+}
+
+.gfl-lede {
+  max-width: 31em;
+  font-size: var(--gfl-text-lg);
+  color: var(--gfl-color-text-soft);
+  text-wrap: pretty;
+}
+
+.gfl-note {
+  font-size: var(--gfl-text-xs);
+  color: var(--gfl-color-text-muted);
+}
+
+.gfl-accent {
+  color: var(--gfl-color-accent);
+}
+
+.gfl-inline-code {
+  font-size: 0.93em;
+  color: var(--gfl-color-text);
+}
+
+/* Actions ------------------------------------------------------------------- */
+
+.gfl-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--gfl-space-3);
+}
+
+.gfl-actions--links {
+  gap: 0 var(--gfl-space-6);
+}
+
+.gfl-arrow {
+  display: inline-block;
+}
+
+.gfl-button {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--gfl-space-2);
+  height: var(--gfl-size-control);
+  padding-inline: var(--gfl-space-6);
+  border-radius: var(--gfl-radius-md);
+  background: var(--gfl-color-accent);
+  color: var(--gfl-color-on-accent);
+  font-size: var(--gfl-text-base);
+  font-weight: 600;
+}
+
+.gfl-button:hover {
+  filter: brightness(1.08);
+}
+
+.gfl-link {
+  display: inline-flex;
+  gap: var(--gfl-space-1);
+  padding-block: var(--gfl-space-3);
+  font-size: var(--gfl-text-md);
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.gfl-link:hover,
+.gfl-link--accent {
+  color: var(--gfl-color-accent);
+}
+
+.gfl-command {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--gfl-space-2);
+  height: var(--gfl-size-control);
+  padding-left: var(--gfl-space-4);
+  padding-right: var(--gfl-space-1);
+  border: 1px solid var(--gfl-color-line-strong);
+  border-radius: var(--gfl-radius-md);
+  background: var(--gfl-color-card);
+}
+
+.gfl-command__text {
+  font-size: var(--gfl-text-md);
+}
+
+.gfl-command__prompt {
+  color: var(--gfl-color-text-faint);
+}
+
+.gfl-command__copy {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border: 0;
+  border-radius: var(--gfl-radius-sm);
+  background: none;
+  color: var(--gfl-color-text-muted);
+  cursor: pointer;
+}
+
+.gfl-command__copy:hover {
+  color: var(--gfl-color-text);
+}
+
+.gfl-command__copy .gfl-icon {
+  width: 18px;
+  height: 18px;
+  stroke-width: 1.5;
+}
+
+/* Surfaces ------------------------------------------------------------------ */
+
+.gfl-card {
+  background: var(--gfl-color-card);
+  border: 1px solid var(--gfl-color-line);
+  border-radius: var(--gfl-radius-lg);
+}
+
+/* Small data pieces --------------------------------------------------------- */
+
+.gfl-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--gfl-space-2);
+}
+
+.gfl-chip {
+  display: inline-block;
+  padding: 3px var(--gfl-space-2);
+  border-radius: var(--gfl-radius-sm);
+  background: var(--gfl-color-fill);
+  font-family: var(--gfl-font-mono);
+  font-size: var(--gfl-text-2xs);
+  color: var(--gfl-color-text-soft);
+  border: 1px solid transparent;
+  overflow-wrap: anywhere;
+}
+
+.gfl-chip:hover,
+.gfl-chip:focus-visible {
+  border-color: var(--gfl-color-accent-line);
+  background: var(--gfl-color-accent-fill);
+  color: var(--gfl-color-accent);
+}
+
+/* A horizontal bar filled to --value. */
+.gfl-meter {
+  display: block;
+  height: 4px;
+  border-radius: 2px;
+  background: var(--gfl-color-fill);
+}
+
+.gfl-meter::before {
+  content: "";
+  display: block;
+  width: var(--value);
+  height: 100%;
+  border-radius: inherit;
+  background: var(--gfl-color-data);
+}
+
+.gfl-meter--accent::before {
+  background: var(--gfl-color-accent);
+}
+
+.gfl-stat {
+  display: flex;
+  flex-direction: column;
+  gap: var(--gfl-space-1);
+}
+
+.gfl-stat__value {
+  font-family: var(--gfl-font-display);
+  font-size: var(--gfl-text-stat);
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: var(--gfl-tracking-tight);
+}
+
+.gfl-stat__label {
+  font-size: var(--gfl-text-md);
+  color: var(--gfl-color-text-muted);
+}
+
+.gfl-stat--display .gfl-stat__value {
+  font-size: var(--gfl-text-display);
+}
+
+/* Legends: a swatch shape plus the tone of the thing it stands for. */
+.gfl-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--gfl-space-1) var(--gfl-space-6);
+  font-size: var(--gfl-text-sm);
+  color: var(--gfl-color-text-muted);
+}
+
+.gfl-legend--row {
+  flex-direction: row;
+}
+
+.gfl-legend--column {
+  flex-direction: column;
+}
+
+.gfl-legend__item {
+  display: flex;
+  align-items: center;
+  gap: var(--gfl-space-2);
+}
+
+.gfl-legend__item::before {
+  content: "";
+  flex: none;
+}
+
+.gfl-legend__item--line::before {
+  width: 20px;
+  border-top: 3px solid var(--gfl-swatch);
+  border-radius: 2px;
+}
+
+.gfl-legend__item--dots::before {
+  width: 20px;
+  border-top: 3px dotted var(--gfl-swatch);
+}
+
+.gfl-legend__item--box::before {
+  width: 10px;
+  height: 10px;
+  border-radius: 2px;
+  background: var(--gfl-swatch);
+}
+
+.gfl-legend__item--accent {
+  --gfl-swatch: var(--gfl-color-accent);
+}
+
+.gfl-legend__item--mark {
+  --gfl-swatch: var(--gfl-color-mark);
+}
+
+.gfl-legend__item--data {
+  --gfl-swatch: var(--gfl-color-data);
+}
+
+.gfl-legend__item--data-mid {
+  --gfl-swatch: var(--gfl-color-data-mid);
+}
+
+.gfl-legend__item--data-low {
+  --gfl-swatch: var(--gfl-color-data-low);
+}
+
+/* Figures --------------------------------------------------------------------- */
+
+/* Labels are placed at --x / --y, percentages supplied by the figure generator. */
+.gfl-figure {
+  position: relative;
+}
+
+.gfl-figure__image {
+  width: 100%;
+  height: auto;
+}
+
+.gfl-figure__label {
+  position: absolute;
+  left: var(--x);
+  top: var(--y);
+  transform: rotate(var(--rotate, 0deg));
+  transform-origin: left center;
+  font-size: var(--gfl-text-xs);
+  line-height: var(--gfl-leading-snug);
+  white-space: nowrap;
+  color: var(--gfl-color-text-muted);
+}
+
+.gfl-figure__label--accent {
+  font-size: var(--gfl-text-sm);
+  font-weight: 600;
+  color: var(--gfl-color-accent);
+}
+
+.gfl-figure__label--strong,
+.gfl-figure__label--title {
+  font-size: var(--gfl-text-sm);
+  font-weight: 500;
+  color: var(--gfl-color-text);
+}
+
+.gfl-figure__label--title {
+  font-weight: 600;
+}
+
+.gfl-figure__label--axis {
+  color: var(--gfl-color-text-muted);
+}
+
+.gfl-figure__label--caption {
+  transform: translateX(-50%);
+  color: var(--gfl-color-text-soft);
+}
+
+.gfl-figure__legend {
+  position: absolute;
+  left: 5%;
+  top: 7%;
+}
+
+.gfl-figure__legend .gfl-legend {
+  font-size: var(--gfl-text-xs);
+  color: var(--gfl-color-text-soft);
+}
+
+/* Icons: drawn with the text colour; parts opt into the accent or cut into the tile. */
+.gfl-icon {
+  --gfl-icon-surface: var(--gfl-color-page);
+  width: 48px;
+  height: 48px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.gfl-icon__accent {
+  fill: var(--gfl-color-accent);
+  stroke: var(--gfl-color-accent);
+}
+
+.gfl-icon__accent-dot {
+  fill: var(--gfl-color-accent);
+  stroke: var(--gfl-icon-surface);
+  stroke-width: 1.6;
+}
+
+.gfl-icon__dot {
+  fill: currentColor;
+  stroke: var(--gfl-icon-surface);
+  stroke-width: 1.4;
+}
+
+.gfl-icon__solid {
+  fill: currentColor;
+  stroke: none;
+}
+
+.gfl-icon__plate {
+  fill: var(--gfl-icon-surface);
+}
+
+.gfl-icon__knock {
+  fill: var(--gfl-icon-surface);
+  stroke: none;
+}
+
+.gfl-icon__cut {
+  stroke: var(--gfl-icon-surface);
+}
+
+.gfl-icon__soft {
+  stroke-opacity: 0.58;
+}
+
+.gfl-icon__shade {
+  fill: var(--gfl-color-line-strong);
+}
+
+.gfl-icon-tile {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 72px;
+  height: 72px;
+  border: 1px solid var(--gfl-color-line);
+  border-radius: var(--gfl-radius-lg);
+  background: var(--gfl-color-page);
+}
+
+/* Code panel ---------------------------------------------------------------- */
+
+.gfl-code {
+  overflow: hidden;
+  font-family: var(--gfl-font-mono);
+}
+
+.gfl-code__bar {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--gfl-space-4);
+  padding: var(--gfl-space-3) var(--gfl-space-5);
+  border-bottom: 1px solid var(--gfl-color-line);
+  font-size: var(--gfl-text-2xs);
+  color: var(--gfl-color-text-muted);
+}
+
+.gfl-code__body {
+  overflow-x: auto;
+  padding: var(--gfl-space-5);
+  line-height: var(--gfl-leading-code);
+  white-space: pre;
+}
+
+.gfl-code__body {
+  font-size: var(--gfl-text-sm);
+}
+
+.gfl-code__line {
+  display: block;
+}
+
+.gfl-code__comment {
+  color: var(--gfl-color-code-comment);
+}
+
+.gfl-code__keyword {
+  color: var(--gfl-color-code-keyword);
+}
+
+.gfl-code__call {
+  color: var(--gfl-color-code-call);
+}
+
+.gfl-code__number {
+  color: var(--gfl-color-code-number);
+}
+
+/* Charts -------------------------------------------------------------------- */
+
+.gfl-chart {
+  width: 100%;
+  height: auto;
+  font-family: var(--gfl-font-body);
+}
+
+.gfl-chart__grid,
+.gfl-chart__axis,
+.gfl-chart__line {
+  fill: none;
+}
+
+.gfl-chart__grid {
+  stroke: var(--gfl-color-line);
+}
+
+.gfl-chart__axis {
+  stroke: var(--gfl-color-line-strong);
+}
+
+.gfl-chart__tick {
+  font-size: var(--gfl-text-2xs);
+  fill: var(--gfl-color-text-muted);
+}
+
+.gfl-chart__line {
+  stroke: var(--gfl-color-data-mid);
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.gfl-chart__line--accent {
+  stroke: var(--gfl-color-accent);
+  stroke-width: 2.5;
+}
+
+/* Points and labels are ringed in the card colour so they stay legible over the lines. */
+.gfl-chart__point {
+  fill: var(--gfl-color-data-mid);
+  stroke: var(--gfl-color-card);
+  stroke-width: 2;
+}
+
+.gfl-chart__point--accent {
+  fill: var(--gfl-color-accent);
+}
+
+.gfl-chart__label {
+  font-size: var(--gfl-text-2xs);
+  fill: var(--gfl-color-text-soft);
+  stroke: var(--gfl-color-card);
+  stroke-width: 3;
+  paint-order: stroke;
+}
+
+.gfl-chart__label--strong {
+  font-size: var(--gfl-text-xs);
+  font-weight: 600;
+  fill: var(--gfl-color-text);
+}
+
+.gfl-chart-card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--gfl-space-2);
+  padding: var(--gfl-space-5) var(--gfl-space-5) var(--gfl-space-3);
+}
+
+.gfl-chart-card__title {
+  font-size: var(--gfl-text-base);
+  font-weight: 600;
+}
+
+.gfl-chart-card__unit {
+  font-weight: 400;
+  color: var(--gfl-color-text-muted);
+}

@@ -1,0 +1,441 @@
+{
+  "date": "2026-10-04",
+  "python": "3.9.6",
+  "platform": "macOS-26.3-arm64-arm-64bit",
+  "machine": "arm64",
+  "processor": "Apple M4 Pro",
+  "source_revision": "22cbd7ac89db01322aa6beb32196e201e6281ba7",
+  "script_sha256": "a01c867257303ab545d50f74740675ac2f6babf76800c7a151f1dec6a42a54f1",
+  "protocol": {
+    "scope": "full build_from_data; only the naive neighbor kernel is substituted",
+    "distance_matrix": "float64, N \u00d7 N, symmetric; each unordered pair evaluated once",
+    "seed": 20261004,
+    "processes_per_method": 3,
+    "timed_builds_per_process": 1,
+    "setup": "same imports and 16-row warmup; input generation outside timing",
+    "memory": "peak process RSS, including Python, dependencies, inputs and build",
+    "timeout_seconds": 45,
+    "memory_limit_bytes": 805306368
+  },
+  "runs": [
+    {
+      "bits": 8,
+      "configurations": 256,
+      "method": "graphfla",
+      "seconds": 0.0037479999999999736,
+      "peak_rss_bytes": 106627072,
+      "shape": [
+        256,
+        1024
+      ],
+      "input_sha256": "7e42da524e970e17efbac1a89df1fd8ebfc206ca29af2021f17fc8d5795c5589",
+      "graph_sha256": "16dcf2afbc158fae5a3d770fed65dc75c949f572d46cca6b13c68066b9d47213",
+      "versions": {
+        "numpy": "2.0.2",
+        "pandas": "2.3.3",
+        "igraph": "1.0.0"
+      },
+      "monitored_tree_peak_rss_bytes": 106283008
+    },
+    {
+      "bits": 8,
+      "configurations": 256,
+      "method": "naive",
+      "seconds": 0.01996941699999999,
+      "peak_rss_bytes": 107053056,
+      "shape": [
+        256,
+        1024
+      ],
+      "input_sha256": "7e42da524e970e17efbac1a89df1fd8ebfc206ca29af2021f17fc8d5795c5589",
+      "graph_sha256": "16dcf2afbc158fae5a3d770fed65dc75c949f572d46cca6b13c68066b9d47213",
+      "versions": {
+        "numpy": "2.0.2",
+        "pandas": "2.3.3",
+        "igraph": "1.0.0"
+      },
+      "monitored_tree_peak_rss_bytes": 107610112
+    },
+    {
+      "bits": 8,
+      "configurations": 256,
+      "method": "naive",
+      "seconds": 0.02027333299999995,
+      "peak_rss_bytes": 106758144,
+      "shape": [
+        256,
+        1024
+      ],
+      "input_sha256": "7e42da524e970e17efbac1a89df1fd8ebfc206ca29af2021f17fc8d5795c5589",
+      "graph_sha256": "16dcf2afbc158fae5a3d770fed65dc75c949f572d46cca6b13c68066b9d47213",
+      "versions": {
+        "numpy": "2.0.2",
+        "pandas": "2.3.3",
+        "igraph": "1.0.0"
+      },
+      "monitored_tree_peak_rss_bytes": 107380736
+    },
+    {
+      "bits": 8,
+      "configurations": 256,
+      "method": "graphfla",
+      "seconds": 0.0032935830000000443,
+      "peak_rss_bytes": 106790912,
+      "shape": [
+        256,
+        1024
+      ],
+      "input_sha256": "7e42da524e970e17efbac1a89df1fd8ebfc206ca29af2021f17fc8d5795c5589",
+      "graph_sha256": "16dcf2afbc158fae5a3d770fed65dc75c949f572d46cca6b13c68066b9d47213",
+      "versions": {
+        "numpy": "2.0.2",
+        "pandas": "2.3.3",
+        "igraph": "1.0.0"
+      },
+      "monitored_tree_peak_rss_bytes": 107446272
+    },
+    {
+      "bits": 8,
+      "configurations": 256,
+      "method": "graphfla",
+      "seconds": 0.0030903330000000007,
+      "peak_rss_bytes": 106610688,
+      "shape": [
+        256,
+        1024
+      ],
+      "input_sha256": "7e42da524e970e17efbac1a89df1fd8ebfc206ca29af2021f17fc8d5795c5589",
+      "graph_sha256": "16dcf2afbc158fae5a3d770fed65dc75c949f572d46cca6b13c68066b9d47213",
+      "versions": {
+        "numpy": "2.0.2",
+        "pandas": "2.3.3",
+        "igraph": "1.0.0"
+      },
+      "monitored_tree_peak_rss_bytes": 104218624
+    },
+    {
+      "bits": 8,
+      "configurations": 256,
+      "method": "naive",
+      "seconds": 0.020071791999999977,
+      "peak_rss_bytes": 106250240,
+      "shape": [
+        256,
+        1024
+      ],
+      "input_sha256": "7e42da524e970e17efbac1a89df1fd8ebfc206ca29af2021f17fc8d5795c5589",
+      "graph_sha256": "16dcf2afbc158fae5a3d770fed65dc75c949f572d46cca6b13c68066b9d47213",
+      "versions": {
+        "numpy": "2.0.2",
+        "pandas": "2.3.3",
+        "igraph": "1.0.0"
+      },
+      "monitored_tree_peak_rss_bytes": 105971712
+    },
+    {
+      "bits": 10,
+      "configurations": 1024,
+      "method": "graphfla",
+      "seconds": 0.006272875000000011,
+      "peak_rss_bytes": 107446272,
+      "shape": [
+        1024,
+        5120
+      ],
+      "input_sha256": "20e0c4175fe2e1945384b9b2810aea00a6eeb15e7fcf27418b348891f8dab88f",
+      "graph_sha256": "df5a0ecbe93e32b82b8c0b34e4cc3b819c9bdfec9d3a0c680a36f45198549cf2",
+      "versions": {
+        "numpy": "2.0.2",
+        "pandas": "2.3.3",
+        "igraph": "1.0.0"
+      },
+      "monitored_tree_peak_rss_bytes": 106102784
+    },
+    {
+      "bits": 10,
+      "configurations": 1024,
+      "method": "naive",
+      "seconds": 0.31215412499999995,
+      "peak_rss_bytes": 116654080,
+      "shape": [
+        1024,
+        5120
+      ],
+      "input_sha256": "20e0c4175fe2e1945384b9b2810aea00a6eeb15e7fcf27418b348891f8dab88f",
+      "graph_sha256": "df5a0ecbe93e32b82b8c0b34e4cc3b819c9bdfec9d3a0c680a36f45198549cf2",
+      "versions": {
+        "numpy": "2.0.2",
+        "pandas": "2.3.3",
+        "igraph": "1.0.0"
+      },
+      "monitored_tree_peak_rss_bytes": 116457472
+    },
+    {
+      "bits": 10,
+      "configurations": 1024,
+      "method": "naive",
+      "seconds": 0.30292970799999996,
+      "peak_rss_bytes": 116375552,
+      "shape": [
+        1024,
+        5120
+      ],
+      "input_sha256": "20e0c4175fe2e1945384b9b2810aea00a6eeb15e7fcf27418b348891f8dab88f",
+      "graph_sha256": "df5a0ecbe93e32b82b8c0b34e4cc3b819c9bdfec9d3a0c680a36f45198549cf2",
+      "versions": {
+        "numpy": "2.0.2",
+        "pandas": "2.3.3",
+        "igraph": "1.0.0"
+      },
+      "monitored_tree_peak_rss_bytes": 117374976
+    },
+    {
+      "bits": 10,
+      "configurations": 1024,
+      "method": "graphfla",
+      "seconds": 0.006417167000000001,
+      "peak_rss_bytes": 107528192,
+      "shape": [
+        1024,
+        5120
+      ],
+      "input_sha256": "20e0c4175fe2e1945384b9b2810aea00a6eeb15e7fcf27418b348891f8dab88f",
+      "graph_sha256": "df5a0ecbe93e32b82b8c0b34e4cc3b819c9bdfec9d3a0c680a36f45198549cf2",
+      "versions": {
+        "numpy": "2.0.2",
+        "pandas": "2.3.3",
+        "igraph": "1.0.0"
+      },
+      "monitored_tree_peak_rss_bytes": 108019712
+    },
+    {
+      "bits": 10,
+      "configurations": 1024,
+      "method": "graphfla",
+      "seconds": 0.006084583000000032,
+      "peak_rss_bytes": 107364352,
+      "shape": [
+        1024,
+        5120
+      ],
+      "input_sha256": "20e0c4175fe2e1945384b9b2810aea00a6eeb15e7fcf27418b348891f8dab88f",
+      "graph_sha256": "df5a0ecbe93e32b82b8c0b34e4cc3b819c9bdfec9d3a0c680a36f45198549cf2",
+      "versions": {
+        "numpy": "2.0.2",
+        "pandas": "2.3.3",
+        "igraph": "1.0.0"
+      },
+      "monitored_tree_peak_rss_bytes": 104546304
+    },
+    {
+      "bits": 10,
+      "configurations": 1024,
+      "method": "naive",
+      "seconds": 0.298579667,
+      "peak_rss_bytes": 116260864,
+      "shape": [
+        1024,
+        5120
+      ],
+      "input_sha256": "20e0c4175fe2e1945384b9b2810aea00a6eeb15e7fcf27418b348891f8dab88f",
+      "graph_sha256": "df5a0ecbe93e32b82b8c0b34e4cc3b819c9bdfec9d3a0c680a36f45198549cf2",
+      "versions": {
+        "numpy": "2.0.2",
+        "pandas": "2.3.3",
+        "igraph": "1.0.0"
+      },
+      "monitored_tree_peak_rss_bytes": 115228672
+    },
+    {
+      "bits": 12,
+      "configurations": 4096,
+      "method": "graphfla",
+      "seconds": 0.019142166000000016,
+      "peak_rss_bytes": 112328704,
+      "shape": [
+        4096,
+        24576
+      ],
+      "input_sha256": "598c23f7b165645a758ab3f792d976f02a6f9634398f98981dbffe44d539beaa",
+      "graph_sha256": "2f6eb1dfd651e3b7bd447ad1c439ac6041d23efd3ded033f69da78761206bb9c",
+      "versions": {
+        "numpy": "2.0.2",
+        "pandas": "2.3.3",
+        "igraph": "1.0.0"
+      },
+      "monitored_tree_peak_rss_bytes": 118882304
+    },
+    {
+      "bits": 12,
+      "configurations": 4096,
+      "method": "naive",
+      "seconds": 5.179130083,
+      "peak_rss_bytes": 247988224,
+      "shape": [
+        4096,
+        24576
+      ],
+      "input_sha256": "598c23f7b165645a758ab3f792d976f02a6f9634398f98981dbffe44d539beaa",
+      "graph_sha256": "2f6eb1dfd651e3b7bd447ad1c439ac6041d23efd3ded033f69da78761206bb9c",
+      "versions": {
+        "numpy": "2.0.2",
+        "pandas": "2.3.3",
+        "igraph": "1.0.0"
+      },
+      "monitored_tree_peak_rss_bytes": 247644160
+    },
+    {
+      "bits": 12,
+      "configurations": 4096,
+      "method": "naive",
+      "seconds": 5.160758709,
+      "peak_rss_bytes": 247595008,
+      "shape": [
+        4096,
+        24576
+      ],
+      "input_sha256": "598c23f7b165645a758ab3f792d976f02a6f9634398f98981dbffe44d539beaa",
+      "graph_sha256": "2f6eb1dfd651e3b7bd447ad1c439ac6041d23efd3ded033f69da78761206bb9c",
+      "versions": {
+        "numpy": "2.0.2",
+        "pandas": "2.3.3",
+        "igraph": "1.0.0"
+      },
+      "monitored_tree_peak_rss_bytes": 253001728
+    },
+    {
+      "bits": 12,
+      "configurations": 4096,
+      "method": "graphfla",
+      "seconds": 0.017972582999999986,
+      "peak_rss_bytes": 111869952,
+      "shape": [
+        4096,
+        24576
+      ],
+      "input_sha256": "598c23f7b165645a758ab3f792d976f02a6f9634398f98981dbffe44d539beaa",
+      "graph_sha256": "2f6eb1dfd651e3b7bd447ad1c439ac6041d23efd3ded033f69da78761206bb9c",
+      "versions": {
+        "numpy": "2.0.2",
+        "pandas": "2.3.3",
+        "igraph": "1.0.0"
+      },
+      "monitored_tree_peak_rss_bytes": 112771072
+    },
+    {
+      "bits": 12,
+      "configurations": 4096,
+      "method": "graphfla",
+      "seconds": 0.017984624999999976,
+      "peak_rss_bytes": 112181248,
+      "shape": [
+        4096,
+        24576
+      ],
+      "input_sha256": "598c23f7b165645a758ab3f792d976f02a6f9634398f98981dbffe44d539beaa",
+      "graph_sha256": "2f6eb1dfd651e3b7bd447ad1c439ac6041d23efd3ded033f69da78761206bb9c",
+      "versions": {
+        "numpy": "2.0.2",
+        "pandas": "2.3.3",
+        "igraph": "1.0.0"
+      },
+      "monitored_tree_peak_rss_bytes": 114622464
+    },
+    {
+      "bits": 12,
+      "configurations": 4096,
+      "method": "naive",
+      "seconds": 5.203106292,
+      "peak_rss_bytes": 247791616,
+      "shape": [
+        4096,
+        24576
+      ],
+      "input_sha256": "598c23f7b165645a758ab3f792d976f02a6f9634398f98981dbffe44d539beaa",
+      "graph_sha256": "2f6eb1dfd651e3b7bd447ad1c439ac6041d23efd3ded033f69da78761206bb9c",
+      "versions": {
+        "numpy": "2.0.2",
+        "pandas": "2.3.3",
+        "igraph": "1.0.0"
+      },
+      "monitored_tree_peak_rss_bytes": 250183680
+    }
+  ],
+  "summary": [
+    {
+      "configurations": 256,
+      "bits": 8,
+      "edges": 1024,
+      "dense_matrix_bytes": 524288,
+      "outputs_equal": true,
+      "graphfla": {
+        "seconds": 0.0032935830000000443,
+        "peak_rss_bytes": 106627072,
+        "seconds_range": [
+          0.0030903330000000007,
+          0.0037479999999999736
+        ]
+      },
+      "naive": {
+        "seconds": 0.020071791999999977,
+        "peak_rss_bytes": 106758144,
+        "seconds_range": [
+          0.01996941699999999,
+          0.02027333299999995
+        ]
+      },
+      "speedup": 6.094211683749797,
+      "peak_rss_reduction": 0.0012277470841006721
+    },
+    {
+      "configurations": 1024,
+      "bits": 10,
+      "edges": 5120,
+      "dense_matrix_bytes": 8388608,
+      "outputs_equal": true,
+      "graphfla": {
+        "seconds": 0.006272875000000011,
+        "peak_rss_bytes": 107446272,
+        "seconds_range": [
+          0.006084583000000032,
+          0.006417167000000001
+        ]
+      },
+      "naive": {
+        "seconds": 0.30292970799999996,
+        "peak_rss_bytes": 116375552,
+        "seconds_range": [
+          0.298579667,
+          0.31215412499999995
+        ]
+      },
+      "speedup": 48.29200454337117,
+      "peak_rss_reduction": 0.0767281430381529
+    },
+    {
+      "configurations": 4096,
+      "bits": 12,
+      "edges": 24576,
+      "dense_matrix_bytes": 134217728,
+      "outputs_equal": true,
+      "graphfla": {
+        "seconds": 0.017984624999999976,
+        "peak_rss_bytes": 112181248,
+        "seconds_range": [
+          0.017972582999999986,
+          0.019142166000000016
+        ]
+      },
+      "naive": {
+        "seconds": 5.179130083,
+        "peak_rss_bytes": 247791616,
+        "seconds_range": [
+          5.160758709,
+          5.203106292
+        ]
+      },
+      "speedup": 287.9754280670299,
+      "peak_rss_reduction": 0.5472758529489553
+    }
+  ]
+}

@@ -1,0 +1,34 @@
+{% import "macros.html" as ui with context %}
+<section class="gfl-section gfl-section--dotted">
+  <div class="gfl-container gfl-closing">
+      <div class="gfl-closing__call">
+        <h2 class="gfl-heading gfl-heading--1">{{ closing.title | inline }}</h2>
+        <div class="gfl-actions">
+          {{ ui.button(closing.action) }}
+          {{ ui.link(closing.link) }}
+        </div>
+      </div>
+    <section class="gfl-publications" aria-labelledby="research-title">
+      <h2 class="gfl-heading gfl-heading--2" id="research-title">{{ closing.publications.title }}</h2>
+      <div class="gfl-publications__list">
+        {% for paper in closing.publications.papers %}
+        <article class="gfl-card gfl-citation">
+          <p class="gfl-eyebrow">{{ paper.venue }}</p>
+          <h3 class="gfl-citation__title">{{ paper.title }}</h3>
+          <p class="gfl-citation__meta">{{ paper.authors }}</p>
+          {{ ui.link(paper.link) }}
+        </article>
+        {% endfor %}
+      </div>
+    </section>
+    <footer class="gfl-footer">
+      <p>{{ footer.text }}</p>
+      <nav class="gfl-nav" aria-label="Footer">
+        {% for item in footer.links %}
+        {% set url = item.href | href %}
+        <a class="gfl-nav__link" href="{{ url }}">{{ item.label }}{% if url is external %} {{ ui.arrow(url) }}{% endif %}</a>
+        {% endfor %}
+      </nav>
+    </footer>
+  </div>
+</section>

@@ -1,0 +1,97 @@
+{# Design-system reference: the tokens as written in tokens.css, and every component with live data. #}
+{% import "macros.html" as ui with context %}
+<div class="gfl-home">
+  <div class="gfl-container gfl-section__inner">
+    <div class="gfl-guide__stack">
+      <p class="gfl-eyebrow">Design system</p>
+      <h1 class="gfl-heading gfl-heading--2">{{ "One ink page, graphite cards, a single *accent*." | inline }}</h1>
+      <p class="gfl-lede">Everything below is read from <code class="gfl-inline-code">styles/tokens.css</code> and rendered with the same components as the landing page.</p>
+    </div>
+
+    {% for title, group in tokens %}
+    <section class="gfl-guide__group">
+      <h2 class="gfl-heading gfl-heading--3">{{ title }}</h2>
+      <div class="gfl-guide__tokens">
+        {% for name, value in group %}
+        <div class="gfl-guide__token">
+          {% if "-color-" in name %}
+          <span class="gfl-guide__swatch" style="--sample: var({{ name }})"></span>
+          {% elif "-space-" in name or "-size-" in name %}
+          <span class="gfl-guide__bar" style="--sample: var({{ name }})"></span>
+          {% elif "-radius-" in name %}
+          <span class="gfl-guide__corner" style="--sample: var({{ name }})"></span>
+          {% elif "-text-" in name %}
+          <span class="gfl-guide__type" style="--sample: var({{ name }})">Ag</span>
+          {% elif "-font-" in name %}
+          <span class="gfl-guide__face" style="--sample: var({{ name }})">Fitness landscape 0123</span>
+          {% endif %}
+          <code class="gfl-guide__name">{{ name }}</code>
+          <span class="gfl-note">{{ value }}</span>
+        </div>
+        {% endfor %}
+      </div>
+    </section>
+    {% endfor %}
+
+    <section class="gfl-guide__group">
+      <h2 class="gfl-heading gfl-heading--3">Text</h2>
+      <div class="gfl-guide__stack">
+        <p class="gfl-heading gfl-heading--1">Heading 1 with an {{ "*accent*" | inline }}</p>
+        <p class="gfl-heading gfl-heading--2">Heading 2</p>
+        <p class="gfl-heading gfl-heading--3">Heading 3</p>
+        <p class="gfl-eyebrow">Eyebrow</p>
+        <p class="gfl-lede">{{ start.lede }}</p>
+        <p class="gfl-note">Note: {{ how.scenarios[0].context }}</p>
+      </div>
+    </section>
+
+    <section class="gfl-guide__group">
+      <h2 class="gfl-heading gfl-heading--3">Actions</h2>
+      <div class="gfl-actions">
+        {{ ui.button(hero.action) }}
+        {{ ui.command(install) }}
+        {{ ui.link(closing.link) }}
+        {{ ui.link(start.links[0]) }}
+      </div>
+    </section>
+
+    <section class="gfl-guide__group">
+      <h2 class="gfl-heading gfl-heading--3">Data pieces</h2>
+      <div class="gfl-guide__row">
+        {{ ui.chips(metrics.cards[0].functions) }}
+        <div class="gfl-guide__stack">{{ ui.meter(0.74) }}{{ ui.meter(1.0, accent=true) }}</div>
+        {{ ui.legend(hero.figure.legend, "column") }}
+        {{ ui.stat(hero.stats[0]) }}
+      </div>
+    </section>
+
+    <section class="gfl-guide__group">
+      <h2 class="gfl-heading gfl-heading--3">Cards</h2>
+      <div class="gfl-cases">
+        {% for case in cases.cards[:3] %}
+        {{ ui.case_card(case) }}
+        {% endfor %}
+      </div>
+    </section>
+
+    <section class="gfl-guide__group">
+      <h2 class="gfl-heading gfl-heading--3">Icons</h2>
+      <div class="gfl-actions">
+        {% for case in cases.cards %}
+        <span class="gfl-icon-tile">{{ icon("cases/" ~ case.slug) }}</span>
+        {% endfor %}
+      </div>
+    </section>
+
+    <section class="gfl-guide__group">
+      <h2 class="gfl-heading gfl-heading--3">Figure, chart and code</h2>
+      <div class="gfl-guide__row">
+        <div class="gfl-card gfl-guide__sample">{{ ui.figure(metrics.cards[2].figure, legend_over=true) }}</div>
+        <div class="gfl-guide__sample">{{ ui.chart_card(performance.charts[0]) }}</div>
+      </div>
+      <div class="gfl-guide__row">
+        <div class="gfl-guide__sample">{{ ui.code_panel(start.code) }}</div>
+      </div>
+    </section>
+  </div>
+</div>

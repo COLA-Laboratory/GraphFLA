@@ -59,7 +59,8 @@ class NotebookRendering(unittest.TestCase):
                 {
                     "notebook": self.path.name,
                     "slug": "example",
-                    "title": "Example",
+                    "title": "Chemical reaction optimization",
+                    "study": "Example chemistry dataset",
                     "icon": "material/flask-outline",
                     "data": ["input.csv"],
                     "topic": "Example",
@@ -78,6 +79,8 @@ class NotebookRendering(unittest.TestCase):
         files = Files([])
         report = add_tutorials(files, self.config, self.catalog)
         page = files.get_file_from_path("tutorials/example.md").content_string
+        self.assertIn("# Chemical reaction optimization\n\n*Example chemistry dataset*", page)
+        self.assertNotIn("# Example\n", page)
         for text in [
             "NARRATIVE_SENTINEL",
             "$x^2$",

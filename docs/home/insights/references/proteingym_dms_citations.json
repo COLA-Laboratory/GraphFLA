@@ -1,0 +1,293 @@
+{
+  "A4_HUMAN_Seuma_2022": {
+    "title": "An atlas of amyloid aggregation: the impact of substitutions, insertions, deletions and truncations on amyloid beta fibril nucleation",
+    "journal": "Nature Communications",
+    "year": 2022,
+    "doi": "10.1038/s41467-022-34742-3",
+    "url": "https://doi.org/10.1038/s41467-022-34742-3",
+    "source_url": "https://www.nature.com/articles/s41467-022-34742-3"
+  },
+  "AMFR_HUMAN_Tsuboyama_2023_4G3O": {
+    "title": "Mega-scale experimental analysis of protein folding stability in biology and design",
+    "journal": "Nature",
+    "year": 2023,
+    "doi": "10.1038/s41586-023-06328-6",
+    "url": "https://doi.org/10.1038/s41586-023-06328-6",
+    "source_url": "https://www.nature.com/articles/s41586-023-06328-6"
+  },
+  "CAPSD_AAV2S_Sinai_2021": {
+    "title": "Generative AAV capsid diversification by latent interpolation",
+    "journal": "bioRxiv",
+    "year": 2021,
+    "doi": "10.1101/2021.04.16.440236",
+    "url": "https://doi.org/10.1101/2021.04.16.440236",
+    "source_url": "https://www.biorxiv.org/content/10.1101/2021.04.16.440236v1.full"
+  },
+  "CBX4_HUMAN_Tsuboyama_2023_2K28": {
+    "title": "Mega-scale experimental analysis of protein folding stability in biology and design",
+    "journal": "Nature",
+    "year": 2023,
+    "doi": "10.1038/s41586-023-06328-6",
+    "url": "https://doi.org/10.1038/s41586-023-06328-6",
+    "source_url": "https://www.nature.com/articles/s41586-023-06328-6"
+  },
+  "CSN4_MOUSE_Tsuboyama_2023_1UFM": {
+    "title": "Mega-scale experimental analysis of protein folding stability in biology and design",
+    "journal": "Nature",
+    "year": 2023,
+    "doi": "10.1038/s41586-023-06328-6",
+    "url": "https://doi.org/10.1038/s41586-023-06328-6",
+    "source_url": "https://www.nature.com/articles/s41586-023-06328-6"
+  },
+  "D7PM05_CLYGR_Somermeyer_2022": {
+    "title": "Heterogeneity of the GFP fitness landscape and data-driven protein design",
+    "journal": "eLife",
+    "year": 2022,
+    "doi": "10.7554/eLife.75842",
+    "url": "https://doi.org/10.7554/eLife.75842",
+    "source_url": "https://elifesciences.org/articles/75842"
+  },
+  "DLG4_HUMAN_Faure_2021": {
+    "title": "Mapping the energetic and allosteric landscapes of protein binding domains",
+    "journal": "Nature",
+    "year": 2022,
+    "doi": "10.1038/s41586-022-04586-4",
+    "url": "https://doi.org/10.1038/s41586-022-04586-4",
+    "source_url": "https://www.nature.com/articles/s41586-022-04586-4"
+  },
+  "DOCK1_MOUSE_Tsuboyama_2023_2M0Y": {
+    "title": "Mega-scale experimental analysis of protein folding stability in biology and design",
+    "journal": "Nature",
+    "year": 2023,
+    "doi": "10.1038/s41586-023-06328-6",
+    "url": "https://doi.org/10.1038/s41586-023-06328-6",
+    "source_url": "https://www.nature.com/articles/s41586-023-06328-6"
+  },
+  "F7YBW8_MESOW_Aakre_2015": {
+    "title": "Evolving New Protein-Protein Interaction Specificity through Promiscuous Intermediates",
+    "journal": "Cell",
+    "year": 2015,
+    "doi": "10.1016/j.cell.2015.09.055",
+    "url": "https://doi.org/10.1016/j.cell.2015.09.055",
+    "source_url": "https://linkinghub.elsevier.com/retrieve/pii/S0092867415012726"
+  },
+  "F7YBW8_MESOW_Ding_2023": {
+    "title": "Protein design using structure-based residue preferences",
+    "journal": "Nature Communications",
+    "year": 2024,
+    "doi": "10.1038/s41467-024-45621-4",
+    "url": "https://doi.org/10.1038/s41467-024-45621-4",
+    "source_url": "https://www.nature.com/articles/s41467-024-45621-4",
+    "proteinGym_reference_doi": "10.1101/2022.10.31.514613"
+  },
+  "GCN4_YEAST_Staller_2018": {
+    "title": "A High-Throughput Mutational Scan of an Intrinsically Disordered Acidic Transcriptional Activation Domain",
+    "journal": "Cell Systems",
+    "year": 2018,
+    "doi": "10.1016/j.cels.2018.01.015",
+    "url": "https://doi.org/10.1016/j.cels.2018.01.015",
+    "source_url": "https://linkinghub.elsevier.com/retrieve/pii/S2405471218300528"
+  },
+  "GFP_AEQVI_Sarkisyan_2016": {
+    "title": "Local fitness landscape of the green fluorescent protein",
+    "journal": "Nature",
+    "year": 2016,
+    "doi": "10.1038/nature17995",
+    "url": "https://doi.org/10.1038/nature17995",
+    "source_url": "https://www.nature.com/articles/nature17995"
+  },
+  "GRB2_HUMAN_Faure_2021": {
+    "title": "Mapping the energetic and allosteric landscapes of protein binding domains",
+    "journal": "Nature",
+    "year": 2022,
+    "doi": "10.1038/s41586-022-04586-4",
+    "url": "https://doi.org/10.1038/s41586-022-04586-4",
+    "source_url": "https://www.nature.com/articles/s41586-022-04586-4"
+  },
+  "HECD1_HUMAN_Tsuboyama_2023_3DKM": {
+    "title": "Mega-scale experimental analysis of protein folding stability in biology and design",
+    "journal": "Nature",
+    "year": 2023,
+    "doi": "10.1038/s41586-023-06328-6",
+    "url": "https://doi.org/10.1038/s41586-023-06328-6",
+    "source_url": "https://www.nature.com/articles/s41586-023-06328-6"
+  },
+  "HIS7_YEAST_Pokusaeva_2019": {
+    "title": "An experimental assay of the interactions of amino acids from orthologous sequences shaping a complex fitness landscape",
+    "journal": "PLOS Genetics",
+    "year": 2019,
+    "doi": "10.1371/journal.pgen.1008079",
+    "url": "https://doi.org/10.1371/journal.pgen.1008079",
+    "source_url": "https://dx.plos.org/10.1371/journal.pgen.1008079"
+  },
+  "ISDH_STAAW_Tsuboyama_2023_2LHR": {
+    "title": "Mega-scale experimental analysis of protein folding stability in biology and design",
+    "journal": "Nature",
+    "year": 2023,
+    "doi": "10.1038/s41586-023-06328-6",
+    "url": "https://doi.org/10.1038/s41586-023-06328-6",
+    "source_url": "https://www.nature.com/articles/s41586-023-06328-6"
+  },
+  "MYO3_YEAST_Tsuboyama_2023_2BTT": {
+    "title": "Mega-scale experimental analysis of protein folding stability in biology and design",
+    "journal": "Nature",
+    "year": 2023,
+    "doi": "10.1038/s41586-023-06328-6",
+    "url": "https://doi.org/10.1038/s41586-023-06328-6",
+    "source_url": "https://www.nature.com/articles/s41586-023-06328-6"
+  },
+  "NKX31_HUMAN_Tsuboyama_2023_2L9R": {
+    "title": "Mega-scale experimental analysis of protein folding stability in biology and design",
+    "journal": "Nature",
+    "year": 2023,
+    "doi": "10.1038/s41586-023-06328-6",
+    "url": "https://doi.org/10.1038/s41586-023-06328-6",
+    "source_url": "https://www.nature.com/articles/s41586-023-06328-6"
+  },
+  "OBSCN_HUMAN_Tsuboyama_2023_1V1C": {
+    "title": "Mega-scale experimental analysis of protein folding stability in biology and design",
+    "journal": "Nature",
+    "year": 2023,
+    "doi": "10.1038/s41586-023-06328-6",
+    "url": "https://doi.org/10.1038/s41586-023-06328-6",
+    "source_url": "https://www.nature.com/articles/s41586-023-06328-6"
+  },
+  "PABP_YEAST_Melamed_2013": {
+    "title": "Deep mutational scanning of an RRM domain of the Saccharomyces cerevisiae poly(A)-binding protein",
+    "journal": "RNA",
+    "year": 2013,
+    "doi": "10.1261/rna.040709.113",
+    "url": "https://doi.org/10.1261/rna.040709.113",
+    "source_url": "http://rnajournal.cshlp.org/lookup/doi/10.1261/rna.040709.113"
+  },
+  "PHOT_CHLRE_Chen_2023": {
+    "title": "Deep Mutational Scanning of an Oxygen-Independent Fluorescent Protein CreiLOV for Comprehensive Profiling of Mutational and Epistatic Effects",
+    "journal": "ACS Synthetic Biology",
+    "year": 2023,
+    "doi": "10.1021/acssynbio.2c00662",
+    "url": "https://doi.org/10.1021/acssynbio.2c00662",
+    "source_url": "https://pubs.acs.org/doi/10.1021/acssynbio.2c00662"
+  },
+  "POLG_PESV_Tsuboyama_2023_2MXD": {
+    "title": "Mega-scale experimental analysis of protein folding stability in biology and design",
+    "journal": "Nature",
+    "year": 2023,
+    "doi": "10.1038/s41586-023-06328-6",
+    "url": "https://doi.org/10.1038/s41586-023-06328-6",
+    "source_url": "https://www.nature.com/articles/s41586-023-06328-6"
+  },
+  "Q6WV12_9MAXI_Somermeyer_2022": {
+    "title": "Heterogeneity of the GFP fitness landscape and data-driven protein design",
+    "journal": "eLife",
+    "year": 2022,
+    "doi": "10.7554/eLife.75842",
+    "url": "https://doi.org/10.7554/eLife.75842",
+    "source_url": "https://elifesciences.org/articles/75842"
+  },
+  "Q8WTC7_9CNID_Somermeyer_2022": {
+    "title": "Heterogeneity of the GFP fitness landscape and data-driven protein design",
+    "journal": "eLife",
+    "year": 2022,
+    "doi": "10.7554/eLife.75842",
+    "url": "https://doi.org/10.7554/eLife.75842",
+    "source_url": "https://elifesciences.org/articles/75842"
+  },
+  "RASK_HUMAN_Weng_2022_abundance": {
+    "title": "The energetic and allosteric landscape for KRAS inhibition",
+    "journal": "Nature",
+    "year": 2024,
+    "doi": "10.1038/s41586-023-06954-0",
+    "url": "https://doi.org/10.1038/s41586-023-06954-0",
+    "source_url": "https://www.nature.com/articles/s41586-023-06954-0",
+    "proteinGym_reference_doi": "10.1101/2022.12.06.519122"
+  },
+  "RASK_HUMAN_Weng_2022_binding-DARPin_K55": {
+    "title": "The energetic and allosteric landscape for KRAS inhibition",
+    "journal": "Nature",
+    "year": 2024,
+    "doi": "10.1038/s41586-023-06954-0",
+    "url": "https://doi.org/10.1038/s41586-023-06954-0",
+    "source_url": "https://www.nature.com/articles/s41586-023-06954-0",
+    "proteinGym_reference_doi": "10.1101/2022.12.06.519127"
+  },
+  "SDA_BACSU_Tsuboyama_2023_1PV0": {
+    "title": "Mega-scale experimental analysis of protein folding stability in biology and design",
+    "journal": "Nature",
+    "year": 2023,
+    "doi": "10.1038/s41586-023-06328-6",
+    "url": "https://doi.org/10.1038/s41586-023-06328-6",
+    "source_url": "https://www.nature.com/articles/s41586-023-06328-6"
+  },
+  "SPA_STAAU_Tsuboyama_2023_1LP1": {
+    "title": "Mega-scale experimental analysis of protein folding stability in biology and design",
+    "journal": "Nature",
+    "year": 2023,
+    "doi": "10.1038/s41586-023-06328-6",
+    "url": "https://doi.org/10.1038/s41586-023-06328-6",
+    "source_url": "https://www.nature.com/articles/s41586-023-06328-6"
+  },
+  "SPG1_STRSG_Olson_2014": {
+    "title": "A comprehensive biophysical description of pairwise epistasis throughout an entire protein domain",
+    "journal": "Current Biology",
+    "year": 2014,
+    "doi": "10.1016/j.cub.2014.09.072",
+    "url": "https://doi.org/10.1016/j.cub.2014.09.072",
+    "source_url": "https://linkinghub.elsevier.com/retrieve/pii/S0960982214012688"
+  },
+  "SPG1_STRSG_Wu_2016": {
+    "title": "Adaptation in protein fitness landscapes is facilitated by indirect paths",
+    "journal": "eLife",
+    "year": 2016,
+    "doi": "10.7554/eLife.16965",
+    "url": "https://doi.org/10.7554/eLife.16965",
+    "source_url": "https://elifesciences.org/articles/16965"
+  },
+  "SPTN1_CHICK_Tsuboyama_2023_1TUD": {
+    "title": "Mega-scale experimental analysis of protein folding stability in biology and design",
+    "journal": "Nature",
+    "year": 2023,
+    "doi": "10.1038/s41586-023-06328-6",
+    "url": "https://doi.org/10.1038/s41586-023-06328-6",
+    "source_url": "https://www.nature.com/articles/s41586-023-06328-6"
+  },
+  "UBE4B_HUMAN_Tsuboyama_2023_3L1X": {
+    "title": "Mega-scale experimental analysis of protein folding stability in biology and design",
+    "journal": "Nature",
+    "year": 2023,
+    "doi": "10.1038/s41586-023-06328-6",
+    "url": "https://doi.org/10.1038/s41586-023-06328-6",
+    "source_url": "https://www.nature.com/articles/s41586-023-06328-6"
+  },
+  "VILI_CHICK_Tsuboyama_2023_1YU5": {
+    "title": "Mega-scale experimental analysis of protein folding stability in biology and design",
+    "journal": "Nature",
+    "year": 2023,
+    "doi": "10.1038/s41586-023-06328-6",
+    "url": "https://doi.org/10.1038/s41586-023-06328-6",
+    "source_url": "https://www.nature.com/articles/s41586-023-06328-6"
+  },
+  "YAIA_ECOLI_Tsuboyama_2023_2KVT": {
+    "title": "Mega-scale experimental analysis of protein folding stability in biology and design",
+    "journal": "Nature",
+    "year": 2023,
+    "doi": "10.1038/s41586-023-06328-6",
+    "url": "https://doi.org/10.1038/s41586-023-06328-6",
+    "source_url": "https://www.nature.com/articles/s41586-023-06328-6"
+  },
+  "YAP1_HUMAN_Araya_2012": {
+    "title": "A fundamental protein property, thermodynamic stability, revealed solely from large-scale measurements of protein function",
+    "journal": "Proceedings of the National Academy of Sciences",
+    "year": 2012,
+    "doi": "10.1073/pnas.1209751109",
+    "url": "https://doi.org/10.1073/pnas.1209751109",
+    "source_url": "https://pnas.org/doi/full/10.1073/pnas.1209751109"
+  },
+  "YNZC_BACSU_Tsuboyama_2023_2JVD": {
+    "title": "Mega-scale experimental analysis of protein folding stability in biology and design",
+    "journal": "Nature",
+    "year": 2023,
+    "doi": "10.1038/s41586-023-06328-6",
+    "url": "https://doi.org/10.1038/s41586-023-06328-6",
+    "source_url": "https://www.nature.com/articles/s41586-023-06328-6"
+  }
+}

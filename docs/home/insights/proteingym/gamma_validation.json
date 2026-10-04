@@ -1,0 +1,61 @@
+{
+  "status": "verified",
+  "method": "Full measured genotype population, exact sparse context traversal, shared GraphFLA moment kernels; no genotype-row sampling.",
+  "comparison": "Bundled sparse helper versus GraphFLA joint public gamma implementation on two complete ProteinGym assays.",
+  "results": [
+    {
+      "assay": "AMFR_HUMAN_Tsuboyama_2023_4G3O",
+      "n_variants": 2972,
+      "n_graph_configs": 2972,
+      "n_variable_positions": 47,
+      "sparse_seconds": 0.072025,
+      "public_seconds": 1.692632,
+      "sparse": {
+        "gamma": 0.709494275230417,
+        "gamma_star": 0.5263651392898562
+      },
+      "public": {
+        "gamma": 0.7094942752304167,
+        "gamma_star": 0.5263651392898562
+      },
+      "absolute_difference": {
+        "gamma": 2.220446049250313e-16,
+        "gamma_star": 0.0
+      },
+      "diagnostics": {
+        "rows": 2972,
+        "variables": 47,
+        "sparse_mutations": 5124,
+        "candidate_position_pairs": 7,
+        "complete_square_contexts": 7
+      }
+    },
+    {
+      "assay": "A4_HUMAN_Seuma_2022",
+      "n_variants": 14811,
+      "n_graph_configs": 14811,
+      "n_variable_positions": 42,
+      "sparse_seconds": 1.083913,
+      "public_seconds": 8.580115,
+      "sparse": {
+        "gamma": 0.6791699259576853,
+        "gamma_star": 0.44576882609349167
+      },
+      "public": {
+        "gamma": 0.6791699259576855,
+        "gamma_star": 0.44576882609349167
+      },
+      "absolute_difference": {
+        "gamma": 2.220446049250313e-16,
+        "gamma_star": 0.0
+      },
+      "diagnostics": {
+        "rows": 14811,
+        "variables": 42,
+        "sparse_mutations": 28826,
+        "candidate_position_pairs": 861,
+        "complete_square_contexts": 861
+      }
+    }
+  ]
+}

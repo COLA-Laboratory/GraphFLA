@@ -1,0 +1,105 @@
+{# Reusable pieces of the landing page. Import with context: the figure macro reads `figures`. #}
+
+{% macro arrow(url) -%}
+<span class="gfl-arrow" aria-hidden="true">{{ "↗" if url is external else "→" }}</span>
+{%- endmacro %}
+
+{% macro link(item) -%}
+{% set url = item.href | href %}
+<a class="gfl-link{% if item.accent is defined %} gfl-link--accent{% endif %}" href="{{ url }}">{{ item.label }} {{ arrow(url) }}</a>
+{%- endmacro %}
+
+{% macro button(item) -%}
+{% set url = item.href | href %}
+<a class="gfl-button" href="{{ url }}">{{ item.label }} {{ arrow(url) }}</a>
+{%- endmacro %}
+
+{% macro command(text) -%}
+<div class="gfl-command">
+  <code class="gfl-command__text"><span class="gfl-command__prompt">$</span> {{ text }}</code>
+  <button class="gfl-command__copy" type="button" data-copy="{{ text }}" aria-label="Copy command">{{ icon("copy") }}</button>
+</div>
+{%- endmacro %}
+
+{% macro section_head(section) -%}
+<div class="gfl-section__head">
+  <div class="gfl-section__titles">
+    <p class="gfl-eyebrow">{{ section.eyebrow }}</p>
+    <h2 class="gfl-heading gfl-heading--2">{{ section.title | inline }}</h2>
+  </div>
+  {% if section.intro is defined %}<p class="gfl-section__intro">{{ section.intro | inline }}</p>{% endif %}
+</div>
+{%- endmacro %}
+
+{# entries: [{swatch: line|dots|box, tone: accent|mark|data|data-mid|data-low, label}] #}
+{% macro legend(entries, layout="row") -%}
+<ul class="gfl-legend gfl-legend--{{ layout }}">
+  {% for entry in entries %}
+  <li class="gfl-legend__item gfl-legend__item--{{ entry.swatch }} gfl-legend__item--{{ entry.tone }}">{{ entry.label }}</li>
+  {% endfor %}
+</ul>
+{%- endmacro %}
+
+{% macro meter(share, accent=false) -%}
+<span class="gfl-meter{% if accent %} gfl-meter--accent{% endif %}" style="--value: {{ "%.1f" | format(100 * share) }}%"></span>
+{%- endmacro %}
+
+{% macro chips(names) -%}
+<ul class="gfl-chips">
+  {% for name in names %}
+  <li><a class="gfl-chip" href="{{ function_links[name] }}">{{ name }}</a></li>
+  {% endfor %}
+</ul>
+{%- endmacro %}
+
+{% macro stat(item, display=false) -%}
+<div class="gfl-stat{% if display %} gfl-stat--display{% endif %}">
+  <p class="gfl-stat__value">{% if item.href is defined %}<a href="{{ item.href | href }}">{{ item.value }}</a>{% else %}{{ item.value }}{% endif %}</p>
+  <p class="gfl-stat__label">{{ item.label }}</p>
+</div>
+{%- endmacro %}
+
+{# The image comes from the figure generator; its text labels are laid over it here. #}
+{% macro figure(spec, eager=false, legend_over=false) -%}
+{% set drawing = figures[spec.name] %}
+<div class="gfl-figure">
+  <img class="gfl-figure__image" src="{{ asset("figures/" ~ drawing.file) }}" width="{{ drawing.width }}" height="{{ drawing.height }}" alt="{{ spec.alt }}"{% if not eager %} loading="lazy"{% endif %}>
+  {% for key, at in drawing.labels.items() %}
+  {% set text = spec.labels[key] %}
+  <span class="gfl-figure__label gfl-figure__label--{{ at.kind }}" style="--x: {{ at.x }}%; --y: {{ at.y }}%{% if at.rotate is defined %}; --rotate: {{ at.rotate }}deg{% endif %}">
+    {%- if text is string %}{{ text }}{% else %}{{ text[0] }}<span class="gfl-figure__ramp"></span>{{ text[1] }}{% endif -%}
+  </span>
+  {% endfor %}
+  {% if legend_over %}
+  <div class="gfl-figure__legend">{{ legend(spec.legend, "column") }}</div>
+  {% endif %}
+</div>
+{%- endmacro %}
+
+{% macro code_panel(code) -%}
+<div class="gfl-card gfl-code">
+  <div class="gfl-code__bar"><span>{{ code.filename }}</span><span>{{ code.language }}</span></div>
+  <pre class="gfl-code__body">{% for line in code.lines %}<span class="gfl-code__line">{{ line }}</span>{% endfor %}</pre>
+</div>
+{%- endmacro %}
+
+{% macro chart_card(chart) -%}
+<div class="gfl-card gfl-chart-card">
+  <h3 class="gfl-chart-card__title">{{ chart.title }} <span class="gfl-chart-card__unit">· {{ chart.unit }}</span></h3>
+  {{ chart.svg }}
+</div>
+{%- endmacro %}
+
+{% macro case_card(case) -%}
+<a class="gfl-card gfl-case" href="{{ case.href }}">
+  <div class="gfl-case__head">
+    <span class="gfl-icon-tile">{{ icon("cases/" ~ case.slug) }}</span>
+    <div>
+      <p class="gfl-case__topic">{{ case.subtitle }}</p>
+      <h3 class="gfl-heading gfl-heading--3">{{ case.title }}</h3>
+    </div>
+  </div>
+  <p class="gfl-case__description">{{ case.description }}</p>
+  <p class="gfl-case__source"><span>{{ "{:,}".format(case.count) }} {{ case.unit }}</span>{{ arrow(case.href) }}</p>
+</a>
+{%- endmacro %}

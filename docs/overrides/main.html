@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% block fonts %}
+  {% if gfl_fonts is defined %}
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="{{ gfl_fonts }}">
+  {% else %}
+    {{ super() }}
+  {% endif %}
+{% endblock %}

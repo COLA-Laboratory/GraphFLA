@@ -1,7 +1,5 @@
 ---
-title: Landscape
-api_class: true
+title: Home
+template: landing.html
 hide: [toc]
 ---
-
-::: graphfla.landscape.Landscape

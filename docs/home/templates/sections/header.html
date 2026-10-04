@@ -1,0 +1,12 @@
+{% import "macros.html" as ui with context %}
+{% if not navigation_only | default(false) %}
+<header class="gfl-header">
+  <a class="gfl-logo" href="#top">{{ icon("logo") }}<span>{{ meta.title }}</span></a>
+{% endif %}
+  <nav class="gfl-nav" aria-label="Primary">
+    {% for item in header.nav %}
+    {% set url = item.href | href %}
+    <a class="gfl-nav__link" href="{{ url }}"{% if item.label == active_section | default('') %} aria-current="true"{% endif %}>{{ item.label }}</a>
+    {% endfor %}
+  </nav>
+{% if not navigation_only | default(false) %}</header>{% endif %}

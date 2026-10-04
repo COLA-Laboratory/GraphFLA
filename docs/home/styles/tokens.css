@@ -1,0 +1,91 @@
+/* GraphFLA design tokens.
+
+   The single place where colours, type and spacing are defined. The other
+   stylesheets and the figure generator only reference these names, so a
+   change here reaches the whole site. */
+
+:root {
+  /* Surfaces */
+  --gfl-color-page: #0B0E14;
+  --gfl-color-card: #1B1C1F;
+  --gfl-color-well: #121315;
+
+  /* Text, strongest to faintest */
+  --gfl-color-text: #EEF1F5;
+  --gfl-color-text-soft: #C9D0DA;
+  --gfl-color-text-muted: #A3ADBB;
+  --gfl-color-text-faint: #7D8898;
+
+  /* Lines and fills laid over a surface */
+  --gfl-color-line: rgba(255, 255, 255, 0.08);
+  --gfl-color-line-strong: rgba(255, 255, 255, 0.20);
+  --gfl-color-fill: rgba(255, 255, 255, 0.08);
+
+  /* Accent: the best variant, the primary action */
+  --gfl-color-accent: #FDE725;
+  --gfl-color-accent-fill: rgba(253, 231, 37, 0.14);
+  --gfl-color-accent-line: rgba(253, 231, 37, 0.45);
+  --gfl-color-on-accent: #0B0E14;
+
+  /* Data marks in figures and charts */
+  --gfl-color-data: #DCE3EC;
+  --gfl-color-data-mid: #8A94A3;
+  --gfl-color-data-low: #5B6676;
+  --gfl-color-mark: #FFFFFF;
+
+  /* Code */
+  --gfl-color-code-keyword: #B9A6F5;
+  --gfl-color-code-call: #5CC8D6;
+  --gfl-color-code-number: var(--gfl-color-accent);
+  --gfl-color-code-comment: var(--gfl-color-text-faint);
+
+  /* Typefaces */
+  --gfl-font-display: "Bricolage Grotesque", "Helvetica Neue", Helvetica, sans-serif;
+  --gfl-font-body: "IBM Plex Sans", "Helvetica Neue", Helvetica, sans-serif;
+  --gfl-font-mono: "IBM Plex Mono", ui-monospace, Menlo, monospace;
+
+  /* Type scale */
+  --gfl-text-2xs: 12px;
+  --gfl-text-xs: 13px;
+  --gfl-text-sm: 14px;
+  --gfl-text-md: 15px;
+  --gfl-text-base: 17px;
+  --gfl-text-lg: 19px;
+  --gfl-text-h3: 23px;
+  --gfl-text-h2: clamp(30px, 3.3vw, 46px);
+  --gfl-text-h1: clamp(40px, 5vw, 66px);
+  --gfl-text-stat: 40px;
+  --gfl-text-display: 84px;
+
+  /* Line height and tracking */
+  --gfl-leading-tight: 1.05;
+  --gfl-leading-snug: 1.2;
+  --gfl-leading-body: 1.5;
+  --gfl-leading-code: 1.7;
+  --gfl-tracking-tight: -0.02em;
+  --gfl-tracking-snug: -0.01em;
+
+  /* Spacing: multiples of 4px */
+  --gfl-space-1: 4px;
+  --gfl-space-2: 8px;
+  --gfl-space-3: 12px;
+  --gfl-space-4: 16px;
+  --gfl-space-5: 20px;
+  --gfl-space-6: 24px;
+  --gfl-space-8: 32px;
+  --gfl-space-10: 40px;
+  --gfl-space-12: 48px;
+  --gfl-space-14: 56px;
+
+  /* Page layout */
+  --gfl-page-width: 1200px;
+  --gfl-gutter: 24px;
+  --gfl-section-pad: clamp(56px, 7vw, 96px);
+
+  /* Shape */
+  --gfl-radius-sm: 6px;
+  --gfl-radius-md: 10px;
+  --gfl-radius-lg: 16px;
+  --gfl-radius-pill: 999px;
+  --gfl-size-control: 52px;
+}

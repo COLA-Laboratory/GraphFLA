@@ -8,7 +8,7 @@ api_grouped_classes: true
 
 1.  As **teaching tools** — every model on this page has a well-understood theoretical profile (smooth, tunably rugged, completely random, etc.), which makes it easy to verify your understanding of an analysis or sanity-check a new pipeline.
 2.  As **benchmarks** — when comparing analysis methods or evolutionary algorithms, you usually want a controlled fitness function whose properties (number of peaks, level of epistasis, dimensionality) you can dial up or down.
-3.  As **building blocks** — each problem returns a `(configurations, fitness)` pair via `get_data()` that you can feed straight into a [`Landscape`](index.md) constructor.
+3.  As **building blocks** — each problem returns a `(configurations, fitness)` pair via `get_data()` that you can feed straight into a [`Landscape`](landscape.md) constructor.
 
 The module is split into two families:
 

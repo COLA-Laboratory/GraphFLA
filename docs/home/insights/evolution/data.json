@@ -1,0 +1,768 @@
+{
+  "schema_version": 1,
+  "status": "complete",
+  "x_label": "Landscape feature",
+  "y_label": "Best fitness percentile",
+  "y_format": "percent",
+  "features": [
+    {
+      "key": "epistasis.magnitude",
+      "label": "Magnitude epistasis"
+    },
+    {
+      "key": "epistasis.sign",
+      "label": "Sign epistasis"
+    },
+    {
+      "key": "epistasis.reciprocal_sign",
+      "label": "Reciprocal sign epistasis"
+    },
+    {
+      "key": "diminishing_returns_index",
+      "label": "Diminishing returns index"
+    },
+    {
+      "key": "increasing_costs_index",
+      "label": "Increasing costs index"
+    },
+    {
+      "key": "global_idiosyncratic_index",
+      "label": "Global idiosyncratic index"
+    },
+    {
+      "key": "r_s_ratio",
+      "label": "Roughness-to-slope ratio"
+    },
+    {
+      "key": "gamma",
+      "label": "Gamma"
+    },
+    {
+      "key": "gamma_star",
+      "label": "Gamma-star"
+    },
+    {
+      "key": "local_optima_ratio",
+      "label": "Local-optima ratio"
+    },
+    {
+      "key": "autocorrelation",
+      "label": "Autocorrelation"
+    },
+    {
+      "key": "fdc",
+      "label": "Fitness-distance correlation"
+    },
+    {
+      "key": "evolvability_enhancing_fraction",
+      "label": "Evolvability-enhancing mutations"
+    },
+    {
+      "key": "global_optima_accessibility",
+      "label": "Global-optimum accessibility"
+    }
+  ],
+  "outcomes": [
+    {
+      "key": "rf_greedy",
+      "label": "RF greedy",
+      "metric": "Best fitness percentile"
+    },
+    {
+      "key": "rf_ucb",
+      "label": "RF uncertainty-guided",
+      "metric": "Best fitness percentile"
+    },
+    {
+      "key": "random",
+      "label": "Random search",
+      "metric": "Best fitness percentile"
+    },
+    {
+      "key": "de_greedy",
+      "label": "Greedy directed evolution",
+      "metric": "Best fitness percentile"
+    }
+  ],
+  "records": [
+    {
+      "id": "Podgornaia2015_PhoQ",
+      "label": "PhoQ protein-protein interface",
+      "features": {
+        "epistasis.magnitude": 0.4655062619401401,
+        "epistasis.sign": 0.29703530743649614,
+        "epistasis.reciprocal_sign": 0.23745843062336375,
+        "diminishing_returns_index": 0.2132712484822951,
+        "increasing_costs_index": 0.9458304697281467,
+        "global_idiosyncratic_index": 0.7792445436071352,
+        "r_s_ratio": 3.157288262106178,
+        "gamma": 0.22956096920742755,
+        "gamma_star": 0.3160564713841114,
+        "local_optima_ratio": 0.005024303109232335,
+        "autocorrelation": 0.24167036098103692,
+        "fdc": -0.19626581226983875,
+        "evolvability_enhancing_fraction": 0.011434578149747663,
+        "global_optima_accessibility": 0.9751702640961591
+      },
+      "outcomes": {
+        "rf_greedy": 0.9997779628087704,
+        "rf_ucb": 0.9996769074204546,
+        "random": 0.9979425976928059,
+        "de_greedy": 0.9858550922664163
+      },
+      "publication": {
+        "title": "Pervasive degeneracy and epistasis in a protein-protein interface",
+        "journal": "Science",
+        "year": 2015,
+        "doi": "10.1126/science.1257360",
+        "url": "https://doi.org/10.1126/science.1257360"
+      },
+      "source_url": "https://github.com/COLA-Laboratory/GraphFLA/blob/main/data/BioSequence/Podgornaia2015_PhoQ.csv",
+      "data_caveat": null
+    },
+    {
+      "id": "Wu2016_GB1",
+      "label": "Protein G B1 domain (GB1)",
+      "features": {
+        "epistasis.magnitude": 0.42727289254094936,
+        "epistasis.sign": 0.34977366516988745,
+        "epistasis.reciprocal_sign": 0.2229534422891632,
+        "diminishing_returns_index": 0.2767920280577574,
+        "increasing_costs_index": 0.9228561013224423,
+        "global_idiosyncratic_index": 0.6094700728743864,
+        "r_s_ratio": 2.4771874479570792,
+        "gamma": 0.45087584922619023,
+        "gamma_star": 0.25496822125046453,
+        "local_optima_ratio": 0.0012319146229604783,
+        "autocorrelation": 0.38310695847985377,
+        "fdc": -0.1230743944529954,
+        "evolvability_enhancing_fraction": 0.009554225937385362,
+        "global_optima_accessibility": 0.9975629515067521
+      },
+      "outcomes": {
+        "rf_greedy": 0.9999832620295794,
+        "rf_ucb": 0.9999819229919458,
+        "random": 0.9990620041376262,
+        "de_greedy": 0.9998734609436198
+      },
+      "publication": {
+        "title": "Adaptation in protein fitness landscapes is facilitated by indirect paths",
+        "journal": "eLife",
+        "year": 2016,
+        "doi": "10.7554/eLife.16965",
+        "url": "https://doi.org/10.7554/eLife.16965"
+      },
+      "source_url": "https://github.com/COLA-Laboratory/GraphFLA/blob/main/data/BioSequence/Wu2016_GB1.csv",
+      "data_caveat": null
+    },
+    {
+      "id": "Jalal2020_NBS",
+      "label": "Noc DNA-binding specificity landscape",
+      "features": {
+        "epistasis.magnitude": 0.37089980161426206,
+        "epistasis.sign": 0.3058129738837405,
+        "epistasis.reciprocal_sign": 0.32328722450199743,
+        "diminishing_returns_index": -0.04092052301678375,
+        "increasing_costs_index": 0.6861410982662656,
+        "global_idiosyncratic_index": 0.6488514024859383,
+        "r_s_ratio": 3.7424148729778834,
+        "gamma": 0.35124369783185994,
+        "gamma_star": 0.1465135662708779,
+        "local_optima_ratio": 0.00360625,
+        "autocorrelation": 0.30730710847593123,
+        "fdc": -0.31301436170743224,
+        "evolvability_enhancing_fraction": 0.019312253289473683,
+        "global_optima_accessibility": 0.9933625
+      },
+      "outcomes": {
+        "rf_greedy": 0.99999625,
+        "rf_ucb": 0.9999549999999999,
+        "random": 0.99720375,
+        "de_greedy": 0.99806
+      },
+      "publication": {
+        "title": "Diversification of DNA-Binding Specificity by Permissive and Specificity-Switching Mutations in the ParB/Noc Protein Family",
+        "journal": "Cell Reports",
+        "year": 2020,
+        "doi": "10.1016/j.celrep.2020.107928",
+        "url": "https://doi.org/10.1016/j.celrep.2020.107928"
+      },
+      "source_url": "https://github.com/COLA-Laboratory/GraphFLA/blob/main/data/BioSequence/Jalal2020_NBS.csv",
+      "data_caveat": null
+    },
+    {
+      "id": "Jalal2020_parS",
+      "label": "ParB DNA-binding specificity landscape",
+      "features": {
+        "epistasis.magnitude": 0.40235742083601644,
+        "epistasis.sign": 0.31301621076798164,
+        "epistasis.reciprocal_sign": 0.2846263683960019,
+        "diminishing_returns_index": -0.04157259302952305,
+        "increasing_costs_index": 0.6636443911692544,
+        "global_idiosyncratic_index": 0.584570890501797,
+        "r_s_ratio": 3.414783108504666,
+        "gamma": 0.4121143569558325,
+        "gamma_star": 0.17105302858229124,
+        "local_optima_ratio": 0.004425,
+        "autocorrelation": 0.42236875970960625,
+        "fdc": -0.3097150647786003,
+        "evolvability_enhancing_fraction": 0.02041957236842105,
+        "global_optima_accessibility": 0.9928625
+      },
+      "outcomes": {
+        "rf_greedy": 0.99992375,
+        "rf_ucb": 0.99995625,
+        "random": 0.9981512499999999,
+        "de_greedy": 0.9902993749999999
+      },
+      "publication": {
+        "title": "Diversification of DNA-Binding Specificity by Permissive and Specificity-Switching Mutations in the ParB/Noc Protein Family",
+        "journal": "Cell Reports",
+        "year": 2020,
+        "doi": "10.1016/j.celrep.2020.107928",
+        "url": "https://doi.org/10.1016/j.celrep.2020.107928"
+      },
+      "source_url": "https://github.com/COLA-Laboratory/GraphFLA/blob/main/data/BioSequence/Jalal2020_parS.csv",
+      "data_caveat": null
+    },
+    {
+      "id": "Tu2022_TEV",
+      "label": "TEV protease activity landscape",
+      "features": {
+        "epistasis.magnitude": 0.33442195600597524,
+        "epistasis.sign": 0.3546469054802144,
+        "epistasis.reciprocal_sign": 0.3109311385138104,
+        "diminishing_returns_index": -0.7612229203191835,
+        "increasing_costs_index": 0.4548682139539212,
+        "global_idiosyncratic_index": 0.9209279341147913,
+        "r_s_ratio": 8.835542129191147,
+        "gamma": 0.034292120821619636,
+        "gamma_star": 0.0246356530837724,
+        "local_optima_ratio": 0.0069690571349571425,
+        "autocorrelation": 0.03913981082990978,
+        "fdc": 0.007929723923178013,
+        "evolvability_enhancing_fraction": 0.002115047972113612,
+        "global_optima_accessibility": 0.9436945428952065
+      },
+      "outcomes": {
+        "rf_greedy": 0.998949299952241,
+        "rf_ucb": 0.998970665862303,
+        "random": 0.9979966317271197,
+        "de_greedy": 0.9901358620516302
+      },
+      "publication": {
+        "title": "An ultra-high-throughput method for measuring biomolecular activities",
+        "journal": "bioRxiv",
+        "year": 2024,
+        "doi": "10.1101/2022.03.09.483646",
+        "url": "https://doi.org/10.1101/2022.03.09.483646"
+      },
+      "source_url": "https://github.com/COLA-Laboratory/GraphFLA/blob/main/data/BioSequence/Tu2022_TEV.csv",
+      "data_caveat": null
+    },
+    {
+      "id": "Tu2022_T7",
+      "label": "T7 RNA polymerase activity (three-site library)",
+      "features": {
+        "epistasis.magnitude": 0.3202586322539103,
+        "epistasis.sign": 0.3375097255385936,
+        "epistasis.reciprocal_sign": 0.342231642207496,
+        "diminishing_returns_index": -0.4639634947138286,
+        "increasing_costs_index": 0.5846222293386543,
+        "global_idiosyncratic_index": 0.9643080388708604,
+        "r_s_ratio": 8.358894103779617,
+        "gamma": 0.018650336197428043,
+        "gamma_star": 0.009708968441894311,
+        "local_optima_ratio": 0.01754646840148699,
+        "autocorrelation": -0.03918735852186762,
+        "fdc": 0.0361740284771143,
+        "evolvability_enhancing_fraction": 0.0003101905111819162,
+        "global_optima_accessibility": 0.8446096654275093
+      },
+      "outcomes": {
+        "rf_greedy": 0.997888475836431,
+        "rf_ucb": 0.9986765799256505,
+        "random": 0.9982156133828995,
+        "de_greedy": 0.9913605947955391
+      },
+      "publication": {
+        "title": "An ultra-high-throughput method for measuring biomolecular activities",
+        "journal": "bioRxiv",
+        "year": 2024,
+        "doi": "10.1101/2022.03.09.483646",
+        "url": "https://doi.org/10.1101/2022.03.09.483646"
+      },
+      "source_url": "https://github.com/COLA-Laboratory/GraphFLA/blob/main/data/BioSequence/Tu2022_T7.csv",
+      "data_caveat": "The local table contains 6,725 measured genotypes and retains its supplied scores. Optimization outcomes use within-table percentiles; higher T7 activity is the maximization objective."
+    },
+    {
+      "id": "Lite2020_ParD2",
+      "label": "ParD3 variants assayed with ParE2",
+      "features": {
+        "epistasis.magnitude": 0.5630717409289682,
+        "epistasis.sign": 0.31345585628176337,
+        "epistasis.reciprocal_sign": 0.12347240278926841,
+        "diminishing_returns_index": -0.059253238649355305,
+        "increasing_costs_index": 0.6003518376033102,
+        "global_idiosyncratic_index": 0.32278049996196384,
+        "r_s_ratio": 0.981872983570605,
+        "gamma": 0.804909568795856,
+        "gamma_star": 0.46786004961423083,
+        "local_optima_ratio": 0.0006343567622430855,
+        "autocorrelation": 0.5604139396903973,
+        "fdc": -0.3015370991821652,
+        "evolvability_enhancing_fraction": 0.02350235407234202,
+        "global_optima_accessibility": 0.9994925145902055
+      },
+      "outcomes": {
+        "rf_greedy": 1.0,
+        "rf_ucb": 1.0,
+        "random": 0.9976655671149455,
+        "de_greedy": 1.0
+      },
+      "publication": {
+        "title": "Uncovering the basis of protein-protein interaction specificity with a combinatorially complete library",
+        "journal": "eLife",
+        "year": 2020,
+        "doi": "10.7554/eLife.60924",
+        "url": "https://doi.org/10.7554/eLife.60924"
+      },
+      "source_url": "https://github.com/COLA-Laboratory/GraphFLA/blob/main/data/BioSequence/Lite2020_ParD2.csv",
+      "data_caveat": null
+    },
+    {
+      "id": "Lite2020_ParD3",
+      "label": "ParD3 variants assayed with ParE3",
+      "features": {
+        "epistasis.magnitude": 0.6334180356931804,
+        "epistasis.sign": 0.2927372650986881,
+        "epistasis.reciprocal_sign": 0.07384469920813143,
+        "diminishing_returns_index": -0.178857190967055,
+        "increasing_costs_index": 0.4888473728667851,
+        "global_idiosyncratic_index": 0.32012699888604207,
+        "r_s_ratio": 0.8177531063375443,
+        "gamma": 0.7942525095760075,
+        "gamma_star": 0.5846135379318556,
+        "local_optima_ratio": 0.0005074854097944684,
+        "autocorrelation": 0.5454590413134888,
+        "fdc": -0.2451534521151054,
+        "evolvability_enhancing_fraction": 0.02061111086033106,
+        "global_optima_accessibility": 0.9996193859426542
+      },
+      "outcomes": {
+        "rf_greedy": 1.0,
+        "rf_ucb": 1.0,
+        "random": 0.997526008627252,
+        "de_greedy": 0.9998477543770617
+      },
+      "publication": {
+        "title": "Uncovering the basis of protein-protein interaction specificity with a combinatorially complete library",
+        "journal": "eLife",
+        "year": 2020,
+        "doi": "10.7554/eLife.60924",
+        "url": "https://doi.org/10.7554/eLife.60924"
+      },
+      "source_url": "https://github.com/COLA-Laboratory/GraphFLA/blob/main/data/BioSequence/Lite2020_ParD3.csv",
+      "data_caveat": null
+    },
+    {
+      "id": "Johnston2024_TrpB4",
+      "label": "TrpB active site (four variable residues)",
+      "features": {
+        "epistasis.magnitude": 0.3564145673454999,
+        "epistasis.sign": 0.3514385660438756,
+        "epistasis.reciprocal_sign": 0.2921468666106245,
+        "diminishing_returns_index": 0.1596290459248483,
+        "increasing_costs_index": 0.8708697852013935,
+        "global_idiosyncratic_index": 0.6552707990139779,
+        "r_s_ratio": 4.362459443490163,
+        "gamma": 0.394165626024921,
+        "gamma_star": 0.07375041376715637,
+        "local_optima_ratio": 0.005039936152429789,
+        "autocorrelation": 0.36559064656808565,
+        "fdc": -0.11155100086027349,
+        "evolvability_enhancing_fraction": 0.014171187479358617,
+        "global_optima_accessibility": 0.9875635490702512
+      },
+      "outcomes": {
+        "rf_greedy": 0.9998849989631055,
+        "rf_ucb": 0.999896310540505,
+        "random": 0.9965273457383633,
+        "de_greedy": 0.9945987217917539
+      },
+      "publication": {
+        "title": "A combinatorially complete epistatic fitness landscape in an enzyme active site",
+        "journal": "Proceedings of the National Academy of Sciences",
+        "year": 2024,
+        "doi": "10.1073/pnas.2400439121",
+        "url": "https://doi.org/10.1073/pnas.2400439121"
+      },
+      "source_url": "https://github.com/COLA-Laboratory/GraphFLA/blob/main/data/BioSequence/Johnston2024_TrpB4.csv",
+      "data_caveat": null
+    },
+    {
+      "id": "Johnston2024_TrpB3A",
+      "label": "TrpB active site (three-site library A)",
+      "features": {
+        "epistasis.magnitude": 0.38375495048082175,
+        "epistasis.sign": 0.3602513033631656,
+        "epistasis.reciprocal_sign": 0.2559937461560127,
+        "diminishing_returns_index": -0.4227443370317522,
+        "increasing_costs_index": 0.6261390394743028,
+        "global_idiosyncratic_index": 0.866197438477808,
+        "r_s_ratio": 2.17631627394597,
+        "gamma": 0.11828562757186226,
+        "gamma_star": 0.12728387004252503,
+        "local_optima_ratio": 0.007778195960356292,
+        "autocorrelation": 0.1393994734254282,
+        "fdc": -0.17765764365707418,
+        "evolvability_enhancing_fraction": 0.020674208924366853,
+        "global_optima_accessibility": 0.9627399322544222
+      },
+      "outcomes": {
+        "rf_greedy": 0.9996487266340484,
+        "rf_ucb": 0.9997365449755364,
+        "random": 0.9985196336720612,
+        "de_greedy": 0.9978296324175135
+      },
+      "publication": {
+        "title": "A combinatorially complete epistatic fitness landscape in an enzyme active site",
+        "journal": "Proceedings of the National Academy of Sciences",
+        "year": 2024,
+        "doi": "10.1073/pnas.2400439121",
+        "url": "https://doi.org/10.1073/pnas.2400439121"
+      },
+      "source_url": "https://github.com/COLA-Laboratory/GraphFLA/blob/main/data/BioSequence/Johnston2024_TrpB3A.csv",
+      "data_caveat": null
+    },
+    {
+      "id": "Johnston2024_TrpB3B",
+      "label": "TrpB active site (three-site library B)",
+      "features": {
+        "epistasis.magnitude": 0.35187560297372455,
+        "epistasis.sign": 0.3553317064865785,
+        "epistasis.reciprocal_sign": 0.292792690539697,
+        "diminishing_returns_index": -0.4648359709648337,
+        "increasing_costs_index": 0.6439560862372854,
+        "global_idiosyncratic_index": 0.9394482177647541,
+        "r_s_ratio": 3.7341779365436087,
+        "gamma": 0.051622250494064825,
+        "gamma_star": 0.056821220237682206,
+        "local_optima_ratio": 0.009254627313656828,
+        "autocorrelation": 0.06783760766853235,
+        "fdc": -0.02113756301484364,
+        "evolvability_enhancing_fraction": 0.005156449623089655,
+        "global_optima_accessibility": 0.9501000500250125
+      },
+      "outcomes": {
+        "rf_greedy": 0.9991745872936468,
+        "rf_ucb": 0.9996498249124564,
+        "random": 0.9975862931465734,
+        "de_greedy": 0.9912581290645323
+      },
+      "publication": {
+        "title": "A combinatorially complete epistatic fitness landscape in an enzyme active site",
+        "journal": "Proceedings of the National Academy of Sciences",
+        "year": 2024,
+        "doi": "10.1073/pnas.2400439121",
+        "url": "https://doi.org/10.1073/pnas.2400439121"
+      },
+      "source_url": "https://github.com/COLA-Laboratory/GraphFLA/blob/main/data/BioSequence/Johnston2024_TrpB3B.csv",
+      "data_caveat": null
+    },
+    {
+      "id": "Johnston2024_TrpB3C",
+      "label": "TrpB active site (three-site library C)",
+      "features": {
+        "epistasis.magnitude": 0.36419643724603806,
+        "epistasis.sign": 0.35745840881944485,
+        "epistasis.reciprocal_sign": 0.2783451539345171,
+        "diminishing_returns_index": -0.5177447569171416,
+        "increasing_costs_index": 0.5263074275930909,
+        "global_idiosyncratic_index": 0.8989979016182247,
+        "r_s_ratio": 3.4378009784655226,
+        "gamma": 0.07758805877630812,
+        "gamma_star": 0.07513314844336687,
+        "local_optima_ratio": 0.007505629221916437,
+        "autocorrelation": 0.11014321389919898,
+        "fdc": -0.06491360727118037,
+        "evolvability_enhancing_fraction": 0.011954229992093474,
+        "global_optima_accessibility": 0.9310733049787341
+      },
+      "outcomes": {
+        "rf_greedy": 0.9992494370778084,
+        "rf_ucb": 0.999074305729297,
+        "random": 0.9967850888166124,
+        "de_greedy": 0.9958218663998
+      },
+      "publication": {
+        "title": "A combinatorially complete epistatic fitness landscape in an enzyme active site",
+        "journal": "Proceedings of the National Academy of Sciences",
+        "year": 2024,
+        "doi": "10.1073/pnas.2400439121",
+        "url": "https://doi.org/10.1073/pnas.2400439121"
+      },
+      "source_url": "https://github.com/COLA-Laboratory/GraphFLA/blob/main/data/BioSequence/Johnston2024_TrpB3C.csv",
+      "data_caveat": null
+    },
+    {
+      "id": "Johnston2024_TrpB3D",
+      "label": "TrpB active site (three-site library D)",
+      "features": {
+        "epistasis.magnitude": 0.38257989393729147,
+        "epistasis.sign": 0.3583145803041912,
+        "epistasis.reciprocal_sign": 0.2591055257585173,
+        "diminishing_returns_index": -0.03174445032996317,
+        "increasing_costs_index": 0.8462930119108031,
+        "global_idiosyncratic_index": 0.7765870822340654,
+        "r_s_ratio": 2.212572518717743,
+        "gamma": 0.2609109958906258,
+        "gamma_star": 0.11602060949875444,
+        "local_optima_ratio": 0.005925544248357594,
+        "autocorrelation": 0.2648172966750049,
+        "fdc": -0.1250026427244742,
+        "evolvability_enhancing_fraction": 0.011763535123976505,
+        "global_optima_accessibility": 0.9853149555584181
+      },
+      "outcomes": {
+        "rf_greedy": 0.9999871183820688,
+        "rf_ucb": 0.9999613551462063,
+        "random": 0.9971402808192709,
+        "de_greedy": 0.9769676671389925
+      },
+      "publication": {
+        "title": "A combinatorially complete epistatic fitness landscape in an enzyme active site",
+        "journal": "Proceedings of the National Academy of Sciences",
+        "year": 2024,
+        "doi": "10.1073/pnas.2400439121",
+        "url": "https://doi.org/10.1073/pnas.2400439121"
+      },
+      "source_url": "https://github.com/COLA-Laboratory/GraphFLA/blob/main/data/BioSequence/Johnston2024_TrpB3D.csv",
+      "data_caveat": null
+    },
+    {
+      "id": "Johnston2024_TrpB3E",
+      "label": "TrpB active site (three-site library E)",
+      "features": {
+        "epistasis.magnitude": 0.3385266684258229,
+        "epistasis.sign": 0.34670674483439073,
+        "epistasis.reciprocal_sign": 0.31476658673978636,
+        "diminishing_returns_index": -0.18098721408848736,
+        "increasing_costs_index": 0.8641985023982354,
+        "global_idiosyncratic_index": 0.925835610945393,
+        "r_s_ratio": 8.066350688202487,
+        "gamma": 0.13307595355817567,
+        "gamma_star": 0.02073754753350784,
+        "local_optima_ratio": 0.011551983927674536,
+        "autocorrelation": 0.13132581065920232,
+        "fdc": -0.036235217276366985,
+        "evolvability_enhancing_fraction": 0.0006611796860833838,
+        "global_optima_accessibility": 0.9519085886489201
+      },
+      "outcomes": {
+        "rf_greedy": 0.9978653942742339,
+        "rf_ucb": 0.997388247112004,
+        "random": 0.9975640381717732,
+        "de_greedy": 0.9900929181315922
+      },
+      "publication": {
+        "title": "A combinatorially complete epistatic fitness landscape in an enzyme active site",
+        "journal": "Proceedings of the National Academy of Sciences",
+        "year": 2024,
+        "doi": "10.1073/pnas.2400439121",
+        "url": "https://doi.org/10.1073/pnas.2400439121"
+      },
+      "source_url": "https://github.com/COLA-Laboratory/GraphFLA/blob/main/data/BioSequence/Johnston2024_TrpB3E.csv",
+      "data_caveat": null
+    },
+    {
+      "id": "Johnston2024_TrpB3F",
+      "label": "TrpB active site (three-site library F)",
+      "features": {
+        "epistasis.magnitude": 0.3386559306286776,
+        "epistasis.sign": 0.3517126045215237,
+        "epistasis.reciprocal_sign": 0.3096314648497987,
+        "diminishing_returns_index": -0.5211139976479823,
+        "increasing_costs_index": 0.5868789284133726,
+        "global_idiosyncratic_index": 0.9209911507954616,
+        "r_s_ratio": 8.928644040682112,
+        "gamma": 0.08761917912460393,
+        "gamma_star": 0.03081749648525203,
+        "local_optima_ratio": 0.011115419413209255,
+        "autocorrelation": 0.10815797546039714,
+        "fdc": -0.19740880683474402,
+        "evolvability_enhancing_fraction": 0.0038031507820957926,
+        "global_optima_accessibility": 0.9705312136487011
+      },
+      "outcomes": {
+        "rf_greedy": 1.0,
+        "rf_ucb": 1.0,
+        "random": 0.9989013829649735,
+        "de_greedy": 0.9906165180302443
+      },
+      "publication": {
+        "title": "A combinatorially complete epistatic fitness landscape in an enzyme active site",
+        "journal": "Proceedings of the National Academy of Sciences",
+        "year": 2024,
+        "doi": "10.1073/pnas.2400439121",
+        "url": "https://doi.org/10.1073/pnas.2400439121"
+      },
+      "source_url": "https://github.com/COLA-Laboratory/GraphFLA/blob/main/data/BioSequence/Johnston2024_TrpB3F.csv",
+      "data_caveat": null
+    },
+    {
+      "id": "Johnston2024_TrpB3G",
+      "label": "TrpB active site (three-site library G)",
+      "features": {
+        "epistasis.magnitude": 0.3394560882732152,
+        "epistasis.sign": 0.3507660939701958,
+        "epistasis.reciprocal_sign": 0.309777817756589,
+        "diminishing_returns_index": -0.23785182201265304,
+        "increasing_costs_index": 0.820524976341838,
+        "global_idiosyncratic_index": 0.850660856860407,
+        "r_s_ratio": 4.309679563722612,
+        "gamma": 0.15522755419350587,
+        "gamma_star": 0.03636465939114782,
+        "local_optima_ratio": 0.009631225446711444,
+        "autocorrelation": 0.1296196137500479,
+        "fdc": -0.17556773279160104,
+        "evolvability_enhancing_fraction": 0.001971880444618522,
+        "global_optima_accessibility": 0.9735141300215435
+      },
+      "outcomes": {
+        "rf_greedy": 1.0,
+        "rf_ucb": 1.0,
+        "random": 0.9980103915853504,
+        "de_greedy": 0.986845773666202
+      },
+      "publication": {
+        "title": "A combinatorially complete epistatic fitness landscape in an enzyme active site",
+        "journal": "Proceedings of the National Academy of Sciences",
+        "year": 2024,
+        "doi": "10.1073/pnas.2400439121",
+        "url": "https://doi.org/10.1073/pnas.2400439121"
+      },
+      "source_url": "https://github.com/COLA-Laboratory/GraphFLA/blob/main/data/BioSequence/Johnston2024_TrpB3G.csv",
+      "data_caveat": null
+    },
+    {
+      "id": "Johnston2024_TrpB3H",
+      "label": "TrpB active site (three-site library H)",
+      "features": {
+        "epistasis.magnitude": 0.33116720819795054,
+        "epistasis.sign": 0.34690077480629844,
+        "epistasis.reciprocal_sign": 0.3219320169957511,
+        "diminishing_returns_index": -0.22143468117543183,
+        "increasing_costs_index": 0.8785559338813973,
+        "global_idiosyncratic_index": 1.027150749195134,
+        "r_s_ratio": 9.712154481040322,
+        "gamma": 0.04779949730281115,
+        "gamma_star": 0.009375599487219567,
+        "local_optima_ratio": 0.014515292897874546,
+        "autocorrelation": 0.011092355139876296,
+        "fdc": -0.011938138573382337,
+        "evolvability_enhancing_fraction": 0.00018145949265786977,
+        "global_optima_accessibility": 0.944530844997408
+      },
+      "outcomes": {
+        "rf_greedy": 0.998535510627268,
+        "rf_ucb": 0.999559357179886,
+        "random": 0.9983022291342664,
+        "de_greedy": 0.9841368584758943
+      },
+      "publication": {
+        "title": "A combinatorially complete epistatic fitness landscape in an enzyme active site",
+        "journal": "Proceedings of the National Academy of Sciences",
+        "year": 2024,
+        "doi": "10.1073/pnas.2400439121",
+        "url": "https://doi.org/10.1073/pnas.2400439121"
+      },
+      "source_url": "https://github.com/COLA-Laboratory/GraphFLA/blob/main/data/BioSequence/Johnston2024_TrpB3H.csv",
+      "data_caveat": null
+    },
+    {
+      "id": "Johnston2024_TrpB3I",
+      "label": "TrpB active site (three-site library I)",
+      "features": {
+        "epistasis.magnitude": 0.4795443636229369,
+        "epistasis.sign": 0.35577053256040075,
+        "epistasis.reciprocal_sign": 0.16468510381666235,
+        "diminishing_returns_index": 0.19511769735473922,
+        "increasing_costs_index": 0.8346365679478104,
+        "global_idiosyncratic_index": 0.577680287710991,
+        "r_s_ratio": 1.5083242326598092,
+        "gamma": 0.5001167844790301,
+        "gamma_star": 0.3002139697959707,
+        "local_optima_ratio": 0.0020554984583761563,
+        "autocorrelation": 0.4032644076571373,
+        "fdc": -0.24031617096271166,
+        "evolvability_enhancing_fraction": 0.042577760533584606,
+        "global_optima_accessibility": 0.9973021582733813
+      },
+      "outcomes": {
+        "rf_greedy": 1.0,
+        "rf_ucb": 1.0,
+        "random": 0.9986510791366907,
+        "de_greedy": 0.9923432682425488
+      },
+      "publication": {
+        "title": "A combinatorially complete epistatic fitness landscape in an enzyme active site",
+        "journal": "Proceedings of the National Academy of Sciences",
+        "year": 2024,
+        "doi": "10.1073/pnas.2400439121",
+        "url": "https://doi.org/10.1073/pnas.2400439121"
+      },
+      "source_url": "https://github.com/COLA-Laboratory/GraphFLA/blob/main/data/BioSequence/Johnston2024_TrpB3I.csv",
+      "data_caveat": null
+    }
+  ],
+  "provenance": {
+    "kind": "GraphFLA directed-evolution benchmark on empirical protein amino-acid landscapes",
+    "landscape_count": 18,
+    "feature_seed": 20261004,
+    "simulation_seeds": [
+      20261004,
+      20261005,
+      20261006,
+      20261007,
+      20261008,
+      20261009,
+      20261010,
+      20261011,
+      20261012,
+      20261013
+    ],
+    "simulation_repeats": 10,
+    "outcome_aggregation": "Arithmetic mean of the 10 seed-level best-fitness percentiles for each landscape and strategy.",
+    "query_budget_cap": 480,
+    "exact_budget_strategies": [
+      "rf_greedy",
+      "rf_ucb",
+      "random"
+    ],
+    "early_stopping_strategy": "de_greedy",
+    "initial_random_measurements": 96,
+    "active_learning_rounds": 4,
+    "active_learning_batch_size": 96,
+    "strategy_protocols": {
+      "rf_greedy": "96 shared random observations, then four batches of 96 unmeasured genotypes ranked by a 32-tree RandomForestRegressor predictive mean.",
+      "rf_ucb": "Same 96+4x96 schedule and forest; rank by standardized predictive mean plus one between-tree standard deviation.",
+      "random": "480 unique uniformly random observed genotypes; shares the initial 96 with both RF strategies.",
+      "de_greedy": "Starts at the first shared initial genotype, assays all available unmeasured one-site neighbors, moves to the best improving neighbor, and stops at a local optimum or the 480-query cap. Actual counts are in simulation_runs.csv."
+    },
+    "random_forest": {
+      "n_estimators": 32,
+      "max_features": "sqrt",
+      "max_depth": 10,
+      "min_samples_leaf": 1,
+      "bootstrap": true,
+      "n_jobs": 1,
+      "target_standardization": "mean and population SD of currently observed labels at each round",
+      "uncertainty": "population SD of individual-tree predictions"
+    },
+    "fitness_rank": "fraction of observed genotypes with fitness <= best fitness measured; ties share the same empirical percentile",
+    "objective": "maximize the source-file fitness column without rescaling; ranks are computed against all observed genotypes in that landscape",
+    "source_population": "Every row in each listed BioSequence CSV is retained; unmeasured sequence combinations are not imputed or removed.",
+    "features_source": "GraphFLA landscape analysis on the full retained one-edit graph with epsilon=0; parameter settings are in README.md."
+  }
+}

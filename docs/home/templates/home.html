@@ -1,0 +1,16 @@
+{# The landing page: one include per section, in page order. #}
+<div class="gfl-home" id="top">
+  <section class="gfl-section gfl-section--lead gfl-section--dotted">
+    <div class="gfl-container">
+      {% if not embedded | default(false) %}{% include "sections/header.html" %}{% endif %}
+      {% include "sections/hero.html" %}
+    </div>
+  </section>
+  {% include "sections/how.html" %}
+  {% include "sections/metrics.html" %}
+  {% include "sections/insights.html" %}
+  {% include "sections/start.html" %}
+  {% include "sections/performance.html" %}
+  {% include "sections/cases.html" %}
+  {% include "sections/closing.html" %}
+</div>

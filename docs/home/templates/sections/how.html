@@ -1,0 +1,68 @@
+{% import "macros.html" as ui with context %}
+<section class="gfl-section" id="how">
+  <div class="gfl-container gfl-section__inner">
+    {{ ui.section_head(how) }}
+    <div class="gfl-scenario-tabs" role="tablist" aria-label="Application examples">
+      {% for scenario in how.scenarios %}
+      <button class="gfl-scenario-tab" type="button" role="tab" id="tab-{{ scenario.id }}" aria-controls="scenario-{{ scenario.id }}" aria-selected="{{ 'true' if loop.first else 'false' }}" tabindex="{{ 0 if loop.first else -1 }}">
+        {{ icon("cases/" ~ scenario.icon) }}<span>{{ scenario.label }}</span>
+      </button>
+      {% endfor %}
+    </div>
+    <p class="gfl-note gfl-demo-note">{{ how.demo_note }}</p>
+    {% for scenario in how.scenarios %}
+    <div class="gfl-scenario" role="tabpanel" id="scenario-{{ scenario.id }}" aria-labelledby="tab-{{ scenario.id }}"{% if not loop.first %} hidden{% endif %}>
+      <div class="gfl-scenario__context">
+        <h3 class="gfl-heading gfl-heading--3">{{ scenario.title }}</h3>
+        <p>{{ scenario.context }}</p>
+      </div>
+      <div class="gfl-how">
+        <div class="gfl-card gfl-panel">
+          <p class="gfl-panel__title">{{ how.panels[0] }}</p>
+          <div class="gfl-data-table">
+            <table class="gfl-data-table__table">
+              <thead><tr>{% for label in scenario.columns %}<th scope="col">{{ label }}</th>{% endfor %}</tr></thead>
+              <tbody>
+              {% for row in scenario.rows %}
+                <tr{% if row.best %} class="is-best"{% endif %}>
+                  {% for cell in row.cells %}
+                  <td>{% if scenario.sequence | default(false) %}<span class="gfl-sequence">{% for residue in row.residues %}<span class="gfl-residue{% if residue.variable %} gfl-residue--variable{% endif %}{% if residue.changed %} gfl-residue--changed{% endif %}">{{ residue.letter }}</span>{% endfor %}</span>{% elif cell in ['On', 'Off'] %}<span class="gfl-switch{% if cell == 'On' %} gfl-switch--on{% endif %}">{{ cell }}</span>{% else %}{{ cell }}{% endif %}</td>
+                  {% endfor %}
+                  <td><span class="gfl-data-result">{{ ui.meter(row.share, row.best) }}<span class="gfl-data-value">{{ row.value }}</span></span></td>
+                </tr>
+              {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div class="gfl-card gfl-panel gfl-panel--figure">
+          <p class="gfl-panel__title">{{ how.panels[1] }}</p>
+          {{ ui.figure(scenario.figure) }}
+        </div>
+        <div class="gfl-card gfl-panel">
+          <p class="gfl-panel__title">{{ how.panels[2] }}</p>
+          <div class="gfl-report">
+            {% for entry in scenario.entries %}
+            <div class="gfl-report__entry">
+              <p class="gfl-report__line"><span>{{ entry.label }}</span><span class="gfl-report__value">{{ entry.value }}</span></p>
+              {{ ui.meter(entry.share) }}
+            </div>
+            {% endfor %}
+            <div class="gfl-report__entry">
+              <p class="gfl-report__line">{{ how.reports.interactions }}</p>
+              <div class="gfl-shares">{% for part in scenario.interactions %}<span class="gfl-shares__part" style="--share: {{ part.percent }}"></span>{% endfor %}</div>
+              <ul class="gfl-legend gfl-legend--column">{% for part in scenario.interactions %}<li class="gfl-legend__item gfl-legend__item--box gfl-legend__item--{{ part.tone }}">{{ part.label }} {{ part.value }}</li>{% endfor %}</ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+    <div class="gfl-workflow-steps">
+      {% for step in how.steps %}
+      <div class="gfl-step"><p class="gfl-step__index">{{ step.number }}</p><h3 class="gfl-heading gfl-heading--3">{{ step.title }}</h3><p class="gfl-step__text">{{ step.text }}</p></div>
+      {% endfor %}
+    </div>
+    <div class="gfl-actions">{{ ui.link(how.catalogue) }}</div>
+  </div>
+</section>

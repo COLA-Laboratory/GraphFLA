@@ -1,0 +1,26 @@
+{# Document shell for previewing a page outside the documentation site. #}
+<!doctype html>
+<html lang="en" class="gfl-document">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{{ title }}</title>
+<meta name="description" content="{{ meta.description }}">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="{{ fonts }}">
+{% for sheet in stylesheets %}
+<link rel="stylesheet" href="{{ asset("css/" ~ sheet) }}">
+{% endfor %}
+</head>
+<body class="gfl-standalone">
+{% block content %}{% include body %}{% endblock %}
+<script src="{{ asset("home.js") }}" defer></script>
+<script src="{{ asset("vendor/d3.v7.9.0.min.js") }}" defer></script>
+<script src="{{ asset("vendor/tom-select-2.4.3.min.js") }}" defer></script>
+<script src="{{ asset("vendor/floating-ui-core-1.7.3.min.js") }}" defer></script>
+<script src="{{ asset("vendor/floating-ui-dom-1.7.4.min.js") }}" defer></script>
+<script src="{{ asset("insights-data.js") }}" defer></script>
+<script src="{{ asset("insights.js") }}" defer></script>
+</body>
+</html>

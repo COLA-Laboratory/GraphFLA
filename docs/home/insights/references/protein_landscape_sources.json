@@ -1,0 +1,350 @@
+{
+  "datasets": {
+    "Podgornaia2015_PhoQ": {
+      "local_file": "data/BioSequence/Podgornaia2015_PhoQ.csv",
+      "molecule": "protein",
+      "protein": "PhoQ",
+      "variable_sites": 4,
+      "full_site_alphabet": "20 canonical amino acids",
+      "observed_rows": 140517,
+      "nominal_space": 160000,
+      "assay": "Two-step selection for a functional PhoQ–PhoP interface in E. coli. PhoP-dependent YFP was used in low/high extracellular Mg conditions; variants were enriched after selection for WT-like activity and Mg-starvation survival.",
+      "direction": "maximize",
+      "direction_basis": "The primary paper calls variants enriched after the functional selection functional PhoQ variants; greater enrichment/fitness therefore indicates retained or stronger target function. This is a functional-interface score, not a direct organismal-fitness measurement.",
+      "citation": {
+        "title": "Pervasive degeneracy and epistasis in a protein-protein interface",
+        "journal": "Science",
+        "year": 2015,
+        "doi": "10.1126/science.1257360",
+        "url": "https://doi.org/10.1126/science.1257360"
+      }
+    },
+    "Wu2016_GB1": {
+      "local_file": "data/BioSequence/Wu2016_GB1.csv",
+      "molecule": "protein",
+      "protein": "GB1 (protein G B1 domain)",
+      "variable_sites": 4,
+      "full_site_alphabet": "20 canonical amino acids",
+      "observed_rows": 149361,
+      "nominal_space": 160000,
+      "assay": "Combinatorially complete four-site GB1 landscape; fitness is binding-based sequence enrichment for IgG-Fc.",
+      "direction": "maximize",
+      "direction_basis": "The source paper defines higher measured fitness as stronger binding/enrichment.",
+      "citation": {
+        "title": "Adaptation in protein fitness landscapes is facilitated by indirect paths",
+        "journal": "eLife",
+        "year": 2016,
+        "doi": "10.7554/eLife.16965",
+        "url": "https://doi.org/10.7554/eLife.16965"
+      }
+    },
+    "Jalal2020_NBS": {
+      "local_file": "data/BioSequence/Jalal2020_NBS.csv",
+      "molecule": "protein",
+      "protein": "Caulobacter crescentus ParB variant scaffold",
+      "variable_sites": 4,
+      "full_site_alphabet": "20 canonical amino acids",
+      "observed_rows": 160000,
+      "nominal_space": 160000,
+      "assay": "Four ParB amino-acid positions are varied; score is the NBS DNA-binding output from bacterial one-hybrid selection (NBS phenotype label, protein sequence genotype).",
+      "direction": "maximize",
+      "direction_basis": "The primary paper normalizes the NBS score so the NBS-specific QKKR endpoint is 1 and parS-specific RTAG endpoint is 0. Higher score means stronger NBS binding.",
+      "citation": {
+        "title": "Diversification of DNA-Binding Specificity by Permissive and Specificity-Switching Mutations in the ParB/Noc Protein Family",
+        "journal": "Cell Reports",
+        "year": 2020,
+        "doi": "10.1016/j.celrep.2020.107928",
+        "url": "https://doi.org/10.1016/j.celrep.2020.107928"
+      }
+    },
+    "Jalal2020_parS": {
+      "local_file": "data/BioSequence/Jalal2020_parS.csv",
+      "molecule": "protein",
+      "protein": "Caulobacter crescentus ParB variant scaffold",
+      "variable_sites": 4,
+      "full_site_alphabet": "20 canonical amino acids",
+      "observed_rows": 160000,
+      "nominal_space": 160000,
+      "assay": "Same four-site ParB amino-acid library; score is the parS DNA-binding output from bacterial one-hybrid selection (parS phenotype label, protein sequence genotype).",
+      "direction": "maximize",
+      "direction_basis": "The primary paper normalizes the parS score so WT RTAG is 1 and NBS-specific QKKR endpoint is 0. Higher score means stronger parS binding.",
+      "citation": {
+        "title": "Diversification of DNA-Binding Specificity by Permissive and Specificity-Switching Mutations in the ParB/Noc Protein Family",
+        "journal": "Cell Reports",
+        "year": 2020,
+        "doi": "10.1016/j.celrep.2020.107928",
+        "url": "https://doi.org/10.1016/j.celrep.2020.107928"
+      }
+    },
+    "Lite2020_ParD2": {
+      "local_file": "data/BioSequence/Lite2020_ParD2.csv",
+      "molecule": "protein",
+      "protein": "ParD3 antitoxin variant scaffold",
+      "variable_sites": 3,
+      "full_site_alphabet": "20 canonical amino acids",
+      "observed_rows": 7882,
+      "nominal_space": 8000,
+      "assay": "Three-site ParD3 amino-acid library assayed against ParE2 toxin; the packaged filename label ParD2 denotes the ParE2-related phenotype.",
+      "direction": "maximize",
+      "direction_basis": "The source paper assigns W from competitive cell-growth/toxin-neutralization assays and normalizes stop-codon median to 0 and the ParE2-targeted reference/best ILK variant to 1. Higher W indicates better toxin neutralization and growth.",
+      "citation": {
+        "title": "Uncovering the basis of protein-protein interaction specificity with a combinatorially complete library",
+        "journal": "eLife",
+        "year": 2020,
+        "doi": "10.7554/eLife.60924",
+        "url": "https://doi.org/10.7554/eLife.60924"
+      }
+    },
+    "Lite2020_ParD3": {
+      "local_file": "data/BioSequence/Lite2020_ParD3.csv",
+      "molecule": "protein",
+      "protein": "ParD3 antitoxin",
+      "variable_sites": 3,
+      "full_site_alphabet": "20 canonical amino acids",
+      "observed_rows": 7882,
+      "nominal_space": 8000,
+      "assay": "Three-site ParD3 amino-acid library assayed against ParE3 toxin.",
+      "direction": "maximize",
+      "direction_basis": "The source paper assigns W from competitive cell-growth/toxin-neutralization assays and normalizes stop-codon median to 0 and WT DKE to 1. Higher W indicates better toxin neutralization and growth.",
+      "citation": {
+        "title": "Uncovering the basis of protein-protein interaction specificity with a combinatorially complete library",
+        "journal": "eLife",
+        "year": 2020,
+        "doi": "10.7554/eLife.60924",
+        "url": "https://doi.org/10.7554/eLife.60924"
+      }
+    },
+    "Tu2022_TEV": {
+      "local_file": "data/BioSequence/Tu2022_TEV.csv",
+      "molecule": "protein",
+      "protein": "TEV protease",
+      "variable_sites": 4,
+      "full_site_alphabet": "20 canonical amino acids",
+      "observed_rows": 159132,
+      "nominal_space": 160000,
+      "assay": "FLIGHTED-corrected activity of TEV protease on its wild-type substrate; four residues in the S1 substrate-binding pocket.",
+      "direction": "maximize",
+      "direction_basis": "The primary preprint describes the response as protease activity/fitness; WT TDHS is scaled to fitness 1 and 99.8% of scored mutants fall below WT. Higher is greater activity.",
+      "scale_note": "Local packaged scores have an unresolved source-scale relation in the existing validation ledger; preserve their own values and do not claim they are a direct conversion of paper values.",
+      "citation": {
+        "title": "An ultra-high-throughput method for measuring biomolecular activities",
+        "journal": "bioRxiv",
+        "year": 2024,
+        "doi": "10.1101/2022.03.09.483646",
+        "url": "https://doi.org/10.1101/2022.03.09.483646",
+        "source_url": "https://www.biorxiv.org/content/10.1101/2022.03.09.483646v4.full"
+      }
+    },
+    "Tu2022_T7": {
+      "local_file": "data/BioSequence/Tu2022_T7.csv",
+      "molecule": "protein",
+      "protein": "T7 RNA polymerase",
+      "variable_sites": 3,
+      "full_site_alphabet": "20 canonical amino acids",
+      "observed_rows": 6725,
+      "nominal_space": 8000,
+      "assay": "FLIGHTED-predicted activity of T7 RNA polymerase on a T3 promoter, inferred from a DNA base-editing/molecular-recording readout at three specificity-loop residues.",
+      "direction": "maximize",
+      "direction_basis": "The primary preprint explicitly interprets the denoised value as polymerase activity; higher recorded C-to-T editing corresponds to greater T7 RNAP activity on T3 promoter.",
+      "scale_note": "The local 6,725-row file range (-1.1766 to 0.8512) does not match the source summary/related comparison values in the existing validation ledger. Direction and molecular class are supported; exact numeric scale correspondence remains unresolved. Do not transform by an inferred log inverse.",
+      "citation": {
+        "title": "An ultra-high-throughput method for measuring biomolecular activities",
+        "journal": "bioRxiv",
+        "year": 2024,
+        "doi": "10.1101/2022.03.09.483646",
+        "url": "https://doi.org/10.1101/2022.03.09.483646",
+        "source_url": "https://www.biorxiv.org/content/10.1101/2022.03.09.483646v4.full"
+      }
+    },
+    "Johnston2024_TrpB4": {
+      "local_file": "data/BioSequence/Johnston2024_TrpB4.csv",
+      "molecule": "protein",
+      "protein": "T. maritima tryptophan synthase beta subunit (TrpB)",
+      "variable_sites": 4,
+      "full_site_alphabet": "20 canonical amino acids",
+      "observed_rows": 159129,
+      "nominal_space": 160000,
+      "assay": "Combinatorially complete four-site TrpB library; cell growth in a trpA/trpB-deficient E. coli host depends on TrpB production of tryptophan from supplied indole.",
+      "direction": "maximize",
+      "direction_basis": "Greater measured fitness reflects greater TrpB activity supporting cellular growth.",
+      "citation": {
+        "title": "A combinatorially complete epistatic fitness landscape in an enzyme active site",
+        "journal": "Proceedings of the National Academy of Sciences",
+        "year": 2024,
+        "doi": "10.1073/pnas.2400439121",
+        "url": "https://doi.org/10.1073/pnas.2400439121"
+      }
+    },
+    "Johnston2024_TrpB3A": {
+      "local_file": "data/BioSequence/Johnston2024_TrpB3A.csv",
+      "molecule": "protein",
+      "protein": "T. maritima tryptophan synthase beta subunit (TrpB)",
+      "variable_sites": 3,
+      "full_site_alphabet": "20 canonical amino acids",
+      "observed_rows": 7971,
+      "nominal_space": 8000,
+      "assay": "One of nine combinatorially complete three-site TrpB libraries used to identify permissive sites before the four-site landscape; growth-coupled tryptophan production assay.",
+      "direction": "maximize",
+      "direction_basis": "Greater measured fitness reflects greater TrpB activity supporting cellular growth.",
+      "citation": {
+        "title": "A combinatorially complete epistatic fitness landscape in an enzyme active site",
+        "journal": "Proceedings of the National Academy of Sciences",
+        "year": 2024,
+        "doi": "10.1073/pnas.2400439121",
+        "url": "https://doi.org/10.1073/pnas.2400439121"
+      }
+    },
+    "Johnston2024_TrpB3B": {
+      "local_file": "data/BioSequence/Johnston2024_TrpB3B.csv",
+      "molecule": "protein",
+      "protein": "T. maritima tryptophan synthase beta subunit (TrpB)",
+      "variable_sites": 3,
+      "full_site_alphabet": "20 canonical amino acids",
+      "observed_rows": 7996,
+      "nominal_space": 8000,
+      "assay": "One of nine combinatorially complete three-site TrpB libraries used to identify permissive sites before the four-site landscape; growth-coupled tryptophan production assay.",
+      "direction": "maximize",
+      "direction_basis": "Greater measured fitness reflects greater TrpB activity supporting cellular growth.",
+      "citation": {
+        "title": "A combinatorially complete epistatic fitness landscape in an enzyme active site",
+        "journal": "Proceedings of the National Academy of Sciences",
+        "year": 2024,
+        "doi": "10.1073/pnas.2400439121",
+        "url": "https://doi.org/10.1073/pnas.2400439121"
+      }
+    },
+    "Johnston2024_TrpB3C": {
+      "local_file": "data/BioSequence/Johnston2024_TrpB3C.csv",
+      "molecule": "protein",
+      "protein": "T. maritima tryptophan synthase beta subunit (TrpB)",
+      "variable_sites": 3,
+      "full_site_alphabet": "20 canonical amino acids",
+      "observed_rows": 7994,
+      "nominal_space": 8000,
+      "assay": "One of nine combinatorially complete three-site TrpB libraries used to identify permissive sites before the four-site landscape; growth-coupled tryptophan production assay.",
+      "direction": "maximize",
+      "direction_basis": "Greater measured fitness reflects greater TrpB activity supporting cellular growth.",
+      "citation": {
+        "title": "A combinatorially complete epistatic fitness landscape in an enzyme active site",
+        "journal": "Proceedings of the National Academy of Sciences",
+        "year": 2024,
+        "doi": "10.1073/pnas.2400439121",
+        "url": "https://doi.org/10.1073/pnas.2400439121"
+      }
+    },
+    "Johnston2024_TrpB3D": {
+      "local_file": "data/BioSequence/Johnston2024_TrpB3D.csv",
+      "molecule": "protein",
+      "protein": "T. maritima tryptophan synthase beta subunit (TrpB)",
+      "variable_sites": 3,
+      "full_site_alphabet": "20 canonical amino acids",
+      "observed_rows": 7763,
+      "nominal_space": 8000,
+      "assay": "One of nine combinatorially complete three-site TrpB libraries used to identify permissive sites before the four-site landscape; growth-coupled tryptophan production assay.",
+      "direction": "maximize",
+      "direction_basis": "Greater measured fitness reflects greater TrpB activity supporting cellular growth.",
+      "citation": {
+        "title": "A combinatorially complete epistatic fitness landscape in an enzyme active site",
+        "journal": "Proceedings of the National Academy of Sciences",
+        "year": 2024,
+        "doi": "10.1073/pnas.2400439121",
+        "url": "https://doi.org/10.1073/pnas.2400439121"
+      }
+    },
+    "Johnston2024_TrpB3E": {
+      "local_file": "data/BioSequence/Johnston2024_TrpB3E.csv",
+      "molecule": "protein",
+      "protein": "T. maritima tryptophan synthase beta subunit (TrpB)",
+      "variable_sites": 3,
+      "full_site_alphabet": "20 canonical amino acids",
+      "observed_rows": 7964,
+      "nominal_space": 8000,
+      "assay": "One of nine combinatorially complete three-site TrpB libraries used to identify permissive sites before the four-site landscape; growth-coupled tryptophan production assay.",
+      "direction": "maximize",
+      "direction_basis": "Greater measured fitness reflects greater TrpB activity supporting cellular growth.",
+      "citation": {
+        "title": "A combinatorially complete epistatic fitness landscape in an enzyme active site",
+        "journal": "Proceedings of the National Academy of Sciences",
+        "year": 2024,
+        "doi": "10.1073/pnas.2400439121",
+        "url": "https://doi.org/10.1073/pnas.2400439121"
+      }
+    },
+    "Johnston2024_TrpB3F": {
+      "local_file": "data/BioSequence/Johnston2024_TrpB3F.csv",
+      "molecule": "protein",
+      "protein": "T. maritima tryptophan synthase beta subunit (TrpB)",
+      "variable_sites": 3,
+      "full_site_alphabet": "20 canonical amino acids",
+      "observed_rows": 7737,
+      "nominal_space": 8000,
+      "assay": "One of nine combinatorially complete three-site TrpB libraries used to identify permissive sites before the four-site landscape; growth-coupled tryptophan production assay.",
+      "direction": "maximize",
+      "direction_basis": "Greater measured fitness reflects greater TrpB activity supporting cellular growth.",
+      "citation": {
+        "title": "A combinatorially complete epistatic fitness landscape in an enzyme active site",
+        "journal": "Proceedings of the National Academy of Sciences",
+        "year": 2024,
+        "doi": "10.1073/pnas.2400439121",
+        "url": "https://doi.org/10.1073/pnas.2400439121"
+      }
+    },
+    "Johnston2024_TrpB3G": {
+      "local_file": "data/BioSequence/Johnston2024_TrpB3G.csv",
+      "molecule": "protein",
+      "protein": "T. maritima tryptophan synthase beta subunit (TrpB)",
+      "variable_sites": 3,
+      "full_site_alphabet": "20 canonical amino acids",
+      "observed_rows": 7891,
+      "nominal_space": 8000,
+      "assay": "One of nine combinatorially complete three-site TrpB libraries used to identify permissive sites before the four-site landscape; growth-coupled tryptophan production assay.",
+      "direction": "maximize",
+      "direction_basis": "Greater measured fitness reflects greater TrpB activity supporting cellular growth.",
+      "citation": {
+        "title": "A combinatorially complete epistatic fitness landscape in an enzyme active site",
+        "journal": "Proceedings of the National Academy of Sciences",
+        "year": 2024,
+        "doi": "10.1073/pnas.2400439121",
+        "url": "https://doi.org/10.1073/pnas.2400439121"
+      }
+    },
+    "Johnston2024_TrpB3H": {
+      "local_file": "data/BioSequence/Johnston2024_TrpB3H.csv",
+      "molecule": "protein",
+      "protein": "T. maritima tryptophan synthase beta subunit (TrpB)",
+      "variable_sites": 3,
+      "full_site_alphabet": "20 canonical amino acids",
+      "observed_rows": 7716,
+      "nominal_space": 8000,
+      "assay": "One of nine combinatorially complete three-site TrpB libraries used to identify permissive sites before the four-site landscape; growth-coupled tryptophan production assay.",
+      "direction": "maximize",
+      "direction_basis": "Greater measured fitness reflects greater TrpB activity supporting cellular growth.",
+      "citation": {
+        "title": "A combinatorially complete epistatic fitness landscape in an enzyme active site",
+        "journal": "Proceedings of the National Academy of Sciences",
+        "year": 2024,
+        "doi": "10.1073/pnas.2400439121",
+        "url": "https://doi.org/10.1073/pnas.2400439121"
+      }
+    },
+    "Johnston2024_TrpB3I": {
+      "local_file": "data/BioSequence/Johnston2024_TrpB3I.csv",
+      "molecule": "protein",
+      "protein": "T. maritima tryptophan synthase beta subunit (TrpB)",
+      "variable_sites": 3,
+      "full_site_alphabet": "20 canonical amino acids",
+      "observed_rows": 7784,
+      "nominal_space": 8000,
+      "assay": "One of nine combinatorially complete three-site TrpB libraries used to identify permissive sites before the four-site landscape; growth-coupled tryptophan production assay.",
+      "direction": "maximize",
+      "direction_basis": "Greater measured fitness reflects greater TrpB activity supporting cellular growth.",
+      "citation": {
+        "title": "A combinatorially complete epistatic fitness landscape in an enzyme active site",
+        "journal": "Proceedings of the National Academy of Sciences",
+        "year": 2024,
+        "doi": "10.1073/pnas.2400439121",
+        "url": "https://doi.org/10.1073/pnas.2400439121"
+      }
+    }
+  }
+}

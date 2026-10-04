@@ -1,0 +1,37 @@
+{
+  "status": "verified",
+  "method": "Exact chunked Hamming comparison to every tied maximizing global optimum, taking the per-configuration minimum before Spearman correlation.",
+  "comparison": "Preparation-only bounded FDC helper versus GraphFLA public analysis.fdc on complete 2-site ProteinLandscapes.",
+  "results": [
+    {
+      "case": "single_global_optimum",
+      "n_configs": 4,
+      "n_global_optima": 1,
+      "chunked": -0.9486832980505139,
+      "public": -0.9486832980505139,
+      "absolute_difference": 0.0,
+      "details": {
+        "implementation": "chunked exact Hamming distance to nearest maximizing global optimum",
+        "n_configs": 4,
+        "n_global_optima": 1,
+        "chunk_rows": 2,
+        "chunks_processed": 2
+      }
+    },
+    {
+      "case": "tied_global_optima",
+      "n_configs": 4,
+      "n_global_optima": 2,
+      "chunked": -1.0,
+      "public": -1.0,
+      "absolute_difference": 0.0,
+      "details": {
+        "implementation": "chunked exact Hamming distance to nearest maximizing global optimum",
+        "n_configs": 4,
+        "n_global_optima": 2,
+        "chunk_rows": 2,
+        "chunks_processed": 4
+      }
+    }
+  ]
+}
