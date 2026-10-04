@@ -1,0 +1,11 @@
+<svg class="gfl-icon" viewBox="0 0 48 48" aria-hidden="true">
+<g transform="rotate(42 24 24)">
+<rect class="gfl-icon__plate" x="7" y="18" width="34" height="12" rx="6"/>
+<path d="M24 18 V30"/>
+</g>
+<g transform="rotate(-42 24 24)">
+<rect class="gfl-icon__plate" x="7" y="18" width="34" height="12" rx="6"/>
+<path class="gfl-icon__accent" d="M24 18 H13 a6 6 0 0 0 0 12 H24 Z"/>
+<rect x="7" y="18" width="34" height="12" rx="6"/>
+</g>
+</svg>

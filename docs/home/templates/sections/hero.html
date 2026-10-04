@@ -1,0 +1,20 @@
+{% import "macros.html" as ui with context %}
+<div class="gfl-hero">
+  <div class="gfl-hero__copy">
+    <h1 class="gfl-heading gfl-heading--1">{{ hero.title | inline }}</h1>
+    <p class="gfl-lede">{{ hero.lede }}</p>
+    <div class="gfl-actions">
+      {{ ui.button(hero.action) }}
+      {{ ui.command(install) }}
+    </div>
+  </div>
+  <figure class="gfl-hero__figure">
+    {{ ui.figure(hero.figure, eager=true) }}
+    <figcaption>{{ ui.legend(hero.figure.legend) }}</figcaption>
+  </figure>
+</div>
+<div class="gfl-stats">
+  {% for item in hero.stats %}
+  {{ ui.stat(item) }}
+  {% endfor %}
+</div>

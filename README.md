@@ -38,7 +38,7 @@ Feel free to explore examples in Google Colab!
 
 ## Quick Start
 
-Our documentation website is currently under development, but `GraphFLA` is quite easy to get started with!
+See the [documentation guide](docs/README.md) to preview the MkDocs website with source-synchronized API references, or explore the [worked tutorials](#tutorials) below.
 
 ### 1. Installation
 
@@ -154,6 +154,22 @@ data_types = {
 landscape.build_from_data(complex_search_space, f, data_types=data_types, verbose=True)
 ```
 
+## Tutorials
+
+These nine notebooks include worked code and saved outputs, with their [input data](tutorials/datasets/data/) alongside them.
+
+| Dataset | Application |
+|---|---|
+| [Suzuki–Miyaura](tutorials/datasets/04_suzuki_landscape.ipynb) | Chemical reaction conditions |
+| [Flow semihydrogenation](tutorials/datasets/05_flow_semihydrogenation_landscape.ipynb) | Electrochemical process settings |
+| [W–Re–Os alloys](tutorials/datasets/06_alloy_landscape.ipynb) | Alloy composition |
+| [Perovskites](tutorials/datasets/07_perovskite_landscape.ipynb) | Material constituent choices |
+| [BacPUS](tutorials/datasets/08_microbiome_landscape.ipynb) | Bacterial strain–substrate combinations |
+| [Cyanimide](tutorials/datasets/09_cyanimide_landscape.ipynb) | Chemical building blocks and enzyme inhibition |
+| [NCI-ALMANAC](tutorials/datasets/10_drug_combination_landscape.ipynb) | Drug combinations and doses |
+| [NAS-Bench-201](tutorials/datasets/11_neural_architecture_landscape.ipynb) | Neural architecture choices |
+| [LLVM](tutorials/datasets/12_software_configuration_landscape.ipynb) | Compiler configuration |
+
 ## Landscape Analysis Features
 
 `GraphFLA` ships 20+ landscape-level metrics spanning the major aspects of landscape topography. Grab the whole portfolio in one call with `analysis.profile()`, restrict it with `profile(..., metrics=[...])` (the group tokens are the section headers below), or call any function on its own. The collapsible tables below catalog every landscape-level metric — expand the aspect you care about.
@@ -161,7 +177,7 @@ landscape.build_from_data(complex_search_space, f, data_types=data_types, verbos
 > Mutation- and position-specific tools (`fitness_effect_distribution`, `idiosyncratic_index`, `single_mutation_effects`) characterize a single element rather than the whole landscape and are not listed here.
 
 <details>
-<summary><b>Ruggedness</b> · <code>groups="ruggedness"</code> — multimodality and local structure</summary>
+<summary><b>Ruggedness</b> · <code>metrics="ruggedness"</code> — multimodality and local structure</summary>
 
 | Function | Measures | Range | Higher value → |
 |---|---|---|---|
@@ -173,14 +189,14 @@ landscape.build_from_data(complex_search_space, f, data_types=data_types, verbos
 </details>
 
 <details>
-<summary><b>Epistasis</b> · <code>groups="epistasis"</code> — interactions between mutations</summary>
+<summary><b>Epistasis</b> · <code>metrics="epistasis"</code> — interactions between mutations</summary>
 
 | Function | Measures | Range | Higher value → |
 |---|---|---|---|
-| `gamma` | Gamma statistic — overall magnitude of epistasis | [-1, 1] | more epistasis |
+| `gamma` | Correlation of mutation effects across genetic backgrounds | [-1, 1] | more consistent mutation effects |
 | `gamma_star` | Gamma-star — consistency of sign epistasis | [-1, 1] | more consistent sign epistasis |
 | `classify_epistasis` | Fraction of pairwise interactions of each type: magnitude, sign, reciprocal-sign, positive, negative | [0, 1] | — (composition) |
-| `global_idiosyncratic_index` | How context-dependent (idiosyncratic) mutation effects are | [0, 1] | more idiosyncratic |
+| `global_idiosyncratic_index` | How context-dependent (idiosyncratic) mutation effects are | [0, ∞) | more idiosyncratic |
 | `diminishing_returns_index` | Pooled background fitness vs. beneficial gains | [-1, 1] | more positive gain trend |
 | `increasing_costs_index` | Pooled background fitness vs. deleterious costs | [-1, 1] | more positive cost trend |
 | `extradimensional_bypass` | Reciprocal-sign motifs bypassed via extra dimensions (proportion, avg. length) | [0, 1] | more bypasses → more navigable |
@@ -189,7 +205,7 @@ landscape.build_from_data(complex_search_space, f, data_types=data_types, verbos
 </details>
 
 <details>
-<summary><b>Navigability</b> · <code>groups="navigability"</code> — reachability of optima</summary>
+<summary><b>Navigability</b> · <code>metrics="navigability"</code> — reachability of optima</summary>
 
 | Function | Measures | Range | Higher value → |
 |---|---|---|---|
@@ -203,7 +219,7 @@ landscape.build_from_data(complex_search_space, f, data_types=data_types, verbos
 </details>
 
 <details>
-<summary><b>Correlation</b> · <code>groups="correlation"</code> — fitness–distance and basin structure</summary>
+<summary><b>Correlation</b> · <code>metrics="correlation"</code> — fitness–distance and basin structure</summary>
 
 | Function | Measures | Range | Higher value → |
 |---|---|---|---|
@@ -215,7 +231,7 @@ landscape.build_from_data(complex_search_space, f, data_types=data_types, verbos
 </details>
 
 <details>
-<summary><b>Robustness</b> · <code>groups="robustness"</code> — neutrality and evolvability</summary>
+<summary><b>Robustness</b> · <code>metrics="robustness"</code> — neutrality and evolvability</summary>
 
 | Function | Measures | Range | Higher value → |
 |---|---|---|---|
@@ -225,7 +241,7 @@ landscape.build_from_data(complex_search_space, f, data_types=data_types, verbos
 </details>
 
 <details>
-<summary><b>Fitness distribution</b> · <code>groups="fitness"</code> — shape statistics</summary>
+<summary><b>Fitness distribution</b> · <code>metrics="fitness"</code> — shape statistics</summary>
 
 | Function | Measures | Range |
 |---|---|---|

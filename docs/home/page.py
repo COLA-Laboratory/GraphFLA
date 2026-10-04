@@ -1,0 +1,158 @@
+"""Assemble what the landing-page templates render: site copy joined with the data it describes."""
+import csv
+import json
+import math
+from html import escape
+from pathlib import Path
+
+import yaml
+from charts import Series, format_duration, line_chart
+from catalogue import inventory
+from insight_data import load_insights
+from markupsafe import Markup
+from pygments.lexers import PythonLexer
+from pygments.token import Comment, Keyword, Name, Number
+
+HOME = Path(__file__).resolve().parent
+DOCS = HOME.parent
+CONTENT = HOME / "content.yml"
+TUTORIALS = DOCS / "tutorials.yml"
+BENCHMARK = DOCS / "content" / "assets" / "benchmarks" / "construction.json"
+
+# Tones of a part-to-whole bar, from its first part to its last.
+SHARE_TONES = ("data-low", "data-mid", "data")
+CODE_CLASSES = ((Keyword, "keyword"), (Name.Function, "call"), (Number, "number"), (Comment, "comment"))
+
+
+def load_page(figures):
+    """Return the template context.
+
+    Parameters
+    ----------
+    figures : dict
+        Metadata returned by ``figures.render``.
+    """
+    page = yaml.safe_load(CONTENT.read_text())
+    page["figures"] = figures
+    page["insights"]["panels"] = load_insights()
+
+    how = page["how"]
+    for number, step in enumerate(how["steps"], start=1):
+        step["number"] = number
+    for scenario in how["scenarios"]:
+        data = scenario["profile"]
+        scenario["figure"] = {
+            "name": "example-" + scenario["id"], "labels": how["figure_labels"],
+            "alt": f"Illustrative {scenario['title'].lower()} landscape: three smooth peaks above a sparse neighbor graph.",
+        }
+        values = [row[-1] for row in scenario["rows"]]
+        best = (max if scenario["maximize"] else min)(values)
+        scenario["rows"] = [{"cells": row[:-1], "value": f"{row[-1]:g}{scenario['outcome_suffix']}",
+                            "best": row[-1] == best,
+                            "share": row[-1] / max(values)} for row in scenario["rows"]]
+        if scenario.get("sequence"):
+            baseline = scenario["rows"][0]["cells"][0]
+            for row in scenario["rows"]:
+                row["residues"] = [{"letter": aa, "variable": i in (4, 6, 9), "changed": aa != baseline[i]}
+                                   for i, aa in enumerate(row["cells"][0])]
+        labels = how["reports"]
+        scenario["entries"] = [
+            {"label": labels["peaks"], "value": f"{data['peaks']} / {data['total']}", "share": data["peaks"] / data["total"]},
+            {"label": labels["rs"] if scenario["id"] == "protein" else labels["autocorrelation"],
+             "value": f"{data['roughness']:.2f}", "share": data["roughness"]},
+            {"label": labels["neutrality"], "value": f"{data['neutrality']:.0%}", "share": data["neutrality"]},
+        ]
+        scenario["interactions"] = [
+            {"percent": 100 * share, "label": label, "value": f"{share:.0%}", "tone": tone}
+            for share, label, tone in zip(data["interactions"], labels["parts"], SHARE_TONES)]
+    page["hero"]["stats"][-1]["value"] = str(sum(group["count"] for group in inventory()))
+
+    code = page["start"]["code"]
+    code["lines"] = highlight(code["source"])
+
+    page["performance"].update(benchmark(page["performance"]))
+    page["cases"]["cards"] = case_cards(page["links"]["tutorials"], page["cases"]["stories"])
+    return page
+
+
+def highlight(source):
+    """Return Python source as one HTML string per line, with syntax classes on the tokens."""
+    tokens = list(PythonLexer().get_tokens(source))
+    lines, current = [], ""
+    for index, (kind, text) in enumerate(tokens):
+        # Pygments has no token for calls: a name directly followed by "(" is one.
+        if kind in Name and index + 1 < len(tokens) and tokens[index + 1][1].startswith("("):
+            kind = Name.Function
+        name = next((name for parent, name in CODE_CLASSES if kind in parent), None)
+        for piece_index, piece in enumerate(text.split("\n")):
+            if piece_index:
+                lines.append(current)
+                current = ""
+            if piece:
+                current += f'<span class="gfl-code__{name}">{escape(piece)}</span>' if name else escape(piece)
+    if current:
+        lines.append(current)
+    # A line holding one space keeps its height where an empty one would collapse.
+    return [Markup(line or " ") for line in lines]
+
+
+def benchmark(spec):
+    """Return the headline numbers, legend and charts of the recorded construction benchmark."""
+    rows = json.loads(BENCHMARK.read_text())["summary"]
+    largest = rows[-1]
+    columns = [f"{row['configurations']:,}" for row in rows]
+
+    def series(measure, scale=1):
+        return [Series(spec["series"][method], tuple(row[method][measure] / scale for row in rows),
+                       emphasis=method == "graphfla") for method in ("naive", "graphfla")]
+
+    seconds, mebibytes = series("seconds"), series("peak_rss_bytes", 2 ** 20)
+    time, memory = spec["charts"]["time"], spec["charts"]["memory"]
+    charts = [
+        {**time, "svg": Markup(line_chart(
+            columns, seconds, _decade_ticks(seconds), format_duration, log=True, x_title=spec["x_title"],
+            title=f"{time['title']} against number of configurations, {time['unit']}"))},
+        {**memory, "svg": Markup(line_chart(
+            columns, mebibytes, _hundred_ticks(mebibytes), lambda value: f"{value:.0f}", x_title=spec["x_title"],
+            title=f"{memory['title']} in {memory['unit']} against number of configurations"))},
+    ]
+    stats = [
+        {"value": f"{largest['speedup']:.0f}×",
+         "label": spec["headline"]["speedup"].format(configurations=columns[-1])},
+        {"value": f"{largest['peak_rss_reduction']:.0%}", "label": spec["headline"]["memory_saved"]},
+    ]
+    legend = [{"swatch": "line", "tone": "accent", "label": spec["series"]["graphfla"]},
+              {"swatch": "line", "tone": "data-mid", "label": spec["series"]["naive"]}]
+    return {"stats": stats, "legend": legend, "charts": charts}
+
+
+def _decade_ticks(series):
+    """Powers of ten, in seconds, enclosing every value."""
+    values = [value for item in series for value in item.values]
+    low, high = math.floor(math.log10(min(values))), math.ceil(math.log10(max(values)))
+    return [(10.0 ** k, format_duration(10.0 ** k).replace(".0 ", " ").replace(".00 ", " "))
+            for k in range(low, high + 1)]
+
+
+def _hundred_ticks(series):
+    """Multiples of one hundred from zero to just above the largest value."""
+    top = math.ceil(max(value for item in series for value in item.values) / 100)
+    return [(100.0 * k, str(100 * k)) for k in range(top + 1)]
+
+
+def case_cards(base_url, stories):
+    """Join optimization problems with their tutorial inputs, scale and destination."""
+    cards = []
+    catalog = yaml.safe_load(TUTORIALS.read_text())
+    source = TUTORIALS.parent / catalog["source_dir"] / "data"
+    for item in catalog["notebooks"]:
+        # The first data file is the configuration table; others are lookups.
+        with (source / item["data"][0]).open(newline="") as handle:
+            rows = csv.reader(handle)
+            if item.get("data_has_header", True):
+                next(rows)
+            count = sum(1 for _ in rows)
+        cards.append({**stories[item["slug"]], "slug": item["slug"],
+                      "count": count,
+                      "href": f"{base_url}{item['slug']}/"})
+    return cards

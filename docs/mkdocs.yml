@@ -1,32 +1,44 @@
 site_name: GraphFLA
 site_description: Graph-based fitness landscape analysis
+repo_url: https://github.com/COLA-Laboratory/GraphFLA
+repo_name: COLA-Laboratory/GraphFLA
 docs_dir: content
 site_dir: .build/site
 dev_addr: 127.0.0.1:8818
-watch: [../graphfla, _support, templates, includes]
+watch: [../graphfla, _support, templates, includes, home, overrides]
 theme:
   name: material
+  custom_dir: overrides
+  icon:
+    repo: fontawesome/brands/github
   language: en
   palette: {scheme: default, primary: black, accent: purple}
-  features: [navigation.top, search.suggest, search.highlight, content.code.copy, toc.follow]
+  features: [navigation.top, navigation.tabs, navigation.tabs.sticky, search.suggest, search.highlight, content.code.copy, toc.follow]
 nav:
-  - Landscapes:
-      - Landscape: index.md
-      - BooleanLandscape: boolean-landscape.md
-      - OrdinalLandscape: ordinal-landscape.md
-      - SequenceLandscape: sequence-landscape.md
-      - DNALandscape: dna-landscape.md
-      - RNALandscape: rna-landscape.md
-      - ProteinLandscape: protein-landscape.md
-  - Problems:
-      - Biological Models: problems.md
-      - Combinatorial Problems: problems/combinatorial.md
-  - Analysis:
-      - Epistasis: analysis/epistasis.md
-      - Navigability: analysis/navigability.md
-      - Robustness: analysis/robustness.md
-      - Ruggedness: analysis/ruggedness.md
-      - Fitness distributions: analysis/fitness.md
+  - Home: index.md
+  - Datasets: datasets.md
+  - Example methods: demo-methods.md
+  - Interactive benchmark data: insights-sources.md
+  - API reference:
+      - Landscapes:
+          - Landscape: landscape.md
+          - BooleanLandscape: boolean-landscape.md
+          - OrdinalLandscape: ordinal-landscape.md
+          - SequenceLandscape: sequence-landscape.md
+          - DNALandscape: dna-landscape.md
+          - RNALandscape: rna-landscape.md
+          - ProteinLandscape: protein-landscape.md
+      - Problems:
+          - Biological Models: problems.md
+          - Combinatorial Problems: problems/combinatorial.md
+      - Analysis:
+          - Landscape profile: analysis/profile.md
+          - Epistasis: analysis/epistasis.md
+          - Navigability: analysis/navigability.md
+          - Robustness: analysis/robustness.md
+          - Ruggedness: analysis/ruggedness.md
+          - Fitness distributions: analysis/fitness.md
+  - Benchmarks: benchmarks.md
 # Earlier template samples remain on disk; this integration covers these three modules.
 exclude_docs: |
   nk.md
@@ -63,7 +75,7 @@ plugins:
             merge_init_into_class: true
             show_if_no_docstring: false
             heading_level: 3
-hooks: [_support/hooks.py]
+hooks: [_support/hooks.py, _support/landing.py]
 markdown_extensions:
   - admonition
   - attr_list
@@ -78,8 +90,17 @@ markdown_extensions:
   - pymdownx.snippets: {check_paths: true}
   - pymdownx.tabbed: {alternate_style: true}
   - pymdownx.arithmatex: {generic: true}
-extra_css: [assets/api.css, assets/tutorials.css]
+extra_css:
+  - assets/home/css/tokens.css
+  - assets/home/css/base.css
+  - assets/home/css/components.css
+  - assets/home/css/sections.css
+  - assets/home/css/insights.css
+  - assets/site.css
+  - assets/api.css
+  - assets/tutorials.css
 extra_javascript:
+  - assets/home/home.js
   - assets/api.js
   - https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js
 extra:
@@ -87,8 +108,7 @@ extra:
   tutorial_catalog: tutorials.yml
   api_modules: [graphfla.landscape, graphfla.analysis, graphfla.problems]
   api_omissions:
-    graphfla.analysis.profile: Landscape Profiles is intentionally outside the website scope.
-    graphfla.analysis.list_metrics: Landscape Profiles is intentionally outside the website scope.
+    graphfla.analysis.list_metrics: The metric registry listing is intentionally outside the website scope.
   # One shared icon map. Unlisted API links inherit their source object's kind.
   navigation_icons:
     defaults:
@@ -98,12 +118,14 @@ extra:
       class: material/cube-outline
       function: material/function-variant
     sections:
+      API reference: material/book-open-variant
       Tutorials: material/book-open-page-variant-outline
       Landscapes: material/layers-triple-outline
       Problems: material/flask-outline
       Analysis: material/chart-line
     pages:
-      index.md: material/cube-outline
+      index.md: material/home-outline
+      landscape.md: material/cube-outline
       boolean-landscape.md: material/numeric-10-box-outline
       ordinal-landscape.md: material/sort-numeric-ascending
       sequence-landscape.md: material/format-letter-matches
@@ -112,8 +134,12 @@ extra:
       protein-landscape.md: material/molecule
       problems.md: material/dna
       problems/combinatorial.md: material/shape-outline
+      analysis/profile.md: material/clipboard-list-outline
       analysis/epistasis.md: material/vector-polyline
       analysis/navigability.md: material/routes
       analysis/robustness.md: material/shield-check-outline
       analysis/ruggedness.md: material/image-filter-hdr
       analysis/fitness.md: material/chart-bell-curve
+      benchmarks.md: material/speedometer
+      datasets.md: material/database-outline
+      demo-methods.md: material/flask-outline

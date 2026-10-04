@@ -1,0 +1,80 @@
+/* Layout of the design-system reference page only. */
+
+.gfl-guide__group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--gfl-space-5);
+  padding-top: var(--gfl-space-8);
+  border-top: 1px solid var(--gfl-color-line);
+}
+
+.gfl-guide__tokens {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: var(--gfl-space-5) var(--gfl-space-6);
+}
+
+.gfl-guide__token,
+.gfl-guide__stack {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--gfl-space-2);
+}
+
+.gfl-guide__stack .gfl-meter {
+  width: 180px;
+}
+
+.gfl-guide__name {
+  font-size: var(--gfl-text-xs);
+}
+
+.gfl-guide__swatch {
+  width: 100%;
+  height: 56px;
+  border: 1px solid var(--gfl-color-line-strong);
+  border-radius: var(--gfl-radius-md);
+  background: var(--sample);
+}
+
+.gfl-guide__bar {
+  width: var(--sample);
+  height: var(--gfl-space-4);
+  border-radius: 2px;
+  background: var(--gfl-color-data);
+}
+
+.gfl-guide__corner {
+  width: 72px;
+  height: 56px;
+  border: 1px solid var(--gfl-color-line-strong);
+  border-radius: var(--sample);
+  background: var(--gfl-color-card);
+}
+
+.gfl-guide__type {
+  font-family: var(--gfl-font-display);
+  font-size: min(var(--sample), var(--gfl-text-stat));
+  font-weight: 700;
+  line-height: 1;
+}
+
+.gfl-guide__face {
+  font-family: var(--sample);
+  font-size: var(--gfl-text-lg);
+}
+
+.gfl-guide__row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: var(--gfl-space-8);
+}
+
+.gfl-guide__sample {
+  flex: 1 1 340px;
+  min-width: 0;
+  max-width: 640px;
+  overflow: hidden;
+}

@@ -1,0 +1,65 @@
+/* Site shell: Material owns navigation, search, drawers and document layout. */
+:root {
+  --md-text-font: var(--gfl-font-body);
+  --md-code-font: var(--gfl-font-mono);
+}
+
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 128px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+}
+
+.md-header {
+  background: var(--gfl-color-page);
+  color: var(--gfl-color-text);
+}
+
+.md-header__inner {
+  max-width: calc(var(--gfl-page-width) + 2 * var(--gfl-gutter));
+  padding-inline: var(--gfl-gutter);
+}
+
+.md-header__title {
+  font-family: var(--gfl-font-display);
+  font-weight: 700;
+}
+
+.gfl-site-navigation {
+  border-top: 1px solid var(--gfl-color-line);
+  border-bottom: 1px solid var(--gfl-color-line);
+}
+
+.gfl-site-navigation :focus-visible {
+  outline: 2px solid var(--gfl-color-accent);
+  outline-offset: 2px;
+}
+
+.gfl-site-navigation .gfl-nav > a {
+  flex: none;
+}
+
+/* The homepage changes only the body of the standard Material template. */
+.md-main:has(.gfl-home) .md-main__inner {
+  display: block;
+  max-width: none;
+  margin: 0;
+}
+
+.md-container:has(.gfl-home) {
+  background: var(--gfl-color-page);
+}
+
+/* Keep Material's native navigation drawer available on phones. */
+@media (min-width: 76.25em) {
+  .md-main:has(.gfl-home) .md-sidebar--primary { display: none; }
+}
+
+.md-main:has(.gfl-home) .md-sidebar--secondary { display: none; }
+
+@media (max-width: 600px) {
+  html { scroll-padding-top: 180px; }
+}

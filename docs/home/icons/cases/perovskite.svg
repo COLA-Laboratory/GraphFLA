@@ -1,0 +1,10 @@
+<svg class="gfl-icon" viewBox="0 0 48 48" aria-hidden="true">
+<rect class="gfl-icon__soft" x="9" y="9" width="30" height="30" rx="1" stroke-width="1.3"/>
+<path class="gfl-icon__accent" d="M24 12 L36 24 L24 36 L12 24 Z"/>
+<path class="gfl-icon__cut" d="M12 24 H36 M24 12 V36" stroke-width="1.3"/>
+<circle class="gfl-icon__knock" cx="24" cy="24" r="2.6"/>
+<circle class="gfl-icon__dot" cx="9" cy="9" r="3"/>
+<circle class="gfl-icon__dot" cx="39" cy="9" r="3"/>
+<circle class="gfl-icon__dot" cx="9" cy="39" r="3"/>
+<circle class="gfl-icon__dot" cx="39" cy="39" r="3"/>
+</svg>

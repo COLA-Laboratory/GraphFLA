@@ -1,0 +1,11 @@
+{% import "macros.html" as ui with context %}
+<section class="gfl-section" id="cases">
+  <div class="gfl-container gfl-section__inner">
+    {{ ui.section_head(cases) }}
+    <div class="gfl-cases">
+      {% for case in cases.cards %}
+      {{ ui.case_card(case) }}
+      {% endfor %}
+    </div>
+  </div>
+</section>

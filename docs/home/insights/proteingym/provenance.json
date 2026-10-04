@@ -1,0 +1,2027 @@
+{
+  "status": "completed_with_missing_metrics",
+  "dataset": "ProteinGym DMS substitution benchmark",
+  "dataset_release": "v1.3",
+  "dataset_release_record": "https://zenodo.org/records/15293562",
+  "reference_rows": 217,
+  "assay_archive_files": 217,
+  "assay_archive_variants": 2465767,
+  "eligible_assays": 36,
+  "eligibility_rule": "unfiltered mean number of substitution labels per measured variant > 1.5; indels are excluded by the substitution-only benchmark",
+  "eligible_variants": 1788585,
+  "selected_dms_ids": [
+    "A4_HUMAN_Seuma_2022",
+    "AMFR_HUMAN_Tsuboyama_2023_4G3O",
+    "CAPSD_AAV2S_Sinai_2021",
+    "CBX4_HUMAN_Tsuboyama_2023_2K28",
+    "CSN4_MOUSE_Tsuboyama_2023_1UFM",
+    "D7PM05_CLYGR_Somermeyer_2022",
+    "DLG4_HUMAN_Faure_2021",
+    "DOCK1_MOUSE_Tsuboyama_2023_2M0Y",
+    "F7YBW8_MESOW_Aakre_2015",
+    "F7YBW8_MESOW_Ding_2023",
+    "GCN4_YEAST_Staller_2018",
+    "GFP_AEQVI_Sarkisyan_2016",
+    "GRB2_HUMAN_Faure_2021",
+    "HECD1_HUMAN_Tsuboyama_2023_3DKM",
+    "HIS7_YEAST_Pokusaeva_2019",
+    "ISDH_STAAW_Tsuboyama_2023_2LHR",
+    "MYO3_YEAST_Tsuboyama_2023_2BTT",
+    "NKX31_HUMAN_Tsuboyama_2023_2L9R",
+    "OBSCN_HUMAN_Tsuboyama_2023_1V1C",
+    "PABP_YEAST_Melamed_2013",
+    "PHOT_CHLRE_Chen_2023",
+    "POLG_PESV_Tsuboyama_2023_2MXD",
+    "Q6WV12_9MAXI_Somermeyer_2022",
+    "Q8WTC7_9CNID_Somermeyer_2022",
+    "RASK_HUMAN_Weng_2022_abundance",
+    "RASK_HUMAN_Weng_2022_binding-DARPin_K55",
+    "SDA_BACSU_Tsuboyama_2023_1PV0",
+    "SPA_STAAU_Tsuboyama_2023_1LP1",
+    "SPG1_STRSG_Olson_2014",
+    "SPG1_STRSG_Wu_2016",
+    "SPTN1_CHICK_Tsuboyama_2023_1TUD",
+    "UBE4B_HUMAN_Tsuboyama_2023_3L1X",
+    "VILI_CHICK_Tsuboyama_2023_1YU5",
+    "YAIA_ECOLI_Tsuboyama_2023_2KVT",
+    "YAP1_HUMAN_Araya_2012",
+    "YNZC_BACSU_Tsuboyama_2023_2JVD"
+  ],
+  "missing_published_scores": {
+    "GFP_AEQVI_Sarkisyan_2016": {
+      "Protriever": "The pinned official ProteinGym per-DMS Spearman table has no score in this cell."
+    },
+    "GRB2_HUMAN_Faure_2021": {
+      "Protriever": "The pinned official ProteinGym per-DMS Spearman table has no score in this cell."
+    },
+    "HIS7_YEAST_Pokusaeva_2019": {
+      "Protriever": "The pinned official ProteinGym per-DMS Spearman table has no score in this cell."
+    }
+  },
+  "source_files": {
+    "DMS_ProteinGym_substitutions.zip": {
+      "url": "https://zenodo.org/records/15293562/files/DMS_ProteinGym_substitutions.zip?download=1",
+      "sha256": "3a83766254ac9ac9984ec25cb73c6e010ea4418f5e35f143933e6b6e6473b921"
+    },
+    "DMS_substitutions.csv": {
+      "url": "https://zenodo.org/records/15293562/files/DMS_substitutions.csv?download=1",
+      "sha256": "a8f498011532a74aa9fe556a50555a75e928c5837d19c06a87592ae04049b308"
+    },
+    "DMS_substitutions_Spearman_DMS_level.csv": {
+      "url": "https://raw.githubusercontent.com/OATML-Markslab/ProteinGym/144fe22b07dfaeec2b366f2346203a9838a55b4c/benchmarks/DMS_zero_shot/substitutions/Spearman/DMS_substitutions_Spearman_DMS_level.csv",
+      "repository_commit": "144fe22b07dfaeec2b366f2346203a9838a55b4c",
+      "sha256": "f432423b87f79ac9778dfac86e3d95be041d246bc618dc0a406b35b0b7466437",
+      "scope": "published per-DMS zero-shot Spearman correlations; no models were trained or scored here"
+    },
+    "proteingym_dms_citations.json": {
+      "path": "docs/home/insights/references/proteingym_dms_citations.json",
+      "sha256": "24820f710360764ba402a698ddc0162a613cbb31baf075526a9e6341b8be307f",
+      "scope": "verified per-assay peer-reviewed publication metadata"
+    }
+  },
+  "graphfla": {
+    "repository_commit": "22cbd7ac89db01322aa6beb32196e201e6281ba7",
+    "landscape": "ProteinLandscape over the union of observed mutated positions; DMS_score; maximize=True; n_edit=1; epsilon=0",
+    "isolate_handling": "GraphFLA's standard construction removes configurations with no observed one-edit neighbors after eligibility and input validation; per-record n_graph_configs and n_isolated_removed are retained",
+    "ee_equivalence_validation": {
+      "path": "docs/home/insights/proteingym/ee_validation.json",
+      "sha256": "1c806e60c84d4137d9fde8a0b04a5f0db051891b31bfd249c39cfc3f23b046ac",
+      "status": "optimized helper matches public EE and prior exact helper on two full landscapes, including a neutral pair"
+    },
+    "sparse_gamma_validation": {
+      "path": "docs/home/insights/proteingym/gamma_validation.json",
+      "sha256": "135959ba3f2bded18cab0dd292fab1d0df890ec891b7534698c41a840384dcef",
+      "status": "bundled exact sparse traversal compared with GraphFLA's joint public API on full ProteinGym assays"
+    },
+    "bounded_fdc_validation": {
+      "path": "docs/home/insights/proteingym/fdc_validation.json",
+      "sha256": "a109a09f6da016052ce858d1550b75d873a334d55f25e00789c72de06a8ad321",
+      "status": "exact match with GraphFLA public FDC for single and tied global optima"
+    },
+    "preparation_code": {
+      "script": {
+        "path": "docs/home/insights/proteingym/prepare_proteingym.py",
+        "sha256": "42f06ba12b0a543154e07c2fd85c3118516479e73ba27c12a00697b7d08ef683"
+      },
+      "sparse_gamma_helper": {
+        "path": "docs/home/insights/proteingym/sparse_gamma.py",
+        "sha256": "082e98fe5e40abd7e17ae726233bd7baec830d484f108b52c5dbecb3bbc3cc02"
+      },
+      "bounded_ee_helper": {
+        "path": "docs/home/insights/proteingym/bounded_ee_fast.py",
+        "sha256": "210c979885f75a8ceada0f854cf52ad983a92f9d90d6383a4671772faac4706d"
+      }
+    },
+    "metric_failures": {
+      "D7PM05_CLYGR_Somermeyer_2022": {
+        "r_s_ratio": "UserWarning: The additive design is rank deficient; slope is not identifiable. Returning nan."
+      },
+      "GCN4_YEAST_Staller_2018": {
+        "r_s_ratio": "UserWarning: The additive coefficients are not identifiable. Returning nan."
+      },
+      "Q8WTC7_9CNID_Somermeyer_2022": {
+        "r_s_ratio": "UserWarning: The additive design is rank deficient; slope is not identifiable. Returning nan."
+      },
+      "RASK_HUMAN_Weng_2022_abundance": {
+        "r_s_ratio": "UserWarning: The encoded model exceeds the 64 MiB QR workspace limit. Returning nan."
+      },
+      "RASK_HUMAN_Weng_2022_binding-DARPin_K55": {
+        "r_s_ratio": "UserWarning: The encoded model exceeds the 64 MiB QR workspace limit. Returning nan."
+      }
+    },
+    "parameters_by_dms": {
+      "A4_HUMAN_Seuma_2022": {
+        "classify_epistasis": {
+          "sample_cut_prob": null,
+          "seed": 20261004,
+          "time_budget": 15.0
+        },
+        "diminishing_returns_index": {
+          "method": "pearson"
+        },
+        "increasing_costs_index": {
+          "method": "pearson"
+        },
+        "global_idiosyncratic_index": {
+          "n_jobs": 1,
+          "seed": 20261004,
+          "min_pairs": 3
+        },
+        "r_s_ratio": {},
+        "gamma": {
+          "n_jobs": 1
+        },
+        "gamma_star": {
+          "n_jobs": 1
+        },
+        "local_optima_ratio": {},
+        "autocorrelation": {
+          "walk_length": 20,
+          "walk_times": 1000,
+          "lag": 1,
+          "seed": 20261004
+        },
+        "fdc": {
+          "method": "spearman"
+        },
+        "evolvability_enhancing_fraction": {
+          "fdr": 0.01,
+          "effect_type": "all"
+        },
+        "global_optima_accessibility": {}
+      },
+      "AMFR_HUMAN_Tsuboyama_2023_4G3O": {
+        "classify_epistasis": {
+          "sample_cut_prob": null,
+          "seed": 20261004,
+          "time_budget": 15.0
+        },
+        "diminishing_returns_index": {
+          "method": "pearson"
+        },
+        "increasing_costs_index": {
+          "method": "pearson"
+        },
+        "global_idiosyncratic_index": {
+          "n_jobs": 1,
+          "seed": 20261004,
+          "min_pairs": 3
+        },
+        "r_s_ratio": {},
+        "gamma": {
+          "n_jobs": 1
+        },
+        "gamma_star": {
+          "n_jobs": 1
+        },
+        "local_optima_ratio": {},
+        "autocorrelation": {
+          "walk_length": 20,
+          "walk_times": 1000,
+          "lag": 1,
+          "seed": 20261004
+        },
+        "fdc": {
+          "method": "spearman"
+        },
+        "evolvability_enhancing_fraction": {
+          "fdr": 0.01,
+          "effect_type": "all"
+        },
+        "global_optima_accessibility": {}
+      },
+      "CAPSD_AAV2S_Sinai_2021": {
+        "classify_epistasis": {
+          "sample_cut_prob": null,
+          "seed": 20261004,
+          "time_budget": 15.0
+        },
+        "diminishing_returns_index": {
+          "method": "pearson"
+        },
+        "increasing_costs_index": {
+          "method": "pearson"
+        },
+        "global_idiosyncratic_index": {
+          "n_jobs": 1,
+          "seed": 20261004,
+          "min_pairs": 3
+        },
+        "r_s_ratio": {},
+        "gamma": {
+          "n_jobs": 1,
+          "computed_jointly": true
+        },
+        "gamma_star": {
+          "n_jobs": 1,
+          "computed_jointly": true
+        },
+        "local_optima_ratio": {},
+        "autocorrelation": {
+          "walk_length": 20,
+          "walk_times": 1000,
+          "lag": 1,
+          "seed": 20261004
+        },
+        "fdc": {
+          "method": "spearman"
+        },
+        "evolvability_enhancing_fraction": {
+          "fdr": 0.01,
+          "effect_type": "all"
+        },
+        "global_optima_accessibility": {}
+      },
+      "CBX4_HUMAN_Tsuboyama_2023_2K28": {
+        "classify_epistasis": {
+          "sample_cut_prob": null,
+          "seed": 20261004,
+          "time_budget": 15.0
+        },
+        "diminishing_returns_index": {
+          "method": "pearson"
+        },
+        "increasing_costs_index": {
+          "method": "pearson"
+        },
+        "global_idiosyncratic_index": {
+          "n_jobs": 1,
+          "seed": 20261004,
+          "min_pairs": 3
+        },
+        "r_s_ratio": {},
+        "gamma": {
+          "n_jobs": 1,
+          "computed_jointly": true
+        },
+        "gamma_star": {
+          "n_jobs": 1,
+          "computed_jointly": true
+        },
+        "local_optima_ratio": {},
+        "autocorrelation": {
+          "walk_length": 20,
+          "walk_times": 1000,
+          "lag": 1,
+          "seed": 20261004
+        },
+        "fdc": {
+          "method": "spearman"
+        },
+        "evolvability_enhancing_fraction": {
+          "fdr": 0.01,
+          "effect_type": "all"
+        },
+        "global_optima_accessibility": {}
+      },
+      "CSN4_MOUSE_Tsuboyama_2023_1UFM": {
+        "classify_epistasis": {
+          "sample_cut_prob": null,
+          "seed": 20261004,
+          "time_budget": 15.0
+        },
+        "diminishing_returns_index": {
+          "method": "pearson"
+        },
+        "increasing_costs_index": {
+          "method": "pearson"
+        },
+        "global_idiosyncratic_index": {
+          "n_jobs": 1,
+          "seed": 20261004,
+          "min_pairs": 3
+        },
+        "r_s_ratio": {},
+        "gamma": {
+          "n_jobs": 1,
+          "computed_jointly": true
+        },
+        "gamma_star": {
+          "n_jobs": 1,
+          "computed_jointly": true
+        },
+        "local_optima_ratio": {},
+        "autocorrelation": {
+          "walk_length": 20,
+          "walk_times": 1000,
+          "lag": 1,
+          "seed": 20261004
+        },
+        "fdc": {
+          "method": "spearman"
+        },
+        "evolvability_enhancing_fraction": {
+          "fdr": 0.01,
+          "effect_type": "all"
+        },
+        "global_optima_accessibility": {}
+      },
+      "D7PM05_CLYGR_Somermeyer_2022": {
+        "classify_epistasis": {
+          "sample_cut_prob": null,
+          "seed": 20261004,
+          "time_budget": 15.0
+        },
+        "diminishing_returns_index": {
+          "method": "pearson"
+        },
+        "increasing_costs_index": {
+          "method": "pearson"
+        },
+        "global_idiosyncratic_index": {
+          "n_jobs": 1,
+          "seed": 20261004,
+          "min_pairs": 3
+        },
+        "r_s_ratio": {},
+        "gamma": {
+          "implementation": "bundled sparse_gamma_statistics",
+          "n_jobs": 1,
+          "computed_jointly": true,
+          "row_subsampling": false,
+          "kernel": "GraphFLA _gamma_grid_moments and _merge_gamma_contributions",
+          "elapsed_sec": 0.88868,
+          "diagnostics": {
+            "rows": 12138,
+            "variables": 234,
+            "sparse_mutations": 23946,
+            "candidate_position_pairs": 7692,
+            "complete_square_contexts": 7798
+          }
+        },
+        "gamma_star": {
+          "implementation": "bundled sparse_gamma_statistics",
+          "n_jobs": 1,
+          "computed_jointly": true,
+          "row_subsampling": false,
+          "kernel": "GraphFLA _gamma_grid_moments and _merge_gamma_contributions",
+          "elapsed_sec": 0.88868,
+          "diagnostics": {
+            "rows": 12138,
+            "variables": 234,
+            "sparse_mutations": 23946,
+            "candidate_position_pairs": 7692,
+            "complete_square_contexts": 7798
+          }
+        },
+        "local_optima_ratio": {},
+        "autocorrelation": {
+          "walk_length": 20,
+          "walk_times": 1000,
+          "lag": 1,
+          "seed": 20261004
+        },
+        "fdc": {
+          "method": "spearman"
+        },
+        "evolvability_enhancing_fraction": {
+          "fdr": 0.01,
+          "effect_type": "all"
+        },
+        "global_optima_accessibility": {}
+      },
+      "DLG4_HUMAN_Faure_2021": {
+        "classify_epistasis": {
+          "sample_cut_prob": null,
+          "seed": 20261004,
+          "time_budget": 15.0
+        },
+        "diminishing_returns_index": {
+          "method": "pearson"
+        },
+        "increasing_costs_index": {
+          "method": "pearson"
+        },
+        "global_idiosyncratic_index": {
+          "n_jobs": 1,
+          "seed": 20261004,
+          "min_pairs": 3
+        },
+        "r_s_ratio": {},
+        "gamma": {
+          "n_jobs": 1
+        },
+        "gamma_star": {
+          "n_jobs": 1
+        },
+        "local_optima_ratio": {},
+        "autocorrelation": {
+          "walk_length": 20,
+          "walk_times": 1000,
+          "lag": 1,
+          "seed": 20261004
+        },
+        "fdc": {
+          "method": "spearman"
+        },
+        "evolvability_enhancing_fraction": {
+          "fdr": 0.01,
+          "effect_type": "all"
+        },
+        "global_optima_accessibility": {}
+      },
+      "DOCK1_MOUSE_Tsuboyama_2023_2M0Y": {
+        "classify_epistasis": {
+          "sample_cut_prob": null,
+          "seed": 20261004,
+          "time_budget": 15.0
+        },
+        "diminishing_returns_index": {
+          "method": "pearson"
+        },
+        "increasing_costs_index": {
+          "method": "pearson"
+        },
+        "global_idiosyncratic_index": {
+          "n_jobs": 1,
+          "seed": 20261004,
+          "min_pairs": 3
+        },
+        "r_s_ratio": {},
+        "gamma": {
+          "n_jobs": 1,
+          "computed_jointly": true
+        },
+        "gamma_star": {
+          "n_jobs": 1,
+          "computed_jointly": true
+        },
+        "local_optima_ratio": {},
+        "autocorrelation": {
+          "walk_length": 20,
+          "walk_times": 1000,
+          "lag": 1,
+          "seed": 20261004
+        },
+        "fdc": {
+          "method": "spearman"
+        },
+        "evolvability_enhancing_fraction": {
+          "fdr": 0.01,
+          "effect_type": "all"
+        },
+        "global_optima_accessibility": {}
+      },
+      "F7YBW8_MESOW_Aakre_2015": {
+        "classify_epistasis": {
+          "sample_cut_prob": 0.1,
+          "seed": 20261004,
+          "time_budget": 15.0
+        },
+        "diminishing_returns_index": {
+          "method": "pearson"
+        },
+        "increasing_costs_index": {
+          "method": "pearson"
+        },
+        "global_idiosyncratic_index": {
+          "n_jobs": 1,
+          "seed": 20261004,
+          "min_pairs": 3
+        },
+        "r_s_ratio": {},
+        "gamma": {
+          "n_jobs": 1,
+          "computed_jointly": true
+        },
+        "gamma_star": {
+          "n_jobs": 1,
+          "computed_jointly": true
+        },
+        "local_optima_ratio": {},
+        "autocorrelation": {
+          "walk_length": 20,
+          "walk_times": 1000,
+          "lag": 1,
+          "seed": 20261004
+        },
+        "fdc": {
+          "method": "spearman"
+        },
+        "evolvability_enhancing_fraction": {
+          "fdr": 0.01,
+          "effect_type": "all"
+        },
+        "global_optima_accessibility": {}
+      },
+      "F7YBW8_MESOW_Ding_2023": {
+        "classify_epistasis": {
+          "sample_cut_prob": null,
+          "seed": 20261004,
+          "time_budget": 15.0
+        },
+        "diminishing_returns_index": {
+          "method": "pearson"
+        },
+        "increasing_costs_index": {
+          "method": "pearson"
+        },
+        "global_idiosyncratic_index": {
+          "n_jobs": 1,
+          "seed": 20261004,
+          "min_pairs": 3
+        },
+        "r_s_ratio": {},
+        "gamma": {
+          "n_jobs": 1,
+          "computed_jointly": true
+        },
+        "gamma_star": {
+          "n_jobs": 1,
+          "computed_jointly": true
+        },
+        "local_optima_ratio": {},
+        "autocorrelation": {
+          "walk_length": 20,
+          "walk_times": 1000,
+          "lag": 1,
+          "seed": 20261004
+        },
+        "fdc": {
+          "method": "spearman"
+        },
+        "evolvability_enhancing_fraction": {
+          "fdr": 0.01,
+          "effect_type": "all"
+        },
+        "global_optima_accessibility": {}
+      },
+      "GCN4_YEAST_Staller_2018": {
+        "classify_epistasis": {
+          "sample_cut_prob": null,
+          "seed": 20261004,
+          "time_budget": 15.0
+        },
+        "diminishing_returns_index": {
+          "method": "pearson"
+        },
+        "increasing_costs_index": {
+          "method": "pearson"
+        },
+        "global_idiosyncratic_index": {
+          "n_jobs": 1,
+          "seed": 20261004,
+          "min_pairs": 3
+        },
+        "r_s_ratio": {},
+        "gamma": {
+          "n_jobs": 1,
+          "computed_jointly": true
+        },
+        "gamma_star": {
+          "n_jobs": 1,
+          "computed_jointly": true
+        },
+        "local_optima_ratio": {},
+        "autocorrelation": {
+          "walk_length": 20,
+          "walk_times": 1000,
+          "lag": 1,
+          "seed": 20261004
+        },
+        "fdc": {
+          "method": "spearman"
+        },
+        "evolvability_enhancing_fraction": {
+          "fdr": 0.01,
+          "effect_type": "all"
+        },
+        "global_optima_accessibility": {}
+      },
+      "GFP_AEQVI_Sarkisyan_2016": {
+        "classify_epistasis": {
+          "sample_cut_prob": null,
+          "seed": 20261004,
+          "time_budget": 15.0
+        },
+        "diminishing_returns_index": {
+          "method": "pearson"
+        },
+        "increasing_costs_index": {
+          "method": "pearson"
+        },
+        "global_idiosyncratic_index": {
+          "n_jobs": 1,
+          "seed": 20261004,
+          "min_pairs": 3
+        },
+        "r_s_ratio": {},
+        "gamma": {
+          "implementation": "bundled sparse_gamma_statistics",
+          "n_jobs": 1,
+          "computed_jointly": true,
+          "row_subsampling": false,
+          "kernel": "GraphFLA _gamma_grid_moments and _merge_gamma_contributions",
+          "elapsed_sec": 1.149052,
+          "diagnostics": {
+            "rows": 17603,
+            "variables": 233,
+            "sparse_mutations": 37912,
+            "candidate_position_pairs": 9131,
+            "complete_square_contexts": 10196
+          }
+        },
+        "gamma_star": {
+          "implementation": "bundled sparse_gamma_statistics",
+          "n_jobs": 1,
+          "computed_jointly": true,
+          "row_subsampling": false,
+          "kernel": "GraphFLA _gamma_grid_moments and _merge_gamma_contributions",
+          "elapsed_sec": 1.149052,
+          "diagnostics": {
+            "rows": 17603,
+            "variables": 233,
+            "sparse_mutations": 37912,
+            "candidate_position_pairs": 9131,
+            "complete_square_contexts": 10196
+          }
+        },
+        "local_optima_ratio": {},
+        "autocorrelation": {
+          "walk_length": 20,
+          "walk_times": 1000,
+          "lag": 1,
+          "seed": 20261004
+        },
+        "fdc": {
+          "method": "spearman"
+        },
+        "evolvability_enhancing_fraction": {
+          "fdr": 0.01,
+          "effect_type": "all"
+        },
+        "global_optima_accessibility": {}
+      },
+      "GRB2_HUMAN_Faure_2021": {
+        "classify_epistasis": {
+          "requested_cut": 0.75,
+          "sample_cut_prob": 0.75,
+          "seed": 20261004,
+          "time_budget": 15.0
+        },
+        "diminishing_returns_index": {
+          "method": "pearson"
+        },
+        "increasing_costs_index": {
+          "method": "pearson"
+        },
+        "global_idiosyncratic_index": {
+          "n_jobs": 1,
+          "seed": 20261004,
+          "min_pairs": 3
+        },
+        "r_s_ratio": {},
+        "gamma": {
+          "n_jobs": 1,
+          "computed_jointly": true
+        },
+        "gamma_star": {
+          "n_jobs": 1,
+          "computed_jointly": true
+        },
+        "local_optima_ratio": {},
+        "autocorrelation": {
+          "walk_length": 20,
+          "walk_times": 1000,
+          "lag": 1,
+          "seed": 20261004
+        },
+        "fdc": {
+          "method": "spearman"
+        },
+        "evolvability_enhancing_fraction": {
+          "fdr": 0.01,
+          "effect_type": "all"
+        },
+        "global_optima_accessibility": {}
+      },
+      "HECD1_HUMAN_Tsuboyama_2023_3DKM": {
+        "classify_epistasis": {
+          "sample_cut_prob": null,
+          "seed": 20261004,
+          "time_budget": 15.0
+        },
+        "diminishing_returns_index": {
+          "method": "pearson"
+        },
+        "increasing_costs_index": {
+          "method": "pearson"
+        },
+        "global_idiosyncratic_index": {
+          "n_jobs": 1,
+          "seed": 20261004,
+          "min_pairs": 3
+        },
+        "r_s_ratio": {},
+        "gamma": {
+          "n_jobs": 1,
+          "computed_jointly": true
+        },
+        "gamma_star": {
+          "n_jobs": 1,
+          "computed_jointly": true
+        },
+        "local_optima_ratio": {},
+        "autocorrelation": {
+          "walk_length": 20,
+          "walk_times": 1000,
+          "lag": 1,
+          "seed": 20261004
+        },
+        "fdc": {
+          "method": "spearman"
+        },
+        "evolvability_enhancing_fraction": {
+          "fdr": 0.01,
+          "effect_type": "all"
+        },
+        "global_optima_accessibility": {}
+      },
+      "HIS7_YEAST_Pokusaeva_2019": {
+        "classify_epistasis": {
+          "seed": 20261004,
+          "time_budget": 15.0,
+          "cutoff_request": "auto",
+          "resolved_cutoff_not_logged": true
+        },
+        "diminishing_returns_index": {
+          "method": "pearson"
+        },
+        "increasing_costs_index": {
+          "method": "pearson"
+        },
+        "global_idiosyncratic_index": {
+          "n_jobs": 1,
+          "seed": 20261004,
+          "min_pairs": 3
+        },
+        "r_s_ratio": {},
+        "local_optima_ratio": {},
+        "autocorrelation": {
+          "walk_length": 20,
+          "walk_times": 1000,
+          "lag": 1,
+          "seed": 20261004
+        },
+        "fdc": {
+          "method": "spearman",
+          "distance": "Hamming to nearest maximizing global optimum",
+          "implementation": "chunked exact comparison of retained uint8 configuration rows"
+        },
+        "global_optima_accessibility": {},
+        "evolvability_enhancing_fraction": {
+          "fdr": 0.01,
+          "effect_type": "all",
+          "implementation": "degree-bucketed exact GraphFLA nonfocal-moment kernel"
+        },
+        "gamma": {
+          "implementation": "bundled sparse_gamma_statistics",
+          "n_jobs": 1,
+          "computed_jointly": true,
+          "row_subsampling": false,
+          "kernel": "GraphFLA _gamma_grid_moments and _merge_gamma_contributions",
+          "elapsed_sec": 305.945553,
+          "diagnostics": {
+            "rows": 493435,
+            "variables": 171,
+            "sparse_mutations": 3429001,
+            "candidate_position_pairs": 1058,
+            "complete_square_contexts": 3828045
+          }
+        },
+        "gamma_star": {
+          "implementation": "bundled sparse_gamma_statistics",
+          "n_jobs": 1,
+          "computed_jointly": true,
+          "row_subsampling": false,
+          "kernel": "GraphFLA _gamma_grid_moments and _merge_gamma_contributions",
+          "elapsed_sec": 305.945553,
+          "diagnostics": {
+            "rows": 493435,
+            "variables": 171,
+            "sparse_mutations": 3429001,
+            "candidate_position_pairs": 1058,
+            "complete_square_contexts": 3828045
+          }
+        }
+      },
+      "ISDH_STAAW_Tsuboyama_2023_2LHR": {
+        "classify_epistasis": {
+          "sample_cut_prob": null,
+          "seed": 20261004,
+          "time_budget": 15.0
+        },
+        "diminishing_returns_index": {
+          "method": "pearson"
+        },
+        "increasing_costs_index": {
+          "method": "pearson"
+        },
+        "global_idiosyncratic_index": {
+          "n_jobs": 1,
+          "seed": 20261004,
+          "min_pairs": 3
+        },
+        "r_s_ratio": {},
+        "gamma": {
+          "n_jobs": 1,
+          "computed_jointly": true
+        },
+        "gamma_star": {
+          "n_jobs": 1,
+          "computed_jointly": true
+        },
+        "local_optima_ratio": {},
+        "autocorrelation": {
+          "walk_length": 20,
+          "walk_times": 1000,
+          "lag": 1,
+          "seed": 20261004
+        },
+        "fdc": {
+          "method": "spearman"
+        },
+        "evolvability_enhancing_fraction": {
+          "fdr": 0.01,
+          "effect_type": "all"
+        },
+        "global_optima_accessibility": {}
+      },
+      "MYO3_YEAST_Tsuboyama_2023_2BTT": {
+        "classify_epistasis": {
+          "sample_cut_prob": null,
+          "seed": 20261004,
+          "time_budget": 15.0
+        },
+        "diminishing_returns_index": {
+          "method": "pearson"
+        },
+        "increasing_costs_index": {
+          "method": "pearson"
+        },
+        "global_idiosyncratic_index": {
+          "n_jobs": 1,
+          "seed": 20261004,
+          "min_pairs": 3
+        },
+        "r_s_ratio": {},
+        "gamma": {
+          "n_jobs": 1,
+          "computed_jointly": true
+        },
+        "gamma_star": {
+          "n_jobs": 1,
+          "computed_jointly": true
+        },
+        "local_optima_ratio": {},
+        "autocorrelation": {
+          "walk_length": 20,
+          "walk_times": 1000,
+          "lag": 1,
+          "seed": 20261004
+        },
+        "fdc": {
+          "method": "spearman"
+        },
+        "evolvability_enhancing_fraction": {
+          "fdr": 0.01,
+          "effect_type": "all"
+        },
+        "global_optima_accessibility": {}
+      },
+      "NKX31_HUMAN_Tsuboyama_2023_2L9R": {
+        "classify_epistasis": {
+          "sample_cut_prob": null,
+          "seed": 20261004,
+          "time_budget": 15.0
+        },
+        "diminishing_returns_index": {
+          "method": "pearson"
+        },
+        "increasing_costs_index": {
+          "method": "pearson"
+        },
+        "global_idiosyncratic_index": {
+          "n_jobs": 1,
+          "seed": 20261004,
+          "min_pairs": 3
+        },
+        "r_s_ratio": {},
+        "gamma": {
+          "n_jobs": 1,
+          "computed_jointly": true
+        },
+        "gamma_star": {
+          "n_jobs": 1,
+          "computed_jointly": true
+        },
+        "local_optima_ratio": {},
+        "autocorrelation": {
+          "walk_length": 20,
+          "walk_times": 1000,
+          "lag": 1,
+          "seed": 20261004
+        },
+        "fdc": {
+          "method": "spearman"
+        },
+        "evolvability_enhancing_fraction": {
+          "fdr": 0.01,
+          "effect_type": "all"
+        },
+        "global_optima_accessibility": {}
+      },
+      "OBSCN_HUMAN_Tsuboyama_2023_1V1C": {
+        "classify_epistasis": {
+          "sample_cut_prob": null,
+          "seed": 20261004,
+          "time_budget": 15.0
+        },
+        "diminishing_returns_index": {
+          "method": "pearson"
+        },
+        "increasing_costs_index": {
+          "method": "pearson"
+        },
+        "global_idiosyncratic_index": {
+          "n_jobs": 1,
+          "seed": 20261004,
+          "min_pairs": 3
+        },
+        "r_s_ratio": {},
+        "gamma": {
+          "n_jobs": 1,
+          "computed_jointly": true
+        },
+        "gamma_star": {
+          "n_jobs": 1,
+          "computed_jointly": true
+        },
+        "local_optima_ratio": {},
+        "autocorrelation": {
+          "walk_length": 20,
+          "walk_times": 1000,
+          "lag": 1,
+          "seed": 20261004
+        },
+        "fdc": {
+          "method": "spearman"
+        },
+        "evolvability_enhancing_fraction": {
+          "fdr": 0.01,
+          "effect_type": "all"
+        },
+        "global_optima_accessibility": {}
+      },
+      "PABP_YEAST_Melamed_2013": {
+        "classify_epistasis": {
+          "sample_cut_prob": null,
+          "seed": 20261004,
+          "time_budget": 15.0
+        },
+        "diminishing_returns_index": {
+          "method": "pearson"
+        },
+        "increasing_costs_index": {
+          "method": "pearson"
+        },
+        "global_idiosyncratic_index": {
+          "n_jobs": 1,
+          "seed": 20261004,
+          "min_pairs": 3
+        },
+        "r_s_ratio": {},
+        "gamma": {
+          "n_jobs": 1,
+          "computed_jointly": true
+        },
+        "gamma_star": {
+          "n_jobs": 1,
+          "computed_jointly": true
+        },
+        "local_optima_ratio": {},
+        "autocorrelation": {
+          "walk_length": 20,
+          "walk_times": 1000,
+          "lag": 1,
+          "seed": 20261004
+        },
+        "fdc": {
+          "method": "spearman"
+        },
+        "evolvability_enhancing_fraction": {
+          "fdr": 0.01,
+          "effect_type": "all"
+        },
+        "global_optima_accessibility": {}
+      },
+      "PHOT_CHLRE_Chen_2023": {
+        "classify_epistasis": {
+          "sample_cut_prob": 0.5,
+          "seed": 20261004,
+          "time_budget": 15.0
+        },
+        "diminishing_returns_index": {
+          "method": "pearson"
+        },
+        "increasing_costs_index": {
+          "method": "pearson"
+        },
+        "global_idiosyncratic_index": {
+          "n_jobs": 1,
+          "seed": 20261004,
+          "min_pairs": 3
+        },
+        "r_s_ratio": {},
+        "gamma": {
+          "implementation": "bundled sparse_gamma_statistics",
+          "n_jobs": 1,
+          "computed_jointly": true,
+          "row_subsampling": false,
+          "kernel": "GraphFLA _gamma_grid_moments and _merge_gamma_contributions",
+          "elapsed_sec": 164.615181,
+          "diagnostics": {
+            "rows": 167529,
+            "variables": 118,
+            "sparse_mutations": 1336844,
+            "candidate_position_pairs": 105,
+            "complete_square_contexts": 3039183
+          }
+        },
+        "gamma_star": {
+          "implementation": "bundled sparse_gamma_statistics",
+          "n_jobs": 1,
+          "computed_jointly": true,
+          "row_subsampling": false,
+          "kernel": "GraphFLA _gamma_grid_moments and _merge_gamma_contributions",
+          "elapsed_sec": 164.615181,
+          "diagnostics": {
+            "rows": 167529,
+            "variables": 118,
+            "sparse_mutations": 1336844,
+            "candidate_position_pairs": 105,
+            "complete_square_contexts": 3039183
+          }
+        },
+        "local_optima_ratio": {},
+        "autocorrelation": {
+          "walk_length": 20,
+          "walk_times": 1000,
+          "lag": 1,
+          "seed": 20261004
+        },
+        "fdc": {
+          "method": "spearman"
+        },
+        "evolvability_enhancing_fraction": {
+          "fdr": 0.01,
+          "effect_type": "all"
+        },
+        "global_optima_accessibility": {}
+      },
+      "POLG_PESV_Tsuboyama_2023_2MXD": {
+        "classify_epistasis": {
+          "sample_cut_prob": null,
+          "seed": 20261004,
+          "time_budget": 15.0
+        },
+        "diminishing_returns_index": {
+          "method": "pearson"
+        },
+        "increasing_costs_index": {
+          "method": "pearson"
+        },
+        "global_idiosyncratic_index": {
+          "n_jobs": 1,
+          "seed": 20261004,
+          "min_pairs": 3
+        },
+        "r_s_ratio": {},
+        "gamma": {
+          "n_jobs": 1,
+          "computed_jointly": true
+        },
+        "gamma_star": {
+          "n_jobs": 1,
+          "computed_jointly": true
+        },
+        "local_optima_ratio": {},
+        "autocorrelation": {
+          "walk_length": 20,
+          "walk_times": 1000,
+          "lag": 1,
+          "seed": 20261004
+        },
+        "fdc": {
+          "method": "spearman"
+        },
+        "evolvability_enhancing_fraction": {
+          "fdr": 0.01,
+          "effect_type": "all"
+        },
+        "global_optima_accessibility": {}
+      },
+      "Q6WV12_9MAXI_Somermeyer_2022": {
+        "classify_epistasis": {
+          "sample_cut_prob": null,
+          "seed": 20261004,
+          "time_budget": 15.0
+        },
+        "diminishing_returns_index": {
+          "method": "pearson"
+        },
+        "increasing_costs_index": {
+          "method": "pearson"
+        },
+        "global_idiosyncratic_index": {
+          "n_jobs": 1,
+          "seed": 20261004,
+          "min_pairs": 3
+        },
+        "r_s_ratio": {},
+        "gamma": {
+          "implementation": "bundled sparse_gamma_statistics",
+          "n_jobs": 1,
+          "computed_jointly": true,
+          "row_subsampling": false,
+          "kernel": "GraphFLA _gamma_grid_moments and _merge_gamma_contributions",
+          "elapsed_sec": 1.367121,
+          "diagnostics": {
+            "rows": 19302,
+            "variables": 221,
+            "sparse_mutations": 39718,
+            "candidate_position_pairs": 10602,
+            "complete_square_contexts": 11140
+          }
+        },
+        "gamma_star": {
+          "implementation": "bundled sparse_gamma_statistics",
+          "n_jobs": 1,
+          "computed_jointly": true,
+          "row_subsampling": false,
+          "kernel": "GraphFLA _gamma_grid_moments and _merge_gamma_contributions",
+          "elapsed_sec": 1.367121,
+          "diagnostics": {
+            "rows": 19302,
+            "variables": 221,
+            "sparse_mutations": 39718,
+            "candidate_position_pairs": 10602,
+            "complete_square_contexts": 11140
+          }
+        },
+        "local_optima_ratio": {},
+        "autocorrelation": {
+          "walk_length": 20,
+          "walk_times": 1000,
+          "lag": 1,
+          "seed": 20261004
+        },
+        "fdc": {
+          "method": "spearman"
+        },
+        "evolvability_enhancing_fraction": {
+          "fdr": 0.01,
+          "effect_type": "all"
+        },
+        "global_optima_accessibility": {}
+      },
+      "Q8WTC7_9CNID_Somermeyer_2022": {
+        "classify_epistasis": {
+          "sample_cut_prob": null,
+          "seed": 20261004,
+          "time_budget": 15.0
+        },
+        "diminishing_returns_index": {
+          "method": "pearson"
+        },
+        "increasing_costs_index": {
+          "method": "pearson"
+        },
+        "global_idiosyncratic_index": {
+          "n_jobs": 1,
+          "seed": 20261004,
+          "min_pairs": 3
+        },
+        "r_s_ratio": {},
+        "gamma": {
+          "implementation": "bundled sparse_gamma_statistics",
+          "n_jobs": 1,
+          "computed_jointly": true,
+          "row_subsampling": false,
+          "kernel": "GraphFLA _gamma_grid_moments and _merge_gamma_contributions",
+          "elapsed_sec": 1.688239,
+          "diagnostics": {
+            "rows": 19288,
+            "variables": 237,
+            "sparse_mutations": 44726,
+            "candidate_position_pairs": 10695,
+            "complete_square_contexts": 13524
+          }
+        },
+        "gamma_star": {
+          "implementation": "bundled sparse_gamma_statistics",
+          "n_jobs": 1,
+          "computed_jointly": true,
+          "row_subsampling": false,
+          "kernel": "GraphFLA _gamma_grid_moments and _merge_gamma_contributions",
+          "elapsed_sec": 1.688239,
+          "diagnostics": {
+            "rows": 19288,
+            "variables": 237,
+            "sparse_mutations": 44726,
+            "candidate_position_pairs": 10695,
+            "complete_square_contexts": 13524
+          }
+        },
+        "local_optima_ratio": {},
+        "autocorrelation": {
+          "walk_length": 20,
+          "walk_times": 1000,
+          "lag": 1,
+          "seed": 20261004
+        },
+        "fdc": {
+          "method": "spearman"
+        },
+        "evolvability_enhancing_fraction": {
+          "fdr": 0.01,
+          "effect_type": "all",
+          "implementation": "public GraphFLA API"
+        },
+        "global_optima_accessibility": {}
+      },
+      "RASK_HUMAN_Weng_2022_abundance": {
+        "classify_epistasis": {
+          "requested_cut": 0.75,
+          "sample_cut_prob": 0.75,
+          "seed": 20261004,
+          "time_budget": 15.0
+        },
+        "diminishing_returns_index": {
+          "method": "pearson"
+        },
+        "increasing_costs_index": {
+          "method": "pearson"
+        },
+        "global_idiosyncratic_index": {
+          "n_jobs": 1,
+          "seed": 20261004,
+          "min_pairs": 3
+        },
+        "r_s_ratio": {},
+        "gamma": {
+          "implementation": "bundled sparse_gamma_statistics",
+          "n_jobs": 1,
+          "computed_jointly": true,
+          "row_subsampling": false,
+          "kernel": "GraphFLA _gamma_grid_moments and _merge_gamma_contributions",
+          "elapsed_sec": 4.270743,
+          "diagnostics": {
+            "rows": 26011,
+            "variables": 187,
+            "sparse_mutations": 48957,
+            "candidate_position_pairs": 1419,
+            "complete_square_contexts": 1419
+          }
+        },
+        "gamma_star": {
+          "implementation": "bundled sparse_gamma_statistics",
+          "n_jobs": 1,
+          "computed_jointly": true,
+          "row_subsampling": false,
+          "kernel": "GraphFLA _gamma_grid_moments and _merge_gamma_contributions",
+          "elapsed_sec": 4.270743,
+          "diagnostics": {
+            "rows": 26011,
+            "variables": 187,
+            "sparse_mutations": 48957,
+            "candidate_position_pairs": 1419,
+            "complete_square_contexts": 1419
+          }
+        },
+        "local_optima_ratio": {},
+        "autocorrelation": {
+          "walk_length": 20,
+          "walk_times": 1000,
+          "lag": 1,
+          "seed": 20261004
+        },
+        "fdc": {
+          "method": "spearman"
+        },
+        "evolvability_enhancing_fraction": {
+          "fdr": 0.01,
+          "effect_type": "all",
+          "implementation": "public GraphFLA API"
+        },
+        "global_optima_accessibility": {}
+      },
+      "RASK_HUMAN_Weng_2022_binding-DARPin_K55": {
+        "classify_epistasis": {
+          "requested_cut": 0.75,
+          "sample_cut_prob": 0.75,
+          "seed": 20261004,
+          "time_budget": 15.0
+        },
+        "diminishing_returns_index": {
+          "method": "pearson"
+        },
+        "increasing_costs_index": {
+          "method": "pearson"
+        },
+        "global_idiosyncratic_index": {
+          "n_jobs": 1,
+          "seed": 20261004,
+          "min_pairs": 3
+        },
+        "r_s_ratio": {},
+        "gamma": {
+          "implementation": "bundled sparse_gamma_statistics",
+          "n_jobs": 1,
+          "computed_jointly": true,
+          "row_subsampling": false,
+          "kernel": "GraphFLA _gamma_grid_moments and _merge_gamma_contributions",
+          "elapsed_sec": 3.98528,
+          "diagnostics": {
+            "rows": 24873,
+            "variables": 187,
+            "sparse_mutations": 46662,
+            "candidate_position_pairs": 1443,
+            "complete_square_contexts": 1443
+          }
+        },
+        "gamma_star": {
+          "implementation": "bundled sparse_gamma_statistics",
+          "n_jobs": 1,
+          "computed_jointly": true,
+          "row_subsampling": false,
+          "kernel": "GraphFLA _gamma_grid_moments and _merge_gamma_contributions",
+          "elapsed_sec": 3.98528,
+          "diagnostics": {
+            "rows": 24873,
+            "variables": 187,
+            "sparse_mutations": 46662,
+            "candidate_position_pairs": 1443,
+            "complete_square_contexts": 1443
+          }
+        },
+        "local_optima_ratio": {},
+        "autocorrelation": {
+          "walk_length": 20,
+          "walk_times": 1000,
+          "lag": 1,
+          "seed": 20261004
+        },
+        "fdc": {
+          "method": "spearman"
+        },
+        "evolvability_enhancing_fraction": {
+          "fdr": 0.01,
+          "effect_type": "all",
+          "implementation": "public GraphFLA API"
+        },
+        "global_optima_accessibility": {}
+      },
+      "SDA_BACSU_Tsuboyama_2023_1PV0": {
+        "classify_epistasis": {
+          "sample_cut_prob": null,
+          "seed": 20261004,
+          "time_budget": 15.0
+        },
+        "diminishing_returns_index": {
+          "method": "pearson"
+        },
+        "increasing_costs_index": {
+          "method": "pearson"
+        },
+        "global_idiosyncratic_index": {
+          "n_jobs": 1,
+          "seed": 20261004,
+          "min_pairs": 3
+        },
+        "r_s_ratio": {},
+        "gamma": {
+          "n_jobs": 1,
+          "computed_jointly": true
+        },
+        "gamma_star": {
+          "n_jobs": 1,
+          "computed_jointly": true
+        },
+        "local_optima_ratio": {},
+        "autocorrelation": {
+          "walk_length": 20,
+          "walk_times": 1000,
+          "lag": 1,
+          "seed": 20261004
+        },
+        "fdc": {
+          "method": "spearman"
+        },
+        "evolvability_enhancing_fraction": {
+          "fdr": 0.01,
+          "effect_type": "all",
+          "implementation": "public GraphFLA API"
+        },
+        "global_optima_accessibility": {}
+      },
+      "SPA_STAAU_Tsuboyama_2023_1LP1": {
+        "classify_epistasis": {
+          "sample_cut_prob": null,
+          "seed": 20261004,
+          "time_budget": 15.0
+        },
+        "diminishing_returns_index": {
+          "method": "pearson"
+        },
+        "increasing_costs_index": {
+          "method": "pearson"
+        },
+        "global_idiosyncratic_index": {
+          "n_jobs": 1,
+          "seed": 20261004,
+          "min_pairs": 3
+        },
+        "r_s_ratio": {},
+        "gamma": {
+          "n_jobs": 1,
+          "computed_jointly": true
+        },
+        "gamma_star": {
+          "n_jobs": 1,
+          "computed_jointly": true
+        },
+        "local_optima_ratio": {},
+        "autocorrelation": {
+          "walk_length": 20,
+          "walk_times": 1000,
+          "lag": 1,
+          "seed": 20261004
+        },
+        "fdc": {
+          "method": "spearman"
+        },
+        "evolvability_enhancing_fraction": {
+          "fdr": 0.01,
+          "effect_type": "all",
+          "implementation": "public GraphFLA API"
+        },
+        "global_optima_accessibility": {}
+      },
+      "SPG1_STRSG_Olson_2014": {
+        "classify_epistasis": {
+          "requested_cut": 0.75,
+          "sample_cut_prob": 0.75,
+          "seed": 20261004,
+          "time_budget": 15.0
+        },
+        "diminishing_returns_index": {
+          "method": "pearson"
+        },
+        "increasing_costs_index": {
+          "method": "pearson"
+        },
+        "global_idiosyncratic_index": {
+          "n_jobs": 1,
+          "seed": 20261004,
+          "min_pairs": 3
+        },
+        "r_s_ratio": {},
+        "gamma": {
+          "implementation": "bundled sparse_gamma_statistics",
+          "n_jobs": 1,
+          "computed_jointly": true,
+          "row_subsampling": false,
+          "kernel": "GraphFLA _gamma_grid_moments and _merge_gamma_contributions",
+          "elapsed_sec": 14.720112,
+          "diagnostics": {
+            "rows": 536962,
+            "variables": 55,
+            "sparse_mutations": 1072879,
+            "candidate_position_pairs": 1485,
+            "complete_square_contexts": 1485
+          }
+        },
+        "gamma_star": {
+          "implementation": "bundled sparse_gamma_statistics",
+          "n_jobs": 1,
+          "computed_jointly": true,
+          "row_subsampling": false,
+          "kernel": "GraphFLA _gamma_grid_moments and _merge_gamma_contributions",
+          "elapsed_sec": 14.720112,
+          "diagnostics": {
+            "rows": 536962,
+            "variables": 55,
+            "sparse_mutations": 1072879,
+            "candidate_position_pairs": 1485,
+            "complete_square_contexts": 1485
+          }
+        },
+        "local_optima_ratio": {},
+        "autocorrelation": {
+          "walk_length": 20,
+          "walk_times": 1000,
+          "lag": 1,
+          "seed": 20261004
+        },
+        "fdc": {
+          "method": "spearman",
+          "implementation": "chunked exact Hamming distance to nearest maximizing global optimum",
+          "chunk_rows": 8192,
+          "n_configs": 536962,
+          "n_global_optima": 1,
+          "chunks_processed": 66
+        },
+        "evolvability_enhancing_fraction": {
+          "fdr": 0.01,
+          "effect_type": "all",
+          "implementation": "degree-bucketed exact GraphFLA nonfocal-moment kernel",
+          "improving_edge_pairs": 9256035,
+          "neutral_neighbor_pairs": 1468988,
+          "ordered_pair_denominator": 21450046,
+          "testable_pairs": 10725023,
+          "ee_ordered_pairs": 402099,
+          "timings_seconds": {
+            "pairs_ready": 3.7335254580000026,
+            "moments_ready": 5.567157207999998,
+            "tests_adjusted": 4.580126
+          },
+          "total_seconds": 13.895389417000004
+        },
+        "global_optima_accessibility": {}
+      },
+      "SPG1_STRSG_Wu_2016": {
+        "classify_epistasis": {
+          "sample_cut_prob": 0.75,
+          "seed": 20261004,
+          "time_budget": 15.0
+        },
+        "diminishing_returns_index": {
+          "method": "pearson"
+        },
+        "increasing_costs_index": {
+          "method": "pearson"
+        },
+        "global_idiosyncratic_index": {
+          "n_jobs": 1,
+          "seed": 20261004,
+          "min_pairs": 3
+        },
+        "r_s_ratio": {},
+        "gamma": {
+          "n_jobs": 1,
+          "computed_jointly": true
+        },
+        "gamma_star": {
+          "n_jobs": 1,
+          "computed_jointly": true
+        },
+        "local_optima_ratio": {},
+        "autocorrelation": {
+          "walk_length": 20,
+          "walk_times": 1000,
+          "lag": 1,
+          "seed": 20261004
+        },
+        "fdc": {
+          "method": "spearman"
+        },
+        "evolvability_enhancing_fraction": {
+          "fdr": 0.01,
+          "effect_type": "all",
+          "implementation": "blockwise exact-equivalent GraphFLA EE kernels; full population; symmetric two-orientation BH family",
+          "improving_edge_pairs": 5074250,
+          "neutral_neighbor_pairs": 418479,
+          "ordered_pair_denominator": 10985458,
+          "testable_pairs": 5492729,
+          "edge_block_size": 100000,
+          "equivalence_validation": "public GraphFLA API; two full landscapes; absolute error 0"
+        },
+        "global_optima_accessibility": {}
+      },
+      "SPTN1_CHICK_Tsuboyama_2023_1TUD": {
+        "classify_epistasis": {
+          "sample_cut_prob": null,
+          "seed": 20261004,
+          "time_budget": 15.0
+        },
+        "diminishing_returns_index": {
+          "method": "pearson"
+        },
+        "increasing_costs_index": {
+          "method": "pearson"
+        },
+        "global_idiosyncratic_index": {
+          "n_jobs": 1,
+          "seed": 20261004,
+          "min_pairs": 3
+        },
+        "r_s_ratio": {},
+        "gamma": {
+          "n_jobs": 1,
+          "computed_jointly": true
+        },
+        "gamma_star": {
+          "n_jobs": 1,
+          "computed_jointly": true
+        },
+        "local_optima_ratio": {},
+        "autocorrelation": {
+          "walk_length": 20,
+          "walk_times": 1000,
+          "lag": 1,
+          "seed": 20261004
+        },
+        "fdc": {
+          "method": "spearman"
+        },
+        "evolvability_enhancing_fraction": {
+          "fdr": 0.01,
+          "effect_type": "all",
+          "implementation": "public GraphFLA API"
+        },
+        "global_optima_accessibility": {}
+      },
+      "UBE4B_HUMAN_Tsuboyama_2023_3L1X": {
+        "classify_epistasis": {
+          "sample_cut_prob": null,
+          "seed": 20261004,
+          "time_budget": 15.0
+        },
+        "diminishing_returns_index": {
+          "method": "pearson"
+        },
+        "increasing_costs_index": {
+          "method": "pearson"
+        },
+        "global_idiosyncratic_index": {
+          "n_jobs": 1,
+          "seed": 20261004,
+          "min_pairs": 3
+        },
+        "r_s_ratio": {},
+        "gamma": {
+          "n_jobs": 1,
+          "computed_jointly": true
+        },
+        "gamma_star": {
+          "n_jobs": 1,
+          "computed_jointly": true
+        },
+        "local_optima_ratio": {},
+        "autocorrelation": {
+          "walk_length": 20,
+          "walk_times": 1000,
+          "lag": 1,
+          "seed": 20261004
+        },
+        "fdc": {
+          "method": "spearman"
+        },
+        "evolvability_enhancing_fraction": {
+          "fdr": 0.01,
+          "effect_type": "all",
+          "implementation": "public GraphFLA API"
+        },
+        "global_optima_accessibility": {}
+      },
+      "VILI_CHICK_Tsuboyama_2023_1YU5": {
+        "classify_epistasis": {
+          "sample_cut_prob": null,
+          "seed": 20261004,
+          "time_budget": 15.0
+        },
+        "diminishing_returns_index": {
+          "method": "pearson"
+        },
+        "increasing_costs_index": {
+          "method": "pearson"
+        },
+        "global_idiosyncratic_index": {
+          "n_jobs": 1,
+          "seed": 20261004,
+          "min_pairs": 3
+        },
+        "r_s_ratio": {},
+        "gamma": {
+          "n_jobs": 1,
+          "computed_jointly": true
+        },
+        "gamma_star": {
+          "n_jobs": 1,
+          "computed_jointly": true
+        },
+        "local_optima_ratio": {},
+        "autocorrelation": {
+          "walk_length": 20,
+          "walk_times": 1000,
+          "lag": 1,
+          "seed": 20261004
+        },
+        "fdc": {
+          "method": "spearman"
+        },
+        "evolvability_enhancing_fraction": {
+          "fdr": 0.01,
+          "effect_type": "all",
+          "implementation": "public GraphFLA API"
+        },
+        "global_optima_accessibility": {}
+      },
+      "YAIA_ECOLI_Tsuboyama_2023_2KVT": {
+        "classify_epistasis": {
+          "sample_cut_prob": null,
+          "seed": 20261004,
+          "time_budget": 15.0
+        },
+        "diminishing_returns_index": {
+          "method": "pearson"
+        },
+        "increasing_costs_index": {
+          "method": "pearson"
+        },
+        "global_idiosyncratic_index": {
+          "n_jobs": 1,
+          "seed": 20261004,
+          "min_pairs": 3
+        },
+        "r_s_ratio": {},
+        "gamma": {
+          "n_jobs": 1,
+          "computed_jointly": true
+        },
+        "gamma_star": {
+          "n_jobs": 1,
+          "computed_jointly": true
+        },
+        "local_optima_ratio": {},
+        "autocorrelation": {
+          "walk_length": 20,
+          "walk_times": 1000,
+          "lag": 1,
+          "seed": 20261004
+        },
+        "fdc": {
+          "method": "spearman"
+        },
+        "evolvability_enhancing_fraction": {
+          "fdr": 0.01,
+          "effect_type": "all",
+          "implementation": "public GraphFLA API"
+        },
+        "global_optima_accessibility": {}
+      },
+      "YAP1_HUMAN_Araya_2012": {
+        "classify_epistasis": {
+          "sample_cut_prob": null,
+          "seed": 20261004,
+          "time_budget": 15.0
+        },
+        "diminishing_returns_index": {
+          "method": "pearson"
+        },
+        "increasing_costs_index": {
+          "method": "pearson"
+        },
+        "global_idiosyncratic_index": {
+          "n_jobs": 1,
+          "seed": 20261004,
+          "min_pairs": 3
+        },
+        "r_s_ratio": {},
+        "gamma": {
+          "n_jobs": 1,
+          "computed_jointly": true
+        },
+        "gamma_star": {
+          "n_jobs": 1,
+          "computed_jointly": true
+        },
+        "local_optima_ratio": {},
+        "autocorrelation": {
+          "walk_length": 20,
+          "walk_times": 1000,
+          "lag": 1,
+          "seed": 20261004
+        },
+        "fdc": {
+          "method": "spearman"
+        },
+        "evolvability_enhancing_fraction": {
+          "fdr": 0.01,
+          "effect_type": "all",
+          "implementation": "public GraphFLA API"
+        },
+        "global_optima_accessibility": {}
+      },
+      "YNZC_BACSU_Tsuboyama_2023_2JVD": {
+        "classify_epistasis": {
+          "sample_cut_prob": null,
+          "seed": 20261004,
+          "time_budget": 15.0
+        },
+        "diminishing_returns_index": {
+          "method": "pearson"
+        },
+        "increasing_costs_index": {
+          "method": "pearson"
+        },
+        "global_idiosyncratic_index": {
+          "n_jobs": 1,
+          "seed": 20261004,
+          "min_pairs": 3
+        },
+        "r_s_ratio": {},
+        "gamma": {
+          "n_jobs": 1,
+          "computed_jointly": true
+        },
+        "gamma_star": {
+          "n_jobs": 1,
+          "computed_jointly": true
+        },
+        "local_optima_ratio": {},
+        "autocorrelation": {
+          "walk_length": 20,
+          "walk_times": 1000,
+          "lag": 1,
+          "seed": 20261004
+        },
+        "fdc": {
+          "method": "spearman"
+        },
+        "evolvability_enhancing_fraction": {
+          "fdr": 0.01,
+          "effect_type": "all",
+          "implementation": "public GraphFLA API"
+        },
+        "global_optima_accessibility": {}
+      }
+    },
+    "resource_audit_by_dms": {
+      "HIS7_YEAST_Pokusaeva_2019": {
+        "retry": "exact full-population graph build and requested feature pass",
+        "max_worker_rss_mib": 4096,
+        "stop_reason": "worker RSS exceeded 4096 MiB (measured 4570 MiB) during fdc; host free memory remained about 64\u201367%.",
+        "source_release": "v1.3",
+        "n_configs_raw": 496137,
+        "n_graph_configs": 493435,
+        "n_isolated_removed": 2702,
+        "fdc_followup": {
+          "id": "HIS7_YEAST_Pokusaeva_2019",
+          "fdc": -0.2145599946525916,
+          "method": "spearman",
+          "distance": "Hamming to the nearest maximizing global optimum",
+          "n_configs": 493435,
+          "n_global_optima": 1,
+          "n_mutated_positions": 171,
+          "chunk_rows": 8192,
+          "equivalence": "Exact rowwise Hamming and Spearman formula used by GraphFLA FDC; avoids materializing landscape.configs and get_data().",
+          "max_worker_rss_mib": 2137.4,
+          "host_free_percent_at_last_check": 67
+        },
+        "goa_followup": {
+          "id": "HIS7_YEAST_Pokusaeva_2019",
+          "global_optima_accessibility": 0.04260743562981953,
+          "n_configs": 493435,
+          "n_edges": 3270567,
+          "n_local_optima": 20484,
+          "n_mutated_positions": 171,
+          "method": "public GraphFLA analysis.global_optima_accessibility",
+          "max_worker_rss_mib": 2158.2,
+          "host_free_percent_at_last_check": 66
+        },
+        "global_idiosyncratic_index_retry": {
+          "max_worker_rss_mib": 3453.0,
+          "host_free_percent_at_last_check": 69,
+          "metric_timeout_sec": 300,
+          "result_details": null
+        },
+        "evolvability_enhancing_fraction_retry": {
+          "max_worker_rss_mib": 3574.8,
+          "host_free_percent_at_last_check": 66,
+          "metric_timeout_sec": 300,
+          "result_details": {
+            "improving_edge_pairs": 3270567,
+            "neutral_neighbor_pairs": 795336,
+            "ordered_pair_denominator": 8131806,
+            "testable_pairs": 3995250,
+            "ee_ordered_pairs": 9222,
+            "implementation": "degree-bucketed exact GraphFLA nonfocal-moment kernel",
+            "timings_seconds": {
+              "pairs_ready": 1.4526442919999987,
+              "moments_ready": 2.6048977499999992,
+              "tests_adjusted": 1.6239590000000028
+            },
+            "total_seconds": 5.692149209
+          }
+        }
+      }
+    },
+    "sampling": {
+      "classify_epistasis": {
+        "seed": 20261004,
+        "time_budget_sec": 15.0,
+        "requested_cut_by_dms": {
+          "A4_HUMAN_Seuma_2022": null,
+          "AMFR_HUMAN_Tsuboyama_2023_4G3O": null,
+          "CAPSD_AAV2S_Sinai_2021": null,
+          "CBX4_HUMAN_Tsuboyama_2023_2K28": null,
+          "CSN4_MOUSE_Tsuboyama_2023_1UFM": null,
+          "D7PM05_CLYGR_Somermeyer_2022": null,
+          "DLG4_HUMAN_Faure_2021": null,
+          "DOCK1_MOUSE_Tsuboyama_2023_2M0Y": null,
+          "F7YBW8_MESOW_Aakre_2015": null,
+          "F7YBW8_MESOW_Ding_2023": null,
+          "GCN4_YEAST_Staller_2018": null,
+          "GFP_AEQVI_Sarkisyan_2016": null,
+          "GRB2_HUMAN_Faure_2021": 0.75,
+          "HECD1_HUMAN_Tsuboyama_2023_3DKM": null,
+          "HIS7_YEAST_Pokusaeva_2019": null,
+          "ISDH_STAAW_Tsuboyama_2023_2LHR": null,
+          "MYO3_YEAST_Tsuboyama_2023_2BTT": null,
+          "NKX31_HUMAN_Tsuboyama_2023_2L9R": null,
+          "OBSCN_HUMAN_Tsuboyama_2023_1V1C": null,
+          "PABP_YEAST_Melamed_2013": null,
+          "PHOT_CHLRE_Chen_2023": null,
+          "POLG_PESV_Tsuboyama_2023_2MXD": null,
+          "Q6WV12_9MAXI_Somermeyer_2022": null,
+          "Q8WTC7_9CNID_Somermeyer_2022": null,
+          "RASK_HUMAN_Weng_2022_abundance": 0.75,
+          "RASK_HUMAN_Weng_2022_binding-DARPin_K55": 0.75,
+          "SDA_BACSU_Tsuboyama_2023_1PV0": null,
+          "SPA_STAAU_Tsuboyama_2023_1LP1": null,
+          "SPG1_STRSG_Olson_2014": 0.75,
+          "SPG1_STRSG_Wu_2016": null,
+          "SPTN1_CHICK_Tsuboyama_2023_1TUD": null,
+          "UBE4B_HUMAN_Tsuboyama_2023_3L1X": null,
+          "VILI_CHICK_Tsuboyama_2023_1YU5": null,
+          "YAIA_ECOLI_Tsuboyama_2023_2KVT": null,
+          "YAP1_HUMAN_Araya_2012": null,
+          "YNZC_BACSU_Tsuboyama_2023_2JVD": null
+        },
+        "resolved_cut_probability_by_dms": {
+          "A4_HUMAN_Seuma_2022": null,
+          "AMFR_HUMAN_Tsuboyama_2023_4G3O": null,
+          "CAPSD_AAV2S_Sinai_2021": null,
+          "CBX4_HUMAN_Tsuboyama_2023_2K28": null,
+          "CSN4_MOUSE_Tsuboyama_2023_1UFM": null,
+          "D7PM05_CLYGR_Somermeyer_2022": null,
+          "DLG4_HUMAN_Faure_2021": null,
+          "DOCK1_MOUSE_Tsuboyama_2023_2M0Y": null,
+          "F7YBW8_MESOW_Aakre_2015": 0.1,
+          "F7YBW8_MESOW_Ding_2023": null,
+          "GCN4_YEAST_Staller_2018": null,
+          "GFP_AEQVI_Sarkisyan_2016": null,
+          "GRB2_HUMAN_Faure_2021": 0.75,
+          "HECD1_HUMAN_Tsuboyama_2023_3DKM": null,
+          "HIS7_YEAST_Pokusaeva_2019": null,
+          "ISDH_STAAW_Tsuboyama_2023_2LHR": null,
+          "MYO3_YEAST_Tsuboyama_2023_2BTT": null,
+          "NKX31_HUMAN_Tsuboyama_2023_2L9R": null,
+          "OBSCN_HUMAN_Tsuboyama_2023_1V1C": null,
+          "PABP_YEAST_Melamed_2013": null,
+          "PHOT_CHLRE_Chen_2023": 0.5,
+          "POLG_PESV_Tsuboyama_2023_2MXD": null,
+          "Q6WV12_9MAXI_Somermeyer_2022": null,
+          "Q8WTC7_9CNID_Somermeyer_2022": null,
+          "RASK_HUMAN_Weng_2022_abundance": 0.75,
+          "RASK_HUMAN_Weng_2022_binding-DARPin_K55": 0.75,
+          "SDA_BACSU_Tsuboyama_2023_1PV0": null,
+          "SPA_STAAU_Tsuboyama_2023_1LP1": null,
+          "SPG1_STRSG_Olson_2014": 0.75,
+          "SPG1_STRSG_Wu_2016": 0.75,
+          "SPTN1_CHICK_Tsuboyama_2023_1TUD": null,
+          "UBE4B_HUMAN_Tsuboyama_2023_3L1X": null,
+          "VILI_CHICK_Tsuboyama_2023_1YU5": null,
+          "YAIA_ECOLI_Tsuboyama_2023_2KVT": null,
+          "YAP1_HUMAN_Araya_2012": null,
+          "YNZC_BACSU_Tsuboyama_2023_2JVD": null
+        }
+      },
+      "global_idiosyncratic_index_seed": 20261004,
+      "autocorrelation_seed": 20261004
+    }
+  },
+  "citation_fields": "publication is the verified peer-reviewed assay paper; proteinGym_reference_doi preserves the benchmark's DOI if it differs"
+}

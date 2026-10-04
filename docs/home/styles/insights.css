@@ -1,0 +1,54 @@
+/* Research scatter plots share the homepage's type and color tokens. */
+.gfl-insights { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--gfl-space-6); }
+.gfl-insight { padding: var(--gfl-space-6); min-width: 0; }
+.gfl-insight__heading { margin-bottom: var(--gfl-space-6); }
+.gfl-insight__heading p { margin-top: var(--gfl-space-2); color: var(--gfl-color-text-muted); font-size: var(--gfl-text-sm); }
+.gfl-insight__controls { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--gfl-space-3); }
+.gfl-insight__controls label { display: flex; flex-direction: column; gap: var(--gfl-space-2); font-size: var(--gfl-text-xs); color: var(--gfl-color-text-muted); min-width: 0; }
+.gfl-insight__controls select { width: 100%; min-height: 44px; border: 1px solid var(--gfl-color-line-strong); border-radius: var(--gfl-radius-sm); background: var(--gfl-color-well); color: var(--gfl-color-text); padding: var(--gfl-space-2); font-family: var(--gfl-font-body); font-size: var(--gfl-text-sm); cursor: pointer; }
+.gfl-insight__canvas { position: relative; margin-top: var(--gfl-space-5); }
+.gfl-insight__plot { display: block; width: 100%; height: auto; overflow: visible; }
+.gfl-insight__axis { color: var(--gfl-color-text-muted); font-family: var(--gfl-font-body); font-size: var(--gfl-text-sm); }
+.gfl-insight__axis path, .gfl-insight__axis line { stroke: var(--gfl-color-line-strong); }
+.gfl-insight__grid { color: var(--gfl-color-line); }
+.gfl-insight__grid .domain { display: none; }
+.gfl-insight__fit { fill: none; stroke: var(--gfl-color-accent); stroke-width: 2; stroke-dasharray: 5 4; pointer-events: none; }
+.gfl-insight__points circle { fill: var(--gfl-color-data); fill-opacity: 0.75; stroke: var(--gfl-color-card); stroke-width: 1.3; cursor: pointer; }
+.gfl-insight__points circle:is(:hover, :focus, [aria-expanded="true"]) { fill: var(--gfl-color-accent); fill-opacity: 1; stroke: var(--gfl-color-accent); outline: none; }
+.gfl-insight__points circle:focus { stroke-width: 4; }
+.gfl-insight__label { fill: var(--gfl-color-text-soft); font-family: var(--gfl-font-body); font-size: var(--gfl-text-md); }
+.gfl-insight__empty { fill: var(--gfl-color-text-muted); font-family: var(--gfl-font-body); font-size: var(--gfl-text-sm); }
+/* Compact, anchored study card; positioning is handled by Floating UI. */
+.gfl-insight__detail { --tip-x: 0px; --tip-y: 0px; position: absolute; left: var(--tip-x); top: var(--tip-y); z-index: 30; width: min(280px, calc(100vw - 32px)); padding: var(--gfl-space-3); display: grid; gap: var(--gfl-space-2); background: var(--gfl-color-well); border: 1px solid var(--gfl-color-line-strong); border-radius: var(--gfl-radius-sm); box-shadow: 0 6px 24px var(--gfl-color-page); font-size: var(--gfl-text-xs); line-height: 1.4; }
+.gfl-insight__detail[hidden] { display: none; }
+.gfl-insight__detail p { margin: 0 !important; font-size: inherit; line-height: inherit; }
+.gfl-insight__detail button { position: absolute; top: var(--gfl-space-2); right: var(--gfl-space-2); display: grid; place-items: center; width: 24px; height: 24px; padding: 0; color: var(--gfl-color-text-muted); background: none; border: none; font-size: var(--gfl-text-lg); line-height: 1; cursor: pointer; border-radius: var(--gfl-radius-sm); }
+.gfl-insight__detail button:hover { color: var(--gfl-color-text); background: var(--gfl-color-line); }
+.gfl-insight__dataset { padding-right: var(--gfl-space-6); color: var(--gfl-color-accent); font-weight: 500; overflow-wrap: anywhere; }
+.gfl-insight__values { color: var(--gfl-color-text-muted); }
+.gfl-insight__paper { font-weight: 500; }
+.gfl-insight__journal { color: var(--gfl-color-text-muted); }
+.gfl-insight__detail .gfl-link { margin: 0; padding: 0; font-size: inherit; line-height: inherit; justify-self: start; }
+/* Tom Select supplies search, keyboard navigation and listbox behavior. */
+.gfl-insight__controls select.tomselected { display: none; }
+.gfl-insight__controls .ts-wrapper { position: relative; width: 100%; min-width: 0; font-size: var(--gfl-text-sm); color: var(--gfl-color-text); }
+.gfl-insight__controls .ts-wrapper.dropdown-active { z-index: 40; }
+.gfl-insight__controls .ts-control { position: relative; display: flex; align-items: center; width: 100%; min-height: 40px; padding: var(--gfl-space-2) 36px var(--gfl-space-2) var(--gfl-space-3); background: var(--gfl-color-well); border: 1px solid var(--gfl-color-line-strong); border-radius: var(--gfl-radius-sm); cursor: pointer; line-height: 1.4; }
+.gfl-insight__controls .ts-control .items-placeholder { display: none; }
+.gfl-insight__controls .ts-control .item { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.gfl-insight__controls .ts-control::after { content: ''; position: absolute; right: 14px; top: calc(50% - 5px); width: 7px; height: 7px; border-right: 1.5px solid currentColor; border-bottom: 1.5px solid currentColor; transform: rotate(45deg); pointer-events: none; color: var(--gfl-color-text-muted); }
+.gfl-insight__controls .dropdown-active .ts-control::after { top: calc(50% - 2px); transform: rotate(225deg); }
+.gfl-insight__controls .ts-control:focus-visible { outline: 1px solid var(--gfl-color-accent); outline-offset: 2px; }
+.gfl-insight__controls .ts-dropdown { position: absolute; top: calc(100% + 6px); left: 0; width: 100%; z-index: 40; padding: var(--gfl-space-1); background: var(--gfl-color-well); border: 1px solid var(--gfl-color-line-strong); border-radius: var(--gfl-radius-sm); box-shadow: 0 6px 24px var(--gfl-color-page); }
+.gfl-insight__controls .ts-dropdown .dropdown-input { display: block; width: 100%; margin: 0 0 var(--gfl-space-1); padding: var(--gfl-space-2); border: 0; border-bottom: 1px solid var(--gfl-color-line); border-radius: 0; color: var(--gfl-color-text); background: none; font: inherit; outline: none; }
+.gfl-insight__controls .ts-dropdown .dropdown-input::placeholder { color: var(--gfl-color-text-muted); }
+.gfl-insight__controls .ts-dropdown-content { max-height: 228px; overflow: auto; overscroll-behavior: contain; scrollbar-width: thin; scrollbar-color: var(--gfl-color-line-strong) transparent; }
+.gfl-insight__controls .ts-dropdown .option, .gfl-insight__controls .ts-dropdown .no-results { padding: var(--gfl-space-2); line-height: 1.25; border-radius: var(--gfl-radius-sm); cursor: pointer; }
+.gfl-insight__controls .ts-dropdown .option.active { background: var(--gfl-color-line); }
+.gfl-insight__controls .ts-dropdown .option.selected { color: var(--gfl-color-accent); }
+.gfl-insight__controls .ts-dropdown .highlight { text-decoration: underline; }
+.gfl-insight__footer { display: flex; flex-wrap: wrap; justify-content: space-between; gap: var(--gfl-space-2); font-size: var(--gfl-text-xs); color: var(--gfl-color-text-muted); }
+.gfl-insight__footer > :last-child::before { content: ''; display: inline-block; width: 20px; margin-right: var(--gfl-space-2); vertical-align: middle; border-top: 2px dashed var(--gfl-color-accent); }
+.gfl-insights__footer { display: flex; flex-wrap: wrap; gap: var(--gfl-space-3); justify-content: space-between; color: var(--gfl-color-text-muted); font-size: var(--gfl-text-sm); }
+@media (max-width: 900px) { .gfl-insights { grid-template-columns: minmax(0, 1fr); } }
+@media (max-width: 420px) { .gfl-insight { padding: var(--gfl-space-4); } .gfl-insight__controls { grid-template-columns: minmax(0, 1fr); } }

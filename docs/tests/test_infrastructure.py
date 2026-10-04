@@ -61,6 +61,7 @@ class DocumentationInfrastructure(unittest.TestCase):
             extra_javascript=[],
         )
         cfg["extra"]["api_source_root"] = str(cls.source)
+        cfg["theme"]["custom_dir"] = str(DOCS / "overrides")
         cfg["extra"]["api_modules"] = ["docfixture"]
         cfg["extra"]["api_omissions"] = {}
         cfg["extra"]["tutorial_catalog"] = None

@@ -1,0 +1,15 @@
+{# Like Material's own homepage, only replace the page body and sidebars. #}
+{% extends "main.html" %}
+{% block container %}
+  <div class="md-content" data-md-component="content">{{ page.content | safe }}</div>
+{% endblock %}
+{% block footer %}{% endblock %}
+{% block scripts %}
+  {{ super() }}
+  <script src="{{ 'assets/home/vendor/d3.v7.9.0.min.js' | url }}" defer></script>
+  <script src="{{ 'assets/home/vendor/tom-select-2.4.3.min.js' | url }}" defer></script>
+  <script src="{{ 'assets/home/vendor/floating-ui-core-1.7.3.min.js' | url }}" defer></script>
+  <script src="{{ 'assets/home/vendor/floating-ui-dom-1.7.4.min.js' | url }}" defer></script>
+  <script src="{{ 'assets/home/insights-data.js' | url }}" defer></script>
+  <script src="{{ 'assets/home/insights.js' | url }}" defer></script>
+{% endblock %}

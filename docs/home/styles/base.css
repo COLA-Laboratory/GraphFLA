@@ -1,0 +1,60 @@
+/* Element defaults inside the landing page. Everything is scoped to .gfl-home so the
+   documentation theme around it is left alone. */
+
+/* Let the browser own anchor scrolling, including its timing and easing. */
+.gfl-document {
+  scroll-behavior: smooth;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .gfl-document {
+    scroll-behavior: auto;
+  }
+}
+
+.gfl-standalone {
+  margin: 0;
+  background: var(--gfl-color-page);
+}
+
+.gfl-home {
+  font-family: var(--gfl-font-body);
+  font-size: var(--gfl-text-base);
+  line-height: var(--gfl-leading-body);
+  color: var(--gfl-color-text);
+  background: var(--gfl-color-page);
+  -webkit-font-smoothing: antialiased;
+}
+
+.gfl-home *,
+.gfl-home *::before,
+.gfl-home *::after {
+  box-sizing: border-box;
+}
+
+.gfl-home :where(h1, h2, h3, p, figure, pre, ul) {
+  margin: 0;
+}
+
+.gfl-home :where(ul) {
+  padding: 0;
+  list-style: none;
+}
+
+.gfl-home :where(a) {
+  color: inherit;
+  text-decoration: none;
+}
+
+.gfl-home :where(img, svg) {
+  display: block;
+}
+
+.gfl-home :where(code, pre) {
+  font-family: var(--gfl-font-mono);
+}
+
+.gfl-home :focus-visible {
+  outline: 2px solid var(--gfl-color-accent);
+  outline-offset: 3px;
+}

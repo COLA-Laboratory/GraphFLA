@@ -1,0 +1,6 @@
+<svg class="gfl-icon" viewBox="0 0 28 28" aria-hidden="true">
+<path d="M5 21 L14 6 L23 16 L5 21"/>
+<circle class="gfl-icon__plate" cx="5" cy="21" r="3"/>
+<circle class="gfl-icon__plate" cx="23" cy="16" r="3"/>
+<circle class="gfl-icon__accent" cx="14" cy="6" r="3"/>
+</svg>

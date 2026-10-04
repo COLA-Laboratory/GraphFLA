@@ -1,4 +1,10 @@
 /* Saved notebook results share Material's typography without notebook UI chrome. */
+/* Descriptive titles wrap at words; single API identifiers remain compact. */
+.md-nav--primary .md-nav__link[title*=" "] .md-ellipsis {
+  white-space: normal;
+  overflow: visible;
+  text-overflow: clip;
+}
 .md-typeset .tutorial-output {
   border-inline-start: 2px solid var(--md-default-fg-color--lightest);
   margin: -.35em 0 1.5em;

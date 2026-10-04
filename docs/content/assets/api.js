@@ -1,5 +1,7 @@
 window.MathJax = {tex: {inlineMath: [["\\(", "\\)"]], displayMath: [["\\[", "\\]"]]}};
 function revealTarget() {
+  // Homepage anchors use native smooth scrolling, not API disclosure repair.
+  if (document.querySelector('.gfl-home')) return;
   if (!location.hash) return;
   const id = decodeURIComponent(location.hash.slice(1));
   const target = document.getElementById(id);

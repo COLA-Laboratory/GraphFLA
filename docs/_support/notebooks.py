@@ -40,7 +40,7 @@ def configure(config):
     catalog["source_dir"] = (path.parent / catalog["source_dir"]).resolve()
     config.watch.extend([str(path), str(catalog["source_dir"])])
     config.nav.insert(
-        0,
+        1 if config.nav and config.nav[0] == {"Home": "index.md"} else 0,
         {
             "Tutorials": [{"Overview": "tutorials/index.md"}]
             + [
@@ -91,6 +91,11 @@ def add_tutorials(files, config, catalog):
             "bundle_download": "downloads/" + item["slug"] + ".zip",
         }
         markdown, resources = exporter.from_notebook_node(nb, resources=resources)
+        # Site-facing titles describe the task; the executed notebook stays intact.
+        heading = "# " + item["title"]
+        if item.get("study"):
+            heading += "\n\n*" + item["study"] + "*"
+        markdown = re.sub(r"(?m)^# [^\n]+", lambda _: heading, markdown, count=1)
         metadata = yaml.safe_dump({"title": item["title"], "icon": item["icon"]})
         files.append(
             File.generated(
@@ -132,7 +137,7 @@ def add_tutorials(files, config, catalog):
             )
         )
         rows.append(
-            f"| [{item['title']}]({item['slug']}.md) | {item['topic']} | {item['variables']} | {item['objective']} |"
+            f"| [{item['title']}]({item['slug']}.md) | {item.get('study', item['topic'])} | {item['variables']} | {item['objective']} |"
         )
         report.append(
             {
@@ -150,9 +155,9 @@ def add_tutorials(files, config, catalog):
         "Explore GraphFLA with nine datasets, from chemical reactions and materials to "
         "neural architectures and compiler settings. Each tutorial takes you from "
         "preparing the data to building a landscape and interpreting its analysis.\n\n"
-        "Choose a dataset below. Every page includes Python code, saved results, and "
+        "Choose an optimization problem below. Every page includes Python code, saved results, and "
         "a downloadable notebook with its data.\n\n"
-        "| Tutorial | Topic | Variables | Objective |\n| --- | --- | --- | --- |\n"
+        "| Tutorial | Study / dataset | Variables | Objective |\n| --- | --- | --- | --- |\n"
         + "\n".join(rows)
         + "\n"
     )
