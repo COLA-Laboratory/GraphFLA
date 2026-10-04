@@ -1,3 +1,8 @@
+import re
+from pathlib import Path
+
+from setuptools import setup, find_packages
+
 long_description = """
 graphfla: A Python package for Graph-based Fitness Landscape Analysis.
 ========================================================
@@ -8,16 +13,18 @@ different aspects of fitness landscape topography, such as ruggedness,
 navigability, neutrality, and epistasis.
 """
 
-from setuptools import setup, find_packages
+init_py = (Path(__file__).parent / "graphfla" / "__init__.py").read_text()
+version = re.search(r'^__version__ = "([^"]+)"', init_py, re.M).group(1)
 
 setup(
     name="graphfla",
-    version="0.3.0",
+    version=version,
     author="Mingyu Huang",
     author_email="m.huang.gla@outlook.com",
     description="A Python package for Graph-based Fitness Landscape Analysis.",
     long_description=long_description,
     long_description_content_type="text/plain",
+    license="MIT",
     url="https://github.com/COLA-Laboratory/GraphFLA/tree/main",
     packages=find_packages(include=["graphfla", "graphfla.*"]),
     classifiers=[
@@ -25,7 +32,8 @@ setup(
         "Programming Language :: Python :: 3.9",
         "Programming Language :: Python :: 3.10",
         "Programming Language :: Python :: 3.11",
-        "License :: OSI Approved :: MIT License",
+        "Programming Language :: Python :: 3.12",
+        "Programming Language :: Python :: 3.13",
         "Operating System :: OS Independent",
         "Intended Audience :: Science/Research",
         "Topic :: Scientific/Engineering",
@@ -33,7 +41,7 @@ setup(
         "Topic :: Scientific/Engineering :: Bio-Informatics",
         "Development Status :: 3 - Alpha",
     ],
-    python_requires=">=3.8",
+    python_requires=">=3.9",
     install_requires=[
         "joblib>=1.0.0",
         "numpy>=1.19",

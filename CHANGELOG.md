@@ -3,7 +3,7 @@
 All notable changes to GraphFLA are recorded here. Entries that change a
 returned statistic are marked, because downstream analyses depend on them.
 
-## Unreleased
+## 0.4.0 (2026-10-04)
 
 ### First-release API
 
