@@ -65,8 +65,9 @@ def on_template_context(context, **kwargs):
 
 def structured_data(config):
     """Return the schema.org JSON-LD that describes GraphFLA to search engines."""
-    data = {
-        "@context": "https://schema.org",
+    # Google shows the WebSite name above the search result.
+    website = {"@type": "WebSite", "name": PAGE["meta"]["title"], "url": config.site_url}
+    software = {
         "@type": "SoftwareSourceCode",
         "name": PAGE["meta"]["title"],
         "description": PAGE["meta"]["description"],
@@ -80,6 +81,7 @@ def structured_data(config):
             for paper in PAGE["closing"]["publications"]["papers"]
         ],
     }
+    data = {"@context": "https://schema.org", "@graph": [website, software]}
     # An escaped "<" cannot close the surrounding script element.
     return Markup(json.dumps(data, ensure_ascii=False).replace("<", "\\u003c"))
 

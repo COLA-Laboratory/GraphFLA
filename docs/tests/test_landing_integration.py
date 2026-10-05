@@ -118,9 +118,11 @@ class LandingIntegration(unittest.TestCase):
                          content["meta"]["description"])
         script = self.home.find("script", type="application/ld+json")
         self.assertNotIn("<", script.string)
-        data = json.loads(script.string)
-        self.assertEqual((data["url"], data["codeRepository"]), (config["site_url"], config["repo_url"]))
-        self.assertEqual([paper["name"] for paper in data["citation"]],
+        nodes = {node["@type"]: node for node in json.loads(script.string)["@graph"]}
+        self.assertEqual((nodes["WebSite"]["name"], nodes["WebSite"]["url"]), (config["site_name"], config["site_url"]))
+        software = nodes["SoftwareSourceCode"]
+        self.assertEqual((software["url"], software["codeRepository"]), (config["site_url"], config["repo_url"]))
+        self.assertEqual([paper["name"] for paper in software["citation"]],
                          [paper["title"] for paper in content["closing"]["publications"]["papers"]])
         key = config["extra"]["indexnow_key"]
         self.assertEqual((self.site / f"{key}.txt").read_text(), key)
