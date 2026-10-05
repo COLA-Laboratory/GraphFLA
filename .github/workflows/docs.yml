@@ -44,3 +44,16 @@ jobs:
     steps:
       - id: deployment
         uses: actions/deploy-pages@v4
+  indexnow:
+    # Best effort: a failed search-engine notification never fails the deployment.
+    if: github.event_name != 'pull_request'
+    needs: deploy
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+      - run: python -m pip install pyyaml
+      - run: python docs/scripts/indexnow.py
