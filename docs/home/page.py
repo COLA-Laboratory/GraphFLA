@@ -40,9 +40,12 @@ def load_page(figures):
         step["number"] = number
     for scenario in how["scenarios"]:
         data = scenario["profile"]
+        # Local optima and fitness-distance correlation are computed from the drawn graph.
+        drawn = figures["example-" + scenario["id"]]
         scenario["figure"] = {
             "name": "example-" + scenario["id"], "labels": how["figure_labels"],
-            "alt": f"Illustrative {scenario['title'].lower()} landscape: three smooth peaks above a sparse neighbor graph.",
+            "alt": (f"Illustrative {scenario['title'].lower()} landscape with {drawn['local_optima']} peaks, "
+                    f"drawn above its neighbor graph of {drawn['nodes']} candidates."),
         }
         values = [row[-1] for row in scenario["rows"]]
         best = (max if scenario["maximize"] else min)(values)
@@ -56,18 +59,22 @@ def load_page(figures):
                                    for i, aa in enumerate(row["cells"][0])]
         labels = how["reports"]
         scenario["entries"] = [
-            {"label": labels["peaks"], "value": f"{data['peaks']} / {data['total']}", "share": data["peaks"] / data["total"]},
+            {"label": labels["peaks"], "value": f"{drawn['local_optima']} / {drawn['nodes']}",
+             "share": drawn["local_optima"] / drawn["nodes"]},
             {"label": labels["rs"] if scenario["id"] == "protein" else labels["autocorrelation"],
              "value": f"{data['roughness']:.2f}", "share": data["roughness"]},
             {"label": labels["neutrality"], "value": f"{data['neutrality']:.0%}", "share": data["neutrality"]},
+            {"label": labels["fdc"], "value": f"{drawn['fdc']:.2f}".replace("-", "\u2212"), "share": abs(drawn["fdc"])},
         ]
         scenario["interactions"] = [
             {"percent": 100 * share, "label": label, "value": f"{share:.0%}", "tone": tone}
             for share, label, tone in zip(data["interactions"], labels["parts"], SHARE_TONES)]
     page["hero"]["stats"][-1]["value"] = str(sum(group["count"] for group in inventory()))
 
-    code = page["start"]["code"]
-    code["lines"] = highlight(code["source"])
+    # Each quick-start example shares the icon of its "How it works" scenario.
+    icons = {scenario["id"]: scenario["icon"] for scenario in how["scenarios"]}
+    for example in page["start"]["code"]["examples"]:
+        example.update(icon=icons[example["id"]], lines=highlight(example["source"]))
 
     page["performance"].update(benchmark(page["performance"]))
     page["cases"]["cards"] = case_cards(page["links"]["tutorials"], page["cases"]["stories"])

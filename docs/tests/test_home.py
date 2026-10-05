@@ -159,14 +159,15 @@ class LandingPage(unittest.TestCase):
                     self.assertEqual(sum(left[c] != right[c] for c in result["columns"]), 1)
             self.assertAlmostEqual(sum(result["interactions"].values()), 1.0)
         self.assertEqual(recorded["hpo"]["count"], 4 * 4 * 3)
-        tabs = self.pages["index"].select('.gfl-scenario-tabs [role="tab"]')
-        self.assertEqual(len(tabs), 5)
-        self.assertEqual(sum(t["aria-selected"] == "true" for t in tabs), 1)
+        for section in ("#how", "#start"):
+            tabs = self.pages["index"].select(f'{section} .gfl-scenario-tabs [role="tab"]')
+            self.assertEqual(len(tabs), 5)
+            self.assertEqual(sum(t["aria-selected"] == "true" for t in tabs), 1)
         self.assertFalse(self.pages["index"].select('.gfl-hero .gfl-badge'))
         self.assertIn("Illustrative data and profiles", self.pages["index"].select_one('#how').get_text())
         for panel in self.pages["index"].select('.gfl-scenario'):
             self.assertEqual(len(panel.select('tbody tr')), 8)
-            self.assertEqual(len(panel.select('.gfl-report .gfl-meter')), 3)
+            self.assertEqual(len(panel.select('.gfl-report .gfl-meter')), 4)
 
     def test_hero_best_path_ends_at_the_highest_peak(self):
         figure = hero(Palette.from_tokens("page", load_tokens()))
@@ -177,28 +178,38 @@ class LandingPage(unittest.TestCase):
         peak = camera.project(0.40, 0.36, surfaces.hero(0.40, 0.36))
         self.assertLess(sum((a - b) ** 2 for a, b in zip(endpoint, peak)), 9)
 
-    def test_quick_start_loads_and_analyzes_a_tabular_dataset(self):
+    def test_quick_start_examples_load_and_analyze_their_datasets(self):
         try:
             import graphfla.analysis  # noqa: F401
         except ImportError as error:
             self.skipTest(f"GraphFLA's runtime dependencies are not installed: {error}")
         import pandas as pd
-        data = pd.read_csv(DOCS.parent / "tutorials/datasets/data/suzuki.csv", keep_default_na=False)
-        data = data.loc[(data.base == "NaOH") & (data.ligand != "None"), ["ligand", "solvent", "response_uv_pct"]]
-        data = data.rename(columns={"ligand": "catalyst", "response_uv_pct": "response"})
-        code = self.content["start"]["code"]["source"]
-        *statements, last = code.strip().splitlines()
-        namespace = {}
         reader = pd.read_csv
-        with tempfile.TemporaryDirectory() as folder:
-            data.to_csv(Path(folder) / "experiments.csv", index=False)
-            with patch("pandas.read_csv", side_effect=lambda name: reader(Path(folder) / name)), contextlib.redirect_stdout(io.StringIO()):
-                exec("\n".join(statements), namespace)
-                profile = eval(last, namespace)
-        landscape = namespace["landscape"]
-        self.assertEqual(landscape.n_configs, len(data))
-        self.assertEqual(list(namespace["X"].columns), ["catalyst", "solvent"])
-        self.assertEqual(profile["local_optima_ratio"], landscape.n_lo / landscape.n_configs)
+        suzuki = reader(DOCS.parent / "tutorials/datasets/data/suzuki.csv", keep_default_na=False)
+        suzuki = suzuki.loc[(suzuki.base == "NaOH") & (suzuki.ligand != "None"), ["ligand", "solvent", "response_uv_pct"]]
+        recorded = lambda name: reader(HOME / "examples" / (name + ".csv"))
+        # Small real datasets, renamed to the columns each example reads.
+        frames = {
+            "variants.csv": recorded("protein").rename(columns={"sequences": "sequence", "fitness": "activity"}),
+            "reactions.csv": suzuki.rename(columns={"ligand": "catalyst", "response_uv_pct": "yield"}),
+            "alloys.csv": recorded("materials")[["W", "Re", "H1000_HV"]].rename(columns={"H1000_HV": "hardness"}),
+            "builds.csv": recorded("software").rename(columns={"compile_time_raw": "time"}),
+            "grid_search.csv": recorded("hpo").rename(
+                columns={"max_depth": "depth", "min_samples_leaf": "leaf", "max_features": "features"}),
+        }
+        examples = self.content["start"]["code"]["examples"]
+        self.assertEqual([e["id"] for e in examples], [s["id"] for s in self.content["how"]["scenarios"]])
+        for example in examples:
+            with self.subTest(example=example["id"]):
+                *statements, last = example["source"].strip().splitlines()
+                namespace = {}
+                with patch("pandas.read_csv", side_effect=lambda name: frames[name].copy()), \
+                        contextlib.redirect_stdout(io.StringIO()), contextlib.redirect_stderr(io.StringIO()):
+                    exec("\n".join(statements), namespace)
+                    profile = eval(last, namespace)
+                landscape = namespace["landscape"]
+                self.assertEqual(landscape.n_configs, len(namespace["df"]))
+                self.assertEqual(profile["local_optima_ratio"], landscape.n_lo / landscape.n_configs)
 
 
 class BenchmarkChart(unittest.TestCase):

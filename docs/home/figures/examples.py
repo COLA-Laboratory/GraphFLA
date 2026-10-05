@@ -1,91 +1,169 @@
-"""Authored workflow illustrations, using the original smooth three-peak surface."""
+"""Workflow illustrations: each scenario's neighbor graph and the landscape above it.
+
+Every scenario has the graph of its own kind of search space, laid out by stress
+majorization, and its own surface. Node fitness is the surface height at the node,
+so the local optima and fitness-distance correlation of the drawn graph are
+computed from the drawing, not asserted.
+"""
 import math
 import random
 
 from .camera import Camera
+from .graphs import distances, fit_disc, product, simplex, stress_layout
 from .palette import Palette
 from .scenes import Figure
 from .svg import disc, path_data
-from .surfaces import workflow
 from .terrain import terrain
 
-SCENARIOS = ("protein", "chemistry", "materials", "software", "hpo")
+BINARY, CATEGORY = (2, "categorical"), "categorical"
+
+# Search space, layout seed, and (amplitude, width) of each surface peak, highest first.
+SCENARIOS = {
+    "protein": (product(*[BINARY] * 5), 3, [(0.80, 0.085), (0.52, 0.075), (0.42, 0.07), (0.34, 0.065)]),
+    "chemistry": (product((4, CATEGORY), (3, CATEGORY), (3, CATEGORY)), 5, [(0.80, 0.11), (0.58, 0.1), (0.40, 0.09)]),
+    "materials": (simplex(6), 1, [(0.78, 0.2), (0.34, 0.1)]),
+    "software": (product(*[BINARY] * 4, (3, "ordinal")), 7, [(0.80, 0.1), (0.66, 0.1), (0.36, 0.08)]),
+    "hpo": (product((4, "ordinal"), (3, "ordinal"), (3, CATEGORY)), 11, [(0.76, 0.16), (0.40, 0.09)]),
+}
+# Where the main summit sits: left of centre and toward the back, so the surface does not hide it.
+SUMMIT = (0.40, 0.40)
+PEAK_HEIGHT = 0.72
+# A steeper view than the other figures keeps the graph round instead of a thin ellipse.
+SIZE = 560
+UPPER = dict(cx=280, cy=250, scale=300, azimuth=38, tilt=40, zscale=140)
+LOWER = dict(UPPER, cy=468)
+# Edges bend by this fraction of their length, all to the same side, as arcs.
+BEND = 0.22
+
+
+def _peaks(points, hops, widths, rng):
+    """Return up to one node per hill width: two or more steps apart in the graph, and far
+    enough apart on the floor that neighbouring hills stay distinct.
+
+    The first is the node nearest ``SUMMIT``.
+    """
+    chosen = [min(range(len(points)), key=lambda i: math.dist(points[i], SUMMIT))]
+    candidates = [i for i in range(len(points)) if math.dist(points[i], (0.5, 0.5)) < 0.36]
+    rng.shuffle(candidates)
+    for i in candidates:
+        if len(chosen) == len(widths):
+            break
+        width = widths[len(chosen)]
+        if all(hops[i][c] >= 2 and math.dist(points[i], points[c]) > 1.2 * (width + widths[k])
+               for k, c in enumerate(chosen)):
+            chosen.append(i)
+    return chosen
+
+
+def _surface(centres, peaks):
+    """Return a height function with one hill above each peak node, scaled to ``PEAK_HEIGHT``."""
+    def raw(u, v):
+        z = 0.12 * math.exp(-((u - 0.5) ** 2 + (v - 0.5) ** 2) / (2 * 0.3 ** 2))
+        for (cu, cv), (amplitude, width) in zip(centres, peaks):
+            z += amplitude * math.exp(-((u - cu) ** 2 + (v - cv) ** 2) / (2 * width ** 2))
+        return z
+    # Every scenario reaches the same summit height, so the figures share one frame.
+    top = max(raw(*c) for c in centres)
+    return lambda u, v: PEAK_HEIGHT * raw(u, v) / top
+
+
+def _ranks(values):
+    """Return average ranks, with ties sharing the mean of their positions."""
+    order = sorted(range(len(values)), key=values.__getitem__)
+    ranks = [0.0] * len(values)
+    start = 0
+    while start < len(order):
+        end = start
+        while end + 1 < len(order) and values[order[end + 1]] == values[order[start]]:
+            end += 1
+        for k in range(start, end + 1):
+            ranks[order[k]] = (start + end) / 2
+        start = end + 1
+    return ranks
+
+
+def spearman(x, y):
+    """Return the Spearman rank correlation of two equally long sequences."""
+    rx, ry = _ranks(x), _ranks(y)
+    mx, my = sum(rx) / len(rx), sum(ry) / len(ry)
+    cov = sum((a - mx) * (b - my) for a, b in zip(rx, ry))
+    return cov / math.sqrt(sum((a - mx) ** 2 for a in rx) * sum((b - my) ** 2 for b in ry))
+
+
+def _arc(camera, a, b):
+    """Return the ``d`` of a quadratic arc from ``a`` to ``b`` on the floor plane, and its length."""
+    (u1, v1), (u2, v2) = a, b
+    control = ((u1 + u2) / 2 - (v2 - v1) * BEND, (v1 + v2) / 2 + (u2 - u1) * BEND)
+    (x1, y1), (cx, cy), (x2, y2) = (camera.project(*p) for p in (a, control, b))
+    return f"M{x1:.2f} {y1:.2f}Q{cx:.2f} {cy:.2f} {x2:.2f} {y2:.2f}", math.hypot(u2 - u1, v2 - v1)
 
 
 def draw(key, tokens):
+    """Return the figure of one scenario and the statistics of its drawn graph."""
     palette = Palette.from_tokens("card", tokens)
-    figure = Figure("example-" + key, 560, 520)
-    variation = SCENARIOS.index(key)
-    shift = ((0, 0), (0.035, -0.018), (-0.025, 0.015), (0.015, 0.025), (-0.018, -0.025))[variation]
-    height = lambda u, v: workflow(u + shift[0], v + shift[1])
-    upper = Camera(280, 205, 365, 38, 26, 178)
-    lower = Camera(280, 388, 365, 38, 26, 178)
+    figure = Figure("example-" + key, SIZE, SIZE)
+    (nodes, edges), seed, peaks = SCENARIOS[key]
+    points = fit_disc(stress_layout(len(nodes), edges, seed=seed), radius=0.4)
+    hops = distances(len(points), edges)
+    centres = _peaks(points, hops, [width for _, width in peaks], random.Random(seed))
+    peaks = peaks[:len(centres)]
+    height = _surface([points[c] for c in centres], peaks)
+    upper, lower = Camera(**UPPER), Camera(**LOWER)
 
-    # The original layered composition, with a sparse, gently irregular mesh below.
-    # Adjacent rows are linked without crossings; no data-derived force layout.
-    rng = random.Random(31)
-    rows, points = [], []
-    for row, count in enumerate((4, 5, 6, 7, 6, 4)):
-        indices = []
-        span = 0.14 * (count - 1)
-        for col in range(count):
-            u = 0.5 - span / 2 + col * 0.14 + rng.uniform(-0.012, 0.012)
-            v = 0.14 + row * 0.144 + rng.uniform(-0.01, 0.01)
-            indices.append(len(points))
-            points.append((u, v))
-        rows.append(indices)
-    links = set()
-    for row in rows:
-        links.update(zip(row, row[1:]))
-    for first, second in zip(rows, rows[1:]):
-        for a in first:
-            b = min(second, key=lambda b: abs(points[a][0] - points[b][0]))
-            links.add((a, b))
-        for b in second:
-            a = min(first, key=lambda a: abs(points[a][0] - points[b][0]))
-            links.add((a, b))
+    # Fitness decays with graph distance to the strongest nearby peak, so exactly the
+    # peak nodes are local optima; the surface puts a hill directly above each of them.
+    fitness = [max(amplitude * math.exp(-hops[i][c]) for c, (amplitude, _) in zip(centres, peaks))
+               for i in range(len(points))]
+    neighbors = [set() for _ in points]
+    for a, b in edges:
+        neighbors[a].add(b)
+        neighbors[b].add(a)
+    optima = [i for i in range(len(points)) if all(fitness[i] > fitness[j] for j in neighbors[i])]
+    assert sorted(optima) == sorted(centres), key
+    best = centres[0]
+    low, top = min(fitness), fitness[best]
+    to_best = hops[best]
+    others = [i for i in range(len(points)) if i != best]
+    fdc = spearman([fitness[i] for i in others], [to_best[i] for i in others])
 
-    values = [height(*p) for p in points]
-    best = max(range(len(points)), key=lambda i: values[i])
-    # Place the highlighted configuration exactly at the main summit.
-    points[best] = (0.36 - shift[0], 0.40 - shift[1])
-    values[best] = height(*points[best])
-    floor = [lower.project(*p) for p in ((0, 0), (1, 0), (1, 1), (0, 1), (0, 0))]
-    figure.body.append(f'<path d="{path_data(floor)}" fill="none" stroke="{palette.tone(0.28)}" stroke-width="0.7"/>')
-    # Light projection guides preserve the graph-to-surface reading of the original.
-    for i in (1, 6, best, 20, 28):
-        a = lower.project(*points[i])
-        b = upper.project(*points[i], height(*points[i]))
-        figure.body.append(f'<path d="{path_data([a, b])}" fill="none" stroke="{palette.tone(0.3)}" '
+    # Projection guides tie each local optimum in the graph to its point on the surface.
+    for i in optima:
+        guide = [lower.project(*points[i]), upper.project(*points[i], height(*points[i]))]
+        figure.body.append(f'<path d="{path_data(guide)}" fill="none" stroke="{palette.tone(0.3)}" '
                            'stroke-width="0.8" stroke-dasharray="3 5"/>')
-    for a, b in sorted(links):
-        x1, y1 = lower.project(*points[a])
-        x2, y2 = lower.project(*points[b])
-        bend = 2.4 * (1 if (a + b) % 2 else -1)
-        length = math.hypot(x2 - x1, y2 - y1)
-        cx = (x1 + x2) / 2 - (y2 - y1) / length * bend
-        cy = (y1 + y2) / 2 + (x2 - x1) / length * bend
-        figure.body.append(f'<path d="M{x1:.2f} {y1:.2f}Q{cx:.2f} {cy:.2f} {x2:.2f} {y2:.2f}" '
-                           f'fill="none" stroke="{palette.tone(0.56)}" stroke-width="1.1"/>')
-    for i, p in enumerate(points):
-        color = palette.accent if i == best else palette.tone(0.40 + 0.5 * values[i] / max(values))
-        figure.body.append(disc(lower.project(*p), 6.2 if i == best else 5, color, palette.surface, 1.2))
+    arcs = [_arc(lower, points[a], points[b]) for a, b in edges]
+    longest = max(length for _, length in arcs)
+    # Long links fade slightly so the local structure stays readable.
+    for d, length in sorted(arcs, key=lambda arc: -arc[1]):
+        strength = 0.62 - 0.22 * length / longest
+        figure.body.append(f'<path d="{d}" fill="none" stroke="{palette.tone(strength)}" stroke-width="1"/>')
+    radius = 4.2 if len(points) > 40 else 4.8
+    for i in sorted(range(len(points)), key=lambda i: lower.rotate(*points[i])[1]):
+        quality = (fitness[i] - low) / (top - low)
+        if i == best:
+            color, r = palette.accent, radius + 1.6
+        elif i in optima:
+            color, r = palette.mark, radius + 0.6
+        else:
+            color, r = palette.tone(0.3 + 0.45 * quality), radius
+        figure.body.append(disc(lower.project(*points[i]), r, color, palette.surface, 1.2))
+
     figure.body += terrain(upper, height, palette, step=0.04, every=4, density=0.8)
-    for i in (1, 6, best, 20, 28):
+    for i in optima:
         u, v = points[i]
         if upper.visible(height, u, v):
-            figure.body.append(disc(upper.project(u, v, height(u, v) + .008),
-                                   5 if i == best else 2.8,
-                                   palette.accent if i == best else palette.mark, palette.surface, 1.2))
+            figure.body.append(disc(upper.project(u, v, height(u, v) + 0.008), 5 if i == best else 2.8,
+                                    palette.accent if i == best else palette.mark, palette.surface, 1.2))
     figure.label("surface", (24, 20), "title")
-    figure.label("graph", (344, 467), "title")
-    return figure
+    figure.label("graph", (24, SIZE - 44), "title")
+    return figure, {"nodes": len(points), "local_optima": len(optima), "fdc": fdc}
 
 
 def render_examples(out, tokens):
+    """Write each scenario's figure and return metadata, including its graph's statistics."""
     metadata = {}
     for key in SCENARIOS:
-        fig = draw(key, tokens)
-        (out / (fig.name + ".svg")).write_text(fig.svg())
-        metadata[fig.name] = fig.metadata()
+        figure, stats = draw(key, tokens)
+        (out / (figure.name + ".svg")).write_text(figure.svg())
+        metadata[figure.name] = {**figure.metadata(), **stats}
     return metadata

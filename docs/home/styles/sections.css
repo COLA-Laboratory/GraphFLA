@@ -139,7 +139,8 @@
   grid-template-columns: minmax(0, 1.05fr) minmax(0, 1.3fr) minmax(0, 1fr);
   gap: var(--gfl-space-6);
 }
-.gfl-workflow-steps { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--gfl-space-6); }
+.gfl-how__column { display: flex; flex-direction: column; gap: var(--gfl-space-4); min-width: 0; }
+.gfl-how__column > .gfl-panel { flex: 1; }
 .gfl-data-table { overflow-x: auto; font-size: var(--gfl-text-sm); margin-block: auto; }
 .gfl-data-table__table { width: 100%; border-collapse: collapse; font-variant-numeric: tabular-nums; }
 .gfl-data-table :is(th, td) { padding: var(--gfl-space-2) var(--gfl-space-1); text-align: left; border-bottom: 1px solid var(--gfl-color-line); }
@@ -157,7 +158,7 @@
 .gfl-switch { display: inline-block; min-width: 30px; text-align: center; font-size: var(--gfl-text-xs); color: var(--gfl-color-text-faint); }
 .gfl-switch--on { background: var(--gfl-color-fill); border-radius: var(--gfl-radius-sm); color: var(--gfl-color-text-soft); }
 @media (max-width: 900px) {
-  .gfl-how, .gfl-workflow-steps { grid-template-columns: minmax(0, 1fr); }
+  .gfl-how { grid-template-columns: minmax(0, 1fr); gap: var(--gfl-space-10); }
 }
 @media (max-width: 600px) {
   .gfl-sequence { font-size: var(--gfl-text-2xs); }
@@ -254,14 +255,22 @@
   gap: var(--gfl-space-2);
 }
 
+.gfl-step__title {
+  display: flex;
+  align-items: baseline;
+  gap: var(--gfl-space-3);
+  font-family: var(--gfl-font-display);
+  font-size: var(--gfl-text-lg);
+  font-weight: 700;
+}
+
 .gfl-step__index {
   font-size: var(--gfl-text-sm);
-  font-weight: 600;
-  color: var(--gfl-color-text-muted);
+  color: var(--gfl-color-accent);
 }
 
 .gfl-step__text {
-  font-size: var(--gfl-text-md);
+  font-size: var(--gfl-text-sm);
   color: var(--gfl-color-text-muted);
   text-wrap: pretty;
 }
@@ -327,9 +336,20 @@
   gap: var(--gfl-space-5);
 }
 
-.gfl-start .gfl-code {
+.gfl-start__code {
   flex: 1.3 1 520px;
   min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--gfl-space-4);
+}
+
+.gfl-start__code .gfl-scenario-tabs {
+  gap: 0 var(--gfl-space-1);
+}
+
+.gfl-start__code .gfl-scenario-tab {
+  padding-inline: var(--gfl-space-2);
 }
 
 .gfl-classes {
@@ -358,13 +378,51 @@
   gap: var(--gfl-space-3);
 }
 
-.gfl-class {
+.gfl-classes__list > li {
   flex: 1 1 auto;
+  display: flex;
+}
+
+@media (max-width: 1100px) {
+  .gfl-classes__list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(190px, 100%), 1fr));
+  }
+}
+
+
+.gfl-class {
+  flex: 1;
   display: flex;
   flex-direction: column;
   gap: 2px;
   padding: var(--gfl-space-3) var(--gfl-space-4);
   border-radius: var(--gfl-radius-md);
+}
+
+.gfl-class:hover,
+.gfl-class:focus-visible {
+  border-color: var(--gfl-color-line-strong);
+}
+
+.gfl-class:hover .gfl-class__name {
+  color: var(--gfl-color-accent);
+}
+
+/* On phones each class is one compact row: name on the left, note on the right. */
+@media (max-width: 600px) {
+  .gfl-classes__list {
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--gfl-space-2);
+  }
+
+  .gfl-class {
+    flex-direction: row;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--gfl-space-3);
+    padding: var(--gfl-space-2) var(--gfl-space-3);
+  }
 }
 
 .gfl-class__name {
@@ -491,7 +549,7 @@
 .gfl-publications__list {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(min(400px, 100%), 1fr));
-  gap: var(--gfl-space-5);
+  gap: var(--gfl-space-4);
 }
 
 .gfl-closing__call .gfl-actions {
@@ -502,13 +560,27 @@
   min-width: 0;
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
   gap: var(--gfl-space-2);
-  padding: var(--gfl-space-6);
+  padding: var(--gfl-space-4) var(--gfl-space-5);
+}
+
+/* Authors and link share the last row, kept at the bottom so a row of cards lines up. */
+.gfl-citation__foot {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--gfl-space-1) var(--gfl-space-4);
+  margin-top: auto;
+}
+
+/* 24 px still meets the WCAG minimum target size, without padding every card. */
+.gfl-citation__foot .gfl-link {
+  min-height: 24px;
+  padding-block: var(--gfl-space-1);
 }
 
 .gfl-citation__title {
-  flex-grow: 1;
   font-size: var(--gfl-text-lg);
   font-weight: 600;
   line-height: var(--gfl-leading-snug);

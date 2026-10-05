@@ -76,9 +76,9 @@
 </div>
 {%- endmacro %}
 
-{% macro code_panel(code) -%}
-<div class="gfl-card gfl-code">
-  <div class="gfl-code__bar"><span>{{ code.filename }}</span><span>{{ code.language }}</span></div>
+{% macro code_panel(code, language, attributes="") -%}
+<div class="gfl-card gfl-code"{{ attributes }}>
+  <div class="gfl-code__bar"><span>{{ code.filename }}</span><span>{{ language }}</span></div>
   <pre class="gfl-code__body">{% for line in code.lines %}<span class="gfl-code__line">{{ line }}</span>{% endfor %}</pre>
 </div>
 {%- endmacro %}

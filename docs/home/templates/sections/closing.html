@@ -15,8 +15,10 @@
         <article class="gfl-card gfl-citation">
           <p class="gfl-eyebrow">{{ paper.venue }}</p>
           <h3 class="gfl-citation__title">{{ paper.title }}</h3>
-          <p class="gfl-citation__meta">{{ paper.authors }}</p>
-          {{ ui.link(paper.link) }}
+          <div class="gfl-citation__foot">
+            <p class="gfl-citation__meta">{{ paper.authors }}</p>
+            {{ ui.link(paper.link) }}
+          </div>
         </article>
         {% endfor %}
       </div>

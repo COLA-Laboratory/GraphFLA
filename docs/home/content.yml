@@ -83,7 +83,7 @@ hero:
     href: datasets
 how:
   eyebrow: How it works
-  title: Analyze fitness landscapes as graphs.
+  title: Build, analyze, and manipulate fitness landscapes as graphs.
   catalogue:
     label: Browse the datasets
     href: datasets
@@ -107,6 +107,7 @@ how:
     rs: Roughness
     autocorrelation: Autocorrelation
     neutrality: Neutrality
+    fdc: Fitness-distance correlation
     interactions: Variable interactions
     parts:
     - Magnitude
@@ -142,8 +143,6 @@ how:
     outcome_suffix: '%'
     maximize: true
     profile:
-      peaks: 3
-      total: 32
       roughness: 0.68
       neutrality: 0.19
       interactions:
@@ -196,8 +195,6 @@ how:
     outcome_suffix: '%'
     maximize: true
     profile:
-      peaks: 3
-      total: 32
       roughness: 0.61
       neutrality: 0.12
       interactions:
@@ -250,8 +247,6 @@ how:
     outcome_suffix: ' HV'
     maximize: true
     profile:
-      peaks: 3
-      total: 32
       roughness: 0.83
       neutrality: 0.24
       interactions:
@@ -304,8 +299,6 @@ how:
     outcome_suffix: ' s'
     maximize: false
     profile:
-      peaks: 3
-      total: 32
       roughness: 0.72
       neutrality: 0.16
       interactions:
@@ -358,8 +351,6 @@ how:
     outcome_suffix: ''
     maximize: false
     profile:
-      peaks: 3
-      total: 32
       roughness: 0.56
       neutrality: 0.21
       interactions:
@@ -468,30 +459,103 @@ start:
   - label: Read the API reference
     href: api
   code:
-    filename: quickstart.py
     language: Python
-    source: "import pandas as pd\nfrom graphfla import analysis\nfrom graphfla.landscape import Landscape\n\ndf\
-      \ = pd.read_csv(\"experiments.csv\")\nX = df[[\"catalyst\", \"solvent\"]]\nf = df[\"response\"]  # The outcome\
-      \ to maximize\n\nlandscape = Landscape(maximize=True).build_from_data(\n    X, f, data_types={c: \"categorical\"\
-      \ for c in X},\n    verbose=False,\n)\nanalysis.profile(landscape, seed=42)\n"
+    examples:
+    - id: protein
+      label: Protein
+      filename: quickstart.py
+      source: 'import pandas as pd
+
+        from graphfla import analysis
+
+        from graphfla.landscape import ProteinLandscape
+
+
+        df = pd.read_csv("variants.csv")
+
+        X = df["sequence"]  # Amino-acid sequence of each variant
+
+        f = df["activity"]  # Measured activity, to maximize
+
+
+        landscape = ProteinLandscape(maximize=True)
+
+        landscape.build_from_data(X, f)
+
+        analysis.profile(landscape, seed=42)
+
+        '
+    - id: chemistry
+      label: Chemistry
+      filename: quickstart.py
+      source: "import pandas as pd\nfrom graphfla import analysis\nfrom graphfla.landscape import Landscape\n\n\
+        df = pd.read_csv(\"reactions.csv\")\nX = df[[\"catalyst\", \"solvent\"]]  # Reaction conditions\nf = df[\"\
+        yield\"]  # Product yield, to maximize\n\nlandscape = Landscape(maximize=True)\nlandscape.build_from_data(\n\
+        \    X, f, data_types={c: \"categorical\" for c in X}\n)\nanalysis.profile(landscape, seed=42)\n"
+    - id: materials
+      label: Materials
+      filename: quickstart.py
+      source: 'import pandas as pd
+
+        from graphfla import analysis
+
+        from graphfla.landscape import OrdinalLandscape
+
+
+        df = pd.read_csv("alloys.csv")
+
+        X = df[["W", "Re"]]  # W and Re content; Os makes up the rest
+
+        f = df["hardness"]  # Hardness at 1,000 °C, to maximize
+
+
+        landscape = OrdinalLandscape(maximize=True)
+
+        landscape.build_from_data(X, f)
+
+        analysis.profile(landscape, seed=42)
+
+        '
+    - id: software
+      label: Software
+      filename: quickstart.py
+      source: "import pandas as pd\nfrom graphfla import analysis\nfrom graphfla.landscape import BooleanLandscape\n\
+        \ndf = pd.read_csv(\"builds.csv\")\nflags = [\"gvn\", \"inline\", \"instcombine\",\n         \"jump_threading\"\
+        , \"sccp\", \"simplifycfg\"]\nX = df[flags]  # One on/off column per compiler flag\nf = df[\"time\"]  #\
+        \ Compilation time, to minimize\n\nlandscape = BooleanLandscape(maximize=False)\nlandscape.build_from_data(X,\
+        \ f)\nanalysis.profile(landscape, seed=42)\n"
+    - id: hpo
+      label: Hyperparameters
+      filename: quickstart.py
+      source: "import pandas as pd\nfrom graphfla import analysis\nfrom graphfla.landscape import Landscape\n\n\
+        df = pd.read_csv(\"grid_search.csv\")\nX = df[[\"depth\", \"leaf\", \"features\"]]  # Hyperparameters\n\
+        f = df[\"rmse\"]  # Validation error, to minimize\n\nlandscape = Landscape(maximize=False)\nlandscape.build_from_data(\n\
+        \    X, f, data_types={c: \"ordinal\" for c in X}\n)\nanalysis.profile(landscape, seed=42)\n"
   classes:
     title: Seven landscape classes
     text: Choose the class that matches your data.
     entries:
     - name: Landscape
       note: any mix of column types
+      href: landscape/
     - name: SequenceLandscape
       note: shared alphabet
+      href: sequence-landscape/
     - name: BooleanLandscape
       note: binary variables
+      href: boolean-landscape/
     - name: OrdinalLandscape
       note: ordered levels
+      href: ordinal-landscape/
     - name: DNALandscape
       note: A · C · G · T
+      href: dna-landscape/
     - name: RNALandscape
       note: A · C · G · U
+      href: rna-landscape/
     - name: ProteinLandscape
       note: 20 amino acids
+      href: protein-landscape/
 performance:
   eyebrow: Performance
   title: Scales to millions of candidates on a single machine.
@@ -524,14 +588,13 @@ cases:
       title: Chemical reaction optimization
       subtitle: Suzuki–Miyaura coupling
       unit: reaction conditions
-      description: Ligand, base and solvent combinations for one pair of reactants, scored by the UV signal of the
-        coupling product.
+      description: Ligand, base and solvent for one pair of reactants, scored by the UV signal of the coupling product.
     flow-semihydrogenation:
       title: Reaction process optimization
       subtitle: Electrochemical flow hydrogenation
       unit: operating conditions
-      description: Concentration, temperature and residence time in an electrochemical flow reactor, scored by a
-        combined measure of selectivity and current efficiency.
+      description: Concentration, temperature and residence time in a flow reactor, scored by selectivity and current
+        efficiency.
     alloy:
       title: Alloy composition optimization
       subtitle: Tungsten–rhenium–osmium alloys
@@ -553,8 +616,8 @@ cases:
       title: Enzyme inhibitor discovery
       subtitle: Cyanimide library · Mouse USP18
       unit: building-block pairs
-      description: Amine and carboxylic-acid building blocks combined into candidate inhibitors, scored by inhibition
-        of the mouse USP18 enzyme.
+      description: Amine and carboxylic-acid building blocks combined into inhibitors, scored by inhibition of mouse
+        USP18.
     drug-combination:
       title: Drug combination optimization
       subtitle: NCI-ALMANAC · Cancer cell assays

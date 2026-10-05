@@ -13,7 +13,18 @@
           {% endfor %}
         </div>
       </div>
-      {{ ui.code_panel(start.code) }}
+      <div class="gfl-start__code">
+        <div class="gfl-scenario-tabs" role="tablist" aria-label="Quick-start examples">
+          {% for example in start.code.examples %}
+          <button class="gfl-scenario-tab" type="button" role="tab" id="code-tab-{{ example.id }}" aria-controls="code-{{ example.id }}" aria-selected="{{ 'true' if loop.first else 'false' }}" tabindex="{{ 0 if loop.first else -1 }}">
+            {{ icon("cases/" ~ example.icon) }}<span>{{ example.label }}</span>
+          </button>
+          {% endfor %}
+        </div>
+        {% for example in start.code.examples %}
+        {{ ui.code_panel(example, start.code.language, (' role="tabpanel" id="code-' ~ example.id ~ '" aria-labelledby="code-tab-' ~ example.id ~ '"' ~ ('' if loop.first else ' hidden')) | safe) }}
+        {% endfor %}
+      </div>
     </div>
     <div class="gfl-classes">
       <div class="gfl-classes__head">
@@ -22,7 +33,7 @@
       </div>
       <ul class="gfl-classes__list">
         {% for entry in start.classes.entries %}
-        <li class="gfl-card gfl-class"><code class="gfl-class__name">{{ entry.name }}</code><span class="gfl-note">{{ entry.note }}</span></li>
+        <li><a class="gfl-card gfl-class" href="{{ entry.href }}"><code class="gfl-class__name">{{ entry.name }}</code><span class="gfl-note">{{ entry.note }}</span></a></li>
         {% endfor %}
       </ul>
     </div>

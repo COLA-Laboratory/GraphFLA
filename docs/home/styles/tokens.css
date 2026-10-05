@@ -55,7 +55,7 @@
   --gfl-text-h2: clamp(30px, 3.3vw, 46px);
   --gfl-text-h1: clamp(40px, 5vw, 66px);
   --gfl-text-stat: 40px;
-  --gfl-text-display: 84px;
+  --gfl-text-display: clamp(44px, 4.4vw, 60px);
 
   /* Line height and tracking */
   --gfl-leading-tight: 1.05;
