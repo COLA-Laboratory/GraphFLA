@@ -3,6 +3,9 @@
 ![Alt text](images/landscape.jpg)
 
 <div align="center">
+    <a href="https://colalab.ai/GraphFLA/" rel="nofollow">
+        <img src="https://img.shields.io/badge/website-GraphFLA-ffd60a" alt="Website" />
+    </a>
     <a href="https://www.python.org/" rel="nofollow">
         <img src="https://img.shields.io/pypi/pyversions/graphfla" alt="Python" />
     </a>

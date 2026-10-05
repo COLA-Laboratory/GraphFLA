@@ -5,6 +5,7 @@ on:
   push:
     branches: [main]
     paths: ['docs/**', 'tutorials/datasets/**', 'graphfla/**', '.github/workflows/docs.yml']
+  workflow_dispatch:
 jobs:
   docs:
     runs-on: ubuntu-latest
@@ -18,6 +19,28 @@ jobs:
       - run: python -m pip install -r docs/requirements.txt
       - run: python docs/manage.py check
       - uses: actions/upload-artifact@v4
+        if: github.event_name == 'pull_request'
         with:
           name: documentation-preview
           path: docs/.build/site
+      - uses: actions/upload-pages-artifact@v3
+        if: github.event_name != 'pull_request'
+        with:
+          path: docs/.build/site
+  deploy:
+    if: github.event_name != 'pull_request'
+    needs: docs
+    runs-on: ubuntu-latest
+    # One deployment at a time; a newer push replaces a queued one.
+    concurrency:
+      group: pages
+      cancel-in-progress: false
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4
