@@ -1,6 +1,6 @@
 # GraphFLA
 
-![Alt text](images/landscape.jpg)
+![GraphFLA](images/landscape.jpg)
 
 <div align="center">
     <a href="https://colalab.ai/GraphFLA/" rel="nofollow">
@@ -26,133 +26,81 @@
 
 **GraphFLA** (Graph-based Fitness Landscape Analysis) is a Python framework for constructing, analyzing, manipulating and visualizing **fitness landscapes** as graphs. It provides a broad collection of features rooted in evolutionary biology to decipher the topography of complex fitness landscapes of diverse modalities.
 
-This is also the official code & data repository for the **NeurIPS 2025 (Spotlight)** paper "Augmenting Biological Fitness Prediction Benchmarks with Landscapes Features from GraphFLA". 
+This is also the official code and data repository for the **NeurIPS 2025 (Spotlight)** paper "Augmenting Biological Fitness Prediction Benchmarks with Landscape Features from GraphFLA".
 
-Every [tutorial](#tutorials) can be run directly in Google Colab.
+Full documentation, including the API reference, is at [colalab.ai/GraphFLA](https://colalab.ai/GraphFLA/). Every [tutorial](#tutorials) also runs in Google Colab.
 
 ## Key Features
-- **Versatility:** applicable to arbitrary discrete, combinatorial sequence-fitness data, ranging from biomolecules like DNA, RNA, and protein, to functional units like genes, to complex ecological communities.
-- **Comprehensiveness:** offers a holistic collection of 20+ features for characterizing 4 fundamental topographical aspects of fitness landscape, including ruggedness, navigability, epistasis and neutrality.
-- **Interoperability:** works with the same data format (i.e., `X` and `f`) as in training machine learning (ML) models, thus being interoperable with established ML ecosystems in different disciplines.
-- **Scalability:** heavily optimized to be capable of handling landscapes with even millions of variants.
-- **Extensibility:** new landscape features can be easily added via an unified API.
+- **Versatility:** works on any discrete, combinatorial sequence-fitness data, from DNA, RNA and proteins to genes and ecological communities.
+- **Comprehensiveness:** 20+ metrics covering ruggedness, epistasis, navigability and neutrality.
+- **Interoperability:** takes the same `X` and `f` used to train machine learning models.
+- **Scalability:** handles landscapes with millions of variants.
+- **Extensibility:** new metrics plug into a unified API.
 
 ## Quick Start
 
-See the [documentation guide](docs/README.md) to preview the MkDocs website with source-synchronized API references, or explore the [worked tutorials](#tutorials) below.
+### 1. Install
 
-### 1. Installation
-
-Official installation (pip)
-
-```
+```bash
 pip install graphfla
 ```
 
-### 2. Prepare your data
+### 2. Build a landscape
 
-`GraphFLA` is designed to interoperate with established ML frameworks and benchmarks by using the same data format as in ML model training: an `X` and an `f`. 
+GraphFLA takes the same input as a machine learning model: variants `X` and their fitness `f`. `X` can be a list of sequences, or a `pandas.DataFrame` or `numpy.ndarray` with one column per position; `f` can be a list, `pandas.Series` or `numpy.ndarray`.
 
-Specifically, `X` can either be a list of sequences of strings representing genotypes, or a `pd.DataFrame` or an `numpy.ndarray`, wherein each column represents a loci; `f` can either be a list, `pd.Series` or `numpy.ndarray`.
+Choose the class that matches your data:
 
-To make landscape construction faster, we recommended removing redundant loci in `X` (i.e., those that are never mutated across the whole library) .
-
-```python
-import pandas as pd
-
-# Load data:
-data = pd.DataFrame({
-    "sequences": ["AAA", "AAG", "AGA", "AGG", "GAA", "GAG", "GGA", "GGG"],
-    "fitness": [0.10, 0.25, 0.25, 0.40, 0.25, 0.40, 0.40, 0.91]
-})
-# 3 positions (A/G), 8 variants; all connected via single mutations; unimodal (GGG optimum)
-
-X = data["sequences"]
-f = data["fitness"]
-```
-
-### 3. Create the landscape object
-
-Creating a landscape object in `GraphFLA` is much like training an ML model: we first initialize a `Landscape` class, and then build it with our data. 
-
-Here, assume we are working with DNA sequences. `GraphFLA` provides registered methods for performance optimization for this type, which can be triggered by specifying `kind="dna"`. Alternatively, you can directly use the `DNALandscape` class to get the same effect, which is natively built for DNA data.
-
-The `maximize` parameter specifies the direction of optimization, i.e., whether `f` is to be optimized or minimized.
+| Data | Class |
+|---|---|
+| DNA, RNA or protein sequences | `DNALandscape`, `RNALandscape`, `ProteinLandscape` |
+| Sequences over another alphabet | `SequenceLandscape` |
+| Binary variables (on/off, present/absent) | `BooleanLandscape` |
+| Ordered levels (doses, temperatures) | `OrdinalLandscape` |
+| A mix of the above | `Landscape` (see [step 4](#4-mixed-variable-types)) |
 
 ```python
 from graphfla.landscape import DNALandscape
 
-# initialize the landscape
-landscape = DNALandscape(maximize=True)
+# 8 variants over 3 positions, with a single peak at GGG
+X = ["AAA", "AAG", "AGA", "AGG", "GAA", "GAG", "GGA", "GGG"]
+f = [0.10, 0.25, 0.25, 0.40, 0.25, 0.40, 0.40, 0.91]
 
-# build the landscape with our data
-landscape.build_from_data(X, f, verbose=True)
+landscape = DNALandscape(maximize=True)  # maximize=False if lower f is fitter
+landscape.build_from_data(X, f)
 ```
 
-### 4. Landscape analysis
+### 3. Analyze it
 
-The quickest way to characterize a built landscape is `analysis.profile()`: it computes the whole portfolio of landscape-level metrics in one call and returns a tidy `pandas` object — a `Series` for one landscape, or a `DataFrame` (one row each) for several, which is ideal for comparing landscapes.
+`analysis.profile()` computes every landscape-level metric in one call and returns a `pandas.Series`. Given a list of landscapes, it returns a `DataFrame` with one row each. Sampling-based metrics such as `classify_epistasis` adapt to a time budget, so profiling stays tractable on large landscapes such as GB1 or DHFR.
 
 ```python
 from graphfla import analysis
 
-# every whole-landscape metric, as a pandas Series
-metrics = analysis.profile(landscape)
-print(metrics["gamma"], metrics["fdc"], metrics["epistasis.magnitude"])
+metrics = analysis.profile(landscape, seed=42)
+metrics[["gamma", "fdc", "epistasis.magnitude"]]
 
-# select groups, individual function names, or a mixture of both
-analysis.profile(landscape, metrics=["ruggedness", "epistasis"])
-
-# compare several landscapes side by side -> DataFrame, one row each.
-# here, a panel of NK landscapes with increasing ruggedness (k):
-from graphfla.problems import NK
-from graphfla.landscape import BooleanLandscape
-
-panel = [BooleanLandscape().build_from_data(*NK(n=8, k=k, seed=0).get_data(), verbose=False)
-         for k in (0, 2, 4)]
-profiles = analysis.profile(panel, seed=0)
-profiles.index = ["NK k=0", "NK k=2", "NK k=4"]
-
-analysis.list_metrics()   # discover what's available
+analysis.profile(landscape, metrics=["ruggedness", "epistasis"])  # selected groups
+analysis.local_optima_ratio(landscape)                            # a single metric
+analysis.list_metrics()                                           # all available metrics
 ```
 
-The expensive motif metrics (`classify_epistasis`, `extradimensional_bypass`) auto-tune their sampling to a time budget, so `profile()` stays tractable even on large landscapes such as GB1 or DHFR. You can also call any metric on its own:
+### 4. Mixed variable types
 
-```python
-from graphfla.analysis import local_optima_ratio, classify_epistasis, neutrality
-
-local_optima_ratio(landscape)
-classify_epistasis(landscape)      # sample_cut_prob="auto" by default
-neutrality(landscape)
-```
-### 5. Playing with arbitrary combinatorial data
-The `kind` parameter of the `Landscape` class currently supports `"boolean"`, `"ordinal"`, `"dna"`, `"rna"`, and `"protein"`. However, this does not mean that `GraphFLA` can only work with these types of data; instead, these registered values are only for convenience and performance optimization purpose. 
-
-In fact, `GraphFLA` can handle arbitrary combinatorial search space as long as the values of each variable is discrete. To work with such data, we can initialize a general landscape, and then pass in a dictionary to specify the data type of each variable (options: `{"ordinal", "categorical", "boolean"}`).
+When columns differ in type, for example a categorical solvent alongside an ordinal temperature, use the general `Landscape` class and declare each column as `"categorical"`, `"ordinal"` or `"boolean"`.
 
 ```python
 import pandas as pd
 from graphfla.landscape import Landscape
 
-complex_data = pd.read_csv("path_to_complex_data.csv")
+df = pd.read_csv("reactions.csv")
+X = df[["solvent", "catalyst", "temperature"]]  # Reaction conditions
+f = df["yield"]                                 # Product yield, to maximize
 
-f = complex_data["fitness"]
-# data serving as "X"
-complex_search_space = complex_data.drop(columns=["fitness"])
-
-# initialize a general fitness landscape without specifying `kind`
 landscape = Landscape(maximize=True)
-
-# create a data type dictionary
-data_types = {
-  "x1": "ordinal",
-  "x2": "categorical",
-  "x3": "boolean",
-  "x4": "categorical"
-}
-
-# build the landscape with our data and specified data types
-landscape.build_from_data(complex_search_space, f, data_types=data_types, verbose=True)
+landscape.build_from_data(
+    X, f, data_types={"solvent": "categorical", "catalyst": "categorical", "temperature": "ordinal"}
+)
 ```
 
 ## Tutorials
@@ -161,11 +109,11 @@ These nine notebooks include worked code and saved outputs, with their [input da
 
 | Dataset | Application | Colab |
 |---|---|---|
-| [Suzuki–Miyaura](tutorials/datasets/04_suzuki_landscape.ipynb) | Chemical reaction conditions | [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/17ef8wR3DNM8URikhJm73YeziTgoqTeVQ) |
+| [Suzuki-Miyaura](tutorials/datasets/04_suzuki_landscape.ipynb) | Chemical reaction conditions | [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/17ef8wR3DNM8URikhJm73YeziTgoqTeVQ) |
 | [Flow semihydrogenation](tutorials/datasets/05_flow_semihydrogenation_landscape.ipynb) | Electrochemical process settings | [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/1YpJbji2XZU_lNHMSkxYQj7Yp7om8tiZM) |
-| [W–Re–Os alloys](tutorials/datasets/06_alloy_landscape.ipynb) | Alloy composition | [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/1Q8ieoHAUOKkCfjSyYGwFCCyvZBx9zCq-) |
+| [W-Re-Os alloys](tutorials/datasets/06_alloy_landscape.ipynb) | Alloy composition | [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/1Q8ieoHAUOKkCfjSyYGwFCCyvZBx9zCq-) |
 | [Perovskites](tutorials/datasets/07_perovskite_landscape.ipynb) | Material constituent choices | [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/1rlJXgnu62rxqt-1840Uf8FztUhlyqOjm) |
-| [BacPUS](tutorials/datasets/08_microbiome_landscape.ipynb) | Bacterial strain–substrate combinations | [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/1Ujin6GvhBEpSsN6XzF8INGO0GIVdAMTc) |
+| [BacPUS](tutorials/datasets/08_microbiome_landscape.ipynb) | Bacterial strain-substrate combinations | [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/1Ujin6GvhBEpSsN6XzF8INGO0GIVdAMTc) |
 | [Cyanimide](tutorials/datasets/09_cyanimide_landscape.ipynb) | Chemical building blocks and enzyme inhibition | [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/1SY-iF_iLClT_B43OwtSlbxhX2XOkHpki) |
 | [NCI-ALMANAC](tutorials/datasets/10_drug_combination_landscape.ipynb) | Drug combinations and doses | [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/1460Ai_tDeyFMfEoHCRs65k0NeChd3BFV) |
 | [NAS-Bench-201](tutorials/datasets/11_neural_architecture_landscape.ipynb) | Neural architecture choices | [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/11Cr2t_8ojP0T6D1jXQuCrDO-Qnb0p3lV) |
@@ -173,16 +121,16 @@ These nine notebooks include worked code and saved outputs, with their [input da
 
 ## Landscape Analysis Features
 
-`GraphFLA` ships 20+ landscape-level metrics spanning the major aspects of landscape topography. Grab the whole portfolio in one call with `analysis.profile()`, restrict it with `profile(..., metrics=[...])` (the group tokens are the section headers below), or call any function on its own. The collapsible tables below catalog every landscape-level metric — expand the aspect you care about.
+`analysis.profile()` computes every metric below except those marked †. Pass a group name (for example `metrics="ruggedness"`) to compute one group, or call any function directly.
 
-> Mutation- and position-specific tools (`fitness_effect_distribution`, `idiosyncratic_index`, `single_mutation_effects`) characterize a single element rather than the whole landscape and are not listed here.
+> Functions describing individual mutations or positions (`fitness_effect_distribution`, `idiosyncratic_index`, `single_mutation_effects`) are not listed here.
 
 <details>
-<summary><b>Ruggedness</b> · <code>metrics="ruggedness"</code> — multimodality and local structure</summary>
+<summary><b>Ruggedness</b>: multimodality and local structure · <code>metrics="ruggedness"</code></summary>
 
 | Function | Measures | Range | Higher value → |
 |---|---|---|---|
-| `local_optima_ratio` | Fraction of configurations that are local optima | [0, 1] | more peaks |
+| `local_optima_ratio` | Fraction of variants that are local optima | [0, 1] | more peaks |
 | `r_s_ratio` | Roughness-to-slope ratio | [0, ∞) | more rugged |
 | `autocorrelation` | Autocorrelation of fitness along random walks | [-1, 1] | less rugged |
 | `gradient_intensity` | Mean absolute fitness change per edge | [0, ∞) | steeper gradients |
@@ -190,27 +138,27 @@ These nine notebooks include worked code and saved outputs, with their [input da
 </details>
 
 <details>
-<summary><b>Epistasis</b> · <code>metrics="epistasis"</code> — interactions between mutations</summary>
+<summary><b>Epistasis</b>: interactions between mutations · <code>metrics="epistasis"</code></summary>
 
 | Function | Measures | Range | Higher value → |
 |---|---|---|---|
 | `gamma` | Correlation of mutation effects across genetic backgrounds | [-1, 1] | more consistent mutation effects |
-| `gamma_star` | Gamma-star — consistency of sign epistasis | [-1, 1] | more consistent sign epistasis |
-| `classify_epistasis` | Fraction of pairwise interactions of each type: magnitude, sign, reciprocal-sign, positive, negative | [0, 1] | — (composition) |
+| `gamma_star` | Consistency of sign epistasis (γ*) | [-1, 1] | more consistent sign epistasis |
+| `classify_epistasis` | Fraction of pairwise interactions of each type: magnitude, sign, reciprocal-sign, positive, negative | [0, 1] | n/a (composition) |
 | `global_idiosyncratic_index` | How context-dependent (idiosyncratic) mutation effects are | [0, ∞) | more idiosyncratic |
 | `diminishing_returns_index` | Pooled background fitness vs. beneficial gains | [-1, 1] | more positive gain trend |
 | `increasing_costs_index` | Pooled background fitness vs. deleterious costs | [-1, 1] | more positive cost trend |
 | `extradimensional_bypass` | Reciprocal-sign motifs bypassed via extra dimensions (proportion, avg. length) | [0, 1] | more bypasses → more navigable |
-| `walsh_hadamard` † | Coefficients, nested fit gains and model variance spectrum | — | returns coefficients and order-summary tables |
+| `walsh_hadamard` † | Coefficients, nested fit gains and model variance spectrum | n/a | returns coefficients and order-summary tables |
 
 </details>
 
 <details>
-<summary><b>Navigability</b> · <code>metrics="navigability"</code> — reachability of optima</summary>
+<summary><b>Navigability</b>: reachability of optima · <code>metrics="navigability"</code></summary>
 
 | Function | Measures | Range | Higher value → |
 |---|---|---|---|
-| `global_optima_accessibility` | Fraction of configs on a fitness-monotone path to the global optimum | [0, 1] | more accessible |
+| `global_optima_accessibility` | Fraction of variants on a fitness-monotone path to the global optimum | [0, 1] | more accessible |
 | `mean_path_length_to_global_optimum` | Mean shortest adaptive-walk length to the global optimum | [0, ∞) | farther to reach |
 | `mean_distance_to_global_optimum` | Mean Hamming distance to the global optimum | [0, ∞) | more spread out |
 | `local_optima_accessibility` † | Accessibility of one or more specified local optima | [0, 1] | more accessible |
@@ -220,29 +168,29 @@ These nine notebooks include worked code and saved outputs, with their [input da
 </details>
 
 <details>
-<summary><b>Correlation</b> · <code>metrics="correlation"</code> — fitness–distance and basin structure</summary>
+<summary><b>Correlation</b>: fitness-distance and basin structure · <code>metrics="correlation"</code></summary>
 
 | Function | Measures | Range | Higher value → |
 |---|---|---|---|
-| `fdc` | Fitness–distance correlation to the global optimum | [-1, 1] | more navigable |
-| `neighbor_fitness_correlation` | Correlation of a config's fitness with its neighbors' mean | [-1, 1] | less rugged |
+| `fdc` | Fitness-distance correlation to the global optimum | [-1, 1] | more navigable |
+| `neighbor_fitness_correlation` | Correlation of a variant's fitness with its neighbors' mean | [-1, 1] | less rugged |
 | `basin_fitness_correlation` | Correlation between basin size and local-optimum fitness | [-1, 1] | fitter peaks have larger basins |
 | `fitness_flattening_index` | Whether fitness flattens approaching the global optimum | [-1, 1] | flatter near the peak |
 
 </details>
 
 <details>
-<summary><b>Robustness</b> · <code>metrics="robustness"</code> — neutrality and evolvability</summary>
+<summary><b>Robustness</b>: neutrality and evolvability · <code>metrics="robustness"</code></summary>
 
 | Function | Measures | Range | Higher value → |
 |---|---|---|---|
 | `neutrality` | Fraction of neutral (equal-fitness) edges | [0, 1] | more neutral |
-| `evolvability_enhancing_fraction` | Fraction of directed neighbour pairs with significant evolvability enhancement | [0, 1] | more local EE changes |
+| `evolvability_enhancing_fraction` | Fraction of directed neighbor pairs with significant evolvability enhancement | [0, 1] | more local EE changes |
 
 </details>
 
 <details>
-<summary><b>Fitness distribution</b> · <code>metrics="fitness"</code> — shape statistics</summary>
+<summary><b>Fitness distribution</b>: shape statistics · <code>metrics="fitness"</code></summary>
 
 | Function | Measures | Range |
 |---|---|---|
@@ -250,16 +198,16 @@ These nine notebooks include worked code and saved outputs, with their [input da
 
 </details>
 
-<sub>† Not part of the default `profile()` portfolio — call directly. These require a focal optimum (`lo=...`) or return a variable-length table rather than a single value.</sub>
+<sub>† Not computed by `profile()`; call directly. These need a focal optimum (`lo=...`) or return a table rather than a single value.</sub>
 
 ## Landscape Classes
 
 <details>
-<summary><b>Seven landscape classes</b> — pick the one matching your data (all share the same <code>build_from_data</code> API)</summary>
+<summary><b>Seven landscape classes</b>, all built with <code>build_from_data</code></summary>
 
 | Class | Search space | Notes |
 |---|---|---|
-| `Landscape` | Any discrete combinatorial space — categorical, boolean, and/or ordinal columns (possibly mixed) | Base class, most general; pass `data_types=` for mixed columns |
+| `Landscape` | Any discrete space with categorical, ordinal or boolean columns, possibly mixed | Most general; pass `data_types=` |
 | `SequenceLandscape` | Categorical sequences over a shared alphabet | General sequence data |
 | `BooleanLandscape` | Boolean (binary) space | Optimized for bit-strings |
 | `OrdinalLandscape` | Ordinal variables (ordered levels) | Optimized for ordinal data |
@@ -271,33 +219,28 @@ These nine notebooks include worked code and saved outputs, with their [input da
 
 ## Synthetic Problem Generators
 
-GraphFLA provides synthetic fitness landscape generators for benchmarking and experimentation. All generators produce binary (boolean) search spaces. Use `get_data()` to obtain configurations and fitness values in the same format as ML training data:
+`graphfla.problems` generates binary landscapes for benchmarking: `NK`, `RoughMountFuji`, `Additive`, `Eggbox` and `HoC` from biology, and `Max3Sat`, `Knapsack` and `NumberPartitioning` from combinatorial optimization. `get_data()` evaluates all 2^n variants, so keep n small.
 
 ```python
-from graphfla.problems import NK, RoughMountFuji, Additive, Eggbox, HoC
-from graphfla.problems import Max3Sat, Knapsack, NumberPartitioning
-
-# Example: NK landscape
-problem = NK(n=10, k=1)
-X, f = problem.get_data()
-# X: list of binary strings, e.g. ["0000000000", "0000000001", "0000000010", ...]
-# f: list of fitness values
-
-# Build landscape and analyze
 from graphfla.landscape import BooleanLandscape
+from graphfla.problems import NK
+
+X, f = NK(n=10, k=1).get_data()  # X holds bit strings such as "0000000001"
 landscape = BooleanLandscape()
-landscape.build_from_data(X, f, verbose=False)
+landscape.build_from_data(X, f)
 ```
 
-Available generators: `NK`, `RoughMountFuji`, `Additive`, `Eggbox`, `HoC` (biological models); `Max3Sat`, `Knapsack`, `NumberPartitioning` (combinatorial). Warning: `get_data()` evaluates all 2^n configurations—use with caution for large n.
+## Development
+
+Install `requirements-dev.txt` and run `python -m pytest`. See the [test contracts](tests/README.md), [performance benchmarks](benchmarks/README.md) and [construction optimization results](benchmarks/RESULTS.md). To preview the documentation website locally, see the [documentation guide](docs/README.md).
 
 ## License
 
 This project is licensed under the terms of the [MIT License](./LICENSE).
 
-## Credit
+## Citation
 
-You may cite GraphFLA via the following references:
+If you use GraphFLA, please cite:
 
 ```
 @inproceedings{HuangZL25,
@@ -307,7 +250,7 @@ You may cite GraphFLA via the following references:
   title     = {Augmenting Biological Fitness Prediction Benchmarks with Landscape Features
                from GraphFLA},
   booktitle = {{NeurIPS}'25: Proc. of Advances in Neural Information Processing Systems 39},
-  year      = {2024},
+  year      = {2025},
 }
 ```
 
@@ -344,8 +287,4 @@ You may cite GraphFLA via the following references:
 
 ---
 
-**Happy analyzing!** If you have any questions or suggestions, feel free to open an issue or start a discussion.
-
-## Development checks
-
-Install `requirements-dev.txt` and run `python -m pytest`. See the [test contracts](tests/README.md), [performance benchmarks](benchmarks/README.md), and [recorded construction optimization](benchmarks/RESULTS.md).
+**Happy analyzing!** If you have questions or suggestions, please open an issue or start a discussion.
