@@ -192,7 +192,7 @@ class LandingPage(unittest.TestCase):
         frames = {
             "variants.csv": recorded("protein").rename(columns={"sequences": "sequence", "fitness": "activity"}),
             "reactions.csv": suzuki.rename(columns={"ligand": "catalyst", "response_uv_pct": "yield"}),
-            "alloys.csv": recorded("materials")[["W", "Re", "H1000_HV"]].rename(columns={"H1000_HV": "hardness"}),
+            "alloys.csv": recorded("materials").rename(columns={"H1000_HV": "hardness"}),
             "builds.csv": recorded("software").rename(columns={"compile_time_raw": "time"}),
             "grid_search.csv": recorded("hpo").rename(
                 columns={"max_depth": "depth", "min_samples_leaf": "leaf", "max_features": "features"}),

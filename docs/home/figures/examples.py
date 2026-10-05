@@ -19,7 +19,7 @@ BINARY, CATEGORY = (2, "categorical"), "categorical"
 
 # Search space, layout seed, and (amplitude, width) of each surface peak, highest first.
 SCENARIOS = {
-    "protein": (product(*[BINARY] * 5), 3, [(0.80, 0.085), (0.52, 0.075), (0.42, 0.07), (0.34, 0.065)]),
+    "protein": (product(*[BINARY] * 5), 3, [(0.80, 0.075), (0.52, 0.068), (0.42, 0.064), (0.34, 0.06)]),
     "chemistry": (product((4, CATEGORY), (3, CATEGORY), (3, CATEGORY)), 5, [(0.80, 0.11), (0.58, 0.1), (0.40, 0.09)]),
     "materials": (simplex(6), 1, [(0.78, 0.2), (0.34, 0.1)]),
     "software": (product(*[BINARY] * 4, (3, "ordinal")), 7, [(0.80, 0.1), (0.66, 0.1), (0.36, 0.08)]),
@@ -28,30 +28,28 @@ SCENARIOS = {
 # Where the main summit sits: left of centre and toward the back, so the surface does not hide it.
 SUMMIT = (0.40, 0.40)
 PEAK_HEIGHT = 0.72
-# A steeper view than the other figures keeps the graph round instead of a thin ellipse.
-SIZE = 560
-UPPER = dict(cx=280, cy=250, scale=300, azimuth=38, tilt=40, zscale=140)
-LOWER = dict(UPPER, cy=468)
-# Edges bend by this fraction of their length, all to the same side, as arcs.
-BEND = 0.22
+WIDTH, HEIGHT = 560, 520
+UPPER = dict(cx=280, cy=205, scale=365, azimuth=38, tilt=26, zscale=178)
+LOWER = dict(UPPER, cy=388)
+# Each edge bends to a random side by up to this fraction of its length, so the arcs
+# weave in every direction instead of all bowing the same way.
+BEND = (0.06, 0.26)
 
 
-def _peaks(points, hops, widths, rng):
-    """Return up to one node per hill width: two or more steps apart in the graph, and far
-    enough apart on the floor that neighbouring hills stay distinct.
+def _peaks(points, hops, widths):
+    """Return one node per hill width, each as far as possible from the hills already placed.
 
-    The first is the node nearest ``SUMMIT``.
+    Hills are two or more steps apart in the graph and far enough apart on the floor to
+    stay distinct. The first is the node nearest ``SUMMIT``.
     """
     chosen = [min(range(len(points)), key=lambda i: math.dist(points[i], SUMMIT))]
-    candidates = [i for i in range(len(points)) if math.dist(points[i], (0.5, 0.5)) < 0.36]
-    rng.shuffle(candidates)
-    for i in candidates:
-        if len(chosen) == len(widths):
+    for width in widths[1:]:
+        allowed = [i for i in range(len(points)) if math.dist(points[i], (0.5, 0.5)) < 0.34
+                   and all(hops[i][c] >= 2 and math.dist(points[i], points[c]) > 1.2 * (width + widths[k])
+                           for k, c in enumerate(chosen))]
+        if not allowed:
             break
-        width = widths[len(chosen)]
-        if all(hops[i][c] >= 2 and math.dist(points[i], points[c]) > 1.2 * (width + widths[k])
-               for k, c in enumerate(chosen)):
-            chosen.append(i)
+        chosen.append(max(allowed, key=lambda i: min(math.dist(points[i], points[c]) for c in chosen)))
     return chosen
 
 
@@ -90,10 +88,13 @@ def spearman(x, y):
     return cov / math.sqrt(sum((a - mx) ** 2 for a in rx) * sum((b - my) ** 2 for b in ry))
 
 
-def _arc(camera, a, b):
-    """Return the ``d`` of a quadratic arc from ``a`` to ``b`` on the floor plane, and its length."""
+def _arc(camera, a, b, bend):
+    """Return the ``d`` of a quadratic arc from ``a`` to ``b`` on the floor plane, and its length.
+
+    ``bend`` is the signed offset of the control point, as a fraction of the edge length.
+    """
     (u1, v1), (u2, v2) = a, b
-    control = ((u1 + u2) / 2 - (v2 - v1) * BEND, (v1 + v2) / 2 + (u2 - u1) * BEND)
+    control = ((u1 + u2) / 2 - (v2 - v1) * bend, (v1 + v2) / 2 + (u2 - u1) * bend)
     (x1, y1), (cx, cy), (x2, y2) = (camera.project(*p) for p in (a, control, b))
     return f"M{x1:.2f} {y1:.2f}Q{cx:.2f} {cy:.2f} {x2:.2f} {y2:.2f}", math.hypot(u2 - u1, v2 - v1)
 
@@ -101,11 +102,11 @@ def _arc(camera, a, b):
 def draw(key, tokens):
     """Return the figure of one scenario and the statistics of its drawn graph."""
     palette = Palette.from_tokens("card", tokens)
-    figure = Figure("example-" + key, SIZE, SIZE)
+    figure = Figure("example-" + key, WIDTH, HEIGHT)
     (nodes, edges), seed, peaks = SCENARIOS[key]
     points = fit_disc(stress_layout(len(nodes), edges, seed=seed), radius=0.4)
     hops = distances(len(points), edges)
-    centres = _peaks(points, hops, [width for _, width in peaks], random.Random(seed))
+    centres = _peaks(points, hops, [width for _, width in peaks])
     peaks = peaks[:len(centres)]
     height = _surface([points[c] for c in centres], peaks)
     upper, lower = Camera(**UPPER), Camera(**LOWER)
@@ -126,12 +127,15 @@ def draw(key, tokens):
     others = [i for i in range(len(points)) if i != best]
     fdc = spearman([fitness[i] for i in others], [to_best[i] for i in others])
 
+    floor = [lower.project(*p) for p in ((0, 0), (1, 0), (1, 1), (0, 1), (0, 0))]
+    figure.body.append(f'<path d="{path_data(floor)}" fill="none" stroke="{palette.tone(0.28)}" stroke-width="0.7"/>')
     # Projection guides tie each local optimum in the graph to its point on the surface.
     for i in optima:
         guide = [lower.project(*points[i]), upper.project(*points[i], height(*points[i]))]
         figure.body.append(f'<path d="{path_data(guide)}" fill="none" stroke="{palette.tone(0.3)}" '
                            'stroke-width="0.8" stroke-dasharray="3 5"/>')
-    arcs = [_arc(lower, points[a], points[b]) for a, b in edges]
+    rng = random.Random(seed)
+    arcs = [_arc(lower, points[a], points[b], rng.choice((-1, 1)) * rng.uniform(*BEND)) for a, b in edges]
     longest = max(length for _, length in arcs)
     # Long links fade slightly so the local structure stays readable.
     for d, length in sorted(arcs, key=lambda arc: -arc[1]):
@@ -155,7 +159,7 @@ def draw(key, tokens):
             figure.body.append(disc(upper.project(u, v, height(u, v) + 0.008), 5 if i == best else 2.8,
                                     palette.accent if i == best else palette.mark, palette.surface, 1.2))
     figure.label("surface", (24, 20), "title")
-    figure.label("graph", (24, SIZE - 44), "title")
+    figure.label("graph", (344, 467), "title")
     return figure, {"nodes": len(points), "local_optima": len(optima), "fdc": fdc}
 
 

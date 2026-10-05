@@ -502,9 +502,9 @@ start:
         from graphfla.landscape import OrdinalLandscape
 
 
-        df = pd.read_csv("alloys.csv")
+        df = pd.read_csv("alloys.csv")  # columns: W, Re, Os, hardness
 
-        X = df[["W", "Re"]]  # W and Re content; Os makes up the rest
+        X = df[["W", "Re"]]  # Os = 100 - W - Re, so it is implied
 
         f = df["hardness"]  # Hardness at 1,000 °C, to maximize
 

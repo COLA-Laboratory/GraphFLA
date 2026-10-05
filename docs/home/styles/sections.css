@@ -139,8 +139,9 @@
   grid-template-columns: minmax(0, 1.05fr) minmax(0, 1.3fr) minmax(0, 1fr);
   gap: var(--gfl-space-6);
 }
-.gfl-how__column { display: flex; flex-direction: column; gap: var(--gfl-space-4); min-width: 0; }
-.gfl-how__column > .gfl-panel { flex: 1; }
+/* Steps share one row height, so the three panels below them start level. */
+.gfl-how { grid-template-rows: auto 1fr; }
+.gfl-how__column { display: grid; grid-row: span 2; grid-template-rows: subgrid; row-gap: var(--gfl-space-4); min-width: 0; }
 .gfl-data-table { overflow-x: auto; font-size: var(--gfl-text-sm); margin-block: auto; }
 .gfl-data-table__table { width: 100%; border-collapse: collapse; font-variant-numeric: tabular-nums; }
 .gfl-data-table :is(th, td) { padding: var(--gfl-space-2) var(--gfl-space-1); text-align: left; border-bottom: 1px solid var(--gfl-color-line); }
@@ -158,7 +159,8 @@
 .gfl-switch { display: inline-block; min-width: 30px; text-align: center; font-size: var(--gfl-text-xs); color: var(--gfl-color-text-faint); }
 .gfl-switch--on { background: var(--gfl-color-fill); border-radius: var(--gfl-radius-sm); color: var(--gfl-color-text-soft); }
 @media (max-width: 900px) {
-  .gfl-how { grid-template-columns: minmax(0, 1fr); gap: var(--gfl-space-10); }
+  .gfl-how { grid-template-columns: minmax(0, 1fr); grid-template-rows: none; gap: var(--gfl-space-10); }
+  .gfl-how__column { display: flex; flex-direction: column; grid-row: auto; }
 }
 @media (max-width: 600px) {
   .gfl-sequence { font-size: var(--gfl-text-2xs); }
