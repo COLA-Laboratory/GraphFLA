@@ -1,7 +1,8 @@
 {# Reusable pieces of the landing page. Import with context: the figure macro reads `figures`. #}
 
 {% macro arrow(url) -%}
-<span class="gfl-arrow" aria-hidden="true">{{ "↗" if url is external else "→" }}</span>
+{# U+FE0E keeps the arrow a text glyph; iOS otherwise draws ↗ as a colour emoji. #}
+<span class="gfl-arrow" aria-hidden="true">{{ "↗\uFE0E" if url is external else "→" }}</span>
 {%- endmacro %}
 
 {% macro link(item) -%}

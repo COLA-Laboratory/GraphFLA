@@ -91,6 +91,12 @@ class LandingPage(unittest.TestCase):
 
     # -- page ------------------------------------------------------------------
 
+    def test_external_link_arrows_render_as_text_on_ios(self):
+        # Without U+FE0E, iOS draws "↗" as a colour emoji.
+        page = str(self.pages["index"])
+        self.assertIn("↗\ufe0e", page)
+        self.assertEqual(page.count("↗"), page.count("↗\ufe0e"))
+
     def test_page_has_every_section_and_a_footer(self):
         page = self.pages["index"]
         for anchor in ("top", "how", "metrics", "start", "performance", "cases"):

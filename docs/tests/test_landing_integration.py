@@ -59,7 +59,7 @@ class LandingIntegration(unittest.TestCase):
             soup = BeautifulSoup((self.site / path).read_text(), "html.parser")
             nav = soup.select_one(".md-header .gfl-site-navigation .gfl-nav")
             self.assertIsNotNone(nav, path)
-            labels = [tag.get_text(" ", strip=True).replace(" ↗", "")
+            labels = [tag.get_text(" ", strip=True).replace(" ↗\ufe0e", "")
                       for tag in nav.select(":scope > a")]
             self.assertEqual(labels, expected, path)
             self.assertTrue(soup.select('.md-header input[aria-label="Search"]'), path)
