@@ -27,8 +27,6 @@ open docs/home/dist/styleguide.html               # the design system, rendered
 | The five interactive illustrations | `content.yml`, `figures/examples.py` | Keep the original `surfaces.workflow` three-peak shape, compact tables and profile bars. Do not replace them with real-data projections. |
 | The dataset catalogue | `catalogue.py` | Counts and links come from repository CSV files and data cards. |
 | Research scatter plots | `insights/`, `insight_data.py`, `scripts/insights.js`, `styles/insights.css` | Real prepared benchmark data, independent of the illustrative How it works demos. |
-| The homepage's search-result title and snippet | `content.yml` → `meta` | `document_title` is the browser and search-result title; `description` is the snippet. |
-| The link-preview image | `docs/content/assets/social-card.png` | Re-render with `docs/scripts/social_card.py` (needs Chrome) after changing the hero title, hero figure or tokens. |
 
 `page.py` joins the copy with the data it describes (tutorial catalog, benchmark
 record, the worked example) and `build.py` renders the templates.

@@ -1,12 +1,10 @@
 """Integrate the authored landing page into the normal MkDocs build."""
 
-import json
 from pathlib import Path
 import sys
 import tempfile
 
 from jinja2 import ChoiceLoader, FileSystemLoader
-from markupsafe import Markup
 from mkdocs.plugins import event_priority
 from mkdocs.structure.files import File
 from mkdocs.utils import get_relative_url
@@ -41,8 +39,6 @@ def on_files(files, config):
 def on_page_content(html, page, **kwargs):
     if page.meta.get("template") != "landing.html":
         return html
-    # The landing copy also owns the homepage's search-result title and snippet.
-    page.meta.update(document_title=PAGE["meta"]["document_title"], description=PAGE["meta"]["description"])
     # Rendering before on_page_context also puts the homepage in the search index.
     return home_build.environment(PAGE["links"], ASSETS).get_template("home.html").render(PAGE, embedded=True)
 
@@ -52,36 +48,12 @@ def on_env(env, **kwargs):
     return env
 
 
-def on_page_context(context, page, config, **kwargs):
-    context = navigation_context(context, page.url, page.is_homepage)
-    if page.is_homepage:
-        context["gfl_structured_data"] = structured_data(config)
-    return context
+def on_page_context(context, page, **kwargs):
+    return navigation_context(context, page.url, page.is_homepage)
 
 
 def on_template_context(context, **kwargs):
     return navigation_context(context, "404.html")
-
-
-def structured_data(config):
-    """Return the schema.org JSON-LD that describes GraphFLA to search engines."""
-    data = {
-        "@context": "https://schema.org",
-        "@type": "SoftwareSourceCode",
-        "name": PAGE["meta"]["title"],
-        "description": PAGE["meta"]["description"],
-        "url": config.site_url,
-        "codeRepository": config.repo_url,
-        "programmingLanguage": "Python",
-        "sameAs": [config.repo_url, PAGE["links"]["pypi"]],
-        "citation": [
-            {"@type": "ScholarlyArticle", "name": paper["title"], "url": paper["link"]["href"],
-             "author": [{"@type": "Person", "name": name} for name in paper["authors"].split(", ")]}
-            for paper in PAGE["closing"]["publications"]["papers"]
-        ],
-    }
-    # An escaped "<" cannot close the surrounding script element.
-    return Markup(json.dumps(data, ensure_ascii=False).replace("<", "\\u003c"))
 
 
 def navigation_context(context, page_url, is_homepage=False):

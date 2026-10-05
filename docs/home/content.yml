@@ -1,8 +1,6 @@
 meta:
   title: GraphFLA
-  document_title: 'GraphFLA: graph-based fitness landscape analysis in Python'
-  description: A Python package that builds fitness landscapes from data, such as protein variants, and measures
-    their ruggedness, epistasis, navigability and neutrality.
+  description: Fitness landscape analysis for combinatorial optimization problems in Python.
 links:
   home: ./
   github: https://github.com/COLA-Laboratory/GraphFLA

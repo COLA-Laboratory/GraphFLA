@@ -156,7 +156,7 @@ def add_tutorials(files, config, catalog):
             }
         )
     index = (
-        "---\ntitle: Tutorials\nicon: material/book-open-page-variant-outline\n---\n\n# Tutorials\n\n"
+        "---\nicon: material/book-open-page-variant-outline\n---\n\n# Tutorials\n\n"
         "Explore GraphFLA with nine datasets, from chemical reactions and materials to "
         "neural architectures and compiler settings. Each tutorial takes you from "
         "preparing the data to building a landscape and interpreting its analysis.\n\n"

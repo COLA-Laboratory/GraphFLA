@@ -25,12 +25,7 @@ setup(
     long_description=long_description,
     long_description_content_type="text/plain",
     license="MIT",
-    url="https://colalab.ai/GraphFLA/",
-    project_urls={
-        "Documentation": "https://colalab.ai/GraphFLA/",
-        "Source": "https://github.com/COLA-Laboratory/GraphFLA",
-        "Issues": "https://github.com/COLA-Laboratory/GraphFLA/issues",
-    },
+    url="https://github.com/COLA-Laboratory/GraphFLA/tree/main",
     packages=find_packages(include=["graphfla", "graphfla.*"]),
     classifiers=[
         "Programming Language :: Python :: 3",

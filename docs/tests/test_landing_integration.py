@@ -3,7 +3,6 @@
 import json
 import os
 from pathlib import Path
-import re
 import subprocess
 import sys
 import tempfile
@@ -16,7 +15,6 @@ import yaml
 DOCS = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(DOCS / "_support"))
 from checks import site_errors
-from seo import SNIPPET_LENGTH
 
 
 class LandingIntegration(unittest.TestCase):
@@ -90,40 +88,6 @@ class LandingIntegration(unittest.TestCase):
             self.assertTrue(soup.select('a[href$=".ipynb"]'), item["slug"])
             self.assertTrue(soup.select('a[href$=".zip"]'), item["slug"])
             self.assertTrue(soup.select(".md-nav--primary"))
-
-    def test_every_sitemap_page_has_its_own_snippet_and_link_preview(self):
-        site_url = yaml.safe_load((DOCS / "mkdocs.yml").read_text())["site_url"]
-        urls = re.findall(r"<loc>([^<]+)</loc>", (self.site / "sitemap.xml").read_text())
-        self.assertIn(site_url, urls)
-        pages_by_description = {}
-        for url in urls:
-            head = BeautifulSoup((self.site / url.removeprefix(site_url) / "index.html").read_text(),
-                                 "html.parser").head
-            meta = {tag.get("property") or tag.get("name"): tag.get("content") for tag in head.find_all("meta")}
-            description = meta["description"]
-            self.assertTrue(0 < len(description) <= SNIPPET_LENGTH, (url, description))
-            pages_by_description.setdefault(description, []).append(url)
-            self.assertEqual(head.find("link", rel="canonical")["href"], url)
-            self.assertEqual(meta["og:url"], url)
-            self.assertEqual(meta["og:description"], description)
-            self.assertTrue(meta["og:image"].startswith(site_url))
-            self.assertTrue((self.site / meta["og:image"].removeprefix(site_url)).is_file())
-        self.assertEqual({text: pages for text, pages in pages_by_description.items() if len(pages) > 1}, {})
-
-    def test_homepage_title_snippet_and_structured_data_follow_the_landing_copy(self):
-        config = yaml.safe_load((DOCS / "mkdocs.yml").read_text())
-        content = yaml.safe_load((DOCS / "home/content.yml").read_text())
-        self.assertEqual(self.home.title.get_text(), content["meta"]["document_title"])
-        self.assertEqual(self.home.find("meta", attrs={"name": "description"})["content"],
-                         content["meta"]["description"])
-        script = self.home.find("script", type="application/ld+json")
-        self.assertNotIn("<", script.string)
-        data = json.loads(script.string)
-        self.assertEqual((data["url"], data["codeRepository"]), (config["site_url"], config["repo_url"]))
-        self.assertEqual([paper["name"] for paper in data["citation"]],
-                         [paper["title"] for paper in content["closing"]["publications"]["papers"]])
-        key = config["extra"]["indexnow_key"]
-        self.assertEqual((self.site / f"{key}.txt").read_text(), key)
 
     def test_api_coverage_profile_and_search_survive_integration(self):
         manifest = json.loads((self.site / "_api/build-manifest.json").read_text())
