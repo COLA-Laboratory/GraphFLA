@@ -1,6 +1,6 @@
 site_name: GraphFLA
 site_description: Graph-based fitness landscape analysis
-site_url: https://colalab.ai/GraphFLA/
+site_url: https://graphfla.org/
 repo_url: https://github.com/COLA-Laboratory/GraphFLA
 repo_name: COLA-Laboratory/GraphFLA
 docs_dir: content

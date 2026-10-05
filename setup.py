@@ -25,9 +25,9 @@ setup(
     long_description=long_description,
     long_description_content_type="text/plain",
     license="MIT",
-    url="https://colalab.ai/GraphFLA/",
+    url="https://graphfla.org/",
     project_urls={
-        "Documentation": "https://colalab.ai/GraphFLA/",
+        "Documentation": "https://graphfla.org/",
         "Source": "https://github.com/COLA-Laboratory/GraphFLA",
         "Issues": "https://github.com/COLA-Laboratory/GraphFLA/issues",
     },
