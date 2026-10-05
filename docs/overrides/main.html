@@ -1,4 +1,11 @@
 {% extends "base.html" %}
+{% block htmltitle %}
+  {% if page and page.meta.document_title %}
+    <title>{{ page.meta.document_title }}</title>
+  {% else %}
+    {{ super() }}
+  {% endif %}
+{% endblock %}
 {% block fonts %}
   {% if gfl_fonts is defined %}
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -6,5 +13,26 @@
     <link rel="stylesheet" href="{{ gfl_fonts }}">
   {% else %}
     {{ super() }}
+  {% endif %}
+{% endblock %}
+{% block extrahead %}
+  {# Ownership tokens for search-engine consoles, keyed by meta name. #}
+  {% for name, token in (config.extra.site_verification or {}).items() %}
+    <meta name="{{ name }}" content="{{ token }}">
+  {% endfor %}
+  {# Link previews on social sites and chat apps. #}
+  {% if page and page.canonical_url %}
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="{{ config.site_name }}">
+    <meta property="og:title" content="{{ (page.meta.document_title or page.meta.title or page.title) | striptags | e }}">
+    <meta property="og:description" content="{{ page.meta.description }}">
+    <meta property="og:url" content="{{ page.canonical_url }}">
+    {% if config.extra.social_card %}
+      <meta property="og:image" content="{{ config.site_url ~ config.extra.social_card }}">
+      <meta name="twitter:card" content="summary_large_image">
+    {% endif %}
+  {% endif %}
+  {% if gfl_structured_data is defined %}
+    <script type="application/ld+json">{{ gfl_structured_data }}</script>
   {% endif %}
 {% endblock %}

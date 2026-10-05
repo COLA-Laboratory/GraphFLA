@@ -99,7 +99,7 @@ def build(out=DIST):
 
     shell = environment(page["links"]).get_template("standalone.html")
     (out / "index.html").write_text(shell.render(
-        page, title=page["meta"]["title"], body="home.html", fonts=FONTS, stylesheets=STYLESHEETS))
+        page, title=page["meta"]["document_title"], body="home.html", fonts=FONTS, stylesheets=STYLESHEETS))
     (out / "styleguide.html").write_text(shell.render(
         page, title=f"{page['meta']['title']} design system", body="styleguide.html", fonts=FONTS,
         stylesheets=(*STYLESHEETS, "styleguide.css"), tokens=token_groups()))

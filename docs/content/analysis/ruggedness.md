@@ -2,7 +2,7 @@
 api_narrative: true
 ---
 
-Ruggedness is arguably the most widely studied topograhical aspect of fitness landscapes. Although biologists have offered a staggering number of definitions of ruggedness, they agree broadly on the essence of the idea: the lack of correlation in fitness between genotypes. This can either manifests as the presence of multiple fitness peaks (local optima) or significant fitness fluctuation.
+Ruggedness is arguably the most widely studied topographical aspect of fitness landscapes. Although biologists have offered a staggering number of definitions of ruggedness, they agree broadly on the essence of the idea: the lack of correlation in fitness between genotypes. This can either manifest as the presence of multiple fitness peaks (local optima) or significant fitness fluctuation.
 
 **Relationship to landscape navigability:** Ruggedness can pose a fundamental challenge to evolution’s ability to find a landscape’s highest peaks, i.e., landscape *navigability* or peak *accessibility*. This is because a population evolving under the influence of natural selection can only travel on *accessible paths* through the landscape, that is, paths in which each mutational step increases fitness. The reason is that natural selection favors high fitness genotypes and does not allow a population to traverse low fitness valleys between a local peak of intermediate fitness and nearby higher fitness peaks.
 
