@@ -24,18 +24,33 @@
 </div>
 <br>
 
-**GraphFLA** (Graph-based Fitness Landscape Analysis) is a Python framework for constructing, analyzing, manipulating and visualizing **fitness landscapes** as graphs. It provides a broad collection of features rooted in evolutionary biology to decipher the topography of complex fitness landscapes of diverse modalities.
+**GraphFLA** (Graph-based Fitness Landscape Analysis) is a Python framework for constructing, analyzing, manipulating and visualizing **fitness landscapes** of combinatorial optimization problems. Drawing on concepts and measures established in evolutionary biology, it represents a landscape as a graph of variants connected by single mutations and characterizes the topography of complex optimization landscapes across diverse fields.
 
 This is also the official code and data repository for the **NeurIPS 2025 (Spotlight)** paper "Augmenting Biological Fitness Prediction Benchmarks with Landscape Features from GraphFLA".
 
-Full documentation, including the API reference, is at [colalab.ai/GraphFLA](https://colalab.ai/GraphFLA/). Every [tutorial](#tutorials) also runs in Google Colab.
+Full documentation, including the API reference, is at [colalab.ai/GraphFLA](https://colalab.ai/GraphFLA/).
+
+## Tutorials
+
+These nine notebooks include worked code and saved outputs, with their [input data](tutorials/datasets/data/) alongside them. Each one also opens in Google Colab, where it installs GraphFLA and downloads its data.
+
+| Dataset | Application | Colab |
+|---|---|---|
+| [Suzuki-Miyaura](tutorials/datasets/04_suzuki_landscape.ipynb) | Chemical reaction conditions | [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/17ef8wR3DNM8URikhJm73YeziTgoqTeVQ) |
+| [Flow semihydrogenation](tutorials/datasets/05_flow_semihydrogenation_landscape.ipynb) | Electrochemical process settings | [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/1YpJbji2XZU_lNHMSkxYQj7Yp7om8tiZM) |
+| [W-Re-Os alloys](tutorials/datasets/06_alloy_landscape.ipynb) | Alloy composition | [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/1Q8ieoHAUOKkCfjSyYGwFCCyvZBx9zCq-) |
+| [Perovskites](tutorials/datasets/07_perovskite_landscape.ipynb) | Material constituent choices | [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/1rlJXgnu62rxqt-1840Uf8FztUhlyqOjm) |
+| [BacPUS](tutorials/datasets/08_microbiome_landscape.ipynb) | Bacterial strain-substrate combinations | [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/1Ujin6GvhBEpSsN6XzF8INGO0GIVdAMTc) |
+| [Cyanimide](tutorials/datasets/09_cyanimide_landscape.ipynb) | Chemical building blocks and enzyme inhibition | [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/1SY-iF_iLClT_B43OwtSlbxhX2XOkHpki) |
+| [NCI-ALMANAC](tutorials/datasets/10_drug_combination_landscape.ipynb) | Drug combinations and doses | [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/1460Ai_tDeyFMfEoHCRs65k0NeChd3BFV) |
+| [NAS-Bench-201](tutorials/datasets/11_neural_architecture_landscape.ipynb) | Neural architecture choices | [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/11Cr2t_8ojP0T6D1jXQuCrDO-Qnb0p3lV) |
+| [LLVM](tutorials/datasets/12_software_configuration_landscape.ipynb) | Compiler configuration | [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/1-pxEz0Wpg7M1xXp99RdrQ59XH-lBU37P) |
 
 ## Key Features
-- **Versatility:** works on any discrete, combinatorial sequence-fitness data, from DNA, RNA and proteins to genes and ecological communities.
-- **Comprehensiveness:** 20+ metrics covering ruggedness, epistasis, navigability and neutrality.
-- **Interoperability:** takes the same `X` and `f` used to train machine learning models.
-- **Scalability:** handles landscapes with millions of variants.
-- **Extensibility:** new metrics plug into a unified API.
+- **Versatility:** GraphFLA applies to any discrete, combinatorial mapping from variants to fitness, from biological sequences to chemical reaction conditions, material compositions, drug combinations and software configurations.
+- **Comprehensiveness:** more than 20 metrics, drawn from the evolutionary biology and evolutionary computation literature, quantify ruggedness, epistasis, navigability and neutrality, together giving a detailed account of landscape topography.
+- **Interoperability:** GraphFLA analyzes the same variants `X` and fitness values `f` used to train machine learning models, so landscape analysis fits into existing modeling workflows without data conversion.
+- **Scalability:** GraphFLA constructs and analyzes landscapes comprising millions of variants.
 
 ## Quick Start
 
@@ -102,137 +117,6 @@ landscape.build_from_data(
     X, f, data_types={"solvent": "categorical", "catalyst": "categorical", "temperature": "ordinal"}
 )
 ```
-
-## Tutorials
-
-These nine notebooks include worked code and saved outputs, with their [input data](tutorials/datasets/data/) alongside them. Each one also opens in Google Colab, where it installs GraphFLA and downloads its data.
-
-| Dataset | Application | Colab |
-|---|---|---|
-| [Suzuki-Miyaura](tutorials/datasets/04_suzuki_landscape.ipynb) | Chemical reaction conditions | [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/17ef8wR3DNM8URikhJm73YeziTgoqTeVQ) |
-| [Flow semihydrogenation](tutorials/datasets/05_flow_semihydrogenation_landscape.ipynb) | Electrochemical process settings | [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/1YpJbji2XZU_lNHMSkxYQj7Yp7om8tiZM) |
-| [W-Re-Os alloys](tutorials/datasets/06_alloy_landscape.ipynb) | Alloy composition | [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/1Q8ieoHAUOKkCfjSyYGwFCCyvZBx9zCq-) |
-| [Perovskites](tutorials/datasets/07_perovskite_landscape.ipynb) | Material constituent choices | [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/1rlJXgnu62rxqt-1840Uf8FztUhlyqOjm) |
-| [BacPUS](tutorials/datasets/08_microbiome_landscape.ipynb) | Bacterial strain-substrate combinations | [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/1Ujin6GvhBEpSsN6XzF8INGO0GIVdAMTc) |
-| [Cyanimide](tutorials/datasets/09_cyanimide_landscape.ipynb) | Chemical building blocks and enzyme inhibition | [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/1SY-iF_iLClT_B43OwtSlbxhX2XOkHpki) |
-| [NCI-ALMANAC](tutorials/datasets/10_drug_combination_landscape.ipynb) | Drug combinations and doses | [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/1460Ai_tDeyFMfEoHCRs65k0NeChd3BFV) |
-| [NAS-Bench-201](tutorials/datasets/11_neural_architecture_landscape.ipynb) | Neural architecture choices | [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/11Cr2t_8ojP0T6D1jXQuCrDO-Qnb0p3lV) |
-| [LLVM](tutorials/datasets/12_software_configuration_landscape.ipynb) | Compiler configuration | [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/1-pxEz0Wpg7M1xXp99RdrQ59XH-lBU37P) |
-
-## Landscape Analysis Features
-
-`analysis.profile()` computes every metric below except those marked †. Pass a group name (for example `metrics="ruggedness"`) to compute one group, or call any function directly.
-
-> Functions describing individual mutations or positions (`fitness_effect_distribution`, `idiosyncratic_index`, `single_mutation_effects`) are not listed here.
-
-<details>
-<summary><b>Ruggedness</b>: multimodality and local structure · <code>metrics="ruggedness"</code></summary>
-
-| Function | Measures | Range | Higher value → |
-|---|---|---|---|
-| `local_optima_ratio` | Fraction of variants that are local optima | [0, 1] | more peaks |
-| `r_s_ratio` | Roughness-to-slope ratio | [0, ∞) | more rugged |
-| `autocorrelation` | Autocorrelation of fitness along random walks | [-1, 1] | less rugged |
-| `gradient_intensity` | Mean absolute fitness change per edge | [0, ∞) | steeper gradients |
-
-</details>
-
-<details>
-<summary><b>Epistasis</b>: interactions between mutations · <code>metrics="epistasis"</code></summary>
-
-| Function | Measures | Range | Higher value → |
-|---|---|---|---|
-| `gamma` | Correlation of mutation effects across genetic backgrounds | [-1, 1] | more consistent mutation effects |
-| `gamma_star` | Consistency of sign epistasis (γ*) | [-1, 1] | more consistent sign epistasis |
-| `classify_epistasis` | Fraction of pairwise interactions of each type: magnitude, sign, reciprocal-sign, positive, negative | [0, 1] | n/a (composition) |
-| `global_idiosyncratic_index` | How context-dependent (idiosyncratic) mutation effects are | [0, ∞) | more idiosyncratic |
-| `diminishing_returns_index` | Pooled background fitness vs. beneficial gains | [-1, 1] | more positive gain trend |
-| `increasing_costs_index` | Pooled background fitness vs. deleterious costs | [-1, 1] | more positive cost trend |
-| `extradimensional_bypass` | Reciprocal-sign motifs bypassed via extra dimensions (proportion, avg. length) | [0, 1] | more bypasses → more navigable |
-| `walsh_hadamard` † | Coefficients, nested fit gains and model variance spectrum | n/a | returns coefficients and order-summary tables |
-
-</details>
-
-<details>
-<summary><b>Navigability</b>: reachability of optima · <code>metrics="navigability"</code></summary>
-
-| Function | Measures | Range | Higher value → |
-|---|---|---|---|
-| `global_optima_accessibility` | Fraction of variants on a fitness-monotone path to the global optimum | [0, 1] | more accessible |
-| `mean_path_length_to_global_optimum` | Mean shortest adaptive-walk length to the global optimum | [0, ∞) | farther to reach |
-| `mean_distance_to_global_optimum` | Mean Hamming distance to the global optimum | [0, ∞) | more spread out |
-| `local_optima_accessibility` † | Accessibility of one or more specified local optima | [0, 1] | more accessible |
-| `mean_path_length_to_local_optima` † | Mean adaptive-walk length to specified local optima | [0, ∞) | farther to reach |
-| `mean_distance_to_local_optima` † | Mean Hamming distance to specified local optima | [0, ∞) | more spread out |
-
-</details>
-
-<details>
-<summary><b>Correlation</b>: fitness-distance and basin structure · <code>metrics="correlation"</code></summary>
-
-| Function | Measures | Range | Higher value → |
-|---|---|---|---|
-| `fdc` | Fitness-distance correlation to the global optimum | [-1, 1] | more navigable |
-| `neighbor_fitness_correlation` | Correlation of a variant's fitness with its neighbors' mean | [-1, 1] | less rugged |
-| `basin_fitness_correlation` | Correlation between basin size and local-optimum fitness | [-1, 1] | fitter peaks have larger basins |
-| `fitness_flattening_index` | Whether fitness flattens approaching the global optimum | [-1, 1] | flatter near the peak |
-
-</details>
-
-<details>
-<summary><b>Robustness</b>: neutrality and evolvability · <code>metrics="robustness"</code></summary>
-
-| Function | Measures | Range | Higher value → |
-|---|---|---|---|
-| `neutrality` | Fraction of neutral (equal-fitness) edges | [0, 1] | more neutral |
-| `evolvability_enhancing_fraction` | Fraction of directed neighbor pairs with significant evolvability enhancement | [0, 1] | more local EE changes |
-
-</details>
-
-<details>
-<summary><b>Fitness distribution</b>: shape statistics · <code>metrics="fitness"</code></summary>
-
-| Function | Measures | Range |
-|---|---|---|
-| `fitness_distribution` | Unitless shape of the fitness distribution: skewness, kurtosis, coefficient of variation, quartile coefficient, median/mean ratio, relative range, Cauchy location | various |
-
-</details>
-
-<sub>† Not computed by `profile()`; call directly. These need a focal optimum (`lo=...`) or return a table rather than a single value.</sub>
-
-## Landscape Classes
-
-<details>
-<summary><b>Seven landscape classes</b>, all built with <code>build_from_data</code></summary>
-
-| Class | Search space | Notes |
-|---|---|---|
-| `Landscape` | Any discrete space with categorical, ordinal or boolean columns, possibly mixed | Most general; pass `data_types=` |
-| `SequenceLandscape` | Categorical sequences over a shared alphabet | General sequence data |
-| `BooleanLandscape` | Boolean (binary) space | Optimized for bit-strings |
-| `OrdinalLandscape` | Ordinal variables (ordered levels) | Optimized for ordinal data |
-| `DNALandscape` | DNA sequences (A/C/G/T) | Optimized for DNA |
-| `RNALandscape` | RNA sequences (A/C/G/U) | Optimized for RNA |
-| `ProteinLandscape` | Protein sequences (20 amino acids) | Optimized for protein |
-
-</details>
-
-## Synthetic Problem Generators
-
-`graphfla.problems` generates binary landscapes for benchmarking: `NK`, `RoughMountFuji`, `Additive`, `Eggbox` and `HoC` from biology, and `Max3Sat`, `Knapsack` and `NumberPartitioning` from combinatorial optimization. `get_data()` evaluates all 2^n variants, so keep n small.
-
-```python
-from graphfla.landscape import BooleanLandscape
-from graphfla.problems import NK
-
-X, f = NK(n=10, k=1).get_data()  # X holds bit strings such as "0000000001"
-landscape = BooleanLandscape()
-landscape.build_from_data(X, f)
-```
-
-## Development
-
-Install `requirements-dev.txt` and run `python -m pytest`. See the [test contracts](tests/README.md), [performance benchmarks](benchmarks/README.md) and [construction optimization results](benchmarks/RESULTS.md). To preview the documentation website locally, see the [documentation guide](docs/README.md).
 
 ## License
 
