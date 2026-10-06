@@ -3,7 +3,7 @@
 ![GraphFLA](images/landscape.jpg)
 
 <div align="center">
-    <a href="https://graphfla.org/" rel="nofollow">
+    <a href="https://colalab.ai/GraphFLA/" rel="nofollow">
         <img src="https://img.shields.io/badge/website-GraphFLA-ffd60a" alt="Website" />
     </a>
     <a href="https://www.python.org/" rel="nofollow">
@@ -28,7 +28,7 @@
 
 This is also the official code and data repository for the **NeurIPS 2025 (Spotlight)** paper "Augmenting Biological Fitness Prediction Benchmarks with Landscape Features from GraphFLA".
 
-Full documentation, including the API reference, is at [graphfla.org](https://graphfla.org/).
+Full documentation, including the API reference, is at [colalab.ai/GraphFLA](https://colalab.ai/GraphFLA/).
 
 ## Tutorials
 
