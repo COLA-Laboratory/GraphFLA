@@ -14,7 +14,7 @@ construction conventions. `prepare_proteingym.py`, `sparse_gamma.py`, and
 JSON files document exact equivalence checks for gamma, EE, and FDC, including
 tied global optima.
 
-The strict eligibility rule is a mean of more than 1.5 substitution tokens per
+The strict eligibility rule, as in the NeurIPS 2025 paper, is a mean of more than one substitution token per
 measured assay row. This mean is computed from every row before landscape
 construction. The landscape receives the complete measured population after
 invariant sequence positions are removed. GraphFLA then removes configurations

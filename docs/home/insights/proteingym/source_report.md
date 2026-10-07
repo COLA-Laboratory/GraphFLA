@@ -20,13 +20,13 @@ training or inference and does not download the 1.9 GB model-score archive.
 
 All 217 substitution assay CSVs were scanned using every measured row. Eligibility
 is based on the arithmetic mean number of colon-separated substitution tokens in
-`mutant`, strictly greater than 1.5. No variant rows were filtered to calculate
+`mutant`, strictly greater than 1. No variant rows were filtered to calculate
 that mean. The v1.3 archive contains 2,465,767 rows; the
-selected 36 assays contain
-1,788,585 complete measured
+selected 69 assays contain
+1,840,084 complete measured
 rows. Every selected row was checked against the official target sequence: the
 WT letter and position match, the labels reproduce `mutated_sequence`, and the
-fitness value is finite. Every selected genotype is unique. The 36-assay cohort
+fitness value is finite. Every selected genotype is unique. The 69-assay cohort
 is recomputed from the current v1.3 release and is not copied from an earlier
 paper table with rounded mutation-depth summaries.
 
@@ -73,7 +73,7 @@ nonfocal-moment and p-value/BH kernels; it was checked against the public API
 and the prior exact helper on two full landscapes with zero numerical
 difference. The neutrality metric is excluded.
 
-Per-assay feature status: {'complete': 36}. Missing/non-finite values are JSON
+Per-assay feature status: {'complete': 69}. Missing/non-finite values are JSON
 `null`; explanations are in `provenance.graphfla.metric_failures`.
 
 ## Reproduction

@@ -86,6 +86,10 @@ PERFORMANCE_METADATA_COLUMNS = {
     "MSA_Neff_L_category",
     "Taxon",
 }
+# Assays with a mean of more than one substitution per variant, as in the
+# NeurIPS 2025 paper; singles-only assays carry no epistasis information.
+MIN_MEAN_MUTATIONS = 1.0
+EXPECTED_ELIGIBLE = 69
 BASE_SEED = 20261004
 MOTIF_TIME_BUDGET_SEC = 15.0
 DEFAULT_METRIC_TIMEOUT_SEC = 300
@@ -208,7 +212,7 @@ def _scan_eligibility(
         result[dms_id] = {
             "n_variants": n_rows,
             "mean_mutations": n_mutations / n_rows,
-            "eligible": n_mutations / n_rows > 1.5,
+            "eligible": n_mutations / n_rows > MIN_MEAN_MUTATIONS,
         }
         total_variants += n_rows
     return result, {"n_assays": len(result), "n_variants": total_variants}
@@ -819,7 +823,7 @@ def _write_artifacts(
         and json.loads((METRIC_CACHE / f"{dms_id}.json").read_text(encoding="utf-8")).get("status") in ("complete", "failed")
         for dms_id in selected_ids
     )
-    is_partial = not all_attempted or len(selected_ids) != 36
+    is_partial = not all_attempted or len(selected_ids) != EXPECTED_ELIGIBLE
     completed_status = (
         "partial" if is_partial
         else "completed_with_missing_metrics" if missing_reasons
@@ -830,7 +834,7 @@ def _write_artifacts(
             "status": completed_status,
             "dataset_release": PROTEINGYM_VERSION,
             "eligible_assays": len(selected_ids),
-            "eligible_assays_total": 36,
+            "eligible_assays_total": EXPECTED_ELIGIBLE,
             "default_feature": "r_s_ratio",
             "default_model": "ESM-1b",
         },
@@ -847,7 +851,7 @@ def _write_artifacts(
             "assay_archive_files": summary_totals["n_assays"],
             "assay_archive_variants": summary_totals["n_variants"],
             "eligible_assays": len([row for row in summaries.values() if row["eligible"]]),
-            "eligibility_rule": "unfiltered mean number of substitution labels per measured variant > 1.5; indels are excluded by the substitution-only benchmark",
+            "eligibility_rule": f"unfiltered mean number of substitution labels per measured variant > {MIN_MEAN_MUTATIONS:g}; indels are excluded by the substitution-only benchmark",
             "eligible_variants": sum(summaries[dms_id]["n_variants"] for dms_id in selected_ids),
             "selected_dms_ids": selected_ids,
             "missing_published_scores": {
@@ -987,13 +991,13 @@ training or inference and does not download the 1.9 GB model-score archive.
 
 All 217 substitution assay CSVs were scanned using every measured row. Eligibility
 is based on the arithmetic mean number of colon-separated substitution tokens in
-`mutant`, strictly greater than 1.5. No variant rows were filtered to calculate
+`mutant`, strictly greater than {MIN_MEAN_MUTATIONS:g}. No variant rows were filtered to calculate
 that mean. The v1.3 archive contains {summary_totals['n_variants']:,} rows; the
 selected {len(selected_ids)} assays contain
 {sum(summaries[dms_id]['n_variants'] for dms_id in selected_ids):,} complete measured
 rows. Every selected row was checked against the official target sequence: the
 WT letter and position match, the labels reproduce `mutated_sequence`, and the
-fitness value is finite. Every selected genotype is unique. The 36-assay cohort
+fitness value is finite. Every selected genotype is unique. The {len(selected_ids)}-assay cohort
 is recomputed from the current v1.3 release and is not copied from an earlier
 paper table with rounded mutation-depth summaries.
 
@@ -1044,7 +1048,7 @@ subprocesses. A worker is stopped above the configured resident-memory ceiling
 or assay timeout;
 individual metric limits and incomplete metric reasons are recorded in the output.
 Use `--limit 3` for an explicitly partial preview.
-    """,
+    """.rstrip() + "\n",
         encoding="utf-8",
     )
 
@@ -1129,8 +1133,11 @@ def _run(args: argparse.Namespace) -> None:
     if set(performance) != set(reference):
         raise ValueError("Current per-DMS score IDs do not match v1.3 reference IDs exactly")
     eligible_ids = sorted(dms_id for dms_id, row in summaries.items() if row["eligible"])
-    if len(eligible_ids) != 36:
-        raise ValueError(f"Expected 36 eligible assays at mean >1.5; found {len(eligible_ids)}")
+    if len(eligible_ids) != EXPECTED_ELIGIBLE:
+        raise ValueError(
+            f"Expected {EXPECTED_ELIGIBLE} eligible assays at mean >{MIN_MEAN_MUTATIONS:g}; "
+            f"found {len(eligible_ids)}"
+        )
     selected_ids = eligible_ids if args.limit is None else eligible_ids[: args.limit]
     if args.only:
         unknown = set(args.only) - set(eligible_ids)
@@ -1234,7 +1241,7 @@ def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--limit", type=int, help="process the first N eligible assays (partial preview)")
     parser.add_argument("--only", action="append", help="process one eligible DMS_id; repeatable")
-    parser.add_argument("--keep-full-cohort", action="store_true", help="keep all 36 records in public outputs during targeted retry runs")
+    parser.add_argument("--keep-full-cohort", action="store_true", help="keep the full eligible cohort in public outputs during targeted retry runs")
     parser.add_argument("--force", action="store_true", help="recompute assay feature caches")
     parser.add_argument("--assemble-only", action="store_true", help="rewrite JSON and reports from verified cached results without launching workers")
     parser.add_argument("--retry-failed", action="store_true", help="retry failed builds and metrics with timeout/resource-limit reasons only")
