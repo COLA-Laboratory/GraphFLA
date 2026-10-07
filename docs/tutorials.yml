@@ -1,5 +1,35 @@
 source_dir: ../tutorials/datasets
 notebooks:
+- slug: protein
+  title: Protein engineering
+  notebook: 01_gb1_landscape.ipynb
+  data:
+  - gb1.csv
+  topic: Protein binding
+  variables: Amino acids at positions 39, 40, 41 and 54
+  objective: Maximise IgG-Fc binding fitness
+  icon: material/test-tube
+  study: GB1 · Protein G domain B1
+- slug: antibiotic-resistance
+  title: Antibiotic resistance evolution
+  notebook: 02_dhfr_landscape.ipynb
+  data:
+  - dhfr.csv
+  topic: Antibiotic resistance
+  variables: Nine nucleotides in codons 26, 27 and 28
+  objective: Maximise fitness under trimethoprim
+  icon: material/dna
+  study: DHFR · Trimethoprim selection in E. coli
+- slug: ribozyme
+  title: Ribozyme evolution
+  notebook: 03_ribozyme_landscape.ipynb
+  data:
+  - ribozyme.csv
+  topic: Catalytic RNA
+  variables: Nucleotides at 14 variable positions
+  objective: Maximise log₁₀ ligase activity
+  icon: material/link-variant
+  study: Ribozymes · HDV and class III ligase
 - slug: suzuki
   title: Chemical reaction optimization
   notebook: 04_suzuki_landscape.ipynb

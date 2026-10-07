@@ -78,7 +78,7 @@ hero:
     label: landscape types for sequences, categorical, ordinal and mixed data
   - value: '8'
     label: model landscapes and benchmark problems
-  - value: '9'
+  - value: '12'
     label: step-by-step tutorials on published data
   - value: '179'
     label: curated datasets from biology, chemistry and materials science
@@ -586,6 +586,24 @@ cases:
     to amino acids and reaction conditions, alloy compositions and neural architectures, drug doses and compiler
     flags.
   stories:
+    protein:
+      title: Protein engineering
+      subtitle: GB1 · Protein G domain B1
+      unit: protein variants
+      description: Amino acids at four positions of an antibody-binding protein domain, scored by binding to an
+        antibody fragment.
+    antibiotic-resistance:
+      title: Antibiotic resistance evolution
+      subtitle: DHFR · Trimethoprim selection in E. coli
+      unit: gene variants
+      description: Nine nucleotides in three codons of an essential bacterial enzyme, scored by growth in the presence
+        of the antibiotic trimethoprim.
+    ribozyme:
+      title: Ribozyme evolution
+      subtitle: Ribozymes · HDV and class III ligase
+      unit: RNA variants
+      description: Every combination of the fourteen nucleotide differences between two catalytic RNAs, scored by
+        ligation activity.
     suzuki:
       title: Chemical reaction optimization
       subtitle: Suzuki–Miyaura coupling

@@ -32,10 +32,13 @@ Full documentation, including the API reference, is at [colalab.ai/GraphFLA](htt
 
 ## Tutorials
 
-These nine notebooks include worked code and saved outputs, with their [input data](tutorials/datasets/data/) alongside them. Each one also opens in Google Colab, where it installs GraphFLA and downloads its data.
+These twelve notebooks include worked code and saved outputs, with their [input data](tutorials/datasets/data/) alongside them. Each one also opens in Google Colab, where it installs GraphFLA and downloads its data.
 
 | Dataset | Application | Colab |
 |---|---|---|
+| [GB1](tutorials/datasets/01_gb1_landscape.ipynb) | Protein variants and antibody binding | |
+| [DHFR](tutorials/datasets/02_dhfr_landscape.ipynb) | Gene variants and antibiotic resistance | |
+| [Ribozymes](tutorials/datasets/03_ribozyme_landscape.ipynb) | RNA variants and catalytic activity | |
 | [Suzuki-Miyaura](tutorials/datasets/04_suzuki_landscape.ipynb) | Chemical reaction conditions | [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/17ef8wR3DNM8URikhJm73YeziTgoqTeVQ) |
 | [Flow semihydrogenation](tutorials/datasets/05_flow_semihydrogenation_landscape.ipynb) | Electrochemical process settings | [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/1YpJbji2XZU_lNHMSkxYQj7Yp7om8tiZM) |
 | [W-Re-Os alloys](tutorials/datasets/06_alloy_landscape.ipynb) | Alloy composition | [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/1Q8ieoHAUOKkCfjSyYGwFCCyvZBx9zCq-) |

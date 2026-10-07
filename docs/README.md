@@ -12,7 +12,7 @@ types pages and the deleted EE entry are also removed. Analysis results use the
 current source's ordinary dictionary contracts.
 Landscapes, Analysis and Problems are in the active navigation; other old
 template samples are excluded from builds.
-Nine dataset tutorials are also available, generated from the canonical
+Twelve dataset tutorials are also available, generated from the canonical
 executed notebooks in `tutorials/datasets/`. Their catalog is `docs/tutorials.yml`.
 Catalog `title` names the optimization problem in navigation, the tutorial index
 and the page heading; `study` identifies the dataset or experimental system beneath

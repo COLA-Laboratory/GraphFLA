@@ -1,0 +1,6 @@
+<svg class="gfl-icon" viewBox="0 0 48 48" aria-hidden="true">
+<path class="gfl-icon__soft" d="M18 38 H30 M18 32 H30 M18 26 H30" stroke-width="1.3"/>
+<path d="M10 44 H18 V22 C18 7 30 7 30 22 V44 H38"/>
+<circle class="gfl-icon__plate" cx="18" cy="44" r="2.6"/>
+<circle class="gfl-icon__accent-dot" cx="24" cy="10.8" r="3.6"/>
+</svg>

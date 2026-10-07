@@ -157,8 +157,8 @@ def add_tutorials(files, config, catalog):
         )
     index = (
         "---\ntitle: Tutorials\nicon: material/book-open-page-variant-outline\n---\n\n# Tutorials\n\n"
-        "Explore GraphFLA with nine datasets, from chemical reactions and materials to "
-        "neural architectures and compiler settings. Each tutorial takes you from "
+        "Explore GraphFLA with twelve datasets, from protein, enzyme and RNA evolution to "
+        "chemical reactions, materials, neural architectures and compiler settings. Each tutorial takes you from "
         "preparing the data to building a landscape and interpreting its analysis.\n\n"
         "Choose an optimization problem below. Every page includes Python code, saved results, "
         "a downloadable notebook with its data, and a link to run it in Google Colab.\n\n"
