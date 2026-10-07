@@ -730,7 +730,7 @@ insights:
         associated publication.
     evolution:
       title: Directed evolution
-      description: Up to 480 evaluations · 10 runs per landscape
+      description: 18 near-complete combinatorial DMS assays
       outcome_label: Search strategy
       y_label: Best fitness percentile
       accessible_description: Each point is a protein landscape. Select a feature and a search strategy to compare
