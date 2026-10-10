@@ -434,14 +434,13 @@
 /* Performance ----------------------------------------------------------------- */
 
 .gfl-performance {
-  display: flex;
-  flex-wrap: wrap;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 3fr);
   align-items: stretch;
   gap: var(--gfl-space-6);
 }
 
 .gfl-performance__summary {
-  flex: 1 1 230px;
   min-width: 0;
   display: flex;
   flex-direction: column;
@@ -454,9 +453,47 @@
   border-top: 1px solid var(--gfl-color-line);
 }
 
-.gfl-performance .gfl-chart-card {
-  flex: 1.5 1 320px;
+.gfl-performance__charts {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-auto-rows: 1fr;
+  gap: var(--gfl-space-6);
   min-width: 0;
+}
+
+.gfl-performance .gfl-chart-card {
+  min-width: 0;
+}
+
+/* Keep peer charts together when the summary no longer fits beside them. */
+@media (max-width: 1000px) {
+  .gfl-performance { grid-template-columns: minmax(0, 1fr); }
+  .gfl-performance__summary {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    align-items: start;
+  }
+  .gfl-performance__summary > * + * {
+    padding-top: 0;
+    border-top: 0;
+  }
+  .gfl-performance__summary > .gfl-legend {
+    grid-column: 1 / -1;
+    padding-top: var(--gfl-space-5);
+    border-top: 1px solid var(--gfl-color-line);
+  }
+}
+
+@media (max-width: 720px) {
+  .gfl-performance__charts { grid-template-columns: minmax(0, 1fr); }
+}
+
+@media (max-width: 600px) {
+  .gfl-performance__summary { grid-template-columns: minmax(0, 1fr); }
+  .gfl-performance__summary > * + * {
+    padding-top: var(--gfl-space-5);
+    border-top: 1px solid var(--gfl-color-line);
+  }
 }
 
 .gfl-performance__foot {

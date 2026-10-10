@@ -9,9 +9,11 @@
         {% endfor %}
         {{ ui.legend(performance.legend, "column") }}
       </div>
-      {% for chart in performance.charts %}
-      {{ ui.chart_card(chart) }}
-      {% endfor %}
+      <div class="gfl-performance__charts">
+        {% for chart in performance.charts %}
+        {{ ui.chart_card(chart) }}
+        {% endfor %}
+      </div>
     </div>
     <div class="gfl-performance__foot">
       <p class="gfl-note">{{ performance.footnote }}</p>
