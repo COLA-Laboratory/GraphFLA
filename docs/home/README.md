@@ -21,7 +21,7 @@ open docs/home/dist/styleguide.html               # the design system, rendered
 | Wording, links and illustrative demo tables/profiles | `content.yml` | Inline markup: `*accent*`, `` `code` ``. |
 | The markup of a component | `templates/macros.html` | One macro per component. |
 | The markup or order of a section | `templates/sections/*.html`, `templates/home.html` | |
-| A case-study card | `content.yml` → `cases.stories`, `docs/tutorials.yml`, `icons/cases/<slug>.svg` | Use the optimization problem as the title, with the dataset or study context above it. |
+| A case-study card | `content.yml` → `cases.cover_style` / `cases.stories`, `docs/tutorials.yml`, `covers/<style>/<slug>.webp` | Use the optimization problem as the title, with one study subtitle below it. |
 | The benchmark numbers and charts | `docs/content/assets/benchmarks/construction.json` | Re-record with `docs/scripts/benchmark_home.py`; never typed by hand. |
 | A landscape drawing | `figures/scenes.py` | Shapes in `figures/surfaces.py`, line style in `figures/terrain.py`. |
 | The five interactive illustrations | `content.yml`, `figures/examples.py` | Keep the original `surfaces.workflow` three-peak shape, compact tables and profile bars. Do not replace them with real-data projections. |
@@ -79,10 +79,19 @@ record, the worked example) and `build.py` renders the templates.
 
 ## Extending
 
-**A new case study** needs an optimization-problem title, study subtitle, short description and count
-unit in `cases.stories`,
-an entry in `docs/tutorials.yml`, and `icons/cases/<slug>.svg` on the 48×48 grid of the others (`class="gfl-icon"`, parts
-marked with the `gfl-icon__*` classes).
+**A new case study** needs an optimization-problem title and study subtitle in
+`cases.stories`, an entry in `docs/tutorials.yml`, and a 1536×1024 WebP cover in
+each of `covers/a/`, `covers/b/` and `covers/c/`. Retain description/count metadata
+for data validation, and the small SVG icon for the style guide.
+
+**Case-cover style** is selected at build time by `cases.cover_style` in
+`content.yml`: `a` is natural scientific rendering, `b` is simplified game-style
+3D, and `c` is painted illustration (the default). Change this one value and
+rebuild/deploy to switch the full set. The build rejects unknown styles or missing
+covers, and packages only the selected collection. All three collections remain
+in source control. `covers/manifest.json` records the image-generation prompts and
+asset hashes. Covers contain no text; the shared HTML macro renders accessible
+titles and study subtitles, while CSS controls cropping, contrast and padding.
 
 **A new section**: add its copy to `content.yml`, a partial in
 `templates/sections/`, one `{% include %}` in `templates/home.html`, and its layout
@@ -119,8 +128,9 @@ Restart `serve` after changes to Python build modules.
 Navigation links, exact function anchors and the four research references live in
 `content.yml`. Case titles name the optimization problem; subtitles identify the dataset or
 study context. Descriptions explain the choices and objective in a concise
-academic style. The footer count is generated from the first CSV in each
-tutorial catalog entry (the configuration table; later files are lookups).
+academic style. The retained count metadata is generated from the first CSV in each
+tutorial catalog entry (the configuration table; later files are lookups); cover cards
+show only their title and study subtitle, without a numeric footer or divider.
 Set `data_has_header: false` for a headerless table, as used by perovskites.
 Metrics and Case studies are plain links to homepage sections. Scrolling uses
 CSS `scroll-behavior`, with `prefers-reduced-motion` respected. The GitHub link

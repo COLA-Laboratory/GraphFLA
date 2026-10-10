@@ -21,6 +21,7 @@ REPO = DOCS.parent
 HOME = DOCS / "home"
 sys.path.insert(0, str(HOME))
 import build as home_build
+import page as home_page
 from charts import Series, line_chart
 from figures import load_tokens, render
 from figures.camera import Camera
@@ -103,27 +104,46 @@ class LandingPage(unittest.TestCase):
             self.assertIsNotNone(page.find(id=anchor), anchor)
         self.assertIsNotNone(page.find("footer"))
 
-    def test_every_tutorial_has_a_card_with_its_own_icon(self):
+    def test_every_tutorial_has_a_cover_card_and_accessible_html_copy(self):
         cards = self.pages["index"].select(".gfl-case")
         self.assertEqual([card["href"] for card in cards], [f"tutorials/{item['slug']}/" for item in self.tutorials])
         for item, card in zip(self.tutorials, cards):
-            self.assertTrue((HOME / "icons" / "cases" / f"{item['slug']}.svg").is_file(), item["slug"])
-            self.assertIsNotNone(card.find("svg"))
-
-    def test_cases_explain_the_problem_and_show_the_input_table_size(self):
-        page = self.pages["index"]
-        self.assertFalse(page.select(".gfl-tag"))
-        source = REPO / "tutorials" / "datasets" / "data"
-        for item, card in zip(self.tutorials, page.select(".gfl-case")):
             self.assertEqual(card.h3.get_text(strip=True), item["title"])
-            self.assertNotEqual(item["title"], item["study"])
-            self.assertTrue(card.select_one(".gfl-case__topic").get_text(strip=True))
-            with (source / item["data"][0]).open(newline="") as handle:
-                count = len(list(csv.reader(handle))) - int(item.get("data_has_header", True))
-            if item["slug"] == "perovskite":
-                self.assertEqual(count, 16 * 3 * 4)
-            self.assertIn(f"{count:,}", card.select_one(".gfl-case__source").get_text())
-            self.assertTrue(card.select_one(".gfl-case__description").get_text(strip=True))
+            self.assertEqual(card.select_one(".gfl-case__topic").get_text(strip=True), item["study"])
+            self.assertEqual(card["aria-labelledby"], card.h3["id"])
+            self.assertEqual(card["aria-describedby"], card.p["id"])
+            image = card.find("img")
+            self.assertEqual(image["alt"], "")
+            self.assertEqual((image["width"], image["height"]), ("1536", "1024"))
+            self.assertTrue((Path(self.temp.name) / image["src"]).is_file())
+            self.assertIsNone(card.find("svg"))
+            self.assertIsNone(card.select_one(".gfl-case__description"))
+            self.assertIsNone(card.select_one(".gfl-case__source"))
+
+    def test_cover_style_configuration_builds_each_preserved_collection(self):
+        self.assertIn(self.content["cases"]["cover_style"], ("a", "b", "c"))
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            content = yaml.safe_load((HOME / "content.yml").read_text())
+            config = root / "content.yml"
+            for style in ("a", "b", "c"):
+                with self.subTest(style=style):
+                    content["cases"]["cover_style"] = style
+                    config.write_text(yaml.safe_dump(content))
+                    with patch.object(home_page, "CONTENT", config):
+                        out = home_build.build(root / "reused-output")
+                    page = BeautifulSoup((out / "index.html").read_text(), "html.parser")
+                    images = page.select(".gfl-case__image")
+                    self.assertEqual(len(images), len(self.tutorials))
+                    for item, image in zip(self.tutorials, images):
+                        self.assertEqual(image["src"], f"assets/covers/{style}/{item['slug']}.webp")
+                        self.assertTrue((out / image["src"]).is_file())
+                    self.assertEqual({p.name for p in (out / "assets/covers").iterdir()}, {style})
+        with self.assertRaisesRegex(ValueError, "cases.cover_style"):
+            home_page.case_cards("tutorials/", self.content["cases"]["stories"], "unknown")
+        with patch.object(home_page, "HOME", Path(self.temp.name) / "missing"):
+            with self.assertRaisesRegex(FileNotFoundError, "Missing case cover"):
+                home_page.case_cards("tutorials/", self.content["cases"]["stories"], "c")
 
     def test_all_four_research_papers_have_individual_links(self):
         papers = self.pages["index"].select(".gfl-citation")

@@ -68,6 +68,11 @@ def build_assets(assets):
     figures = render(assets / "figures")
     figures.update(render_examples(assets / "figures", load_tokens()))
     page = load_page(figures)
+    cover_style = page["cases"]["cover_style"]
+    cover_assets = assets / "covers"
+    if cover_assets.exists():
+        shutil.rmtree(cover_assets)
+    shutil.copytree(HOME / "covers" / cover_style, cover_assets / cover_style)
     (assets / "data").mkdir(parents=True, exist_ok=True)
     for path in (HOME / "examples").glob("*"):
         shutil.copyfile(path, assets / "data" / path.name)

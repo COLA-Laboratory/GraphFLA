@@ -580,6 +580,8 @@ performance:
   footnote: Complete binary landscapes with 8 to 20 variables. Apple M4 Pro, Python 3.9, single thread. Peak memory
     includes Python and its dependencies. The baseline is a nested Python loop with a dense distance matrix.
 cases:
+  # a: natural scientific rendering; b: game-style 3D; c: painted illustration
+  cover_style: c
   eyebrow: Case studies
   title: Applicable to any combinatorial optimization problem.
   intro: GraphFLA makes no assumption about what the variables or the objective represent. The same analysis applies

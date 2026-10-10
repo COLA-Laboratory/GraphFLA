@@ -77,7 +77,7 @@ def load_page(figures):
         example.update(icon=icons[example["id"]], lines=highlight(example["source"]))
 
     page["performance"].update(benchmark(page["performance"]))
-    page["cases"]["cards"] = case_cards(page["links"]["tutorials"], page["cases"]["stories"])
+    page["cases"]["cards"] = case_cards(page["links"]["tutorials"], page["cases"]["stories"], page["cases"]["cover_style"])
     return page
 
 
@@ -149,8 +149,10 @@ def _ticks(series, candidates):
     return candidates[first:last + 1]
 
 
-def case_cards(base_url, stories):
+def case_cards(base_url, stories, cover_style):
     """Join optimization problems with their tutorial inputs, scale and destination."""
+    if cover_style not in ("a", "b", "c"):
+        raise ValueError("cases.cover_style must be a, b or c")
     cards = []
     catalog = yaml.safe_load(TUTORIALS.read_text())
     source = TUTORIALS.parent / catalog["source_dir"] / "data"
@@ -161,7 +163,10 @@ def case_cards(base_url, stories):
             if item.get("data_has_header", True):
                 next(rows)
             count = sum(1 for _ in rows)
+        cover = f"covers/{cover_style}/{item['slug']}.webp"
+        if not (HOME / cover).is_file():
+            raise FileNotFoundError(f"Missing case cover: {cover}")
         cards.append({**stories[item["slug"]], "slug": item["slug"],
-                      "count": count,
+                      "count": count, "cover": cover,
                       "href": f"{base_url}{item['slug']}/"})
     return cards

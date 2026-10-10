@@ -92,15 +92,12 @@
 {%- endmacro %}
 
 {% macro case_card(case) -%}
-<a class="gfl-card gfl-case" href="{{ case.href }}">
-  <div class="gfl-case__head">
-    <span class="gfl-icon-tile">{{ icon("cases/" ~ case.slug) }}</span>
-    <div>
-      <p class="gfl-case__topic">{{ case.subtitle }}</p>
-      <h3 class="gfl-heading gfl-heading--3">{{ case.title }}</h3>
-    </div>
+<a class="gfl-card gfl-case" href="{{ case.href }}" aria-labelledby="case-{{ case.slug }}" aria-describedby="study-{{ case.slug }}">
+  <img class="gfl-case__image" src="{{ asset(case.cover) }}" alt=""
+       width="1536" height="1024" loading="lazy" decoding="async">
+  <div class="gfl-case__copy">
+    <h3 class="gfl-heading gfl-case__title" id="case-{{ case.slug }}">{{ case.title }}</h3>
+    <p class="gfl-case__topic" id="study-{{ case.slug }}">{{ case.subtitle }}</p>
   </div>
-  <p class="gfl-case__description">{{ case.description }}</p>
-  <p class="gfl-case__source"><span>{{ "{:,}".format(case.count) }} {{ case.unit }}</span>{{ arrow(case.href) }}</p>
 </a>
 {%- endmacro %}

@@ -10,6 +10,12 @@
   --gfl-color-card: #1B1C1F;
   --gfl-color-well: #121315;
 
+  /* Case-cover readability */
+  --gfl-color-cover: #0B0E12;
+  --gfl-color-cover-clear: rgba(11, 14, 18, 0);
+  --gfl-color-cover-light: rgba(11, 14, 18, 0.10);
+  --gfl-color-cover-heavy: rgba(11, 14, 18, 0.86);
+
   /* Text, strongest to faintest */
   --gfl-color-text: #EEF1F5;
   --gfl-color-text-soft: #C9D0DA;
@@ -52,6 +58,7 @@
   --gfl-text-base: 17px;
   --gfl-text-lg: 19px;
   --gfl-text-h3: 23px;
+  --gfl-text-cover-mobile: 22px;
   --gfl-text-h2: clamp(30px, 3.3vw, 46px);
   --gfl-text-h1: clamp(40px, 5vw, 66px);
   --gfl-text-stat: 40px;
