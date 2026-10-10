@@ -100,6 +100,7 @@ extra_css:
   - assets/site.css
   - assets/api.css
   - assets/tutorials.css
+  - assets/home/css/polish.css
 extra_javascript:
   - assets/home/home.js
   - assets/api.js

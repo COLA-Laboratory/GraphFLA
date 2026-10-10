@@ -11,6 +11,7 @@ import re
 import sys
 import tempfile
 import unittest
+import xml.etree.ElementTree as ET
 from pathlib import Path
 
 import yaml
@@ -28,6 +29,7 @@ from figures.camera import Camera
 from figures.palette import Palette
 from figures.scenes import hero
 from figures import surfaces
+from figures import examples as workflow_figures
 
 COLOUR = re.compile(r"#[0-9a-fA-F]{3,8}\b|\brgba?\(|\bhsla?\(")
 STYLED_SOURCES = [path for pattern in ("styles/*.css", "templates/**/*.html", "icons/**/*.svg")
@@ -203,6 +205,32 @@ class LandingPage(unittest.TestCase):
         camera = Camera(385, 338, 505, 38, 27, 265)
         peak = camera.project(0.40, 0.36, surfaces.hero(0.40, 0.36))
         self.assertLess(sum((a - b) ** 2 for a, b in zip(endpoint, peak)), 9)
+
+    def test_workflow_layers_share_projection_and_keep_every_neighbor_edge(self):
+        upper = Camera(**workflow_figures.UPPER)
+        lower = Camera(**workflow_figures.LOWER)
+        offsets = []
+        for u, v in ((0, 0), (1, 0), (1, 1), (0, 1), (0.37, 0.62)):
+            top, bottom = upper.project(u, v), lower.project(u, v)
+            self.assertEqual(top[0], bottom[0])
+            offsets.append(bottom[1] - top[1])
+        self.assertLess(max(offsets) - min(offsets), 1e-9)
+        self.assertGreater(offsets[0], 0)
+        for key, ((nodes, edges), _, _) in workflow_figures.SCENARIOS.items():
+            with self.subTest(scenario=key):
+                figure, stats = workflow_figures.draw(key, load_tokens())
+                elements = list(ET.fromstring(figure.svg()).iter())
+                drawn_nodes = {int(e.attrib["data-node"]) for e in elements if "data-node" in e.attrib}
+                drawn_edges = {tuple(map(int, e.attrib["data-edge"].split("-")))
+                               for e in elements if "data-edge" in e.attrib}
+                self.assertEqual(drawn_nodes, set(range(len(nodes))))
+                self.assertEqual(drawn_edges, set(edges))
+                guides = [e for e in elements if e.attrib.get("stroke-dasharray") == "2 6"]
+                self.assertEqual(len(guides), stats["local_optima"])
+                for guide in guides:
+                    coordinates = list(map(float, re.findall(r"-?\d+(?:\.\d+)?", guide.attrib["d"])))
+                    self.assertAlmostEqual(coordinates[0], coordinates[2], places=2)
+                self.assertEqual(figure.labels["surface"]["x"], figure.labels["graph"]["x"])
 
     def test_quick_start_examples_load_and_analyze_their_datasets(self):
         try:

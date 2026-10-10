@@ -18,7 +18,7 @@ from markupsafe import Markup, escape
 from page import HOME, load_page
 
 DIST = HOME / "dist"
-STYLESHEETS = ("tokens.css", "base.css", "components.css", "sections.css", "insights.css")
+STYLESHEETS = ("tokens.css", "base.css", "components.css", "sections.css", "insights.css", "polish.css")
 # Must provide the families named by the --gfl-font-* tokens.
 FONTS = ("https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800"
          "&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap")
@@ -79,6 +79,7 @@ def build_assets(assets):
     (assets / "css").mkdir(parents=True, exist_ok=True)
     for sheet in (*STYLESHEETS, "styleguide.css"):
         shutil.copyfile(HOME / "styles" / sheet, assets / "css" / sheet)
+    shutil.copytree(HOME / "fonts", assets / "fonts", dirs_exist_ok=True)
     shutil.copyfile(HOME / "scripts" / "home.js", assets / "home.js")
     shutil.copyfile(HOME / "scripts" / "insights.js", assets / "insights.js")
     shutil.copytree(HOME / "vendor", assets / "vendor", dirs_exist_ok=True,

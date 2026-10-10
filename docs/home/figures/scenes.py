@@ -9,7 +9,7 @@ from .camera import Camera
 from .geometry import ascend, find_peaks, pick_start, winding_ascent
 from .palette import Palette, load_tokens
 from .svg import arrow_head, disc, document, path_data, stroke
-from .terrain import terrain
+from .facets import terrain
 
 CARD_WIDTH, CARD_HEIGHT = 560, 300
 

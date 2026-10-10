@@ -1,19 +1,17 @@
 """Workflow illustrations: each scenario's neighbor graph and the landscape above it.
 
-Every scenario has the graph of its own kind of search space, laid out by stress
-majorization, and its own surface. Node fitness is the surface height at the node,
-so the local optima and fitness-distance correlation of the drawn graph are
-computed from the drawing, not asserted.
+Each scenario has its own search-space graph and authored surface. Fitness
+decays with graph distance to the selected optima, whose coordinates also locate
+the surface peaks. Both layers share one camera and the same candidate positions.
 """
 import math
-import random
 
 from .camera import Camera
 from .graphs import distances, fit_disc, product, simplex, stress_layout
 from .palette import Palette
 from .scenes import Figure
 from .svg import disc, path_data
-from .terrain import terrain
+from .facets import terrain
 
 BINARY, CATEGORY = (2, "categorical"), "categorical"
 
@@ -28,12 +26,11 @@ SCENARIOS = {
 # Where the main summit sits: left of centre and toward the back, so the surface does not hide it.
 SUMMIT = (0.40, 0.40)
 PEAK_HEIGHT = 0.72
-WIDTH, HEIGHT = 560, 520
+WIDTH, HEIGHT = 560, 560
 UPPER = dict(cx=280, cy=205, scale=365, azimuth=38, tilt=26, zscale=178)
-LOWER = dict(UPPER, cy=388)
-# Each edge bends to a random side by up to this fraction of its length, so the arcs
-# weave in every direction instead of all bowing the same way.
-BEND = (0.06, 0.26)
+LOWER = dict(UPPER, cy=413)
+# Both layers share the same camera; only the vertical screen position differs.
+BEND = 0.06
 
 
 def _peaks(points, hops, widths):
@@ -122,44 +119,38 @@ def draw(key, tokens):
     optima = [i for i in range(len(points)) if all(fitness[i] > fitness[j] for j in neighbors[i])]
     assert sorted(optima) == sorted(centres), key
     best = centres[0]
-    low, top = min(fitness), fitness[best]
     to_best = hops[best]
     others = [i for i in range(len(points)) if i != best]
     fdc = spearman([fitness[i] for i in others], [to_best[i] for i in others])
 
-    floor = [lower.project(*p) for p in ((0, 0), (1, 0), (1, 1), (0, 1), (0, 0))]
-    figure.body.append(f'<path d="{path_data(floor)}" fill="none" stroke="{palette.tone(0.28)}" stroke-width="0.7"/>')
-    # Projection guides tie each local optimum in the graph to its point on the surface.
-    for i in optima:
+    floor = [lower.project(*point) for point in ((0, 0), (1, 0), (1, 1), (0, 1), (0, 0))]
+    figure.body.append(f'<path d="{path_data(floor)}" fill="none" stroke="{palette.tone(0.12)}" stroke-width=".65"/>')
+    for i in centres:
         guide = [lower.project(*points[i]), upper.project(*points[i], height(*points[i]))]
-        figure.body.append(f'<path d="{path_data(guide)}" fill="none" stroke="{palette.tone(0.3)}" '
-                           'stroke-width="0.8" stroke-dasharray="3 5"/>')
-    rng = random.Random(seed)
-    arcs = [_arc(lower, points[a], points[b], rng.choice((-1, 1)) * rng.uniform(*BEND)) for a, b in edges]
-    longest = max(length for _, length in arcs)
-    # Long links fade slightly so the local structure stays readable.
-    for d, length in sorted(arcs, key=lambda arc: -arc[1]):
-        strength = 0.62 - 0.22 * length / longest
-        figure.body.append(f'<path d="{d}" fill="none" stroke="{palette.tone(strength)}" stroke-width="1"/>')
-    radius = 4.2 if len(points) > 40 else 4.8
-    for i in sorted(range(len(points)), key=lambda i: lower.rotate(*points[i])[1]):
-        quality = (fitness[i] - low) / (top - low)
-        if i == best:
-            color, r = palette.accent, radius + 1.6
-        elif i in optima:
-            color, r = palette.mark, radius + 0.6
-        else:
-            color, r = palette.tone(0.3 + 0.45 * quality), radius
-        figure.body.append(disc(lower.project(*points[i]), r, color, palette.surface, 1.2))
-
-    figure.body += terrain(upper, height, palette, step=0.04, every=4, density=0.8)
-    for i in optima:
+        figure.body.append(f'<path d="{path_data(guide)}" fill="none" stroke="{palette.tone(0.18)}" '
+                           'stroke-width=".65" stroke-dasharray="2 6"/>')
+    figure.body += terrain(upper, height, palette)
+    for i in centres:
         u, v = points[i]
         if upper.visible(height, u, v):
             figure.body.append(disc(upper.project(u, v, height(u, v) + 0.008), 5 if i == best else 2.8,
                                     palette.accent if i == best else palette.mark, palette.surface, 1.2))
-    figure.label("surface", (24, 20), "title")
-    figure.label("graph", (344, 467), "title")
+    # Construct shallow arcs on the same floor plane, then project vertices and controls together.
+    for a, b in edges:
+        left, right = points[a], points[b]
+        du, dv = right[0] - left[0], right[1] - left[1]
+        midpoint = ((left[0] + right[0]) / 2, (left[1] + right[1]) / 2)
+        side = 1 if (midpoint[0] - 0.5) * (-dv) + (midpoint[1] - 0.5) * du > 0 else -1
+        path, _ = _arc(lower, left, right, BEND * side)
+        figure.body.append(f'<path data-edge="{a}-{b}" d="{path}" fill="none" '
+                           f'stroke="{palette.tone(0.30)}" stroke-width=".85" stroke-linecap="round"/>')
+    for i, point in enumerate(points):
+        color, radius = ((palette.accent, 6.1) if i == best else
+                         (palette.mark, 5.2) if i in centres else (palette.node, 4.8))
+        mark = disc(lower.project(*point), radius, color, palette.surface, 1.4)
+        figure.body.append(mark.replace('<circle ', f'<circle data-node="{i}" '))
+    figure.label("surface", (24, 14), "title")
+    figure.label("graph", (24, 326), "title")
     return figure, {"nodes": len(points), "local_optima": len(optima), "fdc": fdc}
 
 

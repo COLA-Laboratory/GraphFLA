@@ -5,6 +5,24 @@
    change here reaches the whole site. */
 
 :root {
+  /* Approved graphite-gold terrain (A1) */
+  --gfl-color-facet-low: #454e52;
+  --gfl-color-facet-mid: #a6a28a;
+  --gfl-color-facet-high: #d6bc64;
+  --gfl-color-facet-edge: #182026;
+  --gfl-color-node: #b3b0a0;
+
+  /* Homepage refinement */
+  --gfl-color-body-muted: #adb5c1;
+  --gfl-color-body-lede: #bac2cd;
+  --gfl-color-figure-caption: #b4bcc7;
+  --gfl-color-top-surface: #202329;
+  --gfl-color-top-text: #b9c0cb;
+  --gfl-color-top-border: #373c45;
+  --gfl-color-top-shadow: #0003;
+  --gfl-color-top-hover: #ffec3d;
+  --gfl-color-top-hover-border: #777243;
+
   /* Surfaces */
   --gfl-color-page: #0B0E14;
   --gfl-color-card: #1B1C1F;

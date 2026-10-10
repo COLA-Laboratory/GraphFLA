@@ -1,0 +1,227 @@
+@font-face {
+  font-family: Inter;
+  src: url('../fonts/inter-400.ttf') format('truetype');
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+}
+@font-face {
+  font-family: Inter;
+  src: url('../fonts/inter-500.ttf') format('truetype');
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+}
+@font-face {
+  font-family: Inter;
+  src: url('../fonts/inter-600.ttf') format('truetype');
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+}
+/* Homepage typography, proportions and figure captions. */
+.gfl-home {
+  --gfl-font-body: Inter,-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+  --gfl-text-h2: clamp(29px,2.6vw,36px);
+  --gfl-section-pad: clamp(56px,5.5vw,80px);
+  --gfl-color-text-muted: var(--gfl-color-body-muted);
+  font-size: 16px;
+  line-height: 1.6;
+  letter-spacing: -.006em;
+}
+.gfl-nav {
+  font-family: Inter,-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+}
+.gfl-home .gfl-heading--2 {
+  line-height: 1.16;
+  letter-spacing: -.023em;
+  text-wrap: balance;
+}
+.gfl-section__inner {
+  gap: 36px;
+}
+.gfl-section__head {
+  align-items: center;
+}
+.gfl-section__intro {
+  font-size: 15.5px;
+  line-height: 1.65;
+  max-width: 52ch;
+}
+.gfl-hero__copy .gfl-lede {
+  font-size: 18px;
+  line-height: 1.65;
+  max-width: 52ch;
+  color: var(--gfl-color-body-lede);
+}
+.gfl-section--dotted {
+  background-image: none;
+}
+.gfl-scenario__context {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 6px 16px;
+  margin-bottom: 12px;
+}
+.gfl-scenario__context .gfl-heading {
+  font-size: 18px;
+}
+.gfl-scenario__context p {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.6;
+}
+.gfl-panel {
+  border-radius: 12px;
+}
+.gfl-panel--figure .gfl-figure__label--title {
+  font-family: Inter,sans-serif;
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0;
+  color: var(--gfl-color-figure-caption);
+}
+.gfl-metric__media .gfl-figure {
+  max-width: 480px;
+  margin: 10px auto 0;
+}
+.gfl-metric__body {
+  gap: 12px;
+  padding-top: 20px;
+  padding-bottom: 20px;
+}
+.gfl-metric__text {
+  font-size: 15px;
+  line-height: 1.65;
+}
+.gfl-metric__question {
+  font-size: 16px;
+  line-height: 1.45;
+}
+.gfl-chip {
+  font-size: 12px;
+  padding: 4px 8px;
+}
+.gfl-insight {
+  padding: 22px;
+  border-radius: 12px;
+}
+.gfl-insight__heading {
+  margin-bottom: 18px;
+}
+.gfl-insight__heading h3 {
+  font-size: 21px;
+}
+.gfl-insight__heading p {
+  font-size: 13px;
+  line-height: 1.6;
+}
+.gfl-insight__canvas {
+  margin-top: 18px;
+}
+.gfl-insight__points circle {
+  fill-opacity: .8;
+  stroke-width: 1;
+}
+.gfl-insight__fit {
+  stroke-width: 1.5;
+  opacity: .8;
+}
+.gfl-insight__grid {
+  opacity: .65;
+}
+.gfl-insight__axis {
+  font-size: 13px;
+}
+.gfl-insight__label {
+  font-size: 14px;
+}
+.gfl-insights__footer {
+  font-size: 13px;
+  line-height: 1.6;
+}
+.gfl-case__copy {
+  letter-spacing: 0;
+}
+.gfl-citation {
+  border-radius: 12px;
+}
+.gfl-citation__title {
+  line-height: 1.5;
+}
+@media(min-width:601px) {
+  .gfl-scenario__context p {
+    padding-left: 16px;
+    border-left: 1px solid var(--gfl-color-line-strong);
+  }
+}
+@media(max-width:900px) {
+  .gfl-panel--figure .gfl-figure {
+    width: min(100%,510px);
+    margin-inline: auto;
+  }
+  .gfl-insight {
+    max-width: 760px;
+    width: 100%;
+    margin-inline: auto;
+  }
+}
+@media(max-width:600px) {
+  .gfl-home {
+    font-size: 15px;
+  }
+  .gfl-section__intro {
+    font-size: 15px;
+  }
+  .gfl-hero__copy .gfl-lede {
+    font-size: 17px;
+  }
+  .gfl-section__inner {
+    gap: 28px;
+  }
+  .gfl-insight {
+    padding: 18px;
+  }
+  .gfl-scenario__context {
+    gap: 4px;
+  }
+  .gfl-scenario__context p {
+    flex-basis: 100%;
+  }
+}
+body: has(.gfl-home) .md-top {;
+  background: var(--gfl-color-top-surface);
+  color: var(--gfl-color-top-text);
+  border: 1px solid var(--gfl-color-top-border);
+  box-shadow: 0 3px 14px var(--gfl-color-top-shadow);
+}
+body: has(.gfl-home) .md-top:hover {;
+  color: var(--gfl-color-top-hover);
+  border-color: var(--gfl-color-top-hover-border);
+}
+/* Workflow captions have one hierarchy and a consistent inset. */
+.gfl-panel--figure {
+  padding-top: 6px;
+  padding-bottom: 8px;
+}
+.gfl-panel--figure .gfl-figure {
+  margin-block: 0;
+}
+.gfl-panel--figure .gfl-figure__label--title {
+  left: 20px;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--gfl-color-figure-caption);
+}
+@media(max-width:900px) {
+  .gfl-panel--figure .gfl-figure {
+    width: 100%;
+    max-width: none;
+  }
+  .gfl-panel--figure .gfl-figure__image {
+    display: block;
+    width: min(100%,510px);
+    margin-inline: auto;
+  }
+}

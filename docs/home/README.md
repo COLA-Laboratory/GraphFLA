@@ -17,14 +17,14 @@ open docs/home/dist/styleguide.html               # the design system, rendered
 |---|---|---|
 | A colour, font, type size, spacing step, radius | `styles/tokens.css` | The only file with colour values. Figures pick the change up on the next build. |
 | How a component looks (button, card, chip, legend, chart…) | `styles/components.css` | |
-| How a section is laid out | `styles/sections.css` | |
+| How a section is laid out | `styles/sections.css`, `styles/polish.css` | Final homepage typography, spacing, compact charts and caption alignment live in `polish.css`. |
 | Wording, links and illustrative demo tables/profiles | `content.yml` | Inline markup: `*accent*`, `` `code` ``. |
 | The markup of a component | `templates/macros.html` | One macro per component. |
 | The markup or order of a section | `templates/sections/*.html`, `templates/home.html` | |
 | A case-study card | `content.yml` → `cases.cover_style` / `cases.stories`, `docs/tutorials.yml`, `covers/<style>/<slug>.webp` | Use the optimization problem as the title, with one study subtitle below it. |
 | The benchmark numbers and charts | `docs/content/assets/benchmarks/construction.json` | Re-record with `docs/scripts/benchmark_home.py`; never typed by hand. |
-| A landscape drawing | `figures/scenes.py` | Shapes in `figures/surfaces.py`, line style in `figures/terrain.py`. |
-| The five interactive illustrations | `content.yml`, `figures/examples.py` | Keep the original `surfaces.workflow` three-peak shape, compact tables and profile bars. Do not replace them with real-data projections. |
+| A landscape drawing | `figures/scenes.py` | Shapes in `figures/surfaces.py`, A1 faceted rendering in `figures/facets.py`. |
+| The five interactive illustrations | `content.yml`, `figures/examples.py` | Keep the authored height functions, compact tables and profile bars. Both layers must use the same camera and candidate coordinates, with vertical correspondence guides. |
 | The dataset catalogue | `catalogue.py` | Counts and links come from repository CSV files and data cards. |
 | Research scatter plots | `insights/`, `insight_data.py`, `scripts/insights.js`, `styles/insights.css` | Real prepared benchmark data, independent of the illustrative How it works demos. |
 | The homepage's search-result title and snippet | `content.yml` → `meta` | `document_title` is the browser and search-result title; `description` is the snippet. |
@@ -47,7 +47,7 @@ record, the worked example) and `build.py` renders the templates.
 - Lines are white at low opacity (`line`, `line-strong`) so they work on both surfaces.
 
 **Type**
-- Bricolage Grotesque for headings and large numbers, IBM Plex Sans for text,
+- Bricolage Grotesque for headings and large numbers, locally bundled Inter for homepage text,
   IBM Plex Mono for code and measured values.
 - Sizes come from the scale `--gfl-text-2xs` … `--gfl-text-lg` and the three
   heading sizes. No other font sizes.
@@ -57,8 +57,11 @@ record, the worked example) and `build.py` renders the templates.
 - Three radii: `sm` for chips and tags, `md` for controls, `lg` for cards.
 
 **Figures**
-- Line art only: contour lines plus fall lines down the slopes. No fills, no
-  lighting, no colour ramps.
+- Deterministic triangular surfaces use the A1 graphite-gold palette from the
+  `--gfl-color-facet-*` tokens. Shapes, camera positions and scientific paths remain independent of rendering.
+- Workflow graphs share the surface camera (only `cy` differs). Shallow edge
+  controls are constructed in the same candidate plane before projection; do not
+  distort the graph in screen space or reroute edges with large arcs.
 - Markers and walks are white; the one that reaches the global optimum is the accent.
 - Text never goes inside the SVG. A scene registers label positions
   (`Figure.label`) and the page lays the wording from `content.yml` over the image.
@@ -180,3 +183,7 @@ results are omitted for that selection, with the displayed dataset count updated
 The source page is `content/insights-sources.md`; preparation and provenance belong
 there and in the data files, not in long homepage notes. Data work is an explicit
 offline preparation step; building or browsing the site never trains models.
+
+The Inter font files in `fonts/` are distributed under the included SIL Open Font
+License. `build_assets` copies them for both the standalone preview and MkDocs;
+CSS uses relative URLs so deployment under `/GraphFLA/` remains supported.

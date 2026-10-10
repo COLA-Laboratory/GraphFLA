@@ -99,7 +99,7 @@
 
     function render(animate = true) {
       close();
-      const width = Math.max(220, canvas.clientWidth), height = Math.max(330, width * 0.72);
+      const width = Math.max(220, canvas.clientWidth), height = Math.min(350, Math.max(300, width * 0.55));
       currentWidth = width;
       const margin = {left: source.id === 'evolution' ? 92 : 60, right: 16, top: 20, bottom: width < 380 ? 70 : 58};
       const right = width - margin.right, bottom = height - margin.bottom;
@@ -158,7 +158,7 @@
             event.preventDefault(); show(this, d, true); publication.focus({preventScroll: true});
           }
         })
-        .transition(transition).attr('cx', d => x(d.x)).attr('cy', d => y(d.y)).attr('r', width < 380 ? 4.5 : 5);
+        .transition(transition).attr('cx', d => x(d.x)).attr('cy', d => y(d.y)).attr('r', width < 380 ? 3.5 : 4);
     }
     feature.addEventListener('change', () => render());
     outcome.addEventListener('change', () => render());

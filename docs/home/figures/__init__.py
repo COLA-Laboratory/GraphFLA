@@ -1,4 +1,4 @@
-"""Landscape illustrations of the GraphFLA landing page, drawn as SVG line art."""
+"""Landscape illustrations of the GraphFLA landing page, drawn as faceted SVG surfaces."""
 from .palette import Palette, load_tokens
 from .scenes import SCENES, render
 

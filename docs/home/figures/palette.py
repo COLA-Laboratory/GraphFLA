@@ -59,6 +59,10 @@ class Palette:
         Colour of the highlighted marker or walk.
     muted : str
         Colour of axes.
+    facet_low, facet_mid, facet_high, facet_edge : str
+        Terrain pigments and facet outline from the selected design tokens.
+    node : str
+        Ordinary neighbor-graph node fill.
     """
 
     surface: str
@@ -66,6 +70,11 @@ class Palette:
     mark: str
     accent: str
     muted: str
+    facet_low: str
+    facet_mid: str
+    facet_high: str
+    facet_edge: str
+    node: str
 
     @classmethod
     def from_tokens(cls, surface, tokens=None):
@@ -77,6 +86,11 @@ class Palette:
             mark=tokens["--gfl-color-mark"],
             accent=tokens["--gfl-color-accent"],
             muted=tokens["--gfl-color-text-muted"],
+            facet_low=tokens["--gfl-color-facet-low"],
+            facet_mid=tokens["--gfl-color-facet-mid"],
+            facet_high=tokens["--gfl-color-facet-high"],
+            facet_edge=tokens["--gfl-color-facet-edge"],
+            node=tokens["--gfl-color-node"],
         )
 
     def tone(self, strength):
