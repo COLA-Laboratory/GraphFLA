@@ -86,7 +86,7 @@
     <section class="gfl-guide__group">
       <h2 class="gfl-heading gfl-heading--3">Figure, chart and code</h2>
       <div class="gfl-guide__row">
-        <div class="gfl-card gfl-guide__sample">{{ ui.figure(metrics.cards[2].figure, legend_over=true) }}</div>
+        <div class="gfl-card gfl-guide__sample">{{ ui.legend(metrics.cards[2].figure.legend, "column") }}{{ ui.figure(metrics.cards[2].figure) }}</div>
         <div class="gfl-guide__sample">{{ ui.chart_card(performance.charts[0]) }}</div>
       </div>
       <div class="gfl-guide__row">

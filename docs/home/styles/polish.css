@@ -1,27 +1,12 @@
 @font-face {
-  font-family: Inter;
-  src: url('../fonts/inter-400.ttf') format('truetype');
+  font-family: Geist;
+  src: url('../fonts/geist-variable.ttf') format('truetype');
   font-style: normal;
-  font-weight: 400;
-  font-display: swap;
-}
-@font-face {
-  font-family: Inter;
-  src: url('../fonts/inter-500.ttf') format('truetype');
-  font-style: normal;
-  font-weight: 500;
-  font-display: swap;
-}
-@font-face {
-  font-family: Inter;
-  src: url('../fonts/inter-600.ttf') format('truetype');
-  font-style: normal;
-  font-weight: 600;
+  font-weight: 100 900;
   font-display: swap;
 }
 /* Homepage typography, proportions and figure captions. */
 .gfl-home {
-  --gfl-font-body: Inter,-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
   --gfl-text-h2: clamp(29px,2.6vw,36px);
   --gfl-section-pad: clamp(56px,5.5vw,80px);
   --gfl-color-text-muted: var(--gfl-color-body-muted);
@@ -30,7 +15,7 @@
   letter-spacing: -.006em;
 }
 .gfl-nav {
-  font-family: Inter,-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+  font-family: var(--gfl-font-body);
 }
 .gfl-home .gfl-heading--2 {
   line-height: 1.16;
@@ -40,13 +25,10 @@
 .gfl-section__inner {
   gap: 36px;
 }
-.gfl-section__head {
-  align-items: center;
-}
 .gfl-section__intro {
   font-size: 15.5px;
   line-height: 1.65;
-  max-width: 52ch;
+  max-width: 76ch;
 }
 .gfl-hero__copy .gfl-lede {
   font-size: 18px;
@@ -76,7 +58,7 @@
   border-radius: 12px;
 }
 .gfl-panel--figure .gfl-figure__label--title {
-  font-family: Inter,sans-serif;
+  font-family: var(--gfl-font-body);
   font-size: 12px;
   font-weight: 500;
   letter-spacing: 0;
@@ -84,6 +66,7 @@
 }
 .gfl-metric__media .gfl-figure {
   max-width: 480px;
+  width: 100%;
   margin: 10px auto 0;
 }
 .gfl-metric__body {
@@ -94,10 +77,6 @@
 .gfl-metric__text {
   font-size: 15px;
   line-height: 1.65;
-}
-.gfl-metric__question {
-  font-size: 16px;
-  line-height: 1.45;
 }
 .gfl-chip {
   font-size: 12px;
@@ -141,14 +120,34 @@
   font-size: 13px;
   line-height: 1.6;
 }
+.gfl-insights__footer .gfl-link {
+  display: inline;
+  white-space: normal;
+}
 .gfl-case__copy {
   letter-spacing: 0;
 }
+.gfl-publications__list {
+  align-items: start;
+}
 .gfl-citation {
   border-radius: 12px;
+  padding: 18px 20px;
+  gap: 8px;
 }
 .gfl-citation__title {
+  font-size: 17px;
+  font-weight: 500;
+  line-height: 1.45;
+}
+.gfl-citation .gfl-eyebrow,
+.gfl-citation__meta,
+.gfl-citation__foot .gfl-link {
+  font-size: 13px;
   line-height: 1.5;
+}
+.gfl-citation__foot .gfl-link {
+  font-weight: 400;
 }
 @media(min-width:601px) {
   .gfl-scenario__context p {
@@ -188,6 +187,16 @@
   }
   .gfl-scenario__context p {
     flex-basis: 100%;
+  }
+}
+@media(max-width:360px) {
+  .gfl-metric__media .gfl-figure__label--caption {
+    max-width: 48%;
+    white-space: normal;
+    text-align: center;
+  }
+  .gfl-metric__media .gfl-figure:has(.gfl-figure__label--caption) {
+    margin-bottom: 16px;
   }
 }
 body: has(.gfl-home) .md-top {;

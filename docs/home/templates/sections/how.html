@@ -1,7 +1,7 @@
 {% import "macros.html" as ui with context %}
 {# Each column pairs a workflow step with the panel that illustrates it. #}
-{% macro step(item) -%}
-<div class="gfl-step"><p class="gfl-step__title"><span class="gfl-step__index">{{ item.number }}</span>{{ item.title }}</p><p class="gfl-step__text">{{ item.text }}</p></div>
+{% macro step(item, text) -%}
+<div class="gfl-step"><p class="gfl-step__title"><span class="gfl-step__index">{{ item.number }}</span>{{ item.title }}</p><p class="gfl-step__text">{{ text }}</p></div>
 {%- endmacro %}
 <section class="gfl-section" id="how">
   <div class="gfl-container gfl-section__inner">
@@ -13,7 +13,6 @@
       </button>
       {% endfor %}
     </div>
-    <p class="gfl-note gfl-demo-note">{{ how.demo_note }}</p>
     {% for scenario in how.scenarios %}
     <div class="gfl-scenario" role="tabpanel" id="scenario-{{ scenario.id }}" aria-labelledby="tab-{{ scenario.id }}"{% if not loop.first %} hidden{% endif %}>
       <div class="gfl-scenario__context">
@@ -22,7 +21,7 @@
       </div>
       <div class="gfl-how">
         <div class="gfl-how__column">
-        {{ step(how.steps[0]) }}
+        {{ step(how.steps[0], scenario.steps[0]) }}
         <div class="gfl-card gfl-panel">
           <p class="gfl-panel__title">{{ how.panels[0] }}</p>
           <div class="gfl-data-table">
@@ -43,13 +42,13 @@
         </div>
         </div>
         <div class="gfl-how__column">
-        {{ step(how.steps[1]) }}
+        {{ step(how.steps[1], scenario.steps[1]) }}
         <div class="gfl-card gfl-panel gfl-panel--figure">
           {{ ui.figure(scenario.figure) }}
         </div>
         </div>
         <div class="gfl-how__column">
-        {{ step(how.steps[2]) }}
+        {{ step(how.steps[2], scenario.steps[2]) }}
         <div class="gfl-card gfl-panel">
           <p class="gfl-panel__title">{{ how.panels[2] }}</p>
           <div class="gfl-report">

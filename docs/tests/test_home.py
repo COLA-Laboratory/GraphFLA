@@ -192,8 +192,11 @@ class LandingPage(unittest.TestCase):
             self.assertEqual(len(tabs), 5)
             self.assertEqual(sum(t["aria-selected"] == "true" for t in tabs), 1)
         self.assertFalse(self.pages["index"].select('.gfl-hero .gfl-badge'))
-        self.assertIn("Illustrative data and profiles", self.pages["index"].select_one('#how').get_text())
         for panel in self.pages["index"].select('.gfl-scenario'):
+            scenario = next(s for s in self.content["how"]["scenarios"]
+                            if panel["id"] == "scenario-" + s["id"])
+            self.assertEqual([step.get_text(strip=True) for step in panel.select('.gfl-step__text')],
+                             scenario["steps"])
             self.assertEqual(len(panel.select('tbody tr')), 8)
             self.assertEqual(len(panel.select('.gfl-report .gfl-meter')), 4)
 

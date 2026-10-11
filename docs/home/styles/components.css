@@ -30,14 +30,12 @@
 
 .gfl-section__head {
   display: flex;
-  flex-wrap: wrap;
-  align-items: flex-end;
-  justify-content: space-between;
-  gap: var(--gfl-space-5) var(--gfl-space-12);
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--gfl-space-4);
 }
 
 .gfl-section__titles {
-  flex: 1 1 480px;
   min-width: 0;
   display: flex;
   flex-direction: column;
@@ -45,7 +43,6 @@
 }
 
 .gfl-section__intro {
-  flex: 0 1 520px;
   font-size: var(--gfl-text-md);
   color: var(--gfl-color-text-muted);
   text-wrap: pretty;
@@ -386,17 +383,6 @@
 
 .gfl-figure__label--caption {
   transform: translateX(-50%);
-  color: var(--gfl-color-text-soft);
-}
-
-.gfl-figure__legend {
-  position: absolute;
-  left: 5%;
-  top: 7%;
-}
-
-.gfl-figure__legend .gfl-legend {
-  font-size: var(--gfl-text-xs);
   color: var(--gfl-color-text-soft);
 }
 

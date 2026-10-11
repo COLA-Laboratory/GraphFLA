@@ -21,7 +21,7 @@ DIST = HOME / "dist"
 STYLESHEETS = ("tokens.css", "base.css", "components.css", "sections.css", "insights.css", "polish.css")
 # Must provide the families named by the --gfl-font-* tokens.
 FONTS = ("https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800"
-         "&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap")
+         "&family=IBM+Plex+Mono:wght@400;500&display=swap")
 
 _INLINE = re.compile(r"\*(.+?)\*|`(.+?)`")
 

@@ -61,7 +61,7 @@
 {%- endmacro %}
 
 {# The image comes from the figure generator; its text labels are laid over it here. #}
-{% macro figure(spec, eager=false, legend_over=false) -%}
+{% macro figure(spec, eager=false) -%}
 {% set drawing = figures[spec.name] %}
 <div class="gfl-figure">
   <img class="gfl-figure__image" src="{{ asset("figures/" ~ drawing.file) }}" width="{{ drawing.width }}" height="{{ drawing.height }}" alt="{{ spec.alt }}"{% if not eager %} loading="lazy"{% endif %}>
@@ -71,9 +71,6 @@
     {%- if text is string %}{{ text }}{% else %}{{ text[0] }}<span class="gfl-figure__ramp"></span>{{ text[1] }}{% endif -%}
   </span>
   {% endfor %}
-  {% if legend_over %}
-  <div class="gfl-figure__legend">{{ legend(spec.legend, "column") }}</div>
-  {% endif %}
 </div>
 {%- endmacro %}
 

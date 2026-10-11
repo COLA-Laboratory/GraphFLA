@@ -5,10 +5,12 @@
     <div class="gfl-metrics">
       {% for card in metrics.cards %}
       <article class="gfl-card gfl-metric">
-        <div class="gfl-metric__media">{{ ui.figure(card.figure, legend_over=card.figure.legend is defined) }}</div>
+        <div class="gfl-metric__media">
+          {% if card.figure.legend is defined %}{{ ui.legend(card.figure.legend, "column") }}{% endif %}
+          {{ ui.figure(card.figure) }}
+        </div>
         <div class="gfl-metric__body">
           <h3 class="gfl-heading gfl-heading--3">{{ card.title }}</h3>
-          <p class="gfl-metric__question">{{ card.question }}</p>
           <p class="gfl-metric__text">{{ card.text }}</p>
           {{ ui.chips(card.functions) }}
           {{ ui.link(card.link) }}

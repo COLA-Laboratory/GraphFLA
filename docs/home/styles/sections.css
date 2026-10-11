@@ -102,7 +102,6 @@
 
 /* Three columns of [panel, caption]; column flow keeps each caption under its panel. */
 #how .gfl-section__inner { gap: var(--gfl-space-6); }
-.gfl-demo-note { margin-top: calc(-1 * var(--gfl-space-3)); }
 .gfl-scenario-tabs {
   display: flex;
   flex-wrap: nowrap;
@@ -286,13 +285,23 @@
 }
 
 .gfl-metric {
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  grid-template-rows: subgrid;
+  grid-row: span 2;
+  row-gap: 0;
   overflow: hidden;
 }
 
 .gfl-metric__media {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
   border-bottom: 1px solid var(--gfl-color-line);
+}
+
+.gfl-metric__media > .gfl-legend {
+  padding: var(--gfl-space-5) var(--gfl-space-6) 0;
+  font-size: var(--gfl-text-xs);
 }
 
 .gfl-metric__body {
@@ -307,11 +316,6 @@
 /* Functions and link sit at the bottom, so they line up across cards of one row. */
 .gfl-metric__body .gfl-chips {
   margin-top: auto;
-}
-
-.gfl-metric__question {
-  font-weight: 600;
-  line-height: var(--gfl-leading-snug);
 }
 
 .gfl-metric__text {
@@ -628,14 +632,14 @@
   padding: var(--gfl-space-4) var(--gfl-space-5);
 }
 
-/* Authors and link share the last row, kept at the bottom so a row of cards lines up. */
+/* Authors and link follow the title without stretching the space between them. */
 .gfl-citation__foot {
   display: flex;
   flex-wrap: wrap;
   align-items: baseline;
   justify-content: space-between;
   gap: var(--gfl-space-1) var(--gfl-space-4);
-  margin-top: auto;
+  margin-top: var(--gfl-space-1);
 }
 
 /* 24 px still meets the WCAG minimum target size, without padding every card. */

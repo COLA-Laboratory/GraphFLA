@@ -47,7 +47,7 @@ record, the worked example) and `build.py` renders the templates.
 - Lines are white at low opacity (`line`, `line-strong`) so they work on both surfaces.
 
 **Type**
-- Bricolage Grotesque for headings and large numbers, locally bundled Inter for homepage text,
+- Bricolage Grotesque for headings and large numbers, locally bundled Geist for homepage text,
   IBM Plex Mono for code and measured values.
 - Sizes come from the scale `--gfl-text-2xs` … `--gfl-text-lg` and the three
   heading sizes. No other font sizes.
@@ -144,8 +144,7 @@ builds a general Landscape and calls profile. It is not restricted to sequences.
 
 ## Homepage illustrations and reproducible examples
 
-The homepage switcher uses deliberately illustrative data and profiles, labeled
-as such. Tables show recognizable choices: amino-acid substitutions, catalysts and
+The homepage switcher uses deliberately illustrative data and profiles. Tables show recognizable choices: amino-acid substitutions, catalysts and
 solvents and temperatures, three-component alloy proportions, named On/Off build
 settings and three random-forest parameters. Use at least three variable choices
 per scenario (three mutable sites for proteins); compact tabs use an underline,
@@ -184,6 +183,16 @@ The source page is `content/insights-sources.md`; preparation and provenance bel
 there and in the data files, not in long homepage notes. Data work is an explicit
 offline preparation step; building or browsing the site never trains models.
 
-The Inter font files in `fonts/` are distributed under the included SIL Open Font
+The Geist variable font in `fonts/` are distributed under the included `Geist-OFL.txt` SIL Open Font
 License. `build_assets` copies them for both the standalone preview and MkDocs;
 CSS uses relative URLs so deployment under `/GraphFLA/` remains supported.
+
+Homepage section headers stack their title and introduction at every width. Each
+How it works scenario owns its three step descriptions in `content.yml`; only
+the step titles are shared. Metric legends occupy normal flow above their figures
+so wrapped labels cannot overlap the terrain. Publication cards follow their
+content height, with the author/link row directly after the title.
+
+Geist is sourced from the Google Fonts `ofl/geist` distribution
+(`https://github.com/google/fonts/tree/main/ofl/geist`). The variable font is
+bundled locally so homepage text does not depend on a remote font request.

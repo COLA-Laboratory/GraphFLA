@@ -81,7 +81,7 @@ hero:
   - value: '12'
     label: step-by-step tutorials on published data
   - value: '179'
-    label: curated datasets from biology, chemistry and materials science
+    label: curated datasets across diverse domains
     href: datasets
 how:
   eyebrow: How it works
@@ -91,12 +91,8 @@ how:
     href: datasets
   steps:
   - title: Provide your data
-    text: A table of tested candidates, with one column for each variable and one for the measured property.
   - title: Build the landscape
-    text: GraphFLA links candidates that are adjacent in the design space, e.g., protein variants that differ by
-      one amino-acid substitution, or reaction conditions that differ by one solvent.
   - title: Analyze its topography
-    text: Quantify peaks, ruggedness, neutrality and variable interactions.
   panels:
   - Your data
   - GraphFLA
@@ -119,8 +115,14 @@ how:
   - id: protein
     label: Protein engineering
     icon: cyanimide
-    title: Enzyme activity
-    context: Change amino acids at three sites to improve enzyme activity.
+    title: Protein function and stability
+    context: Explore how amino acid variation affects protein function and stability.
+    steps:
+    - Protein variant screening data, pairing amino acid sequences with measurements such as catalytic
+      activity, binding affinity or thermostability.
+    - GraphFLA connects variants that differ by a single amino acid substitution, mapping the measured
+      property across sequence space.
+    - Characterize epistasis, mutational robustness and the accessibility of optimal sequences.
     columns:
     - Protein sequence
     - Activity
@@ -155,7 +157,14 @@ how:
     label: Chemistry
     icon: suzuki
     title: Reaction conditions
-    context: Choose a catalyst, solvent and reaction temperature to increase product yield.
+    context: Explore how reagents and reaction conditions affect chemical reactivity and selectivity.
+    steps:
+    - Reaction screening data, with columns describing reagents and reaction conditions alongside an outcome
+      such as yield, conversion or selectivity.
+    - GraphFLA connects experiments that differ in a single reagent choice or a step in one reaction
+      condition.
+    - Characterize interactions between reaction factors, sensitivity to local changes and the accessibility
+      of optimal conditions.
     columns:
     - Catalyst
     - Solvent
@@ -206,8 +215,15 @@ how:
   - id: materials
     label: Materials
     icon: alloy
-    title: Copper–zinc–nickel alloys
-    context: Vary copper, zinc and nickel fractions to improve alloy hardness.
+    title: Alloy composition
+    context: Explore how alloy composition affects material properties.
+    steps:
+    - Composition–property data, pairing elemental proportions with measurements such as hardness, strength or
+      conductivity.
+    - GraphFLA connects neighboring compositions through small adjustments in elemental proportions, mapping
+      the chosen property across composition space.
+    - Identify composition–property trends, interactions between alloying elements and regions with stable
+      material performance.
     columns:
     - Copper
     - Zinc
@@ -258,8 +274,15 @@ how:
   - id: software
     label: Software tuning
     icon: software-configuration
-    title: Build settings
-    context: Toggle caching, parallel builds and debug symbols to reduce build time.
+    title: Software configurations
+    context: Explore how software configuration options affect system performance.
+    steps:
+    - Configuration benchmark data, pairing software settings with performance measurements such as execution
+      time, throughput or memory usage.
+    - GraphFLA connects configurations that differ in a single option, mapping performance across
+      configuration space.
+    - Characterize interactions between configuration options, performance sensitivity and the accessibility
+      of optimal configurations.
     columns:
     - Cache
     - Parallel
@@ -310,8 +333,15 @@ how:
   - id: hpo
     label: Hyperparameters
     icon: neural-architecture
-    title: Random forest regression
-    context: Tune tree depth, forest size and minimum leaf size to reduce prediction error.
+    title: Model hyperparameters
+    context: Explore how model hyperparameters affect predictive performance.
+    steps:
+    - Hyperparameter evaluation data, pairing model and training settings with validation metrics such as
+      accuracy or prediction error.
+    - GraphFLA connects neighboring configurations through a change in one hyperparameter, mapping predictive
+      performance across the search space.
+    - Characterize hyperparameter interactions, sensitivity to tuning and the accessibility of high-performing
+      configurations.
     columns:
     - Depth
     - Trees
@@ -359,7 +389,6 @@ how:
       - 0.49
       - 0.34
       - 0.17
-  demo_note: Illustrative data and profiles
 metrics:
   eyebrow: What you can measure
   title: A holistic picture of your landscape, with 20+ features across four aspects.
@@ -367,7 +396,6 @@ metrics:
     they let you explore your problem from complementary angles and understand it fully.
   cards:
   - title: Ruggedness
-    question: Is the landscape smooth or rugged?
     text: A rugged landscape has many local peaks and abrupt changes in fitness between neighbors. Ruggedness makes
       it more likely that stepwise improvement stops short of the best candidate.
     functions:
@@ -385,7 +413,6 @@ metrics:
         smooth: 'smooth: one peak'
         rugged: 'rugged: many local peaks'
   - title: Interactions
-    question: Do the variables act independently?
     text: Variables interact when the effect of changing one depends on the values of others, known as epistasis
       in biology. Interactions that reverse the direction of an effect can block improving paths and create multiple
       peaks.
@@ -408,9 +435,8 @@ metrics:
         tone: mark
         label: the same change decreases it there
   - title: Navigability
-    question: Can local search find the global optimum?
-    text: 'Navigability describes how easily a search that accepts only improvements reaches the global optimum:
-      from how many starting points, in how many steps, and whether fitness rises steadily towards it.'
+    text: Navigability describes how easily a search can find the global optimum. The landscape may provide useful
+      guidance or misleading signals that steer the search elsewhere.
     functions:
     - global_optima_accessibility
     - mean_path_length_to_global_optimum
@@ -429,7 +455,6 @@ metrics:
         tone: mark
         label: stops at a local optimum
   - title: Neutrality
-    question: How much of the landscape is flat?
     text: Neutral changes leave fitness essentially unchanged. Large flat regions can stall a search, but they also
       connect distant candidates of equal quality.
     functions:
@@ -561,8 +586,8 @@ start:
 performance:
   eyebrow: Performance
   title: Scales to millions of candidates on a single machine.
-  intro: Every stage of landscape construction has been optimized in detail. The comparison below measures construction
-    time and peak memory against a naive implementation that compares all pairs of candidates.
+  intro: Landscape construction in GraphFLA is heavily optimized for speed and memory efficiency, enabling analysis
+    of large combinatorial spaces on a single machine.
   headline:
     speedup: faster construction at {configurations} candidates
     memory_saved: lower peak memory on the same build
@@ -584,9 +609,8 @@ cases:
   cover_style: c
   eyebrow: Case studies
   title: Applicable to any combinatorial optimization problem.
-  intro: GraphFLA makes no assumption about what the variables or the objective represent. The same analysis applies
-    to amino acids and reaction conditions, alloy compositions and neural architectures, drug doses and compiler
-    flags.
+  intro: GraphFLA provides a unified framework for analyzing combinatorial optimization problems across domains,
+    with flexible representations of variables, objectives and neighborhood relationships.
   stories:
     protein:
       title: Protein engineering
@@ -712,9 +736,9 @@ footer:
 insights:
   eyebrow: Why landscape topography matters
   title: Landscape features help interpret model performance and optimization outcomes.
-  intro: Landscape features help explain why a predictive model or a search method works well on some problems but
-    not on others. In the protein datasets below, compare each feature with the accuracy of zero-shot predictors
-    and with the results of simulated directed evolution.
+  intro: Landscape features help explain why predictive models and search algorithms perform differently across
+    problems. They reveal interactions that complicate prediction, local optima that can trap search, and broad
+    trends that can guide optimization.
   feature_label: Landscape feature
   publication_label: Read the study
   legend: Linear fit
