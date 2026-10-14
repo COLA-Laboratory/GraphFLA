@@ -191,10 +191,10 @@ def neutrality(palette):
 # Scene and the surface token its figure is displayed on.
 SCENES = {
     "hero": (hero, "page"),
-    "ruggedness": (ruggedness, "card"),
-    "epistasis": (epistasis, "card"),
-    "navigability": (navigability, "card"),
-    "neutrality": (neutrality, "card"),
+    "ruggedness": (ruggedness, "page"),
+    "epistasis": (epistasis, "page"),
+    "navigability": (navigability, "page"),
+    "neutrality": (neutrality, "page"),
 }
 
 

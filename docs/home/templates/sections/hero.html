@@ -5,8 +5,9 @@
     <p class="gfl-lede">{{ hero.lede }}</p>
     <div class="gfl-actions">
       {{ ui.button(hero.action) }}
-      {{ ui.command(install) }}
+      {{ ui.button(hero.secondary_action, secondary=true) }}
     </div>
+    {{ ui.command(install) }}
   </div>
   <figure class="gfl-hero__figure">
     {{ ui.figure(hero.figure, eager=true) }}

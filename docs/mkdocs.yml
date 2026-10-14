@@ -10,6 +10,7 @@ watch: [../graphfla, _support, templates, includes, home, overrides]
 theme:
   name: material
   custom_dir: overrides
+  favicon: assets/home/favicon.svg
   icon:
     repo: fontawesome/brands/github
   language: en
@@ -17,6 +18,7 @@ theme:
   features: [navigation.top, navigation.tabs, navigation.tabs.sticky, search.suggest, search.highlight, content.code.copy, toc.follow]
 nav:
   - Home: index.md
+  - Quick start: quick-start.md
   - Datasets: datasets.md
   - Example methods: demo-methods.md
   - Interactive benchmark data: insights-sources.md

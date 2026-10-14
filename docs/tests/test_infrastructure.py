@@ -62,6 +62,8 @@ class DocumentationInfrastructure(unittest.TestCase):
         )
         cfg["extra"]["api_source_root"] = str(cls.source)
         cfg["theme"]["custom_dir"] = str(DOCS / "overrides")
+        # This API-only fixture omits the landing hook that generates the favicon.
+        cfg["theme"].pop("favicon", None)
         cfg["extra"]["api_modules"] = ["docfixture"]
         cfg["extra"]["api_omissions"] = {}
         cfg["extra"]["tutorial_catalog"] = None

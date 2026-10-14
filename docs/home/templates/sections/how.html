@@ -22,7 +22,7 @@
       <div class="gfl-how">
         <div class="gfl-how__column">
         {{ step(how.steps[0], scenario.steps[0]) }}
-        <div class="gfl-card gfl-panel">
+        <div class="gfl-panel">
           <p class="gfl-panel__title">{{ how.panels[0] }}</p>
           <div class="gfl-data-table">
             <table class="gfl-data-table__table">
@@ -43,13 +43,13 @@
         </div>
         <div class="gfl-how__column">
         {{ step(how.steps[1], scenario.steps[1]) }}
-        <div class="gfl-card gfl-panel gfl-panel--figure">
+        <div class="gfl-panel gfl-panel--figure">
           {{ ui.figure(scenario.figure) }}
         </div>
         </div>
         <div class="gfl-how__column">
         {{ step(how.steps[2], scenario.steps[2]) }}
-        <div class="gfl-card gfl-panel">
+        <div class="gfl-panel">
           <p class="gfl-panel__title">{{ how.panels[2] }}</p>
           <div class="gfl-report">
             {% for entry in scenario.entries %}

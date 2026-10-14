@@ -131,9 +131,7 @@
   align-items: start;
 }
 .gfl-citation {
-  border-radius: 12px;
-  padding: 18px 20px;
-  gap: 8px;
+  border-radius: 0;
 }
 .gfl-citation__title {
   font-size: 17px;
@@ -167,6 +165,10 @@
   }
 }
 @media(max-width:600px) {
+  .gfl-button {
+    padding-inline: 18px;
+    font-size: 15px;
+  }
   .gfl-home {
     font-size: 15px;
   }
@@ -199,13 +201,13 @@
     margin-bottom: 16px;
   }
 }
-body: has(.gfl-home) .md-top {;
+body:has(.gfl-home) .md-top {
   background: var(--gfl-color-top-surface);
   color: var(--gfl-color-top-text);
   border: 1px solid var(--gfl-color-top-border);
   box-shadow: 0 3px 14px var(--gfl-color-top-shadow);
 }
-body: has(.gfl-home) .md-top:hover {;
+body:has(.gfl-home) .md-top:hover {
   color: var(--gfl-color-top-hover);
   border-color: var(--gfl-color-top-hover-border);
 }

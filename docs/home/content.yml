@@ -5,6 +5,7 @@ meta:
     their ruggedness, epistasis, navigability and neutrality.
 links:
   home: ./
+  quick_start: quick-start/
   github: https://github.com/COLA-Laboratory/GraphFLA
   pypi: https://pypi.org/project/graphfla/
   colab: https://colab.research.google.com/drive/1zRsU6V0iNucXmeSXqRtwnbaipWfxFGKA?usp=sharing
@@ -23,6 +24,8 @@ header:
   nav:
   - label: Home
     href: home
+  - label: Quick start
+    href: quick_start
   - label: Metrics
     href: '#metrics'
   - label: Case studies
@@ -52,8 +55,11 @@ hero:
     revealing what makes a problem easy or hard to model and to optimize. These insights help you develop better
     predictive models and search algorithms.
   action:
-    label: Get started
-    href: '#start'
+    label: Quick start
+    href: quick_start
+  secondary_action:
+    label: Tutorials
+    href: tutorials
   figure:
     name: hero
     alt: An illustrative fitness landscape with improving paths, one reaching the global optimum and two ending
@@ -480,6 +486,8 @@ start:
   lede: Simply load your dataset, specify the variables and the objective, and build the landscape. The same steps
     apply to laboratory measurements, simulations and model evaluations.
   links:
+  - label: Run the quick start
+    href: quick_start
   - label: Try a worked tutorial
     href: tutorials
     accent: true
@@ -684,8 +692,8 @@ cases:
 closing:
   title: Analyze *your own* data.
   action:
-    label: Get started
-    href: '#start'
+    label: Quick start
+    href: quick_start
   link:
     label: Source on GitHub
     href: github

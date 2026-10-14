@@ -36,9 +36,9 @@ These twelve notebooks include worked code and saved outputs, with their [input 
 
 | Dataset | Application | Colab |
 |---|---|---|
-| [GB1](tutorials/datasets/01_gb1_landscape.ipynb) | Protein variants and antibody binding | |
-| [DHFR](tutorials/datasets/02_dhfr_landscape.ipynb) | Gene variants and antibiotic resistance | |
-| [Ribozymes](tutorials/datasets/03_ribozyme_landscape.ipynb) | RNA variants and catalytic activity | |
+| [GB1](tutorials/datasets/01_gb1_landscape.ipynb) | Protein variants and antibody binding | [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/1UiOASVmXNVH0Wj77Vo4gDqEbvNO6taMk) |
+| [DHFR](tutorials/datasets/02_dhfr_landscape.ipynb) | Gene variants and antibiotic resistance | [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/1x8iz3zcImNtsdWwG8SxkSGY2BrqLWDgE) |
+| [Ribozymes](tutorials/datasets/03_ribozyme_landscape.ipynb) | RNA variants and catalytic activity | [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/1whEGj9qo2B3Retwkm_l0SlrMzhLZXXeP) |
 | [Suzuki-Miyaura](tutorials/datasets/04_suzuki_landscape.ipynb) | Chemical reaction conditions | [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/17ef8wR3DNM8URikhJm73YeziTgoqTeVQ) |
 | [Flow semihydrogenation](tutorials/datasets/05_flow_semihydrogenation_landscape.ipynb) | Electrochemical process settings | [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/1YpJbji2XZU_lNHMSkxYQj7Yp7om8tiZM) |
 | [W-Re-Os alloys](tutorials/datasets/06_alloy_landscape.ipynb) | Alloy composition | [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/1Q8ieoHAUOKkCfjSyYGwFCCyvZBx9zCq-) |

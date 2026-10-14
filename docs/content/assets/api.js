@@ -41,6 +41,19 @@ window.addEventListener('load', () => {
   });
 });
 document.addEventListener('DOMContentLoaded', () => {
+  // Open the two API groups on arrival; native toggles still let readers collapse them.
+  const groups = [...document.querySelectorAll('.md-nav--primary .md-nav__item--nested')];
+  const title = group => group.querySelector(':scope > label .md-ellipsis')?.textContent.trim();
+  const api = groups.find(group => title(group) === 'API reference');
+  if (api?.classList.contains('md-nav__item--active')) {
+    groups.filter(group => api.contains(group) && ['Problems', 'Analysis'].includes(title(group)))
+      .forEach(group => {
+        const toggle = group.querySelector(':scope > input.md-nav__toggle');
+        toggle.checked = true;
+        group.querySelector(':scope > nav').setAttribute('aria-expanded', 'true');
+        toggle.dispatchEvent(new Event('change', {bubbles: true}));
+      });
+  }
   document.querySelectorAll('.md-nav--primary .md-nav__link').forEach(link => {
     const label = link.querySelector('.md-ellipsis');
     if (label) link.title = label.textContent.trim();

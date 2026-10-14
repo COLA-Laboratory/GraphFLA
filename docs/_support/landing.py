@@ -99,7 +99,8 @@ def navigation_context(context, page_url, is_homepage=False):
         return get_relative_url(path or ".", page_url) + (separator + anchor if separator else "")
 
     env.filters["href"] = href
-    active_section = ("Home" if is_homepage else "Tutorials" if page_url.startswith("tutorials/")
+    active_section = ("Home" if is_homepage else "Quick start" if page_url == "quick-start/"
+                      else "Tutorials" if page_url.startswith("tutorials/")
                       else "API reference" if page_url not in
                       ("404.html", "benchmarks/", "datasets/", "demo-methods/", "insights-sources/") else "")
     context.update(

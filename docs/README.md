@@ -25,7 +25,7 @@ The site root uses the landing page maintained in `home/`; read
 `main.html` and replaces only the homepage content and footer. The native
 header, search, sticky navigation and mobile drawer belong to the same theme
 on the homepage, tutorials and API pages. `overrides/partials/tabs.html` places
-the shared navigation inside Material's header: Home, Metrics, Case studies,
+the shared navigation inside Material's header: Home, Quick start, Metrics, Case studies,
 Tutorials and API reference. Metrics and Case studies link to the corresponding
 homepage sections, including from nested documentation pages. The repository
 link uses Material's native `repo_url` / `repo_name` slot beside search.
@@ -326,3 +326,13 @@ an error output remains, or a required input is missing from the catalog. The
 generated `_api/tutorial-manifest.json` records notebook/data hashes, code/output
 counts and execution provenance. After editing narrative alone, re-run the same
 verification workflow so the published source and recorded results stay aligned.
+
+## Quick start and API navigation
+
+`content/quick-start.md` is the concise, runnable introduction linked from the
+global navigation, homepage actions and code section. It uses a domain-neutral
+table of three on/off choices and explains the computed local optima.
+
+On API pages, `content/assets/api.js` opens the Problems and Analysis sidebar
+groups after the page loads. Their native Material toggles remain available;
+individual modules and member lists are not expanded unless active.

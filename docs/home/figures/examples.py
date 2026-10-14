@@ -98,7 +98,7 @@ def _arc(camera, a, b, bend):
 
 def draw(key, tokens):
     """Return the figure of one scenario and the statistics of its drawn graph."""
-    palette = Palette.from_tokens("card", tokens)
+    palette = Palette.from_tokens("page", tokens)
     figure = Figure("example-" + key, WIDTH, HEIGHT)
     (nodes, edges), seed, peaks = SCENARIOS[key]
     points = fit_disc(stress_layout(len(nodes), edges, seed=seed), radius=0.4)

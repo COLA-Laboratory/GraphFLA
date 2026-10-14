@@ -42,6 +42,23 @@ def icon(name):
     return Markup((HOME / "icons" / f"{name}.svg").read_text().strip())
 
 
+def favicon(tokens):
+    """Give the header artwork explicit colours for use outside the page CSS."""
+    logo = str(icon("logo"))
+    logo = logo.replace('<svg ', '<svg xmlns="http://www.w3.org/2000/svg" ', 1)
+    logo = logo.replace('viewBox="0 0 28 28"', 'viewBox="-3 -3 34 34"')
+    opening = logo.index(">") + 1
+    text, page, accent = (tokens["--gfl-color-" + name] for name in ("text", "page", "accent"))
+    styles = (
+        f'<style>svg {{color:{text};fill:none;stroke:currentColor;stroke-width:1.8;'
+        'stroke-linecap:round;stroke-linejoin:round}'
+        f'.gfl-icon__plate {{fill:{page}}}'
+        f'.gfl-icon__accent {{fill:{accent};stroke:{accent}}}</style>'
+        f'<rect x="-3" y="-3" width="34" height="34" rx="7" stroke="none" fill="{page}"/>'
+    )
+    return logo[:opening] + styles + logo[opening:]
+
+
 def environment(links, assets="assets/"):
     """Return the template environment.
 
@@ -66,6 +83,7 @@ def build_assets(assets):
     """Write shared assets and return the page context for either build entry point."""
     assets = Path(assets)
     figures = render(assets / "figures")
+    (assets / "favicon.svg").write_text(favicon(load_tokens()))
     figures.update(render_examples(assets / "figures", load_tokens()))
     page = load_page(figures)
     cover_style = page["cases"]["cover_style"]

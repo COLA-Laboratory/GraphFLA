@@ -4,7 +4,7 @@
     {{ ui.section_head(metrics) }}
     <div class="gfl-metrics">
       {% for card in metrics.cards %}
-      <article class="gfl-card gfl-metric">
+      <article class="gfl-metric">
         <div class="gfl-metric__media">
           {% if card.figure.legend is defined %}{{ ui.legend(card.figure.legend, "column") }}{% endif %}
           {{ ui.figure(card.figure) }}

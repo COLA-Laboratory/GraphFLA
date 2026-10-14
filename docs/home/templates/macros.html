@@ -10,9 +10,9 @@
 <a class="gfl-link{% if item.accent is defined %} gfl-link--accent{% endif %}" href="{{ url }}">{{ item.label }} {{ arrow(url) }}</a>
 {%- endmacro %}
 
-{% macro button(item) -%}
+{% macro button(item, secondary=false) -%}
 {% set url = item.href | href %}
-<a class="gfl-button" href="{{ url }}">{{ item.label }} {{ arrow(url) }}</a>
+<a class="gfl-button{% if secondary %} gfl-button--secondary{% endif %}" href="{{ url }}">{{ item.label }} {{ arrow(url) }}</a>
 {%- endmacro %}
 
 {% macro command(text) -%}
@@ -82,14 +82,14 @@
 {%- endmacro %}
 
 {% macro chart_card(chart) -%}
-<div class="gfl-card gfl-chart-card">
+<div class="gfl-chart-card">
   <h3 class="gfl-chart-card__title">{{ chart.title }} <span class="gfl-chart-card__unit">· {{ chart.unit }}</span></h3>
   {{ chart.svg }}
 </div>
 {%- endmacro %}
 
 {% macro case_card(case) -%}
-<a class="gfl-card gfl-case" href="{{ case.href }}" aria-labelledby="case-{{ case.slug }}" aria-describedby="study-{{ case.slug }}">
+<a class="gfl-case" href="{{ case.href }}" aria-labelledby="case-{{ case.slug }}" aria-describedby="study-{{ case.slug }}">
   <img class="gfl-case__image" src="{{ asset(case.cover) }}" alt=""
        width="1536" height="1024" loading="lazy" decoding="async">
   <div class="gfl-case__copy">

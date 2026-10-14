@@ -135,6 +135,16 @@
   filter: brightness(1.08);
 }
 
+.gfl-button--secondary {
+  background: transparent;
+  color: var(--gfl-color-text);
+  border: 1px solid var(--gfl-color-line-strong);
+}
+
+.gfl-button--secondary:hover {
+  border-color: var(--gfl-color-text-muted);
+}
+
 .gfl-link {
   display: inline-flex;
   gap: var(--gfl-space-1);

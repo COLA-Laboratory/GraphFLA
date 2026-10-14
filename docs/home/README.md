@@ -21,7 +21,7 @@ open docs/home/dist/styleguide.html               # the design system, rendered
 | Wording, links and illustrative demo tables/profiles | `content.yml` | Inline markup: `*accent*`, `` `code` ``. |
 | The markup of a component | `templates/macros.html` | One macro per component. |
 | The markup or order of a section | `templates/sections/*.html`, `templates/home.html` | |
-| A case-study card | `content.yml` → `cases.cover_style` / `cases.stories`, `docs/tutorials.yml`, `covers/<style>/<slug>.webp` | Use the optimization problem as the title, with one study subtitle below it. |
+| A case-study cover | `content.yml` → `cases.cover_style` / `cases.stories`, `docs/tutorials.yml`, `covers/<style>/<slug>.webp` | Use the optimization problem as the title, with one study subtitle below it. |
 | The benchmark numbers and charts | `docs/content/assets/benchmarks/construction.json` | Re-record with `docs/scripts/benchmark_home.py`; never typed by hand. |
 | A landscape drawing | `figures/scenes.py` | Shapes in `figures/surfaces.py`, A1 faceted rendering in `figures/facets.py`. |
 | The five interactive illustrations | `content.yml`, `figures/examples.py` | Keep the authored height functions, compact tables and profile bars. Both layers must use the same camera and candidate coordinates, with vertical correspondence guides. |
@@ -139,8 +139,8 @@ Metrics and Case studies are plain links to homepage sections. Scrolling uses
 CSS `scroll-behavior`, with `prefers-reduced-motion` respected. The GitHub link
 beside search is configured through Material's native repository settings.
 
-The quick start loads `experiments.csv`, selects variable and response columns,
-builds a general Landscape and calls profile. It is not restricted to sequences.
+The dedicated Quick start uses a self-contained table of on/off choices. The
+homepage code tabs retain examples for loading domain datasets.
 
 ## Homepage illustrations and reproducible examples
 
@@ -190,9 +190,26 @@ CSS uses relative URLs so deployment under `/GraphFLA/` remains supported.
 Homepage section headers stack their title and introduction at every width. Each
 How it works scenario owns its three step descriptions in `content.yml`; only
 the step titles are shared. Metric legends occupy normal flow above their figures
-so wrapped labels cannot overlap the terrain. Publication cards follow their
-content height, with the author/link row directly after the title.
+so wrapped labels cannot overlap the terrain. Publications form a compact reading list, with the author/link row directly after the title.
 
 Geist is sourced from the Google Fonts `ofl/geist` distribution
 (`https://github.com/google/fonts/tree/main/ofl/geist`). The variable font is
 bundled locally so homepage text does not depend on a remote font request.
+
+## Onboarding and open layouts
+
+The top navigation and hero link to `docs/content/quick-start.md`, a short,
+self-contained example with three Boolean variables. Its displayed output is
+checked by executing the code with GraphFLA. The homepage keeps the existing
+domain examples and links to the same Quick start page.
+
+Metrics use alternating figure-and-text rows. Workflow panels, class links,
+performance charts and publications use whitespace and rules rather than boxed
+cards. Interactive research plots and code retain their bounded surfaces.
+Case-study titles and study names sit below their images in an open grid.
+
+The case-study index retains the painted `c` cover collection.
+
+The browser favicon is generated from `icons/logo.svg`, the same artwork used
+in the header, with explicit token colours and a dark backing for light or dark
+browser chrome. `theme.favicon` in `docs/mkdocs.yml` selects the generated SVG.

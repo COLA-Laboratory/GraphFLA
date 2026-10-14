@@ -3,6 +3,7 @@ notebooks:
 - slug: protein
   title: Protein engineering
   notebook: 01_gb1_landscape.ipynb
+  colab: https://colab.research.google.com/drive/1UiOASVmXNVH0Wj77Vo4gDqEbvNO6taMk
   data:
   - gb1.csv
   topic: Protein binding
@@ -13,6 +14,7 @@ notebooks:
 - slug: antibiotic-resistance
   title: Antibiotic resistance evolution
   notebook: 02_dhfr_landscape.ipynb
+  colab: https://colab.research.google.com/drive/1x8iz3zcImNtsdWwG8SxkSGY2BrqLWDgE
   data:
   - dhfr.csv
   topic: Antibiotic resistance
@@ -23,6 +25,7 @@ notebooks:
 - slug: ribozyme
   title: Ribozyme evolution
   notebook: 03_ribozyme_landscape.ipynb
+  colab: https://colab.research.google.com/drive/1whEGj9qo2B3Retwkm_l0SlrMzhLZXXeP
   data:
   - ribozyme.csv
   topic: Catalytic RNA

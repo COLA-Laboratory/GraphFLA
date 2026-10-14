@@ -53,9 +53,9 @@ class LandingIntegration(unittest.TestCase):
                 self.assertTrue(path.startswith("/GraphFLA/"), target)
 
     def test_global_header_and_search_are_shared_by_home_tutorials_and_apis(self):
-        expected = ["Home", "Metrics", "Case studies", "Tutorials", "API reference"]
+        expected = ["Home", "Quick start", "Metrics", "Case studies", "Tutorials", "API reference"]
         for path in ("index.html", "landscape/index.html", "analysis/epistasis/index.html",
-                     "tutorials/suzuki/index.html", "404.html"):
+                     "tutorials/suzuki/index.html", "quick-start/index.html", "404.html"):
             soup = BeautifulSoup((self.site / path).read_text(), "html.parser")
             nav = soup.select_one(".md-header .gfl-site-navigation .gfl-nav")
             self.assertIsNotNone(nav, path)
