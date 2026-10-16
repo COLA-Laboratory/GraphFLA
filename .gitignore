@@ -24,3 +24,40 @@ htmlcov/
 .ruff_cache/
 benchmarks/results/*.partial.json
 benchmarks/results/*.tmp
+
+# Local agent instructions, plans and session state
+AGENTS.md
+AGENTS.local.md
+CLAUDE.md
+CLAUDE.local.md
+GEMINI.md
+.codex/
+.claude/
+.cursor/
+.cursorrules
+/REFACTOR_PLAN.md
+/plans/
+
+# Editor settings and package build outputs
+/.vscode/
+/.idea/
+/build/
+/dist/
+*.egg-info/
+.ipynb_checkpoints/
+
+# Retired tutorials, website prototypes and migration records
+/archived_tutorials/
+/docs/docs/
+/docs/candidates/
+/docs/migration.json
+/docs/problems-migration.json
+/docs/tutorials-migration.json
+/docs/scripts/migrate_candidate.py
+/docs/scripts/import_problems.py
+
+# Internal research handoffs and exploratory logs
+/validation/HANDOFF.md
+/validation/harvest/
+/validation/metric_provenance_findings.md
+/validation/*_TEST_AUDIT.md

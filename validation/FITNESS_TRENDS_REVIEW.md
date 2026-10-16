@@ -112,7 +112,7 @@ negative fitness encoding now preserves interpretation. Missing/stale
 before degenerate-data exits; constant backgrounds return NaN for OLS instead
 of an arbitrary rank-deficient coefficient. Pearson/regression stream 32,768
 edges at a time; Spearman sorts the full edge population. See
-`FITNESS_TRENDS_TEST_AUDIT.md` and `../benchmarks/FITNESS_TRENDS_RESULTS.md`.
+[bounded performance results](../benchmarks/FITNESS_TRENDS_RESULTS.md).
 
 Research failures remain failures: no tolerances were widened to match package
 output, and existing case fingerprints were not changed. Tutorial/API proposals

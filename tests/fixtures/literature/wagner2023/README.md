@@ -31,4 +31,4 @@ The executable regression entry is now
 `python -m validation.tests --literature-study Wagner2023 -q`. It is separate
 from the default basic tests, cites versioned cases, and also checks each public
 table decision against the independent oracle. See `validation/TESTING.md` for
-the reusable contract and `validation/EE_TEST_AUDIT.md` for resource observations.
+the reusable contract and `benchmarks/EE_RESULTS.md` for resource observations.

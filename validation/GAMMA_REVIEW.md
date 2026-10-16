@@ -2,7 +2,7 @@
 
 Follow-up: the user accepted the remaining empirical discrepancies on
 2026-10-02. They remain documented scientific limits, not widened test tolerances.
-The subsequent [test audit](GAMMA_TEST_AUDIT.md) and
+The [literature tests](tests/test_gamma.py) and
 [bounded performance results](../benchmarks/GAMMA_RESULTS.md) describe nine
 dedicated literature tests, expanded basic coverage and an equivalent faster
 implementation. This initial review's six-test counts below are historical.

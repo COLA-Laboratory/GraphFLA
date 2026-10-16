@@ -2,7 +2,6 @@
 
 The active website is `docs/mkdocs.yml` + `docs/content/`. It uses the selected
 G styling, class tabs with expandable methods, and continuous analysis articles.
-`docs/candidates/` is an archive of design prototypes, not a build dependency.
 
 The current integration covers **all 7 public Landscape classes, 31 Analysis
 functions, and all 9 Problems classes** from package revision
@@ -60,14 +59,13 @@ Do not substitute old-version comparisons or theoretical allocation sizes for
 the recorded runtime and peak-process RSS measurements.
 
 Problems retains the original model introductions in two continuous articles:
-Biological Models and Combinatorial Problems. `problems-migration.json` records
-the original introduction hashes and their destinations. The calling convention
+Biological Models and Combinatorial Problems. The calling convention
 is shared through `includes/problem-interface.md`. The base class lives with the
 biological models; all constructor fields, methods and API examples come from
 the finalized source.
 
 The six finalized metric introductions were integrated into their existing
-topic pages. `migration.json` records their source hashes and destinations.
+topic pages.
 Introductions without a finalized replacement retain their existing text.
 The EE introduction is shared through `includes/ee-mutations.md` at both of its
 existing topic positions, using `--8<-- "ee-mutations.md"`; edit that one file
@@ -281,16 +279,6 @@ content-quality report.
 artifact when code or docs change in a PR or on main. It does not deploy or
 modify the package workflow.
 
-`docs/scripts/migrate_candidate.py` is a one-time migration record from the frozen
-G articles. Do not rerun it on edited articles: normal builds never regenerate or
-overwrite authored Markdown. Old hand-copied API sections and per-function
-examples/references were replaced by source references; integrated tutorial
-Examples remain authored content.
-
-`docs/scripts/import_problems.py` likewise records the one-time migration and
-split of the original Problems article. It is not a build step: do not rerun it
-over subsequently edited tutorials.
-
 ## Dataset tutorials
 
 Edit narrative and code only in `tutorials/datasets/*.ipynb`; the accompanying
@@ -299,7 +287,6 @@ page slugs, labels, icons and required inputs. It generates Tutorials navigation
 the index and each notebook's download bundle. The nine original introductions
 and all other Markdown cells were retained; only Walsh dictionary access and
 the current `profile` arguments needed mechanical API updates during migration.
-`tutorials-migration.json` records the original hashes and changed code cells.
 
 The build uses nbconvert's Markdown exporter, wrapped by one shared template,
 and MkDocs' virtual files. It preserves Markdown, Python source and saved outputs,

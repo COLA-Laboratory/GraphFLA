@@ -1,7 +1,7 @@
 """Lyons et al. (2020), Nature Ecology & Evolution 4:1685–1693.
 
 DOI: 10.1038/s41559-020-01286-y. Results p. 1686; Methods p. 1692.
-Full-population resource review: validation/IDIOSYNCRASY_TEST_AUDIT.md.
+Full-population resource measurements: benchmarks/IDIOSYNCRASY_RESULTS.md.
 """
 
 import numpy as np

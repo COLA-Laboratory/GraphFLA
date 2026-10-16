@@ -108,8 +108,8 @@ reference or tolerance was chosen to make those targets pass.
 Ferretti's existing pinned TEM source gives 0.444084122858 versus printed 0.43.
 It is not a passing reproduction. The known source/input issue and the accepted
 gamma discrepancies remain unchanged; no fitness entry was repaired in this
-session. Szendro rows B-J have existing method/input discrepancies in
-`harvest/Szendro2013/`; they were not relabelled as passing evidence. The new
+session. Szendro rows B-J have unresolved method/input discrepancies;
+they are not passing evidence. The new
 Aspergillus result does not settle gamma-star or any other metric.
 
 ## Input provenance and execution contract
